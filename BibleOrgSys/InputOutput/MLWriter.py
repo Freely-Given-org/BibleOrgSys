@@ -59,6 +59,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
+
 allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
 HTMLParaTags = 'p', # Not automatically started on a new line
 HTMLInsideTags = 'a', 'b', 'em', 'i', 'sup', 'sub', 'span' # Not automatically started on or finished with a new line
@@ -532,7 +533,7 @@ class MLWriter:
             a result code (0=success)
             and two strings containing the program output and error output.
         """
-        vPrint( 'Info', "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
+        vPrint( 'Info', debuggingThisModule, "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
 
         assert self._status == 'Closed'
 
@@ -557,11 +558,11 @@ class MLWriter:
                     checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                vPrint( 'Info', "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+                vPrint( 'Info', debuggingThisModule, "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
                 if returnCode == 5: # schema error
                     logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
                     if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
-            elvPrint( 'Verbose', "  xmllint validated the xml file {}.".format( self._filename ) )
+            else: vPrint( 'Verbose', debuggingThisModule, "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
 # end of MLWriter class

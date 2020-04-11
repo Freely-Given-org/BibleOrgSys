@@ -53,7 +53,6 @@ SHORT_PROGRAM_NAME = "ReorderSongs"
 PROGRAM_NAME = "Reorder Songs"
 PROGRAM_VERSION = '0.03'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -83,11 +82,11 @@ def main():
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', "Loading songs from {}…".format( songsInputFilepath ) )
+    vPrint( 'Quiet', debuggingThisModule, "Loading songs from {}…".format( songsInputFilepath ) )
     songs = SFMFile.SFMRecords()
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    vPrint( 'Normal', "  {} songs loaded".format( len(songs.records) ) )
+    vPrint( 'Normal', debuggingThisModule, "  {} songs loaded".format( len(songs.records) ) )
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( songs )
 
     # Extract the information out of the file that we want to use for sorting
@@ -102,7 +101,7 @@ def main():
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', "Writing reordered songs to {}…".format( songsOutputFilepath ) )
+    vPrint( 'Quiet', debuggingThisModule, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             if debuggingThisModule: print( "keyPair", keyPair )
@@ -112,9 +111,9 @@ def main():
                 if debuggingThisModule: print( "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
-    vPrint( 'Normal', "  {} songs written".format( k+1 ) )
+    vPrint( 'Normal', debuggingThisModule, "  {} songs written".format( k+1 ) )
 
-    vPrint( 'Quiet', "{} finished.".format( programNameVersion ) )
+    vPrint( 'Quiet', debuggingThisModule, "{} finished.".format( programNameVersion ) )
 #end of main
 
 if __name__ == '__main__':

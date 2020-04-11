@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.53'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -41,6 +40,7 @@ debuggingThisModule = False
 from typing import Dict, List, Tuple, Any, Optional
 import os
 import logging
+from pathlib import Path
 
 if __name__ == '__main__':
     import sys
@@ -172,7 +172,7 @@ class USFMBibleBook( BibleBook ):
             def saveAlignment( C:str, V:str, textStr:str, wordsStr:str ) -> None:
                 """
                 """
-                if debuggingThisModule: 
+                if debuggingThisModule:
                     print( f"  saveAlignment( {C}:{V}, '{textStr}', '{wordsStr}' ) for {self.BBB}…" )
 
                 for j,entry in enumerate( reversed( variables['saved'] ) ):
@@ -207,7 +207,7 @@ class USFMBibleBook( BibleBook ):
 
                 Returns a new marker and text with uW start alignment markers removed.
                 """
-                if debuggingThisModule: 
+                if debuggingThisModule:
                     print( f"  findInternalStarts( {marker!r}, {text!r}, lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}' )…" )
                 assert marker not in ('zaln-s','zaln-e')
 
@@ -224,7 +224,7 @@ class USFMBibleBook( BibleBook ):
                         # Usually this happens around punctuation such as Hebrew maqqef (where spaces aren't wanted)
                         # We have to process the end first
                         assert variables['level'] > 0
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"        Found {variables['level']} end markers inside line" )
                         assert variables['text']
                         if marker == 'SWAPPED': assert not variables['words']
@@ -238,10 +238,10 @@ class USFMBibleBook( BibleBook ):
                         text = text[:ixAlignmentEnd] + text[ixAlignmentEnd+9*lookForCount:]
                         variables['text'] = variables['words'] = ''
                         variables['level'] = 0
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"      Decreased level to {variables['level']}" )
                         assert variables['level'] >= 0
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"      Now got rest1='{text}' rest1" )
                         continue
                     assert 'zaln-e' not in text[:ixAlignmentStart] # Make sure our nesting isn't confused
@@ -256,20 +256,20 @@ class USFMBibleBook( BibleBook ):
                         variables['level'] += 1
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"      Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                                 + text[ixAlignmentStart+10:ixAlignmentStartEnding]
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"      Now got alignmentText='{variables['text']}'" )
                         text = text[:ixAlignmentStart] + text[ixAlignmentStartEnding+2:]
-                        if debuggingThisModule: 
+                        if debuggingThisModule:
                             print( f"      Now got rest2='{text}' rest2" )
 
                 #if variables['level'] > 0:
                     #variables['words'] += f'{marker} {text}'
 
-                if debuggingThisModule: 
+                if debuggingThisModule:
                     print( f"    findInternalStarts returning {marker!r}, {text!r} with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
                 assert 'zaln-s' not in text
                 return marker, text
@@ -355,7 +355,7 @@ class USFMBibleBook( BibleBook ):
                 issueLinePositioningErrors = False
         except AttributeError: pass # Don't worry about it
 
-        vPrint( 'Info', "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
@@ -370,7 +370,6 @@ class USFMBibleBook( BibleBook ):
         lastMarker = lastText = None
         loadErrors:List[str] = []
         #print( "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
-        global debuggingThisModule
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             # if self.BBB == 'EZR':
             #     if C == '5': debuggingThisModule = True
@@ -487,7 +486,7 @@ class USFMBibleBook( BibleBook ):
                         # print( f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
-                        vPrint( 'Verbose', "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                        vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
                         marker = text = None # Seems to make no difference
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
@@ -500,7 +499,7 @@ class USFMBibleBook( BibleBook ):
                 self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 # if lastMarker:
                 #     print("Add2", marker)
@@ -513,7 +512,7 @@ class USFMBibleBook( BibleBook ):
                         # print( f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
-                        vPrint( 'Verbose', "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                        vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
                         marker = text = None # Seems to make no difference
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
@@ -543,7 +542,7 @@ class USFMBibleBook( BibleBook ):
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                         if marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker:
-                                # print("Add3") 
+                                # print("Add3")
                                 doaddLine( lastMarker, lastText )
                                 lastMarker = lastText = None
                             # print( f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
@@ -597,23 +596,23 @@ def demo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', UBB )
+        vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', UBBVersification )
+        vPrint( 'Info', debuggingThisModule, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', UBBAddedUnits )
+        vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #print( "discoveryDict", discoveryDict )
         UBB.check()
         UBErrors = UBB.getErrors()
-        vPrint( 'Info', UBErrors )
+        vPrint( 'Info', debuggingThisModule, UBErrors )
     # end of demoFile
 
 
@@ -621,28 +620,28 @@ def demo() -> None:
 
     if 1: # Test individual files -- choose one of these or add your own
         name, encoding, testFolder, filename, BBB = "USFM3Test", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/'), '81-COLeng-amp.usfm', 'COL' # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
         else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
-        name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
-        #name, encoding, testFolder = "WEB", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
+        name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, encoding, testFolder = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', debuggingThisModule, _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
         else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
-        testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/usfm-js/__tests__/resources/' )
+        testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/usfm-js/__tests__/resources/' )
         for filename in os.listdir( testFolder ):
             if filename.endswith( '.usfm' ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:

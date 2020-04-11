@@ -34,6 +34,8 @@ PROGRAM_NAME = "ISO 639_3_Languages handler"
 PROGRAM_VERSION = '0.84'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
+debuggingThisModule = False
+
 
 import logging, os.path
 from datetime import datetime
@@ -47,6 +49,7 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -109,7 +112,7 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFileOrFilepath = XMLFileOrFilepath
         assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
 
-        vPrint( 'Info', "Loading ISO 639-3 languages XML file from {!r}…".format( XMLFileOrFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "Loading ISO 639-3 languages XML file from {!r}…".format( XMLFileOrFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFileOrFilepath )
         assert self._XMLtree # Fail here if we didn't load anything at all
 
@@ -232,7 +235,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
-        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -258,7 +261,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
-        vPrint( 'Normal', "Exporting to {}…".format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( filepath ) )
 
         IDDict, NameDict = self.__DataDicts
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -287,7 +290,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
-        vPrint( 'Normal', "Exporting to {}…".format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -351,7 +354,7 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Normal', "Exporting to {}…".format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self.__DataDicts

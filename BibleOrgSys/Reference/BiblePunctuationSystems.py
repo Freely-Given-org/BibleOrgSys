@@ -33,7 +33,8 @@ SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
 PROGRAM_NAME = "Bible Punctuation Systems handler"
 PROGRAM_VERSION = '0.44'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
+
+debuggingThisModule = False
 
 
 import os
@@ -44,6 +45,7 @@ if __name__ == '__main__':
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 #@singleton # Can only ever have one instance
@@ -80,7 +82,7 @@ class BiblePunctuationSystems:
                             picklesGood = False; break
             if picklesGood:
                 import pickle
-                vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
+                vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -182,7 +184,7 @@ class BiblePunctuationSystems:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
-            vPrint( 'Normal', _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', debuggingThisModule, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )

@@ -71,7 +71,6 @@ SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.78'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
@@ -835,7 +834,7 @@ def demo() -> None:
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #vPrint( 'Quiet', IBB )
+    #vPrint( 'Quiet', debuggingThisModule, IBB )
 
     global debuggingThisModule
     if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
@@ -843,16 +842,16 @@ def demo() -> None:
         from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
                 UB.discover() # Why does this only help if -1 flag is enabled???
-                vPrint( 'Quiet', ' ', UB )
+                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #debuggingThisModule = True
                 for BBB,bookObject in UB.books.items():

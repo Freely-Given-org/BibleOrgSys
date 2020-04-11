@@ -40,7 +40,6 @@ SHORT_PROGRAM_NAME = "ESFMFile"
 PROGRAM_NAME = "ESFM File loader"
 PROGRAM_VERSION = '0.87'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -160,7 +159,7 @@ def demo() -> None:
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', debuggingThisModule, "Using {} as test file…".format( filepath ) )
 
     linesDB = ESFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

@@ -79,9 +79,9 @@ from gettext import gettext as _
 
 LAST_MODIFIED_DATE = '2020-01-04' # by RJH
 ShortProgName = "CompareBibles"
-ProgName = "Bible compare analyzer"
-ProgVersion = '0.26'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+PROGRAM_NAME = "Bible compare analyzer"
+PROGRAM_VERSION = '0.26'
+ProgNameVersion = '{} v{}'.format( ShortProgName, PROGRAM_VERSION )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
 debuggingThisModule = False
@@ -194,7 +194,7 @@ def loadWordCompares( folder, filename ):
     dict12, dict21 = {}, {} # Not worried about sorting yet
 
     filepath = os.path.join( folder, filename )
-    vPrint( 'Normal', "Loading word compares from {}…".format( filepath ) )
+    vPrint( 'Normal', debuggingThisModule, "Loading word compares from {}…".format( filepath ) )
 
     lineCount = 0
     with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
@@ -941,7 +941,7 @@ def analyzeBibles( Bible1, Bible2 ):
         assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
         assert Bible1.discoveryResults
         assert Bible2.discoveryResults
-    vPrint( 'Quiet', _("Running analyzeBibles…") )
+    vPrint( 'Quiet', debuggingThisModule, _("Running analyzeBibles…") )
 
     bSegmentList, bResults = {}, {}
 
@@ -951,9 +951,9 @@ def analyzeBibles( Bible1, Bible2 ):
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    vPrint( 'Info', _("Running segmentizeBooks on both Bibles…") )
+    vPrint( 'Info', debuggingThisModule, _("Running segmentizeBooks on both Bibles…") )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vPrint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+        vPrint( 'Normal', debuggingThisModule, _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -964,7 +964,7 @@ def analyzeBibles( Bible1, Bible2 ):
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            vPrint( 'Verbose', "  " + _("Comparing {}…").format( BBB ) )
+            vPrint( 'Verbose', debuggingThisModule, "  " + _("Comparing {}…").format( BBB ) )
             bSegmentList[BBB], bResults[BBB] = segmentizeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
             print( BBB, bSegmentList[BBB] )
             print( BBB, bResults[BBB] )
@@ -996,7 +996,7 @@ def compareBibles( Bible1, Bible2,
         assert isinstance( Bible1, Bible )
         assert isinstance( Bible2, Bible )
         assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
-    vPrint( 'Quiet', _("Running compareBibles…") )
+    vPrint( 'Quiet', debuggingThisModule, _("Running compareBibles…") )
 
     len1, len2 = len(Bible1), len(Bible2)
     commonBooks = []
@@ -1004,10 +1004,10 @@ def compareBibles( Bible1, Bible2,
         if bBook.BBB in Bible2: commonBooks.append( bBook.BBB )
     numBooks = len( commonBooks )
 
-    vPrint( 'Info', _("Running compareBooksPedantic on both Bibles…") )
+    vPrint( 'Info', debuggingThisModule, _("Running compareBooksPedantic on both Bibles…") )
     bResults = {}
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
-        vPrint( 'Normal', _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
+        vPrint( 'Normal', debuggingThisModule, _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1018,7 +1018,7 @@ def compareBibles( Bible1, Bible2,
         BibleOrgSysGlobals.alreadyMultiprocessing = False
     else: # Just single threaded
         for BBB in commonBooks: # Do individual book prechecks
-            vPrint( 'Verbose', "  " + _("Comparing {}…").format( BBB ) )
+            vPrint( 'Verbose', debuggingThisModule, "  " + _("Comparing {}…").format( BBB ) )
             bResults[BBB] = compareBooksPedantic( Bible1[BBB], Bible2[BBB], compareQuotes=compareQuotes,
                                                 comparePunctuation=comparePunctuation, compareDigits=compareDigits,
                                                 illegalCleanTextOnlyStrings1=illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2=illegalCleanTextOnlyStrings2,
@@ -1041,9 +1041,9 @@ def demo():
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Load a USFM Bible and BT
-    vPrint( 'Quiet', "\nLoading USFM Bible…" )
-    name1, encoding1, testFolder1 = "MBTV", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
-    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
+    vPrint( 'Quiet', debuggingThisModule, "\nLoading USFM Bible…" )
+    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
@@ -1055,7 +1055,7 @@ def demo():
     if os.access( testFolder1, os.R_OK ):
         UB1 = USFMBible( testFolder1, name1, encoding1 )
         UB1.load()
-        vPrint( 'Quiet', UB1 )
+        vPrint( 'Quiet', debuggingThisModule, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB1.check()
         #UB1.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -1064,30 +1064,30 @@ def demo():
     if os.access( testFolder2, os.R_OK ):
         UB2 = USFMBible( testFolder2, name2, encoding2 )
         UB2.load()
-        vPrint( 'Quiet', UB2 )
+        vPrint( 'Quiet', debuggingThisModule, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB2.check()
         #UB2.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder2 ) )
 
     if 0: # Test one book
-        vPrint( 'Quiet', "\nTesting one book only…" )
+        vPrint( 'Quiet', debuggingThisModule, "\nTesting one book only…" )
         BBB = 'JDE'
         result = compareBooksPedantic( UB1[BBB], UB2[BBB],
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
-        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
             print( ' ', result )
 
     if 1: # Test the whole Bibles
-        vPrint( 'Quiet', "\nTesting for whole Bible…" )
+        vPrint( 'Quiet', debuggingThisModule, "\nTesting for whole Bible…" )
         results = compareBibles( UB1, UB2,
                                         illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         totalCount = resultsBooksCount = 0
-        vPrint( 'Quiet', "\nComparing the entire Bibles gave:" )
+        vPrint( 'Quiet', debuggingThisModule, "\nComparing the entire Bibles gave:" )
             for BBB,bookResults in results.items():
                 if bookResults:
                     resultsBooksCount += 1
@@ -1099,15 +1099,15 @@ def demo():
             print( "{} total results in {} books (out of {})".format( totalCount, resultsBooksCount, len(UB1) ) )
 
     if 0: # Compare one book
-        vPrint( 'Quiet', "\nAnalyzing one book only…" )
+        vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing one book only…" )
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
-        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
             #print( ' 1s', len(segmentResult), segmentResult )
             print( ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
-        vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
             print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
             for (C,V,marker),resultString in awResult:
                 resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
@@ -1115,23 +1115,23 @@ def demo():
             print( "{:,} results in {}".format( len(awResult), BBB ) )
 
     if 0: # Compare the whole Bibles
-        vPrint( 'Quiet', "\nAnalyzing whole Bible…" )
+        vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing whole Bible…" )
         totalSegments = totalCount = 0
         for BBB in UB1.getBookList():
             segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
             totalSegments += len( segmentResult )
-            vPrint( 'Quiet', "Comparing {} gave:".format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
                 #print( ' 1s', len(segmentResult), segmentResult )
                 print( ' 2o', len(otherResult), otherResult )
             dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
             awResult = analyzeWords( segmentResult, dict12, dict21 )
             totalCount += len( awResult )
-            vPrint( 'Quiet', '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+            vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
                 for (C,V,marker),resultString in awResult:
                     resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
                     print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
                 print( "  {:,} results in {}".format( len(awResult), BBB ) )
-        vPrint( 'Quiet', "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
+        vPrint( 'Quiet', debuggingThisModule, "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
 # end of demo
 
 
@@ -1151,7 +1151,7 @@ def main():
     if allOkay:
         UnkB1 = UnknownBible( fp1 )
         result1 = UnkB1.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Normal', "Bible1 loaded", result1 )
+        vPrint( 'Normal', debuggingThisModule, "Bible1 loaded", result1 )
         if isinstance( result1, Bible ):
             Bible1 = result1
         else:
@@ -1159,7 +1159,7 @@ def main():
     if allOkay:
         UnkB2 = UnknownBible( fp2 )
         result2 = UnkB2.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Normal', "Bible2 loaded", result2 )
+        vPrint( 'Normal', debuggingThisModule, "Bible2 loaded", result2 )
         if isinstance( result2, Bible ):
             Bible2 = result2
         else:
@@ -1186,12 +1186,12 @@ if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
     #parser.add_argument('Bible1', help="Bible folder or file path 1" )
     #parser.add_argument('Bible2', help="Bible folder or file path 2" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CompareBibles.py

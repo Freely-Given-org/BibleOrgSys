@@ -58,7 +58,7 @@ import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-vPrint( 'Normal', programNameVersion )
+vPrint( 'Normal', debuggingThisModule, programNameVersion )
 
 
 # Create the test suite

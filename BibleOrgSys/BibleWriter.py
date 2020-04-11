@@ -82,7 +82,6 @@ SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -130,7 +129,7 @@ def setDefaultControlFolderpath( newFolderName:Path ) -> None:
     Set the global default folder for control files.
     """
     global defaultControlFolderpath
-    vPrint( 'Normal', f"defaultControlFolderpath changed from {defaultControlFolderpath} to {newFolderName}" )
+    vPrint( 'Normal', debuggingThisModule, f"defaultControlFolderpath changed from {defaultControlFolderpath} to {newFolderName}" )
 
     defaultControlFolderpath = newFolderName
 # end of BibleWriter.setDefaultControlFolderpath
@@ -205,7 +204,7 @@ class BibleWriter( InternalBible ):
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
         if BibleOrgSysGlobals.debugFlag: print( "toPickleObject( {}, {} )".format( self.abbreviation, outputFolderpath ) )
-        vPrint( 'Normal', "Running BibleWriter:toPickleObject…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPickleObject…" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
@@ -216,7 +215,7 @@ class BibleWriter( InternalBible ):
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert filename
             filename = BibleOrgSysGlobals.makeSafeFilename( f'{filename}.pickle' ) # Same as in InternalBible.pickle()
             filepath = Path( outputFolderpath ).joinpath( filename )
-            vPrint( 'Info', f"  Zipping {filename} pickle file…" )
+            vPrint( 'Info', debuggingThisModule, f"  Zipping {filename} pickle file…" )
             zf = zipfile.ZipFile( f'{filepath}.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
@@ -252,7 +251,7 @@ class BibleWriter( InternalBible ):
 
         if BibleOrgSysGlobals.debugFlag:
             print( "toPickledBible( {}, {}, {}, {} )".format( outputFolderpath, metadataDict, dataLevel, zipOnly ) )
-        vPrint( 'Normal', "Running BibleWriter:toPickledBible" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPickledBible" )
 
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
@@ -274,7 +273,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.JSONBible import createBOSJSONBible
         if BibleOrgSysGlobals.debugFlag: print( "toBOSJSONBible( {}, {}, {} )".format( outputFolderpath, sourceURL, licenceString ) )
-        vPrint( 'Normal', "Running BibleWriter:toBOSJSONBible" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toBOSJSONBible" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_JSONBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
@@ -327,7 +326,7 @@ class BibleWriter( InternalBible ):
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
         from BibleOrgSys.Internals import InternalBibleBook
-        vPrint( 'Normal', "Running BibleWriter:makeLists…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:makeLists…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -394,7 +393,7 @@ class BibleWriter( InternalBible ):
                     sorts and writes the word count data to text, csv, and xml files. """
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by word" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_word." )
-            vPrint( 'Info', "  " + _("Writing '{}*'…").format( filenamePortion ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Writing '{}*'…").format( filenamePortion ) )
             sortedWords = sorted(dictionary)
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
@@ -417,7 +416,7 @@ class BibleWriter( InternalBible ):
                     htmlFile.write( '</table></body></html>' ) # close open elements
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by count" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_count." )
-            vPrint( 'Info', "  " + _("Writing '{}*'…").format( filenamePortion ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Writing '{}*'…").format( filenamePortion ) )
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt', encoding='utf-8' ) as txtFile, \
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
                  open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
@@ -493,7 +492,7 @@ class BibleWriter( InternalBible ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        vPrint( 'Normal', "Running BibleWriter:toBOSBCV…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toBOSBCV…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -505,7 +504,7 @@ class BibleWriter( InternalBible ):
         self.writeBOSBCVFiles( outputFolderpath ) # This function is part of InternalBible
 
         # Now create a zipped collection (for easier download)
-        vPrint( 'Info', "  Zipping BCV files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping BCV files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -526,7 +525,7 @@ class BibleWriter( InternalBible ):
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
-        vPrint( 'Normal', "Running BibleWriter:toPseudoUSFM…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPseudoUSFM…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -547,7 +546,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
+                vPrint( 'Info', debuggingThisModule, '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
@@ -559,7 +558,7 @@ class BibleWriter( InternalBible ):
 
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
             indentLevel = 0
             C, V = '-1', '-1' # So first/id line starts at -1:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -590,7 +589,7 @@ class BibleWriter( InternalBible ):
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert indentLevel == 0
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping PseudoUSFM files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping PseudoUSFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -611,7 +610,7 @@ class BibleWriter( InternalBible ):
 
         NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toUSFM2…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSFM2…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
         includeEmptyVersesFlag = True
 
@@ -658,7 +657,7 @@ class BibleWriter( InternalBible ):
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            vPrint( 'Info', "  " + _("Adjusting USFM2 output…" ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting USFM2 output…" ) )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
@@ -732,16 +731,16 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toUSFM2: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toUSFM2: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
                 myFile.write( bookUSFM )
 
         if ignoredMarkers:
             logger.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toUSFM2 markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toUSFM2 markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping USFM2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping USFM2 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSFM2Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -749,7 +748,7 @@ class BibleWriter( InternalBible ):
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', "  GZipping USFM2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  GZipping USFM2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM2Files.gzip' ), 'w:gz' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -757,7 +756,7 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', "  BZipping USFM2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  BZipping USFM2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM2Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -778,7 +777,7 @@ class BibleWriter( InternalBible ):
 
         NOTE: We use utf-8 encoding and Windows \r\n line endings for writing USFM files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toUSFM3…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSFM3…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
         includeEmptyVersesFlag = True
 
@@ -825,7 +824,7 @@ class BibleWriter( InternalBible ):
                     except (KeyError,TypeError): pass # ok, we've got nothing to add
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
-            vPrint( 'Info', "  " + _("Adjusting USFM3 output…" ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting USFM3 output…" ) )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                 #print( BBB, pseudoMarker, repr(fullText) )
@@ -903,16 +902,16 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toUSFM3: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toUSFM3: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
                 myFile.write( bookUSFM )
 
         if ignoredMarkers:
             logger.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toUSFM3 markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toUSFM3 markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping USFM3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping USFM3 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSFM3Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -920,7 +919,7 @@ class BibleWriter( InternalBible ):
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', "  GZipping USFM3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  GZipping USFM3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM3Files.gzip' ), 'w:gz' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -928,7 +927,7 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', "  BZipping USFM3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  BZipping USFM3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSFM3Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.usfm' ):
@@ -947,7 +946,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toESFM…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toESFM…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -968,13 +967,13 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toESFM: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toESFM: ' + _("Writing {!r}…").format( filepath ) )
             indentLevel, indentSize =  0, 2
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             initialMarkers = [processedBibleEntry.getMarker() for processedBibleEntry in internalBibleBookData[:4]]
             #print( BBB, initialMarkers )
-            vPrint( 'Info', "  " + _("Adjusting ESFM output…" ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting ESFM output…" ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if 'id' not in initialMarkers:
                     #print( "Write ID" )
@@ -1076,10 +1075,10 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toESFM: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toESFM markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toESFM markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping ESFM files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping ESFM files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllESFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -1100,7 +1099,7 @@ class BibleWriter( InternalBible ):
             The format varies, depending on whether or not there are paragraph markers in the text.
             Introductions and several other fields are ignored.
         """
-        vPrint( 'Normal', "Running BibleWriter:toText…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toText…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1122,7 +1121,7 @@ class BibleWriter( InternalBible ):
             """
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( wtfOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toText: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toText: ' + _("Writing {!r}…").format( filepath ) )
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if withBOMFlag:
@@ -1173,7 +1172,7 @@ class BibleWriter( InternalBible ):
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
             # Now create a zipped collection
-            vPrint( 'Info', "  Zipping text files…" )
+            vPrint( 'Info', debuggingThisModule, "  Zipping text files…" )
             zf = zipfile.ZipFile( os.path.join( wtfOutputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( wtfOutputFolder ):
                 if not filename.endswith( '.zip' ):
@@ -1190,7 +1189,7 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.toText finished successfully." )
@@ -1203,7 +1202,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
-        vPrint( 'Normal', "Running BibleWriter:toVPL…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toVPL…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1231,7 +1230,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "BOS-BibleWriter-{}.txt".format( bookName )
                 filepath = os.path.join( thisOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
+                vPrint( 'Info', debuggingThisModule, '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                     #try: myFile.write('\ufeff') # VPL needs the BOM
@@ -1303,7 +1302,7 @@ class BibleWriter( InternalBible ):
                     print( "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
 
             # Now create a zipped collection
-            vPrint( 'Info', "  Zipping VPL text files…" )
+            vPrint( 'Info', debuggingThisModule, "  Zipping VPL text files…" )
             zf = zipfile.ZipFile( os.path.join( thisOutputFolder, 'AllVPLTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( thisOutputFolder ):
                 if not filename.endswith( '.zip' ):
@@ -1323,7 +1322,7 @@ class BibleWriter( InternalBible ):
         Write the Bible data out into GFM markdown format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        vPrint( 'Normal', "Running BibleWriter:toMarkdown…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toMarkdown…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -1637,7 +1636,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.md".format( BBB )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toMarkdown: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toMarkdown: ' + _("Writing {!r}…").format( filepath ) )
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
@@ -1691,10 +1690,10 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toMarkdown: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toMarkdown markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toMarkdown markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping markdown files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping markdown files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllMarkdownFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if not filename.endswith( '.zip' ):
@@ -2014,7 +2013,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toHTML5…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toHTML5…" )
         if BibleOrgSysGlobals.debugFlag:
             #print( self )
             assert self.books
@@ -2212,7 +2211,7 @@ class BibleWriter( InternalBible ):
 
 
         def writeHomePage():
-            vPrint( 'Normal', _("    Creating HTML5 home/index page…") )
+            vPrint( 'Normal', debuggingThisModule, _("    Creating HTML5 home/index page…") )
             xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2226,7 +2225,7 @@ class BibleWriter( InternalBible ):
 
 
         def writeAboutPage():
-            vPrint( 'Normal', _("    Creating HTML5 about page…") )
+            vPrint( 'Normal', debuggingThisModule, _("    Creating HTML5 about page…") )
             xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
@@ -2467,7 +2466,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to HTML5 format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to HTML5 format…") )
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
@@ -2478,7 +2477,7 @@ class BibleWriter( InternalBible ):
         html5Globals = {}
         if 'HTML5Files' not in controlDict or controlDict['HTML5Files']=='byBook':
             for BBB,bookData in self.books.items(): # Now export the books
-                vPrint( 'Info', _("    Exporting {} to HTML5 format…").format( BBB ) )
+                vPrint( 'Info', debuggingThisModule, _("    Exporting {} to HTML5 format…").format( BBB ) )
                 xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
@@ -2498,13 +2497,13 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toHTML5: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toHTML5 markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toHTML5 markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping HTML5 files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping HTML5 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( WEBoutputFolder ):
             if not filename.endswith( '.zip' ):
@@ -2563,7 +2562,7 @@ class BibleWriter( InternalBible ):
             index {('Iv0'): 742, ('1v0'): 1412, ('1v3'): 2665, …}
 
         """
-        vPrint( 'Normal', "Running BibleWriter:_toBibleDoorText…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:_toBibleDoorText…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         BDDataFormatVersion = 1 # Increment this when the data files / arrays change
@@ -2752,7 +2751,7 @@ class BibleWriter( InternalBible ):
             #print( "BDText", bookText[:4000] )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.txt'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( bookText )
 
@@ -2760,7 +2759,7 @@ class BibleWriter( InternalBible ):
             ##print( "index", bookIndex )
             #filename = "{}.{}.bd.d.idx".format( BBB, BDDataFormatVersion )
             #filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            #vPrint( 'Info', '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            #vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
             #outputBytes = json.dumps( bookIndexDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             #with open( filepath, 'wb' ) as jsonFile:
                 #jsonFile.write( outputBytes )
@@ -2784,20 +2783,20 @@ class BibleWriter( InternalBible ):
             #print( "index", bookIndex )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.idx'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', '  toBDText: ' + _(f"Writing {filepath!r}…") )
+            vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _(f"Writing {filepath!r}…") )
             outputBytes = json.dumps( newBookIndexList, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
 
         if ignoredMarkers:
             logger.info( "_toBibleDoorText: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored _toBibleDoorText markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored _toBibleDoorText markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.error( f"_toBibleDoorText: Unhandled markers were {unhandledMarkers}" )
-            vPrint( 'Info', "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
+            vPrint( 'Info', debuggingThisModule, "  " + _(f"WARNING: Unhandled _toBibleDoorText markers were {unhandledMarkers}") )
 
         # Now create the bz2 file
-        vPrint( 'Info', "  BZipping BDText files…" )
+        vPrint( 'Info', debuggingThisModule, "  BZipping BDText files…" )
         tar = tarfile.open( os.path.join( bookOutputFolder, 'AllBDTextFiles.bz2' ), 'w:bz2' )
         for filename in os.listdir( bookOutputFolder ):
             if filename.endswith( '.bd.txt' ) or filename.endswith( '.bd.idx' ):
@@ -2943,14 +2942,14 @@ class BibleWriter( InternalBible ):
         def writeCompressions():
             """
             """
-            vPrint( 'Normal', "  Writing compression entries…" )
+            vPrint( 'Normal', debuggingThisModule, "  Writing compression entries…" )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
             outputBytes = json.dumps( BDCompressions, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressionDictFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
             checksums[compressionDictFilename] = hashlib.md5(outputBytes).hexdigest()
-            vPrint( 'Info', "    {} compression entries written.".format( len(BDCompressions) ) )
+            vPrint( 'Info', debuggingThisModule, "    {} compression entries written.".format( len(BDCompressions) ) )
         # end of _toBibleDoorJSONCHTML.writeCompressions
 
 
@@ -3011,7 +3010,7 @@ class BibleWriter( InternalBible ):
             headerDict['Has section headings'] = haveAnySectionHeadings
             #print( headerDict )
 
-            vPrint( 'Info', "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
             outputBytes = json.dumps( headerDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( headerFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3024,7 +3023,7 @@ class BibleWriter( InternalBible ):
             After we've written all the other files,
                 we write a json dictionary/map of md5 checksums (written as 32 hex characters in a string)
             """
-            vPrint( 'Info', "  " +  _("Exporting BD checksums to {}…").format( checksumFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "  " +  _("Exporting BD checksums to {}…").format( checksumFilepath ) )
             with open( checksumFilepath, 'wt', encoding='utf-8' ) as jsonFile:
                 json.dump( checksums, jsonFile, ensure_ascii=False, indent=jsonIndent )
         # end of _toBibleDoorJSONCHTML.writeChecksums
@@ -3068,7 +3067,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
             #print( divisionData )
-            vPrint( 'Info', "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
             outputBytes = json.dumps( divisionData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( divisionNamesFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3098,7 +3097,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
             #print( bkData )
-            vPrint( 'Info', "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
             outputBytes = json.dumps( bkData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( bookNamesFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3115,7 +3114,7 @@ class BibleWriter( InternalBible ):
                 """
                 """
                 filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, BDDataFormatVersion ) )
-                vPrint( 'Info', "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
+                vPrint( 'Info', debuggingThisModule, "  " + _("Exporting {}_{} chapter to {}…").format( BBB, chapter, filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as jsonFile:
                     json.dump( cData, jsonFile, ensure_ascii=False, indent=jsonIndent )
             # end of writeBDChapter
@@ -3149,7 +3148,7 @@ class BibleWriter( InternalBible ):
 
             filename = '{}.{}.json'.format( BBB, BDDataFormatVersion )
             filepath = os.path.join( bookOutputFolderJSON, filename )
-            vPrint( 'Info', "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Exporting {} book to {}…").format( BBB, filepath ) )
             outputBytes = json.dumps( outputData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( filepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3562,7 +3561,7 @@ class BibleWriter( InternalBible ):
                 completeHTMLString += sectionHTML
             filename = destinationZippedHTMLFilenameTemplate.format( BBB )
             filepath = destinationZippedHTMLFilepathTemplate.format( BBB )
-            vPrint( 'Info', "  Zipping {} HTML file…".format( filename ) )
+            vPrint( 'Info', debuggingThisModule, "  Zipping {} HTML file…".format( filename ) )
             zf = zipfile.ZipFile( filepath, 'w', compression=zipfile.ZIP_DEFLATED )
             zf.writestr( filename, completeHTMLString )
             zf.close()
@@ -3601,7 +3600,7 @@ class BibleWriter( InternalBible ):
         writeBDBookNames()
 
         if uncompressedHTMLIndex: # Sort the main uncompressed index and write it
-            vPrint( 'Normal', "  Fixing and writing main uncompressed index…" )
+            vPrint( 'Normal', debuggingThisModule, "  Fixing and writing main uncompressed index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3622,14 +3621,14 @@ class BibleWriter( InternalBible ):
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
             #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', "    toBibleDoor: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( uncompressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
             checksums[uncompressedIndexFilename] = hashlib.md5(outputBytes).hexdigest()
 
         if compressedHTMLIndex: # Sort the main uncompressed index and write it
-            vPrint( 'Normal', "  Fixing and writing main compressed index…" )
+            vPrint( 'Normal', debuggingThisModule, "  Fixing and writing main compressed index…" )
 
             def toInt( CVstring ):
                 try: return int( CVstring )
@@ -3650,7 +3649,7 @@ class BibleWriter( InternalBible ):
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
             #print( "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', "    toBibleDoor: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3661,10 +3660,10 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toBibleDoor: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toBibleDoor markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toBibleDoor markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toBibleDoor: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toBibleDoor markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toBibleDoor markers were {}").format( unhandledMarkers ) )
 
         # Display compression info
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
@@ -3679,7 +3678,7 @@ class BibleWriter( InternalBible ):
                     print( f"    Compressed bytes: {bytesCompressed:,}" )
 
         ## Now create a zipped collection
-        #vPrint( 'Info', "  Zipping BibleDoor files…" )
+        #vPrint( 'Info', debuggingThisModule, "  Zipping BibleDoor files…" )
         #zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllBDUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         #for filename in os.listdir( outputFolderpath ):
             #if not filename.endswith( '.zip' ):
@@ -3693,7 +3692,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the BibleDoor (Android) app.
         """
-        vPrint( 'Normal', "Running BibleWriter:toBibleDoor…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toBibleDoor…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3723,7 +3722,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.EasyWorshipBible import createEasyWorshipBible
 
-        vPrint( 'Normal', "Running BibleWriter:toEasyWorshipBible…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toEasyWorshipBible…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -3742,7 +3741,7 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        vPrint( 'Normal', "Running BibleWriter:toUSX2XML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSX2XML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4215,7 +4214,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to USX format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to USX format…") )
         #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -4234,16 +4233,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toUSX2XML: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("ERROR: Ignored toUSX2XML markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("ERROR: Ignored toUSX2XML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.error( "toUSX2XML: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("ERROR: Unhandled toUSX2XML markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("ERROR: Unhandled toUSX2XML markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toUSX2XML: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toUSX2XML books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toUSX2XML books were {}").format( unhandledBooks ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping USX2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping USX2 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSX2Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( filesFolder ):
             #if not filename.endswith( '.zip' ):
@@ -4251,7 +4250,7 @@ class BibleWriter( InternalBible ):
             zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', "  GZipping USX2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  GZipping USX2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX2Files.gzip' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4259,7 +4258,7 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', "  BZipping USX2 files…" )
+        vPrint( 'Info', debuggingThisModule, "  BZipping USX2 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX2Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4286,7 +4285,7 @@ class BibleWriter( InternalBible ):
 
         TODO: Actually implement USX 3 spec, haha.
         """
-        vPrint( 'Normal', "Running BibleWriter:toUSX3XML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSX3XML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4753,7 +4752,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to USX format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to USX format…") )
         #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -4772,16 +4771,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toUSX3XML: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("ERROR: Ignored toUSX3XML markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("ERROR: Ignored toUSX3XML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.error( "toUSX3XML: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("ERROR: Unhandled toUSX3XML markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("ERROR: Unhandled toUSX3XML markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toUSX3XML: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toUSX3XML books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toUSX3XML books were {}").format( unhandledBooks ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping USX3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping USX3 files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSX3Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( filesFolder ):
             #if not filename.endswith( '.zip' ):
@@ -4789,7 +4788,7 @@ class BibleWriter( InternalBible ):
             zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
         # Now create the gzipped file
-        vPrint( 'Info', "  GZipping USX3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  GZipping USX3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX3Files.gzip' ), 'w:gz' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4797,7 +4796,7 @@ class BibleWriter( InternalBible ):
                 tar.add( filepath, arcname=filename, recursive=False )
         tar.close()
         # Now create the bz2 file
-        vPrint( 'Info', "  BZipping USX3 files…" )
+        vPrint( 'Info', debuggingThisModule, "  BZipping USX3 files…" )
         tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX3Files.bz2' ), 'w:bz2' )
         for filename in os.listdir( filesFolder ):
             if filename.endswith( '.usx' ):
@@ -4820,7 +4819,7 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        vPrint( 'Normal', "Running BibleWriter:toUSFXXML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSFXXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5215,7 +5214,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to USFX XML format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to USFX XML format…") )
         #USFXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USFX output/' )
         #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -5240,17 +5239,17 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toUSFXXML: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toUSFXXML markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toUSFXXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toUSFXXML: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toUSFXXML markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toUSFXXML markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toUSFXXML: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toUSFXXML books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toUSFXXML books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', "  Zipping {} USFX file…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Zipping {} USFX file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -5267,7 +5266,7 @@ class BibleWriter( InternalBible ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
-        vPrint( 'Normal', _("Writing Sword locale file {}…").format(localeFilepath) )
+        vPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(localeFilepath) )
 
         with open( localeFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
@@ -5341,7 +5340,7 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
                             abbreviationList.append( vernacularAbbrev )
 
-        vPrint( 'Normal', _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbreviationList) ) )
+        vPrint( 'Normal', debuggingThisModule, _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbreviationList) ) )
     # end of BibleWriter._writeSwordLocale
 
 
@@ -5355,7 +5354,7 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
-        vPrint( 'Normal', "Running BibleWriter:toOSISXML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toOSISXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -5396,7 +5395,7 @@ class BibleWriter( InternalBible ):
         try: ln = controlDict['LanguageName']
         except KeyError: ln = 'eng'
         self._writeSwordLocale( xlg, ln, BOS, getBookNameFunction, os.path.join( outputFolderpath, 'SwLocale-utf8.conf' ) )
-        #vPrint( 'Normal', _("Writing Sword locale file {}…").format(SwLocFilepath) )
+        #vPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
@@ -6010,7 +6009,7 @@ class BibleWriter( InternalBible ):
 
         # Start of main toOSIS code
         if 'osisFiles' not in controlDict or controlDict['osisFiles']=='byBook': # Write an individual XML file for each book
-            vPrint( 'Info', _("  Exporting individually to OSIS XML format…") )
+            vPrint( 'Info', debuggingThisModule, _("  Exporting individually to OSIS XML format…") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
                 try: fn = controlDict['osisOutputFilename'].replace( '_Bible', "_Book-{}".format(BBB) )
@@ -6042,7 +6041,7 @@ class BibleWriter( InternalBible ):
                         if validationResults[1]: veFile.write( validationResults[1] + '\n\n\n' ) # Normally empty
                         if validationResults[2]: veFile.write( validationResults[2] )
         elif controlDict['osisFiles']=='byBible': # write all the books into a single file
-            vPrint( 'Info', _("  Exporting to OSIS XML format…") )
+            vPrint( 'Info', debuggingThisModule, _("  Exporting to OSIS XML format…") )
             filename = BibleOrgSysGlobals.makeSafeFilename( controlDict['osisOutputFilename'] )
             xw = MLWriter( filename, outputFolderpath )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' — one output file went from None/Header=4.7MB to All=5.7MB
@@ -6059,7 +6058,7 @@ class BibleWriter( InternalBible ):
             xw.close()
             # Now create a zipped version
             filepath = os.path.join( outputFolderpath, filename )
-            vPrint( 'Info', "  Zipping {} OSIS file…".format( filename ) )
+            vPrint( 'Info', debuggingThisModule, "  Zipping {} OSIS file…".format( filename ) )
             zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
@@ -6069,14 +6068,14 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toOSISXML: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("ERROR: Ignored toOSISXML markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("ERROR: Ignored toOSISXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.error( "toOSISXML: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("ERROR: Unhandled toOSISXML markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("ERROR: Unhandled toOSISXML markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toOSISXML: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toOSISXML books were {}").format( unhandledBooks ) )
-        vPrint( 'Info', "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toOSISXML books were {}").format( unhandledBooks ) )
+        vPrint( 'Info', debuggingThisModule, "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
             print( "  BibleWriter.toOSISXML finished successfully." )
         if validationSchema: return validationResults
@@ -6094,7 +6093,7 @@ class BibleWriter( InternalBible ):
             and at http://www.bgfdb.de/zefaniaxml/bml/
             but more fields can be discovered by looking at downloaded files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toZefaniaXML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toZefaniaXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6534,7 +6533,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to Zefania format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to Zefania format…") )
         try: zOFn = controlDict['ZefaniaOutputFilename']
         except KeyError: zOFn = 'Bible.zef'
         filename = BibleOrgSysGlobals.makeSafeFilename( zOFn )
@@ -6554,17 +6553,17 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toZefania: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toZefania markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toZefania markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toZefania: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toZefania markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toZefania markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toZefania: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toZefania books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toZefania books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', "  Zipping {} Zefania file…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Zipping {} Zefania file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -6586,7 +6585,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Haggai_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        vPrint( 'Normal', "Running BibleWriter:toHaggaiXML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toHaggaiXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6726,7 +6725,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        vPrint( 'Info', _("  Exporting to Haggai format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to Haggai format…") )
         try: hOFn = controlDict['HaggaiOutputFilename']
         except KeyError: hOFn = 'Bible.hag'
         filename = BibleOrgSysGlobals.makeSafeFilename( hOFn )
@@ -6746,17 +6745,17 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toHaggai: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toHaggai markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toHaggai markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toHaggai: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toHaggai markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toHaggai markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toHaggai: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toHaggai books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toHaggai books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
         filepath = os.path.join( outputFolderpath, filename )
-        vPrint( 'Info', "  Zipping {} Haggai file…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Zipping {} Haggai file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -6780,7 +6779,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.OpenSongXMLBible import createOpenSongXML
 
-        vPrint( 'Normal', "Running BibleWriter:toOpenSongXML…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toOpenSongXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6803,7 +6802,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
-        vPrint( 'Normal', "Running BibleWriter:toSwordModule…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toSwordModule…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -6857,7 +6856,7 @@ class BibleWriter( InternalBible ):
         except KeyError: lN = 'eng'
         self._writeSwordLocale( xL, lN, BOS, getBookNameFunction, os.path.join( outputFolderpath, 'SwLocale-utf8.conf' ) )
         #SwLocFilepath = os.path.join( outputFolderpath, 'SwLocale-utf8.conf" )
-        #vPrint( 'Normal', _("Writing Sword locale file {}…").format(SwLocFilepath) )
+        #vPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
@@ -7476,7 +7475,7 @@ class BibleWriter( InternalBible ):
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
-        vPrint( 'Info', _("  Exporting to Sword modified-OSIS XML format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to Sword modified-OSIS XML format…") )
         xwOT = MLWriter( 'ot', lgFolder )
         xwNT = MLWriter( 'nt', lgFolder )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
@@ -7505,13 +7504,13 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toSwordModule: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("ERROR: Ignored toSwordModule markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("ERROR: Ignored toSwordModule markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.error( "toSwordModule: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("ERROR: Unhandled toSwordModule markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("ERROR: Unhandled toSwordModule markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toSwordModule: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toSwordModule books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toSwordModule books were {}").format( unhandledBooks ) )
         makeConfFile( modsdFolder, compressedFlag=False ) # Create the conf (settings) file
         if validationSchema:
             OTresults= xwOT.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
@@ -7533,7 +7532,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.theWordBible import createTheWordModule
 
-        vPrint( 'Normal', "Running BibleWriter:totheWord…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:totheWord…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7562,7 +7561,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.MySwordBible import createMySwordModule
 
-        vPrint( 'Normal', "Running BibleWriter:toMySword…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toMySword…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7591,7 +7590,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.ESwordBible import createESwordBibleModule
 
-        vPrint( 'Normal', "Running BibleWriter:toESword…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toESword…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7621,7 +7620,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.MyBibleBible import createMyBibleModule
 
-        vPrint( 'Normal', "Running BibleWriter:toMyBible…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toMyBible…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7656,7 +7655,7 @@ class BibleWriter( InternalBible ):
                             'TH1':'1Th', 'TH2':'2Th', 'TI1':'1Ti', 'TI2':'2Ti', 'TIT':'Tit', 'PHM':'Phm',
                             'HEB':'Heb', 'JAM':'Jas', 'PE1':'1Pe', 'PE2':'2Pe',
                             'JN1':'1Jo', 'JN2':'2Jo', 'JN3':'3Jo', 'JDE':'Jude', 'REV':'Re' }
-        vPrint( 'Normal', "Running BibleWriter:toSwordSearcher…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toSwordSearcher…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7735,10 +7734,10 @@ class BibleWriter( InternalBible ):
         # end of toSwordSearcher:writeSSBook
 
 
-        vPrint( 'Info', _("  Exporting to SwordSearcher format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to SwordSearcher format…") )
         filename = 'Bible.txt'
         filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        vPrint( 'Info', '  toSwordSearcher: ' + _("Writing {!r}…").format( filepath ) )
+        vPrint( 'Info', debuggingThisModule, '  toSwordSearcher: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
@@ -7752,16 +7751,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toSwordSearcher: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toSwordSearcher markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toSwordSearcher markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toSwordSearcher: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toSwordSearcher markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toSwordSearcher markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toSwordSearcher: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toSwordSearcher books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toSwordSearcher books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        vPrint( 'Info', "  Zipping {} SwordSearcher file…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Zipping {} SwordSearcher file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
@@ -7777,7 +7776,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
-        vPrint( 'Normal', "Running BibleWriter:toDrupalBible…" )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toDrupalBible…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -7919,10 +7918,10 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible:writeDrupalBibleBook
 
 
-        vPrint( 'Info', _("  Exporting to DrupalBible format…") )
+        vPrint( 'Info', debuggingThisModule, _("  Exporting to DrupalBible format…") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        vPrint( 'Info', '  toDrupalBible: ' + _("Writing {!r}…").format( filepath ) )
+        vPrint( 'Info', debuggingThisModule, '  toDrupalBible: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
@@ -7934,16 +7933,16 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toDrupalBible: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toDrupalBible markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toDrupalBible markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toDrupalBible: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toDrupalBible markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toDrupalBible markers were {}").format( unhandledMarkers ) )
         if unhandledBooks:
             logger.warning( "toDrupalBible: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toDrupalBible books were {}").format( unhandledBooks ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toDrupalBible books were {}").format( unhandledBooks ) )
 
         # Now create a zipped version
-        vPrint( 'Info', "  Zipping {} DrupalBible file…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Zipping {} DrupalBible file…".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
@@ -7968,7 +7967,7 @@ class BibleWriter( InternalBible ):
             ImageMagick convert is unable to handle complex scripts.  :(
         """
         import unicodedata
-        vPrint( 'Normal', "Running BibleWriter:toPhotoBible… {}".format( datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPhotoBible… {}".format( datetime.now().strftime('%H:%M') ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -8006,9 +8005,9 @@ class BibleWriter( InternalBible ):
         assert 10 <= maxLines <= 20
         maxBooknameLetters = 12 # For the header line — the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
-        vPrint( 'Info', "toPhotoBible -> {}x{} pixel JPEG frames".format( pixelWidth, pixelHeight ) )
-        vPrint( 'Info', "  {} chars per line with {} fontsize and {} pixel(s) left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
-        vPrint( 'Info', "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
+        vPrint( 'Info', debuggingThisModule, "toPhotoBible -> {}x{} pixel JPEG frames".format( pixelWidth, pixelHeight ) )
+        vPrint( 'Info', debuggingThisModule, "  {} chars per line with {} fontsize and {} pixel(s) left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
+        vPrint( 'Info', debuggingThisModule, "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
 
         # Now determine our fonts
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
@@ -8485,13 +8484,13 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toPhotoBible: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toPhotoBible markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toPhotoBible markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toPhotoBible: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
 
         # Now create some zipped collections (for easier downloads)
-        vPrint( 'Info', "  Zipping PhotoBible files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping PhotoBible files…" )
         for subset in ('OT','NT','Other','All'):
             loadFolder = outputFolderpath if subset=='All' else os.path.join( outputFolderpath, subset+'/' )
             #print( repr(subset), "Load folder =", repr(loadFolder) )
@@ -8537,7 +8536,7 @@ class BibleWriter( InternalBible ):
         from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
-        vPrint( 'Normal', "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toODF… {}".format( datetime.now().strftime('%H:%M') ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9554,7 +9553,7 @@ class BibleWriter( InternalBible ):
             """
             Returns a True/False result
             """
-            vPrint( 'Info', "  Creating ODF file for {}…".format( BBB ) )
+            vPrint( 'Info', debuggingThisModule, "  Creating ODF file for {}…".format( BBB ) )
             if BibleOrgSysGlobals.verbosityLevel > 1: # Very basic progress bar
                 print( "{}-{}…".format( BBB, datetime.now().strftime('%H:%M') ), end='', flush=True )
             internalBibleBookData = bookObject._processedLines
@@ -9562,7 +9561,7 @@ class BibleWriter( InternalBible ):
             # Create the blank document
             filename = f"{bookNum:02}-{BBB}_BOS-BibleWriter.odt"
             filepath = os.path.join( os.getcwd(), outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            vPrint( 'Info', "  " + _("Creating {!r}…").format( filename ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("Creating {!r}…").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             try: documentText = document.Text
             except AttributeError: # no Text? = no blank/outline ODF text available
@@ -9837,14 +9836,14 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toODF: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toODF markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toODF markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toODF: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toODF markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toODF markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
         if createCount > 0:
-            vPrint( 'Info', "  Zipping ODF files…" )
+            vPrint( 'Info', debuggingThisModule, "  Zipping ODF files…" )
             zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             for filename in os.listdir( outputFolderpath ):
                 if not filename.endswith( '.zip' ):
@@ -9867,7 +9866,7 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
         """
-        vPrint( 'Normal', "Running BibleWriter:toTeX… {}".format( datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toTeX… {}".format( datetime.now().strftime('%H:%M') ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -10038,14 +10037,14 @@ class BibleWriter( InternalBible ):
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
-        vPrint( 'Info', '  toTeX: ' + _("Writing {!r}…").format( allFilepath ) )
+        vPrint( 'Info', debuggingThisModule, '  toTeX: ' + _("Writing {!r}…").format( allFilepath ) )
         with open( allFilepath, 'wt', encoding='utf-8' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                vPrint( 'Info', '  toTeX: ' + _("Writing {!r}…").format( filepath ) )
+                vPrint( 'Info', debuggingThisModule, '  toTeX: ' + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
@@ -10149,13 +10148,13 @@ class BibleWriter( InternalBible ):
 
         if ignoredMarkers:
             logger.info( "toTeX: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', "  " + _("WARNING: Ignored toTeX markers were {}").format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toTeX markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logger.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped collection
-        vPrint( 'Info', "  Zipping PDF files…" )
+        vPrint( 'Info', debuggingThisModule, "  Zipping PDF files…" )
         zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllBible1PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolderpath ):
             if filename.endswith( '.Bible1.pdf' ):
@@ -10207,14 +10206,14 @@ class BibleWriter( InternalBible ):
         Returns a dictionary of result flags.
         """
         allWord = _("all") if wantPhotoBible and wantODFs and wantPDFs else _("most")
-        vPrint( 'Normal', "BibleWriterV{}.doAllExports: ".format(PROGRAM_VERSION) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
+        vPrint( 'Normal', debuggingThisModule, "BibleWriterV{}.doAllExports: ".format(PROGRAM_VERSION) + _("Exporting {} ({}) to {} formats… {}").format( self.name, self.objectTypeString, allWord, datetime.now().strftime('%H:%M') ) )
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
         if givenOutputFolderName == None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
             if not os.access( givenOutputFolderName, os.F_OK ):
-                vPrint( 'Info', "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
+                vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
             assert givenOutputFolderName and isinstance( givenOutputFolderName, (str,Path) )
@@ -10257,13 +10256,13 @@ class BibleWriter( InternalBible ):
         TeXOutputFolder = os.path.join( givenOutputFolderName, 'BOS_TeX_Export/' )
 
         if not wantPhotoBible:
-            vPrint( 'Info', "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
+            vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
             PhotoBibleExportResult = None
         if not wantODFs:
-            vPrint( 'Info', "BibleWriter.doAllExports: " + _("Skipping ODF export") )
+            vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: " + _("Skipping ODF export") )
             ODFExportResult = None
         if not wantPDFs:
-            vPrint( 'Info', "BibleWriter.doAllExports: " + _("Skipping TeX/PDF export") )
+            vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: " + _("Skipping TeX/PDF export") )
             TeXExportResult = None
 
         # Pickle this Bible object
@@ -10344,14 +10343,14 @@ class BibleWriter( InternalBible ):
                                     swOutputFolder, tWOutputFolder, MySwOutputFolder, ESwOutputFolder, MyBOutputFolder,
                                     SwSOutputFolder, DrOutputFolder, ]
             assert len(self.__outputFolders) == len(self.__outputProcesses)
-            vPrint( 'Quiet', "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
             if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             # With no timeout safeguard
             #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 #results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
-                #vPrint( 'Quiet', "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 #assert len(results) == len(self.__outputFolders)
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
@@ -10389,7 +10388,7 @@ class BibleWriter( InternalBible ):
                                     result, result, result, result, result, result, result, result, result, result, result, ]
             #print( "async results2 are", results )
             BibleOrgSysGlobals.alreadyMultiprocessing = False
-            vPrint( 'Info', "BibleWriter.doAllExports: Multiprocessing got {} results".format( len(results) ) )
+            vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: Multiprocessing got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
             ( PhotoBibleExportResult, #ODFExportResult,
                 TeXExportResult,
@@ -10644,12 +10643,12 @@ def demo() -> None:
 
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = 'Dummy test Bible Writer object'
-    vPrint( 'Quiet', BW )
+    vPrint( 'Quiet', debuggingThisModule, BW )
 
 
     if 0: # Test reading and writing a (shortish) USFM Bible (with ALL exports so it's SLOW)
@@ -10662,11 +10661,11 @@ def demo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', f"\nBibleWriter A{j+1}/…" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nBibleWriter A{j+1}/…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', ' ', UB )
+                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     #result = UB.toBibleDoor(); print( f"{result[0]} {result[1]!r}\n{result[2]}" ); halt
@@ -10676,7 +10675,7 @@ def demo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', "\nComparing original and re-exported USFM files…" )
+                        vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #print( jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
@@ -10707,9 +10706,9 @@ def demo() -> None:
                 #("ESFMTest1-LV", 'ESFM1', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/'),
                 #("ESFMTest2-RV", 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #("WEB", 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
-                ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
-                #("MS-BT", 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
-                #("MS-ABT", 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
+                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                #("MS-BT", 'MBTBT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
+                #("MS-ABT", 'MBTABT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
                 #("WEB2", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #("WEB3", 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/'),
                 #("WEB4", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),
@@ -10724,11 +10723,11 @@ def demo() -> None:
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', f" {UB}" )
+                vPrint( 'Quiet', debuggingThisModule, f" {UB}" )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if debuggingThisModule:
@@ -10740,7 +10739,7 @@ def demo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', "\nComparing original and re-exported USFM files…" )
+                        vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #print( jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
@@ -10776,9 +10775,9 @@ def demo() -> None:
                 #('ESFMTest2', 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #('WEB', 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
                 #('OEB', 'OEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/'),
-                #('Matigsalug', 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
-                #('MS-BT', 'MBTBT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
-                #('MS-ABT', 'MBTABT', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
+                #('Matigsalug', 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                #('MS-BT', 'MBTBT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
+                #('MS-ABT', 'MBTABT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),
@@ -10787,14 +10786,14 @@ def demo() -> None:
                 ) # You can put your test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', '\nBibleWriter C'+str(j+1)+'/…' )
+            vPrint( 'Quiet', debuggingThisModule, '\nBibleWriter C'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UnkB = UnknownBible( testFolder )
                 result = UnkB.search( autoLoadAlways=True, autoLoadBooks=True )
-                vPrint( 'Normal', "Bible loaded", result )
+                vPrint( 'Normal', debuggingThisModule, "Bible loaded", result )
                 if isinstance( result, Bible ):
                     thisBible = result
-                    vPrint( 'Quiet', ' ', thisBible )
+                    vPrint( 'Quiet', debuggingThisModule, ' ', thisBible )
                     if BibleOrgSysGlobals.strictCheckingFlag: thisBible.check()
                     thisBible.toBibleDoor(); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
@@ -10804,7 +10803,7 @@ def demo() -> None:
                         fN = USFMFilenames( testFolder )
                         folderContents1 = os.listdir( testFolder ) # Originals
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
-                        vPrint( 'Normal', "\nComparing original and re-exported USFM files…" )
+                        vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #print( jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
@@ -10832,16 +10831,16 @@ def demo() -> None:
         from BibleOrgSys.Formats.USXXMLBible import USXXMLBible
         from BibleOrgSys.Formats.USXFilenames import USXFilenames
         testData = (
-                #('Matigsalug', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/') ),
-                ('MatigsalugUSX', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/') ),
+                #('Matigsalug', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/') ),
+                ('MatigsalugUSX', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/') ),
                 ) # You can put your USX test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', '\nBibleWriter D'+str(j+1)+'/…' )
+            vPrint( 'Quiet', debuggingThisModule, '\nBibleWriter D'+str(j+1)+'/…' )
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', ' ', UB )
+                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -10849,7 +10848,7 @@ def demo() -> None:
                     fN = USXFilenames( testFolder )
                     folderContents1 = os.listdir( testFolder ) # Originals
                     folderContents2 = os.listdir( outputFolderpath ) # Derived
-                    vPrint( 'Normal', "\nComparing original and re-exported USX files…" )
+                    vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USX files…" )
                     for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
                             #print( "\n{}: {} {}".format( jj+1, BBB, filename ) )
@@ -10884,7 +10883,7 @@ def demo() -> None:
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                vPrint( 'Quiet', '\nBibleWriter E'+str(j+1)+'/', UB )
+                vPrint( 'Quiet', debuggingThisModule, '\nBibleWriter E'+str(j+1)+'/', UB )
                 #if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
@@ -10896,7 +10895,7 @@ def demo() -> None:
                     else: halt
                     fn1 = name + ext # Supplied
                     fn2 = name + ext # Created
-                    vPrint( 'Normal', "\nComparing supplied and exported theWord files…" )
+                    vPrint( 'Normal', debuggingThisModule, "\nComparing supplied and exported theWord files…" )
                     result = theWordFileCompare( fn1, fn2, mainFolderpath, outputFolderpath, exitCount=10 )
                     if not result:
                         print( "theWord modules did NOT match" )

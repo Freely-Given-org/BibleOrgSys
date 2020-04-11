@@ -65,7 +65,6 @@ SHORT_PROGRAM_NAME = "USFM2USX"
 PROGRAM_NAME = "USFM to USX"
 PROGRAM_VERSION = '0.03'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 
 import os
@@ -92,13 +91,13 @@ def main():
         -v (verbose) is 4.
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
-    vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
+    vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    vPrint( 'Info', unknownBible ) # Display what Bible typed we found
-    vPrint( 'Normal', loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if isinstance( loadedBible, Bible ):
@@ -106,10 +105,10 @@ def main():
 
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
-            vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
+            vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
                 shutil.rmtree( defaultOutputFolder )
 
-        vPrint( 'Quiet', f"\n{SHORT_PROGRAM_NAME}: starting export…" )
+        vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
@@ -117,7 +116,7 @@ def main():
         #result = loadedBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        vPrint( 'Info', f"  Result was: {result}" )
+        vPrint( 'Info', debuggingThisModule, f"  Result was: {result}" )
         print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
 # end of main
 

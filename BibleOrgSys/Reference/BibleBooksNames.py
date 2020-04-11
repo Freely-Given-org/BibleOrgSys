@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
 PROGRAM_VERSION = '0.41'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -49,6 +48,7 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -113,7 +113,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     assert divisionsNamesDict and booknameLeadersDict and bookNamesDict
     assert bookList
 
-    vPrint( 'Info', _("  Expanding {} input abbreviations (for {} books)…").format( systemName, len(bookList) ) )
+    vPrint( 'Info', debuggingThisModule, _("  Expanding {} input abbreviations (for {} books)…").format( systemName, len(bookList) ) )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -288,7 +288,7 @@ class BibleBooksNamesSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #             #self.__ExpandedDicts = pickle.load( pickleFile )

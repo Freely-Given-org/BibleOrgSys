@@ -62,12 +62,12 @@ if INCLUDE_DATA_SOURCE_FILES:
                 'DataFiles/BookOrders/BibleBookOrder_SynodalBible.xml',
                 'DataFiles/BookOrders/BibleBookOrder_SyriacNewTestament.xml',
                 'DataFiles/BookOrders/BibleBookOrder_VulgateBible.xml',
-                
+
                 'DataFiles/PunctuationSystems/BiblePunctuationSystem.rnc',
                 'DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml',
                 'DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml',
                 'DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml',
-                
+
                 'DataFiles/VersificationSystems/BibleVersificationSystem.rnc',
                 'DataFiles/VersificationSystems/BibleVersificationSystem_BibMaxRef.xml',
                 'DataFiles/VersificationSystems/BibleVersificationSystem_CatholicEsther16.xml',
@@ -129,13 +129,13 @@ setup(
     version=VERSION,
 
     packages=['BibleOrgSys',
-            'BibleOrgSys.InputOutput', 
-            'BibleOrgSys.Internals', 
+            'BibleOrgSys.InputOutput',
+            'BibleOrgSys.Internals',
             'BibleOrgSys.Formats',
-            'BibleOrgSys.Misc', 
-            'BibleOrgSys.Online', 
-            'BibleOrgSys.OriginalLanguages', 
-            'BibleOrgSys.Reference', 
+            'BibleOrgSys.Misc',
+            'BibleOrgSys.Online',
+            'BibleOrgSys.OriginalLanguages',
+            'BibleOrgSys.Reference',
             ],
     package_dir ={ 'BibleOrgSys': 'BibleOrgSys' },
     package_data={ 'BibleOrgSys': package_data_list },

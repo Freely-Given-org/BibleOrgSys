@@ -65,7 +65,7 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
+inputFolder = Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _
@@ -75,7 +75,6 @@ SHORT_PROGRAM_NAME = "MakePhotoBible"
 PROGRAM_NAME = "Make PhotoBible"
 PROGRAM_VERSION = '0.23'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 import os
 
@@ -104,18 +103,18 @@ def main():
         -v (verbose) is 4.
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
-    vPrint( 'Quiet', "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
+    vPrint( 'Quiet', debuggingThisModule, "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    vPrint( 'Info', unknownBible ) # Display what Bible typed we found
-    vPrint( 'Normal', loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        vPrint( 'Quiet', "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
+        vPrint( 'Quiet', debuggingThisModule, "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -123,7 +122,7 @@ def main():
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        vPrint( 'Info', "  Result was: {}".format( result ) )
+        vPrint( 'Info', debuggingThisModule, "  Result was: {}".format( result ) )
         print(f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 

@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "TestBooksCodesRE"
 PROGRAM_NAME = "TestBooksCodes Regular Expressions"
 PROGRAM_VERSION = '0.20'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -47,6 +46,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 # Regular expressions to be searched for

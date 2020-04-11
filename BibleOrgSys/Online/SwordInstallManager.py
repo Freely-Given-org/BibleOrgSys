@@ -39,7 +39,6 @@ SHORT_PROGRAM_NAME = "SwordInstallManager"
 PROGRAM_NAME = "Sword download handler"
 PROGRAM_VERSION = '0.12'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -60,6 +59,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 #from BibleOrgSys.Misc.singleton import singleton
 #from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 #from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
@@ -365,7 +365,7 @@ class SwordInstallManager():
             #print( "Delete2", repoConfFolder )
             shutil.rmtree( repoConfFolder )
 
-        vPrint( 'Normal', _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
+        vPrint( 'Normal', debuggingThisModule, _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
 
         # Download the config files
         ftp = ftplib.FTP( repoSite )
@@ -463,7 +463,7 @@ class SwordInstallManager():
             logging.critical( _("User security disclaimer not yet confirmed.") )
             return False
 
-        vPrint( 'Normal', _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
+        vPrint( 'Normal', debuggingThisModule, _("Refreshing/Downloading index files from {} repositories…").format( len(self.downloadSources) ) )
 
         saveRepo = self.currentRepoName # Remember this
         self.availableModules = {}
@@ -549,7 +549,7 @@ class SwordInstallManager():
             assert repoFolderpath[0] == '/'
             assert repoFolderpath[-1] == '/'
 
-        vPrint( 'Normal', _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Downloading {!r} files from {} to {} …").format( moduleName, repoName, fileSaveFolder ) )
 
         # Download the files we need
         ftp = ftplib.FTP( repoSite )
@@ -600,7 +600,7 @@ def demo() -> None:
 
     if 1: # try refreshing one repository
         getRepoName = 'NET Bible'
-        vPrint( 'Quiet', "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
@@ -612,7 +612,7 @@ def demo() -> None:
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'NETfree'
-            vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
             if im.installModule( getModuleName ):
                 confData = im.availableModules[getModuleName]
@@ -624,13 +624,13 @@ def demo() -> None:
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
-                vPrint( 'Verbose', swM )
+                vPrint( 'Verbose', debuggingThisModule, swM )
                 if not swM.SwordModuleConfiguration.locked: swM.test()
 
 
     if 0: # try refreshing one repository
         getRepoName = 'eBible'
-        vPrint( 'Quiet', "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh {} repository…".format( getRepoName ) )
         im.currentRepoName = getRepoName
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
@@ -642,7 +642,7 @@ def demo() -> None:
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'engWEBBE2015eb'
-            vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
             im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
             if im.installModule( getModuleName ):
                 swMC = SwordModules.SwordModuleConfiguration( getModuleName, im.currentInstallFolderpath )
@@ -651,12 +651,12 @@ def demo() -> None:
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
-                vPrint( 'Verbose', swM )
+                vPrint( 'Verbose', debuggingThisModule, swM )
                 if not swM.SwordModuleConfiguration.locked: swM.test()
 
 
     if 0: # try refreshing all repositories
-        vPrint( 'Quiet', "\nDemo: Refresh all repositories…" )
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh all repositories…" )
         im.refreshAllRemoteSources()
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
@@ -665,7 +665,7 @@ def demo() -> None:
 
     if 0: # try installing another module
         getModuleName = 'JPS'
-        vPrint( 'Quiet', "\nDemo: Install {}…".format( getModuleName ) )
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
         im.currentRepoName = 'CrossWire Main'
         im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
         if im.installModule( getModuleName ): # See if we can read it
@@ -678,7 +678,7 @@ def demo() -> None:
 
             swM = SwordModules.SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=True )
-            vPrint( 'Verbose', swM )
+            vPrint( 'Verbose', debuggingThisModule, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
 # end of demo

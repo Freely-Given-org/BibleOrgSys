@@ -8,6 +8,7 @@ if BOSTopFolderpath not in sys.path:
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
 class BOSGlobalsTestCase(unittest.TestCase):
 
     def test_applyStringAdjustments(self):

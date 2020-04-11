@@ -39,13 +39,15 @@ SHORT_PROGRAM_NAME = "EasyWorshipBible"
 PROGRAM_NAME = "EasyWorship Bible format handler"
 PROGRAM_VERSION = '0.14'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
 
-import logging, os.path
-import struct, zlib
+import logging
+import os.path
+from pathlib import Path
+import struct
+import zlib
 from binascii import hexlify
 import multiprocessing
 
@@ -78,7 +80,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     if autoLoad is true and exactly one EasyWorship Bible is found,
         returns the loaded EasyWorshipBible object.
     """
-    vPrint( 'Info', "EasyWorshipBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', debuggingThisModule, "EasyWorshipBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -91,7 +93,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', " EasyWorshipBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', debuggingThisModule, " EasyWorshipBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     numFound = foundFileCount = 0
     for something in os.listdir( givenFolderName ):
@@ -108,7 +110,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     #if foundFileCount >= len(compulsoryFiles):
         #numFound = 1
     if numFound:
-        vPrint( 'Info', "EasyWorshipBibleFileCheck got", numFound, givenFolderName )
+        vPrint( 'Info', debuggingThisModule, "EasyWorshipBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             oB = EasyWorshipBible( givenFolderName, foundFiles[0] )
             if autoLoadBooks: oB.load() # Load and process the file
@@ -125,7 +127,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("EasyWorshipBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', "    EasyWorshipBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', debuggingThisModule, "    EasyWorshipBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -139,7 +141,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             #foundProjects.append( tryFolderName )
             #numFound += 1
     if numFound:
-        vPrint( 'Info', "EasyWorshipBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', debuggingThisModule, "EasyWorshipBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             oB = EasyWorshipBible( foundProjects[0][0], foundProjects[0][1] )
@@ -163,7 +165,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     # It seems 7-9 give the correct two header bytes
     ZLIB_COMPRESSION_LEVEL = 9 #  -1=default(=6), 0=none, 1=fastest…9=highest compression level
 
-    vPrint( 'Normal', "Running createEasyWorshipBible…" )
+    vPrint( 'Normal', debuggingThisModule, "Running createEasyWorshipBible…" )
     if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
 
     if not BibleObject.doneSetupGeneric: BibleObject.__setupWriter()
@@ -273,7 +275,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
 
     filename = '{}{}'.format( BibleObject.abbreviation, FILENAME_ENDING ).lower()
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-    vPrint( 'Info', '  createEasyWorshipBible: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', debuggingThisModule, '  createEasyWorshipBible: ' + _("Writing {!r}…").format( filepath ) )
     bookAddress = startingBookAddress = 14872 + len(name) + 18 + 4 # Name is something like ezFreeXXX
     vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
     with open( filepath, 'wb' ) as myFile:
@@ -346,11 +348,11 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
 
     if ignoredMarkers:
         logging.info( "createEasyWorshipBible: Ignored markers were {}".format( ignoredMarkers ) )
-    vPrint( 'Info', "  " + _("WARNING: Ignored createEasyWorshipBible markers were {}").format( ignoredMarkers ) )
+    vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored createEasyWorshipBible markers were {}").format( ignoredMarkers ) )
 
     # Now create a zipped version
     filepath = os.path.join( outputFolder, filename )
-    vPrint( 'Info', "  Zipping {} EWB file…".format( filename ) )
+    vPrint( 'Info', debuggingThisModule, "  Zipping {} EWB file…".format( filename ) )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
@@ -402,7 +404,7 @@ class EasyWorshipBible( Bible ):
         """
         Load the compressed data file and import book objects.
         """
-        vPrint( 'Normal', _("\nLoading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("\nLoading {}…").format( self.sourceFilepath ) )
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             fileBytes = myFile.read()
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
@@ -440,7 +442,7 @@ class EasyWorshipBible( Bible ):
             if char8 < 0x20: break
             nString += chr( char8 )
         #if BibleOrgSysGlobals.debugFlag or debuggingThisModule: print( 'nString', repr(nString), index )
-        vPrint( 'Normal', "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
         self.name = nString
         #assert self.name # Not there for amp and gkm
         moduleNameBlockb = fileBytes[index+j:index+56]
@@ -533,7 +535,7 @@ class EasyWorshipBible( Bible ):
                 print( "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
             assert textResult.startswith('ezFree') or textResult.startswith('ezPaid')
             keep['workName'] = (index+4,textResult)
-            vPrint( 'Normal', "EasyWorshipBible.load: " + _("Setting module work name to {!r}").format( textResult ) )
+            vPrint( 'Normal', debuggingThisModule, "EasyWorshipBible.load: " + _("Setting module work name to {!r}").format( textResult ) )
             if self.name: self.workName = textResult
             else: # Should rarely happen
                 self.name = self.workName = textResult
@@ -575,14 +577,14 @@ class EasyWorshipBible( Bible ):
         del fileBytes # Not needed any more
 
         # Now we have to decode the book text (compressed about 4x with zlib)
-        vPrint( 'Normal', "EWB loading books for {}…".format( self.abbreviation ) )
+        vPrint( 'Normal', debuggingThisModule, "EWB loading books for {}…".format( self.abbreviation ) )
         for j, BBB in enumerate( BOS.getBookList() ):
             bookAbbrev, numChapters, numVerses, bookStart, bookLength, bookBytes = rawBooks[j]
             if bookLength == 0:
                 assert not bookBytes
                 logging.critical( "   Skipped empty {}".format( BBB ) )
                 continue
-            vPrint( 'Info', '  Decoding {}…'.format( BBB ) )
+            vPrint( 'Info', debuggingThisModule, '  Decoding {}…'.format( BBB ) )
             bookBytes, bookExtra = bookBytes[:-10], bookBytes[-10:]
             assert len(bookExtra) == 10
             keep['bookExtra-{}'.format(j+1)] = (-10,bookExtra)
@@ -654,7 +656,7 @@ class EasyWorshipBible( Bible ):
                 V = newV
                 thisBook.addLine( 'v', V + ' ' + verseText )
 
-            vPrint( 'Verbose', "Saving", BBB )
+            vPrint( 'Verbose', debuggingThisModule, "Saving", BBB )
             self.stashBook( thisBook )
 
         self.doPostLoadProcessing()
@@ -667,17 +669,17 @@ class EasyWorshipBible( Bible ):
 def testEWB( TEWBfilename ):
     # Crudely demonstrate the EasyWorship Bible class
     from BibleOrgSys.Reference import VerseReferences
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
     #TEWBfolder = os.path.join( testFolder, TEWBfilename+'/' )
     TEWBfolder = testFolder
-    vPrint( 'Normal', _("Demonstrating the EasyWorship Bible class…") )
-    vPrint( 'Quiet', "  Test folder is {!r} {!r}".format( TEWBfolder, TEWBfilename ) )
+    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the EasyWorship Bible class…") )
+    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( TEWBfolder, TEWBfilename ) )
     ewb = EasyWorshipBible( TEWBfolder, TEWBfilename )
     keep = ewb.load() # Load and process the file
-    vPrint( 'Normal', ewb ) # Just print a summary
+    vPrint( 'Normal', debuggingThisModule, ewb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ewb.check()
         #print( UsfmB.books['GEN']._processedLines[0:40] )
@@ -716,30 +718,30 @@ def demo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = EasyWorshipBibleFileCheck( testFolder )
-        vPrint( 'Normal', "EasyWorship TestA1", result1 )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA1", result1 )
         result2 = EasyWorshipBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', "EasyWorship TestA2", result2 )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA2", result2 )
         result3 = EasyWorshipBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', "EasyWorship TestA3", result3 )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA3", result3 )
 
         #testSubfolder = os.path.join( testFolder, 'AV/' )
         #result3 = EasyWorshipBibleFileCheck( testSubfolder )
-        #vPrint( 'Normal', "EasyWorship TestB1", result3 )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB1", result3 )
         #result4 = EasyWorshipBibleFileCheck( testSubfolder, autoLoad=True )
-        #vPrint( 'Normal', "EasyWorship TestB2", result4 )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB2", result4 )
         #result5 = EasyWorshipBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        #vPrint( 'Normal', "EasyWorship TestB3", result5 )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB3", result5 )
 
     if 0: # specified module
         singleModule = 'mbtv.ewb'
-        vPrint( 'Normal', "\nEasyWorship C/ Trying {}".format( singleModule ) )
+        vPrint( 'Normal', debuggingThisModule, "\nEasyWorship C/ Trying {}".format( singleModule ) )
         #myTestFolder = os.path.join( testFolder, singleModule+'/' )
         #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
         testEWB( singleModule )
@@ -758,7 +760,7 @@ def demo() -> None:
         bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
         allModules = good + bad
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
-            vPrint( 'Normal', "\nEasyWorship D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', debuggingThisModule, "\nEasyWorship D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEWB( testFilename )
@@ -821,7 +823,7 @@ def demo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -830,7 +832,7 @@ def demo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', "\nEasyWorship E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', debuggingThisModule, "\nEasyWorship E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testEWB( someFolder )
 # end of demo

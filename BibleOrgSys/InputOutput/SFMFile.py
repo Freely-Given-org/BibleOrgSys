@@ -44,7 +44,6 @@ SHORT_PROGRAM_NAME = "SFMFile"
 PROGRAM_NAME = "SFM Files loader"
 PROGRAM_VERSION = '0.86'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -58,6 +57,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -365,7 +365,7 @@ def demo() -> None:
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', debuggingThisModule, "Using {} as test file…".format( filepath ) )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )

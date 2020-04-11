@@ -5,7 +5,7 @@
 #
 # Functions for replace and regex replace which explain what they did.
 #
-# Copyright (C) 2018 Robert Hunt
+# Copyright (C) 2018-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,12 +37,11 @@ Functions for replace and regex replace which explain what they did.
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2018-02-09' # by RJH
-ShortProgName = "NoisyReplaceFunctions"
-ProgName = "Noisy Replace Functions"
-ProgVersion = '0.07'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
+LAST_MODIFIED_DATE = '2020-04-10' # by RJH
+SHORT_PROGRAM_NAME = "NoisyReplaceFunctions"
+PROGRAM_NAME = "Noisy Replace Functions"
+PROGRAM_VERSION = '0.07'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
@@ -59,6 +58,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -94,10 +94,10 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', _("No occurrences of {!r} found to replace").format( this ) )
+        vPrint( 'Info', debuggingThisModule, _("No occurrences of {!r} found to replace").format( this ) )
         return text
 
-    vPrint( 'Normal', _("Replacing {:,} occurrence{} of {!r} with {!r}").format( count, '' if count==1 else 's', this, that ) )
+    vPrint( 'Normal', debuggingThisModule, _("Replacing {:,} occurrence{} of {!r} with {!r}").format( count, '' if count==1 else 's', this, that ) )
     if loop:
         newText = text
         while this in newText:
@@ -118,9 +118,9 @@ def noisyRegExReplaceAll( text:str, this:str, that:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', _("No occurrences of regex {!r} found to replace").format( this ) )
+        vPrint( 'Info', debuggingThisModule, _("No occurrences of regex {!r} found to replace").format( this ) )
         return text
-    vPrint( 'Normal', _("Replacing {:,} occurrence{} of regex {!r} with {!r}").format( count1, '' if count1==1 else 's', this, that ) )
+    vPrint( 'Normal', debuggingThisModule, _("Replacing {:,} occurrence{} of regex {!r} with {!r}").format( count1, '' if count1==1 else 's', this, that ) )
 
     newText, count2 = re.subn( regex, that, text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 0:
@@ -139,9 +139,9 @@ def noisyDeleteAll( text:str, this:str ) -> str:
     """
     count = text.count( this )
     if count == 0:
-        vPrint( 'Info', _("No occurrences of {!r} found to delete").format( this ) )
+        vPrint( 'Info', debuggingThisModule, _("No occurrences of {!r} found to delete").format( this ) )
         return text
-    vPrint( 'Normal', _("Deleting {:,} occurrence{} of {!r}").format( count, '' if count==1 else 's', this ) )
+    vPrint( 'Normal', debuggingThisModule, _("Deleting {:,} occurrence{} of {!r}").format( count, '' if count==1 else 's', this ) )
     newText = text.replace( this, '' )
 
     count2 = newText.count( this )
@@ -158,9 +158,9 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
     count1 = len( re.findall( regex, text ) )
     if count1 == 0:
-        vPrint( 'Info', _("No occurrences of regex {!r} found to delete").format( this ) )
+        vPrint( 'Info', debuggingThisModule, _("No occurrences of regex {!r} found to delete").format( this ) )
         return text
-    vPrint( 'Normal', _("Deleting {:,} occurrence{} of regex {!r}").format( count1, '' if count1==1 else 's', this ) )
+    vPrint( 'Normal', debuggingThisModule, _("Deleting {:,} occurrence{} of regex {!r}").format( count1, '' if count1==1 else 's', this ) )
 
     newText, count2 = re.subn( regex, '', text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 2:
@@ -197,10 +197,10 @@ if __name__ == '__main__':
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of NoisyReplaceFunctions.py

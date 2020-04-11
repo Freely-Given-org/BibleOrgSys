@@ -74,7 +74,6 @@ SHORT_PROGRAM_NAME = "VerseReferences"
 PROGRAM_NAME = "Bible verse reference handler"
 PROGRAM_VERSION = '0.39'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -91,6 +90,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 # Regular expressions to be searched for

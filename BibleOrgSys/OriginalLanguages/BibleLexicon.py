@@ -36,7 +36,6 @@ SHORT_PROGRAM_NAME = "BibleLexicon"
 PROGRAM_NAME = "Bible Lexicon format handler"
 PROGRAM_VERSION = '0.24'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -388,12 +387,12 @@ def demo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    HebrewLexiconFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Open Scriptures Hebrew lexicon folder
-    GreekLexiconFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # morphgnt Greek lexicon folder
+    HebrewLexiconFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Open Scriptures Hebrew lexicon folder
+    GreekLexiconFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # morphgnt Greek lexicon folder
 
 
     if 0: # demonstrate the Bible Lexicon Index class
-        vPrint( 'Normal', "\nDemonstrating the Bible Lexicon Index class…" )
+        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Bible Lexicon Index class…" )
         blix = BibleLexiconIndex( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( blix ) # Just print a summary
         print()
@@ -407,7 +406,7 @@ def demo() -> None:
 
 
     if 1: # demonstrate the Bible Lexicon class
-        vPrint( 'Normal', "\nDemonstrating the Bible Lexicon class…" )
+        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Bible Lexicon class…" )
         bl = BibleLexicon( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( bl ) # Just print a summary
         print()

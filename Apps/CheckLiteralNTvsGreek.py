@@ -61,7 +61,6 @@ SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
 PROGRAM_NAME = "Check Literal NT vs Greek"
 PROGRAM_VERSION = '0.02'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 import logging
 
@@ -91,7 +90,7 @@ def main():
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
-    vPrint( 'Info', door43CatalogResources )
+    vPrint( 'Info', debuggingThisModule, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 2:
         print()
@@ -101,19 +100,19 @@ def main():
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
-        #vPrint( 'Quiet', Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.preload()
-        #vPrint( 'Quiet', Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
-        vPrint( 'Quiet', Door43CatalogUGNTBible, end='\n\n' )
+        vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible, end='\n\n' )
 
     # Download the ULT = unfoldingWord Literal Text
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
-        #vPrint( 'Quiet', Door43CatalogULTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
-        vPrint( 'Quiet', Door43CatalogULTBible, end='\n\n' )
+        vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible, end='\n\n' )
 
     # Go through the UGNT verse by verse
     #   and do some comparisions with the matching ULT verses
@@ -149,7 +148,7 @@ def main():
                         print( f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
                         print( f"                              {text1}" )
                     count2 += 1
-    vPrint( 'Quiet', f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
+    vPrint( 'Quiet', debuggingThisModule, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
 if __name__ == '__main__':

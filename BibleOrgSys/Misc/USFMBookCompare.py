@@ -39,9 +39,9 @@ from gettext import gettext as _
 
 LAST_MODIFIED_DATE = '2018-12-02' # by RJH
 ShortProgName = "USFMBookCompare"
-ProgName = "USFM book file comparator"
-ProgVersion = '0.16'
-ProgNameVersion = '{} v{}'.format( ShortProgName, ProgVersion )
+PROGRAM_NAME = "USFM book file comparator"
+PROGRAM_VERSION = '0.16'
+ProgNameVersion = '{} v{}'.format( ShortProgName, PROGRAM_VERSION )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
 debuggingThisModule = False
@@ -59,6 +59,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
@@ -67,9 +68,9 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' ):
     """
     """
-    vPrint( 'Info', "\nUSFMBookCompare() for USFM Bible books" )
-    vPrint( 'Verbose', "  comparing {}".format( filepath1 ) )
-    vPrint( 'Verbose', "        and {}".format( filepath2 ) )
+    vPrint( 'Info', debuggingThisModule, "\nUSFMBookCompare() for USFM Bible books" )
+    vPrint( 'Verbose', debuggingThisModule, "  comparing {}".format( filepath1 ) )
+    vPrint( 'Verbose', debuggingThisModule, "        and {}".format( filepath2 ) )
 
 
     # Set up empty results dictionaries
@@ -347,7 +348,7 @@ if __name__ == '__main__':
     demoFlag = False # Set to true to run the demo instead of main()
 
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
     if not demoFlag:
         parser.add_argument('file1', help="USFM Bible book file 1" )
         parser.add_argument('file2', help="USFM Bible book file 2" )
@@ -356,5 +357,5 @@ if __name__ == '__main__':
     if demoFlag: demo()
     else: main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFMBookCompare.py

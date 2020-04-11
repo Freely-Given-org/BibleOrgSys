@@ -33,12 +33,14 @@ SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
 PROGRAM_VERSION = '0.26'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
 
-import logging, os, sys
+import logging
+import os
+import sys
+from pathlib import Path
 from xml.etree.ElementTree import ElementTree, ParseError
 
 if __name__ == '__main__':
@@ -424,8 +426,9 @@ class USXXMLBibleBook( BibleBook ):
 
         # Main code for load()
         #lastMarker = None
-        vPrint( 'Verbose', "  " + _("Loading {} from {}…").format( filename, folder ) )
-        elvPrint( 'Info', "  " + _("Loading {}…").format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
+            print( "  " + _("Loading {} from {}…").format( filename, folder ) )
+        else: vPrint( 'Info', debuggingThisModule, "  " + _("Loading {}…").format( filename ) )
         self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
@@ -663,13 +666,13 @@ def demo() -> None:
 
     from BibleOrgSys.InputOutput import USXFilenames, USFMFilenames
     from BibleOrgSys.Formats import USFMBibleBook
-    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
-    #name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
-    name, testFolder = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
-    name2, testFolder2 = "Matigsalug", BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
+    #name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
+    #name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
+    name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
+    name2, testFolder2 = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        vPrint( 'Normal', _("Scanning USX  {} from {}…").format( name, testFolder ) )
-        vPrint( 'Normal', _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
+        vPrint( 'Normal', debuggingThisModule, _("Scanning USX  {} from {}…").format( name, testFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
@@ -680,21 +683,21 @@ def demo() -> None:
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                vPrint( 'Normal', _("Loading USX {} from {}…").format( BBB, filename ) )
+                vPrint( 'Normal', debuggingThisModule, _("Loading USX {} from {}…").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                vPrint( 'Info', "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
-                vPrint( 'Info', "  Header is {!r}".format( UxBB.getField( 'h' ) ) )
-                vPrint( 'Info', "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
-                vPrint( 'Info', UxBB )
+                vPrint( 'Info', debuggingThisModule, "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
+                vPrint( 'Info', debuggingThisModule, "  Header is {!r}".format( UxBB.getField( 'h' ) ) )
+                vPrint( 'Info', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
+                vPrint( 'Info', debuggingThisModule, UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification()
-                vPrint( 'Info', UxBBVersification )
+                vPrint( 'Info', debuggingThisModule, UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
-                vPrint( 'Info', UxBBAddedUnits )
+                vPrint( 'Info', debuggingThisModule, UxBBAddedUnits )
                 UxBB.check()
                 UxBBErrors = UxBB.getErrors()
-                vPrint( 'Info', UxBBErrors )
+                vPrint( 'Info', debuggingThisModule, UxBBErrors )
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
@@ -704,13 +707,13 @@ def demo() -> None:
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        vPrint( 'Info', _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
+                        vPrint( 'Info', debuggingThisModule, _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is {!r}".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-                        vPrint( 'Info', UBB )
+                        vPrint( 'Info', debuggingThisModule, UBB )
                         UBB.validateMarkers()
 
                         # Now compare the USX and USFM projects
@@ -760,7 +763,7 @@ def demo() -> None:
                             print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
                 else: print( "Sorry, USFM test folder {!r} doesn't exist on this computer.".format( testFolder2 ) )
-            elvPrint( 'Info', "*** Skipped USX/USFM compare on {}", BBB )
+            else: vPrint( 'Info', debuggingThisModule, "*** Skipped USX/USFM compare on {}", BBB )
     else: print( "Sorry, USX test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

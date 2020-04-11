@@ -39,7 +39,6 @@ SHORT_PROGRAM_NAME = "GreekLexicon"
 PROGRAM_NAME = "Greek Lexicon format handler"
 PROGRAM_VERSION = '0.17'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -54,6 +53,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -133,7 +133,7 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
@@ -187,7 +187,7 @@ class GreekStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib ==  "strongs":
                 strongs5 = value
-                vPrint( 'Info', "Validating {} entry…".format( strongs5 ) )
+                vPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( strongs5 ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
@@ -460,11 +460,11 @@ def demo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    testFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+    testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        vPrint( 'Normal', "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the converter classes…" )
 
         print()
         gsc = GreekStrongsFileConverter()
@@ -479,7 +479,7 @@ def demo() -> None:
 
 
     if 1: # demonstrate the Greek Lexicon class
-        vPrint( 'Normal', "\nDemonstrating the Greek Lexicon class…" )
+        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Greek Lexicon class…" )
         hl = GreekLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()

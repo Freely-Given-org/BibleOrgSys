@@ -70,7 +70,7 @@ Contains functions:
 
     setVerbosity( verbosityLevelParameter )
     vPrint( level:str, printString:str )
-    introduceProgram( name:str, programNameVersion:str, lastModifiedDate:str ) -> None:
+    introduceProgram( name:str, programNameVersion:str, LAST_MODIFIED_DATE:str ) -> None:
 
     setDebugFlag( newValue=True )
     setStrictCheckingFlag( newValue=True )
@@ -89,7 +89,6 @@ SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys Globals"
 PROGRAM_VERSION = '0.85'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 haltOnXMLWarning = False # Used for XML debugging
@@ -182,8 +181,8 @@ BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' )
 BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' )
 
 # Resources like original language lexicons should be based from this folder
-PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
-#print( f"PARALLEL_RESOURCES_BASE_FOLDERPATH = {PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
+BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
+print( f"BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH = {BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH}" )
 
 
 ##########################################################################################################
@@ -1324,34 +1323,36 @@ def setVerbosity( verbosityLevelParameter ):
 LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
                     'Normal':2, 'N':2,
                     'Informative':3, 'Info':3, 'I':3,
-                    'Verbose':4, 'V':4 }
-def vPrint( level:Union[int,str], *args, **kwargs ) -> None:
+                    'Verbose':4, 'V':4,
+                    'Never': 5, # Will only ever print if increaseOneLevel is set
+                    }
+def vPrint( level:Union[int,str], increaseOneLevel:bool, *args, **kwargs ) -> None:
     """
     Only print the given string, if the verbosity level is correct.
     """
     if isinstance( level, str ):
         try: level = LEVEL_NAME_DICT[level]
         except KeyError: level = 4 # default to verbose
-    if verbosityLevel < level: return
-
-    print( *args, **kwargs )
+    if increaseOneLevel: level -= 1 # Make one level more verbose if this is set
+    if verbosityLevel >= level:
+        print( *args, **kwargs )
 # end of BibleOrgSysGlobals.vPrint function
 
 
-def introduceProgram( name:str, programNameVersion:str, lastModifiedDate:str ) -> None:
+def introduceProgram( theirName:str, theirProgramNameVersion:str, theirLastModifiedDate:str ) -> None:
     """
     Introduces the program name and version
         and maybe some modification dates if more verbose.
     """
     if verbosityLevel > 2:
-        print( f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}' )
-        if name == '__main__':
+        print( f'{theirProgramNameVersion} {_("last modified")} {theirLastModifiedDate}' )
+        if theirName == '__main__':
             latestPythonModificationDate = getLatestPythonModificationDate()
             if verbosityLevel > 3 \
-            or latestPythonModificationDate != LAST_MODIFIED_DATE:
-                print( f"  (Last BibleOrgSys code update was {latestPythonModificationDate})" )
+            or latestPythonModificationDate != theirLastModifiedDate:
+                print( f"  ({_('Last BibleOrgSys code update was')} {latestPythonModificationDate})" )
     elif verbosityLevel > 0:
-        print( programNameVersion )
+        print( theirProgramNameVersion )
 # end of BibleOrgSysGlobals.introduceProgram function
 
 

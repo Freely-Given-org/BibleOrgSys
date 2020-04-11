@@ -72,7 +72,6 @@ SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.77'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
@@ -321,7 +320,7 @@ class InternalBibleCVIndex:
 
 
         # Main code of InternalBibleCVIndex.makeCVIndex
-        vPrint( 'Verbose', "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
@@ -355,7 +354,7 @@ class InternalBibleCVIndex:
                         #for char in strV:
                             #if char.isdigit(): digitV += char
                             #else: # the first non-digit in the verse "number"
-                                #vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                #vPrint( 'Verbose', debuggingThisModule, "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 #break # ignore the rest
                         ##assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         #saveCV, saveJ = (strC,digitV,), revertToJ
@@ -418,7 +417,7 @@ class InternalBibleCVIndex:
                     for char in strV:
                         if char.isdigit(): digitV += char
                         else: # the first non-digit in the verse "number"
-                            vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                            vPrint( 'Verbose', debuggingThisModule, "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                             break # ignore the rest
                     #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                     saveCV, saveJ = (strC,digitV,), revertToJ
@@ -1026,7 +1025,7 @@ class InternalBibleSectionIndex:
 
 
         # Main code of InternalBibleSectionIndex.makeSectionIndex
-        vPrint( 'Verbose', "    " + _("Indexing {} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
@@ -1061,7 +1060,7 @@ class InternalBibleSectionIndex:
                         ##for char in strV:
                             ##if char.isdigit(): digitV += char
                             ##else: # the first non-digit in the verse "number"
-                                ##vPrint( 'Verbose', "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                ##vPrint( 'Verbose', debuggingThisModule, "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 ##break # ignore the rest
                         ###assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                         ##saveCV, saveJ = (strC,digitV,), revertToJ
@@ -1461,32 +1460,31 @@ def demo() -> None:
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print()
     ICVE = InternalBibleCVIndexEntry( 0, 1, ['abc'] )
-    vPrint( 'Quiet', f"ICVE={ICVE}" )
+    vPrint( 'Quiet', debuggingThisModule, f"ICVE={ICVE}" )
     ISE = InternalBibleSectionIndexEntry( '1', '1', '1', '5', 0, 1, 's1', 'Section Name', ['abc'] )
-    vPrint( 'Quiet', f"ISE={ISE}" )
+    vPrint( 'Quiet', debuggingThisModule, f"ISE={ISE}" )
 
     #IBB = InternalBibleIndexes( 'GEN' )
     ## The following fields would normally be filled in a by "load" routine in the derived class
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #vPrint( 'Quiet', IBB )
+    #vPrint( 'Quiet', debuggingThisModule, IBB )
 
-    global debuggingThisModule
     if 1: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
         import os
         from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', f"\nInternalBibleIndexes B{j+1}/ {abbrev} from {testFolder}…" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleIndexes B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                vPrint( 'Quiet', ' ', UB )
+                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 #debuggingThisModule = True # Just for the index creation
                 if 0:

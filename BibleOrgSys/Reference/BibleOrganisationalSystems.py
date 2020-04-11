@@ -62,7 +62,6 @@ SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
 PROGRAM_NAME = "Bible Organisation Systems handler"
 PROGRAM_VERSION = '0.35'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -76,6 +75,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystem
 from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystem
@@ -118,7 +118,7 @@ class BibleOrganisationalSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
@@ -299,7 +299,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             logging.error( _("{} Bible Organisational System has no {} specified (b)").format(self.__systemName,valueName) )
         # end of getOrganisationalSystemValue
 
-        vPrint( 'Info', "Loading {!r} system".format( systemName ) )
+        vPrint( 'Info', debuggingThisModule, "Loading {!r} system".format( systemName ) )
         assert systemName and isinstance( systemName, str )
         self.__boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganisationalSystem( systemName )
@@ -321,16 +321,16 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         booksNamesSystemName = self.getOrganisationalSystemValue( 'booksNamesSystem' )
         if BibleOrgSysGlobals.debugFlag: print( "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
         if bookOrderSystemName and bookOrderSystemName!='None' and bookOrderSystemName!='Unknown':
-            vPrint( 'Info', "Uses {!r} book order system".format( bookOrderSystemName ) )
+            vPrint( 'Info', debuggingThisModule, "Uses {!r} book order system".format( bookOrderSystemName ) )
             BibleBookOrderSystem.__init__( self, bookOrderSystemName )
         if versificationSystemName and versificationSystemName!='None' and versificationSystemName!='Unknown':
-            vPrint( 'Info', "Uses {!r} versification system".format( versificationSystemName ) )
+            vPrint( 'Info', debuggingThisModule, "Uses {!r} versification system".format( versificationSystemName ) )
             BibleVersificationSystem.__init__( self, versificationSystemName )
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown':
-            vPrint( 'Info', "Uses {!r} punctuation system".format( punctuationSystemName ) )
+            vPrint( 'Info', debuggingThisModule, "Uses {!r} punctuation system".format( punctuationSystemName ) )
             BiblePunctuationSystem.__init__( self, punctuationSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown':
-            vPrint( 'Info', "Uses {!r} books name system".format( booksNamesSystemName ) )
+            vPrint( 'Info', debuggingThisModule, "Uses {!r} books name system".format( booksNamesSystemName ) )
             BibleBooksNamesSystem.__init__( self, booksNamesSystemName, getOrganisationalSystemValue( 'includesBooks' ) ) # Does one extra step To create the input abbreviations
 
         # Do some cross-checking
@@ -595,21 +595,21 @@ def demo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # Demo the BibleOrganisationalSystems object
-        vPrint( 'Normal', "\nTesting load of ALL Bible organisational systems…" )
+        vPrint( 'Normal', debuggingThisModule, "\nTesting load of ALL Bible organisational systems…" )
         boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        vPrint( 'Normal', boss ) # Just print a summary
-        vPrint( 'Normal', _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
+        vPrint( 'Normal', debuggingThisModule, boss ) # Just print a summary
+        vPrint( 'Normal', debuggingThisModule, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
 
     if 1: # Demo a BibleOrganisationalSystem object -- this is the one most likely to be wanted by a user
-        vPrint( 'Normal', "\nTesting varying Bible organisational systems…" )
+        vPrint( 'Normal', debuggingThisModule, "\nTesting varying Bible organisational systems…" )
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
-            vPrint( 'Normal', "\nTrying: {!r}".format( testString ) )
+            vPrint( 'Normal', debuggingThisModule, "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganisationalSystem( testString )
-            vPrint( 'Normal', 'bos', bos ) # Just print a summary
-            vPrint( 'Normal', "First book", bos.getFirstBookCode() )
-            # vPrint( 'Normal', "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
-            # vPrint( 'Normal', "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
-            vPrint( 'Normal', "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
+            vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
+            vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
+            # vPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            # vPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
             #    print( "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
@@ -617,14 +617,14 @@ def demo() -> None:
 
     if 1:
         version = 'KJV-1769_edition'
-        vPrint( 'Normal', "\nTesting absolute verse numbers for", version )
+        vPrint( 'Normal', debuggingThisModule, "\nTesting absolute verse numbers for", version )
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
-            vPrint( 'Normal', ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
+            vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print()
         for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
-            vPrint( 'Normal', ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
+            vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of demo
 
 if __name__ == '__main__':

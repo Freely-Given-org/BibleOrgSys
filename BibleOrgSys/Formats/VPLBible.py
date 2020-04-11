@@ -76,7 +76,6 @@ SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
 PROGRAM_VERSION = '0.38'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -115,7 +114,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     if autoLoad is true and exactly one VPL Bible is found,
         returns the loaded VPLBible object.
     """
-    vPrint( 'Info', "VPLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    vPrint( 'Info', debuggingThisModule, "VPLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -128,7 +127,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', " VPLBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
+    vPrint( 'Verbose', debuggingThisModule, " VPLBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -177,12 +176,12 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     if BibleOrgSysGlobals.debugFlag:
                         print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                 else:
-                    vPrint( 'Verbose', "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', debuggingThisModule, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', debuggingThisModule, "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = VPLBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -198,7 +197,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("VPLBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', "    VPLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', debuggingThisModule, "    VPLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -240,14 +239,14 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                     else:
-                        vPrint( 'Verbose', "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        vPrint( 'Verbose', debuggingThisModule, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', "VPLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', debuggingThisModule, "VPLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
@@ -289,7 +288,7 @@ class VPLBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -329,7 +328,7 @@ class VPLBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag:
                             print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
                     else:
-                        vPrint( 'Verbose', "VPLBible.load: (unexpected) first line was {!r} in {}".format( line, self.sourceFilepath ) )
+                        vPrint( 'Verbose', debuggingThisModule, "VPLBible.load: (unexpected) first line was {!r} in {}".format( line, self.sourceFilepath ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
                     #print( 'vplType', vplType )
@@ -651,11 +650,11 @@ def testVPL( VPLfolder ):
     # Crudely demonstrate the VPL Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', _("Demonstrating the VPL Bible class…") )
-    vPrint( 'Quiet', "  Test folder is {!r}".format( VPLfolder ) )
+    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the VPL Bible class…") )
+    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r}".format( VPLfolder ) )
     vb = VPLBible( VPLfolder, "demo" )
     vb.load() # Load and process the file
-    vPrint( 'Normal', vb ) # Just print a summary
+    vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
         #print( UsfmB.books['GEN']._processedLines[0:40] )
@@ -679,7 +678,7 @@ def testVPL( VPLfolder ):
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', reference, shortText, verseText )
+        vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
 # end of testVPL
 
 
@@ -696,10 +695,10 @@ def demo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ):
             result1 = VPLBibleFileCheck( testFolder )
-            vPrint( 'Normal', "\nVPL TestA1", result1 )
+            vPrint( 'Normal', debuggingThisModule, "\nVPL TestA1", result1 )
 
             result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', "VPL TestA2", result2 )
+            vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
             if result2 is not None:
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -713,7 +712,7 @@ def demo() -> None:
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
             result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', "VPL TestA3", result3 )
+            vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
             if result3 is not None:
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
@@ -735,7 +734,7 @@ def demo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -744,7 +743,7 @@ def demo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', debuggingThisModule, "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testVPL( someFolder )
 # end of demo

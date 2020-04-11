@@ -49,7 +49,6 @@ SHORT_PROGRAM_NAME = "GreekNTHandler"
 PROGRAM_NAME = "Greek NT format handler"
 PROGRAM_VERSION = '0.08'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -141,10 +140,10 @@ class GreekNT( Bible ):
     def loadBooks( self ):
         """
         """
-        vPrint( 'Info', "Loading Greek NT from {}…".format( self.sourceFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "Loading Greek NT from {}…".format( self.sourceFilepath ) )
         for BBB in Greek.morphgntBookList:
             self.loadBook( BBB, Greek.morphgntFilenameDict[BBB] )
-        vPrint( 'Verbose', "{} books loaded.".format( len(self.books) ) )
+        vPrint( 'Verbose', debuggingThisModule, "{} books loaded.".format( len(self.books) ) )
         #if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             #for filename in self.possibleFilenames:
                 #pathname = os.path.join( self.sourceFilepath, filename )
@@ -208,7 +207,7 @@ class GreekNT( Bible ):
         self.thisBook.objectNameString = 'Morph Greek NT Bible Book object'
         self.thisBook.objectTypeString = 'MorphGNT'
         filepath = os.path.join( self.sourceFilepath, filename )
-        vPrint( 'Info', "  Loading {}…".format( filename ) )
+        vPrint( 'Info', debuggingThisModule, "  Loading {}…".format( filename ) )
         lastLine, lineCount = '', 0
         lastC = lastV = None
         with open( filepath, encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -245,7 +244,7 @@ class GreekNT( Bible ):
                 #if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #else: print( 'Possible encoding error -- expected', encoding )
         if self.thisBook:
-            vPrint( 'Verbose', "    {} words loaded from {}".format( len(self.thisBook), filename ) )
+            vPrint( 'Verbose', debuggingThisModule, "    {} words loaded from {}".format( len(self.thisBook), filename ) )
             self.stashBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
@@ -257,7 +256,7 @@ class GreekNT( Bible ):
 
         Used by the interlinearizer app.
         """
-        vPrint( 'Verbose', "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
+        vPrint( 'Verbose', debuggingThisModule, "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
 
         self.wordCounts = {} # Wordcount organised by BBB
         self.wordCounts['Total'] = 0
@@ -266,7 +265,7 @@ class GreekNT( Bible ):
             wordCount = len(self.books[BBB])
             self.wordCounts[BBB] = wordCount
             self.wordCounts['Total'] += wordCount
-            vPrint( 'Verbose', "  analyzeWords: {} has {} Greek words".format( BBB, wordCount ) )
+            vPrint( 'Verbose', debuggingThisModule, "  analyzeWords: {} has {} Greek words".format( BBB, wordCount ) )
             for reference,parsing,(punctuatedWord,actualWord,normalizedWord,lemma) in self.books[BBB]: # Stuff is: reference,parsing,words
                 # File the actual words
                 if actualWord not in self.actualWordsToNormalized:
@@ -368,23 +367,23 @@ class GreekNT( Bible ):
                     if changed:
                         self.lemmasToNormalizedWords[lemma] = newList
                         #print( "  now have", newList )
-        vPrint( 'Info', "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
-        vPrint( 'Info', "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
+        vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
+        vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,aW in enumerate( self.actualWordsToNormalized.keys() ):
                 print( "  ", aW, self.actualWordsToNormalized[aW] )
                 if j==6: break
-        vPrint( 'Info', "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
+        vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToActual.keys() ):
                 print( "  ", nW, self.normalizedWordsToActual[nW] )
                 if j==6: break
-        vPrint( 'Info', "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
+        vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToParsing.keys() ):
                 print( "  ", nW, self.normalizedWordsToParsing[nW] )
                 if j==6: break
-        vPrint( 'Info', "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
+        vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,lem in enumerate( self.lemmasToNormalizedWords.keys() ):
                 print( "  ", lem, self.lemmasToNormalizedWords[lem] )
@@ -445,10 +444,10 @@ def demo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    fileFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/sblgnt/' )
+    fileFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/sblgnt/' )
 
     # Demonstrate the Greek NT class
-    vPrint( 'Normal', "\nDemonstrating the Greek NT class…" )
+    vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Greek NT class…" )
     testReference = SimpleVerseKey('MAT', '1', '1')
     #print( testFolder, testReference )
     gNT = GreekNT( fileFolder ) # Load and process the XML

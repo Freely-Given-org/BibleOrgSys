@@ -37,7 +37,6 @@ SHORT_PROGRAM_NAME = "BibleObjects"
 PROGRAM_NAME = "Bible object handler"
 PROGRAM_VERSION = '0.14'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -223,19 +222,19 @@ def demo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    vPrint( 'Quiet', "\nTest Bible…" )
+    vPrint( 'Quiet', debuggingThisModule, "\nTest Bible…" )
     B = Bible()
-    vPrint( 'Quiet', B )
+    vPrint( 'Quiet', debuggingThisModule, B )
 
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
-        #vPrint( 'Quiet', "\nTest USFM Bible…" )
+        #vPrint( 'Quiet', debuggingThisModule, "\nTest USFM Bible…" )
         #from BibleOrgSys.Formats.USFMBible import USFMBible
-        #name, encoding, testFolder = "Matigsalug", 'utf-8', BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()
-            #vPrint( 'Quiet', UB )
+            #vPrint( 'Quiet', debuggingThisModule, UB )
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
             #UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )

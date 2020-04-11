@@ -42,7 +42,6 @@ SHORT_PROGRAM_NAME = "Door43ContentService"
 PROGRAM_NAME = "Door43 Content Service online handler"
 PROGRAM_VERSION = '0.04'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -153,7 +152,7 @@ class DCSBibles:
             print( "DCSBibles.fetchAllBibles()…" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
-        vPrint( 'Normal', f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
+        vPrint( 'Normal', debuggingThisModule, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
 
         if self.onlineVersion: # Get a list of available data sets
             self.BibleList = []
@@ -478,17 +477,17 @@ def demo() -> None:
     # Test the DCSBibles class (also used later)
     if BibleOrgSysGlobals.verbosityLevel > 0: print("\n\nA/ DCSBibles class test…")
     dcsBibles = DCSBibles()
-    vPrint( 'Quiet', dcsBibles, end='\n\n' )
+    vPrint( 'Quiet', debuggingThisModule, dcsBibles, end='\n\n' )
     #dcsBibles.load() # takes a minute
     #print( dcsBibles )
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vPrint( 'Quiet', "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', debuggingThisModule, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']
-            vPrint( 'Normal', f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
+            vPrint( 'Normal', debuggingThisModule, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
 
 
     testRefs = ( ('GEN','1','1'), ('GEN','2','2'), ('JER','33','3'), ('MAL','4','6'),
@@ -499,7 +498,7 @@ def demo() -> None:
             dcsBible1 = DCSBible( searchResult, downloadAllBooks=downloadAllBooks )
             try: dcsBible1.preload()
             except FileNotFoundError: assert downloadAllBooks == False
-            vPrint( 'Normal', dcsBible1, end='\n\n' )
+            vPrint( 'Normal', debuggingThisModule, dcsBible1, end='\n\n' )
             for testRef in testRefs:
                 verseKey = SimpleVerseKey( *testRef )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -518,7 +517,7 @@ def demo() -> None:
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', f"Found {len(searchResult)} 'en_ult' repos!" )
+                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ult' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )
@@ -536,7 +535,7 @@ def demo() -> None:
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', f"Found {len(searchResult)} 'en_ust' repos!" )
+                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ust' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )

@@ -55,7 +55,6 @@ SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 BCV_VERSION = '1.0'
 
@@ -127,8 +126,8 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
     import re
     #debuggingThisModule = True
 
-    vPrint( 'Info', f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
-    vPrint( 'Verbose', f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
+    vPrint( 'Info', debuggingThisModule, f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
+    vPrint( 'Verbose', debuggingThisModule, f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
@@ -1982,7 +1981,7 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        vPrint( 'Info', "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
         if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._rawLines # or else the book was totally blank
@@ -2446,7 +2445,7 @@ class InternalBibleBook:
             assert not self._indexedCVFlag
         if self._indexedCVFlag: return # Can only do it once
 
-        vPrint( 'Info', "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._CVIndex = InternalBibleCVIndex( self.workName, self.BBB )
         self._CVIndex.makeCVIndex( self._processedLines )
 
@@ -2485,7 +2484,7 @@ class InternalBibleBook:
             assert not self._indexedSectionsFlag
         if self._indexedSectionsFlag: return # Can only do it once
 
-        vPrint( 'Info', "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         self._SectionIndex = InternalBibleSectionIndex( self, self.containerBibleObject )
         self._SectionIndex.makeSectionIndex()
 
@@ -3084,7 +3083,7 @@ class InternalBibleBook:
                 verseNumberStr = '0'
             elif marker == 'cp':
                 cpChapterText = text.split( None, 1 )[0]
-                vPrint( 'Info', "In {}, chapter text went from {!r} to {!r} with cp marker".format( self.BBB, chapterNumberStr, cpChapterText ) )
+                vPrint( 'Info', debuggingThisModule, "In {}, chapter text went from {!r} to {!r} with cp marker".format( self.BBB, chapterNumberStr, cpChapterText ) )
                 chapterNumberStr = cpChapterText
                 if len(chapterNumberStr)>2 and chapterNumberStr[0]=='(' and chapterNumberStr[-1]==')': chapterNumberStr = chapterNumberStr[1:-1] # Remove parenthesis -- NOT SURE IF WE REALLY WANT TO DO THIS OR NOT ???
                 verseNumberStr = '0'
@@ -4816,7 +4815,7 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        vPrint( 'Info', '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
+        vPrint( 'Info', debuggingThisModule, '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
@@ -4860,7 +4859,7 @@ class InternalBibleBook:
         if verseLines: print( f"verseLines = {verseLines}" )
         assert not verseLines
 
-        vPrint( 'Info', "  " + _("Writing BCV book metadata…") )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Writing BCV book metadata…") )
         metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )
@@ -4885,7 +4884,7 @@ def demo() -> None:
     IBB.objectNameString = 'Dummy test Internal Bible Book object'
     IBB.objectTypeString = 'DUMMY'
     IBB.sourceFilepath = 'Nowhere'
-    vPrint( 'Quiet', IBB )
+    vPrint( 'Quiet', debuggingThisModule, IBB )
 # end of demo
 
 

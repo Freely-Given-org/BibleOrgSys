@@ -46,7 +46,6 @@ SHORT_PROGRAM_NAME = "Paratext7Bible"
 PROGRAM_NAME = "Paratext-7 Bible handler"
 PROGRAM_VERSION = '0.31'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -54,6 +53,7 @@ debuggingThisModule = False
 import sys
 import os
 import logging
+from pathlib import Path
 import multiprocessing
 from xml.etree.ElementTree import ElementTree
 
@@ -115,7 +115,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', " PTX7BibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', debuggingThisModule, " PTX7BibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -144,15 +144,15 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     ## See if there's an USXBible project here in this given folder
     #numFound = 0
     #UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    #vPrint( 'Info', UFns )
+    #vPrint( 'Info', debuggingThisModule, UFns )
     #filenameTuples = UFns.getConfirmedFilenames()
-    #vPrint( 'Verbose', "Confirmed:", len(filenameTuples), filenameTuples )
+    #vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
     #if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "Found {} USX files.".format( len(filenameTuples) ) )
     #if filenameTuples:
         #numFound += 1
 
     if numFound:
-        vPrint( 'Info', "PTX7BibleFileCheck got", numFound, givenFolderName )
+        vPrint( 'Info', debuggingThisModule, "PTX7BibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             dB = PTX7Bible( givenFolderName )
             if autoLoad or autoLoadBooks:
@@ -171,7 +171,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("PTX7BibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', "    PTX7BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', debuggingThisModule, "    PTX7BibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -198,9 +198,9 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
         ## See if there's an USX Bible here in this folder
         #UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        #vPrint( 'Info', UFns )
+        #vPrint( 'Info', debuggingThisModule, UFns )
         #filenameTuples = UFns.getConfirmedFilenames()
-        #vPrint( 'Verbose', "Confirmed:", len(filenameTuples), filenameTuples )
+        #vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
         #if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         #elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX files".format( len(filenameTuples) ) )
         #if filenameTuples:
@@ -208,7 +208,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             #numFound += 1
 
     if numFound:
-        vPrint( 'Info', "PTX7BibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', debuggingThisModule, "PTX7BibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             dB = PTX7Bible( foundProjects[0] )
             if autoLoad or autoLoadBooks:
@@ -317,7 +317,7 @@ def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
     if status != 9:
         logging.critical( _("PTX7 SSF file parsing error: {}").format( BibleObject.ssfFilepath ) )
     if BibleOrgSysGlobals.debugFlag: assert status == 9
-    vPrint( 'Info', "  " + _("Got {} PTX7 SSF entries:").format( len(PTXSettingsDict) ) )
+    vPrint( 'Info', debuggingThisModule, "  " + _("Got {} PTX7 SSF entries:").format( len(PTXSettingsDict) ) )
     if BibleOrgSysGlobals.verbosityLevel > 3:
         for key in sorted(PTXSettingsDict):
             print( "    {}: {}".format( key, PTXSettingsDict[key] ) )
@@ -365,7 +365,7 @@ def loadPTX7Languages( BibleObject ):
         languageName = languageFilename[:-4] # Remove the .lds
 
         languageFilepath = os.path.join( BibleObject.sourceFilepath, languageFilename )
-        vPrint( 'Info', "PTX7Bible.loading language from {}…".format( languageFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading language from {}…".format( languageFilepath ) )
 
         assert languageName not in PTXLanguages
         PTXLanguages[languageName] = {}
@@ -398,7 +398,7 @@ def loadPTX7Languages( BibleObject ):
                     PTXLanguages[languageName][sectionName][left] = right
                 else: print( "What's this language line? {!r}".format( line ) )
 
-    vPrint( 'Info', "  Loaded {} languages.".format( len(PTXLanguages) ) )
+    vPrint( 'Info', debuggingThisModule, "  Loaded {} languages.".format( len(PTXLanguages) ) )
     #print( 'PTXLanguages', PTXLanguages )
     return PTXLanguages
 # end of PTX7Bible.loadPTX7Languages
@@ -415,7 +415,7 @@ def loadPTXVersifications( BibleObject ):
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-    #vPrint( 'Info', "PTX7Bible.loading versification from {}…".format( versificationFilepath ) )
+    #vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading versification from {}…".format( versificationFilepath ) )
 
     #PTXVersifications = { 'VerseCounts':{}, 'Mappings':{}, 'Omitted':[] }
 
@@ -508,7 +508,7 @@ def loadPTXVersifications( BibleObject ):
                     except KeyError:
                         logging.error( "Unknown {!r} USFM book code in loadPTXVersifications from {}".format( USFMBookCode, versificationFilepath ) )
 
-    vPrint( 'Info', "  Loaded {} versifications.".format( len(PTXVersifications) ) )
+    vPrint( 'Info', debuggingThisModule, "  Loaded {} versifications.".format( len(PTXVersifications) ) )
     #print( 'PTXVersifications', PTXVersifications )
     return PTXVersifications
 # end of PTX7Bible.loadPTXVersifications
@@ -587,7 +587,7 @@ class PTX7Bible( Bible ):
             if unexpectedFolders:
                 logging.info( _("PTX7 preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', _("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -692,7 +692,7 @@ class PTX7Bible( Bible ):
         bookNamesFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( bookNamesFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.XMLTree = ElementTree().parse( bookNamesFilepath )
         assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -734,7 +734,7 @@ class PTX7Bible( Bible ):
         else:
             logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, thisFilename ) )
 
-        vPrint( 'Info', "  Loaded {} book names.".format( len(booksNamesDict) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} book names.".format( len(booksNamesDict) ) )
         #print( "booksNamesDict", booksNamesDict )
         if booksNamesDict: self.suppliedMetadata['PTX7']['BooksNames'] = booksNamesDict
     # end of PTX7Bible.loadPTXBooksNames
@@ -751,7 +751,7 @@ class PTX7Bible( Bible ):
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( projectUsersFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
         assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -807,7 +807,7 @@ class PTX7Bible( Bible ):
         else:
             logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, thisFilename ) )
 
-        vPrint( 'Info', "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         #print( "projectUsersDict", projectUsersDict )
         if projectUsersDict: self.suppliedMetadata['PTX7']['ProjectUsers'] = projectUsersDict
     # end of PTX7Bible.loadPTX7ProjectUsers
@@ -824,7 +824,7 @@ class PTX7Bible( Bible ):
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( projectUsersFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading project user field data from {}…".format( projectUsersFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user field data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
         assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -880,7 +880,7 @@ class PTX7Bible( Bible ):
         else:
             logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, thisFilename ) )
 
-        vPrint( 'Info', "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} project users.".format( len(projectUsersDict['Users']) ) )
         #print( "projectUsersDict", projectUsersDict )
         if projectUsersDict: self.suppliedMetadata['PTX7']['ProjectUserFields'] = projectUsersDict
     # end of PTX7Bible.loadPTX7ProjectUserFields
@@ -897,7 +897,7 @@ class PTX7Bible( Bible ):
         lexiconFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( lexiconFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
         self.XMLTree = ElementTree().parse( lexiconFilepath )
         assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -1017,7 +1017,7 @@ class PTX7Bible( Bible ):
         else:
             logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, thisFilename ) )
 
-        vPrint( 'Info', "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} lexicon entries.".format( len(lexiconDict['Entries']) ) )
         #print( "lexiconDict", lexiconDict )
         if lexiconDict: self.suppliedMetadata['PTX7']['Lexicon'] = lexiconDict
     # end of PTX7Bible.loadPTXLexicon
@@ -1034,7 +1034,7 @@ class PTX7Bible( Bible ):
         spellingStatusFilepath = os.path.join( self.sourceFilepath, thisFilename )
         if not os.path.exists( spellingStatusFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( spellingStatusFilepath )
         assert len( self.XMLTree ) # Fail here if we didn't load anything at all
 
@@ -1091,7 +1091,7 @@ class PTX7Bible( Bible ):
         else:
             logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, thisFilename ) )
 
-        vPrint( 'Info', "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} spelling status entries.".format( len(spellingStatusDict['SpellingWords']) ) )
         #print( "spellingStatusDict", spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX7']['SpellingStatus'] = spellingStatusDict
     # end of PTX7Bible.loadPTXSpellingStatus
@@ -1123,7 +1123,7 @@ class PTX7Bible( Bible ):
             commentsList[commenterName] = []
 
             commentFilepath = os.path.join( self.sourceFilepath, commentFilename )
-            vPrint( 'Info', "PTX7Bible.loading comments from {}…".format( commentFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading comments from {}…".format( commentFilepath ) )
 
             self.XMLTree = ElementTree().parse( commentFilepath )
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -1192,7 +1192,7 @@ class PTX7Bible( Bible ):
             else:
                 logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, commentFilename ) )
 
-        vPrint( 'Info', "  Loaded {} commenters.".format( len(commentsList) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} commenters.".format( len(commentsList) ) )
         #print( "commentsList", commentsList )
         # Call this 'PTXComments' rather than just 'Comments' which might just be a note on the particular version
         if commentsList: self.suppliedMetadata['PTX7']['PTXComments'] = commentsList
@@ -1225,7 +1225,7 @@ class PTX7Bible( Bible ):
             BiblicalTermsDict[versionName] = {}
 
             BiblicalTermsFilepath = os.path.join( self.sourceFilepath, BiblicalTermsFilename )
-            vPrint( 'Info', "PTX7Bible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
 
             self.XMLTree = ElementTree().parse( BiblicalTermsFilepath )
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -1305,7 +1305,7 @@ class PTX7Bible( Bible ):
             else:
                 logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, BiblicalTermsFilename ) )
 
-        vPrint( 'Info', "  Loaded {} Biblical terms.".format( len(BiblicalTermsDict) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} Biblical terms.".format( len(BiblicalTermsDict) ) )
         #print( "BiblicalTermsDict", BiblicalTermsDict )
         #print( BiblicalTermsDict['MBTV']['חָנוּן'] )
         if BiblicalTermsDict: self.suppliedMetadata['PTX7']['BiblicalTerms'] = BiblicalTermsDict
@@ -1338,7 +1338,7 @@ class PTX7Bible( Bible ):
             progressDict[versionName] = {}
 
             progressFilepath = os.path.join( self.sourceFilepath, progressFilename )
-            vPrint( 'Info', "PTX7Bible.loading Progress from {}…".format( progressFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading Progress from {}…".format( progressFilepath ) )
 
             self.XMLTree = ElementTree().parse( progressFilepath )
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -1494,7 +1494,7 @@ class PTX7Bible( Bible ):
             else:
                 logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, progressFilename ) )
 
-        vPrint( 'Info', "  Loaded {} progress.".format( len(progressDict) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} progress.".format( len(progressDict) ) )
         #print( "progressDict", progressDict )
         if progressDict: self.suppliedMetadata['PTX7']['Progress'] = progressDict
     # end of PTX7Bible.loadPTXProgress
@@ -1526,7 +1526,7 @@ class PTX7Bible( Bible ):
             printConfigDict[printConfigType] = {}
 
             printConfigFilepath = os.path.join( self.sourceFilepath, printConfigFilename )
-            vPrint( 'Info', "PTX7Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.XMLTree = ElementTree().parse( printConfigFilepath )
             assert len( self.XMLTree ) # Fail here if we didn't load anything at all
@@ -1582,7 +1582,7 @@ class PTX7Bible( Bible ):
             else:
                 logging.critical( _("Unprocessed {} tree in {}").format( self.XMLTree.tag, printConfigFilename ) )
 
-        vPrint( 'Info', "  Loaded {} printConfig.".format( len(printConfigDict) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} printConfig.".format( len(printConfigDict) ) )
         #print( "printConfigDict", printConfigDict )
         if printConfigDict: self.suppliedMetadata['PTX7']['PrintConfig'] = printConfigDict
     # end of PTX7Bible.loadPTXPrintConfig
@@ -1600,7 +1600,7 @@ class PTX7Bible( Bible ):
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
         if not os.path.exists( autocorrectFilepath ): return
 
-        vPrint( 'Info', "PTX7Bible.loading autocorrect from {}…".format( autocorrectFilepath ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading autocorrect from {}…".format( autocorrectFilepath ) )
         PTXAutocorrects = {}
 
         lineCount = 0
@@ -1629,7 +1629,7 @@ class PTX7Bible( Bible ):
                     PTXAutocorrects[bits[0]] = bits[1]
                 else: logging.error( "Invalid {!r} autocorrect line in PTX7Bible.loading autocorrect".format( line ) )
 
-        vPrint( 'Info', "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
         #print( 'PTXAutocorrects', PTXAutocorrects )
         if PTXAutocorrects: self.suppliedMetadata['PTX7']['Autocorrects'] = PTXAutocorrects
     # end of PTX7Bible.loadPTXAutocorrects
@@ -1656,7 +1656,7 @@ class PTX7Bible( Bible ):
             styleName = styleFilename[:-4] # Remove the .sty
 
             styleFilepath = os.path.join( self.sourceFilepath, styleFilename )
-            vPrint( 'Info', "PTX7Bible.loading style from {}…".format( styleFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading style from {}…".format( styleFilepath ) )
 
             assert styleName not in PTXStyles
             PTXStyles[styleName] = {}
@@ -1703,7 +1703,7 @@ class PTX7Bible( Bible ):
                 except UnicodeDecodeError:
                     logging.error( _("loadPTXStyles fails with encoding: {} on {}{}").format( encoding, styleFilepath, {} if encoding==encodings[-1] else ' -- trying again' ) )
 
-        vPrint( 'Info', "  Loaded {} style files.".format( len(PTXStyles) ) )
+        vPrint( 'Info', debuggingThisModule, "  Loaded {} style files.".format( len(PTXStyles) ) )
         #print( 'PTXStyles', PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX7']['Styles'] = PTXStyles
     # end of PTX7Bible.loadPTXStyles
@@ -1715,7 +1715,7 @@ class PTX7Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
@@ -1745,7 +1745,7 @@ class PTX7Bible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', _("loadBookMP( {} )").format( BBB_Filename ) )
+        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB_Filename ) )
 
         BBB, filename = BBB_Filename
         if BBB in self.books:
@@ -1769,7 +1769,7 @@ class PTX7Bible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -1811,7 +1811,7 @@ def __processPTX7Bible( parametersTuple ): # for demo
     Special shim function used for multiprocessing.
     """
     codeLetter, mainFolderName, subFolderName = parametersTuple
-    vPrint( 'Normal', "\nPTX7 {} Trying {}".format( codeLetter, subFolderName ) )
+    vPrint( 'Normal', debuggingThisModule, "\nPTX7 {} Trying {}".format( codeLetter, subFolderName ) )
     PTX7_Bible = PTX7Bible( mainFolderName, subFolderName )
     PTX7_Bible.load()
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
@@ -1840,31 +1840,31 @@ def demo() -> None:
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
-                            BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../../mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                            Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),
                             "OutputFiles/BOS_USFM2_Export/",
                             "OutputFiles/BOS_USFM2_Reexport/",
                             "OutputFiles/BOS_USFM3_Export/",
                             "OutputFiles/BOS_USFM3_Reexport/",
                             "MadeUpFolder/",
                             ):
-            vPrint( 'Quiet', "\nTestfolder is: {}".format( testFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nTestfolder is: {}".format( testFolder ) )
             result1 = PTX7BibleFileCheck( testFolder )
-            vPrint( 'Normal', "PTX7 TestA1", result1 )
+            vPrint( 'Normal', debuggingThisModule, "PTX7 TestA1", result1 )
             result2 = PTX7BibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', "PTX7 TestA2", result2 )
+            vPrint( 'Normal', debuggingThisModule, "PTX7 TestA2", result2 )
             result3 = PTX7BibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', "PTX7 TestA3", result3 )
+            vPrint( 'Normal', debuggingThisModule, "PTX7 TestA3", result3 )
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' )
     if 1: # specify testFolder containing a single module
-        vPrint( 'Normal', "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
+        vPrint( 'Normal', debuggingThisModule, "\nPTX7 B/ Trying single module in {}".format( testFolder ) )
         PTX_Bible = PTX7Bible( testFolder )
         PTX_Bible.load()
-        vPrint( 'Quiet', PTX_Bible )
+        vPrint( 'Quiet', debuggingThisModule, PTX_Bible )
 
     if 1: # specified single installed module
         singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
-        vPrint( 'Normal', "\nPTX7 C/ Trying installed {} module".format( singleModule ) )
+        vPrint( 'Normal', debuggingThisModule, "\nPTX7 C/ Trying installed {} module".format( singleModule ) )
         PTX_Bible = PTX7Bible( testFolder, singleModule )
         PTX_Bible.load()
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
@@ -1879,7 +1879,7 @@ def demo() -> None:
         nonEnglish = ( '', )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
-            vPrint( 'Normal', "\nPTX7 D{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', debuggingThisModule, "\nPTX7 D{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             PTX_Bible = PTX7Bible( testFolder, testFilename )
@@ -1895,7 +1895,7 @@ def demo() -> None:
 
         if BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [('E',testFolder,folderName) for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1904,7 +1904,7 @@ def demo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', "\nPTX7 E{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', debuggingThisModule, "\nPTX7 E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 PTX7Bible( testFolder, someFolder )
     if 1:
@@ -1916,7 +1916,7 @@ def demo() -> None:
             if os.access( testFolder, os.R_OK ):
                 PTX_Bible = PTX7Bible( testFolder )
                 PTX_Bible.load()
-                vPrint( 'Quiet', PTX_Bible )
+                vPrint( 'Quiet', debuggingThisModule, PTX_Bible )
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
                 #DBErrors = PTX_Bible.getErrors()
                 # print( DBErrors )
@@ -1937,7 +1937,7 @@ def demo() -> None:
             if os.access( testFolder, os.R_OK ):
                 PTX_Bible = PTX7Bible( testFolder )
                 PTX_Bible.load()
-                vPrint( 'Quiet', PTX_Bible )
+                vPrint( 'Quiet', debuggingThisModule, PTX_Bible )
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX_Bible.check()
                 #DBErrors = PTX_Bible.getErrors()
                 # print( DBErrors )
@@ -1949,7 +1949,7 @@ def demo() -> None:
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    vPrint( 'Quiet', "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
 
 if __name__ == '__main__':

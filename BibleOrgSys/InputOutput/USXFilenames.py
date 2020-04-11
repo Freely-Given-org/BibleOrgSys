@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
 PROGRAM_VERSION = '0.54'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -49,6 +48,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 # All of the following must be all UPPER CASE
@@ -248,7 +248,7 @@ class USXFilenames:
                     if not firstLines or len(firstLines)<3: continue
                     if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                     and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                        vPrint( 'Verbose', "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                        vPrint( 'Verbose', debuggingThisModule, "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                         continue # so it doesn't get added
                 resultList.append( (BBB, possibleFilename,) )
@@ -348,8 +348,8 @@ class USXFilenames:
 
 
 def demo() -> None:
-    """ 
-    Demonstrate finding files in some USX Bible folders. 
+    """
+    Demonstrate finding files in some USX Bible folders.
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 

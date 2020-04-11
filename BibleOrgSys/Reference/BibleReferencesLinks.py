@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "BibleReferencesLinks"
 PROGRAM_NAME = "Bible References Links handler"
 PROGRAM_VERSION = '0.40'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -78,7 +77,7 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            vPrint( 'Info', "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -206,7 +205,7 @@ class BibleReferencesLinks:
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #vPrint( 'Info', "Loading pickle file {}…".format( standardPickleFilepath ) )
+                #vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it

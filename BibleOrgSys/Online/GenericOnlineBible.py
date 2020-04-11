@@ -32,7 +32,6 @@ SHORT_PROGRAM_NAME = "GenericOnlineBible"
 PROGRAM_NAME = "Generic online Bible handler"
 PROGRAM_VERSION = '0.02'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -135,7 +134,7 @@ class GenericOnlineBible:
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #print( _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        #vPrint( 'Info', "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
+        #vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         ##print( "Request string is", repr(requestString) )
         #try: responseJSON = urllib.request.urlopen( requestString )

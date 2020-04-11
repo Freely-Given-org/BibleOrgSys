@@ -59,7 +59,6 @@ SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
 PROGRAM_NAME = "Get KJV Verse Number"
 PROGRAM_VERSION = '0.10'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':

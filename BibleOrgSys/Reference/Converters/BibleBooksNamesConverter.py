@@ -33,7 +33,6 @@ SHORT_PROGRAM_NAME = "BibleBooksNamesConverter"
 PROGRAM_NAME = "Bible Books Names Systems converter"
 PROGRAM_VERSION = '0.36'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -50,6 +49,7 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 @singleton # Can only ever have one instance
@@ -91,12 +91,12 @@ class BibleBooksNamesConverter:
         if not self.__XMLSystems: # Only ever do this once
             if folder==None: folder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
             self.__XMLFolder = folder
-            vPrint( 'Info', _("Loading book names systems from {}…").format( folder ) )
+            vPrint( 'Info', debuggingThisModule, _("Loading book names systems from {}…").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(self.__filenameBase.upper()+"_"):
                     booksNamesSystemCode = filepart[len(self.__filenameBase)+1:]
-                    vPrint( 'Verbose', _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
+                    vPrint( 'Verbose', debuggingThisModule, _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.__XMLSystems[booksNamesSystemCode]['tree'] = ElementTree().parse( os.path.join( folder, filename ) )
@@ -288,9 +288,9 @@ class BibleBooksNamesConverter:
             for BBB in bookList: # Just check this list is valid
                 if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
 
-        vPrint( 'Normal', _("Expanding input abbreviations…") )
+        vPrint( 'Normal', debuggingThisModule, _("Expanding input abbreviations…") )
         for systemName in self.__BookNamesSystemsDict:
-            vPrint( 'Info', _("  Expanding {}…").format( systemName ) )
+            vPrint( 'Info', debuggingThisModule, _("  Expanding {}…").format( systemName ) )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
             self.__expandedInputSystems[systemName] = self.expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
@@ -308,7 +308,7 @@ class BibleBooksNamesConverter:
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
         # We'll create a number of dictionaries
-        vPrint( 'Verbose', _("Importing data into Python dictionary…") )
+        vPrint( 'Verbose', debuggingThisModule, _("Importing data into Python dictionary…") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
             #print( booksNamesSystemCode )
@@ -387,7 +387,7 @@ class BibleBooksNamesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
             #pickle.dump( self.__expandedInputSystems, myFile )
@@ -440,7 +440,7 @@ class BibleBooksNamesConverter:
 
         raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -495,7 +495,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
@@ -542,7 +542,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.h' )
-        vPrint( 'Normal', _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 
         ifdefName = self.__filenameBase.upper() + "_Tables_h"

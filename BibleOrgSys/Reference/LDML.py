@@ -58,7 +58,6 @@ SHORT_PROGRAM_NAME = "LDML_Handler"
 PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
 PROGRAM_VERSION = '0.13'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 debuggingThisModule = False
 
@@ -76,6 +75,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 
@@ -3576,7 +3576,7 @@ class LDMLFile:
 
 
         # Main code for LDMLFile.load()
-        vPrint( 'Verbose', "    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {}…".format( self.filepath ) )
+        vPrint( 'Verbose', debuggingThisModule, "    Loading LOCALE DATA MARKUP LANGUAGE (LDML) file from {}…".format( self.filepath ) )
 
         LDMLData = {}
 
@@ -3844,7 +3844,7 @@ def demo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    mainTestFolder = BibleOrgSysGlobals.PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/SIL_NRSI/sldr/sldr/' )
+    mainTestFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/SIL_NRSI/sldr/sldr/' )
     if 1: # test load all SIL LDML files (cloned from GitHub)
         for something in sorted( os.listdir( mainTestFolder ) ):
             somepath = os.path.join( mainTestFolder, something )
@@ -3864,13 +3864,13 @@ def demo() -> None:
                         if os.access( somepath2, os.R_OK ):
                             thisLDMLfile = LDMLFile( somepath, something2 )
                             LDMLdict = thisLDMLfile.load()
-                            vPrint( 'Normal', "  Loaded {} and got:\n  {}".format( something2, LDMLdict ) )
+                            vPrint( 'Normal', debuggingThisModule, "  Loaded {} and got:\n  {}".format( something2, LDMLdict ) )
                             #if BibleOrgSysGlobals.strictCheckingFlag: thisLDMLfile.check()
                         else: print( "Sorry, test file '{}' is not readable on this computer.".format( somepath2 ) )
-        #vPrint( 'Normal', "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
+        #vPrint( 'Normal', debuggingThisModule, "\nPTX8 B/ Trying single module in {}".format( testFolder ) )
         #thisLDMLfile = LDMLFile( testFolder )
         #thisLDMLfile.load()
-        #vPrint( 'Quiet', "thisLDMLfile )
+        #vPrint( 'Quiet', debuggingThisModule, "thisLDMLfile )
 
 
 if __name__ == '__main__':
