@@ -70,7 +70,7 @@ class GenericOnlineBible:
                 4-6: Version code, e.g., ESV
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "GenericOnlineBible.__init__()" )
+            vPrint( 'Quiet', debuggingThisModule, "GenericOnlineBible.__init__()" )
 
         self.bookList = None
         self.books = {}
@@ -115,7 +115,7 @@ class GenericOnlineBible:
         Given an index, return the book object (or raise an IndexError)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"GenericOnlineBible.__getitem__( {keyIndex} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )" )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of GenericOnlineBible.__getitem__
@@ -132,11 +132,11 @@ class GenericOnlineBible:
         #Returns None if the data cannot be fetched.
         #"""
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+            #vPrint( 'Quiet', debuggingThisModule, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
         #vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        ##print( "Request string is", repr(requestString) )
+        ##vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
         #try: responseJSON = urllib.request.urlopen( requestString )
         #except urllib.error.URLError:
             #if BibleOrgSysGlobals.debugFlag: logging.critical( "GenericOnlineBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
@@ -151,10 +151,10 @@ class GenericOnlineBible:
         Given a BCV key, add the data to the cache.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"GenericOnlineBible.cacheVerse( {key}, {verseData} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )" )
 
         if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + _("Retrieved from cache") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             cachedVerseData = self.cache[str(key)]
             if cachedVerseData != verseData:
@@ -172,10 +172,10 @@ class GenericOnlineBible:
         Return None if not.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"GenericOnlineBible.getCachedVerseDataList( {key} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )" )
 
         if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + _("Retrieved from cache") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
 
@@ -191,7 +191,7 @@ class GenericOnlineBible:
         (Most platforms don't provide the context so an empty list is returned.)
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"GenericOnlineBible.getContextVerseData( {key} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )" )
 
         return self.getVerseDataList( key ), [] # No context
     # end of GenericOnlineBible.getContextVerseData
@@ -199,7 +199,7 @@ class GenericOnlineBible:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate how some of the above classes can be used.
     """
@@ -210,22 +210,29 @@ def demo() -> None:
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the GenericOnlineBible class
-        print()
+        vPrint( 'Quiet', debuggingThisModule, '' )
         dbpBible1 = GenericOnlineBible()
-        print( dbpBible1 )
+        vPrint( 'Quiet', debuggingThisModule, dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            print( verseKey )
+            vPrint( 'Quiet', debuggingThisModule, verseKey )
             dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
-            print( f"  Cache length: {len(dbpBible1.cache)}" )
-            print( " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            vPrint( 'Quiet', debuggingThisModule, f"  Cache length: {len(dbpBible1.cache)}" )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
          # Now test the GenericOnlineBible class caching
-        print()
+        vPrint( 'Quiet', debuggingThisModule, '' )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            print( verseKey, "cached" )
-            print( " ", dbpBible1.getCachedVerseDataList( verseKey ) )
-# end of demo
+            vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -235,7 +242,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GenericOnlineBible.py

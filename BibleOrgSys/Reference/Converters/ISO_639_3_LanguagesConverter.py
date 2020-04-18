@@ -37,7 +37,8 @@ programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-import logging, os.path
+import logging
+import os.path
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -91,7 +92,7 @@ class ISO_639_3_LanguagesConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
                 XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
 
@@ -380,7 +381,7 @@ class ISO_639_3_LanguagesConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -396,8 +397,15 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         lgC = ISO_639_3_LanguagesConverter().loadAndValidate() # Load the XML
-        print( lgC ) # Just print a summary
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, lgC ) # Just print a summary
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -407,7 +415,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ISO_639_3_LanguagesConverter.py

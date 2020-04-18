@@ -98,18 +98,18 @@ class GreekNT( Bible ):
         if os.path.isdir( self.sourceFilepath ): # We've been given a folder -- see if we can find the files
             # There's no standard for OSIS xml file naming
             fileList = os.listdir( self.sourceFilepath )
-            #print( len(fileList), fileList )
+            #vPrint( 'Quiet', debuggingThisModule, len(fileList), fileList )
             # First try looking for OSIS book names
             for filename in fileList:
                 if filename.lower().endswith('.txt'):
                     thisFilepath = os.path.join( self.sourceFilepath, filename )
-                    #if BibleOrgSysGlobals.debugFlag: print( "Trying {}…".format( thisFilepath ) )
+                    #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Trying {}…".format( thisFilepath ) )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
             logging.critical( "GreekNT: File {!r} is unreadable".format( self.sourceFilepath ) )
             return # No use continuing
-        #print( self.possibleFilenames ); halt
+        #vPrint( 'Quiet', debuggingThisModule, self.possibleFilenames ); halt
 
         self.name = self.givenName
         #gNTfc = GreekNTFileConverter( self.sourceFilepath ) # Load and process the XML
@@ -174,13 +174,13 @@ class GreekNT( Bible ):
             #       180102 N- ----DSF- ἐκκλησίᾳ· ἐκκλησίᾳ ἐκκλησίᾳ ἐκκλησία
             bits = line.split()
             assert len(bits) == 7
-            #print( bits )
+            #vPrint( 'Quiet', debuggingThisModule, bits )
 
             bn, cn, vn = bits[0][0:2], bits[0][2:4], bits[0][4:6]
             if bn[0]=='0': bn = bn[1:] # Remove any leading zero
             if cn[0]=='0': cn = cn[1:] # Remove any leading zero
             if vn[0]=='0': vn = vn[1:] # Remove any leading zero
-            #print( b, c, v )
+            #vPrint( 'Quiet', debuggingThisModule, b, c, v )
 
             POSCode = bits[1]
             assert len(POSCode) == 2
@@ -188,7 +188,7 @@ class GreekNT( Bible ):
 
             parsingCode = bits[2]
             assert len(parsingCode) == 8
-            #print( parsingCode )
+            #vPrint( 'Quiet', debuggingThisModule, parsingCode )
             for j,char in enumerate(parsingCode):
                 assert char in Greek.parsingCodes[j]
             assert parsingCode[0] in Greek.personCodes
@@ -220,10 +220,10 @@ class GreekNT( Bible ):
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #if not line: continue # Just discard blank lines
                     lastLine = line
-                    #print ( 'gNT file line is "' + line + '"' )
+                    #vPrint( 'Quiet', debuggingThisModule, 'gNT file line is "' + line + '"' )
                     #if line[0]=='#': continue # Just discard comment lines
                     unpackedLine = unpackLine( line )
-                    #print( unpackedLine )
+                    #vPrint( 'Quiet', debuggingThisModule, unpackedLine )
                     ref, grammar, words = unpackedLine
                     bn, cn, vn = ref
                     POSCode, parsingCode = grammar
@@ -238,11 +238,11 @@ class GreekNT( Bible ):
                     self.thisBook.addLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
-                    #print( reference,bits[1],bits[2] ); halt
+                    #vPrint( 'Quiet', debuggingThisModule, reference,bits[1],bits[2] ); halt
             #if 0: #except:
                 #logging.critical( "Invalid line in " + filepath + " -- line ignored at " + str(lineCount) )
-                #if lineCount > 1: print( 'Previous line was: ', lastLine )
-                #else: print( 'Possible encoding error -- expected', encoding )
+                #if lineCount > 1: vPrint( 'Quiet', debuggingThisModule, 'Previous line was: ', lastLine )
+                #else: vPrint( 'Quiet', debuggingThisModule, 'Possible encoding error -- expected', encoding )
         if self.thisBook:
             vPrint( 'Verbose', debuggingThisModule, "    {} words loaded from {}".format( len(self.thisBook), filename ) )
             self.stashBook( self.thisBook )
@@ -270,14 +270,14 @@ class GreekNT( Bible ):
                 # File the actual words
                 if actualWord not in self.actualWordsToNormalized:
                     self.actualWordsToNormalized[actualWord] = [([reference],normalizedWord,)]
-                    #print( "Saved", actualWord, "with", self.actualWordsToNormalized[actualWord] )
+                    #vPrint( 'Quiet', debuggingThisModule, "Saved", actualWord, "with", self.actualWordsToNormalized[actualWord] )
                 else: # we've already had this word before
                     previous = self.actualWordsToNormalized[actualWord]
-                    #print( "had", actualWord, "before with", previous, "now with", reference, normalizedWord )
+                    #vPrint( 'Quiet', debuggingThisModule, "had", actualWord, "before with", previous, "now with", reference, normalizedWord )
                     found = changed = False
                     newList = []
                     for oldRefList,oldnormalizedWord in previous:
-                        #print( "  oRL", oldRefList, "oP", oldnormalizedWord )
+                        #vPrint( 'Quiet', debuggingThisModule, "  oRL", oldRefList, "oP", oldnormalizedWord )
                         if normalizedWord == oldnormalizedWord:
                             assert not found
                             if reference not in oldRefList:
@@ -287,23 +287,23 @@ class GreekNT( Bible ):
                             found = True
                         else: newList.append( (oldRefList,oldnormalizedWord,) )
                     if not found:
-                        #print( "  Found a new", normalizedWord, "normalized word for", actualWord, "was", previous )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Found a new", normalizedWord, "normalized word for", actualWord, "was", previous )
                         newList.append( ([reference],normalizedWord,) )
                         changed = True
                     if changed:
                         self.actualWordsToNormalized[actualWord] = newList
-                        #print( "  now have", newList )
+                        #vPrint( 'Quiet', debuggingThisModule, "  now have", newList )
                 # File the normalized words
                 if normalizedWord not in self.normalizedWordsToActual:
                     self.normalizedWordsToActual[normalizedWord] = [([reference],actualWord,)]
-                    #print( "Saved", normalizedWord, "with", self.normalizedWordsToActual[normalizedWord] )
+                    #vPrint( 'Quiet', debuggingThisModule, "Saved", normalizedWord, "with", self.normalizedWordsToActual[normalizedWord] )
                 else: # we've already had this word before
                     previous = self.normalizedWordsToActual[normalizedWord]
-                    #print( "had", normalizedWord, "before with", previous, "now with", reference, actualWord )
+                    #vPrint( 'Quiet', debuggingThisModule, "had", normalizedWord, "before with", previous, "now with", reference, actualWord )
                     found = changed = False
                     newList = []
                     for oldRefList,oldActualWord in previous:
-                        #print( "  oRL", oldRefList, "oP", oldActualWord )
+                        #vPrint( 'Quiet', debuggingThisModule, "  oRL", oldRefList, "oP", oldActualWord )
                         if actualWord == oldActualWord:
                             assert not found
                             if reference not in oldRefList:
@@ -317,17 +317,17 @@ class GreekNT( Bible ):
                         changed = True
                     if changed:
                         self.normalizedWordsToActual[normalizedWord] = newList
-                        #print( "  now have", newList )
+                        #vPrint( 'Quiet', debuggingThisModule, "  now have", newList )
                 if normalizedWord not in self.normalizedWordsToParsing:
                     self.normalizedWordsToParsing[normalizedWord] = [([reference],parsing,)]
-                    #print( "Saved", normalizedWord, "with", self.normalizedWordsToParsing[normalizedWord] )
+                    #vPrint( 'Quiet', debuggingThisModule, "Saved", normalizedWord, "with", self.normalizedWordsToParsing[normalizedWord] )
                 else: # we've already had this word before
                     previous = self.normalizedWordsToParsing[normalizedWord]
-                    #print( "had", normalizedWord, "before with", previous, "now with", reference, parsing )
+                    #vPrint( 'Quiet', debuggingThisModule, "had", normalizedWord, "before with", previous, "now with", reference, parsing )
                     found = changed = False
                     newList = []
                     for oldRefList,oldParsing in previous:
-                        #print( "  oRL", oldRefList, "oP", oldParsing )
+                        #vPrint( 'Quiet', debuggingThisModule, "  oRL", oldRefList, "oP", oldParsing )
                         if parsing == oldParsing:
                             assert not found
                             if reference not in oldRefList:
@@ -341,18 +341,18 @@ class GreekNT( Bible ):
                         changed = True
                     if changed:
                         self.normalizedWordsToParsing[normalizedWord] = newList
-                        #print( "  now have", newList )
+                        #vPrint( 'Quiet', debuggingThisModule, "  now have", newList )
                 # File the self.lemmasToNormalizedWords
                 if lemma not in self.lemmasToNormalizedWords:
                     self.lemmasToNormalizedWords[lemma] = [([reference],normalizedWord,)]
-                    #print( "Saved", lemma, "with", self.lemmasToNormalizedWords[lemma] )
+                    #vPrint( 'Quiet', debuggingThisModule, "Saved", lemma, "with", self.lemmasToNormalizedWords[lemma] )
                 else: # we've already had this word before
                     previous = self.lemmasToNormalizedWords[lemma]
-                    #print( "had", lemma, "before with", previous, "now with", reference, normalizedWord )
+                    #vPrint( 'Quiet', debuggingThisModule, "had", lemma, "before with", previous, "now with", reference, normalizedWord )
                     found = changed = False
                     newList = []
                     for oldRefList,oldnormalizedWord in previous:
-                        #print( "  oRL", oldRefList, "oP", oldnormalizedWord )
+                        #vPrint( 'Quiet', debuggingThisModule, "  oRL", oldRefList, "oP", oldnormalizedWord )
                         if normalizedWord == oldnormalizedWord:
                             assert not found
                             if reference not in oldRefList:
@@ -366,35 +366,35 @@ class GreekNT( Bible ):
                         changed = True
                     if changed:
                         self.lemmasToNormalizedWords[lemma] = newList
-                        #print( "  now have", newList )
+                        #vPrint( 'Quiet', debuggingThisModule, "  now have", newList )
         vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
         vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,aW in enumerate( self.actualWordsToNormalized.keys() ):
-                print( "  ", aW, self.actualWordsToNormalized[aW] )
+                vPrint( 'Quiet', debuggingThisModule, "  ", aW, self.actualWordsToNormalized[aW] )
                 if j==6: break
         vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToActual.keys() ):
-                print( "  ", nW, self.normalizedWordsToActual[nW] )
+                vPrint( 'Quiet', debuggingThisModule, "  ", nW, self.normalizedWordsToActual[nW] )
                 if j==6: break
         vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToParsing.keys() ):
-                print( "  ", nW, self.normalizedWordsToParsing[nW] )
+                vPrint( 'Quiet', debuggingThisModule, "  ", nW, self.normalizedWordsToParsing[nW] )
                 if j==6: break
         vPrint( 'Info', debuggingThisModule, "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,lem in enumerate( self.lemmasToNormalizedWords.keys() ):
-                print( "  ", lem, self.lemmasToNormalizedWords[lem] )
+                vPrint( 'Quiet', debuggingThisModule, "  ", lem, self.lemmasToNormalizedWords[lem] )
                 if j==6: break
         if 0:
-            print( "The following actual words have multiple normalized forms:" )
+            vPrint( 'Quiet', debuggingThisModule, "The following actual words have multiple normalized forms:" )
             for j,aW in enumerate( self.actualWordsToNormalized.keys() ):
                 if len(self.actualWordsToNormalized[aW])>1:
-                    print( "  ", aW )
+                    vPrint( 'Quiet', debuggingThisModule, "  ", aW )
                     for entry in self.actualWordsToNormalized[aW]:
-                        print( "    ", entry[1], self.normalizedWordsToParsing[entry[1]], entry[0] )
+                        vPrint( 'Quiet', debuggingThisModule, "    ", entry[1], self.normalizedWordsToParsing[entry[1]], entry[0] )
     # end of analyzeWords
 
 
@@ -410,7 +410,7 @@ class GreekNT( Bible ):
         #if BBB in self.books:
             #for stuff in self.books[BBB]: # Stuff is: reference,parsing,words
                 #if chapterString==stuff[0][1] and verseString==stuff[0][2]:
-                    ##print( reference, stuff )
+                    ##vPrint( 'Quiet', debuggingThisModule, reference, stuff )
                     #data.append( stuff )
         #if data:
             ##myData = []
@@ -418,7 +418,7 @@ class GreekNT( Bible ):
             ##    myData.append( (word.replace('/','='), lemma,) )
             ##return myData
             #return data
-        #else: print( "oops. empty verse data for", reference )
+        #else: vPrint( 'Quiet', debuggingThisModule, "oops. empty verse data for", reference )
     ## end of getVerseDataList
 
     #def xgetVerseText( self, reference ):
@@ -432,13 +432,13 @@ class GreekNT( Bible ):
         ##if self.originalText: self.originalText = self.originalText.replace('/','=') # We use = for morpheme break character not /
         #self.currentText = self.originalText
         #if self.originalText: return self.originalText
-        #else: print( "oops. empty verse text for", reference )
+        #else: vPrint( 'Quiet', debuggingThisModule, "oops. empty verse text for", reference )
     ## end of getVerseText
 # end of GreekNT class
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -449,20 +449,27 @@ def demo() -> None:
     # Demonstrate the Greek NT class
     vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Greek NT class…" )
     testReference = SimpleVerseKey('MAT', '1', '1')
-    #print( testFolder, testReference )
+    #vPrint( 'Quiet', debuggingThisModule, testFolder, testReference )
     gNT = GreekNT( fileFolder ) # Load and process the XML
     gNT.loadBooks()
     #gNT.analyzeWords() # File and sort the Greek words for later use
-    print( gNT ) # Just print a summary
-    print()
-    print( testReference, gNT.getVerseDataList( testReference ) )
-    print()
+    vPrint( 'Quiet', debuggingThisModule, gNT ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, '' )
+    vPrint( 'Quiet', debuggingThisModule, testReference, gNT.getVerseDataList( testReference ) )
+    vPrint( 'Quiet', debuggingThisModule, '' )
 
     for testReference in SimpleVerseKey('MAT', '28', '1'), SimpleVerseKey('MRK','2','2'), SimpleVerseKey('REV','21','21'):
         verseText = gNT.getVerseText( testReference )
-        print( testReference, verseText )
-        print()
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, testReference, verseText )
+        vPrint( 'Quiet', debuggingThisModule, '' )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -472,7 +479,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GreekNT.py

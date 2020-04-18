@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# USFM2USX.py
+# Bible2USX.py
 #
 # Command-line app to export a USX (XML) Bible.
 #
@@ -25,7 +25,7 @@
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
 This app inputs any known type of Bible file(s)
-    and then exports a USX version in the (default) OutputFiles folder
+    and then exports a USX version in the (default) BOSOutputFiles folder
         (inside the BibleOrgSys folder in your home folder).
     See https://ubsicap.github.io/usfm/ for more information about USFM.
     See https://ubsicap.github.io/usx/ for more information about USX.
@@ -35,36 +35,38 @@ Of course, you must already have Python3 installed on your system.
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/USFM2USX.py path/to/BibleFileOrFolder
+        Apps/Bible2USX.py path/to/BibleFileOrFolder
 
 You can discover the version with
-        Apps/USFM2USX.py --version
+        Apps/Bible2USX.py --version
 
 You can discover the available command line parameters with
-        Apps/USFM2USX.py --help
+        Apps/Bible2USX.py --help
 
     e.g., for verbose mode
-        Apps/USFM2USX.py --verbose path/to/BibleFileOrFolder
+        Apps/Bible2USX.py --verbose path/to/BibleFileOrFolder
     or
-        Apps/USFM2USX.py -v path/to/BibleFileOrFolder
+        Apps/Bible2USX.py -v path/to/BibleFileOrFolder
 
 This app also demonstrates how little actual code is required to use the BOS
     to load a Bible (in any of a large range of formats — see UnknownBible.py)
     and then to export it in your desired format (see options in BibleWriter.py).
-There is also a minimum version of this same app (Apps/USFM2USX.minimal.py)
+There is also a minimum version of this same app (Apps/Bible2USX.minimal.py)
     which really shows how few lines are required to use the BOS for Bible conversions.
 
 The BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
 """
 
-from gettext import gettext as _
+# from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-08' # by RJH
-SHORT_PROGRAM_NAME = "USFM2USX"
-PROGRAM_NAME = "USFM to USX"
-PROGRAM_VERSION = '0.03'
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+SHORT_PROGRAM_NAME = "Bible2USX"
+PROGRAM_NAME = "Bible to USX"
+PROGRAM_VERSION = '0.04'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 import os
@@ -77,12 +79,27 @@ from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
-def main():
+def briefDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+# end of Bible2USX.briefDemo()
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+# end of Bible2USX.fullDemo()
+
+
+def main() -> None:
     """
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a USX Bible (in the default OutputFiles folder).
+        and then export a USX Bible (in the default BOSOutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -106,7 +123,7 @@ def main():
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
             vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
-                shutil.rmtree( defaultOutputFolder )
+            shutil.rmtree( defaultOutputFolder )
 
         vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
@@ -117,10 +134,12 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         vPrint( 'Info', debuggingThisModule, f"  Result was: {result}" )
-        print( f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
-# end of main
+        vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
+# end of Bible2USX.main()
 
-if __name__ == '__main__':
+def run() -> None:
+    """
+    """
     from multiprocessing import freeze_support
     freeze_support() # Multiprocessing support for frozen Windows executables
 
@@ -133,4 +152,8 @@ if __name__ == '__main__':
 
     # Do the BOS close-down stuff
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
-# end of USFM2USX.py
+# end of Bible2USX.run()
+
+if __name__ == '__main__':
+    run()
+# end of Bible2USX.py

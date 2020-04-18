@@ -232,6 +232,13 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
 # end of ISO_639_3_LanguagesTests class
 
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support() # Multiprocessing support for frozen Windows executables

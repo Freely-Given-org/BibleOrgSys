@@ -5,7 +5,7 @@
 #
 # Module handling "e-Sword" Bible module files
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,9 +31,9 @@ e-Sword Bible modules use RTF internally for formatting.
     and http://e-sword-users.org/users/node/3969
 
     Database has one verse per entry (KJV versification)
-    OT has 23145 lines
-    NT has 7957 lines
-    Bible has 31102 lines.
+    OT has 23,145 lines
+    NT has 7,957 lines
+    Bible has 31,102 lines.
 
 e.g.,
     In the beginning of God's preparing the heavens and the earth--
@@ -46,17 +46,16 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
-from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "e-SwordBible"
 PROGRAM_NAME = "e-Sword Bible format handler"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
 
+from gettext import gettext as _
 import logging
 import os
 import re
@@ -141,7 +140,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             if autoLoadBooks: eSB.load() # Load and process the database
             return eSB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -207,9 +206,9 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
         #if debuggingThisModule:
-        print( "ESwordModule.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
+        vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
         assert originalLine is None or '\r' not in originalLine
-    #print( "ESwordModule.handleRTFLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+    #vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleRTFLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
     line = originalLine
 
     writtenV = False
@@ -228,25 +227,25 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
     while True: # Find patterns like \\'d3
         match = re.search( r"\\'[0-9a-f][0-9a-f]", line )
         if not match: break
-        #print( originalLine )
-        #print( line )
+        #vPrint( 'Quiet', debuggingThisModule, originalLine )
+        #vPrint( 'Quiet', debuggingThisModule, line )
         #h1, h2 = line[match.start()+2], line[match.start()+3]
         i = int( line[match.start()+2:match.end()], 16 ) # Convert two hex characters to decimal
-        #print( h1, h2, i, chr(i) )
+        #vPrint( 'Quiet', debuggingThisModule, h1, h2, i, chr(i) )
         line = line[:match.start()] + chr( i ) + line[match.end():]
-        #print( line )
-        #print( repr(line) )
+        #vPrint( 'Quiet', debuggingThisModule, line )
+        #vPrint( 'Quiet', debuggingThisModule, repr(line) )
     while True: # Find patterns like \\u253?
         match = re.search( r'\\u[1-2][0-9][0-9]\?', line )
         if not match: break
-        #print( originalLine )
-        #print( line )
+        #vPrint( 'Quiet', debuggingThisModule, originalLine )
+        #vPrint( 'Quiet', debuggingThisModule, line )
         #h1, h2 = line[match.start()+2], line[match.start()+3]
         i = int( line[match.start()+2:match.end()-1] ) # Convert three digits to decimal
-        #print( h1, h2, i, chr(i) )
+        #vPrint( 'Quiet', debuggingThisModule, h1, h2, i, chr(i) )
         line = line[:match.start()] + chr( i ) + line[match.end():]
-        #print( line )
-        #print( repr(line) )
+        #vPrint( 'Quiet', debuggingThisModule, line )
+        #vPrint( 'Quiet', debuggingThisModule, repr(line) )
 
     # We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
     # Try to guess some semantic formatting
@@ -272,8 +271,8 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
                 '\\cf15','\\cf14','\\cf10', '\\cf1','\\cf0',
                 '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
             if line.startswith( stuff ): line = line[len(stuff):]; changed = True
-            #print( "stuff", repr(stuff) )
-            #print( "line", repr(line[:20]) )
+            #vPrint( 'Quiet', debuggingThisModule, "stuff", repr(stuff) )
+            #vPrint( 'Quiet', debuggingThisModule, "line", repr(line[:20]) )
             #if line.startswith( '\\pd' ): halt
         if not changed: break
     for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
@@ -345,15 +344,15 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
 
 
     if '#$#' in line: # We need to break the original line into different USFM markers
-        #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        #vPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '#$#' )
         assert len(segments) >= 2
-        #print( " segments (split by backslash):", segments )
+        #vPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
             if segment and segment[0] == '\\':
                 bits = segment.split( None, 1 )
-                #print( " bits", bits )
+                #vPrint( 'Quiet', debuggingThisModule, " bits", bits )
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
@@ -366,13 +365,13 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
                 else:
                     assert len(bits) == 2
                     if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                        print( "line", repr(line) )
-                        print( "seg", repr(segment) )
-                        print( "segments:", segments )
-                        print( "bits", bits )
-                        print( "marker", marker )
-                        print( "leftovers", repr(leftovers) )
+                        vPrint( 'Quiet', debuggingThisModule, "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+                        vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
+                        vPrint( 'Quiet', debuggingThisModule, "seg", repr(segment) )
+                        vPrint( 'Quiet', debuggingThisModule, "segments:", segments )
+                        vPrint( 'Quiet', debuggingThisModule, "bits", bits )
+                        vPrint( 'Quiet', debuggingThisModule, "marker", marker )
+                        vPrint( 'Quiet', debuggingThisModule, "leftovers", repr(leftovers) )
                     if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
@@ -403,7 +402,7 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
             bookObject.addLine( 'ip', line )
         else:
             if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            #print( BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(line) )
             bookObject.addLine( 'v', '{} {}'.format( V, line ) )
 # end of ESwordModule.handleRTFLine
 
@@ -429,9 +428,9 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
         #if debuggingThisModule:
-            #print( "ESwordModule.handleHTMLLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
+            #vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleHTMLLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
         assert originalLine is None or '\r' not in originalLine
-    #print( "ESwordModule.handleHTMLLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+    #vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleHTMLLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
     line = originalLine
 
     if line and line[0]=='\n': line = line[1:] # Remove leading newline
@@ -443,15 +442,15 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
     if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
 
     if '#$#' in line: # We need to break the original line into different USFM markers
-        #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        #vPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '#$#' )
         assert len(segments) >= 2
-        #print( " segments (split by backslash):", segments )
+        #vPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
             if segment and segment[0] == '\\':
                 bits = segment.split( None, 1 )
-                #print( " bits", bits )
+                #vPrint( 'Quiet', debuggingThisModule, " bits", bits )
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
@@ -464,13 +463,13 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
                 else:
                     assert len(bits) == 2
                     if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                        print( "line", repr(line) )
-                        print( "seg", repr(segment) )
-                        print( "segments:", segments )
-                        print( "bits", bits )
-                        print( "marker", marker )
-                        print( "leftovers", repr(leftovers) )
+                        vPrint( 'Quiet', debuggingThisModule, "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+                        vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
+                        vPrint( 'Quiet', debuggingThisModule, "seg", repr(segment) )
+                        vPrint( 'Quiet', debuggingThisModule, "segments:", segments )
+                        vPrint( 'Quiet', debuggingThisModule, "bits", bits )
+                        vPrint( 'Quiet', debuggingThisModule, "marker", marker )
+                        vPrint( 'Quiet', debuggingThisModule, "leftovers", repr(leftovers) )
                     if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         if BibleOrgSysGlobals.debugFlag:
                             assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
@@ -498,7 +497,7 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
             bookObject.addLine( 'ip', line )
         else:
             if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            #print( BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(line) )
             bookObject.addLine( 'v', '{} {}'.format( V, line ) )
 # end of ESwordModule.handleHTMLLine
 
@@ -524,10 +523,10 @@ def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGloba
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
         if debuggingThisModule:
-            print( "ESwordModule.handleESwordLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
+            vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
         assert originalLine is None or '\r' not in originalLine
 
-    #print( "ESwordModule.handleESwordLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+    #vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
     if originalLine is None: # We don't have an entry for this C:V
         return
 
@@ -540,7 +539,7 @@ def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGloba
         return
     else:
         if debuggingThisModule:
-            print( "ESwordModule.handleESwordLine: What's this: {} {} {}:{} {!r}".format( myName, BBB, C, V, originalLine ) )
+            vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine: What's this: {} {} {}:{} {!r}".format( myName, BBB, C, V, originalLine ) )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # What's this???
         bookObject.addLine( 'v', '{} {}'.format( V, originalLine ) )
 # end of ESwordModule.handleESwordLine
@@ -556,7 +555,7 @@ class ESwordBible( Bible ):
         Constructor: just sets up the Bible object.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+            vPrint( 'Quiet', debuggingThisModule, "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -598,10 +597,10 @@ class ESwordBible( Bible ):
         #"""
         #if BibleOrgSysGlobals.debugFlag:
             #if 0 and debuggingThisModule:
-                #print( "ESwordBible.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
+                #vPrint( 'Quiet', debuggingThisModule, "ESwordBible.handleRTFLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
             #assert originalLine is None or ('\n' not in originalLine and '\r' not in originalLine )
 
-        ##print( BBB, C, V, repr(originalLine) )
+        ##vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(originalLine) )
         #line = originalLine
 
         #writtenV = False
@@ -619,25 +618,25 @@ class ESwordBible( Bible ):
         #while True: # Find patterns like \\'d3
             #match = re.search( r"\\'[0-9a-f][0-9a-f]", line )
             #if not match: break
-            ##print( originalLine )
-            ##print( line )
+            ##vPrint( 'Quiet', debuggingThisModule, originalLine )
+            ##vPrint( 'Quiet', debuggingThisModule, line )
             ##h1, h2 = line[match.start()+2], line[match.start()+3]
             #i = int( line[match.start()+2:match.end()], 16 ) # Convert two hex characters to decimal
-            ##print( h1, h2, i, chr(i) )
+            ##vPrint( 'Quiet', debuggingThisModule, h1, h2, i, chr(i) )
             #line = line[:match.start()] + chr( i ) + line[match.end():]
-            ##print( line )
-            ##print( repr(line) )
+            ##vPrint( 'Quiet', debuggingThisModule, line )
+            ##vPrint( 'Quiet', debuggingThisModule, repr(line) )
         #while True: # Find patterns like \\u253?
             #match = re.search( r"\\u[1-2][0-9][0-9]\?", line )
             #if not match: break
-            ##print( originalLine )
-            ##print( line )
+            ##vPrint( 'Quiet', debuggingThisModule, originalLine )
+            ##vPrint( 'Quiet', debuggingThisModule, line )
             ##h1, h2 = line[match.start()+2], line[match.start()+3]
             #i = int( line[match.start()+2:match.end()-1] ) # Convert three digits to decimal
-            ##print( h1, h2, i, chr(i) )
+            ##vPrint( 'Quiet', debuggingThisModule, h1, h2, i, chr(i) )
             #line = line[:match.start()] + chr( i ) + line[match.end():]
-            ##print( line )
-            ##print( repr(line) )
+            ##vPrint( 'Quiet', debuggingThisModule, line )
+            ##vPrint( 'Quiet', debuggingThisModule, repr(line) )
 
         ## We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
         ## Try to guess some semantic formatting
@@ -720,15 +719,15 @@ class ESwordBible( Bible ):
 
 
         #if '#$#' in line: # We need to break the original line into different USFM markers
-            ##print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            ##vPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
             #segments = line.split( '#$#' )
             #assert len(segments) >= 2
-            ##print( " segments (split by backslash):", segments )
+            ##vPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
             #leftovers = ''
             #for segment in segments:
                 #if segment and segment[0] == '\\':
                     #bits = segment.split( None, 1 )
-                    ##print( " bits", bits )
+                    ##vPrint( 'Quiet', debuggingThisModule, " bits", bits )
                     #marker = bits[0][1:]
                     #if len(bits) == 1:
                         ##if bits[0] in ('\\p','\\b'):
@@ -741,13 +740,13 @@ class ESwordBible( Bible ):
                     #else:
                         #assert len(bits) == 2
                         #if 0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            #print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                            #print( "line", repr(line) )
-                            #print( "seg", repr(segment) )
-                            #print( "segments:", segments )
-                            #print( "bits", bits )
-                            #print( "marker", marker )
-                            #print( "leftovers", repr(leftovers) )
+                            #vPrint( 'Quiet', debuggingThisModule, "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
+                            #vPrint( 'Quiet', debuggingThisModule, "seg", repr(segment) )
+                            #vPrint( 'Quiet', debuggingThisModule, "segments:", segments )
+                            #vPrint( 'Quiet', debuggingThisModule, "bits", bits )
+                            #vPrint( 'Quiet', debuggingThisModule, "marker", marker )
+                            #vPrint( 'Quiet', debuggingThisModule, "leftovers", repr(leftovers) )
                         #if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                             #if BibleOrgSysGlobals.debugFlag:
                                 #assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'p', 'q1','q2','q3', 'm', 'r', 'b',)
@@ -772,7 +771,7 @@ class ESwordBible( Bible ):
             ##halt
         #else: # no newlines in the middle
             #if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
-            ##print( BBB, C, V, repr(line) )
+            ##vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(line) )
             #bookObject.addLine( 'v', '{} {}'.format( V, line ) )
     ## end of ESwordBible.handleRTFLine
 
@@ -781,7 +780,7 @@ class ESwordBible( Bible ):
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("checkForExtraMaterial( …, … )") )
+            vPrint( 'Quiet', debuggingThisModule, _("checkForExtraMaterial( …, … )") )
 
         vPrint( 'Quiet', debuggingThisModule, _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
@@ -789,13 +788,13 @@ class ESwordBible( Bible ):
         for row in cursor:
             assert len(row) == 4
             BBBn, C, V, text = row # First three are integers, the last is a string
-            #print( repr(BBBn), repr(C), repr(V), repr(text) )
-            if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
+            #vPrint( 'Quiet', debuggingThisModule, repr(BBBn), repr(C), repr(V), repr(text) )
+            if BBBn<1 or BBBn>66: vPrint( 'Quiet', debuggingThisModule, "Found book number {}".format( BBBn ) )
             BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn )
             if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 logging.error( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
+                    vPrint( 'Quiet', debuggingThisModule, "checkForExtraMaterial: {} contains {} {}:{} {!r}".format( self.name, BBB, C, V, text ) )
                     #halt
     # end of ESwordBible.checkForExtraMaterial
 
@@ -805,7 +804,7 @@ class ESwordBible( Bible ):
         Load Bible details out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "preload()" )
+            vPrint( 'Quiet', debuggingThisModule, "preload()" )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -827,7 +826,7 @@ class ESwordBible( Bible ):
         row = self.cursor.fetchone()
         for key in row.keys():
             self.suppliedMetadata['e-Sword-Bible'][key] = row[key]
-        #print( self.suppliedMetadata['e-Sword-Bible'] ); halt
+        #vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['e-Sword-Bible'] ); halt
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
@@ -838,9 +837,9 @@ class ESwordBible( Bible ):
         #self.cursor.execute( 'select * from Bible' )
         #rows = self.cursor.fetchall()
         #numRows = len(rows)
-        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
+        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, '{} rows found'.format( numRows ) )
         #BBBn1 = rows[0][0]
-        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
+        #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, 'First book number is {}'.format( BBBn1 ) )
         #del rows
         #BBB1 = None
         #if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
@@ -872,15 +871,15 @@ class ESwordBible( Bible ):
             #if 0:
                 #cursor.execute( 'select * from Bible' )
                 #rows = cursor.fetchall()
-                #print( "rows", len(rows) )
+                #vPrint( 'Quiet', debuggingThisModule, "rows", len(rows) )
                 #for row in rows:
                     #assert len(row) == 4
                     #BBBn, C, V, text = row # First three are integers, the last is a string
-                    #print( BBBn, C, V, repr(text) )
+                    #vPrint( 'Quiet', debuggingThisModule, BBBn, C, V, repr(text) )
                     #if C==2: break
                 #del rows # Takes a lot of memory
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            #print( "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
         #if BBB1 != BBB:
             #logging.critical( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
             #loadErrors.append( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
@@ -900,7 +899,7 @@ class ESwordBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("load()") )
+            vPrint( 'Quiet', debuggingThisModule, _("load()") )
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -923,7 +922,7 @@ class ESwordBible( Bible ):
         #row = cursor.fetchone()
         #for key in row.keys():
             #self.suppliedMetadata['e-Sword-Bible'][key] = row[key]
-        ##print( self.suppliedMetadata['e-Sword-Bible'] ); halt
+        ##vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['e-Sword-Bible'] ); halt
         ##if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         ##if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         #if 'encryption' in self.suppliedMetadata['e-Sword-Bible']:
@@ -935,9 +934,9 @@ class ESwordBible( Bible ):
         self.cursor.execute( 'select * from Bible' )
         rows = self.cursor.fetchall()
         numRows = len(rows)
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, '{} rows found'.format( numRows ) )
         BBBn1 = rows[0][0]
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, 'First book number is {}'.format( BBBn1 ) )
         del rows
         BBB1 = None
         if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
@@ -969,15 +968,15 @@ class ESwordBible( Bible ):
             #if 0:
                 #self.cursor.execute( 'select * from Bible' )
                 #rows = self.cursor.fetchall()
-                #print( "rows", len(rows) )
+                #vPrint( 'Quiet', debuggingThisModule, "rows", len(rows) )
                 #for row in rows:
                     #assert len(row) == 4
                     #BBBn, C, V, text = row # First three are integers, the last is a string
-                    #print( BBBn, C, V, repr(text) )
+                    #vPrint( 'Quiet', debuggingThisModule, BBBn, C, V, repr(text) )
                     #if C==2: break
                 #del rows # Takes a lot of memory
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
+            vPrint( 'Quiet', debuggingThisModule, "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
         if BBB1 != BBB:
             logging.critical( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
             loadErrors.append( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
@@ -1009,11 +1008,11 @@ class ESwordBible( Bible ):
                 row = self.cursor.fetchone()
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
-                #print( "something wrong at", BBB, C, V )
+                #vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
-                #print( row )
+                #vPrint( 'Quiet', debuggingThisModule, row )
                 line = None
-            #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
+            #vPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
             if line is None: logging.warning( "ESwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
@@ -1032,11 +1031,11 @@ class ESwordBible( Bible ):
                     if '\r' in line or '\n' in line:
                         if BibleOrgSysGlobals.debugFlag:
                             logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
-                        #print( repr(line) )
+                        #vPrint( 'Quiet', debuggingThisModule, repr(line) )
                     while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' ) # Replace CR/LFs in the middle
 
-            #print( "e-Sword.load", BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, "e-Sword.load", BBB, C, V, repr(line) )
             handleESwordLine( self, self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
@@ -1045,7 +1044,7 @@ class ESwordBible( Bible ):
                     if haveLines:
                         vPrint( 'Verbose', debuggingThisModule, "  e-Sword saving", BBB, bookCount+1 )
                         self.stashBook( thisBook )
-                    #else: print( "Not saving", BBB )
+                    #else: vPrint( 'Quiet', debuggingThisModule, "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
                     BBB = self.BibleOrganisationalSystem.getNextBookCode( BBB )
@@ -1073,7 +1072,7 @@ class ESwordBible( Bible ):
             self.checkForExtraMaterial( self.cursor, self.BibleOrganisationalSystem )
         self.cursor.close()
         del self.cursor
-        if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
+        if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
         self.applySuppliedMetadata( 'e-Sword-Bible' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
     # end of ESwordBible.load
@@ -1084,10 +1083,10 @@ class ESwordBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("loadBook( {} )").format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading e-SwordBible {} for {}".format( BBB, self.name ) )
@@ -1116,11 +1115,11 @@ class ESwordBible( Bible ):
                 row = self.cursor.fetchone()
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
-                #print( "something wrong at", BBB, C, V )
+                #vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
-                #print( row )
+                #vPrint( 'Quiet', debuggingThisModule, row )
                 line = None
-            #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
+            #vPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
             if line is None: logging.warning( "ESwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
@@ -1139,11 +1138,11 @@ class ESwordBible( Bible ):
                     if '\r' in line or '\n' in line:
                         if BibleOrgSysGlobals.debugFlag:
                             logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
-                        #print( repr(line) )
+                        #vPrint( 'Quiet', debuggingThisModule, repr(line) )
                     while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' ) # Replace CR/LFs in the middle
 
-            #print( "e-Sword.load", BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, "e-Sword.load", BBB, C, V, repr(line) )
             handleESwordLine( self, self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
@@ -1156,7 +1155,7 @@ class ESwordBible( Bible ):
                     if haveLines:
                         vPrint( 'Verbose', debuggingThisModule, "  ESwordBible saving", BBB )
                         self.stashBook( thisBook )
-                    #else: print( "Not saving", BBB )
+                    #else: vPrint( 'Quiet', debuggingThisModule, "Not saving", BBB )
                     break
 
             if ourGlobals['haveParagraph']:
@@ -1198,8 +1197,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 #line = removeUSFMCharacterField( marker, line, closedFlag=None )
             #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 #while '\\'+marker+' ' in line:
-                    ##print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
-                    ##print( "was", "'"+line+"'" )
+                    ##vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                    ##vPrint( 'Quiet', debuggingThisModule, "was", "'"+line+"'" )
                     #ix = line.find( '\\'+marker+' ' )
                     #assert ix != -1
                     #ixEnd = line.find( '\\', ix+len(marker)+2 )
@@ -1215,8 +1214,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             #line = re.sub( r'(\\f [a-z+*]{1,4} )', '<RF>', line ) # Handle one to three character callers
             #line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
             ##if '\\f' in originalLine:
-                ##print( "o", originalLine )
-                ##print( "n", line )
+                ##vPrint( 'Quiet', debuggingThisModule, "o", originalLine )
+                ##vPrint( 'Quiet', debuggingThisModule, "n", line )
                 ##halt
 
         if '\\' in line: # Handle character formatting fields
@@ -1255,7 +1254,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         if '\\' in line:
             logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+                vPrint( 'Quiet', debuggingThisModule, "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
                 halt
         return line
     # end of toESword.adjustLine
@@ -1274,7 +1273,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         intC, intV = -1, 0
         composedLine = ''
         while True:
-            #print( "toESword.handleIntroduction", BBB, intC, V )
+            #vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction", BBB, intC, V )
             try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
             except KeyError: break # Reached the end of the introduction
             verseData, context = result
@@ -1292,7 +1291,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 else:
                     logging.warning( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                        vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                         halt
                     ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
             intV += 1 # Step to the next introductory section "verse"
@@ -1301,7 +1300,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         if '\\' in composedLine:
             logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+                vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
                 halt
         return composedLine.replace( '~^~', '\\' )
     # end of toESword.handleIntroduction
@@ -1320,14 +1319,14 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
 
         Returns the composed line.
         """
-        #print( "toESword.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+        #vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
         composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
         ourGlobals['line'] = '' # We've used them so we don't need them any more
         #marker = text = None
 
         vCount = 0
         lastMarker = gotVP = None
-        #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
+        #if BBB=='MAT' and C==4 and 14<V<18: vPrint( 'Quiet', debuggingThisModule, BBB, C, V, ourGlobals, verseData )
         for verseDataEntry in verseData:
             marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -1346,10 +1345,10 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 lastMarker = marker
                 continue
 
-            #print( "toESword.composeVerseLine:", BBB, C, V, marker, text )
+            #vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine:", BBB, C, V, marker, text )
             if marker in theWordIgnoredIntroMarkers:
                 logging.error( "toESword.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-                print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
@@ -1370,7 +1369,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                     ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                 #if text:
-                    #print( 'm', repr(text), verseData )
+                    #vPrint( 'Quiet', debuggingThisModule, 'm', repr(text), verseData )
                     #composedLine += '~^~line '+adjustLine(BBB,C,V,text)
                     #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
                         #composedLine += '~^~line '
@@ -1378,7 +1377,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 #else: # there is text
                     #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
             elif marker in ( 'p', 'b', ):
-                #print( marker, text )
+                #vPrint( 'Quiet', debuggingThisModule, marker, text )
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                     ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
@@ -1428,12 +1427,12 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             elif marker == 'li4': composedLine += '<PI4>• '+adjustLine(BBB,C,V,text)
             elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
             elif marker in ( 'v~', 'p~', ):
-                #print( lastMarker )
+                #vPrint( 'Quiet', debuggingThisModule, lastMarker )
                 if lastMarker == 'p': composedLine += '~^~line ' # We had a continuation paragraph
                 elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
                 elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
                 elif lastMarker != 'v':
-                    print( BBB, C, V, marker, lastMarker, verseData )
+                    vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
                 #if ourGlobals['pi1']: composedLine += '<PI>'
@@ -1447,7 +1446,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
             else:
                 logging.warning( "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
+                    vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker )
             lastMarker = marker
@@ -1460,13 +1459,13 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         if '\\' in composedLine.replace( '\\line ', '' ):
             logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+                vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                 halt
         #haveAdd = False
         #for verseDataEntry in verseData:
             #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
             #if text and '\\add' in text: haveAdd = True; break
-        #if haveAdd: print( "Returning {} {}:{}: {}".format( BBB, C, V, composedLine.replace( '~^~', '\\' ).rstrip() ) )
+        #if haveAdd: vPrint( 'Quiet', debuggingThisModule, "Returning {} {}:{}: {}".format( BBB, C, V, composedLine.replace( '~^~', '\\' ).rstrip() ) )
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
 
@@ -1475,10 +1474,10 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         """
         Writes a book to the e-Sword sqlObject file.
         """
-        #print( "toESword.writeESwordBibleBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
+        #vPrint( 'Quiet', debuggingThisModule, "toESword.writeESwordBibleBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
-        #print( bkData._processedLines )
+        #vPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
         nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -1516,7 +1515,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                     if verseData:
                         composedLine = composeVerseLine( BBB, C, V, verseData, ourGlobals )
                         #if composedLine: # don't bother writing blank (unfinished?) verses
-                            #print( "toESword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                            #vPrint( 'Quiet', debuggingThisModule, "toESword: Writing", BBB, nBBB, C, V, marker, repr(line) )
                             #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
                         # Stay one line behind (because paragraph indicators get appended to the previous line)
                         if ourGlobals['lastBCV'] is not None \
@@ -1621,7 +1620,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     if customCSS: values.append( customCSS )
 
     exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
-    #print( exeStr, values )
+    #vPrint( 'Quiet', debuggingThisModule, exeStr, values )
     cursor.execute( exeStr, values )
 
     # Now create and fill the Bible table
@@ -1657,7 +1656,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        print( "  BibleWriter.toESword finished successfully." )
+        vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toESword finished successfully." )
     return True
 # end of createESwordBibleModule
 
@@ -1678,7 +1677,7 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
     eSwB.preload()
     #eSwB.load() # Load and process the file
     vPrint( 'Normal', debuggingThisModule, "testeSwB1:", eSwB ) # Just print a summary
-    #print( eSwB.suppliedMetadata['e-Sword-Bible'] )
+    #vPrint( 'Quiet', debuggingThisModule, eSwB.suppliedMetadata['e-Sword-Bible'] )
     if eSwB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: eSwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -1690,7 +1689,7 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
             if t=='NT' and len(eSwB)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(eSwB)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #print( svk, ob.getVerseDataList( reference ) )
+            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), eSwB.getVerseText( svk )
                 vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
@@ -1703,7 +1702,7 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
             #eSwB.toESword()
             ##doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             #if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                #outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
+                #outputFolder = "BOSOutputFiles/BOS_e-Sword_Reexport/"
                 #vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported e-Sword files…" )
                 #result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
                 #if BibleOrgSysGlobals.debugFlag:
@@ -1712,9 +1711,114 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
 # end of testeSwB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
+        result1 = ESwordBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "TestA1", result1 )
+        result2 = ESwordBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "TestA2", result2 )
+        result3 = ESwordBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "TestA3", result3 )
+
+
+    if 1: # individual modules in the same test folder
+        testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' )
+        names = ('King James Bible Pure Cambridge Edition','KJ3.JayPGreen','Wycliffe_New_Testament(1385)',)
+        for j, name in enumerate( names):
+            indexString = 'B' + str( j+1 )
+            fullname = name + '.bblx'
+            vPrint( 'Normal', debuggingThisModule, "\neSw {}/ Trying {}".format( indexString, fullname ) )
+            testeSwB( indexString, testFolder, fullname )
+            break
+
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    if 1: # individual modules in the test folder
+        testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' )
+        names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
+        for j, name in enumerate( names):
+            indexString = 'C' + str( j+1 )
+            fullname = name + '.bblx'
+            vPrint( 'Normal', debuggingThisModule, "\neSw {}/ Trying {}".format( indexString, fullname ) )
+            testeSwB( indexString, testFolder, fullname )
+            break
+
+
+    if 1: # individual modules in the output folder
+        testFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_e-SwordExport/' )
+        names = ('Matigsalug',)
+        for j, name in enumerate( names, start=1 ):
+            indexString = 'D' + str( j )
+            fullname = name + '.bblx'
+            pathname = os.path.join( testFolder, fullname )
+            if os.path.exists( pathname ):
+                vPrint( 'Normal', debuggingThisModule, "\neSw {}/ Trying {}".format( indexString, fullname ) )
+                testeSwB( indexString, testFolder, fullname )
+            break
+
+
+    #if 1: # all discovered modules in the test folder
+        #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordRoundtripTestFiles/' )
+        #foundFolders, foundFiles = [], []
+        #for something in os.listdir( testFolder ):
+            #somepath = os.path.join( testFolder, something )
+            #if os.path.isdir( somepath ): foundFolders.append( something )
+            #elif os.path.isfile( somepath ) and somepath.endswith('.bblx'):
+                #if something != 'acc.bblx': # has a corrupted file it seems
+                    #foundFiles.append( something )
+
+        #if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            #vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            #parameters = [('E'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            #BibleOrgSysGlobals.alreadyMultiprocessing = True
+            #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                #results = pool.map( testeSwB, parameters ) # have the pool do our loads
+                #assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            #BibleOrgSysGlobals.alreadyMultiprocessing = False
+        #else: # Just single threaded
+            #for j, someFile in enumerate( sorted( foundFiles ) ):
+                #indexString = 'E' + str( j+1 )
+                #vPrint( 'Normal', debuggingThisModule, "\neSw {}/ Trying {}".format( indexString, someFile ) )
+                ##myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                #testeSwB( indexString, testFolder, someFile )
+                ##break # only do the first one…temp
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    if 1: # all discovered modules in the test folder
+        testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' ) # Put your test folder here
+
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ) and somepath.upper().endswith('.BBLX'): foundFiles.append( something ); break
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [('F'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.starmap( testeSwB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFile in enumerate( sorted( foundFiles ) ):
+                indexString = 'F' + str( j+1 )
+                vPrint( 'Normal', debuggingThisModule, "\neSw {}/ Trying {}".format( indexString, someFile ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testeSwB( indexString, testFolder, someFile )
+                #break # only do the first one…temp
+# end of ESwordBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -1814,7 +1918,7 @@ def demo() -> None:
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( indexString, testFolder, someFile )
                 #break # only do the first one…temp
-# end of demo
+# end of ESwordBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -1823,7 +1927,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESwordBible.py

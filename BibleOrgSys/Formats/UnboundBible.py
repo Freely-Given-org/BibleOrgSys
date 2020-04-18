@@ -5,7 +5,7 @@
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -86,10 +86,10 @@ and
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-12-19' # by RJH
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "UnboundBible"
 PROGRAM_NAME = "Unbound Bible format handler"
-PROGRAM_VERSION = '0.28'
+PROGRAM_VERSION = '0.29'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -181,7 +181,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -281,7 +281,7 @@ class UnboundBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #print ( 'UB file line is "' + line + '"' )
+                #vPrint( 'Quiet', debuggingThisModule, 'UB file line is "' + line + '"' )
                 if line[0]=='#':
                     hashBits = line[1:].split( '\t' )
                     if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
@@ -297,7 +297,7 @@ class UnboundBible( Bible ):
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
-                #print( self.givenName, BBB, bits )
+                #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bookCode, chapterNumberString, verseNumberString, vText = bits
                 elif len(bits) == 6:
@@ -307,14 +307,14 @@ class UnboundBible( Bible ):
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
                     logging.warning( _("Skipping bad {!r} line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', debuggingThisModule, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
                 if NRSVA_bookCode: assert len(NRSVA_bookCode) == 3
                 if NRSVA_chapterNumberString: assert NRSVA_chapterNumberString.isdigit()
                 if NRSVA_verseNumberString: assert NRSVA_verseNumberString.isdigit()
 
                 if not bookCode and not chapterNumberString and not verseNumberString:
-                    print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 if BibleOrgSysGlobals.debugFlag: assert len(bookCode) == 3
                 if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -394,9 +394,9 @@ def testUB( TUBfilename ):
     vPrint( 'Normal', debuggingThisModule, ub ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ub.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        uBErrors = ub.getErrors()
-        # print( uBErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        uBErrors = ub.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, uBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ub.toDrupalBible()
         ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -409,7 +409,7 @@ def testUB( TUBfilename ):
         if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = ub.getVerseText( svk )
@@ -419,9 +419,73 @@ def testUB( TUBfilename ):
 # end of testUB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    BiblesPath = Path( '/mnt/SSDs/Bibles/' )
+    testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        resultA1 = UnboundBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestA1", resultA1 )
+        resultA2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestA2", resultA2 )
+        resultA3 = UnboundBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestA3", resultA3 )
+
+        testSubfolder = os.path.join( testFolder, 'asv/' )
+        resultB1 = UnboundBibleFileCheck( testSubfolder )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestB1", resultB1 )
+        resultB2 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestB2", resultB2 )
+        resultB3 = UnboundBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "Unbound TestB3", resultB3 )
+
+
+    if 1: # specified modules
+        single = ( "kjv_apocrypha", )
+        good = ( "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", \
+                "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testUB( testFilename )
+            break
+
+
+    if 1: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testUB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testUB( someFolder )
+# end of UnboundBible.briefDemo
+
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -481,8 +545,7 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
-# end of demo
-
+# end of UnboundBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -492,7 +555,7 @@ if __name__ == '__main__':
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of UnboundBible.py

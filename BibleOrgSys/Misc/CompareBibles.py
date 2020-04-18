@@ -66,27 +66,17 @@ Includes:
                         illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
                         illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
                         breakOnOne=False )
-    demo()
+    fullDemo()
     main()
 
 REGEX stuff:
-    \w for Unicode (str) patterns:
+    \\w for Unicode (str) patterns:
         Matches Unicode word characters; this includes most characters that can be part of a word in any language,
         as well as numbers and the underscore. If the ASCII flag is used, only [a-zA-Z0-9_] is matched.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-01-04' # by RJH
-ShortProgName = "CompareBibles"
-PROGRAM_NAME = "Bible compare analyzer"
-PROGRAM_VERSION = '0.26'
-ProgNameVersion = '{} v{}'.format( ShortProgName, PROGRAM_VERSION )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
-
-debuggingThisModule = False
-
-
+from typing import Dict, List, Tuple
+from pathlib import Path
 import os.path
 import logging
 import re
@@ -100,8 +90,17 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
-from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Bible import Bible, BibleBook
 
+
+LAST_MODIFIED_DATE = '2020-04-17' # by RJH
+SHORT_PROGRAM_NAME = "CompareBibles"
+PROGRAM_NAME = "Bible compare analyzer"
+PROGRAM_VERSION = '0.26'
+programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
+programNameVersionDate = '{} {} {}'.format( programNameVersion, _("last modified"), LAST_MODIFIED_DATE )
+
+debuggingThisModule = False
 
 
 MAX_MISMATCHED_MARKERS = 4
@@ -112,6 +111,8 @@ DEFAULT_MATCHING_PAIRS = ( ('[',']'), ('(',')'), ('_ ',' _'), )
 
 DEFAULT_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_COMMON = ( '  ','"',"''", "‘‘","’’", '““','””',
                                   '“ ', ' ”', '‘ ', ' ’',
+                                  ',“', '.“', '!“', '?“', ':“', ';“',
+                                  ',‘', '.‘', '!‘', '?‘', ':‘', ';‘',
                                   '""', "''", # straight quotes (doubled)
                                   '««','»»', '‹‹','››', '¿¿', '¡¡',
                                   ',,', '..', '!!', '??', '::', ';;',
@@ -147,9 +148,10 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON = ( '  ',"''", "‘‘","’’", '
                                   ' –','– ','––', ' —','— ','——', # en-dash and em-dash
                                   '-–','-—', '–-','–—', '—-','—–', # hyphen and dash combinations
                                   '&#x2011;', # non-breaking hyphen
-                                  'f*,','f*.','f*?','f*!','f*:', # footnote at end of sentence
-                                  'fe*,','fe*.','fe*?','fe*!','fe*:', # endnote at end of sentence
-                                  'x*,','x*.','x*?','x*!','x*:', # cross-reference at end of sentence
+                                  'f*,','f*.','f*?','f*!','f*:','f*”','f*’','f*\\wj*', # footnote at end of sentence
+                                  'fe*,','fe*.','fe*?','fe*!','fe*:','fe*”','fe*’','fe*\\wj*', # endnote at end of sentence
+                                  'x*,','x*.','x*?','x*!','x*:','x*”','x*’','x*\\wj*', # cross-reference at end of sentence
+                                  '”\\wj*',
                                   )
 DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
 DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_COMMON
@@ -182,14 +184,16 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION = ( ) + DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON
 
+# DEFAULT_ILLEGAL_CONSECUTIVE_LINE_PAIRS = (
+#             ('q1','','q1')
+#             )
+
 
 def loadWordCompares( folder, filename ):
     """
     Returns two dicts (longest entries first)
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("loadWordCompares( {}, {} )").format( folder, filename ) )
+    vPrint( 'Verbose', debuggingThisModule, f"loadWordCompares( {folder}, {filename} )…" )
 
     dict12, dict21 = {}, {} # Not worried about sorting yet
 
@@ -205,7 +209,7 @@ def loadWordCompares( folder, filename ):
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
-            #print ( 'SFM file line is "' + line + '"' )
+            #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
             if line[0]=='#': continue # Just discard comment lines
 
             if debuggingThisModule: assert '=' in line
@@ -218,11 +222,11 @@ def loadWordCompares( folder, filename ):
 
             bitl, bitr = line.split( mid, 1 )
             lBits, rBits = bitl.strip().split( '\\' ), bitr.strip().split( '\\' )
-            #print( '{!r}={} <> {!r}={}'.format( bitl, lBits, bitr, rBits ) )
+            #vPrint( 'Quiet', debuggingThisModule, '{!r}={} <> {!r}={}'.format( bitl, lBits, bitr, rBits ) )
             if use in (12,1221):
                 for lBit in lBits:
                     if lBit in dict12:
-                        #print( "  We already had {!r} = {} (now got {}) in dict12 ({})".format( lBit, dict12[lBit], rBits, use ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict12 ({})".format( lBit, dict12[lBit], rBits, use ) )
                         dict12[lBit].extend( rBits )
                     else: dict12[lBit] = rBits
                     #if lBit.title() != lBit:
@@ -230,14 +234,14 @@ def loadWordCompares( folder, filename ):
             if use in (21,1221):
                 for rBit in rBits:
                     if rBit in dict21:
-                        #print( "  We already had {!r} = {} (now got {}) in dict21 ({})".format( rBit, dict21[rBit], lBits, use ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict21 ({})".format( rBit, dict21[rBit], lBits, use ) )
                         dict21[rBit].extend( lBits )
                     else: dict21[rBit] = lBits
                     #if rBit.title() != rBit:
                         #dict21[rBit.title()] = lBits
 
-    #print( '\ndict12', len(dict12), sorted(dict12.items()) )
-    #print( '\ndict21', len(dict21), sorted(dict21.items()) )
+    #vPrint( 'Quiet', debuggingThisModule, '\ndict12', len(dict12), sorted(dict12.items()) )
+    #vPrint( 'Quiet', debuggingThisModule, '\ndict21', len(dict21), sorted(dict21.items()) )
 
     # Now sort the dictionaries with the longest entries first
     dict12s, dict21s = {}, {}
@@ -250,155 +254,153 @@ def loadWordCompares( folder, filename ):
 
 
 
-def checkBookPedantic( bookObject,
-                        compareQuotes=DEFAULT_COMPARE_QUOTES,
-                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
-                        compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
-                        illegalCompleteLineStrings=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
-                        legalPairs=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
-                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
-                        breakOnOne=False ):
-    """
-    Given a Bible book object, check it carefully
-    and return results.
+# def checkBookPedantic( bookObject,
+#                         compareQuotes=DEFAULT_COMPARE_QUOTES,
+#                         comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+#                         compareDigits=DEFAULT_COMPARE_DIGITS,
+#                         illegalCleanTextOnlyStrings=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
+#                         illegalCompleteLineStrings=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+#                         legalPairs=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+#                         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+#                         illegalCompleteLineRegexes=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+#                         breakOnOne=False ):
+#     """
+#     Given a Bible book object, check it carefully
+#     and return results.
 
-    The returned list is sorted by C:V
-    Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
-    """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("checkBookPedantic( {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
-                    .format( bookObject, compareQuotes, comparePunctuation, compareDigits,
-                                        illegalCleanTextOnlyStrings, matchingPairs,
-                                        breakOnOne, bookObject.BBB ) )
+#     The returned list is sorted by C:V
+#     Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
+#     """
+#     vPrint( 'Verbose', debuggingThisModule, f"checkBookPedantic( {bookObject}, "
+#                     f"{compareQuotes!r}, {comparePunctuation!r}, {compareDigits}, "
+#                     f"{illegalCleanTextOnlyStrings}, {matchingPairs}, "
+#                     f"{breakOnOne} ) for {bookObject.BBB}" )
 
-    bcResults = []
+#     bcResults = []
 
-    len1 = len(bookObject)
+#     len1 = len(bookObject)
 
-    ix1 = 0
-    C, V = '-1', '-1' # So first/id line starts at -1:0
-    while ix1<len1:
-        entry1 = bookObject._processedLines[ix1] # InternalBibleEntry objects
-        #print( 'entry', entry1 )
-        marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
+#     ix1 = 0
+#     C, V = '-1', '-1' # So first/id line starts at -1:0
+#     while ix1<len1:
+#         entry1 = bookObject._processedLines[ix1] # InternalBibleEntry objects
+#         #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1 )
+#         marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
 
-        if marker1 == 'c': C, V = line1.split()[0], '0'
-        elif marker1 == 'v':
-            if C == '-1': C = '1' # Some one chapter books might not have a C marker
-            V = line1.split()[0]
-        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-        #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-        #print( ' ', entry1.getOriginalText() )
-        #print( ' ', entry1.getAdjustedText() )
-        #print( ' ', entry1.getCleanText() )
-        originalMarker = entry1.getOriginalMarker()
-        reference = (C,V,' ' if originalMarker is None else originalMarker)
+#         if marker1 == 'c': C, V = line1.split()[0], '0'
+#         elif marker1 == 'v':
+#             if C == '-1': C = '1' # Some one chapter books might not have a C marker
+#             V = line1.split()[0]
+#         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
+#         #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
+#         originalMarker = entry1.getOriginalMarker()
+#         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
-        numMismatchedMarkers = 0
-        if line1:
-            line1len = len(line1)
-            for left,right in matchingPairs:
-                hadMatchingError1 = hadMatchingError2 = False
-                ixl = -1
-                while True:
-                    ixl = line1.find( left, ixl+1 )
-                    if ixl == -1: break
-                    ixr = line1.find( right, ixl+2 )
-                    if ixr == -1:
-                        contextStart, contextEnd = max(0,ixl-5), ixl+7
-                        context = line1[contextStart:contextEnd]
-                        if contextStart > 0 and context[0]!=' ': context = '…' + context
-                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
-                        bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
-                        hadMatchingError1 = True
-                ixl = -1
-                ixr = 9999
-                while True:
-                    ixr = line1.rfind( right, 0, ixr )
-                    if ixr == -1: break
-                    ixl = line1.rfind( left, 0, ixr )
-                    if ixl == -1:
-                        contextStart, contextEnd = max(0,ixr-6), ixr+6
-                        context = line1[contextStart:contextEnd]
-                        if contextStart > 0 and context[0]!=' ': context = '…' + context
-                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
-                        bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
-                        hadMatchingError1 = True
-                # The above doesn't detect ( ) ) so we do it here
-                if not hadMatchingError1: # already
-                    l1cl, l1cr = line1.count( left ), line1.count( right )
-                    if l1cl > l1cr:
-                        bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
-                    elif l1cr > l1cl:
-                        bcResults.append( (reference,"Too many {!r} in Bible".format( right )) )
+#         numMismatchedMarkers = 0
+#         if line1:
+#             line1len = len(line1)
+#             for left,right in matchingPairs:
+#                 hadMatchingError1 = hadMatchingError2 = False
+#                 ixl = -1
+#                 while True:
+#                     ixl = line1.find( left, ixl+1 )
+#                     if ixl == -1: break
+#                     ixr = line1.find( right, ixl+2 )
+#                     if ixr == -1:
+#                         contextStart, contextEnd = max(0,ixl-5), ixl+7
+#                         context = line1[contextStart:contextEnd]
+#                         if contextStart > 0 and context[0]!=' ': context = '…' + context
+#                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+#                         bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
+#                         hadMatchingError1 = True
+#                 ixl = -1
+#                 ixr = 9999
+#                 while True:
+#                     ixr = line1.rfind( right, 0, ixr )
+#                     if ixr == -1: break
+#                     ixl = line1.rfind( left, 0, ixr )
+#                     if ixl == -1:
+#                         contextStart, contextEnd = max(0,ixr-6), ixr+6
+#                         context = line1[contextStart:contextEnd]
+#                         if contextStart > 0 and context[0]!=' ': context = '…' + context
+#                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+#                         bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
+#                         hadMatchingError1 = True
+#                 # The above doesn't detect ( ) ) so we do it here
+#                 if not hadMatchingError1: # already
+#                     l1cl, l1cr = line1.count( left ), line1.count( right )
+#                     if l1cl > l1cr:
+#                         bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
+#                     elif l1cr > l1cl:
+#                         bcResults.append( (reference,"Too many {!r} in Bible".format( right )) )
 
-            entryCleanText = entry1.getCleanText() # So markers don't confuse things
-            entryFullText = entry1.getFullText() # So can check AROUND markers also
-            extras1 = entry1.getExtras()
-            if marker1 in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
-                assert not extras1
-            else:
-                if extras1 is None: extras1 = () # So it's always iterable
-                for iString in illegalCleanTextOnlyStrings:
-                    iCount = entryCleanText.count( iString )
-                    if iCount:
-                        for illegalString,legalString in legalPairs:
-                            if illegalString==iString:
-                                iCount -= entryCleanText.count( legalString )
-                        if iCount > 0:
-                            if BibleOrgSysGlobals.verbosityLevel > 2:
-                                bcResults.append( (reference,"Illegal string in Bible main text: {!r} in {!r}".format( iString, entryCleanText )) )
-                            else:
-                                bcResults.append( (reference,"Illegal string in Bible main text: {!r}".format( iString )) )
-                    for extra in extras1:
-                        #print( extra )
-                        #print( ' ', extra.getType() )
-                        #print( ' ', extra.getIndex() )
-                        #print( ' ', extra.getText() )
-                        #print( ' ', extra.getCleanText() )
-                        if iString in extra.getCleanText(): # So markers don't confuse things
-                            bcResults.append( (reference,"Illegal string in Bible note main text: {!r}".format( iString )) )
-                for iString in illegalCompleteLineStrings:
-                    iCount = entryFullText.count( iString )
-                    if iCount:
-                        for illegalString,legalString in legalPairs:
-                            if illegalString==iString:
-                                iCount -= entryFullText.count( legalString )
-                        if iCount > 0:
-                            bcResults.append( (reference,"Illegal string in Bible: {!r}".format( iString )) )
-                    for extra in extras1:
-                        if iString in extra.getText(): # with all markers
-                            bcResults.append( (reference,"Illegal string in Bible note: {!r}".format( iString )) )
-                for iRegex in illegalCompleteLineRegexes:
-                    reMatch = re.search( iRegex, entryFullText )
-                    if reMatch:
-                        bcResults.append( (reference,"Illegal {!r} regex string in Bible: {!r}".format( iRegex, reMatch.group(0) )) )
-                        break # Stop at one
+#             entryCleanText = entry1.getCleanText() # So markers don't confuse things
+#             entryFullText = entry1.getFullText() # So can check AROUND markers also
+#             extras1 = entry1.getExtras()
+#             if marker1 in ( 'id','ide','rem', ): # Don't do illegal strings in these non-Bible-text fields
+#                 assert not extras1
+#             else:
+#                 if extras1 is None: extras1 = () # So it's always iterable
+#                 for iString in illegalCleanTextOnlyStrings:
+#                     iCount = entryCleanText.count( iString )
+#                     if iCount:
+#                         for illegalString,legalString in legalPairs:
+#                             if illegalString==iString:
+#                                 iCount -= entryCleanText.count( legalString )
+#                         if iCount > 0:
+#                             if BibleOrgSysGlobals.verbosityLevel > 2:
+#                                 bcResults.append( (reference,"Illegal string in Bible main text: {!r} in {!r}".format( iString, entryCleanText )) )
+#                             else:
+#                                 bcResults.append( (reference,"Illegal string in Bible main text: {!r}".format( iString )) )
+#                     for extra in extras1:
+#                         #vPrint( 'Quiet', debuggingThisModule, extra )
+#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
+#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
+#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
+#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
+#                         if iString in extra.getCleanText(): # So markers don't confuse things
+#                             bcResults.append( (reference,"Illegal string in Bible note main text: {!r}".format( iString )) )
+#                 for iString in illegalCompleteLineStrings:
+#                     iCount = entryFullText.count( iString )
+#                     if iCount:
+#                         for illegalString,legalString in legalPairs:
+#                             if illegalString==iString:
+#                                 iCount -= entryFullText.count( legalString )
+#                         if iCount > 0:
+#                             bcResults.append( (reference,"Illegal string in Bible: {!r}".format( iString )) )
+#                     for extra in extras1:
+#                         if iString in extra.getText(): # with all markers
+#                             bcResults.append( (reference,"Illegal string in Bible note: {!r}".format( iString )) )
+#                 for iRegex in illegalCompleteLineRegexes:
+#                     reMatch = re.search( iRegex, entryFullText )
+#                     if reMatch:
+#                         bcResults.append( (reference,"Illegal {!r} regex string in Bible: {!r}".format( iRegex, reMatch.group(0) )) )
+#                         break # Stop at one
 
-        ix1 += 1
+#         ix1 += 1
 
-    return bcResults
-# end of checkBookPedantic
+#     return bcResults
+# # end of checkBookPedantic
 
 
 
 def compareBooksPedantic( book1, book2,
-                        compareQuotes=DEFAULT_COMPARE_QUOTES,
-                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
-                        compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
-                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
-                        breakOnOne=False ):
+        compareQuotes=DEFAULT_COMPARE_QUOTES,
+        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+        compareDigits=DEFAULT_COMPARE_DIGITS,
+        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For book1 -- case sensitive
+        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
+        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
+        breakOnOne=False ) -> List[Tuple[Tuple[str,str,str],str]]:
     """
     Given two Bible book objects, compare the two carefully
         and return differences.
@@ -409,28 +411,32 @@ def compareBooksPedantic( book1, book2,
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}") \
+    vPrint( 'Verbose', debuggingThisModule, "compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}" \
                     .format( book1, book2, compareQuotes, comparePunctuation, compareDigits,
                                         illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
-        assert book1.BBB == book2.BBB
-        assert book1.workName != book2.workName
+    assert book1.BBB == book2.BBB
+    assert book1.workName != book2.workName
 
-    bcResults = []
+    bcResults:List[Tuple[Tuple[str,str,str],str]] = []
 
     len1, len2 = len(book1), len(book2)
-    #print( 'len', len1, len2 )
+    #vPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
     if len1 != len2:
-        bcResults.append( (('0','0',' '),"Book lengths don't match: {} vs {} newline markers".format( len1, len2 )) )
+        bcResults.append( (('0','0',' '),
+                    f"Book lengths don't match: {len1} vs {len2} newline markers") )
 
     ix1 = ix2 = offset1 = offset2 = 0
+    # marker1 = marker2 = line1 = line2 = None
     numMismatchedMarkers = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
-        entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
-        #print( 'entry', entry1, entry2 )
+        entry1 = book1._processedLines[ix1+offset1] # InternalBibleEntry object
+        entry2 = book2._processedLines[ix2+offset2] # InternalBibleEntry object
+        #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
+
+        # lastMarker1, lastLine1 = marker1, line1
+        # lastMarker2, lastLine2 = marker1, line2
         marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
         marker2, line2 = entry2.getMarker(), entry2.getOriginalText()
 
@@ -439,10 +445,10 @@ def compareBooksPedantic( book1, book2,
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-        #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-        #print( ' ', entry1.getOriginalText() )
-        #print( ' ', entry1.getAdjustedText() )
-        #print( ' ', entry1.getCleanText() )
+        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
@@ -553,11 +559,11 @@ def compareBooksPedantic( book1, book2,
                             if iCount > 0:
                                 bcResults.append( (reference,"Illegal string in Bible1 main text: {!r}".format( iString )) )
                         for extra in extras1:
-                            #print( extra )
-                            #print( ' ', extra.getType() )
-                            #print( ' ', extra.getIndex() )
-                            #print( ' ', extra.getText() )
-                            #print( ' ', extra.getCleanText() )
+                            #vPrint( 'Quiet', debuggingThisModule, extra )
+                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
+                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
+                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
+                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
                             if iString in extra.getCleanText(): # So markers don't confuse things
                                 bcResults.append( (reference,"Illegal string in Bible1 note main text: {!r}".format( iString )) )
                     for iString in illegalCompleteLineStrings1:
@@ -626,12 +632,12 @@ def compareBooksPedantic( book1, book2,
     return bcResults
 # end of compareBooksPedantic
 
-def _doCompare( parameters ): # for multiprocessing
+def _doCompare( parameters:List[Tuple[str,Bible,Bible]] ) -> List[Tuple[Tuple[str,str,str],str]]: # for multiprocessing
     BBB, Bible1, Bible2 = parameters
     return compareBooksPedantic( Bible1[BBB], Bible2[BBB] )
 
 
-def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
+def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[str]]:
     """
     Break the line into segments (like sentences that should match across the translations)
         and then break each segment into words.
@@ -642,9 +648,7 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
 
     Returns a list of lists of words.
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("segmentizeLine( {!r} )").format( line ) )
+    vPrint( 'Verbose', debuggingThisModule, "segmentizeLine( {!r} )".format( line ) )
 
     if segmentEndPunctuation:
         for segmentEndChar in segmentEndPunctuation:
@@ -652,7 +656,7 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
     line = line.replace('—',' ').replace('–',' ') # Treat em-dash and en-dash as word break characters
 
 
-    lineList = []
+    lineList:List[List[str]] = []
     for segment in line.split( 'SsSsSsS' ):
         segmentList = []
         for rawWord in segment.split():
@@ -660,19 +664,19 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
             for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
             word = BibleOrgSysGlobals.stripWordPunctuation( word )
             if word and not word[0].isalnum():
-                #print( "not alnum", repr(rawWord), repr(word) )
+                #vPrint( 'Quiet', debuggingThisModule, "not alnum", repr(rawWord), repr(word) )
                 if len(word) > 1:
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) \
+                        vPrint( 'Quiet', debuggingThisModule, "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) \
                                             + _("Have unexpected character starting word {!r}").format( word ) )
                     word = word[1:]
             if word: # There's still some characters remaining after all that stripping
-                #print( "here", repr(rawWord), repr(word) )
+                #vPrint( 'Quiet', debuggingThisModule, "here", repr(rawWord), repr(word) )
                 if 1 or BibleOrgSysGlobals.verbosityLevel > 3: # why???
                     for k,char in enumerate(word):
                         if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                print( "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
+                                vPrint( 'Quiet', debuggingThisModule, "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                 lcWord = word.lower()
                 isAReferenceOrNumber = True
                 for char in word:
@@ -683,12 +687,12 @@ def segmentizeLine( line, segmentEndPunctuation='.?!;:' ):
                     #lDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in lDict['allCaseInsensitiveWordCounts'] else lDict['allCaseInsensitiveWordCounts'][lcWord] + 1
         lineList.append( segmentList )
 
-    #print( '  lineList', lineList )
+    #vPrint( 'Quiet', debuggingThisModule, '  lineList', lineList )
     return lineList
 # end of segmentizeLine
 
 
-def segmentizeBooks( book1, book2 ):
+def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
     """
     Given two Bible book objects,
         break them into a list of segments
@@ -703,11 +707,11 @@ def segmentizeBooks( book1, book2 ):
         1/ 3-tuple being C, V, optional marker
         2/ Error message string
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("segmentizeBooks( {}, {}, … ) for {}").format( book1, book2, book1.BBB ) )
-        assert book1.BBB == book2.BBB
-        assert book1.workName != book2.workName
+    vPrint( 'Verbose', debuggingThisModule, f"segmentizeBooks( {book1}, {book2}, … ) for {book1.BBB}" )
+    assert isinstance( book1, BibleBook )
+    assert isinstance( book2, BibleBook )
+    assert book1.BBB == book2.BBB
+    assert book1.workName != book2.workName
 
     abResults, segmentList = [], []
     #if 'allWordCounts' not in dict1: dict1['allWordCounts'] = {}
@@ -716,7 +720,7 @@ def segmentizeBooks( book1, book2 ):
     #if 'allCaseInsensitiveWordCounts' not in dict2: dict2['allCaseInsensitiveWordCounts'] = {}
 
     len1, len2 = len(book1), len(book2)
-    #print( 'len', len1, len2 )
+    #vPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
     if len1 != len2:
         abResults.append( (('0','0',' '),"Book lengths don't match: {} vs {} newline markers".format( len1, len2 )) )
 
@@ -725,7 +729,7 @@ def segmentizeBooks( book1, book2 ):
     C, V = '-1', '-1' # So first/id line starts at -1:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
-        #print( 'entry', entry1, entry2 )
+        #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
         marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
         marker2, line2 = entry2.getMarker(), entry2.getOriginalText()
 
@@ -734,10 +738,10 @@ def segmentizeBooks( book1, book2 ):
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-        #print( '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-        #print( ' ', entry1.getOriginalText() )
-        #print( ' ', entry1.getAdjustedText() )
-        #print( ' ', entry1.getCleanText() )
+        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
@@ -782,8 +786,8 @@ def segmentizeBooks( book1, book2 ):
                                 .format( '' if remaining==1 else 's ({})'.format( remaining ),
                                     book1._processedLines[ix2+offset2].getMarker(), '…' if remaining>1 else '' )) )
 
-    #print( '\nsegmentList', len(segmentList), segmentList )
-    #print( '\nabResults', len(abResults), abResults )
+    #vPrint( 'Quiet', debuggingThisModule, '\nsegmentList', len(segmentList), segmentList )
+    #vPrint( 'Quiet', debuggingThisModule, '\nabResults', len(abResults), abResults )
     return segmentList, abResults
 # end of segmentizeBooks
 
@@ -792,9 +796,9 @@ def segmentizeBooks( book1, book2 ):
 def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, resultsList ):
     """
     """
-    #print( "\nanalyzeWordsInSegment( {}, {}, {}, {}, … )".format( reference, segmentAList, segmentBList, len(dictAB) ) )
-    #print( 'segmentBList {}'.format( segmentBList ) )
-    #print( 'segmentAList {}'.format( segmentAList ) )
+    #vPrint( 'Quiet', debuggingThisModule, "\nanalyzeWordsInSegment( {}, {}, {}, {}, … )".format( reference, segmentAList, segmentBList, len(dictAB) ) )
+    #vPrint( 'Quiet', debuggingThisModule, 'segmentBList {}'.format( segmentBList ) )
+    #vPrint( 'Quiet', debuggingThisModule, 'segmentAList {}'.format( segmentAList ) )
     assert isinstance( reference, tuple )
     assert isinstance( segmentAList, list )
     assert isinstance( segmentBList, list )
@@ -808,15 +812,15 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
 
         # First count how many times the lEntry occurs in segmentAList
         if ' ' in lEntry: # lEntry is multiple words -- requires extra handling
-            #print( 'multiple lEntry {!r}'.format( lEntry ) ) # lEntry is language2
+            #vPrint( 'Quiet', debuggingThisModule, 'multiple lEntry {!r}'.format( lEntry ) ) # lEntry is language2
             lWords = lEntry.split()
-            #print( 'lWords (split) =', lWords )
+            #vPrint( 'Quiet', debuggingThisModule, 'lWords (split) =', lWords )
             numLSearchWords = len( lWords )
             seglenA = len( segmentAList )
             ix = -1
             lCount = 0
             while True:
-                #print( lWords, ix, lCount, segmentAList )
+                #vPrint( 'Quiet', debuggingThisModule, lWords, ix, lCount, segmentAList )
                 try: ix = segmentAList.index( lWords[0], ix+1 )
                 except ValueError: break # none / no more found
                 matched = True
@@ -824,31 +828,31 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                     if ix+iy >= seglenA: matched = False; break # Too near the end
                     if segmentAList[ix+iy] != lWords[iy]: matched = False; break
                 if matched:
-                    #print( "lMatched" ); halt
+                    #vPrint( 'Quiet', debuggingThisModule, "lMatched" ); halt
                     lCount += 1
-                    #if lCount > 1: print( "multiple lMatches" ); halt
-                #else: print( "not lMatched" )
+                    #if lCount > 1: vPrint( 'Quiet', debuggingThisModule, "multiple lMatches" ); halt
+                #else: vPrint( 'Quiet', debuggingThisModule, "not lMatched" )
             if lCount: foundLPhrases.extend( lWords )
         else: # lEntry is a single word -- easy
             lCount = segmentAList.count( lEntry )
 
         if lCount:
-            #print( 'lEntry {!r}'.format( lEntry ) ) # lEntry is a string
-            #print( 'lCount', lCount )
-            #print( 'rEntryList {}'.format( rEntryList ) ) # rEntryList is a list
+            #vPrint( 'Quiet', debuggingThisModule, 'lEntry {!r}'.format( lEntry ) ) # lEntry is a string
+            #vPrint( 'Quiet', debuggingThisModule, 'lCount', lCount )
+            #vPrint( 'Quiet', debuggingThisModule, 'rEntryList {}'.format( rEntryList ) ) # rEntryList is a list
             # Now count how many times the rEntries occur in segmentBList
             rCount = 0
             for rEntry in rEntryList:
-                #print( 'rEntry {!r}'.format( rEntry ) ) # rEntry is language1 string
+                #vPrint( 'Quiet', debuggingThisModule, 'rEntry {!r}'.format( rEntry ) ) # rEntry is language1 string
                 assert isinstance( rEntry, str )
                 if ' ' in rEntry: # lEntry is multiple words -- requires extra handling
                     rWords = rEntry.split()
-                    #print( 'rWords (split) =', rWords )
+                    #vPrint( 'Quiet', debuggingThisModule, 'rWords (split) =', rWords )
                     numRSearchWords = len( rWords )
                     seglenB = len( segmentBList )
                     ix = -1
                     while True:
-                        #print( rWords, ix, rCount, segmentBList )
+                        #vPrint( 'Quiet', debuggingThisModule, rWords, ix, rCount, segmentBList )
                         try: ix = segmentBList.index( rWords[0], ix+1 )
                         except ValueError: break # none / no more found
                         matched = True
@@ -856,25 +860,25 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                             if ix+iy >= seglenB: matched = False; break # Too near the end
                             if segmentBList[ix+iy] != rWords[iy]: matched = False; break
                         if matched:
-                            #print( "rMatched" ); halt
+                            #vPrint( 'Quiet', debuggingThisModule, "rMatched" ); halt
                             rCount += 1
-                            #if rCount > 1: print( "multiple rMatches", lEntry ); halt
-                        #else: print( "not rMatched" )
+                            #if rCount > 1: vPrint( 'Quiet', debuggingThisModule, "multiple rMatches", lEntry ); halt
+                        #else: vPrint( 'Quiet', debuggingThisModule, "not rMatched" )
                 else: # rEntry is a single word -- easy
                     rCount += segmentBList.count( rEntry )
-            #print( 'rCount', rCount )
+            #vPrint( 'Quiet', debuggingThisModule, 'rCount', rCount )
 
             # Now check the results
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
-                    #print( lEntry, foundLPhrases ); halt
+                    #vPrint( 'Quiet', debuggingThisModule, lEntry, foundLPhrases ); halt
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
+                        vPrint( 'Quiet', debuggingThisModule, "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
                 else:
                     resultsList.append( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
                     #resultsList.append( ((' ',' ',' '), rEntry) )
-                    #print( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
-                    #print( "   {!r}:{}".format( lEntry, rEntry ) )
+                    #vPrint( 'Quiet', debuggingThisModule, (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
+                    #vPrint( 'Quiet', debuggingThisModule, "   {!r}:{}".format( lEntry, rEntry ) )
             #elif lCount < rCount:
                 #resultsList.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, rCount, segmentAList )) )
 # end of analyzeWordsInSegment
@@ -887,26 +891,24 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
 
     Returns a list of results.
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("analyzeWords( … )") )
-        assert isinstance( segmentList, list )
-        #print( "\ndict12", dict12 )
-        #print( "\ndict21", dict21 )
+    vPrint( 'Verbose', debuggingThisModule, "analyzeWords( … )" )
+    assert isinstance( segmentList, list )
+    #vPrint( 'Quiet', debuggingThisModule, "\ndict12", dict12 )
+    #vPrint( 'Quiet', debuggingThisModule, "\ndict21", dict21 )
 
     awResults = []
     for j,(reference,segment1,segment2) in enumerate( segmentList ):
         if dict12: analyzeWordsInSegment( reference, segment1, segment2, dict12, awResults )
         if dict21: analyzeWordsInSegment( reference, segment2, segment1, dict21, awResults )
 
-    #print( '\nawResults', len(awResults), awResults )
+    #vPrint( 'Quiet', debuggingThisModule, '\nawResults', len(awResults), awResults )
     return awResults
 
     wordDict1, wordDict2 = {}, {}
     for j,(segment1,segment2) in enumerate( segmentList ):
         for word1 in segment1:
             if word1 not in wordDict1:
-                print( "Processing {} {!r}…".format( j, word1 ) )
+                vPrint( 'Quiet', debuggingThisModule, "Processing {} {!r}…".format( j, word1 ) )
                 #wordDict1[word1] = []
                 options = {}
                 wordSet = set( segment2 )
@@ -914,16 +916,16 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
                     if word1 in segment1b:
                         wordSet = wordSet.intersection( segment2b )
                         if len(wordSet) == 1:
-                            print( word1, wordSet )
+                            vPrint( 'Quiet', debuggingThisModule, word1, wordSet )
                             wordDict1[word1] = wordSet.pop()
                             break
         #if j > 5: break
-    print( len(wordDict1), wordDict1 )
+    vPrint( 'Quiet', debuggingThisModule, len(wordDict1), wordDict1 )
     halt
-# end of analyzeWords
+# end of CompareBibles.analyzeWords
 
 
-def analyzeBibles( Bible1, Bible2 ):
+def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> Dict[str,list]:
     """
     Given two Bible objects, break the two into words
         and return a dictionary.
@@ -933,14 +935,12 @@ def analyzeBibles( Bible1, Bible2 ):
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being BCV and error message.
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            print( _("analyzeBibles( {}, {} )").format( Bible1, Bible2 ) )
-        assert isinstance( Bible1, Bible )
-        assert isinstance( Bible2, Bible )
-        assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
-        assert Bible1.discoveryResults
-        assert Bible2.discoveryResults
+    vPrint( 'Verbose', debuggingThisModule, "analyzeBibles( {}, {} )".format( Bible1, Bible2 ) )
+    assert isinstance( Bible1, Bible )
+    assert isinstance( Bible2, Bible )
+    assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
+    assert Bible1.discoveryResults
+    assert Bible2.discoveryResults
     vPrint( 'Quiet', debuggingThisModule, _("Running analyzeBibles…") )
 
     bSegmentList, bResults = {}, {}
@@ -954,7 +954,7 @@ def analyzeBibles( Bible1, Bible2 ):
     vPrint( 'Info', debuggingThisModule, _("Running segmentizeBooks on both Bibles…") )
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         vPrint( 'Normal', debuggingThisModule, _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
-            print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        vPrint( 'Normal', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
@@ -966,36 +966,35 @@ def analyzeBibles( Bible1, Bible2 ):
         for BBB in commonBooks: # Do individual book prechecks
             vPrint( 'Verbose', debuggingThisModule, "  " + _("Comparing {}…").format( BBB ) )
             bSegmentList[BBB], bResults[BBB] = segmentizeBooks( Bible1[BBB], Bible2[BBB] ) #, abResults1, abResults2 )
-            print( BBB, bSegmentList[BBB] )
-            print( BBB, bResults[BBB] )
+            vPrint( 'Quiet', debuggingThisModule, BBB, bSegmentList[BBB] )
+            vPrint( 'Quiet', debuggingThisModule, BBB, bResults[BBB] )
     return bResults
-# end of analyzeBibles
+# end of CompareBibles.analyzeBibles
 
 
 
 def compareBibles( Bible1, Bible2,
-                        compareQuotes=DEFAULT_COMPARE_QUOTES,
-                        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
-                        compareDigits=DEFAULT_COMPARE_DIGITS,
-                        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For Bible1 -- case sensitive
-                        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For Bible2 -- case sensitive
-                        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
-                        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
-                        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
-                        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
-                        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
-                        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
-                        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
-                        breakOnOne=False ):
+        compareQuotes=DEFAULT_COMPARE_QUOTES,
+        comparePunctuation=DEFAULT_COMPARE_PUNCTUATION,
+        compareDigits=DEFAULT_COMPARE_DIGITS,
+        illegalCleanTextOnlyStrings1=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR, # For Bible1 -- case sensitive
+        illegalCleanTextOnlyStrings2=DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION, # For Bible2 -- case sensitive
+        illegalCompleteLineStrings1=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR, # For book1 -- case sensitive
+        illegalCompleteLineStrings2=DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION, # For book2 -- case sensitive
+        legalPairs1=DEFAULT_LEGAL_PAIRS_VERNACULAR, # For book1 for both clean text and complete lines
+        legalPairs2=DEFAULT_LEGAL_PAIRS_BACK_TRANSLATION, # For book2 for both clean text and complete lines
+        matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
+        illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
+        illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
+        breakOnOne=False ):
     """
     Runs a series of checks and count on each book of the Bible
         in order to try to determine what are the normal standards.
     """
-    if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule: print( _("compareBibles( {}, {} )").format( Bible1, Bible2 ) )
-        assert isinstance( Bible1, Bible )
-        assert isinstance( Bible2, Bible )
-        assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
+    vPrint( 'Verbose', debuggingThisModule, "compareBibles( {}, {} )".format( Bible1, Bible2 ) )
+    assert isinstance( Bible1, Bible )
+    assert isinstance( Bible2, Bible )
+    assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
     vPrint( 'Quiet', debuggingThisModule, _("Running compareBibles…") )
 
     len1, len2 = len(Bible1), len(Bible2)
@@ -1008,7 +1007,7 @@ def compareBibles( Bible1, Bible2,
     bResults = {}
     if BibleOrgSysGlobals.maxProcesses > 1: # Check all the books as quickly as possible
         vPrint( 'Normal', debuggingThisModule, _("Comparing {} books using {} processes…").format( numBooks, BibleOrgSysGlobals.maxProcesses ) )
-            print( "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        vPrint( 'Normal', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
         BibleOrgSysGlobals.alreadyMultiprocessing = True
         with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
             results = pool.map( _doCompare, [(BBB,Bible1,Bible2) for BBB in commonBooks] ) # have the pool do our loads
@@ -1028,11 +1027,11 @@ def compareBibles( Bible1, Bible2,
                                                 illegalCompleteLineRegexes1=illegalCompleteLineRegexes1, illegalCompleteLineRegexes2=illegalCompleteLineRegexes2,
                                                 breakOnOne=breakOnOne )
     return bResults
-# end of compareBibles
+# end of CompareBibles.compareBibles
 
 
 
-def demo():
+def briefDemo() -> None:
     """
     Demonstration program to handle command line parameters and then run what they want.
     """
@@ -1058,8 +1057,8 @@ def demo():
         vPrint( 'Quiet', debuggingThisModule, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB1.check()
-        #UB1.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-    else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder1 ) )
+        #UB1.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder1 ) )
 
     if os.access( testFolder2, os.R_OK ):
         UB2 = USFMBible( testFolder2, name2, encoding2 )
@@ -1067,8 +1066,8 @@ def demo():
         vPrint( 'Quiet', debuggingThisModule, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
             UB2.check()
-        #UB2.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-    else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder2 ) )
+        #UB2.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder2 ) )
 
     if 0: # Test one book
         vPrint( 'Quiet', debuggingThisModule, "\nTesting one book only…" )
@@ -1078,7 +1077,7 @@ def demo():
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-            print( ' ', result )
+        vPrint( 'Normal', debuggingThisModule, ' ', result )
 
     if 1: # Test the whole Bibles
         vPrint( 'Quiet', debuggingThisModule, "\nTesting for whole Bible…" )
@@ -1087,32 +1086,34 @@ def demo():
                                         illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
                                         legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
         totalCount = resultsBooksCount = 0
-        vPrint( 'Quiet', debuggingThisModule, "\nComparing the entire Bibles gave:" )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, "\nComparing the entire Bibles gave:" )
             for BBB,bookResults in results.items():
                 if bookResults:
                     resultsBooksCount += 1
                     totalCount += len( bookResults )
-                    print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+                    vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
                     for (C,V,marker),resultString in bookResults:
                         resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
-                        print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
-            print( "{} total results in {} books (out of {})".format( totalCount, resultsBooksCount, len(UB1) ) )
+                        vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+            vPrint( 'Quiet', debuggingThisModule, "{} total results in {} books (out of {})".format( totalCount, resultsBooksCount, len(UB1) ) )
 
     if 0: # Compare one book
         vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing one book only…" )
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
         vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-            #print( ' 1s', len(segmentResult), segmentResult )
-            print( ' 2o', len(otherResult), otherResult )
+        #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+        vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
-        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-            print( '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
             for (C,V,marker),resultString in awResult:
                 resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
-                print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
-            print( "{:,} results in {}".format( len(awResult), BBB ) )
+                vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+            vPrint( 'Quiet', debuggingThisModule, "{:,} results in {}".format( len(awResult), BBB ) )
 
     if 0: # Compare the whole Bibles
         vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing whole Bible…" )
@@ -1120,22 +1121,130 @@ def demo():
         for BBB in UB1.getBookList():
             segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
             totalSegments += len( segmentResult )
-            vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-                #print( ' 1s', len(segmentResult), segmentResult )
-                print( ' 2o', len(otherResult), otherResult )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+                #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+                vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
             dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
             awResult = analyzeWords( segmentResult, dict12, dict21 )
             totalCount += len( awResult )
-            vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
                 for (C,V,marker),resultString in awResult:
                     resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
-                    print( '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
-                print( "  {:,} results in {}".format( len(awResult), BBB ) )
+                    vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {:,} results in {}".format( len(awResult), BBB ) )
+            break
         vPrint( 'Quiet', debuggingThisModule, "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
-# end of demo
+# end of CompareBibles.briefDemo
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    from BibleOrgSys.Formats.USFMBible import USFMBible
 
-def main():
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Load a USFM Bible and BT
+    vPrint( 'Quiet', debuggingThisModule, "\nLoading USFM Bible…" )
+    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
+    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
+    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
+                             'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
+                             'Your ','your ','yours ',' the the ', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_1 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_VERNACULAR
+    MS_ILLEGAL_COMPLETE_LINE_STRINGS_2 = () + DEFAULT_ILLEGAL_COMPLETE_LINE_STRINGS_BACK_TRANSLATION
+    MS_LEGAL_PAIRS = ( ('/',' 1/ '), ('/',' 2/ '), ('/',' 3/ '), ('/',' 4/ '), ) + DEFAULT_LEGAL_PAIRS_COMMON
+
+    if os.access( testFolder1, os.R_OK ):
+        UB1 = USFMBible( testFolder1, name1, encoding1 )
+        UB1.load()
+        vPrint( 'Quiet', debuggingThisModule, UB1 )
+        if BibleOrgSysGlobals.strictCheckingFlag:
+            UB1.check()
+        #UB1.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder1 ) )
+
+    if os.access( testFolder2, os.R_OK ):
+        UB2 = USFMBible( testFolder2, name2, encoding2 )
+        UB2.load()
+        vPrint( 'Quiet', debuggingThisModule, UB2 )
+        if BibleOrgSysGlobals.strictCheckingFlag:
+            UB2.check()
+        #UB2.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder2 ) )
+
+    if 0: # Test one book
+        vPrint( 'Quiet', debuggingThisModule, "\nTesting one book only…" )
+        BBB = 'JDE'
+        result = compareBooksPedantic( UB1[BBB], UB2[BBB],
+                                        illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
+                                        illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
+                                        legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
+        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+        vPrint( 'Normal', debuggingThisModule, ' ', result )
+
+    if 1: # Test the whole Bibles
+        vPrint( 'Quiet', debuggingThisModule, "\nTesting for whole Bible…" )
+        results = compareBibles( UB1, UB2,
+                                        illegalCleanTextOnlyStrings1=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1, illegalCleanTextOnlyStrings2=MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2,
+                                        illegalCompleteLineStrings1=MS_ILLEGAL_COMPLETE_LINE_STRINGS_1, illegalCompleteLineStrings2=MS_ILLEGAL_COMPLETE_LINE_STRINGS_2,
+                                        legalPairs1=MS_LEGAL_PAIRS, legalPairs2=MS_LEGAL_PAIRS )
+        totalCount = resultsBooksCount = 0
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, "\nComparing the entire Bibles gave:" )
+            for BBB,bookResults in results.items():
+                if bookResults:
+                    resultsBooksCount += 1
+                    totalCount += len( bookResults )
+                    vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+                    for (C,V,marker),resultString in bookResults:
+                        resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
+                        vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+            vPrint( 'Quiet', debuggingThisModule, "{} total results in {} books (out of {})".format( totalCount, resultsBooksCount, len(UB1) ) )
+
+    if 0: # Compare one book
+        vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing one book only…" )
+        BBB = 'JDE'
+        segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
+        vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+        #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+        vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
+        dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
+        awResult = analyzeWords( segmentResult, dict12, dict21 )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+            for (C,V,marker),resultString in awResult:
+                resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
+                vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+            vPrint( 'Quiet', debuggingThisModule, "{:,} results in {}".format( len(awResult), BBB ) )
+
+    if 0: # Compare the whole Bibles
+        vPrint( 'Quiet', debuggingThisModule, "\nAnalyzing whole Bible…" )
+        totalSegments = totalCount = 0
+        for BBB in UB1.getBookList():
+            segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
+            totalSegments += len( segmentResult )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
+                #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+                vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
+            dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
+            awResult = analyzeWords( segmentResult, dict12, dict21 )
+            totalCount += len( awResult )
+            if BibleOrgSysGlobals.verbosityLevel > 0:
+                vPrint( 'Quiet', debuggingThisModule, '\n{} ({} vs {}):'.format( BBB, name1, name2 ) )
+                for (C,V,marker),resultString in awResult:
+                    resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
+                    vPrint( 'Quiet', debuggingThisModule, '  {} {}:{} {} {}'.format( BBB, C, V, marker, resultString ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {:,} results in {}".format( len(awResult), BBB ) )
+        vPrint( 'Quiet', debuggingThisModule, "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
+# end of CompareBibles.fullDemo
+
+def main() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -1155,7 +1264,7 @@ def main():
         if isinstance( result1, Bible ):
             Bible1 = result1
         else:
-            logging.critical( "Unable to load Bible1 from {!r}—aborting".format( fp1 ) ); allOkay = False
+            logging.critical( f"Unable to load Bible1 from {fp1!r}—aborting" ); allOkay = False
     if allOkay:
         UnkB2 = UnknownBible( fp2 )
         result2 = UnkB2.search( autoLoadAlways=True, autoLoadBooks=True )
@@ -1163,24 +1272,23 @@ def main():
         if isinstance( result2, Bible ):
             Bible2 = result2
         else:
-            logging.critical( "Unable to load Bible2 from {!r}—aborting".format( fp2 ) ); allOkay = False
+            logging.critical( f"Unable to load Bible2 from {fp2!r}—aborting" ); allOkay = False
 
     if allOkay:
         results = compareBibles( Bible1, Bible2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
             name1 = Bible1.abbreviation if Bible1.abbreviation else Bible1.getAName()
             name2 = Bible2.abbreviation if Bible2.abbreviation else Bible2.getAName()
-            print( "\nComparing the entire Bibles gave:" )
+            vPrint( 'Quiet', debuggingThisModule, "\nComparing the entire Bibles gave:" )
             for BBB,bookResults in results.items():
                 if bookResults:
-                    print( '\n{}:'.format( BBB ) )
+                    vPrint( 'Quiet', debuggingThisModule, f'\n{BBB}:' )
                     for result in bookResults:
                         C, V, resultString = result[0][0], result[0][1], result[1]
                         resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
-                        print( '{}:{} {}'.format( C, V, resultString ) )
-            #print( results )
-# end of main
-
+                        vPrint( 'Quiet', debuggingThisModule, f'{C}:{V} {resultString}' )
+            #vPrint( 'Quiet', debuggingThisModule, results )
+# end of CompareBibles.main
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -1191,7 +1299,7 @@ if __name__ == '__main__':
     #parser.add_argument('Bible2', help="Bible folder or file path 2" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
-    demo()
+    main()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CompareBibles.py

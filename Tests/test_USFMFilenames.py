@@ -55,7 +55,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -235,7 +235,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: print( f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -404,6 +404,13 @@ class USFMFilenamesTests2( unittest.TestCase ):
     # end of test_090_getSSFFilenames
 # end of USFMFilenamesTests2 class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

@@ -96,7 +96,7 @@ class USFM2BibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #print( "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+            #vPrint( 'Quiet', debuggingThisModule, "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = USFM2Markers.getMarkerListFromText( text )
@@ -114,7 +114,7 @@ class USFM2BibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #print( "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -152,11 +152,11 @@ class USFM2BibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
+            #vPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
-                #print( "bits", text.split() )
+                #vPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
                 try: C = text.split()[0]
                 except IndexError: # Seems we had a \c field that's just whitespace
                     loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
@@ -261,14 +261,14 @@ class USFM2BibleBook( BibleBook ):
             logging.error( _("USFM2 file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
-        if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
-        #if debugging: print( self._rawLines ); halt
+        if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
+        #if debugging: vPrint( 'Quiet', debuggingThisModule, self._rawLines ); halt
     # end of USFM2BibleBook.load
 # end of class USFM2BibleBook
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and processing some USFM2 Bible databases.
     """
@@ -288,11 +288,11 @@ def demo() -> None:
         UBBAddedUnits = UBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #print( "discoveryDict", discoveryDict )
+        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         UBB.check()
-        UBErrors = UBB.getErrors()
+        UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
-    # end of demoFile
+    # end of fullDemoFile
 
 
     from BibleOrgSys.InputOutput import USFMFilenames
@@ -307,7 +307,7 @@ def demo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
@@ -317,8 +317,15 @@ def demo() -> None:
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: print( _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
-# end of demo
+        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -328,7 +335,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM2BibleBook.py

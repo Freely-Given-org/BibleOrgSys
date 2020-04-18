@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,19 +35,9 @@ Currently aware of the following Bible types:
     Digital Bible Library (DB) which is USX (XML) plus XML metadata
     Sword modules (binary).
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-12-23' # by RJH
-SHORT_PROGRAM_NAME = "UnknownBible"
-PROGRAM_NAME = "Unknown Bible object handler"
-PROGRAM_VERSION = '0.35'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os.path
+import logging
+import os.path
 from pathlib import Path
 
 if __name__ == '__main__':
@@ -89,6 +79,14 @@ from BibleOrgSys.Formats.ForgeForSwordSearcherBible import ForgeForSwordSearcher
 from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
 #from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "UnknownBible"
+PROGRAM_NAME = "Unknown Bible object handler"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 logger = logging.getLogger(SHORT_PROGRAM_NAME)
@@ -150,7 +148,7 @@ class UnknownBible:
             a loaded Bible
         """
         if debuggingThisModule:
-            print( "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
+            vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
@@ -164,7 +162,7 @@ class UnknownBible:
             Returns the three counters.
             """
             if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                print( "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
+                vPrint( 'Quiet', debuggingThisModule, "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
@@ -670,35 +668,35 @@ class UnknownBible:
                 # We did a strict check the first time, but strict checking wasn't specified on the command line
                 #   so let's try again without the strict check
                 if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "UnknownBible.search: retrying without strict checking criteria" )
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print ( "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                    print ( "  UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
                 totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
         elif totalBibleCount > 1:
             if totalBibleTypes == 1:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
                                                         .format( totalBibleCount, typesFound[0], self.givenFolderName ) )
                 elif BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
                 self.foundType = "Multiple found: {} Bibles".format( typesFound[0] )
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
                                                         .format( totalBibleCount, typesFound, self.givenFolderName ) )
                 elif BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many types found'
                 if not strictCheck:
                     # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        print( "UnknownBible.search: retrying with strict checking criteria" )
+                        vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: retrying with strict checking criteria" )
                     totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print ( "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                        print ( "  UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
+                        vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                        vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
                     totalBibleCount, totalBibleTypes, typesFound = totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
             if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
                 # If there's only one of a particular type, we'll go for that one
@@ -706,25 +704,25 @@ class UnknownBible:
                 for entry in typesFound:
                     if entry.endswith( ':1' ): haveSingle = True; break
                 if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
 
         #if 1 or debuggingThisModule:
-            #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+            #vPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
-            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
-            #print( '  GB={} CSV={} F4SS={} VPL={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
-            #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
         #if 0 and debuggingThisModule:
-            #print( 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+            #vPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
-            #print( '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
-            #print( '  GB={} CSV={} F4SS={} VPL={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
-            #print( '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #vPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
 
         if autoLoadAlways or totalBibleCount == 1:
@@ -857,9 +855,173 @@ class UnknownBible:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    import random
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Now demo the class
+    if 0: # Just test one folder
+        testFolder = 'Put your folder here/'
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result1 = uB.search( autoLoad=False )
+        result2 = uB.search( autoLoadBooks=True ) if result1 else None
+        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', debuggingThisModule, "  A1 result1 is: {}".format( result1 ) )
+        vPrint( 'Info', debuggingThisModule, "  A1 result2 is: {}".format( result2 ) )
+        if result1 == 'Many types found':
+            uB = UnknownBible( testFolder )
+            result3 = uB.search( autoLoadAlways=False )
+            result4 = uB.search( autoLoadAlways=True ) if result3 else None
+            vPrint( 'Normal', debuggingThisModule, "  A1 result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A1 result4 is: {}".format( result4 ) )
+
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result1 = uB.search( strictCheck=True, autoLoad=False )
+        result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
+        vPrint( 'Info', debuggingThisModule, "  A2 result1 is: {}".format( result1 ) )
+        vPrint( 'Info', debuggingThisModule, "  A2 result2 is: {}".format( result2 ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+        if result1 == 'Many types found':
+            uB = UnknownBible( testFolder )
+            result3 = uB.search( strictCheck=True, autoLoadAlways=False )
+            result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
+            vPrint( 'Normal', debuggingThisModule, "  A2 result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A2 result4 is: {}".format( result4 ) )
+            if result3 == 'Many types found':
+                uB = UnknownBible( testFolder )
+                result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
+                result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
+
+        #from BibleOrgSys.Bible import Bible
+        #vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #uB = UnknownBible( testFolder )
+        #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
+        #if BibleOrgSysGlobals.verbosityLevel > 2:
+            #vPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
+        #vPrint( 'Quiet', debuggingThisModule, uB )
+        #if isinstance( result1, Bible ):
+            #thisBible = result1
+            #thisBible.check()
+            #errorDictionary = thisBible.getCheckResults()
+
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
+                    BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
+                    BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),
+                    BiblesFolderpath.joinpath( 'OpenSong Bibles/' ),
+                    BiblesFolderpath.joinpath( 'Zefania modules/' ),
+                    BiblesFolderpath.joinpath( 'YET modules/' ),
+                    BiblesFolderpath.joinpath( 'GoBible modules/' ),
+                    BiblesFolderpath.joinpath( 'MyBible modules/' ),
+                    Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ),
+                    Path( '/srv/AutoProcesses/Processed/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFX-ASV/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFX-WEB/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'HaggaiTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MySwordTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'YETTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest3/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH, # Up a level
+                    )
+    if 1: # Just find the files
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible B/ Trying (but not loading) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoad=False )
+        #result2 = uB.search( autoLoad=True ) if result1 else None
+        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+
+    if 1: # Just load the Bible objects (only if exactly one found)
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible C/ Single loading (but not books) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoad=True )
+        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+
+    if 1: # Fully load the Bible objects (only if exactly one found)
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible D/ Single loading (incl. books) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoadBooks=True )
+        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+
+    if 1: # Always load the Bible objects
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible E/ Always loading (but not books) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoadAlways=True )
+        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+
+    if 1: # Always fully load the Bible objects
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible F/ Always loading (incl. books) {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+
+    if 0: # Load, check, and export the files
+        testFolder = random.choice( testFolders )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible G/ Processing {}…".format( testFolder ) )
+        uB = UnknownBible( testFolder )
+        result = uB.search( autoLoad=True )
+        #vPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
+        vPrint( 'Quiet', debuggingThisModule, uB )
+        if result:
+            result.check()
+            results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            vPrint( 'Info', debuggingThisModule, "  Results are: {}".format( results ) )
+# end of UnknownBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -898,20 +1060,20 @@ def demo() -> None:
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "  A2 result5 is: {}".format( result5 ) )
-                    print( "  A2 result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
         #vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #print( "  A3 result1 is: {}".format( result1 ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
         #vPrint( 'Quiet', debuggingThisModule, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
             #thisBible.check()
-            #errorDictionary = thisBible.getErrors()
+            #errorDictionary = thisBible.getCheckResults()
 
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
@@ -1017,8 +1179,7 @@ def demo() -> None:
                 result.check()
                 results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 vPrint( 'Info', debuggingThisModule, "  Results are: {}".format( results ) )
-# end of demo
-
+# end of UnknownBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -1028,7 +1189,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of UnknownBible.py

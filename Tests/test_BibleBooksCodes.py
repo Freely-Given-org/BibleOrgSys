@@ -544,7 +544,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
     #def test_2365_getAllUnboundBibleBooksCodePairs( self ):
         #""" Test the getAllUnboundBibleBooksCodePairs function. """
         #results = self.bbc.getAllUnboundBibleBooksCodePairs()
-        #print (results)
+        #vPrint( 'Quiet', debuggingThisModule, results)
         #self.assertTrue( isinstance( results, list ) )
         #self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
         #self.assertLess( len(results), 120 )
@@ -665,6 +665,13 @@ class BibleBooksCodesTests( unittest.TestCase ):
     # end of test_2830_isDeuterocanon_NR
 # end of BibleBooksCodesTests class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2019 Robert Hunt
+# Copyright (C) 2012-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -25,21 +25,10 @@
 """
 Module for defining and manipulating complete or partial USX Bibles.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
-PROGRAM_NAME = "USX XML Bible handler"
-PROGRAM_VERSION = '0.38'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
-import logging
 from pathlib import Path
+import logging
 import multiprocessing
 
 if __name__ == '__main__':
@@ -53,6 +42,15 @@ from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 #from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
+PROGRAM_NAME = "USX XML Bible handler"
+PROGRAM_VERSION = '0.38'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -96,11 +94,11 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     vPrint( 'Info', debuggingThisModule, UFns )
     #filenameTuples = UFns.getPossibleFilenameTuples( strictCheck=True )
-    #print( 'P', len(filenameTuples) )
+    #vPrint( 'Quiet', debuggingThisModule, 'P', len(filenameTuples) )
     filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
-    #print( 'C', len(filenameTuples) )
+    #vPrint( 'Quiet', debuggingThisModule, 'C', len(filenameTuples) )
     vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
-    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         numFound += 1
     if numFound:
@@ -133,9 +131,9 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         #filenameTuples = UFns.getPossibleFilenameTuples()
         filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
         vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
-            print( "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+            vPrint( 'Quiet', debuggingThisModule, "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples:
             foundProjects.append( tryFolderName )
             numFound += 1
@@ -181,7 +179,7 @@ class USXXMLBible( Bible ):
         Tries to determine USX filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "USXXMLBible preload() from {}".format( self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, "USXXMLBible preload() from {}".format( self.sourceFolder ) )
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
@@ -189,9 +187,9 @@ class USXXMLBible( Bible ):
 
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
-        #print( "DDFSDF", self.USXFilenamesObject )
-        #print( "DFSFGE", self.USXFilenamesObject.getPossibleFilenameTuples() )
-        #print( "SDFSDQ", self.USXFilenamesObject.getConfirmedFilenameTuples() )
+        #vPrint( 'Quiet', debuggingThisModule, "DDFSDF", self.USXFilenamesObject )
+        #vPrint( 'Quiet', debuggingThisModule, "DFSFGE", self.USXFilenamesObject.getPossibleFilenameTuples() )
+        #vPrint( 'Quiet', debuggingThisModule, "SDFSDQ", self.USXFilenamesObject.getConfirmedFilenameTuples() )
         self.possibleFilenameDict = {}
         filenameTuples = self.USXFilenamesObject.getConfirmedFilenameTuples()
         if not filenameTuples: # Try again
@@ -199,7 +197,7 @@ class USXXMLBible( Bible ):
         for BBB,filename in filenameTuples:
             self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
-        #print( "GHJGHR", self.possibleFilenameDict ); halt
+        #vPrint( 'Quiet', debuggingThisModule, "GHJGHR", self.possibleFilenameDict ); halt
 
         self.preloadDone = True
     # end of USXXMLBible.preload
@@ -210,28 +208,28 @@ class USXXMLBible( Bible ):
         NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+            vPrint( 'Quiet', debuggingThisModule, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
                 return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( self, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
         UBB.validateMarkers()
         #for j, something in enumerate( UBB._processedLines ):
-            #print( j, something )
+            #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 100: break
         #for j, something in enumerate( sorted(UBB._CVIndex) ):
-            #print( j, something )
+            #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 50: break
         #halt
         self.stashBook( UBB )
@@ -246,7 +244,7 @@ class USXXMLBible( Bible ):
         NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+            vPrint( 'Quiet', debuggingThisModule, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
         if BBB in self.books: return # Already loaded
@@ -255,16 +253,16 @@ class USXXMLBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( self, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
         UBB.validateMarkers()
         #for j, something in enumerate( UBB._processedLines ):
-            #print( j, something )
+            #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 100: break
         #for j, something in enumerate( sorted(UBB._CVIndex) ):
-            #print( j, something )
+            #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 50: break
         #halt
         return UBB
@@ -298,13 +296,13 @@ class USXXMLBible( Bible ):
             parameters = []
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenameTuples():
                 parameters.append( BBB )
-            #print( "parameters", parameters )
+            #vPrint( 'Quiet', debuggingThisModule, "parameters", parameters )
             vPrint( 'Normal', debuggingThisModule, _("Loading {} {} books using {} processes…").format( len(parameters), 'USX', BibleOrgSysGlobals.maxProcesses ) )
             vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._loadBookMP, parameters ) # have the pool do our loads
-                #print( "results", results )
+                #vPrint( 'Quiet', debuggingThisModule, "results", results )
                 #assert len(results) == len(parameters)
                 for j, UBB in enumerate( results ):
                     BBB = parameters[j]
@@ -320,13 +318,13 @@ class USXXMLBible( Bible ):
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
-            #print( self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
+            #vPrint( 'Quiet', debuggingThisModule, self.USXFilenamesObject.getConfirmedFilenameTuples() ); halt
             for BBB,filename in self.possibleFilenameDict.items():
                 self.loadBook( BBB, filename ) # also saves it
                 #UBB = USXXMLBibleBook( self, BBB )
                 #UBB.load( filename, self.givenFolderName, self.encoding )
                 #UBB.validateMarkers()
-                #print( UBB )
+                #vPrint( 'Quiet', debuggingThisModule, UBB )
                 #self.stashBook( UBB )
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
@@ -350,7 +348,7 @@ class USXXMLBible( Bible ):
                     #UBB = USXXMLBibleBook( self, BBB )
                     #UBB.load( self.givenFolderName, thisFilename, self.encoding )
                     #UBB.validateMarkers()
-                    #print( UBB )
+                    #vPrint( 'Quiet', debuggingThisModule, UBB )
                     #self.books[BBB] = UBB
                     ## Make up our book name dictionaries while we're at it
                     #assumedBookNames = UBB.getAssumedBookNames()
@@ -360,7 +358,7 @@ class USXXMLBible( Bible ):
                         #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            #if self.books: print( "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
+            #if self.books: vPrint( 'Quiet', debuggingThisModule, "USXXMLBible.loadBooks: Found {} irregularly named USX files".format( len(self.books) ) )
 
         self.doPostLoadProcessing()
     # end of USXXMLBible.loadBooks
@@ -371,9 +369,77 @@ class USXXMLBible( Bible ):
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
+    """
+    import random
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testData = (
+                ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
+                ('Test2',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2'),),
+                ('MatigsalugUSFM',Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
+                ("Matigsalug3", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
+                ("Matigsalug4", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
+                ("Matigsalug5", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
+                ) # You can put your USX test folder here
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        name, testFolder = random.choice( testData )
+        vPrint( 'Quiet', debuggingThisModule, "\nA: Testfolder is: {}".format( testFolder ) )
+        result1 = USXXMLBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "USX TestAa", result1 )
+        result2 = USXXMLBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "USX TestAb (autoLoad)", result2 )
+        result3 = USXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "USX TestAc (autoLoadBooks)", result3 )
+
+    if 1:
+        name, testFolder = random.choice( testData )
+        vPrint( 'Quiet', debuggingThisModule, "\nB: Testfolder is: {} ({})".format( testFolder, name ) )
+        if os.access( testFolder, os.R_OK ):
+            UB = USXXMLBible( testFolder, name )
+            UB.load()
+            vPrint( 'Quiet', debuggingThisModule, UB )
+            if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+            if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+            #UBErrors = UB.getCheckResults()
+            # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+            #vPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
+            #vPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
+            #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+        else: vPrint( 'Quiet', debuggingThisModule, "B: Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
+
+        #if BibleOrgSysGlobals.commandLineArguments.export:
+        #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+        #       pass
+
+    if 1:
+        USXSourceFolder = Path( '/srv/Documents/USXResources/' ) # You can put your own folder here
+        for j, something in enumerate( sorted( os.listdir( USXSourceFolder ) ) ):
+            if something == '.git': assert j==0; continue
+            #if something != 'TND': continue # Test this one only!!!
+            #vPrint( 'Quiet', debuggingThisModule, "something", something )
+            somepath = os.path.join( USXSourceFolder, something )
+            if os.path.isfile( somepath ):
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    vPrint( 'Quiet', debuggingThisModule, "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
+            elif os.path.isdir( somepath ):
+                abbreviation = something
+                vPrint( 'Quiet', debuggingThisModule, "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
+                loadedBible = USXXMLBible( somepath, givenName=abbreviation+' Bible' )
+                loadedBible.loadBooks() # Load and process the USX XML books
+                vPrint( 'Quiet', debuggingThisModule, loadedBible ) # Just print a summary
+                break
+# end of USXXMLBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -405,14 +471,14 @@ def demo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                #UBErrors = UB.getErrors()
-                # print( UBErrors )
-                #print( UB.getVersification() )
-                #print( UB.getAddedUnits() )
+                #UBErrors = UB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
+                #vPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                    ##print( "Looking for", ref )
-                    #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
-            else: print( "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                    #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "B{}: Sorry, test folder {!r} is not readable on this computer.".format( j+1, testFolder ) )
 
         #if BibleOrgSysGlobals.commandLineArguments.export:
         #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
@@ -423,18 +489,18 @@ def demo() -> None:
         for j, something in enumerate( sorted( os.listdir( USXSourceFolder ) ) ):
             if something == '.git': assert j==0; continue
             #if something != 'TND': continue # Test this one only!!!
-            #print( "something", something )
+            #vPrint( 'Quiet', debuggingThisModule, "something", something )
             somepath = os.path.join( USXSourceFolder, something )
             if os.path.isfile( somepath ):
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-                    print( "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
+                    vPrint( 'Quiet', debuggingThisModule, "C{}/ Unexpected {} file in {}".format( j, something, USXSourceFolder ) )
             elif os.path.isdir( somepath ):
                 abbreviation = something
                 vPrint( 'Quiet', debuggingThisModule, "\nC{}/ Loading USX {}…".format( j, abbreviation ) )
                 loadedBible = USXXMLBible( somepath, givenName=abbreviation+' Bible' )
                 loadedBible.loadBooks() # Load and process the USX XML books
                 vPrint( 'Quiet', debuggingThisModule, loadedBible ) # Just print a summary
-# end of demo
+# end of USXXMLBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -443,7 +509,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of USXXMLBible.py

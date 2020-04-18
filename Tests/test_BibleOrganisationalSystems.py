@@ -92,7 +92,7 @@ class BibleOrganisationalSystemsConverterTests(unittest.TestCase):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        print( "Sorry, no C export yet :(" )
+        vPrint( 'Quiet', debuggingThisModule, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bossc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleOrganisationalSystemsConverterTests class
@@ -184,7 +184,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bos )
-        #print( 'str result', result )
+        #vPrint( 'Quiet', debuggingThisModule, 'str result', result )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_3010_str
@@ -198,7 +198,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         """ Test the getOrganizationalSystemType function. """
         result = self.bos.getOrganizationalSystemType()
         self.assertTrue( isinstance( result, str ) )
-        #print( 3030, result )
+        #vPrint( 'Quiet', debuggingThisModule, 3030, result )
         self.assertTrue( result in ('edition','revision',) )
     # end of test_3030_getOrganizationalSystemType
 
@@ -214,7 +214,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3050_getOrganizationalSystemValue( self ):
         """ Test the getOrganizationalSystemValue function. """
         results = self.bos.getOrganizationalSystemValue( 'derivedFrom' )
-        #print( '\n\n3050 results', results )
+        #vPrint( 'Quiet', debuggingThisModule, '\n\n3050 results', results )
         self.assertTrue( isinstance( results, tuple ) or isinstance( results, list ) )
         for result in results:
             self.assertTrue( isinstance( result, str ) )
@@ -224,12 +224,12 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         """ Test the containsBook function. """
         for goodBBB in ('GEN','MAL','MAT','REV'):
             result = self.bos.containsBook( goodBBB )
-            #print( '\n\n3060 result', goodBBB, result )
+            #vPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', goodBBB, result )
             self.assertTrue( result in (True,False,) )
             self.assertTrue( result )
         for badBBB in ('SIR','WIS','MA1','PS2'):
             result = self.bos.containsBook( badBBB )
-            #print( '\n\n3060 result', result )
+            #vPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', result )
             self.assertTrue( result in (True,False,) )
             self.assertFalse( result )
     # end of test_3060_containsBook
@@ -237,7 +237,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3070_getBookList( self ):
         """ Test the getBookList function. """
         results = self.bos.getBookList()
-        #print( '\n\n3070 results', results )
+        #vPrint( 'Quiet', debuggingThisModule, '\n\n3070 results', results )
         self.assertTrue( isinstance( results, tuple ) or isinstance( results, list ) )
         for result in results:
             self.assertTrue( isinstance( result, str ) )
@@ -246,7 +246,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3080_isValidBCVRef( self ):
         """ Test the isValidBCVRef function. """
         result = self.bos.isValidBCVRef( ('GEN','1','1',''), "Test-3080" )
-        #print( '\n\n3080 result', result )
+        #vPrint( 'Quiet', debuggingThisModule, '\n\n3080 result', result )
         self.assertTrue( result in (True,False,) )
         self.assertTrue( result )
     # end of test_3080_isValidBCVRef
@@ -286,7 +286,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         for BBB in ('GEN','MAT','JDE',):
             result = self.bos.getNumVersesList( BBB )
             self.assertTrue( isinstance( result, list ) )
-            #print( len(result), result )
+            #vPrint( 'Quiet', debuggingThisModule, len(result), result )
             self.assertTrue( 1 <= len(result) <= 151 )
             self.assertEqual( len(result), self.bos.getNumChapters(BBB) )
             for value in result:
@@ -296,6 +296,13 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     # end of test_3230_getNumVersesList
 # end of BibleOrganisationalSystemTests class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

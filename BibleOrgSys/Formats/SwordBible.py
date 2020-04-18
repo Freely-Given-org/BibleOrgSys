@@ -37,19 +37,9 @@ It uses the SwordInterface in SwordResources,
 Note: The demo takes about 4 minutes with our Sword code,
         cf. 13 minutes using the Sword library! (Why?)
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-11' # by RJH
-SHORT_PROGRAM_NAME = "SwordBible"
-PROGRAM_NAME = "Sword Bible format handler"
-PROGRAM_VERSION = '0.36'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os
+import logging
+import os
 from pathlib import Path
 import multiprocessing
 
@@ -67,7 +57,16 @@ from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterfac
 #from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
- # Must be lowercase
+LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+SHORT_PROGRAM_NAME = "SwordBible"
+PROGRAM_NAME = "Sword Bible format handler"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
+
+# Must be lowercase
 compulsoryTopFolders = ( 'mods.d', 'modules', ) # Both should be there -- the first one contains the .conf file(s)
 #compulsoryBottomFolders = ( 'rawtext', 'ztext', ) # Either one
 compulsoryFiles = ( 'ot','ot.vss', 'ot.bzs','ot.bzv','ot.bzz', 'nt','nt.vss', 'nt.bzs','nt.bzv','nt.bzz', ) # At least two
@@ -123,14 +122,14 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
             if os.path.isdir( somepath ):
                 if something in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
                     continue # don't visit these directories
-                print( _("SwordBibleFileCheck: Didn't expect a subfolder in conf folder: {}").format( something ) )
+                vPrint( 'Quiet', debuggingThisModule, _("SwordBibleFileCheck: Didn't expect a subfolder in conf folder: {}").format( something ) )
             elif os.path.isfile( somepath ):
                 if something.endswith( '.conf' ):
                     foundConfFiles.append( something[:-5].upper() ) # Remove the .conf bit and make it UPPERCASE
                 else:
                     logging.warning( _("SwordBibleFileCheck: Didn't expect this file in conf folder: {}").format( something ) )
         if not foundConfFiles: return 0
-        #print( "confirmThisFolder:foundConfFiles", foundConfFiles )
+        #vPrint( 'Quiet', debuggingThisModule, "confirmThisFolder:foundConfFiles", foundConfFiles )
 
         # See if there's folders for the Sword module files matching the .conf files
         compressedFolder = os.path.join( checkFolderPath, 'modules/', 'texts/', 'ztext/' )
@@ -166,7 +165,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                                     else:
                                         if something2 not in ( 'errata', 'appendix', ):
                                             logging.warning( _("SwordBibleFileCheck1: Didn't expect this file in {} text folder: {}").format( something, something2 ) )
-                            #print( foundTextFiles )
+                            #vPrint( 'Quiet', debuggingThisModule, foundTextFiles )
                             if len(foundTextFiles) >= 2:
                                 foundTextFolders.append( something )
                         else:
@@ -176,7 +175,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         if not foundTextFolders:
             vPrint( 'Info', debuggingThisModule, "    Looked hopeful but no actual module folders or files found" )
             return None
-        #print( "confirmThisFolder: foundTextFolders", foundTextFolders )
+        #vPrint( 'Quiet', debuggingThisModule, "confirmThisFolder: foundTextFolders", foundTextFolders )
         return foundTextFolders
     # end of confirmThisFolder
 
@@ -207,7 +206,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
             if autoLoadBooks: oB.loadBooks() # Load and process the file
             return oB
         return numFound
-    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -260,7 +259,7 @@ class SwordBible( Bible ):
             (with or without the .conf on it).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
+            vPrint( 'Quiet', debuggingThisModule, f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
 
         if not sourceFolder and not moduleName:
             logging.critical( _("SwordBible must be passed either a folder path or a module name!" ) )
@@ -293,7 +292,7 @@ class SwordBible( Bible ):
                     logging.critical( "Too many .conf files found in {}".format( confFolder ) )
                 else:
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "SwordBible.__init__ got", foundConfs[0] )
+                        vPrint( 'Quiet', debuggingThisModule, "SwordBible.__init__ got", foundConfs[0] )
                     self.moduleName = foundConfs[0]
         self.abbreviation = self.moduleName # First attempt
 
@@ -309,7 +308,7 @@ class SwordBible( Bible ):
             #return # our Sword import must have failed
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and SwordResources.SwordType=='CrosswireLibrary':
             availableGlobalOptions = [str(option) for option in self.SwordInterface.library.getGlobalOptions()]
-            print( "availableGlobalOptions", availableGlobalOptions )
+            vPrint( 'Quiet', debuggingThisModule, "availableGlobalOptions", availableGlobalOptions )
         # Don't need to set options if we use getRawEntry() rather than stripText() or renderText()
         #for optionName in ( 'Headings', 'Footnotes', 'Cross-references', "Strong's Numbers", 'Morphological Tags', ):
             #self.SWMgr.setGlobalOption( optionName, 'On' )
@@ -331,17 +330,17 @@ class SwordBible( Bible ):
             if moduleID.upper() == self.moduleName.upper(): self.moduleName = moduleID # Get the case correct
             #module = SWMgr.getModule( moduleID )
             #if 0:
-                #print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                #try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
-                #except UnicodeDecodeError: print( "   Description is not Unicode!" )
-            #print( "moduleID", repr(moduleID) )
+                #vPrint( 'Quiet', debuggingThisModule, "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
+                #try: vPrint( 'Quiet', debuggingThisModule, "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                #except UnicodeDecodeError: vPrint( 'Quiet', debuggingThisModule, "   Description is not Unicode!" )
+            #vPrint( 'Quiet', debuggingThisModule, "moduleID", repr(moduleID) )
             availableModuleCodes.append( moduleID )
-        #print( "Available module codes:", availableModuleCodes )
+        #vPrint( 'Quiet', debuggingThisModule, "Available module codes:", availableModuleCodes )
 
         if self.moduleName not in availableModuleCodes:
             logging.critical( "Unable to find {!r} Sword module".format( self.moduleName ) )
             if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "Available module codes:", availableModuleCodes )
+                vPrint( 'Quiet', debuggingThisModule, "Available module codes:", availableModuleCodes )
 
         self.abbreviation = self.moduleName # Perhaps a better attempt
     # end of SwordBible.__init__
@@ -352,7 +351,7 @@ class SwordBible( Bible ):
         Load the compressed data file and import book elements.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordBible.loadBooks()") )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordBible.loadBooks()") )
 
         vPrint( 'Normal', debuggingThisModule, _("\nLoading {} module…").format( self.moduleName ) )
 
@@ -375,17 +374,17 @@ class SwordBible( Bible ):
             #elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
             #if BibleOrgSysGlobals.verbosityLevel > 3:
-                #print( 'Description: {!r}'.format( module.getDescription() ) )
-                #print( 'Direction: {!r}'.format( ord(module.getDirection()) ) )
-                #print( 'Encoding: {!r}'.format( encoding ) )
-                #print( 'Language: {!r}'.format( module.getLanguage() ) )
-                #print( 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
-                #print( 'Name: {!r}'.format( module.getName() ) )
-                #print( 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
-                #print( 'Type: {!r}'.format( module.getType() ) )
-                #print( 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
-                #print( 'IsUnicode: {!r}'.format( module.isUnicode() ) )
-                #print( 'IsWritable: {!r}'.format( module.isWritable() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Description: {!r}'.format( module.getDescription() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Direction: {!r}'.format( ord(module.getDirection()) ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Encoding: {!r}'.format( encoding ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Language: {!r}'.format( module.getLanguage() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Markup: {!r}={}'.format( markupCode, FMT_DICT[markupCode] ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Name: {!r}'.format( module.getName() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'RenderHeader: {!r}'.format( module.getRenderHeader() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'Type: {!r}'.format( module.getType() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'IsSkipConsecutiveLinks: {!r}'.format( module.isSkipConsecutiveLinks() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'IsUnicode: {!r}'.format( module.isUnicode() ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'IsWritable: {!r}'.format( module.isWritable() ) )
                 ##return
 
             #bookCount = 0
@@ -399,21 +398,21 @@ class SwordBible( Bible ):
                 #verseKeyText = verseKey.getShortText()
                 ##if '2' in verseKeyText: halt # for debugging first verses
                 ##if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    ##print( '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
+                    ##vPrint( 'Quiet', debuggingThisModule, '\nvkst={!r} vkix={}'.format( verseKeyText, verseKey.getIndex() ) )
 
                 ##nativeVerseText = module.renderText().decode( self.encoding, 'replace' )
                 ##nativeVerseText = str( module.renderText() ) if self.encoding=='utf-8' else str( module.renderText(), encoding=self.encoding )
-                ##print( 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
-                ##print( 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
-                ##print( 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
-                ##print( 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'getRenderHeader: {} {!r}'.format( len(module.getRenderHeader()), module.getRenderHeader() ) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'stripText: {} {!r}'.format( len(module.stripText()), module.stripText() ) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'renderText: {} {!r}'.format( len(str(module.renderText())), str(module.renderText()) ) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'getRawEntry: {} {!r}'.format( len(module.getRawEntry()), module.getRawEntry() ) )
                 #try: nativeVerseText = module.getRawEntry()
                 ##try: nativeVerseText = str( module.renderText() )
                 #except UnicodeDecodeError: nativeVerseText = ''
 
                 #if ':' not in verseKeyText:
                     #if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                        #print( "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "Unusual Sword verse key: {} (gave {!r})".format( verseKeyText, nativeVerseText ) )
                     #if BibleOrgSysGlobals.debugFlag:
                         #assert verseKeyText in ( '[ Module Heading ]', '[ Testament 1 Heading ]', '[ Testament 2 Heading ]', )
                     #if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -427,7 +426,7 @@ class SwordBible( Bible ):
                                 #match2 = re.search( 'n="(.+?)"', attributes )
                                 #n = match2.group(1) if match2 else None
                                 #if n: n = n.replace( '$', '' ).strip()
-                                #print( "Module created by {} {}".format( subType, n ) )
+                                #vPrint( 'Quiet', debuggingThisModule, "Module created by {} {}".format( subType, n ) )
                     #continue
                 #vkBits = verseKeyText.split()
                 #assert len(vkBits) == 2
@@ -437,7 +436,7 @@ class SwordBible( Bible ):
                 #vkBits = vkBits[1].split( ':' )
                 #assert len(vkBits) == 2
                 #C, V = vkBits
-                ##print( 'At {} {}:{}'.format( BBB, C, V ) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'At {} {}:{}'.format( BBB, C, V ) )
 
                 ## Start a new book if necessary
                 #if BBB != currentBBB:
@@ -445,7 +444,7 @@ class SwordBible( Bible ):
                         #vPrint( 'Verbose', debuggingThisModule, "Saving", currentBBB, bookCount )
                         #self.stashBook( thisBook )
                     ## Create the new book
-                    #if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {} {}…'.format( self.moduleName, BBB ) )
+                    #if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', debuggingThisModule, '  Loading {} {}…'.format( self.moduleName, BBB ) )
                     #thisBook = BibleBook( self, BBB )
                     #thisBook.objectNameString = 'Sword Bible Book object'
                     #thisBook.objectTypeString = 'Sword Bible'
@@ -463,7 +462,7 @@ class SwordBible( Bible ):
                     #elif markupCode == FMT_GBF: importGBFVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
                     #elif markupCode == FMT_THML: importTHMLVerseLine( nativeVerseText, thisBook, self.moduleName, BBB, C, V )
                     #else:
-                        #print( 'markupCode', repr(markupCode) )
+                        #vPrint( 'Quiet', debuggingThisModule, 'markupCode', repr(markupCode) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                         #return
 
@@ -473,7 +472,7 @@ class SwordBible( Bible ):
 
 
         #elif SwordResources.SwordType=='OurCode': # module is already loaded above
-            ##print( "moduleConfig =", module.SwordModuleConfiguration )
+            ##vPrint( 'Quiet', debuggingThisModule, "moduleConfig =", module.SwordModuleConfiguration )
             #self.books = module.books
 
         self.doPostLoadProcessing()
@@ -495,9 +494,9 @@ def testSwB( SwFolderPath, SwModuleName=None ):
     vPrint( 'Normal', debuggingThisModule, SwBible ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         SwBible.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        SwBErrors = SwBible.getErrors()
-        # print( SwBErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        SwBErrors = SwBible.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, SwBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##SwBible.toDrupalBible()
         SwBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -511,23 +510,23 @@ def testSwB( SwFolderPath, SwModuleName=None ):
         if T=='NT' and len(SwBible)==39: continue # Don't bother with NT references if it's only a OT
         if T=='DC' and len(SwBible)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( BBB, C, V )
-        #print( svk, SwBible.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, SwBible.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = SwBible.getVerseText( svk )
-            #print( "verseText", verseText )
+            #vPrint( 'Quiet', debuggingThisModule, "verseText", verseText )
             fullVerseText = SwBible.getVerseText( svk, fullTextFlag=True )
         except KeyError:
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if BibleOrgSysGlobals.debugFlag: print()
-            print( reference, shortText, verseText )
-            if BibleOrgSysGlobals.debugFlag: print( '  {}'.format( fullVerseText ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '' )
+            vPrint( 'Quiet', debuggingThisModule, reference, shortText, verseText )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
     return SwBible
 # end of testSwB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -559,7 +558,7 @@ def demo() -> None:
             if BBB in SwBible:
                 SwBible.books[BBB].debugPrint()
                 for entryKey in SwBible.books[BBB]._CVIndex:
-                    print( BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 1: # specified installed modules (Removed 'ESV2001','ESV2011', 'TS1998',)
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ISV','NET','OEB',
@@ -597,8 +596,81 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nSword E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testSwB( testFolder, someFolder )
-# end of demo
+# end of SwordBible.briefDemo
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
+    # Matigsalug_Test module
+    MSTestFolderOld = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
+    MSTestFolder = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = SwordBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "Sword TestA1", result1 )
+        result2 = SwordBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "Sword TestA2", result2 )
+        result3 = SwordBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "Sword TestA3", result3 )
+
+    if 1: # specify testFolder containing a single module
+        vPrint( 'Normal', debuggingThisModule, "\nSword B/ Trying single module in {}".format( MSTestFolder ) )
+        testSwB( MSTestFolder )
+
+    if 1: # specified single installed module
+        singleModule = 'ASV'
+        vPrint( 'Normal', debuggingThisModule, "\nSword C/ Trying installed {} module".format( singleModule ) )
+        SwBible = testSwB( None, singleModule )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+            BBB = 'JN1'
+            if BBB in SwBible:
+                SwBible.books[BBB].debugPrint()
+                for entryKey in SwBible.books[BBB]._CVIndex:
+                    vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
+
+    if 1: # specified installed modules (Removed 'ESV2001','ESV2011', 'TS1998',)
+        good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ISV','NET','OEB',
+                'AB','ABP','ACV','AKJV','BBE','BSV','BWE','CPDV','Common','DRC','Darby',
+                'EMTV','Etheridge','Geneva1599','Godbey','GodsWord','JPS','KJVPCE','LITV','LO','Leeser',
+                'MKJV','Montgomery','Murdock','NETfree','NETtext','NHEB','NHEBJE','NHEBME','Noyes',
+                'OEBcth','OrthJBC','RKJNT','RNKJV','RWebster','RecVer','Rotherham',
+                'SPE','Twenty','Tyndale','UKJV','WEBBE','WEBME','Webster','Weymouth','Worsley',)
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nSword D{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testSwB( testFolder, testFilename )
+            break
+
+
+    if 0: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [(testFolder,folderName) for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testSwB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nSword E{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testSwB( testFolder, someFolder )
+# end of SwordBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -607,7 +679,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordBible.py

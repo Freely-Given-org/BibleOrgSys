@@ -5,7 +5,7 @@
 #
 # Module handling YET Bible files
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -65,18 +65,7 @@ As of 2019-05-05, there's documentation here:
 Seems that a YES Bible file is a binary version of a YET text Bible file.
     (We don't yet read .yes files.)
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "YETBible"
-PROGRAM_NAME = "YET Bible format handler"
-PROGRAM_VERSION = '0.10'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os
 from pathlib import Path
@@ -91,6 +80,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "YETBible"
+PROGRAM_NAME = "YET Bible format handler"
+PROGRAM_VERSION = '0.10'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
@@ -250,7 +248,7 @@ class YETBible( Bible ):
             verseString = verseString.replace( '@9', '\\add ' ).replace( '@7', '\\add*' ) # or \\i ???
             verseString = re.sub( r'@<f([0-9])@>@/', r'\\ff\1', verseString )
             verseString = re.sub( r'@<x([0-9])@>@/', r'\\xx\1', verseString )
-            #print( repr( verseString ) )
+            #vPrint( 'Quiet', debuggingThisModule, repr( verseString ) )
             assert '@' not in verseString
             return verseString
         # end of decodeVerse
@@ -269,10 +267,10 @@ class YETBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #print ( 'YETBible file line is "' + line + '"' )
+                #vPrint( 'Quiet', debuggingThisModule, 'YETBible file line is "' + line + '"' )
 
                 bits = line.split( '\t' )
-                #print( self.givenName, BBB, bits )
+                #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                 if bits[0] == 'info':
                     assert len(bits) == 3
                     if bits[1] == 'shortName':
@@ -306,7 +304,7 @@ class YETBible( Bible ):
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
-                    #print( "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
                             bookDict[lastBBB] = bookLines
@@ -325,7 +323,7 @@ class YETBible( Bible ):
                         assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     headingString = encodedHeadingString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
-                    #print( repr(encodedHeadingString), repr(headingString) )
+                    #vPrint( 'Quiet', debuggingThisModule, repr(encodedHeadingString), repr(headingString) )
                     assert '@' not in headingString
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = headingString, [] # Blank refList
                     continue
@@ -333,7 +331,7 @@ class YETBible( Bible ):
                     assert len(bits) == 2
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
                     refList.append( bits[1] )
-                    #print( "parallel2", repr(heading), refList )
+                    #vPrint( 'Quiet', debuggingThisModule, "parallel2", repr(heading), refList )
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = heading, refList
                     continue
                 elif bits[0] == 'xref':
@@ -349,7 +347,7 @@ class YETBible( Bible ):
                     noteString = re.sub( r'@<ta(.+?)@>', r'', noteString ) # Get rid of these encoded BCV references for now
                     noteString = re.sub( r'@<to(.+?)@>', r'', noteString ) # Get rid of these OSIS BCV references for now
                     noteString = noteString.replace( '@/', '' )
-                    #print( repr(encodedNoteString), repr(noteString) )
+                    #vPrint( 'Quiet', debuggingThisModule, repr(encodedNoteString), repr(noteString) )
                     assert '@' not in noteString
                     xrefDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
@@ -366,13 +364,13 @@ class YETBible( Bible ):
                     assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
-                else: print( "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', debuggingThisModule, "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
             bookDict[lastBBB] = bookLines # Save the last book
 
 
         # Now process the books
         for BBB,bkData in bookDict.items():
-            #print( "Processing", BBB )
+            #vPrint( 'Quiet', debuggingThisModule, "Processing", BBB )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'YET Bible Book object'
             thisBook.objectTypeString = 'YET'
@@ -381,57 +379,57 @@ class YETBible( Bible ):
                 # Insert headings (can only occur before verses)
                 if (BBB,chapterNumberString,verseNumberString) in headingDict:
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
-                    #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
+                    #vPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
                     thisBook.addLine( 's', heading )
                     if refList:
                         refString = ""
-                        #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
+                        #vPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
                         for ref in refList:
                             refString += ('; ' if refString else '') + ref
-                        #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
+                        #vPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
                         thisBook.addLine( 'r', '('+refString+')' )
                 # Insert footnotes and cross-references
                 while '\\ff' in verseString:
-                    #print( "footnote", repr(verseString) )
+                    #vPrint( 'Quiet', debuggingThisModule, "footnote", repr(verseString) )
                     fIx = verseString.index( '\\ff' )
                     caller = verseString[fIx+3]
-                    #print( "fcaller", repr(caller) )
+                    #vPrint( 'Quiet', debuggingThisModule, "fcaller", repr(caller) )
                     assert caller.isdigit()
                     note = footnoteDict[(BBB,chapterNumberString,verseNumberString,caller)]
-                    #print( "fnote", repr(note) )
+                    #vPrint( 'Quiet', debuggingThisModule, "fnote", repr(note) )
                     verseString = verseString[:fIx] + '\\f + \\ft ' + note + '\\f*' + verseString[fIx+4:]
-                    #print( "fvS", repr(verseString) )
+                    #vPrint( 'Quiet', debuggingThisModule, "fvS", repr(verseString) )
                 while '\\xx' in verseString:
-                    #print( "xref", repr(verseString) )
+                    #vPrint( 'Quiet', debuggingThisModule, "xref", repr(verseString) )
                     fIx = verseString.index( '\\xx' )
                     caller = verseString[fIx+3]
-                    #print( "xcaller", repr(caller) )
+                    #vPrint( 'Quiet', debuggingThisModule, "xcaller", repr(caller) )
                     assert caller.isdigit()
                     note = xrefDict[(BBB,chapterNumberString,verseNumberString,caller)]
-                    #print( "xnote", repr(note) )
+                    #vPrint( 'Quiet', debuggingThisModule, "xnote", repr(note) )
                     verseString = verseString[:fIx] + '\\x - \\xt ' + note + '\\x*' + verseString[fIx+4:]
-                    #print( "xvS", repr(verseString) )
+                    #vPrint( 'Quiet', debuggingThisModule, "xvS", repr(verseString) )
                 # Save the Bible data fields
                 if chapterNumberString != lastChapterNumberString:
                     thisBook.addLine( 'c', chapterNumberString )
                     lastChapterNumberString = chapterNumberString
-                #print( BBB, chapterNumberString, verseNumberString, repr(verseString) )
+                #vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumberString, verseNumberString, repr(verseString) )
                 if verseString.startswith( '\\\\' ):  # It's an initial paragraph marker
                     if verseString[3]==' ': marker, verseString = verseString[2], verseString[4:]
                     elif verseString[4]==' ': marker, verseString = verseString[2:4], verseString[5:]
                     else: halt
-                    #print( '', '\\'+marker )
+                    #vPrint( 'Quiet', debuggingThisModule, '', '\\'+marker )
                     thisBook.addLine( marker, '' )
                 assert not verseString.startswith( '\\\\' )
                 bits = verseString.split( '\\\\' ) # Split on paragraph markers (but not character markers)
                 for j,bit in enumerate(bits):
-                    #print( "loop", j, repr(bit), repr(verseString) )
+                    #vPrint( 'Quiet', debuggingThisModule, "loop", j, repr(bit), repr(verseString) )
                     if j==0: thisBook.addLine( 'v', verseNumberString + ' ' + verseString.rstrip() )
                     else:
                         if bit[1]==' ': marker, bit = bit[0], bit[2:]
                         elif bit[2]==' ': marker, bit = bit[0:2], bit[3:]
                         else: halt
-                        #print( "mV", marker, repr(bit), repr(verseString) )
+                        #vPrint( 'Quiet', debuggingThisModule, "mV", marker, repr(bit), repr(verseString) )
                         thisBook.addLine( marker, bit.rstrip() )
             self.stashBook( thisBook )
         self.doPostLoadProcessing()
@@ -461,7 +459,7 @@ def testYB( TUBfilename ):
         if t=='NT' and len(yb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(yb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = yb.getVerseText( svk )
@@ -471,9 +469,68 @@ def testYB( TUBfilename ):
 # end of testYB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolder = Path( '/mnt/SSDs/Bibles/YET modules/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = YETBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "YET TestA1", result1 )
+        result2 = YETBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "YET TestA2", result2 )
+        result3 = YETBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "YET TestA3", result3 )
+
+        #testSubfolder = os.path.join( testFolder, 'kjv/' )
+        #result3 = YETBibleFileCheck( testSubfolder )
+        #vPrint( 'Normal', debuggingThisModule, "YET TestB1", result3 )
+        #result4 = YETBibleFileCheck( testSubfolder, autoLoad=True )
+        #vPrint( 'Normal', debuggingThisModule, "YET TestB2", result4 )
+
+
+    if 1: # specified modules
+        single = ( 'kjv', )
+        good = ( 'kjv', 'kjv-red', 'in-tsi', )
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testYB( testFilename )
+            break
+
+
+    if 1: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testYB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testYB( someFolder )
+# end of YETBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -527,8 +584,7 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
-# end of demo
-
+# end of YETBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -537,7 +593,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of YETBible.py

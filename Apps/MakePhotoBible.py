@@ -25,7 +25,7 @@
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
 This app inputs any known type of Bible file(s) [set inputFolder below]
-    and then exports a PhotoBible in the (default) OutputFiles folder
+    and then exports a PhotoBible in the (default) BOSOutputFiles folder
         (inside the folder where you installed the BOS).
 
 Of course, you must already have Python3 installed on your system.
@@ -89,12 +89,12 @@ from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a PhotoBible (in the default OutputFiles folder).
+        and then export a PhotoBible (in the default BOSOutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -123,8 +123,15 @@ def main():
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
         vPrint( 'Info', debuggingThisModule, "  Result was: {}".format( result ) )
-        print(f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
+        vPrint( 'Quiet', debuggingThisModule, f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

@@ -90,7 +90,7 @@ class BibleBookOrdersConverter:
         Load and pre-process the specified book order systems.
         """
         if not self._XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
+            if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
             vPrint( 'Info', debuggingThisModule, _("Loading book order systems from {}…").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
@@ -135,7 +135,7 @@ class BibleBookOrdersConverter:
                     for subelement in self._XMLSystems[bookOrderSystemCode]['tree']:
                         bookCount += 1
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
 
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -268,7 +268,7 @@ class BibleBookOrdersConverter:
 
         # We'll create a number of dictionaries
         for bookOrderSystemCode in self._XMLSystems.keys():
-            #print( bookOrderSystemCode )
+            #vPrint( 'Quiet', debuggingThisModule, bookOrderSystemCode )
             # Make the data dictionary for this book order system
             bookDataDict, idDataDict, BBBList = {}, {}, []
             for bookElement in self._XMLSystems[bookOrderSystemCode]['tree']:
@@ -305,7 +305,7 @@ class BibleBookOrdersConverter:
                         for BBB in self.__DataLists[checkSystemCode]:
                             if not BBB in self.__DataLists[otherSystemCode]: isSubset=False; break # This book isn't even in the other system
                             index = self.__DataLists[otherSystemCode].index( BBB )
-                            #print( BBB, index, lastIndex )
+                            #vPrint( 'Quiet', debuggingThisModule, BBB, index, lastIndex )
                             if index < lastIndex: isSubset=False; break # they must be in a different order
                             lastIndex = index
                         if isSubset: logging.error( _("{} ({} books) is a subset of {} book order system ({} books)").format( checkSystemCode, len(self.__DataLists[checkSystemCode]), otherSystemCode, len(self.__DataLists[otherSystemCode]) ) )
@@ -496,14 +496,14 @@ class BibleBookOrdersConverter:
         #assert systemName
         #assert bookOrderSchemeToCheck
         #assert self.Lists
-        ##print( systemName, bookOrderSchemeToCheck )
+        ##vPrint( 'Quiet', debuggingThisModule, systemName, bookOrderSchemeToCheck )
 
         #matchedBookOrderSystemCodes = []
         #systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         #for bookOrderSystemCode in self.Lists: # Step through the various reference schemes
             #theseErrors = ''
             #if self.Lists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                ##print( "  {} matches {!r} book order system".format( systemName, bookOrderSystemCode ) )
+                ##vPrint( 'Quiet', debuggingThisModule, "  {} matches {!r} book order system".format( systemName, bookOrderSystemCode ) )
                 #systemMatchCount += 1
                 #matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             #else:
@@ -519,18 +519,18 @@ class BibleBookOrdersConverter:
 
         #if systemMatchCount:
             #if systemMatchCount == 1: # What we hope for
-                #print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.debugFlag: print( errorSummary )
+                #vPrint( 'Quiet', debuggingThisModule, _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+                #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
             #else:
-                #print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                #if BibleOrgSysGlobals.debugFlag: print( errorSummary )
+                #vPrint( 'Quiet', debuggingThisModule, _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+                #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
         #else:
-            #print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            #print( allErrors if BibleOrgSysGlobals.debugFlag else errorSummary )
+            #vPrint( 'Quiet', debuggingThisModule, _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            #vPrint( 'Quiet', debuggingThisModule, allErrors if BibleOrgSysGlobals.debugFlag else errorSummary )
 
         #if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
-            #outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleBookOrder_"+systemName + '.xml' )
-            #print( _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
+            #outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleBookOrder_"+systemName + '.xml' )
+            #vPrint( 'Quiet', debuggingThisModule, _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             #with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 #for n,BBB in enumerate(bookOrderSchemeToCheck):
                     #myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -540,7 +540,7 @@ class BibleBookOrdersConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -556,8 +556,15 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML
-        print( bbosc ) # Just print a summary
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, bbosc ) # Just print a summary
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -567,7 +574,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBookOrdersConverter.py

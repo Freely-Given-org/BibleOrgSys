@@ -71,12 +71,12 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Reference.BibleReferences import BibleSingleReference
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a PhotoBible (in the default OutputFiles folder).
+        and then export a PhotoBible (in the default BOSOutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -90,7 +90,7 @@ def main():
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
     ourBibleSingleReference = BibleSingleReference( ourBibleOrganisationalSystem )
 
-    print( _("Use QUIT or EXIT to finish.") )
+    vPrint( 'Quiet', debuggingThisModule, _("Use QUIT or EXIT to finish.") )
 
     while True: # Loop until they stop it
         userInput = input( '\n' + _("Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): ") )
@@ -103,9 +103,9 @@ def main():
         if userInt:
             if 1 <= userInt <= 31102:
                 BBB, C, V = ourBibleOrganisationalSystem.convertAbsoluteVerseNumber( userInt )
-                print( _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
+                vPrint( 'Quiet', debuggingThisModule, _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
             else:
-                print( _("Absolute verse numbers must be in range 1..31,102.") )
+                vPrint( 'Quiet', debuggingThisModule, _("Absolute verse numbers must be in range 1..31,102.") )
 
         else: # assume it's a Bible reference
             adjustedUserInput = userInput
@@ -115,17 +115,24 @@ def main():
                         adjustedUserInput = adjustedUserInput.replace( alternative, ':', 1 )
                         break
             results = ourBibleSingleReference.parseReferenceString( adjustedUserInput )
-            #print( results )
+            #vPrint( 'Quiet', debuggingThisModule, results )
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
-                print( _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
+                vPrint( 'Quiet', debuggingThisModule, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
                 absoluteVerseNumber = ourBibleOrganisationalSystem.getAbsoluteVerseNumber( BBB, C, V )
-                print( _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
                 if BibleOrgSysGlobals.debugFlag:
-                    print( _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
             else:
-                print( _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
+                vPrint( 'Quiet', debuggingThisModule, _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
 # end of main
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

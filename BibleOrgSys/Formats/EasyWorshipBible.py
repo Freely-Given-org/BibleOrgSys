@@ -116,7 +116,7 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
         return numFound
-    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -188,7 +188,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
         for entry in pseudoESFMData:
             marker, text = entry.getMarker(), entry.getCleanText()
-            #print( BBB, marker, text )
+            #vPrint( 'Quiet', debuggingThisModule, BBB, marker, text )
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             elif marker == 'c':
                 C = int( text ) # Just so we get an error if we have something different
@@ -200,17 +200,17 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                     ix = V.find( bridgeChar )
                     if ix != -1:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                            print( "createEasyWorshipBible: preparing for verse bridge in {} at {} {}:{}" \
+                            vPrint( 'Quiet', debuggingThisModule, "createEasyWorshipBible: preparing for verse bridge in {} at {} {}:{}" \
                                         .format( BibleObject.abbreviation, BBB, C, V ) )
                         # Remove verse bridges
                         vStart = V[:ix].replace( 'a', '' ).replace( 'b', '' ).replace( 'c', '' )
                         vEnd = V[ix+1:].replace( 'a', '' ).replace( 'b', '' ).replace( 'c', '' )
-                        #print( BBB, repr(vStart), repr(vEnd) )
+                        #vPrint( 'Quiet', debuggingThisModule, BBB, repr(vStart), repr(vEnd) )
                         try: vBridgeStartInt, vBridgeEndInt = int( vStart ), int( vEnd )
                         except ValueError:
-                            print( "createEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
+                            vPrint( 'Quiet', debuggingThisModule, "createEasyWorshipBible: bridge doesn't seem to be integers in {} {}:{!r}".format( BBB, C, V ) )
                             vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                        #print( ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                        #vPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                         VBridgedText = V
                         V = vStart
                         break
@@ -223,7 +223,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 except ValueError: pass # had a verse bridge
                 if vBridgeStartInt and vBridgeEndInt: # We had a verse bridge
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                        print( "createEasyWorshipBible: handling verse bridge in {} at {} {}:{}-{}" \
+                        vPrint( 'Quiet', debuggingThisModule, "createEasyWorshipBible: handling verse bridge in {} at {} {}:{}-{}" \
                                     .format( BibleObject.abbreviation, BBB, C, vBridgeStartInt, vBridgeEndInt ) )
                     if 1: # new code -- copies the bridged text to all verses
                         for vNum in range( vBridgeStartInt, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -244,22 +244,22 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
                 textBuffer += ' {}'.format( text ) # continuation of the same verse
             else:
                 ignoredMarkers.add( marker )
-        #print( BBB, textBuffer )
+        #vPrint( 'Quiet', debuggingThisModule, BBB, textBuffer )
         textBuffer = textBuffer \
                         .replace( '“', '"' ).replace( '”', '"' ) \
                         .replace( "‘", "'" ).replace( "’", "'" ) \
                         .replace( '–', '--' ).replace( '—', '--' )
         bookBytes = zlib.compress( textBuffer.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
-        #print( BBB, hexlify(bookBytes[:20]), bookBytes )
+        #vPrint( 'Quiet', debuggingThisModule, BBB, hexlify(bookBytes[:20]), bookBytes )
         assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header
         appendage = b'QK\x03\x04' + struct.pack( '<I', len(textBuffer) ) + b'\x08\x00'
-        #print( "appendage", len(appendage), hexlify(appendage), appendage )
+        #vPrint( 'Quiet', debuggingThisModule, "appendage", len(appendage), hexlify(appendage), appendage )
         assert len(appendage) == 10
         compressedDictionary[BBB] = bookBytes + appendage
 
     # Work out the "compressed" (osfuscated) module name
     #name = BibleObject.getAName()
-    ##print( 'sn', repr(BibleObject.shortName) )
+    ##vPrint( 'Quiet', debuggingThisModule, 'sn', repr(BibleObject.shortName) )
     #if len(name)>18:
         #if BibleObject.shortName: name = shortName
         #elif name.endswith( ' Version' ): name = name[:-8]
@@ -269,7 +269,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     if len(name)>16: name = name[:16] # Shorten
     encodedNameBytes = zlib.compress( name.encode( 'utf8' ), ZLIB_COMPRESSION_LEVEL )
     if BibleOrgSysGlobals.debugFlag:
-        print( 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
+        vPrint( 'Quiet', debuggingThisModule, 'Name {!r} went from {} to {} bytes'.format( name, len(name), len(encodedNameBytes) ) )
     assert encodedNameBytes[0]==0x78 and encodedNameBytes[1]==0xda # Zlib compression header
     assert len(encodedNameBytes) <= 26
 
@@ -292,7 +292,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
             #bookName = BibleObject.getAssumedBookName( BBB )
             try: bookName = BibleObject.books[BBB].shortTOCName
             except (KeyError,AttributeError): bookName = None # KeyError if no BBB, AttributeError if no shortTOCName
-            #print( len(bookName) if bookName else '', bookName )
+            #vPrint( 'Quiet', debuggingThisModule, len(bookName) if bookName else '', bookName )
             assert bookName is None or len(bookName) <= 51
             if bookName: bookNameBytes = bookName.encode( 'utf8' )
             else: bookNameBytes = b'' # Not compulsory -- will default to English
@@ -324,16 +324,16 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         myFile.write( encodedNameBytes )
 
         appendage = b'QK\x03\x04' + struct.pack( 'B', len(name) ) + b'\x00'
-        #print( "appendage", len(appendage), hexlify(appendage), appendage )
+        #vPrint( 'Quiet', debuggingThisModule, "appendage", len(appendage), hexlify(appendage), appendage )
         assert len(appendage) == 6
         myFile.write( appendage )
         remainderCount = 18 + len(name) - len(encodedNameBytes) - 4 - len(appendage)
-        #print( "remainderCount", remainderCount )
+        #vPrint( 'Quiet', debuggingThisModule, "remainderCount", remainderCount )
         assert remainderCount == 0
         #myFile.write( b'\x00' * remainderCount )
         myFile.write( b'\x00\x00\x08\x00' ) # Not sure what this means
         #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            #print( "At", myFile.tell(), 'want', startingBookAddress )
+            #vPrint( 'Quiet', debuggingThisModule, "At", myFile.tell(), 'want', startingBookAddress )
         assert myFile.tell() == startingBookAddress
 
         # Write the book info to the binary files
@@ -341,7 +341,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
             if BBB in compressedDictionary:
                 myFile.write( compressedDictionary[BBB] ) # Write zlib output
             elif BibleOrgSysGlobals.verbosityLevel > 2:
-                print( '  Book {} is not available for EasyWorship export'.format( BBB ) )
+                vPrint( 'Quiet', debuggingThisModule, '  Book {} is not available for EasyWorship export'.format( BBB ) )
 
         # Write the end of file stuff
         myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
@@ -358,7 +358,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        print( "  BibleWriter.createEasyWorshipBible finished successfully." )
+        vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.createEasyWorshipBible finished successfully." )
     return True
 # end of createEasyWorshipBible
 
@@ -396,7 +396,7 @@ class EasyWorshipBible( Bible ):
 
         assert FILENAME_ENDING in self.sourceFilename.upper()
         self.abbreviation = os.path.splitext( self.sourceFilename)[0] # Remove file extension
-        #print( self.sourceFilename, self.abbreviation )
+        #vPrint( 'Quiet', debuggingThisModule, self.sourceFilename, self.abbreviation )
     # end of EasyWorshipBible.__init__
 
 
@@ -408,25 +408,25 @@ class EasyWorshipBible( Bible ):
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             fileBytes = myFile.read()
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            print( "  {:,} bytes read".format( len(fileBytes) ) )
+            vPrint( 'Quiet', debuggingThisModule, "  {:,} bytes read".format( len(fileBytes) ) )
 
         keep = {}
         index = 0
 
         # Block 1 is 32-bytes long and always the same for EW2009 Bibles
-        #if debuggingThisModule: print( 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
+        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
         keep['introBlock'] = (index,fileBytes[index:index+32])
         hString = ''
         for j in range( 32 ):
             char8 = fileBytes[index+j]
-            #print( char8, repr(char8) )
+            #vPrint( 'Quiet', debuggingThisModule, char8, repr(char8) )
             if char8 < 0x20: break
             hString += chr( char8 )
-        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: print( 'hString', repr(hString), index )
+        #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, 'hString', repr(hString), index )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert hString == 'EasyWorship Bible Text'
         introBlockb = fileBytes[index+j:index+32]
-        #if BibleOrgSysGlobals.debugFlag: print( 'introBlockb', hexlify( introBlockb ), introBlockb )
+        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, 'introBlockb', hexlify( introBlockb ), introBlockb )
         assert introBlockb == b'\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00' # b'1a023c000000e0000000'
         # Skipped some (important?) binary here??? but it's the same for every module
         index += 32
@@ -434,19 +434,19 @@ class EasyWorshipBible( Bible ):
         # Block 2 is 56-bytes long
         moduleNameBlock = fileBytes[index:index+56]
         keep['moduleNameBlock'] = (index,moduleNameBlock)
-        #if debuggingThisModule: print( 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
+        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
         nString = ''
         for j in range( 32 ):
             char8 = fileBytes[index+j]
-            #print( char8, repr(char8) )
+            #vPrint( 'Quiet', debuggingThisModule, char8, repr(char8) )
             if char8 < 0x20: break
             nString += chr( char8 )
-        #if BibleOrgSysGlobals.debugFlag or debuggingThisModule: print( 'nString', repr(nString), index )
+        #if BibleOrgSysGlobals.debugFlag or debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'nString', repr(nString), index )
         vPrint( 'Normal', debuggingThisModule, "EasyWorshipBible.load: " + _("Setting module name to {!r}").format( self.name ) )
         self.name = nString
         #assert self.name # Not there for amp and gkm
         moduleNameBlockb = fileBytes[index+j:index+56]
-        #if BibleOrgSysGlobals.debugFlag: print( 'moduleNameBlockb', len(moduleNameBlockb), hexlify( moduleNameBlockb ), moduleNameBlockb )
+        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, 'moduleNameBlockb', len(moduleNameBlockb), hexlify( moduleNameBlockb ), moduleNameBlockb )
         #assert moduleNameBlockb.endswith( b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00' ) # b'000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000'
         for ix in range( index+j, index+56 ): # Mostly zeroes remaining
             if ix == 84: # What does this mean???
@@ -462,59 +462,59 @@ class EasyWorshipBible( Bible ):
             bookInfoBlock = fileBytes[index:index+51]
             blockName = 'bookInfoBlock-{}'.format( bookNumber )
             keep[blockName] = (index,bookInfoBlock)
-            #if debuggingThisModule: print( blockName, hexlify( bookInfoBlock ), bookInfoBlock )
+            #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, blockName, hexlify( bookInfoBlock ), bookInfoBlock )
             bookName = ''
             for j in range( 32 ):
                 char8 = fileBytes[index+j]
-                #print( char8, repr(char8) )
+                #vPrint( 'Quiet', debuggingThisModule, char8, repr(char8) )
                 if char8 < 0x20: break # bookName seems quite optional -- maybe the English ones are assumed if empty???
                 bookName += chr( char8 )
             assert fileBytes[index+j:index+51] == b'\x00' * (51-j) # Skipped some zeroes here
             index += 51
             if bookName and bookName[-1] == '.': bookName = bookName[:-1] # Remove final period
             #if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                #print( 'bookName', repr(bookName) )
+                #vPrint( 'Quiet', debuggingThisModule, 'bookName', repr(bookName) )
             numChapters = fileBytes[index]
             numVerses = []
             for j in range( numChapters ):
                 numVerses.append( fileBytes[index+j+1] )
-            #print( "here1", 157-j-2, hexlify(fileBytes[index+j+2:index+157]), fileBytes[index+j+2:index+157] )
+            #vPrint( 'Quiet', debuggingThisModule, "here1", 157-j-2, hexlify(fileBytes[index+j+2:index+157]), fileBytes[index+j+2:index+157] )
             if self.abbreviation != 'fn1938': # Why does this fail???
                 assert fileBytes[index+j+2:index+157] == b'\x00' * (157-j-2) # Skipped some zeroes here
             index += 157
             #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                #print( ' {!r} numChapters={} verses={}'.format( bookName, numChapters, numVerses ) )
+                #vPrint( 'Quiet', debuggingThisModule, ' {!r} numChapters={} verses={}'.format( bookName, numChapters, numVerses ) )
             bookStart, = struct.unpack( "<I", fileBytes[index:index+4] )
             assert fileBytes[index+4:index+8] == b'\x00' * 4 # Skipped some zeroes here
             index += 8
             #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                #print( '    bookStart is at {:,}'.format( bookStart ) )
+                #vPrint( 'Quiet', debuggingThisModule, '    bookStart is at {:,}'.format( bookStart ) )
             bookLength, = struct.unpack( "<I", fileBytes[index:index+4] )
             assert fileBytes[index+4:index+8] == b'\x00' * 4 # Skipped some zeroes here
             index += 8
             #if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                #print( '    {} bookLength is {:,} which goes to {:,}'.format( bookNumber, bookLength, bookStart+bookLength ) )
+                #vPrint( 'Quiet', debuggingThisModule, '    {} bookLength is {:,} which goes to {:,}'.format( bookNumber, bookLength, bookStart+bookLength ) )
             bookBytes = fileBytes[bookStart:bookStart+bookLength] # Looking ahead into the file
             rawBooks.append( (bookName, numChapters, numVerses, bookStart, bookLength, bookBytes) )
             if bookLength == 0: # e.g., gkm Philippians (book number 50)
                 logging.critical( "Booknumber {} is empty in {}".format( bookNumber, self.abbreviation ) )
             else:
                 #if debuggingThisModule:
-                    #print( "cHeader1 for {}: {}={} {}={}".format( self.abbreviation, bookBytes[0], hexlify(bookBytes[0:1]), bookBytes[1], hexlify(bookBytes[1:2]) ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "cHeader1 for {}: {}={} {}={}".format( self.abbreviation, bookBytes[0], hexlify(bookBytes[0:1]), bookBytes[1], hexlify(bookBytes[1:2]) ) )
                 assert bookBytes[0]==0x78 and bookBytes[1]==0xda # Zlib compression header (for compression levels 7-9)
         assert index == 14872 # 32 + 56 + 224*66
 
         workNameBlock = fileBytes[index:index+30] # 30 here is just a maximum, not fixed
         keep['workNameBlock'] = (index,workNameBlock) # This block starts with a length, then a work name, e.g., ezFreeASV
         #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            #print( 'workNameBlock', index, hexlify(workNameBlock), workNameBlock )
+            #vPrint( 'Quiet', debuggingThisModule, 'workNameBlock', index, hexlify(workNameBlock), workNameBlock )
         length3, = struct.unpack( "<I", fileBytes[index:index+4] )
-        #print( "length3", length3 ) # Seems to include the compressed string plus six more bytes
+        #vPrint( 'Quiet', debuggingThisModule, "length3", length3 ) # Seems to include the compressed string plus six more bytes
         keep['length3'] = (index,length3)
         if length3:
             bookInfoBlock = fileBytes[index+4:index+4+length3-4-6]
             if debuggingThisModule:
-                print( "cHeader2 for {}: {}={} {}={}".format( self.abbreviation, bookInfoBlock[0], hexlify(bookInfoBlock[0:1]), bookInfoBlock[1], hexlify(bookInfoBlock[1:2]) ) )
+                vPrint( 'Quiet', debuggingThisModule, "cHeader2 for {}: {}={} {}={}".format( self.abbreviation, bookInfoBlock[0], hexlify(bookInfoBlock[0:1]), bookInfoBlock[1], hexlify(bookInfoBlock[1:2]) ) )
             assert bookInfoBlock[0]==0x78 and bookInfoBlock[1]==0xda # Zlib compression header (for compression levels 7-9)
             byteResult = zlib.decompress( bookInfoBlock )
             #rewriteResult1 = zlib.compress( byteResult, 9 )
@@ -523,7 +523,7 @@ class EasyWorshipBible( Bible ):
             #rewriteResult2 = compressor.compress( byteResult )
             #rewriteResult2 += compressor.flush()
             #byteResult2 = zlib.decompress( rewriteResult2 )
-            #print( "rewrite1 {} {} {}\n         {} {} {}\n         {} {} {}\n      to {} {}\n      to {} {}\n      to {} {}" \
+            #vPrint( 'Quiet', debuggingThisModule, "rewrite1 {} {} {}\n         {} {} {}\n         {} {} {}\n      to {} {}\n      to {} {}\n      to {} {}" \
                         #.format( len(bookInfoBlock), hexlify(bookInfoBlock), bookInfoBlock,
                                  #len(rewriteResult1), hexlify(rewriteResult1), rewriteResult1,
                                  #len(rewriteResult2), hexlify(rewriteResult2), rewriteResult2,
@@ -532,7 +532,7 @@ class EasyWorshipBible( Bible ):
                                  #len(byteResult2), byteResult2 ) )
             textResult = byteResult.decode( 'utf8' )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
+                vPrint( 'Quiet', debuggingThisModule, "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
             assert textResult.startswith('ezFree') or textResult.startswith('ezPaid')
             keep['workName'] = (index+4,textResult)
             vPrint( 'Normal', debuggingThisModule, "EasyWorshipBible.load: " + _("Setting module work name to {!r}").format( textResult ) )
@@ -540,7 +540,7 @@ class EasyWorshipBible( Bible ):
             else: # Should rarely happen
                 self.name = self.workName = textResult
             workNameAppendage = fileBytes[index+4+length3-6-4:index+4+length3-4]
-            #print( "workNameAppendage", len(workNameAppendage), hexlify(workNameAppendage), workNameAppendage )
+            #vPrint( 'Quiet', debuggingThisModule, "workNameAppendage", len(workNameAppendage), hexlify(workNameAppendage), workNameAppendage )
             keep['workNameAppendage'] = (index+4+length3-6-4,workNameAppendage)
             assert workNameAppendage[:4] == b'QK\x03\x04'
             uncompressedNameLength, = struct.unpack( "<B", workNameAppendage[4:5] )
@@ -548,17 +548,17 @@ class EasyWorshipBible( Bible ):
             assert len(textResult) == uncompressedNameLength
         keep['length3'] = (index,length3)
         index += length3
-        #print( self.abbreviation, len(textResult), repr(textResult), 'length3', length3, len(textResult)+18 )
+        #vPrint( 'Quiet', debuggingThisModule, self.abbreviation, len(textResult), repr(textResult), 'length3', length3, len(textResult)+18 )
         assert length3 == len(textResult) + 18
 
         bookDataStartIndex = rawBooks[0][3]
-        #print( "bookDataStartIndex", bookDataStartIndex )
+        #vPrint( 'Quiet', debuggingThisModule, "bookDataStartIndex", bookDataStartIndex )
 
         #if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            #print( 'After known contents @ {:,}'.format( index ), hexlify( fileBytes[index:index+60] ), fileBytes[index:index+60] )
+            #vPrint( 'Quiet', debuggingThisModule, 'After known contents @ {:,}'.format( index ), hexlify( fileBytes[index:index+60] ), fileBytes[index:index+60] )
 
         block0080 = fileBytes[index:bookDataStartIndex]
-        #print( "block0080", index, len(block0080), hexlify(block0080), block0080 )
+        #vPrint( 'Quiet', debuggingThisModule, "block0080", index, len(block0080), hexlify(block0080), block0080 )
         keep['block0080'] = (index,block0080)
         assert block0080 == b'\x00\x00\x08\x00' # b'00000800'
         index += len( block0080 )
@@ -570,7 +570,7 @@ class EasyWorshipBible( Bible ):
         index = bookStart + bookLength # of the last book
         endBytes = fileBytes[index:]
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( 'endBytes', len(endBytes), hexlify(endBytes), endBytes )
+            #vPrint( 'Quiet', debuggingThisModule, 'endBytes', len(endBytes), hexlify(endBytes), endBytes )
         assert len(endBytes) == 16
         keep['endBytes'] = (index,endBytes)
         assert endBytes == b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' # b'183a000000000000657a774269626c65'
@@ -601,17 +601,17 @@ class EasyWorshipBible( Bible ):
                 rewriteResult1 = zlib.compress( byteResult, 9 )
                 byteResult1 = zlib.decompress( rewriteResult1 )
                 if rewriteResult1 != bookBytes:
-                    print( "\nbookBytes", len(bookBytes), hexlify(bookBytes) )
-                    print( "\nrewriteResult1", len(rewriteResult1), hexlify(rewriteResult1) )
+                    vPrint( 'Quiet', debuggingThisModule, "\nbookBytes", len(bookBytes), hexlify(bookBytes) )
+                    vPrint( 'Quiet', debuggingThisModule, "\nrewriteResult1", len(rewriteResult1), hexlify(rewriteResult1) )
                     halt
                 if byteResult1 != byteResult:
-                    print( len(byteResult), hexlify(byteResult) )
-                    print( len(byteResult1), hexlify(byteResult1) )
+                    vPrint( 'Quiet', debuggingThisModule, len(byteResult), hexlify(byteResult) )
+                    vPrint( 'Quiet', debuggingThisModule, len(byteResult1), hexlify(byteResult1) )
                     halt
             if '\t' in textResult:
                 logging.warning( "Replacing tab characters in {} = {}".format( BBB, bookAbbrev ) )
                 textResult = textResult.replace( '\t', ' ' )
-            #print( textResult )
+            #vPrint( 'Quiet', debuggingThisModule, textResult )
             if BibleOrgSysGlobals.strictCheckingFlag: assert '  ' not in textResult
 
             thisBook = BibleBook( self, BBB )
@@ -623,12 +623,12 @@ class EasyWorshipBible( Bible ):
             for line in textResult.split( '\r\n' ):
                 if not line: continue # skip blank lines
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    #print( 'Processing {} {} line: {!r}'.format( self.abbreviation, BBB, line ) )
+                    #vPrint( 'Quiet', debuggingThisModule, 'Processing {} {} line: {!r}'.format( self.abbreviation, BBB, line ) )
                 assert line[0].isdigit()
                 assert ':' in line[:4]
                 CV,verseText = line.split( ' ', 1 )
                 newC,newV = CV.split( ':' )
-                #print( newC, V, repr(verseText) )
+                #vPrint( 'Quiet', debuggingThisModule, newC, V, repr(verseText) )
                 if newC != C:
                     if self.abbreviation=='hcsb' and BBB in ('SA2',): # Handle a bad bug -- chapter 24 has verses out of order
                         logging.critical( "Skipping error for out-of-order chapters in {}!".format( BBB ) )
@@ -682,9 +682,9 @@ def testEWB( TEWBfilename ):
     vPrint( 'Normal', debuggingThisModule, ewb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ewb.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        ewbErrors = ewb.getErrors()
-        # print( ewbErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        ewbErrors = ewb.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, ewbErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ewb.toDrupalBible()
         ewb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -698,7 +698,7 @@ def testEWB( TEWBfilename ):
         if t=='NT' and len(ewb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(ewb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ewb.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ewb.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = ewb.getVerseText( svk )
@@ -706,13 +706,13 @@ def testEWB( TEWBfilename ):
         except KeyError:
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( reference, shortText, verseText )
-            if BibleOrgSysGlobals.debugFlag: print( '  {}'.format( fullVerseText ) )
+            vPrint( 'Quiet', debuggingThisModule, reference, shortText, verseText )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
     return keep
 # end of testEWB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -765,53 +765,53 @@ def demo() -> None:
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEWB( testFilename )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(allModulesKeepDict)>1:
-            print( "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
+            vPrint( 'Quiet', debuggingThisModule, "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
             # Print the various binary blocks together by block number
-            #print( allModulesKeepDict['alb.ewb'].keys() )
+            #vPrint( 'Quiet', debuggingThisModule, allModulesKeepDict['alb.ewb'].keys() )
             #for blockName in ('introBlock','moduleNameBlock','byte84','workNameBlock','workName','bookDataStartIndex','block0080','endBytes'):
             for blockName in allModulesKeepDict['alb.ewb'].keys():
-                print()
+                vPrint( 'Quiet', debuggingThisModule, '' )
                 for moduleFilename,stuff in allModulesKeepDict.items():
                     if blockName in stuff:
                         index,result = stuff[blockName]
                         if blockName == 'introBlock': # Nice and consistent (32-bytes)
-                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                             assert index == 0
                             assert result == b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00'
                         elif blockName == 'moduleNameBlock':
-                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                         elif blockName == 'byte84': # revision number or something ???
-                            print( blockName, index, result, moduleFilename, )
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
                         #elif blockName in ('bookInfoBlock-1','bookInfoBlock-66'):
-                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                         elif blockName == 'workNameBlock':
-                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                         elif blockName == 'length3':
-                            #print( blockName, index, result, moduleFilename, )
-                            #print( result )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, result )
                             assert 26 <= result <= 32
                         elif blockName == 'workName':
-                            #print( blockName, index, len(result), result, moduleFilename )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), result, moduleFilename )
                             assert index == 14876
                         elif blockName == 'workNameAppendage': # Nice and consistent (4-bytes)
-                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                             assert len(result) == 6
                             assert result[:4] == b'QK\x03\x04'
                             assert result[4] < 16 # Length of uncompressed work name
                             assert result[5:] == b'\x00'
                         elif blockName == 'block0080': # Nice and consistent (4-bytes)
-                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                             assert result == b'\x00\x00\x08\x00'
                         elif blockName == 'bookDataStartIndex':
-                            #print( blockName, index, result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
                             assert 14902 <= result <= 14908
                         elif blockName == 'endBytes': # Nice and consistent (16-bytes)
-                            #print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                             assert result == b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' # b'183a000000000000657a774269626c65'
                         elif not blockName.startswith( 'bookInfoBlock-' ) \
                         and not blockName.startswith( 'bookExtra-' ):
                             # Shouldn't get here
-                            print( blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
                             if debuggingThisModule: halt
 
 
@@ -835,8 +835,15 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nEasyWorship E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testEWB( someFolder )
-# end of demo
+# end of fullDemo
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -848,7 +855,7 @@ if __name__ == '__main__':
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of EasyWorshipBible.py

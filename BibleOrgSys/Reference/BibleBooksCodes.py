@@ -79,8 +79,8 @@ class BibleBooksCodes:
         if not self.__DataDicts: # We need to load them once -- don't do this unnecessarily
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
-                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.pickle' )
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.pickle' )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -92,19 +92,19 @@ class BibleBooksCodes:
                 if pickleIsNewer:
                     import pickle
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( f"Loading pickle file {standardPickleFilepath}…" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
-                    print( "BibleBooksCodes pickle file can't be loaded!" )
-                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.json' )
+                    vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes_Tables.json' )
                 if os.access( standardJsonFilepath, os.R_OK ) \
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( f"Loading json file {standardJsonFilepath}…" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                     # NOTE: We have to convert str referenceNumber keys back to ints
@@ -112,7 +112,7 @@ class BibleBooksCodes:
                                 for key,value in self.__DataDicts['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
-                    print( "BibleBooksCodes JSON file can't be loaded!" )
+                    vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBooksCodesConverter import BibleBooksCodesConverter
             if XMLFileOrFilepath is not None:
@@ -208,8 +208,8 @@ class BibleBooksCodes:
                     resultList.append( something )
                     break
         assert len(resultList) == len(myList)
-        #if resultList == myList: print( "getSequenceList made no change to the order" )
-        #else: print( "getSequenceList: {} produced {}".format( myList, resultList ) )
+        #if resultList == myList: vPrint( 'Quiet', debuggingThisModule, "getSequenceList made no change to the order" )
+        #else: vPrint( 'Quiet', debuggingThisModule, "getSequenceList: {} produced {}".format( myList, resultList ) )
         return resultList
     # end of BibleBooksCodes.getSequenceList
 
@@ -309,7 +309,7 @@ class BibleBooksCodes:
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
         assert len(USFMAbbreviation) == 3
-        #print( USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
+        #vPrint( 'Quiet', debuggingThisModule, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
         result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
         if strict: logging.warning( "getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
@@ -339,17 +339,17 @@ class BibleBooksCodes:
         Returns BBB or None.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+            vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
             assert someText and isinstance( someText, str )
 
         SomeUppercaseText = someText.upper()
-        #print( '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
+        #vPrint( 'Quiet', debuggingThisModule, '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
         if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
             return SomeUppercaseText # it's already a BBB code
         #if someText.isdigit() and 1 <= int(someText) <= 999:
             #return self.__DataDicts['referenceNumberDict'][int(someText)]['referenceAbbreviation']
-        #print( '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
-        #print( '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
+        #vPrint( 'Quiet', debuggingThisModule, '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
+        #vPrint( 'Quiet', debuggingThisModule, '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
         if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
             return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
@@ -357,12 +357,12 @@ class BibleBooksCodes:
         matchCount, foundBBB = 0, None
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             if BBB in SomeUppercaseText:
-                #print( 'getBBB1', BBB, SomeUppercaseText )
+                #vPrint( 'Quiet', debuggingThisModule, 'getBBB1', BBB, SomeUppercaseText )
                 matchCount += 1
                 foundBBB = BBB
-        #print( 'getBBB2', repr(someText), matchCount, foundBBB )
+        #vPrint( 'Quiet', debuggingThisModule, 'getBBB2', repr(someText), matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        #print( sorted(self.__DataDicts['allAbbreviationsDict']) )
+        #vPrint( 'Quiet', debuggingThisModule, sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBBFromText
 
 
@@ -566,25 +566,25 @@ class BibleBooksCodes:
             S = ''
         except:
             BBB, C, V, S = BCVReferenceTuple
-            print( BCVReferenceTuple ); halt # Need to finish handling BCVReferenceTuple
+            vPrint( 'Quiet', debuggingThisModule, BCVReferenceTuple ); halt # Need to finish handling BCVReferenceTuple
         result = self.getReferenceNumber( BBB )
 
         try:
             intC = int( C )
         except ValueError:
-            print( repr(C) ); halt # Need to finish handling C
+            vPrint( 'Quiet', debuggingThisModule, repr(C) ); halt # Need to finish handling C
         result = result * 100 + intC
 
         try:
             intV = int( V )
         except ValueError:
-            print( repr(V) ); halt # Need to finish handling V
+            vPrint( 'Quiet', debuggingThisModule, repr(V) ); halt # Need to finish handling V
         result = result * 150 + intV
 
         try:
             intS = {'a':0, 'b':1}[S.lower()] if S else 0
         except ValueError:
-            print( repr(S) ); halt # Need to finish handling S
+            vPrint( 'Quiet', debuggingThisModule, repr(S) ); halt # Need to finish handling S
         result = result * 10 + intS
 
         return result
@@ -596,9 +596,9 @@ class BibleBooksCodes:
         Sort an iterable containing 3-tuples of BBB,C,V
             or 4-tuples of BBB,C,V,S
         """
-        # print( f"sortBCVReferences( ({len(referencesList)}) {referencesList} )" )
+        # vPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )" )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
-        # print( f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
+        # vPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
         # assert len(sortedList) == len(referencesList)
         return sortedList
     # end of BibleBooksCodes.sortBCVReferences
@@ -657,10 +657,10 @@ class BibleBooksCodes:
 
     def createLists( self, outputFolder=None ):
         """
-        Writes a list of Bible Books Codes to a text file in the OutputFiles folder
+        Writes a list of Bible Books Codes to a text file in the BOSOutputFiles folder
             and also to an HTML-formatted table.
         """
-        if not outputFolder: outputFolder = "OutputFiles/"
+        if not outputFolder: outputFolder = "BOSOutputFiles/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         with open( os.path.join( outputFolder, "BOS_Books_Codes.txt" ), 'wt', encoding='utf-8' ) as txtFile, \
              open( os.path.join( outputFolder, "BOS_Books_Codes.html" ), 'wt', encoding='utf-8' ) as htmlFile:
@@ -675,7 +675,7 @@ class BibleBooksCodes:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -683,41 +683,48 @@ def demo() -> None:
 
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
-    print( bbc ) # Just print a summary
-    print( "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
-    print( "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
-    print( "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
-    print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
-    print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
-    print( "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
-    print( "All BBBs in a print sequence", len(bbc.getSequenceList()), bbc.getSequenceList() )
+    vPrint( 'Quiet', debuggingThisModule, bbc ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
+    vPrint( 'Quiet', debuggingThisModule, "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
+    vPrint( 'Quiet', debuggingThisModule, "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
+    vPrint( 'Quiet', debuggingThisModule, "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
+    vPrint( 'Quiet', debuggingThisModule, "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
+    vPrint( 'Quiet', debuggingThisModule, "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
+    vPrint( 'Quiet', debuggingThisModule, "All BBBs in a print sequence", len(bbc.getSequenceList()), bbc.getSequenceList() )
     myBBBs = ['GEN','EXO','PSA','ISA','MAL','MAT','REV','GLS']
-    print( "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
+    vPrint( 'Quiet', debuggingThisModule, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        print( "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
     myBBBs = ['REV','CO2','GEN','PSA','CO1','ISA','SA2','MAT','GLS','JOB']
-    print( "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
+    vPrint( 'Quiet', debuggingThisModule, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
-        print( "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
-    print( "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
-    print( "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
-    print( "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
-    print( "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
-    print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
+        vPrint( 'Quiet', debuggingThisModule, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
+    vPrint( 'Quiet', debuggingThisModule, "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
+    vPrint( 'Quiet', debuggingThisModule, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
+    vPrint( 'Quiet', debuggingThisModule, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
+    vPrint( 'Quiet', debuggingThisModule, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
-        print( '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
+        vPrint( 'Quiet', debuggingThisModule, '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
-        print( "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
 
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []
         sections[section].append( BBB )
-    print( "\n{} book codes in {} sections".format( len(bbc), len(sections) ) )
-    for section in sections: print( "  {} section: {} {}".format( section, len(sections[section]), sections[section] ) )
-# end of demo
+    vPrint( 'Quiet', debuggingThisModule, "\n{} book codes in {} sections".format( len(bbc), len(sections) ) )
+    for section in sections: vPrint( 'Quiet', debuggingThisModule, "  {} section: {} {}".format( section, len(sections[section]), sections[section] ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -727,7 +734,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBooksCodes.py

@@ -25,19 +25,9 @@
 """
 Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python data tables.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-08' # by RJH
-SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
-PROGRAM_NAME = "Bible References Links converter"
-PROGRAM_VERSION = '0.41'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os.path
+import logging
+import os.path
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -52,6 +42,15 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 #from BibleReferences import BibleSingleReference, BibleReferenceList
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey, FlexibleVersesKey
+
+
+LAST_MODIFIED_DATE = '2020-04-15' # by RJH
+SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
+PROGRAM_NAME = "Bible References Links converter"
+PROGRAM_VERSION = '0.41'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -97,7 +96,7 @@ class BibleReferencesLinksConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
                 XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
 
@@ -296,7 +295,7 @@ class BibleReferencesLinksConverter:
         rawRefLinkList = []
         actualLinkCount = 0
         for element in self._XMLtree:
-            #print( BibleOrgSysGlobals.elementStr( element ) )
+            #vPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( element ) )
 
             # Get these first for helpful error messages
             sourceReference = element.find('sourceReference').text
@@ -309,7 +308,7 @@ class BibleReferencesLinksConverter:
 
             actualRawLinksList = []
             for subelement in element:
-                #print( BibleOrgSysGlobals.elementStr( subelement ) )
+                #vPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( subelement ) )
                 if subelement.tag in ( 'sourceReference','sourceComponent',): # already processed these
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sourceReference, 'ls12' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sourceReference, 'ks02' )
@@ -331,7 +330,7 @@ class BibleReferencesLinksConverter:
 
             rawRefLinkList.append( (sourceReference,sourceComponent,actualRawLinksList,) )
 
-        vPrint( 'Normal', debuggingThisModule, "  {} raw links loaded (with {} actual raw link entries)".format( len(rawRefLinkList), actualLinkCount ) )
+        vPrint( 'Normal', debuggingThisModule, f"  {len(rawRefLinkList):,} raw links loaded (with {actualLinkCount:,} actual raw link entries)" )
 
 
         myRefLinkList = []
@@ -354,7 +353,7 @@ class BibleReferencesLinksConverter:
             # Now do the actual parsing
             parsedSourceReference = FlexibleVersesKey( sourceReference )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( j, sourceComponent, sourceReference, parsedSourceReference )
+                vPrint( 'Quiet', debuggingThisModule, j, sourceComponent, sourceReference, parsedSourceReference )
                 #assert parsedSourceReference.getShortText().replace(' ','_') == sourceReference
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
@@ -373,10 +372,10 @@ class BibleReferencesLinksConverter:
                 # Now do the actual parsing
                 try: parsedTargetReference = FlexibleVersesKey( targetReference )
                 except TypeError:
-                    print( "  Temporarily ignored {!r} (TypeError from FlexibleVersesKey)".format( targetReference ) )
+                    logging.error( "  Temporarily ignored {!r} (TypeError from FlexibleVersesKey)".format( targetReference ) )
                     parsedTargetReference = None
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( ' ', targetComponent, targetReference, parsedTargetReference )
+                    vPrint( 'Quiet', debuggingThisModule, ' ', targetComponent, targetReference, parsedTargetReference )
                     #assert parsedTargetReference.getShortText().replace(' ','_',1) == targetReference
 
                 actualLinksList.append( (targetReference,targetComponent,parsedTargetReference,linkType,) )
@@ -385,7 +384,7 @@ class BibleReferencesLinksConverter:
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
         vPrint( 'Normal', debuggingThisModule, "  {:,} links processed (with {:,} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
-        #print( myRefLinkList ); halt
+        #vPrint( 'Quiet', debuggingThisModule, myRefLinkList ); halt
         self.__DataList = myRefLinkList
 
         # Now put it into my dictionaries for easy access
@@ -394,26 +393,26 @@ class BibleReferencesLinksConverter:
         # Create a link dictionary (by verse key)
         myRefLinkDict = {}
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
-            #print( sourceReference, sourceComponent, parsedSourceReference )
-            #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
+            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for verseRef in parsedSourceReference.getIncludedVerses():
-                #print( verseRef )
+                #vPrint( 'Quiet', debuggingThisModule, verseRef )
                 assert isinstance( verseRef, SimpleVerseKey )
                 if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
-            #print( myRefLinkDict ); halt
+            #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
         originalLinks = len( myRefLinkDict )
-        print( "  {:,} verse links added to dictionary (includes filling out spans)".format( originalLinks ) )
-        #print( myRefLinkDict ); halt
+        vPrint( 'Quiet', debuggingThisModule, "  {:,} verse links added to dictionary (includes filling out spans)".format( originalLinks ) )
+        #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
 
         # Create a reversed link dictionary (by verse key)
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
-            #print( sourceReference, sourceComponent, parsedSourceReference )
-            #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
+            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for targetReference,targetComponent,parsedTargetReference,linkType in actualLinksList:
                 if parsedTargetReference is not None:
                     for verseRef in parsedTargetReference.getIncludedVerses():
-                        #print( verseRef )
+                        #vPrint( 'Quiet', debuggingThisModule, verseRef )
                         assert isinstance( verseRef, SimpleVerseKey )
                         if linkType == 'TSK': reverseLinkType = 'TSKQuoted'
                         elif linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
@@ -422,11 +421,11 @@ class BibleReferencesLinksConverter:
                         else: halt # Have a new linkType!
                         if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                         myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
-            #print( myRefLinkDict ); halt
+            #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
         totalLinks = len( myRefLinkDict )
         reverseLinks = totalLinks - originalLinks
-        print( "  {:,} reverse links added to dictionary to give {:,} total".format( reverseLinks, totalLinks ) )
-        #print( myRefLinkDict ); halt
+        vPrint( 'Quiet', debuggingThisModule, "  {:,} reverse links added to dictionary to give {:,} total".format( reverseLinks, totalLinks ) )
+        #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
 
         self.__DataDict = myRefLinkDict
 
@@ -436,8 +435,8 @@ class BibleReferencesLinksConverter:
             numRefs = len( entryList )
             if numRefs > mostReferences: mostReferences, mostVerseRef = numRefs, verseRef
             totalReferences += numRefs
-        print( "  {:,} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
-        print( "  {:,} total links for all references".format( totalReferences ) )
+        vPrint( 'Quiet', debuggingThisModule, "  {:,} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
+        vPrint( 'Quiet', debuggingThisModule, "  {:,} total links for all references".format( totalReferences ) )
 
         return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython
@@ -488,10 +487,10 @@ class BibleReferencesLinksConverter:
         filePosition = 0
         with open( dataFilepath, 'wb' ) as myFile:
             for vKey,refList in self.__DataDict.items():
-                #print( "vKey", vKey, vKey.getVerseKeyText() )
-                #print( " ", refList )
+                #vPrint( 'Quiet', debuggingThisModule, "vKey", vKey, vKey.getVerseKeyText() )
+                #vPrint( 'Quiet', debuggingThisModule, " ", refList )
                 length = myFile.write( pickle.dumps( refList ) )
-                #print( " ", filePosition, length )
+                #vPrint( 'Quiet', debuggingThisModule, " ", filePosition, length )
                 assert vKey not in index
                 index[vKey] = (filePosition, length )
                 filePosition += length
@@ -523,7 +522,7 @@ class BibleReferencesLinksConverter:
         assert self.__DataList
         assert self.__DataDict
 
-        print( "Export to Python not written yet!" )
+        vPrint( 'Quiet', debuggingThisModule, "Export to Python not written yet!" )
         halt
 
         if not filepath:
@@ -569,14 +568,14 @@ class BibleReferencesLinksConverter:
         vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             for something in self.__DataList: # temp for debugging … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                print( "Dumping something", something )
+                vPrint( 'Quiet', debuggingThisModule, "Dumping something", something )
                 json.dump( something, myFile, indent=2 )
             json.dump( self.__DataList, myFile, indent=2 )
 
             for someKey,someItem in self.__DataDict.items(): # temp for debugging … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                print( "Dumping someKey", someKey )
+                vPrint( 'Quiet', debuggingThisModule, "Dumping someKey", someKey )
                 json.dump( someKey, myFile, indent=2 )
-                print( "Dumping someItem", someItem )
+                vPrint( 'Quiet', debuggingThisModule, "Dumping someItem", someItem )
                 json.dump( someItem, myFile, indent=2 )
             json.dump( self.__DataDict, myFile, indent=2 )
     # end of BibleReferencesLinksConverter.exportDataToJSON
@@ -644,7 +643,7 @@ class BibleReferencesLinksConverter:
         self.importDataToPython()
         assert self.__DataList
 
-        print( "Export to C not written yet!" )
+        vPrint( 'Quiet', debuggingThisModule, "Export to C not written yet!" )
         halt
 
         if not filepath:
@@ -699,7 +698,7 @@ class BibleReferencesLinksConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -716,8 +715,28 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
-        print( brlc ) # Just print a summary
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, brlc ) # Just print a summary
+# end of BibleReferencesLinksConverter.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if BibleOrgSysGlobals.commandLineArguments.export:
+        brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
+        brlc.exportDataWithIndex() # Produce a data file and an index file
+        brlc.pickle() # Produce a pickle output file
+        #brlc.exportDataToJSON() # Produce a json output file TypeError: Object of type FlexibleVersesKey is not JSON serializable
+        #brlc.exportDataToPython() # Produce the .py tables NOT WRITTEN YET
+        #brlc.exportDataToC() # Produce the .h and .c tables NOT WRITTEN YET
+
+    else: # Must be demo mode
+        # Demo the converter object
+        brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
+        vPrint( 'Quiet', debuggingThisModule, brlc ) # Just print a summary
+# end of BibleReferencesLinksConverter.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -727,7 +746,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleReferencesLinksConverter.py

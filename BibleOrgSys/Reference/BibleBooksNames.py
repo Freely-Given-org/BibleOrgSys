@@ -25,18 +25,7 @@
 """
 Module handling BibleBooksNames.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-09' # by RJH
-SHORT_PROGRAM_NAME = "BibleBooksNames"
-PROGRAM_NAME = "Bible Books Names Systems handler"
-PROGRAM_VERSION = '0.41'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 
@@ -49,6 +38,14 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+SHORT_PROGRAM_NAME = "BibleBooksNames"
+PROGRAM_NAME = "Bible Books Names Systems handler"
+PROGRAM_VERSION = '0.41'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -117,13 +114,13 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
-    #print( "bnLD", len(booknameLeadersDict), booknameLeadersDict )
+    #vPrint( 'Quiet', debuggingThisModule, "bnLD", len(booknameLeadersDict), booknameLeadersDict )
     for leader in booknameLeadersDict:
         UCLeader = leader.upper()
         assert UCLeader not in UCBNLeadersDict
         UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
         #UCBNLeadersDict[UCLeader].append( UCLeader ) # We have to add ourselves to this list
-    #print( "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
+    #vPrint( 'Quiet', debuggingThisModule, "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
 
     # Secondly make a set of the given allowed names
     divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
@@ -142,7 +139,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                     logging.warning( _("Have duplicate entries of {!r} in divisions and book names for {}").format( UCField, systemName ) )
                     ambigSet.add( UCField )
                 bkNameInputDict[UCField] = refAbbrev # Store the index to the book
-    #print( 'amb', len(ambigSet), ambigSet )
+    #vPrint( 'Quiet', debuggingThisModule, 'amb', len(ambigSet), ambigSet )
 
     # Now expand the divisions names
     #
@@ -158,7 +155,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     #           If they are only ever entered into separate fields, the ambiguous list could be split into two
     #               i.e., they wouldn't be ambiguous in context
     #
-    #print( "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
+    #vPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
     tempDNDict = {}
     for UCField in divNameInputDict.keys():
         expandAbbrevs( UCField, divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet  )
@@ -166,33 +163,33 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             if UCField.startswith( leader ):
                 for replacementLeader in UCBNLeadersDict[leader]:
                     expandAbbrevs( UCField.replace(leader,replacementLeader), divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet )
-    #print ( '\ntempDN', len(tempDNDict), tempDNDict )
-    #print( '\namb2', len(ambigSet), ambigSet )
+    #vPrint( 'Quiet', debuggingThisModule, '\ntempDN', len(tempDNDict), tempDNDict )
+    #vPrint( 'Quiet', debuggingThisModule, '\namb2', len(ambigSet), ambigSet )
 
-    #print( "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
+    #vPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
     tempBNDict = {}
-    #print( bkNameInputDict.keys(), UCBNLeadersDict )
+    #vPrint( 'Quiet', debuggingThisModule, bkNameInputDict.keys(), UCBNLeadersDict )
     for UCField in bkNameInputDict.keys():
         expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
         for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
             if UCField.startswith( leader ):
                 for replacementLeader in UCBNLeadersDict[leader]:
                     expandAbbrevs( UCField.replace(leader,replacementLeader), bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet )
-    #print ( '\ntempBN', len(tempBNDict) )
-    #print( '\namb3', len(ambigSet), ambigSet )
+    #vPrint( 'Quiet', debuggingThisModule, '\ntempBN', len(tempBNDict) )
+    #vPrint( 'Quiet', debuggingThisModule, '\namb3', len(ambigSet), ambigSet )
 
     # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
     for field in tempDNDict:
         if field not in ambigSet:
             assert field not in divNameInputDict
             divNameInputDict[field] = tempDNDict[field]
-    #print( "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
+    #vPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
     for field in tempBNDict:
         if field not in ambigSet:
             assert field not in bkNameInputDict
             bkNameInputDict[field] = tempBNDict[field]
-        #else: print( "Didn't add {!r}", field )
-    #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
+        #else: vPrint( 'Quiet', debuggingThisModule, "Didn't add {!r}", field )
+    #vPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict--final", len(bkNameInputDict) )
 
     # Now sort both dictionaries to be longest string first
     sortedDNDict = dict( sorted(divNameInputDict.items(), key=lambda s: -len(s[0])) )
@@ -228,8 +225,8 @@ class BibleBooksNamesSystems:
         if not self.__DataDicts: # Don't do this unnecessarily
             if XMLFolder is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
-                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames.xml' )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.pickle' )
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksNames.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.pickle' )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -241,20 +238,20 @@ class BibleBooksNamesSystems:
                 if pickleIsNewer:
                     import pickle
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( f"Loading pickle file {standardPickleFilepath}…" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                         # self.__ExpandedDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
-                    print( "BibleBooksNames pickle file can't be loaded!" )
-                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.json' )
+                    vPrint( 'Quiet', debuggingThisModule, "BibleBooksNames pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksNames_Tables.json' )
                 if os.access( standardJsonFilepath, os.R_OK ) \
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( f"Loading json file {standardJsonFilepath}…" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                         # self.__ExpandedDicts = json.load( JsonFile )
@@ -263,20 +260,20 @@ class BibleBooksNamesSystems:
                     #             for key,value in self.__DataDict['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
                 elif debuggingThisModule:
-                    print( "BibleBooksNames JSON file can't be loaded!" )
+                    vPrint( 'Quiet', debuggingThisModule, "BibleBooksNames JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBooksNamesConverter import BibleBooksNamesConverter
             if XMLFolder is not None:
                 logging.warning( _("Bible books name systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
-            bbnsc = BibleBooksNamesConverter( XMLFolder )
-            bbnsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            bbnsc = BibleBooksNamesConverter()
+            bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
         #     # See if we can load from the pickle file (faster than loading from the XML)
         #     picklesGood = False
-        #     standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BibleBooksNames_Tables.pickle" )
+        #     standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( "BibleBooksNames_Tables.pickle" )
         #     if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
-        #         standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "BookNames/" )
+        #         standardXMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "BookNames/" )
         #         pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
         #         picklesGood = True
         #         for filename in os.listdir( standardXMLFolder ):
@@ -370,31 +367,31 @@ class BibleBooksNamesSystems:
         Tries all the known Bible Books Names systems.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+            vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
             assert bookNameOrAbbreviation
 
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
 
         for systemName in self.__DataDicts:
-            #print( '\n'+repr(systemName) )
-            #print( self.__DataDicts[systemName] )
+            #vPrint( 'Quiet', debuggingThisModule, '\n'+repr(systemName) )
+            #vPrint( 'Quiet', debuggingThisModule, self.__DataDicts[systemName] )
             #for j in range( len(self.__DataDicts[systemName]) ):
-                #print( '\nHere1', j, self.__DataDicts[systemName][j] )
+                #vPrint( 'Quiet', debuggingThisModule, '\nHere1', j, self.__DataDicts[systemName][j] )
             #for BBB in self.__DataDicts[systemName][2]:
-                #print( 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )
+                #vPrint( 'Quiet', debuggingThisModule, 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict, sortedDivisionNamesDict, sortedBookNamesDict = self.getBooksNamesSystem( systemName )
-            #print( '\nHere3 '+systemName, sortedBookNamesDict )
+            #vPrint( 'Quiet', debuggingThisModule, '\nHere3 '+systemName, sortedBookNamesDict )
             if sortedBookNamesDict:
                 if upperCaseBookNameOrAbbreviation in sortedBookNamesDict:
                     return sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
             else:
                 for BBB in self.__DataDicts[systemName][2]:
                     for possibility in self.__DataDicts[systemName][2][BBB]['inputFields']:
-                        #print( possibility )
+                        #vPrint( 'Quiet', debuggingThisModule, possibility )
                         if possibility.upper().startswith( upperCaseBookNameOrAbbreviation ):
                             return BBB
 
-            if self.__ExpandedDicts: print( self.__ExpandedDicts[systemName] ); halt # nothing written here yet
+            if self.__ExpandedDicts: vPrint( 'Quiet', debuggingThisModule, self.__ExpandedDicts[systemName] ); halt # nothing written here yet
     # end of BibleBooksNamesSystems.getBBBFromText
 
 
@@ -445,9 +442,9 @@ class BibleBooksNamesSystems:
 
             # Now expand to get unambiguous input abbreviations for a publication only containing the books we specified
             sortedDNDict, sortedBNDict = expandBibleNamesInputs( systemName, divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, bookList )
-            #print( sortedBNDict )
-            #print( sortedDNDict )
-            #print( len(divisionsNamesDict), len(divisionsNamesDictCopy), len(booknameLeadersDict), len(bookNamesDict), len(bookNamesDictCopy), len(sortedDNDict), len(sortedBNDict) )
+            #vPrint( 'Quiet', debuggingThisModule, sortedBNDict )
+            #vPrint( 'Quiet', debuggingThisModule, sortedDNDict )
+            #vPrint( 'Quiet', debuggingThisModule, len(divisionsNamesDict), len(divisionsNamesDictCopy), len(booknameLeadersDict), len(bookNamesDict), len(bookNamesDictCopy), len(sortedDNDict), len(sortedBNDict) )
             return divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, sortedDNDict, sortedBNDict
 
         # else we couldn't find the requested system name
@@ -517,7 +514,7 @@ class BibleBooksNamesSystem:
         Get the default book name from the given referenceAbbreviation.
         """
         if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
-        #print( self.__systemName )
+        #vPrint( 'Quiet', debuggingThisModule, self.__systemName )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
@@ -539,7 +536,7 @@ class BibleBooksNamesSystem:
         If it fails, tries BibleBooksCodes
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+            vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
             assert bookNameOrAbbreviation
 
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
@@ -551,14 +548,14 @@ class BibleBooksNamesSystem:
             return None
         if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
-            print( "BibleBooksNamesSystem.getBBBFromText( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
-            #print( self.__sortedBookNamesDict )
+            vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
+            #vPrint( 'Quiet', debuggingThisModule, self.__sortedBookNamesDict )
             myList, thisLen = [], len(upperCaseBookNameOrAbbreviation)
             #for key in self.__sortedBookNamesDict.keys():
-                #if key.startswith('L'): print( key )
+                #if key.startswith('L'): vPrint( 'Quiet', debuggingThisModule, key )
             for key in self.__sortedBookNamesDict.keys():
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
-            print( "Possibility list is", myList )
+            vPrint( 'Quiet', debuggingThisModule, "Possibility list is", myList )
 
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
@@ -572,15 +569,15 @@ class BibleBooksNamesSystem:
         if BibleOrgSysGlobals.debugFlag: assert divisionNameOrAbbreviation
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
-            #print( self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
+            #vPrint( 'Quiet', debuggingThisModule, self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
             return self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]
         if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
-            print( "getDivisionAbbrev", divisionNameOrAbbreviation, upperCaseDivisionNameOrAbbreviation )
+            vPrint( 'Quiet', debuggingThisModule, "getDivisionAbbrev", divisionNameOrAbbreviation, upperCaseDivisionNameOrAbbreviation )
             myList, thisLen = [], len(upperCaseDivisionNameOrAbbreviation)
             for key in self.__sortedDivisionNamesDict.keys():
                 if key.startswith( upperCaseDivisionNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
-            print( "Possibility list is", myList )
+            vPrint( 'Quiet', debuggingThisModule, "Possibility list is", myList )
     # end of BibleBooksNamesSystem.getDivisionAbbreviation
 
 
@@ -601,7 +598,7 @@ class BibleBooksNamesSystem:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -613,32 +610,71 @@ def demo() -> None:
 
     # Demo the BibleBooksNamesSystems object
     bbnss = BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    print( bbnss ) # Just print a summary
-    print( "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
-    print( "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
-    print( "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
-    print( "Available language codes are:", bbnss.getAvailableLanguageCodes() )
+    vPrint( 'Quiet', debuggingThisModule, bbnss ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
+    vPrint( 'Quiet', debuggingThisModule, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
+    vPrint( 'Quiet', debuggingThisModule, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
+    vPrint( 'Quiet', debuggingThisModule, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
     for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
-        print( "From {!r} got {}".format( bookName, bbnss.getBBBFromText( bookName ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "From {!r} got {}".format( bookName, bbnss.getBBBFromText( bookName ) ) )
 
     # Demo the BibleBooksNamesSystem object
     bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
-    print( bbns1 ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, bbns1 ) # Just print a summary
 
     # Demo the BibleBooksNamesSystem object with a book list
     bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
-    print( bbns2 ) # Just print a summary
-    print( "Checking book name inputs…" )
+    vPrint( 'Quiet', debuggingThisModule, bbns2 ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Checking book name inputs…" )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
-        print( "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBBFromText(bookAbbrevInput)) )
-    print( "Checking division name inputs…" )
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBBFromText(bookAbbrevInput)) )
+    vPrint( 'Quiet', debuggingThisModule, "Checking division name inputs…" )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
-        print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
-    print( "Getting division booklists…" )
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
+    vPrint( 'Quiet', debuggingThisModule, "Getting division booklists…" )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
-        print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
+# end of BibleBooksNames.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
+    #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
+    #sampleBookList = ['MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL','PE1','PE2','JDE','REV']
+
+    # Demo the BibleBooksNamesSystems object
+    bbnss = BibleBooksNamesSystems().loadData() # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bbnss ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Available system names are:", bbnss.getAvailableBooksNamesSystemNames() )
+    vPrint( 'Quiet', debuggingThisModule, "Available eng system names are:", bbnss.getAvailableBooksNamesSystemNames( 'eng' ) ) # Just get the ones for this language code
+    vPrint( 'Quiet', debuggingThisModule, "Available mbt system names are:", bbnss.getAvailableBooksNamesSystemNames( languageCode='mbt' ) )
+    vPrint( 'Quiet', debuggingThisModule, "Available language codes are:", bbnss.getAvailableLanguageCodes() )
+    for bookName in ( 'Genesis', 'Genèse', 'Génesis', 'Gênesis', '1 John' ):
+        vPrint( 'Quiet', debuggingThisModule, "From {!r} got {}".format( bookName, bbnss.getBBBFromText( bookName ) ) )
+
+    # Demo the BibleBooksNamesSystem object
+    bbns1 = BibleBooksNamesSystem("eng_traditional") # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bbns1 ) # Just print a summary
+
+    # Demo the BibleBooksNamesSystem object with a book list
+    bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bbns2 ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Checking book name inputs…" )
+    for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
+        # NOTE: '1S' is ambiguous with '1st' :(
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBBFromText(bookAbbrevInput)) )
+    vPrint( 'Quiet', debuggingThisModule, "Checking division name inputs…" )
+    for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
+    vPrint( 'Quiet', debuggingThisModule, "Getting division booklists…" )
+    for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
+        vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
+# end of BibleBooksNames.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -650,7 +686,7 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--expandDemo", action='store_true', dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBooksNames.py

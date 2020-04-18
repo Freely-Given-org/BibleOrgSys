@@ -138,7 +138,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
         and saves the results in the given confDict.
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        print( _("processConfLines( {}, … )").format( abbreviation ) )
+        vPrint( 'Quiet', debuggingThisModule, _("processConfLines( {}, … )").format( abbreviation ) )
 
     lastLine, lineCount, continuationFlag, result = None, 0, False, []
     for line in openFile:
@@ -152,7 +152,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                 line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
         if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
         if not line: continue # Just discard blank lines
-        #print ( "processConfLines: Conf file line {} is {!r}".format( lineCount, line ) )
+        #vPrint( 'Quiet', debuggingThisModule, "processConfLines: Conf file line {} is {!r}".format( lineCount, line ) )
         if line[0] in '#;': continue # Just discard comment lines
         if continuationFlag: thisLine += line; continuationFlag = False
         else: thisLine = line
@@ -164,15 +164,15 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                 assert '=' not in thisLine and thisLine[0]=='[' and thisLine[-1]==']'
                 confDict['Name'] = thisLine[1:-1]
             else: # not the first line in the conf file
-                #print( "lastLine = '"+lastLine+"'" )
-                #print( "thisLine = '"+thisLine+"'" )
+                #vPrint( 'Quiet', debuggingThisModule, "lastLine = '"+lastLine+"'" )
+                #vPrint( 'Quiet', debuggingThisModule, "thisLine = '"+thisLine+"'" )
                 if '=' not in thisLine:
                     logging.error( "Missing = in {} conf file line (line will be ignored): {!r}".format( abbreviation, thisLine ) )
                     continue
                 if 'History=1.4-081031=' in thisLine and not BibleOrgSysGlobals.strictCheckingFlag:
                     thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
                 bits = thisLine.split( '=', 1 )
-                #print( "processConfLines", abbreviation, bits )
+                #vPrint( 'Quiet', debuggingThisModule, "processConfLines", abbreviation, bits )
                 assert len(bits) == 2
                 fieldName, fieldContents = bits
                 for specialFieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING:
@@ -184,7 +184,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                         logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
                                         .format( abbreviation, fieldName, fieldContents ) )
                         fieldName, fieldContents = specialFieldName, (fieldName[len(specialFieldName):],fieldContents)
-                        #print( repr(fieldName), repr(fieldContents) )
+                        #vPrint( 'Quiet', debuggingThisModule, repr(fieldName), repr(fieldContents) )
                 if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING and fieldContents and isinstance( fieldContents, str ) \
                 and fieldContents[0].isdigit() and fieldContents[1] in '1234567890.' and fieldContents[2] in '1234567890.' \
                 and '.' in fieldContents[0:3] and ' ' in fieldContents[2:5] \
@@ -192,9 +192,9 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                     logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
                                     .format( abbreviation, fieldName, fieldContents ) )
                     fieldContents = tuple( fieldContents.split( None, 1 ) )
-                    #print( "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
+                    #vPrint( 'Quiet', debuggingThisModule, "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
                     assert len(fieldContents) == 2
-                    #print( j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
+                    #vPrint( 'Quiet', debuggingThisModule, j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                     assert '_' not in fieldName # now
                 if fieldName=='MinumumVersion': fieldName = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
@@ -204,23 +204,23 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                         logging.info( "Conf file for {!r} has duplicate '{}={}' lines".format( abbreviation, fieldName, fieldContents ) )
                     else: # We have multiple different entries for this field name
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( _("processConfLines found inconsistency"), abbreviation, fieldName, repr(fieldContents) )
-                            print( "  existing entry is", repr(confDict[fieldName]) )
+                            vPrint( 'Quiet', debuggingThisModule, _("processConfLines found inconsistency"), abbreviation, fieldName, repr(fieldContents) )
+                            vPrint( 'Quiet', debuggingThisModule, "  existing entry is", repr(confDict[fieldName]) )
                             assert fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING or fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES
                         #if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING: # Try to handle these duplicate entries
-                            #try: confDict[fieldName].append( ('???',fieldContents) ) #; print( fieldName, 'lots' )
-                            #except AttributeError: confDict[fieldName] = [('???',confDict[fieldName]), ('???',fieldContents) ] #; print( fieldName, 'made list' )
+                            #try: confDict[fieldName].append( ('???',fieldContents) ) #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'lots' )
+                            #except AttributeError: confDict[fieldName] = [('???',confDict[fieldName]), ('???',fieldContents) ] #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'made list' )
                         #else:
-                        try: confDict[fieldName].append( fieldContents ) #; print( fieldName, 'lots' )
-                        except AttributeError: confDict[fieldName] = [confDict[fieldName], fieldContents ] #; print( fieldName, 'made list' )
-                    #print( "here", repr(fieldName), confDict[fieldName] )
+                        try: confDict[fieldName].append( fieldContents ) #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'lots' )
+                        except AttributeError: confDict[fieldName] = [confDict[fieldName], fieldContents ] #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'made list' )
+                    #vPrint( 'Quiet', debuggingThisModule, "here", repr(fieldName), confDict[fieldName] )
                 else: confDict[fieldName] = fieldContents # Most fields only occur once
-                #print( "done", repr(fieldName), confDict[fieldName] )
+                #vPrint( 'Quiet', debuggingThisModule, "done", repr(fieldName), confDict[fieldName] )
         lastLine = line
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        #print( 'confDict', confDict )
-        for cdKey,cdValue in confDict.items(): print( " {} = {}".format( cdKey, cdValue ) )
+        #vPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
+        for cdKey,cdValue in confDict.items(): vPrint( 'Quiet', debuggingThisModule, " {} = {}".format( cdKey, cdValue ) )
 # end of processConfLines
 
 
@@ -234,7 +234,7 @@ class SwordInstallManager():
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.__init__()") )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.__init__()") )
 
         self.userDisclaimerConfirmed = False
 
@@ -256,7 +256,7 @@ class SwordInstallManager():
         Clear our list of available sources.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.clearSources()") )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.clearSources()") )
 
         self.downloadSources = {}
         self.currentRepoName = None
@@ -274,7 +274,7 @@ class SwordInstallManager():
             4/ Site folders (starts with '/' )
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
             assert repoType in ( 'FTP', )
 
         self.downloadSources[repoName] = (repoType,repoSite,repoFolderpath)
@@ -289,7 +289,7 @@ class SwordInstallManager():
         This function can be overriden (esp. if you have a GUI).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.isUserDisclaimerConfirmed()") )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.isUserDisclaimerConfirmed()") )
 
         prompt1 = _("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
                     "components, it also uses a systematic method for accessing sites which gives packet " \
@@ -314,7 +314,7 @@ class SwordInstallManager():
         Use this if you don't want to override isUserDisclaimerConfirmed().
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
             assert flag in (True, False)
 
         self.userDisclaimerConfirmed = flag
@@ -329,7 +329,7 @@ class SwordInstallManager():
             (which may need to be cleared to prevent obsolete entries being held).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -358,11 +358,11 @@ class SwordInstallManager():
         repoSaveFolder = self.currentTempFolder
         repoCompressedSaveFilepath = os.path.join( repoSaveFolder, repoCompressedFilename )
         if os.path.isfile( repoCompressedSaveFilepath ): # delete file if it exists
-            #print( "Delete1", repoCompressedSaveFilepath )
+            #vPrint( 'Quiet', debuggingThisModule, "Delete1", repoCompressedSaveFilepath )
             os.remove( repoCompressedSaveFilepath )
         repoConfFolder = os.path.join( repoSaveFolder, repoConfFolderName )
         if os.path.isdir( repoConfFolder ): # delete folder if it exists
-            #print( "Delete2", repoConfFolder )
+            #vPrint( 'Quiet', debuggingThisModule, "Delete2", repoConfFolder )
             shutil.rmtree( repoConfFolder )
 
         vPrint( 'Normal', debuggingThisModule, _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
@@ -386,7 +386,7 @@ class SwordInstallManager():
             allConfigsTar = tarfile.open( repoCompressedSaveFilepath, mode='r:gz')
             allConfigsTar.extractall( path=repoSaveFolder )
         repoConfFolder = os.path.join( repoSaveFolder, repoConfFolderName )
-        #print( 'repoConfFolder', repoConfFolder )
+        #vPrint( 'Quiet', debuggingThisModule, 'repoConfFolder', repoConfFolder )
 
         # Find the names of the .conf files
         confNames = []
@@ -395,37 +395,37 @@ class SwordInstallManager():
             if os.path.isfile( somepath ):
                 if something.lower().endswith( '.conf' ):
                     confNames.append( something[:-5] ) # Remove .conf from filename
-                else: print( "why", something )
-            else: print( "got", something )
-        #print( 'confNames', len(confNames), confNames )
+                else: vPrint( 'Quiet', debuggingThisModule, "why", something )
+            else: vPrint( 'Quiet', debuggingThisModule, "got", something )
+        #vPrint( 'Quiet', debuggingThisModule, 'confNames', len(confNames), confNames )
 
         # Tried to do this all in memory using streams but couldn't make it work :(
         #repoPath = repoSite + repoFolderpath + repoCompressedFilename
-        #print( _("Getting {!r} module list from {}…").format( repoName, repoPath ) )
+        #vPrint( 'Quiet', debuggingThisModule, _("Getting {!r} module list from {}…").format( repoName, repoPath ) )
         #ftpstream = urllib.request.urlopen( 'ftp://' + repoPath )
         #allConfigsTar = tarfile.open( fileobj=ftpstream, mode='r|gz')
         ##allConfigsTar.extractall()
         #for member in allConfigsTar:
-            #print( '  m', member, member.name, member.size )
+            #vPrint( 'Quiet', debuggingThisModule, '  m', member, member.name, member.size )
             #assert isinstance( member, tarfile.TarInfo )
-            #print( '  mf', member.isfile() )
-            #print( '  md', member.isdir() )
+            #vPrint( 'Quiet', debuggingThisModule, '  mf', member.isfile() )
+            #vPrint( 'Quiet', debuggingThisModule, '  md', member.isdir() )
             #if member.isfile():
                 #configData = allConfigsTar.extractfile( member.name )
-                #print( '  cD', configData )
+                #vPrint( 'Quiet', debuggingThisModule, '  cD', configData )
 
                 #with gzip.open( configData, 'rt', encoding='utf-8' ) as cFile1:
-                    #print( '  cFile1', cFile1, dir(cFile1), cFile1.tell() )
-                    ##print( 'ww', ww )
+                    #vPrint( 'Quiet', debuggingThisModule, '  cFile1', cFile1, dir(cFile1), cFile1.tell() )
+                    ##vPrint( 'Quiet', debuggingThisModule, 'ww', ww )
                     #configStuff = cFile1.readlines()
                     ##for x in cFile1:
-                        ##print( 'x', x )
+                        ##vPrint( 'Quiet', debuggingThisModule, 'x', x )
                     ##with open( cFile1, mode='rt', encoding='utf-8' ) as cFile2:
-                        ##print( '  cFile2', cFile2 )
+                        ##vPrint( 'Quiet', debuggingThisModule, '  cFile2', cFile2 )
                         ##configStuff = cFile2.read()
-                #print( '  cS', configStuff )
+                #vPrint( 'Quiet', debuggingThisModule, '  cS', configStuff )
 
-        #print( allConfigs )
+        #vPrint( 'Quiet', debuggingThisModule, allConfigs )
 
         # Place the conf files information into a dictionary
         for confName in confNames:
@@ -440,7 +440,7 @@ class SwordInstallManager():
                 else: self.availableModules[moduleName].append( newTuple )
             else: # add it
                 self.availableModules[moduleName] = newTuple
-        #print( 'availableModules', len(self.availableModules), self.availableModules.keys() )
+        #vPrint( 'Quiet', debuggingThisModule, 'availableModules', len(self.availableModules), self.availableModules.keys() )
         return True
     # end of SwordInstallManager.refreshRemoteSource
 
@@ -454,7 +454,7 @@ class SwordInstallManager():
             (which is cleared first).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.refreshRemoteSource()") )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource()") )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -483,14 +483,14 @@ class SwordInstallManager():
             and parse the information into self.availableModules.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
 
         # Read the conf file
         confDict = {}
         with open( confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as confFile:
             processConfLines( confName, confFile, confDict )
 
-        #print( 'confDict', confDict )
+        #vPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
         return confDict
     # end of SwordInstallManager._getConfFile
 
@@ -500,7 +500,7 @@ class SwordInstallManager():
         Install the requested module from the remote repository.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("SwordInstallManager.installModule( {} )").format( moduleName ) )
+            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.installModule( {} )").format( moduleName ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -530,16 +530,16 @@ class SwordInstallManager():
         # Get the config info
         repoName, confName, confDict = self.availableModules[moduleName]
         if repoName != self.currentRepoName:
-            print( "installModule: You requested {!r} from {} but it's in {}!".format( moduleName, self.currentRepoName, repoName ) )
+            vPrint( 'Quiet', debuggingThisModule, "installModule: You requested {!r} from {} but it's in {}!".format( moduleName, self.currentRepoName, repoName ) )
             return False
 
         moduleName = confDict['Name']
         moduleRelativePath = confDict['DataPath']
         if moduleRelativePath.startswith( './' ): moduleRelativePath = moduleRelativePath[2:]
         if moduleRelativePath[-1] != '/': moduleRelativePath += '/'
-        #print( repr(moduleName), repr(moduleRelativePath) )
+        #vPrint( 'Quiet', debuggingThisModule, repr(moduleName), repr(moduleRelativePath) )
         fileSaveFolder = os.path.join( self.currentInstallFolderpath, moduleRelativePath )
-        #print( "Save folder is", fileSaveFolder )
+        #vPrint( 'Quiet', debuggingThisModule, "Save folder is", fileSaveFolder )
         if not os.path.isdir( fileSaveFolder): os.makedirs( fileSaveFolder )
 
         # Assume that we're good to go
@@ -563,11 +563,11 @@ class SwordInstallManager():
                                             .format( repoFolderpath, repoSite, err ) )
                 return False
         for filename,filedict in ftp.mlsd( moduleRelativePath ):
-            #print( '  ff', repr(filename), filedict )
+            #vPrint( 'Quiet', debuggingThisModule, '  ff', repr(filename), filedict )
             if filename not in ( '.','..', ): # Ignore these
-                #print( "    Need to download", filename )
+                #vPrint( 'Quiet', debuggingThisModule, "    Need to download", filename )
                 fileSaveFilepath = os.path.join( fileSaveFolder, filename )
-                #print( "    Save filepath is", fileSaveFilepath )
+                #vPrint( 'Quiet', debuggingThisModule, "    Save filepath is", fileSaveFilepath )
                 ftp.retrbinary( 'RETR ' + moduleRelativePath + filename,
                                     open( fileSaveFilepath, 'wb' ).write )
 
@@ -576,7 +576,7 @@ class SwordInstallManager():
         confFolderPath = os.path.join( self.currentInstallFolderpath, 'mods.d/' )
         if not os.path.isdir( confFolderPath): os.makedirs( confFolderPath )
         confFilePath = os.path.join( confFolderPath, confFullname )
-        print( 'confFilePath', confFilePath )
+        vPrint( 'Quiet', debuggingThisModule, 'confFilePath', confFilePath )
         ftp.retrbinary( 'RETR ' + 'mods.d/' + confFullname,
                         open( confFilePath, 'wb' ).write ) # , encoding=DEFAULT_SWORD_CONF_ENCODING
         ftp.quit()
@@ -586,7 +586,7 @@ class SwordInstallManager():
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Sword Manager demo
     """
@@ -605,10 +605,10 @@ def demo() -> None:
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 for modName in im.availableModules:
-                    print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'NETfree'
@@ -620,7 +620,7 @@ def demo() -> None:
                 elif isinstance( confData, list ): confName = confData[0][1]
                 swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolderpath )
                 swMC.loadConf()
-                print( swMC )
+                vPrint( 'Quiet', debuggingThisModule, swMC )
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
@@ -635,10 +635,10 @@ def demo() -> None:
         im.currentInstallFolderpath = im.currentTempFolder
         im.refreshRemoteSource()
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 for modName in im.availableModules:
-                    print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
         if 1: # try installing and testing a module from the above repository
             getModuleName = 'engWEBBE2015eb'
@@ -647,7 +647,7 @@ def demo() -> None:
             if im.installModule( getModuleName ):
                 swMC = SwordModules.SwordModuleConfiguration( getModuleName, im.currentInstallFolderpath )
                 swMC.loadConf()
-                print( swMC )
+                vPrint( 'Quiet', debuggingThisModule, swMC )
 
                 swM = SwordModules.SwordModule( swMC )
                 swM.loadBooks( inMemoryFlag=True )
@@ -659,9 +659,9 @@ def demo() -> None:
         vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh all repositories…" )
         im.refreshAllRemoteSources()
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
             for modName in im.availableModules:
-                print( "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
 
     if 0: # try installing another module
         getModuleName = 'JPS'
@@ -674,14 +674,21 @@ def demo() -> None:
             elif isinstance( confData, list ): confName = confData[0][1]
             swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolderpath )
             swMC.loadConf()
-            print( swMC )
+            vPrint( 'Quiet', debuggingThisModule, swMC )
 
             swM = SwordModules.SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=True )
             vPrint( 'Verbose', debuggingThisModule, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
-# end of demo
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -691,7 +698,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SwordInstallManager.py

@@ -37,7 +37,8 @@ programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-import logging, os.path
+import logging
+import os.path
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -128,7 +129,7 @@ class BibleOrganisationalSystemsConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
                 XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
 
@@ -318,7 +319,7 @@ class BibleOrganisationalSystemsConverter:
 
         if BibleOrgSysGlobals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():
-                #print( extendedReferenceAbbreviation, data )
+                #vPrint( 'Quiet', debuggingThisModule, extendedReferenceAbbreviation, data )
                 systemType = data['type']
                 if systemType=='edition':
                     if 'derivedFrom' in data: logging.error( _("{} shouldn't use 'derivedFrom' {!r}").format( extendedReferenceAbbreviation, data['derivedFrom'] ) )
@@ -382,7 +383,7 @@ class BibleOrganisationalSystemsConverter:
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( f"Exporting BibleOrganisationalSystems to {filepath}…" )
+            vPrint( 'Quiet', debuggingThisModule, f"Exporting BibleOrganisationalSystems to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__dataDicts, myFile )
     # end of pickle
@@ -508,7 +509,7 @@ class BibleOrganisationalSystemsConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -525,7 +526,14 @@ def demo() -> None:
         # Demo the converter object
         bosc = BibleOrganisationalSystemsConverter().loadAndValidate()
         vPrint( 'Normal', debuggingThisModule, bosc ) # Just print a summary
-# end of demo
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -535,7 +543,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleOrganisationalSystemsConverter.py

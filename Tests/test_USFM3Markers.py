@@ -556,6 +556,13 @@ class USFM3MarkersTests( unittest.TestCase ):
 # end of USFM3MarkersTests class
 
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
     from multiprocessing import freeze_support
     freeze_support() # Multiprocessing support for frozen Windows executables

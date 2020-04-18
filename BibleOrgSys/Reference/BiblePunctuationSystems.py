@@ -5,7 +5,7 @@
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,10 +28,10 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-12-23' # by RJH
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
 PROGRAM_NAME = "Bible Punctuation Systems handler"
-PROGRAM_VERSION = '0.44'
+PROGRAM_VERSION = '0.45'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -42,6 +42,9 @@ import logging
 
 if __name__ == '__main__':
     import sys
+    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderPath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderPath )
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
@@ -66,32 +69,76 @@ class BiblePunctuationSystems:
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDict: # Don't do this unnecessarily
-            # See if we can load from the pickle file (faster than loading from the XML)
-            picklesGood = False
-            standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "BiblePunctuationSystems_Tables.pickle" )
-            if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
-                standardXMLFolder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'PunctuationSystems/' )
-                pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
-                picklesGood = True
-                for filename in os.listdir( standardXMLFolder ):
-                    filepart, extension = os.path.splitext( filename )
-                    XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
-                    if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
-                        if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
-                        or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
-                            picklesGood = False; break
-            if picklesGood:
-                import pickle
-                vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
-                with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-            else: # We have to load the XML (much slower)
-                from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
-                if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
-                bpsc = BiblePunctuationSystemsConverter()
-                bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
-                self.__DataDict = bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        return self
+            if XMLFolder is None:
+                # See if we can load from the pickle file (faster than loading from the XML)
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BiblePunctuationSystems.xml' )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BiblePunctuationSystems_Tables.pickle' )
+                try:
+                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                except FileNotFoundError as e:
+                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                # if os.access( standardPickleFilepath, os.R_OK ) \
+                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                if pickleIsNewer:
+                    import pickle
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    with open( standardPickleFilepath, 'rb') as pickleFile:
+                        self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    vPrint( 'Quiet', debuggingThisModule, "BiblePunctuationSystems pickle file can't be loaded!" )
+                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BiblePunctuationSystems_Tables.json' )
+                if os.access( standardJsonFilepath, os.R_OK ) \
+                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    import json
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
+                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    with open( standardJsonFilepath, 'rb') as JsonFile:
+                        self.__DataDict = json.load( JsonFile )
+                    # # NOTE: We have to convert str referenceNumber keys back to ints
+                    # self.__DataDict['referenceNumberDict'] = { int(key):value \
+                    #             for key,value in self.__DataDict['referenceNumberDict'].items() }
+                    return self # So this command can be chained after the object creation
+                elif debuggingThisModule:
+                    vPrint( 'Quiet', debuggingThisModule, "BiblePunctuationSystems JSON file can't be loaded!" )
+            # else: # We have to load the XML (much slower)
+            from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
+            if XMLFolder is not None:
+                logging.warning( _("Bible Punctuation systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
+            bvsc = BiblePunctuationSystemsConverter( XMLFolder )
+            bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        return self # So this command can be chained after the object creation
+        #     # See if we can load from the pickle file (faster than loading from the XML)
+        #     picklesGood = False
+        #     standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( "BiblePunctuationSystems_Tables.pickle" )
+        #     if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
+        #         standardXMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'PunctuationSystems/' )
+        #         pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
+        #         picklesGood = True
+        #         for filename in os.listdir( standardXMLFolder ):
+        #             filepart, extension = os.path.splitext( filename )
+        #             XMLFileOrFilepath = os.path.join( standardXMLFolder, filename )
+        #             if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEPUNCTUATIONSYSTEM_"):
+        #                 if pickle8 <= os.stat( XMLFileOrFilepath ).st_mtime \
+        #                 or pickle9 <= os.stat( XMLFileOrFilepath ).st_ctime: # The pickle file is older
+        #                     picklesGood = False; break
+        #     if picklesGood:
+        #         import pickle
+        #         vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         with open( standardPickleFilepath, 'rb') as pickleFile:
+        #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+        #     else: # We have to load the XML (much slower)
+        #         from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
+        #         if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
+        #         bpsc = BiblePunctuationSystemsConverter()
+        #         bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
+        #         self.__DataDict = bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+        # return self
     # end of loadData
 
     def __str__( self ):
@@ -149,14 +196,14 @@ class BiblePunctuationSystems:
         assert systemName
         assert punctuationSchemeToCheck
         assert self.Lists
-        #print( systemName, punctuationSchemeToCheck )
+        #vPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #print( "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
@@ -172,18 +219,18 @@ class BiblePunctuationSystems:
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                print( "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
-                if debugFlag: print( errorSummary )
+                vPrint( 'Quiet', debuggingThisModule, "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
+                if debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
             else:
-                print( "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
-                if debugFlag: print( errorSummary )
+                vPrint( 'Quiet', debuggingThisModule, "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
+                if debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
         else:
-            print( "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
-            if debugFlag: print( allErrors )
-            else: print( errorSummary)
+            vPrint( 'Quiet', debuggingThisModule, "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
+            if debugFlag: vPrint( 'Quiet', debuggingThisModule, allErrors )
+            else: vPrint( 'Quiet', debuggingThisModule, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
-            outputFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
+            outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
             vPrint( 'Normal', debuggingThisModule, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
@@ -208,7 +255,7 @@ class BiblePunctuationSystem:
         self.__systemName = systemName
         self.__bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         self.__punctuationDict = self.__bpss.getPunctuationSystem( self.__systemName )
-        #print( "xxx", self.__punctuationDict )
+        #vPrint( 'Quiet', debuggingThisModule, "xxx", self.__punctuationDict )
     # end of __init__
 
     def __str__( self ):
@@ -257,7 +304,7 @@ class BiblePunctuationSystem:
         """ Returns the value for the name. """
         assert name
         return self.__punctuationDict[name]
-        ##print( "yyy", self.__punctuationDict )
+        ##vPrint( 'Quiet', debuggingThisModule, "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
         #logging.error( _("No {!r} value in {} punctuation system").format(name,self.__systemName) )
         #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
@@ -265,24 +312,31 @@ class BiblePunctuationSystem:
 # end of BiblePunctuationSystem class
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
-    Main program to handle command line parameters and then run what they want.
+    Brief demo to check class is working -- must be fast
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    print( bpss ) # Just print a summary
-    print( _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+    vPrint( 'Quiet', debuggingThisModule, bpss ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
-    print( bps ) # Just print a summary
-    print( "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    vPrint( 'Quiet', debuggingThisModule, bps ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
     name = 'chapterVerseSeparator'
-    print( "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
-# end of demo
+    vPrint( 'Quiet', debuggingThisModule, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+# end of BiblePunctuationSystem.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of BiblePunctuationSystem.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -292,7 +346,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BiblePunctuationSystems.py

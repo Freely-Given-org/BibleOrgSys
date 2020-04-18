@@ -67,39 +67,39 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 
 
 def doBBB():
-    print( "\ndoBBB" )
+    vPrint( 'Quiet', debuggingThisModule, "\ndoBBB" )
     L0, L1, L2 = {}, {}, {}
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #print( BBB )
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         if BBB[0] in L0: L0[BBB[0]] += 1
         else: L0[BBB[0]] = 1
         if BBB[1] in L1: L1[BBB[1]] += 1
         else: L1[BBB[1]] = 1
         if BBB[2] in L2: L2[BBB[2]] += 1
         else: L2[BBB[2]] = 1
-    print( ' ', sorted(L0) )
-    print( ' ', sorted(L1) )
-    print( ' ', sorted(L2) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L0) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L1) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L2) )
 
     # Now test the RE on the books codes
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #print( BBB )
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
-            print( BBB )
+            vPrint( 'Quiet', debuggingThisModule, BBB )
             halt # Got a BBB that can't be found by the RE
 # end of doBBB
 
 
 def doOSIS():
-    print( "\ndoOSIS" )
+    vPrint( 'Quiet', debuggingThisModule, "\ndoOSIS" )
     minL, maxL = 999, 0
     L = {}
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #print( BBB )
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
-        #print( OB )
+        #vPrint( 'Quiet', debuggingThisModule, OB )
         lOB = len( OB )
         if lOB < minL: minL = lOB
         if lOB > maxL: maxL = lOB
@@ -108,25 +108,32 @@ def doOSIS():
             if OB[j] in L[j]: L[j][OB[j]] += 1
             else: L[j][OB[j]] = 1
     for k in range( maxL ):
-        print( ' ', k, sorted(L[k]) )
-    print( ' ', minL, maxL )
+        vPrint( 'Quiet', debuggingThisModule, ' ', k, sorted(L[k]) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', minL, maxL )
 
     # Now test the RE on the books codes
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #print( BBB )
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:
-            print( OB )
+            vPrint( 'Quiet', debuggingThisModule, OB )
             halt # Got a OB that can't be found by the RE
 # end of doOSIS
 
 
-def main():
+def main() -> None:
     doBBB()
     doOSIS()
 # end of main
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

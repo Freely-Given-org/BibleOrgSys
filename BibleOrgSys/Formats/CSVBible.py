@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2019 Robert Hunt
+# Copyright (C) 2014-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,19 +35,10 @@ e.g.,
     "66","22","20","El que da fe de todo esto proclama: — Sí, estoy a punto de llegar. ¡Amén! ¡Ven, Señor Jesús!"
     "66","22","21","Que la gracia de Jesús, el Señor, esté con todos. Amén."
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "CSVBible"
-PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.32'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os, re
+import logging
+import os
+import re
 import multiprocessing
 
 if __name__ == '__main__':
@@ -58,6 +49,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "CSVBible"
+PROGRAM_NAME = "CSV Bible format handler"
+PROGRAM_VERSION = '0.32'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -132,7 +132,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -230,7 +230,7 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                #print ( "CSV file line {} is {}".format( lineCount, repr(line) ) )
+                #vPrint( 'Quiet', debuggingThisModule, "CSV file line {} is {}".format( lineCount, repr(line) ) )
                 if line[0]=='#': continue # Just discard comment lines
                 if lineCount==1:
                     if line.startswith( '"Book",' ):
@@ -241,10 +241,10 @@ class CSVBible( Bible ):
                         continue # Just discard header line
 
                 bits = line.split( ',', 3 )
-                #print( lineCount, self.givenName, BBB, bits )
+                #vPrint( 'Quiet', debuggingThisModule, lineCount, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bString, chapterNumberString, verseNumberString, vText = bits
-                    #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                    #vPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
                 else:
                     logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
 
@@ -254,10 +254,10 @@ class CSVBible( Bible ):
                     if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
                     if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
                     if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
-                    #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                    #vPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
 
                 #if not bookCode and not chapterNumberString and not verseNumberString:
-                    #print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     #continue
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -301,7 +301,7 @@ class CSVBible( Bible ):
                     if not match: break
                     i = int( vText[match.start()+2:match.end()-1] ) # Convert three digits to decimal
                     vText = vText[:match.start()] + chr( i ) + vText[match.end():]
-                #if vText != vTextOriginal: print( repr(vTextOriginal) ); print( repr(vText) )
+                #if vText != vTextOriginal: vPrint( 'Quiet', debuggingThisModule, repr(vTextOriginal) ); vPrint( 'Quiet', debuggingThisModule, repr(vText) )
 
                 ## Handle special formatting
                 ##   [brackets] are for Italicized words
@@ -312,7 +312,7 @@ class CSVBible( Bible ):
                 #if vText and vText[0]=='«':
                     #assert BBB=='PSA' and verseNumberString=='1'
                     #vBits = vText[1:].split( '»' )
-                    ##print( "vBits", vBits )
+                    ##vPrint( 'Quiet', debuggingThisModule, "vBits", vBits )
                     #thisBook.addLine( 'd', vBits[0] ) # Psalm title
                     #vText = vBits[1].lstrip()
 
@@ -353,9 +353,9 @@ def testCSV( CSVfolder ):
     vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        vBErrors = vb.getErrors()
-        # print( vBErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        vBErrors = vb.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -368,7 +368,7 @@ def testCSV( CSVfolder ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
@@ -378,9 +378,65 @@ def testCSV( CSVfolder ):
 # end of testCSV
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    import random
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolders =  ( BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest1/'),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest2/') )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        testFolder = random.choice( testFolders )
+        result1 = CSVBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "CSV TestA1", result1 )
+
+        result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "CSV TestA2", result2 )
+
+        result3 = CSVBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "CSV TestA3", result3 )
+        #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+
+        if BibleOrgSysGlobals.strictCheckingFlag:
+            result3.check()
+            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            vBErrors = result3.getCheckResults()
+            # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+        if BibleOrgSysGlobals.commandLineArguments.export:
+            ##result3.toDrupalBible()
+            result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+
+    if 0: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testCSV, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testCSV( someFolder )
+# end of CSVBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -402,9 +458,9 @@ def demo() -> None:
 
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
-                #print( UsfmB.books['GEN']._processedLines[0:40] )
-                vBErrors = result3.getErrors()
-                # print( vBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                vBErrors = result3.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -430,8 +486,7 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testCSV( someFolder )
-# end of demo
-
+# end of CSVBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -443,7 +498,7 @@ if __name__ == '__main__':
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CSVBible.py

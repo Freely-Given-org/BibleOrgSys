@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,21 +32,10 @@ Creates a semantic dictionary with keys:
         where the key is the name (e.g., 'Jonah')
         and the entry is a list of 4-tuples (BBB,C,V,actualWord)
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "ESFMBible"
-PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.61'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
-import logging
 from pathlib import Path
+import logging
 import multiprocessing
 
 if __name__ == '__main__':
@@ -62,6 +51,14 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from BibleOrgSys.Bible import Bible
 
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "ESFMBible"
+PROGRAM_NAME = "ESFM Bible handler"
+PROGRAM_VERSION = '0.61'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
@@ -110,7 +107,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         returns the loaded ESFMBible object.
     """
     if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+        vPrint( 'Quiet', debuggingThisModule, "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False)
@@ -148,7 +145,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             #if somethingUpperExt not in filenameEndingsToAccept: continue
             #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
-                ##print( 'E1', repr(firstLine) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'E1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
                 #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                     #logging.info( "ESFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
@@ -162,13 +159,13 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     vPrint( 'Info', debuggingThisModule, UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-    for BBB,fn in filenameTuples[:]: # Only accept our specific file extensions
+    for BBB,fn in filenameTuples.copy(): # Only accept our specific file extensions
         acceptFlag = False
         for fna in filenameEndingsToAccept:
             if fn.endswith( fna ): acceptFlag = True
         if not acceptFlag: filenameTuples.remove( (BBB,fn) )
     vPrint( 'Verbose', debuggingThisModule, "  Confirmed:", len(filenameTuples), filenameTuples )
-    if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} ESFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} ESFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
@@ -208,7 +205,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 #if somethingUpperExt not in filenameEndingsToAccept: continue
                 #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
-                    ##print( 'E2', repr(firstLine) )
+                    ##vPrint( 'Quiet', debuggingThisModule, 'E2', repr(firstLine) )
                     #if firstLine is None: continue # seems we couldn't decode the file
                     #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                         #logging.info( "ESFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
@@ -221,14 +218,14 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         vPrint( 'Info', debuggingThisModule, UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
-        for BBB,fn in filenameTuples[:]: # Only accept our specific file extensions
+        for BBB,fn in filenameTuples.copy(): # Only accept our specific file extensions
             acceptFlag = False
             for fna in filenameEndingsToAccept:
                 if fn.endswith( fna ): acceptFlag = True
             if not acceptFlag: filenameTuples.remove( (BBB,fn) )
         vPrint( 'Verbose', debuggingThisModule, "  Confirmed:", len(filenameTuples), filenameTuples )
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} ESFM files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} ESFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} ESFM files: {}".format( len(filenameTuples), filenameTuples ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} ESFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
@@ -257,7 +254,7 @@ class ESFMBible( Bible ):
         Create the internal ESFM Bible object.
         """
         if debuggingThisModule:
-            print( "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
+            vPrint( 'Quiet', debuggingThisModule, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -276,7 +273,7 @@ class ESFMBible( Bible ):
         """
         """
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("preload() from {}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, t("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -300,7 +297,7 @@ class ESFMBible( Bible ):
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
         if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
-            print( self.USFMFilenamesObject )
+            vPrint( 'Quiet', debuggingThisModule, self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
@@ -370,7 +367,7 @@ class ESFMBible( Bible ):
                         #if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
                         #fieldname = bits[0]
                         #attributes = bits[1]
-                        ##print( "attributes = {!r}".format( attributes) )
+                        ##vPrint( 'Quiet', debuggingThisModule, "attributes = {!r}".format( attributes) )
                         #self.suppliedMetadata[fieldname] = (contents, attributes)
                         #processed = True
                 #elif status==1 and line[0]=='<' and line[-1]=='>':
@@ -387,16 +384,16 @@ class ESFMBible( Bible ):
                             #if BibleOrgSysGlobals.debugFlag: assert len(bits)==2
                             #fieldname = bits[0]
                             #attributes = bits[1]
-                            ##print( "attributes = {!r}".format( attributes) )
+                            ##vPrint( 'Quiet', debuggingThisModule, "attributes = {!r}".format( attributes) )
                             #if line[ix2+2:-1]==fieldname:
                                 #self.suppliedMetadata[fieldname] = (contents, attributes)
                                 #processed = True
-                #if not processed: print( "ERROR: Unexpected {!r} line in SSF file".format( line ) )
+                #if not processed: vPrint( 'Quiet', debuggingThisModule, "ERROR: Unexpected {!r} line in SSF file".format( line ) )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #print( "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  " + _("Got {} SSF entries:").format( len(self.suppliedMetadata) ) )
             #if BibleOrgSysGlobals.verbosityLevel > 3:
                 #for key in sorted(self.suppliedMetadata):
-                    #print( "    {}: {}".format( key, self.suppliedMetadata[key] ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( key, self.suppliedMetadata[key] ) )
         #self.applySuppliedMetadata() # Copy to self.settingsDict
     ## end of ESFMBible.loadMetadata
 
@@ -411,7 +408,7 @@ class ESFMBible( Bible ):
 
         count = 0
         for marker,originalText in originalBook.lines:
-            #print( marker, repr(originalText) )
+            #vPrint( 'Quiet', debuggingThisModule, marker, repr(originalText) )
             if marker == 'rem' and originalText.startswith('ESFM '):
                 if ' SEM' not in originalText: return
             elif marker == 'gl':
@@ -425,8 +422,8 @@ class ESFMBible( Bible ):
                     count += 1
         self.dontLoadBook.append( BBB )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if count: print( "{} semantic entries added in {} categories".format( count, len(self.semanticDict) ) )
-            else: print( "No semantic entries found." )
+            if count: vPrint( 'Quiet', debuggingThisModule, "{} semantic entries added in {} categories".format( count, len(self.semanticDict) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "No semantic entries found." )
     # end of ESFMBible.loadSemanticDictionary
 
 
@@ -440,7 +437,7 @@ class ESFMBible( Bible ):
 
         count = 0
         for marker,originalText in originalBook.lines:
-            #print( marker, repr(originalText) )
+            #vPrint( 'Quiet', debuggingThisModule, marker, repr(originalText) )
             if marker == 'rem' and originalText.startswith('ESFM '):
                 if ' STR' not in originalText: return
             elif marker == 'gl':
@@ -454,8 +451,8 @@ class ESFMBible( Bible ):
                 count += 1
         self.dontLoadBook.append( BBB )
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if count: print( "{} Strong's entries added in {} categories".format( count, len(self.StrongsDict) ) )
-            else: print( "No Strong's entries found." )
+            if count: vPrint( 'Quiet', debuggingThisModule, "{} Strong's entries added in {} categories".format( count, len(self.StrongsDict) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "No Strong's entries found." )
     # end of ESFMBible.loadStrongsDictionary
 
 
@@ -484,7 +481,7 @@ class ESFMBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
@@ -508,11 +505,11 @@ class ESFMBible( Bible ):
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
         EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("    Finishing loading ESFM book {}.").format( BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("    Finishing loading ESFM book {}.").format( BBB ) )
         return EBB
     # end of ESFMBible.loadBookMP
 
@@ -534,8 +531,8 @@ class ESFMBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( t("ESFMBible: Loading {} ESFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
-                    print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, t("ESFMBible: Loading {} ESFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -547,22 +544,22 @@ class ESFMBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #vPrint( 'Quiet', debuggingThisModule, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     if BBB not in self.dontLoadBook:
                         loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( "ESFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #print( self.getBookList() )
+        #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             if 'Tag errors' in self.semanticDict:
-                print( "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
+                vPrint( 'Quiet', debuggingThisModule, "\nESFMBible.load tag errors:", self.semanticDict['Tag errors'] )
             if 'Missing' in self.semanticDict:
-                print( "\nESFMBible.load missing:", self.semanticDict['Missing'] )
-        #print( "\nSemantic dict: {}".format( self.semanticDict ) )
+                vPrint( 'Quiet', debuggingThisModule, "\nESFMBible.load missing:", self.semanticDict['Missing'] )
+        #vPrint( 'Quiet', debuggingThisModule, "\nSemantic dict: {}".format( self.semanticDict ) )
         if debuggingThisModule:
-            print( "\n\nSemantic dict:" )
+            vPrint( 'Quiet', debuggingThisModule, "\n\nSemantic dict:" )
             for someKey,someEntry in self.semanticDict.items():
-                print( "\n{}: {}".format( someKey, someEntry ) )
+                vPrint( 'Quiet', debuggingThisModule, "\n{}: {}".format( someKey, someEntry ) )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
 
@@ -572,7 +569,7 @@ class ESFMBible( Bible ):
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
@@ -585,10 +582,10 @@ def demo() -> None:
                 #("All Markers Project2", "USFM2All", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/')),
                 #("All Markers Project3", "USFM3All", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/')),
                 ("USFM Error Project", "UEP", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/')),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM2_Export/"),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM2_Reexport/"),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Export/"),
-                ("BOS Exported Files", "Exported", "OutputFiles/BOS_USFM3_Reexport/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM2_Export/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM2_Reexport/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM3_Export/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM3_Reexport/"),
             # Actual ESFM Bibles
                 ("Matigsalug", "MBTV", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),),
                 ("ESFM Test 1", "OET-LV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/')),
@@ -607,22 +604,23 @@ def demo() -> None:
                 EsfmB = ESFMBible( testFolder, name, abbreviation )
                 EsfmB.load()
                 if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
-                    print( "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
-                    print( "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
-                    print( "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, EsfmB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     EsfmB.check()
-                    #print( EsfmB.books['GEN']._processedLines[0:40] )
-                    EsfmBErrors = EsfmB.getErrors()
-                    # print( UBErrors )
+                    #vPrint( 'Quiet', debuggingThisModule, EsfmB.books['GEN']._processedLines[0:40] )
+                    EsfmBErrors = EsfmB.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##EsfmB.toDrupalBible()
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
-                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-            else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+                break
+            else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
     if 0: # Test a whole folder full of folders of ESFM Bibles
@@ -648,7 +646,7 @@ def demo() -> None:
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         ESFM_BBB, name = adjLine[:3], adjLine[11:]
                         BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromESFM( ESFM_BBB )
-                        #print( ESFM_BBB, BBB, name )
+                        #vPrint( 'Quiet', debuggingThisModule, ESFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
         # end of findInfo
@@ -658,7 +656,7 @@ def demo() -> None:
         if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
             for something in sorted( os.listdir( testBaseFolder ) ):
                 somepath = os.path.join( testBaseFolder, something )
-                if os.path.isfile( somepath ): print( "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
+                if os.path.isfile( somepath ): vPrint( 'Quiet', debuggingThisModule, "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
                 elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a ESFM (partial) Bible
                     #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
                     count += 1
@@ -674,14 +672,125 @@ def demo() -> None:
                         vPrint( 'Quiet', debuggingThisModule, EsfmB )
                         if BibleOrgSysGlobals.strictCheckingFlag:
                             EsfmB.check()
-                            EsfmBErrors = EsfmB.getErrors()
-                            #print( EsfmBErrors )
+                            EsfmBErrors = EsfmB.getCheckResults()
+                            #vPrint( 'Quiet', debuggingThisModule, EsfmBErrors )
                         if BibleOrgSysGlobals.commandLineArguments.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
-            if count: print( "\n{} total ESFM (partial) Bibles processed.".format( count ) )
-            if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
-#end of demo
+                    else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+            if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total ESFM (partial) Bibles processed.".format( count ) )
+            if totalBooks: vPrint( 'Quiet', debuggingThisModule, "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
+#end of ESFMBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # Load and process some of our test versions
+        count = 0
+        for name, abbreviation, testFolder in ( # name, abbreviation, folder
+            # Not actual ESFM
+                #("All Markers Project2", "USFM2All", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/')),
+                #("All Markers Project3", "USFM3All", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/')),
+                ("USFM Error Project", "UEP", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/')),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM2_Export/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM2_Reexport/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM3_Export/"),
+                ("BOS Exported Files", "Exported", "BOSOutputFiles/BOS_USFM3_Reexport/"),
+            # Actual ESFM Bibles
+                ("Matigsalug", "MBTV", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),),
+                ("ESFM Test 1", "OET-LV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/')),
+                ("ESFM Test 2", "OET-RV", BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/')),
+                ("Open English Translation—Literal Version", 'OET-LV', Path( '/mnt/SSDs/Matigsalug/Bible/OET-LV/'),),
+                ("Open English Translation—Base Version", 'OET-BV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-BV'),),
+                ("Open English Translation—Literal Version", 'OET-LV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-LV'),),
+                ("Open English Translation—Readers' Version", 'OET-RV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-RV'),),
+                ("Open English Translation—Colloquial Version", 'OET-CV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-CV'),),
+                ("Open English Translation—Study Version", 'OET-SV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-SV'),),
+                ("Open English Translation—Extended Version", 'OET-EV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/OET-EV'),),
+                ):
+            count += 1
+            if os.access( testFolder, os.R_OK ):
+                vPrint( 'Quiet', debuggingThisModule, "\nESFM A{}/".format( count ) )
+                EsfmB = ESFMBible( testFolder, name, abbreviation )
+                EsfmB.load()
+                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
+                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, EsfmB )
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    EsfmB.check()
+                    #vPrint( 'Quiet', debuggingThisModule, EsfmB.books['GEN']._processedLines[0:40] )
+                    EsfmBErrors = EsfmB.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    ##EsfmB.toDrupalBible()
+                    EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
+                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
+            else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+
+
+    if 0: # Test a whole folder full of folders of ESFM Bibles
+        testBaseFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
+
+        def findInfo( somepath ):
+            """ Find out info about the project from the included copyright.htm file """
+            cFilepath = os.path.join( somepath, "copyright.htm" )
+            if not os.path.exists( cFilepath ): return
+            with open( cFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
+                lastLine, lineCount = None, 0
+                title, nameDict = None, {}
+                for line in myFile:
+                    lineCount += 1
+                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                        logging.info( "ESFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
+                        line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if not line: continue # Just discard blank lines
+                    lastLine = line
+                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                    if line.startswith('<option value="'):
+                        adjLine = line.replace('<option value="','').replace('</option>','')
+                        ESFM_BBB, name = adjLine[:3], adjLine[11:]
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromESFM( ESFM_BBB )
+                        #vPrint( 'Quiet', debuggingThisModule, ESFM_BBB, BBB, name )
+                        nameDict[BBB] = name
+            return title, nameDict
+        # end of findInfo
+
+
+        count = totalBooks = 0
+        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testBaseFolder ) ):
+                somepath = os.path.join( testBaseFolder, something )
+                if os.path.isfile( somepath ): vPrint( 'Quiet', debuggingThisModule, "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
+                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a ESFM (partial) Bible
+                    #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
+                    count += 1
+                    title = None
+                    findInfoResult = findInfo( somepath )
+                    if findInfoResult: title, bookNameDict = findInfoResult
+                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                    name, testFolder = title, somepath
+                    if os.access( testFolder, os.R_OK ):
+                        vPrint( 'Quiet', debuggingThisModule, "\nESFM B{}/".format( count ) )
+                        EsfmB = ESFMBible( testFolder, name )
+                        EsfmB.load()
+                        vPrint( 'Quiet', debuggingThisModule, EsfmB )
+                        if BibleOrgSysGlobals.strictCheckingFlag:
+                            EsfmB.check()
+                            EsfmBErrors = EsfmB.getCheckResults()
+                            #vPrint( 'Quiet', debuggingThisModule, EsfmBErrors )
+                        if BibleOrgSysGlobals.commandLineArguments.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                    else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+            if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total ESFM (partial) Bibles processed.".format( count ) )
+            if totalBooks: vPrint( 'Quiet', debuggingThisModule, "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
+# end of ESFMBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -693,7 +802,7 @@ if __name__ == '__main__':
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ESFMBible.py

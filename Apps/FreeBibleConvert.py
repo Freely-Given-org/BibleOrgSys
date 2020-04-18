@@ -78,11 +78,11 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
     writtenCount = 0
     splitOnString = '\\id '
     for splitText in entireBibleText.split( splitOnString ):
-        # print( "here", writtenCount, repr(splitText[:40]) )
+        # vPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
         if not splitText: continue # coz it gets a blank one right at the beginning
         assert splitText[3] == ' '
         bookID = splitText[:3]
-        # print( "  Got book id", repr(bookID) )
+        # vPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
         assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
 
@@ -100,7 +100,7 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demo program to handle command line parameters and run a few functions.
     """
@@ -111,11 +111,11 @@ def demo() -> None:
     sampleText = noisyRegExReplaceAll( sampleText, ' p(\S)', ' b\\1' ) # pig to big hopefully
     noisyFind( sampleText, 'bile', logging.critical )
 
-    if BibleOrgSysGlobals.verbosityLevel>0: print( sampleText )
+    if BibleOrgSysGlobals.verbosityLevel>0: vPrint( 'Quiet', debuggingThisModule, sampleText )
 # end of FreeBibleConvert.main
 
 
-def main():
+def main() -> None:
     """
     Main program to handle command line parameters
         and then convert the FBV text file.
@@ -263,6 +263,13 @@ def main():
     splitAndWriteBooks( entireText, USFMFolderpath )
 # end of FreeBibleConvert.main
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

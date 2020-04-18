@@ -28,9 +28,12 @@ Module testing BibleBookOrdersConverter.py and BibleBookOrders.py.
 """
 
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+SHORT_PROGRAM_NAME = "BibleBookOrdersTests"
 PROGRAM_NAME = "Bible Book Orders tests"
 PROGRAM_VERSION = '0.85'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 import os.path
@@ -304,6 +307,13 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
     # end of test_3090_correctlyOrdered
 # end of BibleBookOrderSystemTests class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

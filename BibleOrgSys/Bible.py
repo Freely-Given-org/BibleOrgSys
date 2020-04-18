@@ -29,18 +29,7 @@ A class which extends BibleWriter (which itself extends InternalBible).
 
 TODO: Check if we really need this class at all???
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-01-22' # by RJH
-SHORT_PROGRAM_NAME = "BibleObjects"
-PROGRAM_NAME = "Bible object handler"
-PROGRAM_VERSION = '0.14'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 
 if __name__ == '__main__':
@@ -54,6 +43,14 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
+
+LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+SHORT_PROGRAM_NAME = "BibleObjects"
+PROGRAM_NAME = "Bible object handler"
+PROGRAM_VERSION = '0.14'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 logger = logging.getLogger(SHORT_PROGRAM_NAME)
@@ -182,7 +179,7 @@ class BibleBook ( InternalBibleBook ):
             #elif code == 'Vrs':
                 #V = text
                 #self.index[ (C,V) ] = j, 0
-        ##print( self.index )
+        ##vPrint( 'Quiet', debuggingThisModule, self.index )
     ## end of createIndex
 # end of class BibleBook
 
@@ -215,9 +212,21 @@ class Bible( BibleWriter ):
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Since this is only designed to be a base class, it can't actually do much at all
+    vPrint( 'Quiet', debuggingThisModule, "\nTest Bible…" )
+    B = Bible()
+    vPrint( 'Quiet', debuggingThisModule, B )
+# end of Bible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -237,9 +246,9 @@ def demo() -> None:
             #vPrint( 'Quiet', debuggingThisModule, UB )
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
-            #UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        #else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
-# end of demo
+            #UB.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+        #else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+# end of Bible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -249,7 +258,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of Bible.py

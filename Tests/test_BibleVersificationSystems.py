@@ -92,7 +92,7 @@ class BibleVersificationSystemsConverterTests(unittest.TestCase):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        print( "Sorry, no C export yet :(" )
+        vPrint( 'Quiet', debuggingThisModule, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bvssc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleVersificationSystemsConverterTests class
@@ -225,7 +225,7 @@ class BibleVersificationSystemTests(unittest.TestCase):
         for BBB in ('GEN','MAT','JDE',):
             result = self.bvs.getNumVersesList( BBB )
             self.assertTrue( isinstance( result, list ) )
-            print( len(result), result )
+            vPrint( 'Quiet', debuggingThisModule, len(result), result )
             self.assertTrue( 1 <= len(result) <= 151 )
             self.assertEqual( len(result), self.bvs.getNumChapters(BBB) )
             for value in result:
@@ -235,6 +235,13 @@ class BibleVersificationSystemTests(unittest.TestCase):
     # end of test_3070_getNumVersesList
 # end of BibleVersificationSystemTests class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

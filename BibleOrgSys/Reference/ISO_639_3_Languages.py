@@ -85,8 +85,8 @@ class ISO_639_3_Languages:
         if not self.__IDDict and not self.__NameDict: # Don't do this unnecessarily
             if XMLFileOrFilepath is None:
                 # See if we can load from the pickle file (faster than loading from the XML)
-                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3.xml" )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATA_FILES_FOLDERPATH.joinpath( "iso_639_3_Languages_Tables.pickle" )
+                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "iso_639_3.xml" )
+                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( "iso_639_3_Languages_Tables.pickle" )
                 try:
                     pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                                 and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
@@ -166,7 +166,7 @@ class ISO_639_3_Languages:
 # end of ISO_639_3_Languages class
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -174,31 +174,38 @@ def demo() -> None:
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
-    print( lg ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, lg ) # Just print a summary
     for testCode in ('qwq','mbt','MBT','abk',):
-        print( "  Testing {}…".format( testCode ) )
+        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testCode ) )
         if not lg.isValidLanguageCode( testCode ):
-            print( "    {} not found".format( testCode ) )
+            vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testCode ) )
         else:
-            print( "    {} -> {}".format( testCode, lg.getLanguageName( testCode ) ) )
-            print( "    Scope is {}, Type is {}".format( lg.getScope(testCode), lg.getType(testCode) ) )
+            vPrint( 'Quiet', debuggingThisModule, "    {} -> {}".format( testCode, lg.getLanguageName( testCode ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "    Scope is {}, Type is {}".format( lg.getScope(testCode), lg.getType(testCode) ) )
             part1Code, part2Code = lg.getPart1Code(testCode), lg.getPart2Code(testCode)
-            if part1Code is not None: print( "    Part1 code is {}".format(part1Code) )
-            if part2Code is not None: print( "    Part2 code is {}".format(part2Code) )
+            if part1Code is not None: vPrint( 'Quiet', debuggingThisModule, "    Part1 code is {}".format(part1Code) )
+            if part2Code is not None: vPrint( 'Quiet', debuggingThisModule, "    Part2 code is {}".format(part2Code) )
     for testName in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        print( "  Testing {}…".format( testName ) )
+        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testName ) )
         code = lg.getLanguageCode( testName )
         if code is None:
-            print( "    {} not found".format( testName ) )
+            vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testName ) )
         else:
-            print( "    {} -> {}".format( testName, code ) )
+            vPrint( 'Quiet', debuggingThisModule, "    {} -> {}".format( testName, code ) )
     for testNamePortion in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        print( "  Testing {}…".format( testNamePortion ) )
+        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testNamePortion ) )
         matches = lg.getNameMatches( testNamePortion )
         for match in matches:
-            print( "    Found {} = {}".format( lg.getLanguageCode(match), match ) )
-        else: print( "    {} not found".format( testNamePortion ) )
-# end of demo
+            vPrint( 'Quiet', debuggingThisModule, "    Found {} = {}".format( lg.getLanguageCode(match), match ) )
+        else: vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testNamePortion ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -208,7 +215,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of ISO_639_3_Languages.py

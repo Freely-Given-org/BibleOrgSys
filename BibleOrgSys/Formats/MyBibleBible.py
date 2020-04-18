@@ -217,7 +217,7 @@ BOOK_TABLE = {
 BOOKNUMBER_TABLE = {}
 # Check the table
 for bBBB,bStuff in BOOK_TABLE.items():
-    #print( bBBB, bStuff )
+    #vPrint( 'Quiet', debuggingThisModule, bBBB, bStuff )
     assert len(bStuff) == 6
     for someField in bStuff: assert someField # shouldn't be blank
     if debuggingThisModule: assert BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(bBBB)
@@ -289,7 +289,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if autoLoadBooks: MyBB.loadBooks() # Load and process the database
             return MyBB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -368,7 +368,7 @@ class MyBibleBible( Bible ):
         Load the metadata from the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("preload()") )
+            vPrint( 'Quiet', debuggingThisModule, _("preload()") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -390,14 +390,14 @@ class MyBibleBible( Bible ):
         for row in rows:
             assert len(row) == 2 # name, value
             name, value = row
-            if debuggingThisModule: print( '  INFO', name, repr(value) )
+            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '  INFO', name, repr(value) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 assert name in KNOWN_INFO_FIELD_NAMES
             # NOTE: detailed_info may contain HTML formatting
             if value == 'false': value = False
             elif value == 'true': value = True
             self.suppliedMetadata['MyBible'][name] = value
-        #print( self.suppliedMetadata['MyBible'] ); halt
+        #vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['MyBible'] ); halt
 
         if self.getSetting('language') in ('ru','rus',) \
         or self.getSetting('Language') in ('ru','rus',) \
@@ -414,18 +414,18 @@ class MyBibleBible( Bible ):
         try:
             self.cursor.execute( 'select * from books_all' )
             rows = self.cursor.fetchall()
-            #print( "  BOOKS_ALL rows", len(rows) )
+            #vPrint( 'Quiet', debuggingThisModule, "  BOOKS_ALL rows", len(rows) )
             isPresent = True
             for j, row in enumerate( rows ):
                 assert len(row) == 5
                 bookColor, bookNumber, shortName, longName, isPresent = row
-                #print( bookColor, bookNumber, shortName, longName, isPresent )
+                #vPrint( 'Quiet', debuggingThisModule, bookColor, bookNumber, shortName, longName, isPresent )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
                     BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                     if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
-                #print( "  Got1 BBB", BBB, repr(longName) )
+                #vPrint( 'Quiet', debuggingThisModule, "  Got1 BBB", BBB, repr(longName) )
                 assert BBB
                 self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
                                                 'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
@@ -437,12 +437,12 @@ class MyBibleBible( Bible ):
             try:
                 self.cursor.execute( 'select * from books' )
                 rows = self.cursor.fetchall()
-                #print( "  BOOKS rows", len(rows) )
+                #vPrint( 'Quiet', debuggingThisModule, "  BOOKS rows", len(rows) )
                 isPresent = True
                 for j, row in enumerate( rows ):
                     try: bookColor, bookNumber, shortName, longName = row
                     except ValueError: bookColor, bookNumber, shortName, longName, isPresent = row
-                    #print( bookColor, bookNumber, shortName, longName, isPresent )
+                    #vPrint( 'Quiet', debuggingThisModule, bookColor, bookNumber, shortName, longName, isPresent )
                     if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                     longName = longName.strip() # Why do some have a \n at the end???
                     if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
@@ -450,12 +450,12 @@ class MyBibleBible( Bible ):
                         BBB = self.BibleOrganisationalSystem.getBBBFromText( longName ) # Might not work for other languages
                         if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
                         if BBB is None and shortName=='3Ма': BBB = 'MA3' # Cant't track down why this fails ???
-                    #print( "  Got2 BBB", BBB, repr(longName), repr(shortName) )
+                    #vPrint( 'Quiet', debuggingThisModule, "  Got2 BBB", BBB, repr(longName), repr(shortName) )
                     assert BBB
                     self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
                                                     'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "  Loaded book info ({}) from (old) BOOKS table".format( len(rows) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  Loaded book info ({}) from (old) BOOKS table".format( len(rows) ) )
                 loadedBookInfo = True
             except sqlite3.OperationalError: pass # Table is not in older module versions
 
@@ -464,7 +464,7 @@ class MyBibleBible( Bible ):
         else: # no book info loaded
             if '.commentaries.' not in self.sourceFilename:
                 logging.critical( "MyBibleBible.preload for {} had no books table".format( self.sourceFilename ) )
-        #print( self.suppliedMetadata['MyBible'] ); halt
+        #vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['MyBible'] ); halt
         self.preloadDone = True
     # end of MyBibleBible.preload
 
@@ -474,17 +474,17 @@ class MyBibleBible( Bible ):
         Load all the books out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("loadBooks()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadBooks()") )
         assert self.preloadDone
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
 
         for BBB in self.suppliedMetadata['MyBible']['BookInfo']:
-            #print( 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
+            #vPrint( 'Quiet', debuggingThisModule, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
             if self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent']:
                 self.loadBook( BBB )
             elif BibleOrgSysGlobals.verbosityLevel > 1:
-                print( "   {} is not present in this Bible".format( BBB ) )
+                vPrint( 'Quiet', debuggingThisModule, "   {} is not present in this Bible".format( BBB ) )
 
         self.cursor.close()
         del self.cursor
@@ -498,18 +498,18 @@ class MyBibleBible( Bible ):
         Load the requested book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("loadBook( {} )").format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading MyBibleBible {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("MyBibleBible: Loading {} from {}…").format( BBB, self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("MyBibleBible: Loading {} from {}…").format( BBB, self.sourceFilepath ) )
 
         if '.commentaries.' in self.sourceFilename: self.__loadBibleCommentaryBook( BBB )
         else: self.__loadBibleBook( BBB )
@@ -521,7 +521,7 @@ class MyBibleBible( Bible ):
         Load the requested Bible book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "__loadBibleBook( {} )".format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
 
         lastC = None
         def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
@@ -532,7 +532,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( "importVerseLine( {!r}, {} {}:{}, {!r}, … )".format( name, BBB, C, V, originalLine ) )
+                #vPrint( 'Quiet', debuggingThisModule, "importVerseLine( {!r}, {} {}:{}, {!r}, … )".format( name, BBB, C, V, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -561,14 +561,14 @@ class MyBibleBible( Bible ):
 
             # Check for left-overs
             if '<' in line or '>' in line: # or '{' in line or '}' in line: RSTI has braces
-                print( _("importVerseLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+                vPrint( 'Quiet', debuggingThisModule, _("importVerseLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
                 if debuggingThisModule: halt
 
             # Ok, use the adjusted info
             if C!=lastC:
                 bookObject.addLine( 'c', str(C) )
                 lastC = C
-            #print( BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(line) )
             bookObject.addLine( 'v', '{} {}'.format( V, line ) )
         # end of importVerseLine
 
@@ -589,7 +589,7 @@ class MyBibleBible( Bible ):
         #continued = ourGlobals['haveParagraph'] = False
         haveLines = False
         mbBookNumber = self.suppliedMetadata['MyBible']['BookInfo'][BBB]['bookNumber']
-        #print( repr(mbBookNumber) )
+        #vPrint( 'Quiet', debuggingThisModule, repr(mbBookNumber) )
         self.cursor.execute('select chapter,verse,text from verses where book_number=?', (mbBookNumber,) )
         for row in self.cursor.fetchall():
             C, V, line = row
@@ -597,11 +597,11 @@ class MyBibleBible( Bible ):
                 #row = self.cursor.fetchone()
                 #C, V, line = row
             #except TypeError: # This reference is missing (row is None)
-                ##print( "something wrong at", BBB, C, V )
+                ##vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 ##if BibleOrgSysGlobals.debugFlag: halt
-                ##print( row )
+                ##vPrint( 'Quiet', debuggingThisModule, row )
                 #line = None
-            #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
             if line is None: logging.warning( "MyBibleBible.loadBibleBook: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not line: logging.warning( "MyBibleBible.loadBibleBook: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
@@ -620,7 +620,7 @@ class MyBibleBible( Bible ):
         if haveLines:
             vPrint( 'Info', debuggingThisModule, "  MyBible loadBibleBook saving", BBB )
             self.stashBook( thisBook )
-        #else: print( "Not saving", BBB )
+        #else: vPrint( 'Quiet', debuggingThisModule, "Not saving", BBB )
 
         #if ourGlobals['haveParagraph']:
             #thisBook.addLine( 'p', '' )
@@ -633,7 +633,7 @@ class MyBibleBible( Bible ):
         Load the requested Bible book out of the SQLite3 database.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("__loadBibleCommentaryBook( {} )").format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, _("__loadBibleCommentaryBook( {} )").format( BBB ) )
 
         lastC = None
         def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
@@ -644,7 +644,7 @@ class MyBibleBible( Bible ):
             nonlocal lastC
 
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( _("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, … )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
+                #vPrint( 'Quiet', debuggingThisModule, _("importCommentaryLine( {!r}, {} {}:{}, {!r},{!r}, … )").format( name, BBB, C, V, footnoteNumber, originalLine ) )
 
             if originalLine is None: # We don't have an entry for this C:V
                 return
@@ -664,7 +664,7 @@ class MyBibleBible( Bible ):
             # Check for left-overs
             if '<' in line or '>' in line or '=' in line or '{' in line or '}' in line:
                 if '<a ' not in line:
-                    print( _("importCommentaryLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("importCommentaryLine( {!r} failed at {} {}:{} {!r} from {!r} )").format( name, BBB, C, V, line, originalLine ) )
                     if debuggingThisModule:
                         halt
 
@@ -672,7 +672,7 @@ class MyBibleBible( Bible ):
             if C!=lastC:
                 bookObject.addLine( 'c', str(C) )
                 lastC = C
-            #print( BBB, C, V, repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(line) )
             bookObject.addLine( 'v', '{} {}'.format( V, line ) )
         # end of importCommentaryLine
 
@@ -694,7 +694,7 @@ class MyBibleBible( Bible ):
         haveLines = False
         footnoteMarker = None
         mbBookNumber = BOOK_TABLE[BBB][1]
-        #print( repr(mbBookNumber) )
+        #vPrint( 'Quiet', debuggingThisModule, repr(mbBookNumber) )
         if self.suppliedMetadata['MyBible']['is_footnotes']:
             self.cursor.execute('select chapter_number_from,verse_number_from,chapter_number_to,verse_number_to,marker,text from commentaries where book_number=?', (mbBookNumber,) )
         else:
@@ -702,10 +702,10 @@ class MyBibleBible( Bible ):
         for row in self.cursor.fetchall():
             if self.suppliedMetadata['MyBible']['is_footnotes']:
                 C, V, C2, V2, footnoteMarker, line = row
-                #print( '{!r}:{!r}-{!r}:{!r} {!r}:{!r}'.format( C, V, C2, V2, footnoteMarker, line ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{!r}:{!r}-{!r}:{!r} {!r}:{!r}'.format( C, V, C2, V2, footnoteMarker, line ) )
             else: # not footnotes
                 C, V, C2, V2, line = row
-                #print( '{!r}:{!r}-{!r}:{!r} {!r}'.format( C, V, C2, V2, line ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{!r}:{!r}-{!r}:{!r} {!r}'.format( C, V, C2, V2, line ) )
             if C2 is not None or V2 is not None:
                 if C2 is None or C2==C:
                     assert V2 > V
@@ -715,11 +715,11 @@ class MyBibleBible( Bible ):
                 #row = self.cursor.fetchone()
                 #C, V, line = row
             #except TypeError: # This reference is missing (row is None)
-                ##print( "something wrong at", BBB, C, V )
+                ##vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 ##if BibleOrgSysGlobals.debugFlag: halt
-                ##print( row )
+                ##vPrint( 'Quiet', debuggingThisModule, row )
                 #line = None
-            #print ( mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
+            #vPrint( 'Quiet', debuggingThisModule, mbBookNumber, BBB, C, V, "MyBib file line is", repr(line) )
             if line is None: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Have missing commentary line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not line: logging.warning( "MyBibleBible.loadBibleCommentaryBook: Found blank commentary line at {} {}:{}".format( BBB, C, V ) )
@@ -738,7 +738,7 @@ class MyBibleBible( Bible ):
         if haveLines:
             vPrint( 'Info', debuggingThisModule, "  MyBible loadBibleCommentaryBook saving", BBB )
             self.stashBook( thisBook )
-        #else: print( "Not saving", BBB )
+        #else: vPrint( 'Quiet', debuggingThisModule, "Not saving", BBB )
 
         #if ourGlobals['haveParagraph']:
             #thisBook.addLine( 'p', '' )
@@ -775,16 +775,16 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
 
         if '\\f' in line: # Handle footnotes
-            #print( "originalLine", repr(originalLine) )
+            #vPrint( 'Quiet', debuggingThisModule, "originalLine", repr(originalLine) )
             while True: # fix internal footnote formatting
                 match = re.search( r"\\f (.+?)\\f\*", line )
                 if not match: break
-                #print( "line1", repr(line) )
-                #print( "1", match.group(1) )
+                #vPrint( 'Quiet', debuggingThisModule, "line1", repr(line) )
+                #vPrint( 'Quiet', debuggingThisModule, "1", match.group(1) )
                 adjNote = match.group(1).replace('\\fqa*','\\ft ').replace('\\nd*','\\ft ').replace('\\add*','\\ft ')
                 if '\\' in adjNote:
                     noteBits = adjNote.split( '\\' )
-                    #print( "noteBits", noteBits )
+                    #vPrint( 'Quiet', debuggingThisModule, "noteBits", noteBits )
                     newNote = ''
                     for noteBit in noteBits:
                         if noteBit in ( '+ ', '- ', '* ', '*  ', ): pass # Just ignore these -- '*  ' is for WEB
@@ -804,15 +804,15 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                             if BibleOrgSysGlobals.debuggingThisModule and debuggingThisModule: halt
                 else: newNote = adjNote # No backslash fields inside note
                 line = line[:match.start()] + '<n>' + newNote + '</n>' + line[match.end():]
-                #print( "line2", repr(line) )
+                #vPrint( 'Quiet', debuggingThisModule, "line2", repr(line) )
 
             #line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
             ##for marker in ( 'fr', 'fm', ): # simply remove these whole field
                 ##line = removeUSFMCharacterField( marker, line, closedFlag=None )
             ##for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                 ##while '\\'+marker+' ' in line:
-                    ###print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
-                    ###print( "was", "'"+line+"'" )
+                    ###vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                    ###vPrint( 'Quiet', debuggingThisModule, "was", "'"+line+"'" )
                     ##ix = line.find( '\\'+marker+' ' )
                     ##assert ix != -1
                     ##ixEnd = line.find( '\\', ix+len(marker)+2 )
@@ -828,8 +828,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             ##line = re.sub( r'(\\f [a-z+*]{1,4} )', '<RF>', line ) # Handle one to three character callers
             ##line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
             ###if '\\f' in originalLine:
-                ###print( "o", originalLine )
-                ###print( "n", line )
+                ###vPrint( 'Quiet', debuggingThisModule, "o", originalLine )
+                ###vPrint( 'Quiet', debuggingThisModule, "n", line )
                 ###halt
 
         if '\\' in line: # Handle character formatting fields
@@ -870,7 +870,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         if '\\' in line:
             logging.warning( "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+                vPrint( 'Quiet', debuggingThisModule, "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
                 halt
         return line
     # end of toMyBible.adjustLine
@@ -889,7 +889,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         #C = V = 0
         #composedLine = ''
         #while True:
-            ##print( "toMyBible.handleIntroduction", BBB, C, V )
+            ##vPrint( 'Quiet', debuggingThisModule, "toMyBible.handleIntroduction", BBB, C, V )
             #try: result = bookData.getContextVerseData( (BBB,'0',str(V),) ) # Currently this only gets one line
             #except KeyError: break # Reached the end of the introduction
             #verseData, context = result
@@ -906,7 +906,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 #else:
                     #logging.warning( "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        #print( "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "toMyBible.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                         #halt
                     #ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
             #V += 1 # Step to the next introductory section "verse"
@@ -915,7 +915,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         #if '\\' in composedLine:
             #logging.warning( "toMyBible.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #print( "toMyBible.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+                #vPrint( 'Quiet', debuggingThisModule, "toMyBible.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
                 #halt
         #return composedLine.replace( '~^~', '\\' )
     ## end of toMyBible.handleIntroduction
@@ -935,7 +935,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         Returns the composed line.
         """
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #print( "toMyBible.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+            #vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
 
         composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
         ourGlobals['line'] = '' # We've used them so we don't need them any more
@@ -943,7 +943,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
 
         vCount = 0
         lastMarker = gotVP = None
-        #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
+        #if BBB=='MAT' and C==4 and 14<V<18: vPrint( 'Quiet', debuggingThisModule, BBB, C, V, ourGlobals, verseData )
         for verseDataEntry in verseData:
             marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
@@ -962,10 +962,10 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 lastMarker = marker
                 continue
 
-            #print( "toMyBible.composeVerseLine:", BBB, C, V, marker, text )
+            #vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine:", BBB, C, V, marker, text )
             if marker in theWordIgnoredIntroMarkers:
                 logging.error( "toMyBible.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-                print( "toMyBible.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine:", BBB, C, V, marker, text, verseData )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
@@ -988,7 +988,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                     ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<pb/>' # append the new paragraph marker to the previous line
                 #if text:
-                    #print( 'm', repr(text), verseData )
+                    #vPrint( 'Quiet', debuggingThisModule, 'm', repr(text), verseData )
                     #composedLine += '<pb/>'+adjustLine(BBB,C,V,text)
                     #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
                         #composedLine += '<pb/>'
@@ -996,7 +996,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                 #else: # there is text
                     #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
             elif marker in ( 'p', 'b', ):
-                #print( marker, text )
+                #vPrint( 'Quiet', debuggingThisModule, marker, text )
                 assert not text
                 if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                     ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<pb/>' # append the new paragraph marker to the previous line
@@ -1046,19 +1046,19 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
             elif marker == 'li4': composedLine += '• '+adjustLine(BBB,C,V,text)
             elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
             elif marker in ( 'v~', 'p~', ):
-                #print( lastMarker )
+                #vPrint( 'Quiet', debuggingThisModule, lastMarker )
                 if lastMarker == 'p': composedLine += '<pb/>' # We had a continuation paragraph
                 elif lastMarker == 'm': composedLine += '<br/>' # We had a continuation paragraph
                 elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
                 elif lastMarker != 'v':
-                    #print( BBB, C, V, marker, lastMarker, verseData )
+                    #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, lastMarker, verseData )
                     composedLine += adjustLine(BBB,C,V, text )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
                 composedLine += adjustLine(BBB,C,V, text )
             else:
                 logging.warning( "toMyBible.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "toMyBible.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
+                    vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker )
             lastMarker = marker
@@ -1071,7 +1071,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         if '\\' in composedLine:
             logging.warning( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+                vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                 halt
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toMyBible.composeVerseLine
@@ -1082,7 +1082,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         Writes a book to the MyBible sqlObject file.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
+            vPrint( 'Quiet', debuggingThisModule, "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
@@ -1122,7 +1122,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
                     if verseData:
                         composedLine = composeVerseLine( BBB, C, V, verseData, ourGlobals )
                         #if composedLine: # don't bother writing blank (unfinished?) verses
-                            #print( "toMyBible: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                            #vPrint( 'Quiet', debuggingThisModule, "toMyBible: Writing", BBB, nBBB, C, V, marker, repr(line) )
                             #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
                         # Stay one line behind (because paragraph indicators get appended to the previous line)
                         if ourGlobals['lastBCV'] is not None \
@@ -1245,7 +1245,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     for bkData in self:
         BBB = bkData.BBB
         if BBB in BOOKS_TO_IGNORE: continue # No way to encode these books
-        #print( "LOOP1", self.name, BBB )
+        #vPrint( 'Quiet', debuggingThisModule, "LOOP1", self.name, BBB )
         adjBBB = BBB
         #if BBB=='ESG': adjBBB = 'GES'
         bookColor, bookNumber, rusAbbrev, rusName, engAbbrev, engName = BOOK_TABLE[adjBBB]
@@ -1267,7 +1267,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     for bkData in self:
         BBB = bkData.BBB
         if BBB in BOOKS_TO_IGNORE: continue # No way to encode these books
-        #print( "LOOP2", self.name, BBB )
+        #vPrint( 'Quiet', debuggingThisModule, "LOOP2", self.name, BBB )
         adjBBB = BBB
         #if BBB=='ESG': adjBBB = 'GES'
         bookColor, bookNumber, rusAbbrev, rusName, engAbbrev, engName = BOOK_TABLE[adjBBB]
@@ -1301,7 +1301,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        print( "  BibleWriter.toMyBible finished successfully." )
+        vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toMyBible finished successfully." )
     return True
 # end of createMyBibleModule
 
@@ -1313,7 +1313,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
 
     Used by demo() for multiprocessing, etc. so must be at the outer level.
     """
-    #print( "tMSB", MyBBfolder )
+    #vPrint( 'Quiet', debuggingThisModule, "tMSB", MyBBfolder )
     from BibleOrgSys.Reference import VerseReferences
     #testFolder = Path( '/mnt/SSDs/Bibles/MyBible modules/' ) # Must be the same as below
 
@@ -1324,7 +1324,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     MyBB.preload()
     #MyBB.load() # Load and process the file
     vPrint( 'Normal', debuggingThisModule, MyBB ) # Just print a summary
-    #print( MyBB.suppliedMetadata['MyBible'] )
+    #vPrint( 'Quiet', debuggingThisModule, MyBB.suppliedMetadata['MyBible'] )
     if MyBB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MyBB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -1336,7 +1336,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             if t=='NT' and len(MyBB)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(MyBB)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #print( svk, ob.getVerseDataList( reference ) )
+            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText = svk.getShortText()
                 verseText = MyBB.getVerseText( svk )
@@ -1353,7 +1353,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
             MyBB.toMyBible()
             #doaResults = MyBB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                outputFolder = "OutputFiles/BOS_MyBible_Reexport/"
+                outputFolder = "BOSOutputFiles/BOS_MyBible_Reexport/"
                 vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported MyBible files…" )
                 result = BibleOrgSysGlobals.fileCompare( MyBBfilename, MyBBfilename, MyBBfolder, outputFolder )
                 if BibleOrgSysGlobals.debugFlag:
@@ -1375,7 +1375,7 @@ def exportMyBB( eIndexString:str, eFolder ) -> None:
         #try: result.toMyBible()
         #except AttributeError:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            ##print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            ##vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             #if "object has no attribute 'toMyBible'" in str(exceptionInstance):
                 #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
             #else: # it's some other attribute error in the loadBook function
@@ -1383,7 +1383,7 @@ def exportMyBB( eIndexString:str, eFolder ) -> None:
 # end of exportMyBB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -1415,7 +1415,7 @@ def demo() -> None:
 
 
     if 1: # C: individual modules in the output folder
-        testFolder = "OutputFiles/BOS_MyBibleExport"
+        testFolder = "BOSOutputFiles/BOS_MyBibleExport"
         names = ("Matigsalug",)
         for j, name in enumerate( names, start=1 ):
             fullname = name + '.SQLite3'
@@ -1546,12 +1546,19 @@ def demo() -> None:
                 #try: result.toMyBible()
                 #except AttributeError:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    ##print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    ##vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                     #if "object has no attribute 'toMyBible'" in str(exceptionInstance):
                         #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
                     #else: # it's some other attribute error in the loadBook function
                         #raise
-# end of demo
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -1560,7 +1567,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MyBibleBible.py

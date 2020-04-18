@@ -25,19 +25,9 @@
 """
 Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data tables.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-01' # by RJH
-SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
-PROGRAM_NAME = "Bible Books Codes converter"
-PROGRAM_VERSION = '0.81'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os.path
+import logging
+import os.path
 from pathlib import Path
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
@@ -52,6 +42,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
+LAST_MODIFIED_DATE = '2020-04-15' # by RJH
+SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
+PROGRAM_NAME = "Bible Books Codes converter"
+PROGRAM_VERSION = '0.81'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 SPECIAL_CODES = 'ALL', 'UNK' # We check these aren't used for other things
@@ -107,7 +104,7 @@ class BibleBooksCodesConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
                 XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
 
@@ -347,7 +344,7 @@ class BibleBooksCodesConverter:
             if element.find('typicalSection') is None: typicalSection = None
             else:
                 typicalSection = element.find('typicalSection').text
-                #print( 'typicalSection', repr(typicalSection) )
+                #vPrint( 'Quiet', debuggingThisModule, 'typicalSection', repr(typicalSection) )
                 if BibleOrgSysGlobals.debugFlag: assert typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK','???')
 
             # Now put it into my dictionaries for easy access
@@ -440,12 +437,12 @@ class BibleBooksCodesConverter:
                 if "UnboundCodeString" in self._uniqueElements: assert UnboundCodeString not in myUCDict # Shouldn't be any duplicates
                 UCCodeString = UnboundCodeString.upper()
                 assert len(UCCodeString)==3 and UCCodeString[0].isdigit() and UCCodeString[1].isdigit() and UCCodeString[2] in ('N','O','A')
-                if UCCodeString in myUCDict: print( UCCodeString, myUCDict ); halt
+                if UCCodeString in myUCDict: vPrint( 'Quiet', debuggingThisModule, UCCodeString, myUCDict ); halt
                 else: myUCDict[UCCodeString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "BibleditNumberString" in self._compulsoryElements or BibleditNumberString:
                 if "BibleditNumberString" in self._uniqueElements: assert BibleditNumberString not in myBENDict  # Shouldn't be any duplicates
                 UCNumberString = BibleditNumberString.upper()
-                if UCNumberString in myBENDict: print( UCNumberString, myBENDict ); halt
+                if UCNumberString in myBENDict: vPrint( 'Quiet', debuggingThisModule, UCNumberString, myBENDict ); halt
                 else: myBENDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert NETBibleAbbreviation not in myNETDict  # Shouldn't be any duplicates
@@ -469,7 +466,7 @@ class BibleBooksCodesConverter:
                 #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "BibleWorksAbbreviation" in self._compulsoryElements or BibleWorksAbbreviation:
                 if "BibleWorksAbbreviation" in self._uniqueElements:
-                    if BibleWorksAbbreviation in myBWDict: print( "bwA", repr(BibleWorksAbbreviation) )
+                    if BibleWorksAbbreviation in myBWDict: vPrint( 'Quiet', debuggingThisModule, "bwA", repr(BibleWorksAbbreviation) )
                     assert BibleWorksAbbreviation not in myBWDict # Shouldn't be any duplicates
                 UCAbbreviation = BibleWorksAbbreviation.upper()
                 if UCAbbreviation in myBWDict: myBWDict[UCAbbreviation] = ( intID, makeList(myBWDict[UCAbbreviation][1],referenceAbbreviation), )
@@ -498,7 +495,7 @@ class BibleBooksCodesConverter:
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
             if "possibleAlternativeAbbreviations" in self._compulsoryElements or possibleAlternativeAbbreviations:
                 for possibleAlternativeAbbreviation in possibleAlternativeAbbreviations:
-                    #print( "here", possibleAlternativeAbbreviation, referenceAbbreviation )
+                    #vPrint( 'Quiet', debuggingThisModule, "here", possibleAlternativeAbbreviation, referenceAbbreviation )
                     assert possibleAlternativeAbbreviation.upper() == possibleAlternativeAbbreviation
                     assert possibleAlternativeAbbreviation not in myPossAltBooksDict
                     myPossAltBooksDict[possibleAlternativeAbbreviation] = referenceAbbreviation
@@ -543,7 +540,7 @@ class BibleBooksCodesConverter:
 
         # Add possible alternative (shortened) abbreviations to the all abbreviations dict and then remove bad entries
         for abbreviation,BBB in myPossAltBooksDict.items(): # Add these entries (esp. for VPL Bibles)
-            if abbreviation in initialAllAbbreviationsDict: print( "ohoh", abbreviation, BBB )
+            if abbreviation in initialAllAbbreviationsDict: vPrint( 'Quiet', debuggingThisModule, "ohoh", abbreviation, BBB )
             assert ' ' not in abbreviation
             assert abbreviation not in initialAllAbbreviationsDict
             initialAllAbbreviationsDict[abbreviation] = BBB
@@ -585,7 +582,7 @@ class BibleBooksCodesConverter:
                             #s,f = free[-1]
                             #if f==num-1: free.pop(); free.append( (s, num) ); continue
                     #free.append( num )
-            #print( "Free reference numbers = {}".format( free ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Free reference numbers = {}".format( free ) )
             #free = [] # Print available sequence numbers
             #for num in range(1, 1000):
                 #if num not in sequenceNumberList:
@@ -596,16 +593,16 @@ class BibleBooksCodesConverter:
                             #s,f = free[-1]
                             #if f==num-1: free.pop(); free.append( (s, num) ); continue
                     #free.append( num )
-            #print( "Free sequence numbers = {}".format( free ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Free sequence numbers = {}".format( free ) )
 
             ## Compare OSIS and Sword entries
-            #print( "referenceNumberDict", len(myIDDict), myIDDict[1] )
-            #print( "referenceAbbreviationDict", len(myRefAbbrDict), myRefAbbrDict['GEN'] )
-            #print( "OSISAbbreviationDict", len(myOADict) ) #myOADict )
-            #print( "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
+            #vPrint( 'Quiet', debuggingThisModule, "referenceNumberDict", len(myIDDict), myIDDict[1] )
+            #vPrint( 'Quiet', debuggingThisModule, "referenceAbbreviationDict", len(myRefAbbrDict), myRefAbbrDict['GEN'] )
+            #vPrint( 'Quiet', debuggingThisModule, "OSISAbbreviationDict", len(myOADict) ) #myOADict )
+            #vPrint( 'Quiet', debuggingThisModule, "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
             #for num, entry in myIDDict.items():
                 #if entry['SwordAbbreviation']!=entry['OSISAbbreviation']:
-                    #print( "{} {} OSIS={!r} Sword={!r}".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "{} {} OSIS={!r} Sword={!r}".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of BibleBooksCodesConverter.importDataToPython
@@ -622,9 +619,10 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH \
-                            if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
-                            else BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
+            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
+                            # TODO: What was this all about ???
+                            # if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
+                            # else BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.pickle' )
         vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
@@ -843,9 +841,31 @@ class BibleBooksCodesConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if BibleOrgSysGlobals.commandLineArguments.export:
+        bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
+        # bbcc.pickle() # Produce a pickle output file
+        # bbcc.exportDataToJSON() # Produce a json output file
+        # bbcc.exportDataToPython() # Produce the .py tables
+        # bbcc.exportDataToC() # Produce the .h and .c tables
+
+    else: # Must be demo mode
+        # Demo the converter object
+        bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
+        vPrint( 'Quiet', debuggingThisModule, bbcc ) # Just print a summary
+        OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
+        vPrint( 'Quiet', debuggingThisModule, 'OAD', len(OAD), sorted(OAD) )
+        vPrint( 'Quiet', debuggingThisModule, OAD['WIS'] )
+# end of BibleBooksCodesConverter.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -859,11 +879,11 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
-        print( bbcc ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, bbcc ) # Just print a summary
         OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
-        print( 'OAD', len(OAD), sorted(OAD) )
-        print( OAD['WIS'] )
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, 'OAD', len(OAD), sorted(OAD) )
+        vPrint( 'Quiet', debuggingThisModule, OAD['WIS'] )
+# end of BibleBooksCodesConverter.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -873,7 +893,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBooksCodesConverter.py

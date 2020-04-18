@@ -5,7 +5,7 @@
 #
 # Module handling Larry Pierce's "Online Bible" files
 #
-# Copyright (C) 2015-2019 Robert Hunt
+# Copyright (C) 2015-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,19 +32,10 @@ Files are usually:
     Version.Ext (a text file),
     Xref.Dat, xRefNdx.Dat
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-10-03' # by RJH
-SHORT_PROGRAM_NAME = "PierceOnlineBible"
-PROGRAM_NAME = "Pierce Online Bible format handler"
-PROGRAM_VERSION = '0.21'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os, struct
+import logging
+import os
+import struct
 from binascii import hexlify
 import multiprocessing
 
@@ -57,6 +48,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "PierceOnlineBible"
+PROGRAM_NAME = "Pierce Online Bible format handler"
+PROGRAM_VERSION = '0.21'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPPERCASE
@@ -109,7 +109,7 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=Fals
             if autoLoadBooks: oB.load() # Load and process the file
             return oB
         return numFound
-    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif foundFileCount and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -237,7 +237,7 @@ class PierceOnlineBible( Bible ):
             #Returns the string.
             #"""
             ##if BibleOrgSysGlobals.debugFlag:
-                ##print( t("getBinaryString( {}, {} )").format( binary, numBytes ) )
+                ##vPrint( 'Quiet', debuggingThisModule, t("getBinaryString( {}, {} )").format( binary, numBytes ) )
             #if len(binary) < numBytes: halt # Too few bytes provided
             #result = ''
             #for j, value in enumerate( binary ):
@@ -252,7 +252,7 @@ class PierceOnlineBible( Bible ):
             #Used for reading the PalmDB header information from the file.
             #"""
             #if BibleOrgSysGlobals.debugFlag:
-                #print( t("getFileString( {}, {} )").format( thisFile, numBytes ) )
+                #vPrint( 'Quiet', debuggingThisModule, t("getFileString( {}, {} )").format( thisFile, numBytes ) )
             #return getBinaryString( thisFile.read( numBytes ), numBytes )
         ## end of getFileString
 
@@ -294,33 +294,33 @@ class PierceOnlineBible( Bible ):
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 versionBytes = myFile.read()
             vPrint( 'Info', debuggingThisModule, "    {:,} version bytes read".format( len(versionBytes) ) )
-            #print( "vB {} {}".format( len(versionBytes), versionBytes ) )
+            #vPrint( 'Quiet', debuggingThisModule, "vB {} {}".format( len(versionBytes), versionBytes ) )
 
             key, size = versionBytes[0], versionBytes[1]
-            #print( "  prelude length = {:04x} {}".format( size, size ) )
-            #print( "    Key={}, line entry size={}".format( key, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  prelude length = {:04x} {}".format( size, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    Key={}, line entry size={}".format( key, size ) )
             assert key == 8
 
             index, length = 1, 12
             vHeader1 = versionBytes[index:index+length]; index += length
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {} vBH1 {} {}".format( self.abbreviation, len(vHeader1), hexlify(vHeader1) ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {} vBH1 {} {}".format( self.abbreviation, len(vHeader1), hexlify(vHeader1) ) )
                 VBH1s[self.abbreviation] = hexlify(vHeader1)
             unknown1, = struct.unpack( "<H", vHeader1[3:5] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      unknown1 is {:04x}={:,}".format( unknown1, unknown1 ) )
+                vPrint( 'Quiet', debuggingThisModule, "      unknown1 is {:04x}={:,}".format( unknown1, unknown1 ) )
                 #assert ntOffset == 23146
             unknown2, = struct.unpack( "<H", vHeader1[5:7] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      unknown2 is {:04x}={:,}".format( unknown2, unknown2 ) )
+                vPrint( 'Quiet', debuggingThisModule, "      unknown2 is {:04x}={:,}".format( unknown2, unknown2 ) )
                 #assert ntOffset == 23146
             ntOffset, = struct.unpack( "<H", vHeader1[7:9] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      NT offset is {:04x}={:,}".format( ntOffset, ntOffset ) )
+                vPrint( 'Quiet', debuggingThisModule, "      NT offset is {:04x}={:,}".format( ntOffset, ntOffset ) )
                 assert ntOffset == 23146
             unknownFlag1 = vHeader1[-1]
             if BibleOrgSysGlobals.debugFlag:
-                print( "      Unknown flag1 is {}".format( unknownFlag1 ) )
+                vPrint( 'Quiet', debuggingThisModule, "      Unknown flag1 is {}".format( unknownFlag1 ) )
                 assert unknownFlag1 in (0,1)
 
             length = 10 # 1 length byte and 9 max characters
@@ -328,21 +328,21 @@ class PierceOnlineBible( Bible ):
             self.characterBitSize = 8
             while index < len(versionBytes):
                 vBytes = versionBytes[index:index+length]
-                #print( "  vB {} {}".format( hexlify(vBytes), vBytes ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  vB {} {}".format( hexlify(vBytes), vBytes ) )
                 if vBytes[-2] == 0 and vBytes[-1] > 0x7F: break
                 vLen = vBytes[0]
                 if vLen > 0 and vBytes[1]:
                     vString = vBytes[1:vLen+1].decode()
-                    #print( 'Vstring', vString )
-                    #print( "    vBl1 {} {!r}".format( vLen, vString ), end='' )
+                    #vPrint( 'Quiet', debuggingThisModule, 'Vstring', vString )
+                    #vPrint( 'Quiet', debuggingThisModule, "    vBl1 {} {!r}".format( vLen, vString ), end='' )
                     assert not vString[0].islower()
                     strings1.append( vString )
                 index += length
             numStrings1 = len( strings1 )
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {}={:04x} 8-bit capitalized common words loaded".format( numStrings1, numStrings1 ) )
-                print( '     ', strings1 )
-            #print( "  index = {:04x}={}".format( index, index ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {}={:04x} 8-bit capitalized common words loaded".format( numStrings1, numStrings1 ) )
+                vPrint( 'Quiet', debuggingThisModule, '     ', strings1 )
+            #vPrint( 'Quiet', debuggingThisModule, "  index = {:04x}={}".format( index, index ) )
             assert 118 <= numStrings1 <= 123
 
             assert index == 0x4db
@@ -352,91 +352,91 @@ class PierceOnlineBible( Bible ):
             for ix in range( 1, 8+1 ): assert vHeader2[ix] == 0
             vHeader2 = vHeader2[9:]
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {} vBH2 {} {}".format( self.abbreviation, len(vHeader2), hexlify(vHeader2) ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {} vBH2 {} {}".format( self.abbreviation, len(vHeader2), hexlify(vHeader2) ) )
                 VBH2s[self.abbreviation] = hexlify(vHeader2)
 
             assert index == 0x564
             length = 44
             vHeader3 = versionBytes[index:index+length]; index += length
-            #print( "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
             assert vHeader3[0] == 8
             vHeaderDate = vHeader3[1:8+1]
-            #print( "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
+            #vPrint( 'Quiet', debuggingThisModule, "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
             year, month, date = int(vHeaderDate[:4]), int(vHeaderDate[4:6]), int(vHeaderDate[6:])
             if BibleOrgSysGlobals.debugFlag:
-                print( "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
+                vPrint( 'Quiet', debuggingThisModule, "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
             vHeader3 = vHeader3[9:]
             for ix in range( 11+1 ): assert vHeader3[ix] == 0
             vHeader3 = vHeader3[12:]
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {} vBH3 {} {}".format( self.abbreviation, len(vHeader3), hexlify(vHeader3) ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {} vBH3 {} {}".format( self.abbreviation, len(vHeader3), hexlify(vHeader3) ) )
                 VBH3s[self.abbreviation] = hexlify(vHeader3)
             self.StrongsOffset, = struct.unpack( "<H", vHeader3[0:2] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      Strongs' offset is {:04x}={:,}".format( self.StrongsOffset, self.StrongsOffset ) )
+                vPrint( 'Quiet', debuggingThisModule, "      Strongs' offset is {:04x}={:,}".format( self.StrongsOffset, self.StrongsOffset ) )
                 assert self.StrongsOffset in ( 0xffff, 0x5d5c )
             self.haveStrongsFlag = vHeader3[4] != 0
             if BibleOrgSysGlobals.debugFlag:
-                print( "      Have Strongs flag is {}".format( self.haveStrongsFlag ) )
+                vPrint( 'Quiet', debuggingThisModule, "      Have Strongs flag is {}".format( self.haveStrongsFlag ) )
                 assert self.haveStrongsFlag in (0,1)
             numBooks, = struct.unpack( "<H", vHeader3[5:7] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      numBooks is {:04x}={:,}".format( numBooks, numBooks ) )
+                vPrint( 'Quiet', debuggingThisModule, "      numBooks is {:04x}={:,}".format( numBooks, numBooks ) )
                 assert numBooks == 66
             numChapters, = struct.unpack( "<H", vHeader3[9:11] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      numChapters is {:04x}={:,}".format( numChapters, numChapters ) )
+                vPrint( 'Quiet', debuggingThisModule, "      numChapters is {:04x}={:,}".format( numChapters, numChapters ) )
                 assert numChapters == 1189
             numVerses, = struct.unpack( "<H", vHeader3[17:19] )
             if BibleOrgSysGlobals.debugFlag:
-                print( "      numVerses is {:04x}={:,}".format( numVerses, numVerses ) )
+                vPrint( 'Quiet', debuggingThisModule, "      numVerses is {:04x}={:,}".format( numVerses, numVerses ) )
                 assert numVerses == 31102
             unknownFlag2 = vHeader3[-2]
             if BibleOrgSysGlobals.debugFlag:
-                print( "      Unknown flag2 is {:1x}".format( unknownFlag2 ) )
+                vPrint( 'Quiet', debuggingThisModule, "      Unknown flag2 is {:1x}".format( unknownFlag2 ) )
                 assert unknownFlag2 in (1,15)
 
             #vHeader3 = versionBytes[0x4db:0x564]
-            #print( "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    vBH3 {} {}".format( len(vHeader3), hexlify(vHeader3) ) )
             #assert versionBytes[0x564] == 8
             #vHeaderDate = versionBytes[0x565:0x56d]
-            ##print( "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
+            ##vPrint( 'Quiet', debuggingThisModule, "      vHeaderDate {} {}".format( len(vHeaderDate), vHeaderDate ) )
             #year, month, date = int(vHeaderDate[:4]), int(vHeaderDate[4:6]), int(vHeaderDate[6:])
-            #print( "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    vHeaderDate {}-{:02}-{:02}".format( year, month, date ) )
             #vHeader4 = versionBytes[0x56d:index]
-            #print( "    vBH4 {} {}".format( len(vHeader3), hexlify(vHeader4) ) )
-            #print( "  index = {:04x}={}".format( index, index ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    vBH4 {} {}".format( len(vHeader3), hexlify(vHeader4) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  index = {:04x}={}".format( index, index ) )
 
             assert index == 0x590
             length = 19 # 1 length byte and 9 max characters
             strings2 = []
             while index < len(versionBytes):
                 vBytes = versionBytes[index:index+length]
-                #print( "  vB {} {}".format( hexlify(vBytes), vBytes ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  vB {} {}".format( hexlify(vBytes), vBytes ) )
                 vLen, = struct.unpack( ">H", vBytes[0:2] )
                 vLen = vBytes[0]
-                #print( "vL2", repr(vLen) )
+                #vPrint( 'Quiet', debuggingThisModule, "vL2", repr(vLen) )
                 vString = ''
                 for j in range( int(vLen/2) ):
-                    #print( vBytes[2*j+1:2*j+3] )
+                    #vPrint( 'Quiet', debuggingThisModule, vBytes[2*j+1:2*j+3] )
                     char16, = struct.unpack( "<H", vBytes[2*j+1:2*j+3] )
-                    #print( char16 )
+                    #vPrint( 'Quiet', debuggingThisModule, char16 )
                     vString += chr( char16 )
                 #vString = vBytes[2:vLen+1].decode( 'utf-16' )
-                #print( "    vBl2 {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
+                #vPrint( 'Quiet', debuggingThisModule, "    vBl2 {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
                 assert not vString[0].islower()
                 strings2.append( vString )
                 index += length
             numStrings2 = len( strings2 )
             if numStrings2 > 0: self.characterBitSize = 16
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {}={:04x} 16-bit capitalized common words loaded".format( numStrings2, numStrings2 ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {}={:04x} 16-bit capitalized common words loaded".format( numStrings2, numStrings2 ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( '     ', strings2 )
+                vPrint( 'Quiet', debuggingThisModule, '     ', strings2 )
                 ix = -1
                 for j, word in enumerate( trings2 ):
                     if word in ( 'Genesis', 'In', 'The', 'God', ):
-                        print( '      {!r} {}={:04x}'.format( word, j, j ) )
+                        vPrint( 'Quiet', debuggingThisModule, '      {!r} {}={:04x}'.format( word, j, j ) )
 
             self.commonWords = strings2 if strings2 else strings1
         # end of load.loadVersion
@@ -464,7 +464,7 @@ class PierceOnlineBible( Bible ):
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 tokenBytes = myFile.read()
             vPrint( 'Info', debuggingThisModule, "    {:,} token bytes read".format( len(tokenBytes) ) )
-            #print( "vB {} {}".format( len(tokenBytes), hexlify(tokenBytes[:40]) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "vB {} {}".format( len(tokenBytes), hexlify(tokenBytes[:40]) ) )
             assert tokenBytes[0] == 32
             assert tokenBytes[1] in (0,32)
             if BibleOrgSysGlobals.debugFlag:
@@ -481,7 +481,7 @@ class PierceOnlineBible( Bible ):
                 elif self.characterBitSize == 16:
                     try: token, = struct.unpack( "<H", tokenBytes[index:index+2] ); index += 2
                     except struct.error: logging.critical( "Struct ERROR" ); break
-                #print( chr(token), end=' ' )
+                #vPrint( 'Quiet', debuggingThisModule, chr(token), end=' ' )
                 #self.tokenBytes.append( token )
                 tokenChar = chr( token )
                 self.tokenString += tokenChar
@@ -505,16 +505,16 @@ class PierceOnlineBible( Bible ):
                 textIndexBytes = myFile.read()
             numTextIndexBytes = len(textIndexBytes)
             vPrint( 'Info', debuggingThisModule, "    {:,} text index bytes read".format( numTextIndexBytes ) )
-            #print( "tIB {} {}".format( len(textIndexBytes), hexlify(textIndexBytes[:99]) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "tIB {} {}".format( len(textIndexBytes), hexlify(textIndexBytes[:99]) ) )
             assert numTextIndexBytes in (34055,49623,) # Divisible by 35 or 51 = 973
 
             key, size = textIndexBytes[0], textIndexBytes[1]
-            #print( "  prelude length = {:04x} {}".format( size, size ) )
-            #print( "    Key={}, line entry size={}".format( key, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  prelude length = {:04x} {}".format( size, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    Key={}, line entry size={}".format( key, size ) )
             assert key == 1
             assert size in (35,51,) # 35-3=32, 51-3=48
             vTIHeader = textIndexBytes[3:size+3]
-            #print( "tIB header {} {}".format( len(vTIHeader), hexlify(vTIHeader) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "tIB header {} {}".format( len(vTIHeader), hexlify(vTIHeader) ) )
             for something in vTIHeader: assert something == 0 # It's just filler
             index = size
 
@@ -529,22 +529,22 @@ class PierceOnlineBible( Bible ):
                 assert iE > lastIE or ( iE==0 and lastIE==0)
                 indexEntry = indexEntry[3:]
                 lineOffset = iE - lastIE
-                #print( '{} iE={} lastIE={} lineOffset={} total={}'.format( len(self.textIndex), iE, lastIE, lineOffset, total ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{} iE={} lastIE={} lineOffset={} total={}'.format( len(self.textIndex), iE, lastIE, lineOffset, total ) )
                 assert total == lineOffset
-                #print( '{:3} +{:4}={:4} {} {}'.format( len(self.textIndex), lineOffset, iE, hexlify(indexEntry), indexEntry ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{:3} +{:4}={:4} {} {}'.format( len(self.textIndex), lineOffset, iE, hexlify(indexEntry), indexEntry ) )
                 total = 0
                 if size == 35: # One byte per entry (handles offsets in range 0..256)
                     for something in indexEntry: # KJV G
                         if something > 0:
                             total += something
-                            #print( "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
+                            #vPrint( 'Quiet', debuggingThisModule, "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
                             pointer = total + iE
-                            #print( "pointer={} lastPointer={}".format( pointer, lastPointer ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "pointer={} lastPointer={}".format( pointer, lastPointer ) )
                             assert pointer > lastPointer
                             self.textIndex.append( pointer )
                             lastPointer = pointer
                         #else:
-                            #print( "Skipped zero entry at {}".format( pointer ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "Skipped zero entry at {}".format( pointer ) )
                 elif size == 51: # 1.5 bytes per entry (handles offsets in range 0..4,095 -- 256 is not enough for long verses)
                     nibbleIndex = 0
                     for nibbles in indexEntry: # KJV G
@@ -554,20 +554,20 @@ class PierceOnlineBible( Bible ):
                         else: halt
                         if nibbleIndex >= 3:
                             something = (n3<<8) + (n2<<4) + n1
-                            #print( "nibbles1 {} {:02x} {:02x} {:02x} {:02x} {:04x}".format( nibbleIndex, n1, n2, n3, n4, something ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "nibbles1 {} {:02x} {:02x} {:02x} {:02x} {:04x}".format( nibbleIndex, n1, n2, n3, n4, something ) )
                             if nibbleIndex == 3: nibbleIndex = 0
                             elif nibbleIndex == 4: n1 = n4; nibbleIndex = 1
-                            #print( "nibbles2 {} {:02x} {:02x} {:02x} {:02x} {:04x}".format( nibbleIndex, n1, n2, n3, n4, something ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "nibbles2 {} {:02x} {:02x} {:02x} {:02x} {:04x}".format( nibbleIndex, n1, n2, n3, n4, something ) )
                             if something > 0:
                                 total += something
-                                #print( "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
+                                #vPrint( 'Quiet', debuggingThisModule, "something={} total={}".format( something, total ) ) # Each one adds another 35-145 for KJV, 20-70+ for YLT
                                 pointer = total + iE
-                                #print( "pointer={} lastPointer={}".format( pointer, lastPointer ) )
+                                #vPrint( 'Quiet', debuggingThisModule, "pointer={} lastPointer={}".format( pointer, lastPointer ) )
                                 assert pointer > lastPointer
                                 self.textIndex.append( pointer )
                                 lastPointer = pointer
                             #else:
-                                #print( "Skipped zero entry at {}".format( pointer ) )
+                                #vPrint( 'Quiet', debuggingThisModule, "Skipped zero entry at {}".format( pointer ) )
                 else: halt
                 lastIE = iE
                 count += 1
@@ -577,8 +577,8 @@ class PierceOnlineBible( Bible ):
             vPrint( 'Info', debuggingThisModule, "    {:,} text-index entries loaded from {} lines".format( numTextIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
                 assert numTextIndexEntries == 31102 or self.abbreviation in ( 'Darby','Wey', 'Williams',) # Darby has 31,099 (3 less)
-                print( "    Final accumulated total was {:,} (should equal length of Text.Dat)".format( total + iE ) )
-                #for index in (0, 1, 2, 3, 23145, -4, -3, -2, -1 ): print( "      {}={}".format( index, self.textIndex[index] ) )
+                vPrint( 'Quiet', debuggingThisModule, "    Final accumulated total was {:,} (should equal length of Text.Dat)".format( total + iE ) )
+                #for index in (0, 1, 2, 3, 23145, -4, -3, -2, -1 ): vPrint( 'Quiet', debuggingThisModule, "      {}={}".format( index, self.textIndex[index] ) )
                 #assert self.textIndex[-2]==self.textIndex[-3] and self.textIndex[-1]==self.textIndex[-3] # Two zero entries at end
         # end of load.loadVerseTextIndex
 
@@ -630,11 +630,11 @@ class PierceOnlineBible( Bible ):
             vPrint( 'Info', debuggingThisModule, _("  Loading text opts from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 optBytes = myFile.read()
-            if BibleOrgSysGlobals.debugFlag: print( "    {:,} optBytes bytes read".format( len(optBytes) ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "    {:,} optBytes bytes read".format( len(optBytes) ) )
 
             index = 0
             key, size, zero1, zero2 = optBytes[0], optBytes[1], optBytes[2], optBytes[3]
-            if BibleOrgSysGlobals.debugFlag: print( "    TextOpt: key={} size={}".format( key, size ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "    TextOpt: key={} size={}".format( key, size ) )
             assert key == 255
             assert size == 3
             assert zero1 == 0
@@ -648,7 +648,7 @@ class PierceOnlineBible( Bible ):
             while True:
                 stuff = optBytes[index:index+4]
                 pointer = (stuff[1]<<8) + stuff[0]
-                #print( "      {} {:04x} {} pointer={:04x}={}".format( len(self.optStuff1), index, hexlify(stuff), pointer, pointer ) )
+                #vPrint( 'Quiet', debuggingThisModule, "      {} {:04x} {} pointer={:04x}={}".format( len(self.optStuff1), index, hexlify(stuff), pointer, pointer ) )
                 if stuff[2]!=0 or stuff[3]!=0: break # something changes here
                 assert pointer > lastPointer
                 if lastPointer == -1: firstPointer = pointer
@@ -657,28 +657,28 @@ class PierceOnlineBible( Bible ):
                 if len(self.optStuff1) > 1000: halt
                 lastPointer = pointer
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {}={:04x} (seems to match number of words below) increasing 16-bit pointers (or are they bigger?) {}={:04x}..{}={:04x} loaded from {:04x} onwards".format( len(self.optStuff1), len(self.optStuff1), firstPointer, firstPointer, lastPointer, lastPointer, startIndex ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {}={:04x} (seems to match number of words below) increasing 16-bit pointers (or are they bigger?) {}={:04x}..{}={:04x} loaded from {:04x} onwards".format( len(self.optStuff1), len(self.optStuff1), firstPointer, firstPointer, lastPointer, lastPointer, startIndex ) )
                 for ix in (0, 1, 2, 3, -4, -3, -2, -1 ):
-                    print( "      {}={:04x}={}".format( ix, self.optStuff1[ix], self.optStuff1[ix] ) )
-                #print( self.optStuff1 )
+                    vPrint( 'Quiet', debuggingThisModule, "      {}={:04x}={}".format( ix, self.optStuff1[ix], self.optStuff1[ix] ) )
+                #vPrint( 'Quiet', debuggingThisModule, self.optStuff1 )
                 assert len(self.optStuff1) == 896
 
             # Load more stuff -- what does it mean?
-            #print( 'index={}={:04x}'.format( index, index ) )
+            #vPrint( 'Quiet', debuggingThisModule, 'index={}={:04x}'.format( index, index ) )
             assert index == 0xe04
             startIndex = index
             self.optStuff2 = []
             while True:
                 stuff = optBytes[index]; index += 1
-                #print( "      {} {:04x} {}".format( len(self.optStuff2), index, hexlify(stuff) ) )
+                #vPrint( 'Quiet', debuggingThisModule, "      {} {:04x} {}".format( len(self.optStuff2), index, hexlify(stuff) ) )
                 assert stuff==0 or stuff==1
                 self.optStuff2.append( stuff )
                 if len(self.optStuff2) >= len(self.optStuff1): break
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {} unknown 1-bit flags loaded from {:04x} onwards".format( len(self.optStuff2), startIndex ) )
-                #print( "  index = {:04x}={}".format( index, index ) )
-                #print( self.optStuff2 )
-                for ix in (0, 1, 2, -2, -1 ): print( "      {}: {:02x}={!r}".format( ix, self.optStuff2[ix], self.optStuff2[ix] ) )
+                vPrint( 'Quiet', debuggingThisModule, "    {} unknown 1-bit flags loaded from {:04x} onwards".format( len(self.optStuff2), startIndex ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  index = {:04x}={}".format( index, index ) )
+                #vPrint( 'Quiet', debuggingThisModule, self.optStuff2 )
+                for ix in (0, 1, 2, -2, -1 ): vPrint( 'Quiet', debuggingThisModule, "      {}: {:02x}={!r}".format( ix, self.optStuff2[ix], self.optStuff2[ix] ) )
                 assert len(self.optStuff2) == len(self.optStuff1)
 
             # Now load these capitalized commonish words -- how are they referenced?
@@ -688,19 +688,19 @@ class PierceOnlineBible( Bible ):
             startIndex = index
             self.optWords = []
             while index < len(optBytes):
-                #print( "  vB {} {}".format( hexlify(vBytes), vBytes ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  vB {} {}".format( hexlify(vBytes), vBytes ) )
                 #vLen, = struct.unpack( ">H", vBytes[0:2] )
                 vLen = optBytes[index]
-                #print( "vL2", repr(vLen) )
+                #vPrint( 'Quiet', debuggingThisModule, "vL2", repr(vLen) )
                 vString = ''
                 if self.characterBitSize == 8:
                     # Nine 8-bit chars filled with rubbish past the specified number
                     for j in range( vLen ):
-                        #print( vBytes[2*j+1:2*j+3] )
+                        #vPrint( 'Quiet', debuggingThisModule, vBytes[2*j+1:2*j+3] )
                         char8 = optBytes[index+j+1]
-                        #print( vLen, j, char8 )
+                        #vPrint( 'Quiet', debuggingThisModule, vLen, j, char8 )
                         vString += chr( char8 )
-                    #print( 'vString', repr(vString) )
+                    #vPrint( 'Quiet', debuggingThisModule, 'vString', repr(vString) )
                     index += 10
                     assert not vString[0].islower()
                     self.optWords.append( vString )
@@ -708,20 +708,20 @@ class PierceOnlineBible( Bible ):
                     # Nine 16-bit characters
                     vBytes = optBytes[index+1:index+19]
                     for j in range( int(vLen/2) ):
-                        #print( vBytes[2*j+1:2*j+3] )
+                        #vPrint( 'Quiet', debuggingThisModule, vBytes[2*j+1:2*j+3] )
                         try: char16, = struct.unpack( "<H", vBytes[2*j:2*j+2] )
                         except struct.error: logging.critical( "Struct error" ); index += 999999; break
-                        #print( char16 )
+                        #vPrint( 'Quiet', debuggingThisModule, char16 )
                         vString += chr( char16 )
                     #vString = vBytes[2:vLen+1].decode( 'utf-16' )
-                    #print( "    tO {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
+                    #vPrint( 'Quiet', debuggingThisModule, "    tO {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
                     index += 19
                     assert not vString[0].islower()
                     self.optWords.append( vString )
             numOptWords = len( self.optWords )
             if BibleOrgSysGlobals.debugFlag:
-                print( "    {}={:04x} 19-byte text-opt capitalized words loaded from {:04x} onwards".format( numOptWords, numOptWords, startIndex ) )
-                print( '     ', self.optWords )
+                vPrint( 'Quiet', debuggingThisModule, "    {}={:04x} 19-byte text-opt capitalized words loaded from {:04x} onwards".format( numOptWords, numOptWords, startIndex ) )
+                vPrint( 'Quiet', debuggingThisModule, '     ', self.optWords )
                 assert numOptWords == len(self.optStuff1)
         # end of load.loadTextOpt
 
@@ -748,15 +748,15 @@ class PierceOnlineBible( Bible ):
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
             vPrint( 'Info', debuggingThisModule, "    {:,} xref index bytes read".format( numXrefIndexBytes ) )
-            #print( "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
 
             #header = xrefIndexBytes[0:35]
-            #print( "xIB1 header {} {}".format( len(header), hexlify(header) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "xIB1 header {} {}".format( len(header), hexlify(header) ) )
             key, size0, size1, indexSize, tokenBlkSize = struct.unpack( "<BBBHH", xrefIndexBytes[0:7] )
             size = size0 + size1
-            #print( "  prelude length = {:04x} {}".format( size, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  prelude length = {:04x} {}".format( size, size ) )
             if BibleOrgSysGlobals.debugFlag:
-                print( "    Key={}, line entry size {}+{}={} index size={} tokenBlkSize={}*2={}".format( key, size0, size1, size, indexSize, tokenBlkSize, tokenBlkSize*2 ) )
+                vPrint( 'Quiet', debuggingThisModule, "    Key={}, line entry size {}+{}={} index size={} tokenBlkSize={}*2={}".format( key, size0, size1, size, indexSize, tokenBlkSize, tokenBlkSize*2 ) )
             assert key == 2
             assert size0 == 35 # 35-3=32
             assert size1 == 67 # 67-3=64
@@ -766,7 +766,7 @@ class PierceOnlineBible( Bible ):
             index = 7
             header = xrefIndexBytes[index:size]
             if BibleOrgSysGlobals.debugFlag:
-                print( "xIB2 header {} {}".format( len(header), hexlify(header) ) )
+                vPrint( 'Quiet', debuggingThisModule, "xIB2 header {} {}".format( len(header), hexlify(header) ) )
             index = size
 
             assert index == 102
@@ -774,7 +774,7 @@ class PierceOnlineBible( Bible ):
             lastPointer = total = count = 0
             while index < numXrefIndexBytes:
                 indexEntry = xrefIndexBytes[index:index+size]; index += size
-                #print( '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
                 assert len(indexEntry) == size
                 indexEntry1, indexEntry2 = indexEntry[:size0], indexEntry[size0:]
                 assert len(indexEntry1)==size0 and len(indexEntry2)==size1
@@ -784,29 +784,29 @@ class PierceOnlineBible( Bible ):
                 assert diskPointer2 == total
                 count1 = indexEntry1[3]
                 if 0 and len(self.xrefIndex) < 10:
-                    print( '  {} {:06x}={} {}'.format( len(self.xrefIndex), diskPointer1, diskPointer1, count1 ) )
-                    print( '    a {} {} {}'.format( len(indexEntry1), hexlify(indexEntry1), indexEntry1[3:] ) )
-                    print( '     {:06x}={}'.format( diskPointer2, diskPointer2 ) )
-                    print( '    b {} {} {}'.format( len(indexEntry2), hexlify(indexEntry2), indexEntry2[3:] ) )
+                    vPrint( 'Quiet', debuggingThisModule, '  {} {:06x}={} {}'.format( len(self.xrefIndex), diskPointer1, diskPointer1, count1 ) )
+                    vPrint( 'Quiet', debuggingThisModule, '    a {} {} {}'.format( len(indexEntry1), hexlify(indexEntry1), indexEntry1[3:] ) )
+                    vPrint( 'Quiet', debuggingThisModule, '     {:06x}={}'.format( diskPointer2, diskPointer2 ) )
+                    vPrint( 'Quiet', debuggingThisModule, '    b {} {} {}'.format( len(indexEntry2), hexlify(indexEntry2), indexEntry2[3:] ) )
                 for x in range( 32 ):
                     b1, w2 = indexEntry1[x+3], (indexEntry2[2*x+3+1]<<8) + indexEntry2[2*x+3]
                     if b1 == 0:
                         assert w2 == 0
                         break
-                    #print( 'b1={:02x}={} w2={:04x}={}'.format( b1, b1, w2, w2 ) )
+                    #vPrint( 'Quiet', debuggingThisModule, 'b1={:02x}={} w2={:04x}={}'.format( b1, b1, w2, w2 ) )
                     total += w2
                     self.xrefIndex.append( (b1,diskPointer2+w2) )
-                #if len(self.xrefIndex) > 10: print(); halt
+                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', debuggingThisModule, '' ); halt
                 count += 1
             assert index == numXrefIndexBytes
             numXrefIndexEntries = len(self.xrefIndex)
             vPrint( 'Info', debuggingThisModule, "    {:,} xref index duples loaded from {} double lines".format( numXrefIndexEntries, count ) )
-            #print( self.xrefIndex )
+            #vPrint( 'Quiet', debuggingThisModule, self.xrefIndex )
             assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
             assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
-            #print( "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
+            #vPrint( 'Quiet', debuggingThisModule, "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
             #for index in range( 150 ):
-                #print( "      {}: {:02x} @ {:04x}={}".format( index, self.xrefIndex[index][0], self.xrefIndex[index][1], self.xrefIndex[index][1] ) )
+                #vPrint( 'Quiet', debuggingThisModule, "      {}: {:02x} @ {:04x}={}".format( index, self.xrefIndex[index][0], self.xrefIndex[index][1], self.xrefIndex[index][1] ) )
         # end of load.loadXrefIndex
 
 
@@ -837,14 +837,14 @@ class PierceOnlineBible( Bible ):
                 xrefIndexBytes = myFile.read()
             numXrefIndexBytes = len(xrefIndexBytes)
             vPrint( 'Info', debuggingThisModule, "    {:,} Strongs index bytes read".format( numXrefIndexBytes ) )
-            #print( "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "tIB {} {}".format( len(xrefIndexBytes), hexlify(xrefIndexBytes[:99]) ) )
 
             #header = xrefIndexBytes[0:35]
-            #print( "xsIB1 header {} {}".format( len(header), hexlify(header) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "xsIB1 header {} {}".format( len(header), hexlify(header) ) )
             key, size0, size1, indexSize, tokenBlkSize = struct.unpack( "<BBBHH", xrefIndexBytes[0:7] )
-            #print( "  prelude length = {:04x} {}".format( size, size ) )
+            #vPrint( 'Quiet', debuggingThisModule, "  prelude length = {:04x} {}".format( size, size ) )
             if BibleOrgSysGlobals.debugFlag:
-                print( "    Key={}, line entry size {}".format( key, size0 ) )
+                vPrint( 'Quiet', debuggingThisModule, "    Key={}, line entry size {}".format( key, size0 ) )
             assert key == 1
             assert size0 == 67 # 67-3=64
             assert size1 == 0
@@ -852,7 +852,7 @@ class PierceOnlineBible( Bible ):
             assert tokenBlkSize == 0
             index = 7
             header = xrefIndexBytes[index:size0]
-            #print( "xIB2 header {} {}".format( len(header), hexlify(header) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "xIB2 header {} {}".format( len(header), hexlify(header) ) )
             for something in header: assert something == 0 # It's just filler
             index = size0
 
@@ -861,32 +861,32 @@ class PierceOnlineBible( Bible ):
             lastPointer = total = count = 0
             while index < numXrefIndexBytes:
                 indexEntry = xrefIndexBytes[index:index+size0]; index += size0
-                #print( '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{:4} {} {} {}'.format( len(self.xrefIndex), len(indexEntry), hexlify(indexEntry), indexEntry ) )
                 assert len(indexEntry) == size0
                 # Seems part a starts with a 3-byte pointer to something
                 diskPointer = (indexEntry[2]<<16) + (indexEntry[1]<<8) + indexEntry[0]
                 if total == 0: total = diskPointer # Starts part way through
                 assert diskPointer == total
                 if 0 and len(self.xrefIndex) < 10:
-                    print( '  {} {:06x}={}'.format( len(self.xrefIndex), diskPointer, diskPointer ) )
-                    print( '    {} {} {}'.format( len(indexEntry), hexlify(indexEntry), indexEntry[3:] ) )
+                    vPrint( 'Quiet', debuggingThisModule, '  {} {:06x}={}'.format( len(self.xrefIndex), diskPointer, diskPointer ) )
+                    vPrint( 'Quiet', debuggingThisModule, '    {} {} {}'.format( len(indexEntry), hexlify(indexEntry), indexEntry[3:] ) )
                 for x in range( 32 ):
                     w2 = (indexEntry[2*x+3+1]<<8) + indexEntry[2*x+3]
-                    #print( '    {} w2={:04x}={} @ {}'.format( x, w2, w2, len(self.StrongsIndex) ) )
+                    #vPrint( 'Quiet', debuggingThisModule, '    {} w2={:04x}={} @ {}'.format( x, w2, w2, len(self.StrongsIndex) ) )
                     if w2 == 0 and len(self.StrongsIndex)>8849: break
                     total += w2
                     self.StrongsIndex.append( (total) )
-                #if len(self.xrefIndex) > 10: print(); halt
+                #if len(self.xrefIndex) > 10: vPrint( 'Quiet', debuggingThisModule, '' ); halt
                 count += 1
             assert index == numXrefIndexBytes
             numStrongsIndexEntries = len(self.StrongsIndex)
             vPrint( 'Info', debuggingThisModule, "    {:,} Strongs index entries loaded from {} lines".format( numStrongsIndexEntries, count ) )
             if BibleOrgSysGlobals.debugFlag:
-                #print( self.StrongsIndex )
+                #vPrint( 'Quiet', debuggingThisModule, self.StrongsIndex )
                 assert count == 277
                 assert numStrongsIndexEntries == 8850
-                #print( "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
-                for index in (0, 1, 2, 3, -4, -3, -2, -1 ): print( "      {}={}".format( index, self.StrongsIndex[index] ) )
+                #vPrint( 'Quiet', debuggingThisModule, "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
+                for index in (0, 1, 2, 3, -4, -3, -2, -1 ): vPrint( 'Quiet', debuggingThisModule, "      {}={}".format( index, self.StrongsIndex[index] ) )
         # end of load.loadStrongsIndex
 
 
@@ -908,7 +908,7 @@ class PierceOnlineBible( Bible ):
             if BibleOrgSysGlobals.debugFlag:
                 if 'StrongsIndex' in self.__dict__: assert numXrefBytes == self.StrongsIndex[-1]
                 else: # Not all versions have Strongs
-                    print( "lastXref", self.xrefIndex[-1], self.xrefIndex[-2] )
+                    vPrint( 'Quiet', debuggingThisModule, "lastXref", self.xrefIndex[-1], self.xrefIndex[-2] )
                     # XXXXX Why does this fail for CEVUK?
                     if self.abbreviation not in ('ASV', 'AKJV', 'CEVUK', 'Darby', 'KJ21', 'Webster', 'Wey', 'Williams', ):
                         assert numXrefBytes == self.xrefIndex[-1][1]
@@ -917,7 +917,7 @@ class PierceOnlineBible( Bible ):
                 lastPointer = 0
                 for j, pointer in enumerate( self.textIndex ):
                     strip = self.xrefBytes[lastPointer:pointer]
-                    print( "{:5} {:5} {:5} {} {}".format( j, lastPointer, pointer, hexlify(strip), strip ) )
+                    vPrint( 'Quiet', debuggingThisModule, "{:5} {:5} {:5} {} {}".format( j, lastPointer, pointer, hexlify(strip), strip ) )
                     lastPointer = pointer
                     if j > 10: break
         # end of load.loadXrefData
@@ -937,9 +937,9 @@ class PierceOnlineBible( Bible ):
                     word = word.lower() # Not sure what I don't understand here
                 self.dictionary[wordIndex] = (word,None)
                 wordIndex += 1
-            #print( 'wi', wordIndex )
+            #vPrint( 'Quiet', debuggingThisModule, 'wi', wordIndex )
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( '    {:,} common words added to dictionary from {} to {}={:02x}'.format( len(self.commonWords), startWordIndex, wordIndex-1, wordIndex-1 ) )
+                vPrint( 'Quiet', debuggingThisModule, '    {:,} common words added to dictionary from {} to {}={:02x}'.format( len(self.commonWords), startWordIndex, wordIndex-1, wordIndex-1 ) )
             assert wordIndex == 128
             del self.commonWords
 
@@ -949,16 +949,16 @@ class PierceOnlineBible( Bible ):
             wordIndex = startWordIndex
             word = ''
             for bitCodes, xrefPointer in self.xrefIndex:
-                #print( 'tI={} wI={} bc={:02x} p={:04x}'.format( tokenIndex, wordIndex, bitCodes, xrefPointer ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'tI={} wI={} bc={:02x} p={:04x}'.format( tokenIndex, wordIndex, bitCodes, xrefPointer ) )
                 commonChars, addChars = bitCodes >> 5, bitCodes & 0x1f
-                #print( 'eW={!r} cc={} {!r} ac={} {!r}'.format( word, commonChars, word[:commonChars], addChars, self.tokenString[tokenIndex:tokenIndex+addChars] ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'eW={!r} cc={} {!r} ac={} {!r}'.format( word, commonChars, word[:commonChars], addChars, self.tokenString[tokenIndex:tokenIndex+addChars] ) )
                 word = word[:commonChars] + self.tokenString[tokenIndex:tokenIndex+addChars]
-                #print( repr(word) )
+                #vPrint( 'Quiet', debuggingThisModule, repr(word) )
                 self.dictionary[wordIndex] = (word,xrefPointer)
                 tokenIndex += addChars
                 wordIndex += 1
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( '    {:,} regular words added to dictionary from {}={:02x} to {:,}={:04x}'.format( len(self.xrefIndex), startWordIndex, startWordIndex, wordIndex-1, wordIndex-1 ) )
+                vPrint( 'Quiet', debuggingThisModule, '    {:,} regular words added to dictionary from {}={:02x} to {:,}={:04x}'.format( len(self.xrefIndex), startWordIndex, startWordIndex, wordIndex-1, wordIndex-1 ) )
             del self.xrefIndex
 
             if 0 and self.haveStrongsFlag:
@@ -970,7 +970,7 @@ class PierceOnlineBible( Bible ):
                     self.dictionary[wordIndex] = (word,xrefPointer)
                     wordIndex += 1
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "    {:,} Strongs' numbers added to dictionary from {:,}={:04x} to {:,}={:02x}".format( len(self.StrongsIndex), startWordIndex, startWordIndex, wordIndex-1, wordIndex-1 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "    {:,} Strongs' numbers added to dictionary from {:,}={:04x} to {:,}={:02x}".format( len(self.StrongsIndex), startWordIndex, startWordIndex, wordIndex-1, wordIndex-1 ) )
         # end of load.createDictionary
 
 
@@ -979,13 +979,13 @@ class PierceOnlineBible( Bible ):
             Given a verse number from 0..31,101, return the encoded bytes
             """
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
                 #assert 0 <= absoluteVerseNumber < len(self.textIndex)
             startAt = 0 if absoluteVerseNumber==0 else self.textIndex[absoluteVerseNumber-1]
             endAt = self.textIndex[absoluteVerseNumber]
             assert endAt > startAt
             byteStrip = self.textBytes[startAt:endAt]
-            #print( 'Verse {} {} {} {}'.format( absoluteVerseNumber, len(byteStrip), hexlify(byteStrip), byteStrip[-1] ) )
+            #vPrint( 'Quiet', debuggingThisModule, 'Verse {} {} {} {}'.format( absoluteVerseNumber, len(byteStrip), hexlify(byteStrip), byteStrip[-1] ) )
             return byteStrip
         #end of load.getVerseBytes
 
@@ -995,7 +995,7 @@ class PierceOnlineBible( Bible ):
             """
             """
             if BibleOrgSysGlobals.debugFlag:
-                #print( "getWord( {}={:04x} )".format( wordIndex, wordIndex ) )
+                #vPrint( 'Quiet', debuggingThisModule, "getWord( {}={:04x} )".format( wordIndex, wordIndex ) )
                 assert 5 <= wordIndex <= 0x7FFF
 
             if self.haveStrongsFlag and wordIndex >= self.StrongsOffset:
@@ -1005,7 +1005,7 @@ class PierceOnlineBible( Bible ):
             except KeyError:
                 dictionaryWord = '«{:04x}»'.format( wordIndex )
                 if BibleOrgSysGlobals.debugFlag:
-                    print( '{} missing word {:04x} -- have {}={:04x} words'.format( self.abbreviation, wordIndex, len(self.dictionary), len(self.dictionary) ) )
+                    vPrint( 'Quiet', debuggingThisModule, '{} missing word {:04x} -- have {}={:04x} words'.format( self.abbreviation, wordIndex, len(self.dictionary), len(self.dictionary) ) )
                     #self.missingWordNumbers.add( wordIndex )
 
             return dictionaryWord.title() if capsFlag else dictionaryWord
@@ -1017,7 +1017,7 @@ class PierceOnlineBible( Bible ):
             A diagnostic reverse dictionary lookup.
             """
             if BibleOrgSysGlobals.debugFlag:
-                print( "findWordInDictionary( {!r} )".format( searchWord ) )
+                vPrint( 'Quiet', debuggingThisModule, "findWordInDictionary( {!r} )".format( searchWord ) )
 
             results = []
             lcSearchWord = searchWord.lower()
@@ -1034,12 +1034,12 @@ class PierceOnlineBible( Bible ):
             Given a verse number from 0..31,101, return the encoded bytes
             """
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
+                vPrint( 'Quiet', debuggingThisModule, "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
             resultString = ''
             capsFlag = footnoteFlag = headingFlag = False
             saved = None
             for something in verseBytes:
-                #print( 'a {:02x} {} {} {!r}'.format( something, saved, capsFlag, resultString ) )
+                #vPrint( 'Quiet', debuggingThisModule, 'a {:02x} {} {} {!r}'.format( something, saved, capsFlag, resultString ) )
                 word = None
                 if saved is None:
                     if something > 0x7F: assert saved is None; saved = something & 0x7F
@@ -1068,7 +1068,7 @@ class PierceOnlineBible( Bible ):
                 assert not headingFlag # Should be off at the end of the verse
 
             # Now scan for open and close fields
-            #if reference==('SA2','23','8'): print( reference, repr(resultString) ); halt
+            #if reference==('SA2','23','8'): vPrint( 'Quiet', debuggingThisModule, reference, repr(resultString) ); halt
             for openCode,newOpenCode,closeCode,newCloseCode in ( ('\x1c','STARTC','\x1c','ENDC'),
                                                                 ('\x1e','STARTE','\x1e','ENDE'),
                                                                 ('\x1f','STARTF','\x1f','ENDF'),
@@ -1077,19 +1077,19 @@ class PierceOnlineBible( Bible ):
                                                                 ):
                 ix = resultString.find( openCode )
                 while ix != -1:
-                    #print( '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, resultString ) )
+                    #vPrint( 'Quiet', debuggingThisModule, '{} {!r}->{!r} {!r}->{!r} in {!r}'.format( ix, openCode,newOpenCode,closeCode,newCloseCode, resultString ) )
                     resultString = resultString.replace( openCode, newOpenCode, 1 )
                     ixEnd = resultString.find( closeCode, ix )
                     if ixEnd == -1:
-                        #print( 'Missing {!r} close code'.format( closeCode ) )
+                        #vPrint( 'Quiet', debuggingThisModule, 'Missing {!r} close code'.format( closeCode ) )
                         pass
                     else:
                         resultString = resultString.replace( closeCode, newCloseCode, 1 )
                     ix = resultString.find( openCode, ix )
                 if resultString.find( closeCode, ix ) != -1:
-                    print( 'Unexpected {!r} close code'.format( closeCode )  ); halt
+                    vPrint( 'Quiet', debuggingThisModule, 'Unexpected {!r} close code'.format( closeCode )  ); halt
             #if BibleOrgSysGlobals.debugFlag: # final check
-                #print( reference, repr(resultString), resultString )
+                #vPrint( 'Quiet', debuggingThisModule, reference, repr(resultString), resultString )
                 #assert '\\x' not in repr(resultString)  Makes no sense for special characters
 
             # Now do our final clean-up
@@ -1108,7 +1108,7 @@ class PierceOnlineBible( Bible ):
             while '  ' in resultString: # Reduce double spaces
                 resultString = resultString.replace( '  ', ' ' )
             if BibleOrgSysGlobals.debugFlag: # final check
-                #print( repr(resultString) )
+                #vPrint( 'Quiet', debuggingThisModule, repr(resultString) )
                 assert '  ' not in resultString
 
             return resultString.strip()
@@ -1122,7 +1122,7 @@ class PierceOnlineBible( Bible ):
             Strongs printed numbers are Hebrew 1..8,674 plus Greek 1..5,624 = total = 14,298
             """
             if BibleOrgSysGlobals.debugFlag:
-                #print( "getStrongsBytes( {} )".format( StrongsNumber ) )
+                #vPrint( 'Quiet', debuggingThisModule, "getStrongsBytes( {} )".format( StrongsNumber ) )
                 assert 1 <= StrongsNumber <= 8850
             startAt = self.StrongsIndex[StrongsNumber-1]
             endAt = startAt + 120
@@ -1130,8 +1130,8 @@ class PierceOnlineBible( Bible ):
             #except IndexError: endAt = startAt + 999
             assert endAt > startAt
             byteStrip = self.xrefBytes[startAt:endAt]
-            #print( StrongsNumber, startAt, endAt, byteStrip )
-            #print( 'Strongs {} {} {} {!r}'.format( StrongsNumber, len(byteStrip), hexlify(byteStrip), byteStrip ) )
+            #vPrint( 'Quiet', debuggingThisModule, StrongsNumber, startAt, endAt, byteStrip )
+            #vPrint( 'Quiet', debuggingThisModule, 'Strongs {} {} {} {!r}'.format( StrongsNumber, len(byteStrip), hexlify(byteStrip), byteStrip ) )
             return byteStrip
         # end of getStrongsBytes
 
@@ -1151,7 +1151,7 @@ class PierceOnlineBible( Bible ):
                         vPrint( 'Verbose', debuggingThisModule, "Saving", BBB, bookCount+1 )
                         self.stashBook( thisBook )
                     # Create the new book
-                    if BibleOrgSysGlobals.verbosityLevel > 2:  print( '  Loading {}…'.format( BBB ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2:  vPrint( 'Quiet', debuggingThisModule, '  Loading {}…'.format( BBB ) )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = 'Online Bible Book object'
                     thisBook.objectTypeString = 'Online Bible'
@@ -1183,15 +1183,15 @@ class PierceOnlineBible( Bible ):
                     BCVRef = BOS.convertAbsoluteVerseNumber( n+1 )
                     try:
                         verseStuff = getVerseBytes( n )
-                        #print( "\n{} {} = {} {} {}".format( self.abbreviation, BCVRef, len(verseStuff), hexlify(verseStuff), verseStuff ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "\n{} {} = {} {} {}".format( self.abbreviation, BCVRef, len(verseStuff), hexlify(verseStuff), verseStuff ) )
                         verseString = getBibleText( verseStuff, BCVRef )
-                        print( "\n{} {} {} = {}".format( self.abbreviation, n, BCVRef, repr(verseString) ) )
+                        vPrint( 'Quiet', debuggingThisModule, "\n{} {} {} = {}".format( self.abbreviation, n, BCVRef, repr(verseString) ) )
                         if 0:
                             for j in range( int( len(verseStuff)/2 ) ):
                                 w2 = (verseStuff[2*j+1]<<8) + verseStuff[2*j]
-                                print( '   {} {:04x}={} {!r}'.format( j, w2, w2, self.tokenString[w2:w2+3] ) )
+                                vPrint( 'Quiet', debuggingThisModule, '   {} {:04x}={} {!r}'.format( j, w2, w2, self.tokenString[w2:w2+3] ) )
                     except IndexError:
-                        print( "No such verse: {} {} {}".format( self.abbreviation, n, BCVRef ) )
+                        vPrint( 'Quiet', debuggingThisModule, "No such verse: {} {} {}".format( self.abbreviation, n, BCVRef ) )
 
             if 0:
                 for n in range( 31102 ):
@@ -1202,23 +1202,23 @@ class PierceOnlineBible( Bible ):
                         for something in ('<<000', '<<01', '<<02', '<<031', '<<032', '<<033', '<<034', ):
                             if something in verseString: printFlag = True
                         if printFlag or debuggingThisModule:
-                            print( "\n{} {} {} = {!r}".format( self.abbreviation, n, BCVRef, verseString ) )
+                            vPrint( 'Quiet', debuggingThisModule, "\n{} {} {} = {!r}".format( self.abbreviation, n, BCVRef, verseString ) )
                             if '<<020' in verseString: halt
                             #if '<<62' in verseString: halt
                         #if BCVRef == ('GEN','20','2'): halt
                     except IndexError:
-                        print( "No such verse: {} {} {}".format( self.abbreviation, n, BCVRef ) )
+                        vPrint( 'Quiet', debuggingThisModule, "No such verse: {} {} {}".format( self.abbreviation, n, BCVRef ) )
 
             if 1 and self.haveStrongsFlag:
                 for word in ( 'from', 'the', 'same' ):
-                    print( '{!r} -> {}'.format( word, findWordInDictionary( word ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, '{!r} -> {}'.format( word, findWordInDictionary( word ) ) )
                 for strongs in ( 7225, 430, 1254, 853, 8064, 1, 2, 8849, 8850 ):
                     xrefStuff = getStrongsBytes( strongs )
-                    print( "\nStrongs {} = {} {} {}".format( strongs, len(xrefStuff), hexlify(xrefStuff), xrefStuff ) )
-                    print( "         {} = {!r}".format( strongs, getBibleText( xrefStuff ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "\nStrongs {} = {} {} {}".format( strongs, len(xrefStuff), hexlify(xrefStuff), xrefStuff ) )
+                    vPrint( 'Quiet', debuggingThisModule, "         {} = {!r}".format( strongs, getBibleText( xrefStuff ) ) )
 
             #if self.missingWordNumbers:
-                #print( 'missingWordNumbers', sorted(self.missingWordNumbers) ); halt
+                #vPrint( 'Quiet', debuggingThisModule, 'missingWordNumbers', sorted(self.missingWordNumbers) ); halt
         # end of load.test
 
 
@@ -1247,9 +1247,9 @@ class PierceOnlineBible( Bible ):
                 self.abbreviation = something
                 self.sourceFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/', something+'/' )
                 loadVersion()
-            for vbh in VBH1s: print( '{:10} = {} {}'.format( vbh, len(VBH1s[vbh]), VBH1s[vbh] ) )
-            for vbh in VBH2s: print( '{:10} = {} {}'.format( vbh, len(VBH2s[vbh]), VBH2s[vbh] ) )
-            for vbh in VBH3s: print( '{:10} = {} {}'.format( vbh, len(VBH3s[vbh]), VBH3s[vbh] ) )
+            for vbh in VBH1s: vPrint( 'Quiet', debuggingThisModule, '{:10} = {} {}'.format( vbh, len(VBH1s[vbh]), VBH1s[vbh] ) )
+            for vbh in VBH2s: vPrint( 'Quiet', debuggingThisModule, '{:10} = {} {}'.format( vbh, len(VBH2s[vbh]), VBH2s[vbh] ) )
+            for vbh in VBH3s: vPrint( 'Quiet', debuggingThisModule, '{:10} = {} {}'.format( vbh, len(VBH3s[vbh]), VBH3s[vbh] ) )
             halt
 
         self.doPostLoadProcessing()
@@ -1271,9 +1271,9 @@ def testOB( TOBfilename ):
     vPrint( 'Normal', debuggingThisModule, olb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         olb.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        olbErrors = olb.getErrors()
-        # print( olbErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        olbErrors = olb.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, olbErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##olb.toDrupalBible()
         olb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -1286,7 +1286,7 @@ def testOB( TOBfilename ):
         if t=='NT' and len(olb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(olb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, olb.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, olb.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = olb.getVerseText( svk )
@@ -1294,12 +1294,12 @@ def testOB( TOBfilename ):
         except KeyError:
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( reference, shortText, verseText )
-            if BibleOrgSysGlobals.debugFlag: print( '  {}'.format( fullVerseText ) )
+            vPrint( 'Quiet', debuggingThisModule, reference, shortText, verseText )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
 # end of testOB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -1363,8 +1363,73 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nOnline E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testOB( someFolder )
-# end of demo
+# end of PierceOnlineBible.briefDemo
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = PierceOnlineBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "Online TestA1", result1 )
+        result2 = PierceOnlineBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "Online TestA2", result2 )
+        result3 = PierceOnlineBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "Online TestA3", result3 )
+
+        testSubfolder = os.path.join( testFolder, 'AV/' )
+        result3 = PierceOnlineBibleFileCheck( testSubfolder )
+        vPrint( 'Normal', debuggingThisModule, "Online TestB1", result3 )
+        result4 = PierceOnlineBibleFileCheck( testSubfolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "Online TestB2", result4 )
+        result5 = PierceOnlineBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "Online TestB3", result5 )
+
+
+    if 0: # specified module
+        singleModule = 'AV'
+        vPrint( 'Normal', debuggingThisModule, "\nOnline C/ Trying {}".format( singleModule ) )
+        #myTestFolder = os.path.join( testFolder, singleModule+'/' )
+        #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
+        testOB( singleModule )
+
+    if 0: # specified modules
+        good = ('AV','ASV','AKJV','CEVUK','Darby','KJ21','RWebster','WEBSTER','Wey','Williams','YLT',) # 'MART_1707',
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nOnline D{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testOB( testFilename )
+
+
+    if 0: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testOB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nOnline E{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testOB( someFolder )
+# end of PierceOnlineBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -1376,7 +1441,7 @@ if __name__ == '__main__':
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of PierceOnlineBible.py

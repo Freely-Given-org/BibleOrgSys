@@ -5,7 +5,7 @@
 #
 # Module comparing USFM Bible book files
 #
-# Copyright (C) 2016-2018 Robert Hunt
+# Copyright (C) 2016-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,20 +37,19 @@ TODO: Needs internationalisation _("around strings")
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2018-12-02' # by RJH
-ShortProgName = "USFMBookCompare"
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+SHORT_PROGRAM_NAME = "USFMBookCompare"
 PROGRAM_NAME = "USFM book file comparator"
-PROGRAM_VERSION = '0.16'
-ProgNameVersion = '{} v{}'.format( ShortProgName, PROGRAM_VERSION )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LAST_MODIFIED_DATE )
+PROGRAM_VERSION = '0.17'
+programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 
 debuggingThisModule = False
 
 
 import os
 import logging
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
 
 if __name__ == '__main__':
     import sys
@@ -59,7 +58,6 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
-
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
@@ -122,8 +120,8 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     uf1, uf2 = USFMFile(), USFMFile()
     uf1.read( filepath1 )
     uf2.read( filepath2 )
-    #print( 'f1', uf1.lines )
-    #print( 'f2', uf2.lines )
+    #vPrint( 'Quiet', debuggingThisModule, 'f1', uf1.lines )
+    #vPrint( 'Quiet', debuggingThisModule, 'f2', uf2.lines )
 
 
     # Note line counts
@@ -143,7 +141,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf1.lines:
-        #print( '1', C, V, lastC, lastV, marker, line )
+        #vPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File1']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -178,7 +176,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf2.lines:
-        #print( '1', C, V, lastC, lastV, marker, line )
+        #vPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File2']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -259,20 +257,20 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     startedCVs1 = startedCVs2 = False
     while True:
         if lineIndex >= resultDict['File1']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "File1 done" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "File1 done" )
             break
         if lineIndex >= resultDict['File2']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "File2 done" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "File2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
-        #print( lineIndex, lineOffset, m1, m2 )
+        #vPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )
         if m1==m2: resultDict['Same']['SameMarkerCount'] += 1
         else:
-            if BibleOrgSysGlobals.debugFlag: print( "Diff", m1, m2, l1, l2 )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentMarkerCount'] += 1
         if m1==m2 and l1==l2: resultDict['Same']['SameLineCount'] += 1
         else:
-            if BibleOrgSysGlobals.debugFlag: print( "Diff", m1, m2, l1, l2 )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentLineCount'] += 1
         lineIndex += 1
 
@@ -285,7 +283,38 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
 
 
 
-def demo():
+def briefDemo() -> None:
+    """
+    Brief demo to check class is working -- must be fast
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
+    fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
+    allOkay = True
+    if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
+    if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
+    if allOkay:
+        vPrint( 'Quiet', debuggingThisModule, "\nFile1 is: {}".format( fp1 ) )
+        vPrint( 'Quiet', debuggingThisModule, "File2 is: {}".format( fp2 ) )
+
+        result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
+            for division,dResults in result.items():
+                if not dResults: continue
+                if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
+                and not BibleOrgSysGlobals.debugFlag:
+                    continue
+                if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
+                and not BibleOrgSysGlobals.debugFlag:
+                    continue
+                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
+                for field,fResult in dResults.items():
+                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+# end of USFMBookCompare.briefDemo
+
+def fullDemo() -> None:
     """
     Demonstration program to show off USFM Bible book comparison.
     """
@@ -297,12 +326,12 @@ def demo():
     if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
     if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
     if allOkay:
-        print( "\nFile1 is: {}".format( fp1 ) )
-        print( "File2 is: {}".format( fp2 ) )
+        vPrint( 'Quiet', debuggingThisModule, "\nFile1 is: {}".format( fp1 ) )
+        vPrint( 'Quiet', debuggingThisModule, "File2 is: {}".format( fp2 ) )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nResults:" )
+            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
             for division,dResults in result.items():
                 if not dResults: continue
                 if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
@@ -311,12 +340,12 @@ def demo():
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                print( "  {} results are:".format( division ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
                 for field,fResult in dResults.items():
-                    print( "    {}: {}".format( field,fResult ) )
-# end of demo
+                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+# end of USFMBookCompare.fullDemo
 
-def main():
+def main() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -329,7 +358,7 @@ def main():
     if allOkay:
         result = USFMBookCompare( fp1, fp2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nResults:" )
+            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
             for division,dResults in result.items():
                 if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
                 and not BibleOrgSysGlobals.debugFlag:
@@ -337,10 +366,10 @@ def main():
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                print( "  {} results are:".format( division ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
                 for field,fResult in dResults.items():
-                    print( "    {}: {}".format( field,fResult ) )
-# end of main
+                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+# end of USFMBookCompare.main
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables

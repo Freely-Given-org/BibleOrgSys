@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2019 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -25,18 +25,7 @@
 """
 Module handling BibleBooksNames_*.xml to produce pickle, JSON, C and Python data tables.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-05-12' # by RJH
-SHORT_PROGRAM_NAME = "BibleBooksNamesConverter"
-PROGRAM_NAME = "Bible Books Names Systems converter"
-PROGRAM_VERSION = '0.36'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from xml.etree.ElementTree import ElementTree
@@ -49,6 +38,15 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "BibleBooksNamesConverter"
+PROGRAM_NAME = "Bible Books Names Systems converter"
+PROGRAM_VERSION = '0.36'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -89,7 +87,7 @@ class BibleBooksNamesConverter:
         Load and pre-process the specified booksNames systems.
         """
         if not self.__XMLSystems: # Only ever do this once
-            if folder==None: folder = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
+            if folder==None: folder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
             self.__XMLFolder = folder
             vPrint( 'Info', debuggingThisModule, _("Loading book names systems from {}…").format( folder ) )
             for filename in os.listdir( folder ):
@@ -134,7 +132,7 @@ class BibleBooksNamesConverter:
                     for subelement in self.__XMLSystems[booksNamesSystemCode]['tree']:
                         bookCount += 1
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -311,7 +309,7 @@ class BibleBooksNamesConverter:
         vPrint( 'Verbose', debuggingThisModule, _("Importing data into Python dictionary…") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
-            #print( booksNamesSystemCode )
+            #vPrint( 'Quiet', debuggingThisModule, booksNamesSystemCode )
             # Make the data dictionary for this booksNames system
             myDivisionsNamesDict, myBooknameLeadersDict, myBookNamesDict = {}, {}, {}
             for element in self.__XMLSystems[booksNamesSystemCode]['tree']:
@@ -560,7 +558,7 @@ class BibleBooksNamesConverter:
 # end of BibleBooksNamesConverter class
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -581,11 +579,38 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
-        print( bbnsc ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
         #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
-        #    print( bbnsc ) # Just print a summary
-# end of demo
+        #    vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+# end of BibleBooksNamesConverter.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
+    #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
+    #sampleBookList = ['MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL','PE1','PE2','JDE','REV']
+    if BibleOrgSysGlobals.commandLineArguments.export:
+        bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
+        #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #    bbnsc.expandInputs( sampleBookList )
+        bbnsc.pickle() # Produce the .pickle file
+        bbnsc.exportDataToJSON() # Produce a json output file
+        # bbnsc.exportDataToPython() # Produce the .py tables
+        # bbnsc.exportDataToC() # Produce the .h and .c tables
+
+    else: # Must be demo mode
+        # Demo the converter object
+        bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
+        vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+        #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #    bbnsc.expandInputs( sampleBookList )
+        #    vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+# end of BibleBooksNamesConverter.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -595,7 +620,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleBooksNamesConverter.py

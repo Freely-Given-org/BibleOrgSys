@@ -5,7 +5,7 @@
 #
 # Module handling simple XML files
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,19 +24,9 @@
 
 """
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-12-22' # by RJH
-SHORT_PROGRAM_NAME = "XMLFile"
-PROGRAM_NAME = "XML file handler"
-PROGRAM_VERSION = '0.04'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os, sys, subprocess
+import logging
+import os, sys, subprocess
 from pathlib import Path
 from xml.etree.ElementTree import ElementTree, ParseError
 import urllib.request
@@ -49,6 +39,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "XMLFile"
+PROGRAM_NAME = "XML file handler"
+PROGRAM_VERSION = '0.04'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
@@ -80,9 +78,9 @@ class XMLFile():
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "XMLFile: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', debuggingThisModule, "XMLFile: File {!r} is unreadable".format( self.sourceFilepath ) )
         if self.schemaFilepath and not os.access( self.schemaFilepath, os.R_OK ):
-            print( "XMLFile: Schema file {!r} is unreadable".format( self.schemaFilepath ) )
+            vPrint( 'Quiet', debuggingThisModule, "XMLFile: Schema file {!r} is unreadable".format( self.schemaFilepath ) )
         if self.schemaURL:
             try:
                 resp = urllib.request.urlopen( self.schemaURL )
@@ -166,8 +164,8 @@ class XMLFile():
             vPrint( 'Info', debuggingThisModule, "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
             self.validatedWithLint = True
 
-        if BibleOrgSysGlobals.debugFlag: print( "cPOS  = {!r}".format( checkProgramOutputString ) )
-        if BibleOrgSysGlobals.debugFlag: print( "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "cPOS  = {!r}".format( checkProgramOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
         return self.validatedWithLint, checkProgramOutputString, checkProgramErrorOutputString
     # end of XMLFile.validateWithLint
 
@@ -178,7 +176,7 @@ class XMLFile():
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -199,8 +197,9 @@ def demo() -> None:
             xf = XMLFile( testFilename, folder, schema=schema )
             xf.validateByLoading()
             xf.validateWithLint()
-            #print( xf.validateAll() )
-            print( xf )
+            #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+            vPrint( 'Quiet', debuggingThisModule, xf )
+            break
     # end of doTest
 
     if 1: # Test some OpenSong Bibles
@@ -225,8 +224,56 @@ def demo() -> None:
         doTest( testFolder, testNames, schema=osisSchemaFile )
         vPrint( 'Normal', debuggingThisModule, "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
         doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
-# end of demo
+# end of XMLFile.briefDemo
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    AutoProcessesFolder = "../../"
+    osisSchemaHTTP = 'http://ebible.org/osisCore.2.1.1.xsd'
+    osisSchemaFile = os.path.join( AutoProcessesFolder, 'sword-tools/thml2osis/xslt/tests/osisCore.2.1.1.xsd' )
+    usxSchemaFile = os.path.join( AutoProcessesFolder, 'VariousScripts/usx 1.rng' )
+
+    def doTest( folder, filenameList, schema=None ):
+        for testFilename in filenameList:
+            #testFilepath = os.path.join( folder, testFilename )
+            #vPrint( 'Quiet', debuggingThisModule, "\n  Test filepath is {!r}".format( testFilepath ) )
+
+            # Demonstrate the XML file class
+            #xf = XMLFile( testFilepath, schema=schema )
+            xf = XMLFile( testFilename, folder, schema=schema )
+            xf.validateByLoading()
+            xf.validateWithLint()
+            #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+            vPrint( 'Quiet', debuggingThisModule, xf )
+    # end of doTest
+
+    if 1: # Test some OpenSong Bibles
+        testFolder = Path( '/mnt/SSDs/Bibles//OpenSong Bibles/' )
+        single = ( "KJV.xmm", )
+        good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
+            "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
+        nonEnglish = ( "BIBLIA warszawska", "Chinese Union Version Simplified.txt", "hun_karoli", "KNV_HU", "LBLA.xmm", \
+            "Nowe Przymierze", "NVI.xmm", "NVI_PT", "PRT-IBS.xmm", "RV1960", "SVL.xmm", "UJPROT_HU", "vdc", \
+            "Vietnamese Bible.xmm", )
+        bad = ( "EPS99", )
+        allOfThem = good + nonEnglish + bad
+        vPrint( 'Normal', debuggingThisModule, "\n\nDemonstrating the XMLFile class with OpenSong Bibles…" )
+        doTest( testFolder, allOfThem )
+
+    if 1: # Test some OSIS Bibles
+        testFolder = Path( '/mnt/SSDs/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
+        testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
+        vPrint( 'Normal', debuggingThisModule, "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
+        doTest( testFolder, testNames )
+        vPrint( 'Normal', debuggingThisModule, "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)…" )
+        doTest( testFolder, testNames, schema=osisSchemaFile )
+        vPrint( 'Normal', debuggingThisModule, "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)…" )
+        doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
+# end of XMLFile.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -236,7 +283,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of XMLFile.py

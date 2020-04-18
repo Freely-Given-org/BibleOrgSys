@@ -173,12 +173,12 @@ class MLWriter:
         """ Writes the buffer to the file. """
         assert self.__outputFile is not None
         if self._buffer:
-            #print( "Writing buffer of {} characters".format( len(self._buffer) ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Writing buffer of {} characters".format( len(self._buffer) ) )
             if writeAll: # Write it all
                 self._writeToFile( self._buffer )
                 self._buffer = ''
             elif len(self._buffer) > self._bufferSaveSize: # Write most of it (in case we need to retrack)
-                #print( "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
+                #vPrint( 'Quiet', debuggingThisModule, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
                 self._writeToFile( self._buffer[:-self._bufferSaveSize] )
                 self._buffer = self._buffer[-self._bufferSaveSize:]
             #else: pass # Write none
@@ -286,7 +286,7 @@ class MLWriter:
         else:
             logging.error( "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings ) )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
-        if BibleOrgSysGlobals.verbosityLevel>2: print( "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
@@ -309,7 +309,7 @@ class MLWriter:
         """
         Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
         """
-        #print( "tagString: {!r}", tagString )
+        #vPrint( 'Quiet', debuggingThisModule, "tagString: {!r}", tagString )
         assert tagString # It can't be blank
         assert '<' not in tagString and '>' not in tagString and '"' not in tagString
         return tagString
@@ -414,7 +414,7 @@ class MLWriter:
         """
         Writes raw text onto a line.
         """
-        #print( 'writeLineText', text, self._openStack )
+        #vPrint( 'Quiet', debuggingThisModule, 'writeLineText', text, self._openStack )
         if noNL is None:
             noNL = self._outputType=='HTML' and self._openStack and self._openStack[-1] in HTMLCombinedTags
         return self._autoWrite( text if noTextCheck else self.checkText(text), noNL=noNL )
@@ -441,7 +441,7 @@ class MLWriter:
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
         """
-        #print( "text: {!r}".format(text )
+        #vPrint( 'Quiet', debuggingThisModule, "text: {!r}".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
             self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
@@ -455,7 +455,7 @@ class MLWriter:
         """
         Writes a closing tag on a line.
         """
-        #print( 'writeLineClose', self._openStack )
+        #vPrint( 'Quiet', debuggingThisModule, 'writeLineClose', self._openStack )
         if not self._openStack:
             logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
             if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
@@ -517,7 +517,7 @@ class MLWriter:
         """
         assert self.__outputFile is not None
         assert self._status == 'Open'
-        if BibleOrgSysGlobals.debugFlag: print( "autoClose stack: {}", self._openStack )
+        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "autoClose stack: {}", self._openStack )
         for index in range( len(self._openStack)-1, -1, -1 ): # Have to step through this backwards
             self.writeLineClose( self._openStack[index] )
         self._sectionName = 'None'
@@ -569,7 +569,7 @@ class MLWriter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -594,8 +594,8 @@ def demo() -> None:
         mlWr.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
         mlWr.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
         mlWr.autoClose()
-        print( mlWr ) # Just print a summary
-        print( mlWr.validate( schema ) )
+        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
 
         from BibleOrgSys.InputOutput.XMLFile import XMLFile
         xf = XMLFile( outputFilename, outputFolderpath )
@@ -604,8 +604,8 @@ def demo() -> None:
             xf.validateWithLint()
         except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
-        #print( xf.validateAll() )
-        print( xf )
+        #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+        vPrint( 'Quiet', debuggingThisModule, xf )
 
     if 1: # Demo the writer object with HTML5
         import datetime
@@ -646,9 +646,16 @@ def demo() -> None:
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
         mlWr.autoClose()
-        print( mlWr ) # Just print a summary
-        print( mlWr.validate( schema ) )
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -658,7 +665,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MLWriter.py

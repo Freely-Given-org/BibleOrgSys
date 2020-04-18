@@ -5,7 +5,7 @@
 #
 # Module handling USFX XML Bibles
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,18 +45,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
     </p><p sfm="li">Solomonna maung. Solomonna ai awiya Yurayara bauno noi.
     …
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "USFXBible"
-PROGRAM_NAME = "USFX XML Bible handler"
-PROGRAM_VERSION = '0.33'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import sys
 import logging
@@ -73,6 +62,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "USFXBible"
+PROGRAM_NAME = "USFX XML Bible handler"
+PROGRAM_VERSION = '0.33'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -124,7 +121,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #print( 'ff', foundFiles )
+    #vPrint( 'Quiet', debuggingThisModule, 'ff', foundFiles )
 
     # See if there's a USFX project here in this folder
     numFound = 0
@@ -149,7 +146,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -170,7 +167,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
                 if ignore: continue
                 if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                     foundSubfiles.append( something )
-        #print( 'fsf', foundSubfiles )
+        #vPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles )
 
         # See if there's a USFX project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -259,7 +256,7 @@ class USFXXMLBible( Bible ):
             vPrint( 'Quiet', debuggingThisModule, "USFXXMLBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
             return # No use continuing
 
-        #print( self.sourceFolder, foundFolders, len(foundFiles), foundFiles )
+        #vPrint( 'Quiet', debuggingThisModule, self.sourceFolder, foundFolders, len(foundFiles), foundFiles )
         numFound = 0
         for thisFilename in sorted( foundFiles ):
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, sourceFolder, numLines=3 )
@@ -303,7 +300,7 @@ class USFXXMLBible( Bible ):
             # Process the attributes first
             self.schemaLocation = None
             for attrib,value in self.XMLTree.items():
-                #print( "attrib", repr(attrib), repr(value) )
+                #vPrint( 'Quiet', debuggingThisModule, "attrib", repr(attrib), repr(value) )
                 if attrib.endswith("SchemaLocation"):
                     self.schemaLocation = value
                 else:
@@ -311,7 +308,7 @@ class USFXXMLBible( Bible ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             BBB = C = V = None
             for element in self.XMLTree:
-                #print( "element", repr(element.tag) )
+                #vPrint( 'Quiet', debuggingThisModule, "element", repr(element.tag) )
                 sublocation = element.tag + " " + location
                 if element.tag == 'languageCode':
                     self.languageCode = element.text
@@ -369,7 +366,7 @@ class USFXXMLBible( Bible ):
                     #UBB = USFXXMLBibleBook( self, BBB )
                     #UBB.load( self.sourceFolder, thisFilename, self.encoding )
                     #UBB.validateMarkers()
-                    #print( UBB )
+                    #vPrint( 'Quiet', debuggingThisModule, UBB )
                     #self.books[BBB] = UBB
                     ## Make up our book name dictionaries while we're at it
                     #assumedBookNames = UBB.getAssumedBookNames()
@@ -379,7 +376,7 @@ class USFXXMLBible( Bible ):
                         #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-            #if self.books: print( "USFXXMLBible.load: Found {} irregularly named USFX files".format( len(self.books) ) )
+            #if self.books: vPrint( 'Quiet', debuggingThisModule, "USFXXMLBible.load: Found {} irregularly named USFX files".format( len(self.books) ) )
 
         self.doPostLoadProcessing()
     # end of USFXXMLBible.load
@@ -414,7 +411,7 @@ class USFXXMLBible( Bible ):
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for element in bookElement:
-            #print( "element", repr(element.tag) )
+            #vPrint( 'Quiet', debuggingThisModule, "element", repr(element.tag) )
             location = "{} of {} {}:{}".format( element.tag, mainLocation, BBB, C, V )
             if element.tag == 'id':
                 idText = clean( element.text )
@@ -482,10 +479,10 @@ class USFXXMLBible( Bible ):
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 marker = 's'
                 if level: marker += level
-                #print( "loadBook cd536", repr(marker), repr(sText) )
+                #vPrint( 'Quiet', debuggingThisModule, "loadBook cd536", repr(marker), repr(sText) )
                 self.thisBook.addLine( marker, '' if sText is None else sText )
                 for subelement in element:
-                    #print( "subelement", repr(subelement.tag) )
+                    #vPrint( 'Quiet', debuggingThisModule, "subelement", repr(subelement.tag) )
                     sublocation = subelement.tag + " of " + location
                     if subelement.tag == 'f':
                         self.loadFootnote( subelement, sublocation, BBB, C, V )
@@ -581,7 +578,7 @@ class USFXXMLBible( Bible ):
         Load the paragraph (p or q) container from the XML data file.
         """
         #if BibleOrgSysGlobals.verbosityLevel > 3:
-            #print( _("USFXXMLBible.loadParagraph: Loading {} from {}…").format( self.name, self.sourceFolder ) )
+            #vPrint( 'Quiet', debuggingThisModule, _("USFXXMLBible.loadParagraph: Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         V = None
         pTag, pText = paragraphElement.tag, clean(paragraphElement.text)
@@ -604,14 +601,14 @@ class USFXXMLBible( Bible ):
             #assert pTag == 'q' # Could also be mt, etc.
             pTag += level
         if style:
-            #print( repr(pTag), repr(pText), repr(style) )
+            #vPrint( 'Quiet', debuggingThisModule, repr(pTag), repr(pText), repr(style) )
             vPrint( 'Info', debuggingThisModule, "Ignoring {!r} style".format( style ) )
 
         self.thisBook.addLine( pTag, '' if pText is None else pText )
 
         for element in paragraphElement:
             location = element.tag + " of " + paragraphLocation
-            #print( "element", repr(element.tag) )
+            #vPrint( 'Quiet', debuggingThisModule, "element", repr(element.tag) )
             if element.tag == 'v': # verse milestone
                 vTail = clean( element.tail ) # Main verse text
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'crc2' )
@@ -637,10 +634,10 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'table':
                 self.loadTable( element, location, BBB, C, V )
             elif element.tag == 'f':
-                #print( "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
+                #vPrint( 'Quiet', debuggingThisModule, "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
                 self.loadFootnote( element, location, BBB, C, V )
             elif element.tag == 'x':
-                #print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
+                #vPrint( 'Quiet', debuggingThisModule, "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
             elif element.tag == 'w':
                 self.loadWordFormatting( element, location, BBB, C, V )
@@ -655,7 +652,7 @@ class USFXXMLBible( Bible ):
                     else:
                         logging.warning( _("sh29 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
-                if sfm not in ('w','ior',): print( "cs sfm got", repr(sfm) )
+                if sfm not in ('w','ior',): vPrint( 'Quiet', debuggingThisModule, "cs sfm got", repr(sfm) )
                 self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( sfm, text, sfm, (' '+tail) if tail else '' ) )
             elif element.tag in ('cp',): # Simple single-line paragraph-level markers
                 marker, text = element.tag, clean(element.text)
@@ -672,9 +669,9 @@ class USFXXMLBible( Bible ):
                     else:
                         logging.warning( _("be83 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
-                #if target not in ('w','ior',): print( "ref sfm got", repr(sfm) )
+                #if target not in ('w','ior',): vPrint( 'Quiet', debuggingThisModule, "ref sfm got", repr(sfm) )
                 self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}{}'.format( element.tag, target, element.tag, text, (' '+tail) if tail else '' ) )
-                #print( "Saved", '\\{} {}\\{}*{}{}'.format( element.tag, target, element.tag, text, (' '+tail) if tail else '' ) )
+                #vPrint( 'Quiet', debuggingThisModule, "Saved", '\\{} {}\\{}*{}{}'.format( element.tag, target, element.tag, text, (' '+tail) if tail else '' ) )
             elif element.tag == 'optionalLineBreak':
                 self.thisBook.appendToLastLine( '//' )
             elif element.tag == 'milestone': # e.g., <milestone sfm="pb" attribute=""/> (pb = explicit page break)
@@ -689,7 +686,7 @@ class USFXXMLBible( Bible ):
                         logging.warning( _("mcd2 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 if sfm not in ('bl','pb',):
-                    print( "milestone sfm got", repr(sfm) )
+                    vPrint( 'Quiet', debuggingThisModule, "milestone sfm got", repr(sfm) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 if sfm=='bl': sfm = 'b'
                 self.thisBook.addLine( sfm, '' )
@@ -739,9 +736,9 @@ class USFXXMLBible( Bible ):
         self.thisBook.appendToLastLine( ' {}'.format( text ) )
         for subelement in element:
             sublocation = subelement.tag + " of " + location
-            #print( "element", repr(element.tag) )
+            #vPrint( 'Quiet', debuggingThisModule, "element", repr(element.tag) )
             if subelement.tag == 'f':
-                #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
+                #vPrint( 'Quiet', debuggingThisModule, "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
                 self.loadFootnote( subelement, sublocation, BBB, C, V )
             else:
                 logging.warning( _("sh61 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
@@ -757,9 +754,9 @@ class USFXXMLBible( Bible ):
         self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, text ) )
         for subelement in element:
             sublocation = subelement.tag + " of " + location
-            #print( "element", repr(element.tag) )
+            #vPrint( 'Quiet', debuggingThisModule, "element", repr(element.tag) )
             if subelement.tag == 'f':
-                #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
+                #vPrint( 'Quiet', debuggingThisModule, "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
                 self.loadFootnote( subelement, sublocation, BBB, C, V )
             elif subelement.tag == 'w':
                 self.loadWordFormatting( subelement, sublocation, BBB, C, V )
@@ -796,16 +793,16 @@ class USFXXMLBible( Bible ):
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
 
         BibleOrgSysGlobals.checkXMLNoText( element, location, 'kg92' )
         BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ka92' )
         BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'ks63' )
         for subelement in element:
             sublocation = subelement.tag + " of " + location
-            print( "  subelement is {} at {}".format( BibleOrgSysGlobals.elementStr( subelement ), sublocation ) )
+            vPrint( 'Quiet', debuggingThisModule, "  subelement is {} at {}".format( BibleOrgSysGlobals.elementStr( subelement ), sublocation ) )
             if subelement.tag == 'tr':
-                #print( "table", sublocation )
+                #vPrint( 'Quiet', debuggingThisModule, "table", sublocation )
                 self.thisBook.addLine( 'tr', '' )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'sg32' )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'dh82' )
@@ -814,8 +811,8 @@ class USFXXMLBible( Bible ):
                     sub2location = sub2element.tag + " of " + sublocation
                     tag, text = sub2element.tag, clean(sub2element.text)
                     if debuggingThisModule:
-                        print( "  loadTable: tag={!r}, text={!r} at {}".format( tag, text, sub2location ) )
-                        print( "    sub2element is {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
+                        vPrint( 'Quiet', debuggingThisModule, "  loadTable: tag={!r}, text={!r} at {}".format( tag, text, sub2location ) )
+                        vPrint( 'Quiet', debuggingThisModule, "    sub2element is {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
                     if tag not in ('th', 'thr', 'tc', 'tcr',):
                         logging.warning( _("loadTable: unexpected {!r} inside 'tr' in table at {}").format( tag, sublocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
@@ -861,7 +858,7 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, fText, fTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            #print( "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
+            #vPrint( 'Quiet', debuggingThisModule, "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
             if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','w'):
                 logging.warning( "USFX.loadFootnote found {!r} {!r} {!r} {!r}".format( caller, marker, fText, fTail ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
@@ -891,9 +888,9 @@ class USFXXMLBible( Bible ):
                         marker2, fText2, fTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'js72' ) # Wrong! has bd XXXXXXXXXX
                         if marker2 == 'ref':
-                            #print( sub2location )
+                            #vPrint( 'Quiet', debuggingThisModule, sub2location )
                             if fText2:
-                                #print( 'ft2', marker2, repr(fText2), repr(fTail2), sub2location )
+                                #vPrint( 'Quiet', debuggingThisModule, 'ft2', marker2, repr(fText2), repr(fTail2), sub2location )
                                 self.thisBook.appendToLastLine( fText2 )
                             target = None
                             for attrib,value in sub2element.items():
@@ -902,7 +899,7 @@ class USFXXMLBible( Bible ):
                                     logging.warning( _("hd52 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                             if target:
-                                #print( 'tg', marker2, repr(target) )
+                                #vPrint( 'Quiet', debuggingThisModule, 'tg', marker2, repr(target) )
                                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else:
                                 if debuggingThisModule: halt
@@ -911,7 +908,7 @@ class USFXXMLBible( Bible ):
                         elif marker2 in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                             self.loadCharacterFormatting( sub2element, sub2location, BBB, C, V )
                         else:
-                            print( 'Ignored marker2', repr(marker2), BBB, C, V )
+                            vPrint( 'Quiet', debuggingThisModule, 'Ignored marker2', repr(marker2), BBB, C, V )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                         if fTail2: self.thisBook.appendToLastLine( fTail2 )
                 elif marker == 'w':
@@ -919,7 +916,7 @@ class USFXXMLBible( Bible ):
                 elif marker in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                     self.loadCharacterFormatting( subelement, sublocation, BBB, C, V )
                 else:
-                    print( 'Ignored marker', repr(marker), BBB, C, V )
+                    vPrint( 'Quiet', debuggingThisModule, 'Ignored marker', repr(marker), BBB, C, V )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             if fTail:
                 self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, fTail ) )
@@ -943,9 +940,9 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, xText, xTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            #print( "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
+            #vPrint( 'Quiet', debuggingThisModule, "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
             #if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
-                #print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
+                #vPrint( 'Quiet', debuggingThisModule, "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
             if BibleOrgSysGlobals.debugFlag: assert marker in ('ref','xo','xt',)
             if marker=='ref':
                 assert xText
@@ -969,7 +966,7 @@ class USFXXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'fs63' )
                         if marker2=='ref':
                             if xText2:
-                                #print( 'xt2', marker2, repr(xText2), repr(xTail2), sub2location )
+                                #vPrint( 'Quiet', debuggingThisModule, 'xt2', marker2, repr(xText2), repr(xTail2), sub2location )
                                 self.thisBook.appendToLastLine( xText2 )
                             target = None
                             for attrib,value in sub2element.items():
@@ -980,7 +977,7 @@ class USFXXMLBible( Bible ):
                             if target: self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else: halt
                         else: # Why do we get xt's embedded inside other xt's???
-                            if debuggingThisModule: print( "USFXXMLBible.loadCrossreference: m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
+                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "USFXXMLBible.loadCrossreference: m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
                             logging.critical( _("USFXXMLBible.loadCrossreference: Bad nesting of xt:"), "m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
                         if xTail2: self.thisBook.appendToLastLine( xTail2 )
                 else: halt
@@ -992,9 +989,55 @@ class USFXXMLBible( Bible ):
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+        testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/' )
+        resultA1 = USFXXMLBibleFileCheck( testFolder )
+        vPrint( 'Quiet', debuggingThisModule, "TestA1", resultA1 )
+        resultA2 = USFXXMLBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Quiet', debuggingThisModule, "TestA2", resultA2 )
+        resultA3 = USFXXMLBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Quiet', debuggingThisModule, "TestA3", resultA3 )
+
+        #testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
+        #resultB1 = USFXXMLBibleFileCheck( testSubfolder )
+        #vPrint( 'Quiet', debuggingThisModule, "TestB1", resultB1 )
+        #resultB2 = USFXXMLBibleFileCheck( testSubfolder, autoLoad=True, autoLoadBooks=True )
+        #vPrint( 'Quiet', debuggingThisModule, "TestB2", resultB2 )
+
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    if 1:
+        testData = (
+                    ('ASV', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/') ),
+                    ) # You can put your USFX test folder here
+
+        for name, testFolder in testData:
+            if os.access( testFolder, os.R_OK ):
+                UsfxB = USFXXMLBible( testFolder, name )
+                UsfxB.load()
+                vPrint( 'Quiet', debuggingThisModule, UsfxB )
+                if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
+                if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                #UsfxBErrors = UsfxB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, UsfxB.getVersification() )
+                #vPrint( 'Quiet', debuggingThisModule, UsfxB.getAddedUnits() )
+                #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                    ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                    #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )
+                break
+            else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+# end of USFXXMLBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -1032,15 +1075,15 @@ def demo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, UsfxB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                #UsfxBErrors = UsfxB.getErrors()
-                # print( UsfxBErrors )
-                #print( UsfxB.getVersification() )
-                #print( UsfxB.getAddedUnits() )
+                #UsfxBErrors = UsfxB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, UsfxB.getVersification() )
+                #vPrint( 'Quiet', debuggingThisModule, UsfxB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                    ##print( "Looking for", ref )
-                    #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )
-            else: print( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
-# end of demo
+                    ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                    #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UsfxB.getXRefBBB( ref ) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+# end of USFXXMLBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -1050,7 +1093,7 @@ if __name__ == '__main__':
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFXXMLBible.py

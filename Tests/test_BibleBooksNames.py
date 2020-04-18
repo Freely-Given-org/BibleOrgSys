@@ -91,7 +91,7 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        print( "Sorry, no C export yet :(" )
+        vPrint( 'Quiet', debuggingThisModule, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bbnsc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleBooksNamesConverterTests class
@@ -272,6 +272,13 @@ class BibleBooksNamesSystemTests( unittest.TestCase ):
     # end of test_3070_getDivisionBooklist
 # end of BibleBooksNamesSystemTests class
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

@@ -53,18 +53,7 @@ The calling class then fills
     self.books by calling stashBook() which updates:
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-23' # by RJH
-SHORT_PROGRAM_NAME = "InternalBible"
-PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.83'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 from typing import Dict, List, Tuple, Optional
 import os
 import sys
@@ -83,6 +72,15 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "InternalBible"
+PROGRAM_NAME = "Internal Bible handler"
+PROGRAM_VERSION = '0.83'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
@@ -129,8 +127,8 @@ class InternalBible:
         self.preloadDone = self.loadedAllBooks = False
         self.triedLoadingBook, self.bookNeedsReloading = {}, {} # Dictionaries with BBB as key
         self.divisions = {}
-        self.errorDictionary = {}
-        self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
+        self.checkResultsDictionary = {}
+        self.checkResultsDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
     # end of InternalBible.__init__
 
 
@@ -141,7 +139,7 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "InternalBible.__str__()…" )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "InternalBible.__str__()…" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
@@ -216,8 +214,8 @@ class InternalBible:
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
-        #print( _("__getitem__( {} )").format( keyIndex ) )
-        #print( list(self.books.items()) )
+        #vPrint( 'Quiet', debuggingThisModule, _("__getitem__( {} )").format( keyIndex ) )
+        #vPrint( 'Quiet', debuggingThisModule, list(self.books.items()) )
         if isinstance( keyIndex, int ):
             return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
         if isinstance( keyIndex, str ) and len(keyIndex)==3: # assume it's a BBB
@@ -245,7 +243,7 @@ class InternalBible:
 
         We need this to standardise all the different Bible types.
         """
-        print( "discoverProperties for {}".format( self.objectTypeString ) )
+        vPrint( 'Quiet', debuggingThisModule, "discoverProperties for {}".format( self.objectTypeString ) )
         InternalBibleProperties[self.objectTypeString] = {}
 
         for myPropertyName in self.__dict__:
@@ -260,7 +258,7 @@ class InternalBible:
                               'loadMetadataTextFile', 'getBookList', 'pickle', 'getAssumedBookName', 'getLongTOCName',
                               'getShortTOCName', 'getBooknameAbbreviation', 'stashBook', 'guessXRefBBB',
                               'getVersification', 'getAddedUnits', 'discover', '__aggregateDiscoveryResults',
-                              'check', 'getErrors', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
+                              'check', 'getCheckResults', 'makeErrorHTML', 'getNumVerses', 'getNumChapters', 'getContextVerseData',
                               'getVerseDataList', 'getVerseText', 'writeBOSBCVFiles' ):
                 continue # ignore my own functions
             if myPropertyName in ( 'toBOSBCV', 'toBibleDoor', 'toDoor43', 'toDrupalBible', 'toESFM', 'toESword',
@@ -274,15 +272,15 @@ class InternalBible:
                 continue # ignore BibleWriter functions
 
             myProperty = getattr( self, myPropertyName )
-            #print( type(myProperty), type(myProperty).__name__, myProperty.__class__ )
+            #vPrint( 'Quiet', debuggingThisModule, type(myProperty), type(myProperty).__name__, myProperty.__class__ )
             if myProperty is None or isinstance( myProperty, str ) or isinstance( myProperty, int ):
-                print( myPropertyName, '=', myProperty )
+                vPrint( 'Quiet', debuggingThisModule, myPropertyName, '=', myProperty )
                 InternalBibleProperties[self.objectTypeString][myPropertyName] = myProperty
             else: # not any of the above simple types
-                print( myPropertyName, 'is', type(myProperty).__name__ )
+                vPrint( 'Quiet', debuggingThisModule, myPropertyName, 'is', type(myProperty).__name__ )
                 InternalBibleProperties[self.objectTypeString][myPropertyName] = type(myProperty).__name__
 
-        print( InternalBibleProperties )
+        vPrint( 'Quiet', debuggingThisModule, InternalBibleProperties )
     #end of InternalBible.discoverProperties
 
 
@@ -317,7 +315,7 @@ class InternalBible:
         This method should be called once all books are loaded.
         May be called again if external metadata is also loaded.
         """
-        #print( "InternalBible.__getNames()" )
+        #vPrint( 'Quiet', debuggingThisModule, "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
         if not self.name and self.givenName: self.name = self.givenName
         if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
@@ -362,16 +360,16 @@ class InternalBible:
         If not, tries to load the book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"InternalBible.loadBookIfNecessary( {BBB} )…" )
-            #print( "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
-            #print( "bnr {}".format( self.bookNeedsReloading ) )
+            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.loadBookIfNecessary( {BBB} )…" )
+            #vPrint( 'Quiet', debuggingThisModule, "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
+            #vPrint( 'Quiet', debuggingThisModule, "bnr {}".format( self.bookNeedsReloading ) )
 
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
             except AttributeError: # Could be that our Bible doesn't have the ability to load individual books
                 errorClass, exceptionInstance, traceback = sys.exc_info()
-                #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                #vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
                     logging.info( _("No 'loadBook()' function to load individual {} Bible book for {}") \
                         .format( BBB, self.getAName( abbrevFirst=True ) ) ) # Ignore errors
@@ -379,7 +377,7 @@ class InternalBible:
                     raise
             except KeyError:
                 errorClass, exceptionInstance, traceback = sys.exc_info()
-                print( 'loadBookIfNecessary {!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                vPrint( 'Quiet', debuggingThisModule, 'loadBookIfNecessary {!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 # TODO: Fix the text in the following line
                 if "object has no attribute 'loadBook'" in str(exceptionInstance):
                     logging.critical( _("No individual {} Bible book available for {}") \
@@ -392,7 +390,7 @@ class InternalBible:
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( 'NOLOAD', BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
+                vPrint( 'Quiet', debuggingThisModule, 'NOLOAD', BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -401,7 +399,7 @@ class InternalBible:
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"InternalBible.reloadBook( {BBB} )…" )
+            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.reloadBook( {BBB} )…" )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -419,12 +417,12 @@ class InternalBible:
         Tries to re-index a loaded book.
         """
         if BibleOrgSysGlobals.debugFlag:
-            print( f"InternalBible.reProcessBook( {BBB} )…" )
+            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.reProcessBook( {BBB} )…" )
             assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: print( _("reloadBook has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("reloadBook has no discoveryResults to delete") )
 
         if 'discoveryResults' in self.__dict__: # need to update them
             # Need to double-check that this doesn't cause any double-ups …XXXXXXXXXXXXXXXXXXXXXX
@@ -441,7 +439,7 @@ class InternalBible:
             coz discover() is quite time-consuming.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "InternalBible.doPostLoadProcessing()…" )
+            vPrint( 'Quiet', debuggingThisModule, "InternalBible.doPostLoadProcessing()…" )
 
         self.loadedAllBooks = True
 
@@ -459,18 +457,18 @@ class InternalBible:
         #"""
         #Called to unload books, usually coz one or more of them has been edited.
         #"""
-        #if BibleOrgSysGlobals.debugFlag: print( _("unloadBooks()…") )
+        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("unloadBooks()…") )
         #self.books = {}
         #self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         #self.reverseDict, self.guesses = {}, '' # A program history
         #self.loadedAllBooks, self.triedLoadingBook = False, {}
         #self.divisions = {}
-        #self.errorDictionary = {}
-        #self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
+        #self.checkResultsDictionary = {}
+        #self.checkResultsDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
 
         #try: del self.discoveryResults # These are now irrelevant
         #except KeyError:
-            #if BibleOrgSysGlobals.debugFlag: print( _("unloadBooks has no discoveryResults to delete") )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("unloadBooks has no discoveryResults to delete") )
     ## end of InternalBible.unloadBooks
 
 
@@ -513,7 +511,7 @@ class InternalBible:
         with open( mdFilepath, 'rt', encoding='utf-8' ) as mdFile:
             for line in mdFile:
                 while line and line[-1] in '\n\r': line=line[:-1] # Remove trailing newline characters (Linux or Windows)
-                #print( "MD line: {!r}".format( line ) )
+                #vPrint( 'Quiet', debuggingThisModule, "MD line: {!r}".format( line ) )
                 if not line: continue # Just discard additional blank lines
                 lineCount += 1
                 if line[0] == '#': continue # Just discard comment lines
@@ -573,7 +571,7 @@ class InternalBible:
             Rights
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( f"applySuppliedMetadata( {applyMetadataType} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )" )
             assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
                                          'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
@@ -585,9 +583,9 @@ class InternalBible:
             return
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Supplied {} metadata ({}):".format( applyMetadataType, len(self.suppliedMetadata[applyMetadataType]) ) )
             for key,value in sorted( self.suppliedMetadata[applyMetadataType].items() ):
-                print( "  {} = {!r}".format( key, value ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {} = {!r}".format( key, value ) )
 
         if applyMetadataType in ( 'File', 'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' ):
             # These types copy ALL the data across, but through a name-changing dictionary if necessary
@@ -602,7 +600,7 @@ class InternalBible:
             nameChangeDict['Forge4SS'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', 'AUTHORDETAIL':'AuthorDetailHTML' }
             nameChangeDict['VPL'] = { 'TITLE':'FullName', 'ABBREVIATION':'Abbreviation', } # Not sure if these two are needed here???
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if not value: # We don't expect blank metadata values
                     logging.warning( "Why did we get a blank {} {!r} metadata key?".format( applyMetadataType, oldKey ) )
@@ -625,7 +623,7 @@ class InternalBible:
             #   WantODFs, WantPDFs, WantPhotoBible
             wantedDict = { 'ProjectName':'ProjectName', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if not value: # We don't expect blank metadata values
@@ -648,7 +646,7 @@ class InternalBible:
             # This is a special case (coz it's inside the PTX7 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX7']['SSF']), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata['PTX7']['SSF'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
@@ -668,21 +666,21 @@ class InternalBible:
                 if ssfEncoding == '65001': adjSSFencoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( _("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
                     if ssfEncoding.isdigit():
                         adjSSFencoding = 'cp' + ssfEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            print( _("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
+                            vPrint( 'Quiet', debuggingThisModule, _("__init__: Adjusted to {!r} file encoding").format( adjSSFencoding ) )
                     else:
                         logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
                         adjSSFencoding = ssfEncoding
                 if self.encoding is None:
                     self.encoding = adjSSFencoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
                 elif self.encoding == adjSSFencoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
                 else: # we have a conflict of encodings for some reason !
                     logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSSFencoding
@@ -692,7 +690,7 @@ class InternalBible:
             # This is a special case (coz it's inside 'Settings' inside the PTX8 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX8']['Settings']), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['PTX8']['Settings']), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata['PTX8']['Settings'].items():
                 if value and oldKey in wantedDict: # Only copy wanted, non-blank entries
                     newKey = wantedDict[oldKey]
@@ -712,21 +710,21 @@ class InternalBible:
                 if settingsEncoding == '65001': adjSettingsEncoding = 'utf-8'
                 else:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( _("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: File encoding in settings is set to {!r}").format( settingsEncoding ) )
                     if settingsEncoding.isdigit():
                         adjSettingsEncoding = 'cp' + settingsEncoding
                         if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                            print( _("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
+                            vPrint( 'Quiet', debuggingThisModule, _("__init__: Adjusted to {!r} file encoding").format( adjSettingsEncoding ) )
                     else:
                         logging.critical( _("__init__: Unsure how to handle {!r} file encoding").format( settingsEncoding ) )
                         adjSettingsEncoding = settingsEncoding
                 if self.encoding is None:
                     self.encoding = adjSettingsEncoding
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: Switched to {!r} file encoding").format( self.encoding ) )
                 elif self.encoding == adjSettingsEncoding:
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
+                        vPrint( 'Quiet', debuggingThisModule, _("__init__: Confirmed {!r} file encoding").format( self.encoding ) )
                 else: # we have a conflict of encodings for some reason !
                     logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSettingsEncoding
@@ -735,11 +733,11 @@ class InternalBible:
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
             #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
-            # print( "here3450", self.suppliedMetadata )
+            # vPrint( 'Quiet', debuggingThisModule, "here3450", self.suppliedMetadata )
             wantedDict = { 'Rights':'Rights', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
-            # print( "here3452", self.suppliedMetadata[applyMetadataType] )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+            # vPrint( 'Quiet', debuggingThisModule, "here3452", self.suppliedMetadata[applyMetadataType] )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert value
@@ -760,7 +758,7 @@ class InternalBible:
             #                           Publisher, Scope, Coverage, RefSystem, Language, Rights
             wantedDict = { 'language':'Language', 'description':'FullName', 'detailed_info':'Description' }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if BibleOrgSysGlobals.debugFlag: assert value
@@ -775,14 +773,14 @@ class InternalBible:
                                 logging.warning("About to copy {}={!r} from {} metadata file even though already have {!r} (different case)={!r}".format( newKey, value, applyMetadataType, key, self.settingsDict[key] ) )
                                 break
                     self.settingsDict[newKey] = value
-            #print( self.settingsDict ); halt
+            #vPrint( 'Quiet', debuggingThisModule, self.settingsDict ); halt
 
         elif applyMetadataType in ( 'e-Sword-Bible', 'e-Sword-Commentary', 'MySword' ):
             # Available fields include: Abbreviation, Apocrypha, Comments, Description, Font, NT, OT,
             #                           RightToLeft, Strong, Version
             wantedDict = { 'Abbreviation':'Abbreviation', 'Description':'Description', }
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
-                print( "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata[applyMetadataType]), applyMetadataType ) )
             for oldKey,value in self.suppliedMetadata[applyMetadataType].items():
                 if oldKey in wantedDict: #  Only copy wanted entries
                     if not value: # We don't expect blank metadata values
@@ -804,16 +802,16 @@ class InternalBible:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BibleOrgSysGlobals.verbosityLevel>3:
-            print( "Updated settings dict ({}):".format( len(self.settingsDict) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Updated settings dict ({}):".format( len(self.settingsDict) ) )
             for key,value in sorted( self.settingsDict.items() ):
-                print( "  {} = {!r}".format( key, value ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {} = {!r}".format( key, value ) )
 
         # Ensure that self.name and self.abbreviation are set
         for fieldName in ('FullName','WorkName','Name','ProjectName',):
             if fieldName in self.settingsDict: self.name = self.settingsDict[fieldName]; break
         if not self.name: self.name = self.givenName
         if self.sourceFilename and not self.name: self.name = os.path.basename( self.sourceFilename )
-        if self.sourceFolder and not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        if self.sourceFolder and not self.name: self.name = os.path.basename( str(self.sourceFolder)[:-1] ) # Remove the final slash
         if not self.name: self.name = self.objectTypeString + ' Bible'
 
         if not self.abbreviation: self.abbreviation = self.getSetting( 'Abbreviation' )
@@ -830,9 +828,9 @@ class InternalBible:
 
         Returns None if nothing found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( _("getSetting( {} )").format( settingName ) )
-        #print( "\nSettingsDict:", self.settingsDict )
-        #print( "\nSupplied Metadata:", self.suppliedMetadata )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, _("getSetting( {} )").format( settingName ) )
+        #vPrint( 'Quiet', debuggingThisModule, "\nSettingsDict:", self.settingsDict )
+        #vPrint( 'Quiet', debuggingThisModule, "\nSupplied Metadata:", self.suppliedMetadata )
 
         if self.settingsDict:
             try: return self.settingsDict[settingName]
@@ -899,13 +897,13 @@ class InternalBible:
         Save the Bible book into our Bible object
             and update our indexes.
         """
-        #print( "stashBook( {} )".format( bookData ) )
+        #vPrint( 'Quiet', debuggingThisModule, "stashBook( {} )".format( bookData ) )
         BBB = bookData.BBB
         if BBB in self.books: # already
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                print( _("stashBook: Already have"), self.getBookList() )
+                vPrint( 'Quiet', debuggingThisModule, _("stashBook: Already have"), self.getBookList() )
             import __main__
-            #print( "main file", __main__.__file__ )
+            #vPrint( 'Quiet', debuggingThisModule, "main file", __main__.__file__ )
             suppressErrorFlag = False
             try:
                 if 'Biblelator' in __main__.__file__: # This is normal behaviour for a Bible editor
@@ -935,9 +933,9 @@ class InternalBible:
 
         Returns a True/False flag for success.
         """
-        #print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
-        #print( repr(self.objectNameString), repr(self.objectTypeString) )
-        #print( (self.abbreviation), repr(self.name) )
+        #vPrint( 'Quiet', debuggingThisModule, "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, repr(self.objectNameString), repr(self.objectTypeString) )
+        #vPrint( 'Quiet', debuggingThisModule, (self.abbreviation), repr(self.name) )
         if filename is None:
             filename = self.getAName( abbrevFirst=True )
         if filename is None:
@@ -950,7 +948,7 @@ class InternalBible:
         except TypeError: # Could be a yet undebugged SWIG error
             pResult = False
             errorClass, exceptionInstance, traceback = sys.exc_info()
-            #print( '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             if 'SwigPyObject' in str(exceptionInstance):
                 logging.critical( _("SWIG binding error when pickling {} Bible") \
                     .format( self.getAName( abbrevFirst=True ) ) ) # Ignore errors
@@ -979,7 +977,7 @@ class InternalBible:
             return BBB # Found a whole name match
         if adjRefString in self.bookAbbrevDict:
             BBB = self.bookAbbrevDict[adjRefString]
-            #print( referenceString, adjRefString, BBB, self.reverseDict )
+            #vPrint( 'Quiet', debuggingThisModule, referenceString, adjRefString, BBB, self.reverseDict )
             #assert BBB not in self.reverseDict
             self.reverseDict[BBB] = referenceString
             return BBB # Found a whole abbreviation match
@@ -988,7 +986,7 @@ class InternalBible:
         for BBB in self.reverseDict: assert self.reverseDict[BBB] != referenceString
 
         # See if a book name starts with this string
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1…" )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using startswith1…" )
         count = 0
         for bookName in self.bookNameDict:
             if bookName.startswith( adjRefString ):
@@ -1011,9 +1009,9 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-            print( _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
+            vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2…" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using startswith2…" )
             for bookName in self.combinedBookNameDict:
                 if bookName.startswith( adjRefString ):
                     BBB = self.combinedBookNameDict[bookName]
@@ -1037,7 +1035,7 @@ class InternalBible:
 
         # See if a book name contains a word that starts with this string
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith…" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using word startswith…" )
             for bookName in self.bookNameDict:
                 if ' ' in bookName:
                     for bit in bookName.split():
@@ -1050,14 +1048,14 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( _("  guessXRefBBB using first plus other characters…") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB using first plus other characters…") )
             for bookName in self.bookNameDict:
-                if not bookName: print( self.bookNameDict ); halt # temp……
-                #print( "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
+                if not bookName: vPrint( 'Quiet', debuggingThisModule, self.bookNameDict ); halt # temp……
+                #vPrint( 'Quiet', debuggingThisModule, "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
                 for char in adjRefString[1:]:
@@ -1065,7 +1063,7 @@ class InternalBible:
                         found = False
                         break
                 if not found: continue
-                #print( "  getXRefBBB: p…", bookName )
+                #vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB: p…", bookName )
                 BBB = self.bookNameDict[bookName]
                 count += 1
             if count == 1: # Found exactly one
@@ -1073,12 +1071,12 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( _("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
             if count == 0:
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters…" )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using characters…" )
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
@@ -1086,7 +1084,7 @@ class InternalBible:
                             found = False
                             break
                     if not found: continue
-                    #print( "  getXRefBBB: q…", bookName )
+                    #vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB: q…", bookName )
                     BBB = self.bookNameDict[bookName]
                     count += 1
                 if count == 1: # Found exactly one
@@ -1094,10 +1092,10 @@ class InternalBible:
                     self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (letters)".format( referenceString, BBB )
                     return BBB
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                    print( _("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( _("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
+            vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess {!r}".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
@@ -1161,7 +1159,7 @@ class InternalBible:
             in order to try to determine what are the normal standards.
         """
         if BibleOrgSysGlobals.verbosityLevel > 1 or debuggingThisModule:
-            print( "InternalBible:discover()…" )
+            vPrint( 'Quiet', debuggingThisModule, "InternalBible:discover()…" )
         if BibleOrgSysGlobals.debugFlag and 'discoveryResults' in self.__dict__:
             logging.warning( _("discover: We had done this already!") ) # We've already called this once
             halt
@@ -1213,7 +1211,7 @@ class InternalBible:
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
-            #print( "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
+            #vPrint( 'Quiet', debuggingThisModule, "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
             if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
@@ -1233,7 +1231,7 @@ class InternalBible:
 
             for key,value in self.discoveryResults[BBB].items():
                 # Create some lists of books
-                #if key == 'wordCount': print( BBB, key, value )
+                #if key == 'wordCount': vPrint( 'Quiet', debuggingThisModule, BBB, key, value )
                 if key=='notStarted' and value:
                     if 'NotStartedBookCodes' not in aggregateResults: aggregateResults['NotStartedBookCodes'] = [BBB]
                     else: aggregateResults['NotStartedBookCodes'].append( BBB )
@@ -1284,10 +1282,10 @@ class InternalBible:
                     elif isDC:
                         if 'DCpercentageProgressByBook' not in aggregateResults: aggregateResults['DCpercentageProgressByBook'] = value
                         else: aggregateResults['DCpercentageProgressByBook'] += value
-                    #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
+                    #vPrint( 'Quiet', debuggingThisModule, 'xxx', value, aggregateResults['percentageProgressByBook'] )
                 elif key == 'uniqueWordCount': pass # Makes no sense to aggregate this
                 elif key.endswith( 'WordCounts' ): # We need to combine these word count dictionaries
-                    #print( "wcGot", BBB, key )
+                    #vPrint( 'Quiet', debuggingThisModule, "wcGot", BBB, key )
                     if key not in aggregateResults: aggregateResults[key] = {}
                     assert isinstance( value, dict )
                     for word in value:
@@ -1296,13 +1294,13 @@ class InternalBible:
                         if word not in aggregateResults[key]: aggregateResults[key][word] = 0
                         aggregateResults[key][word] += value[word]
                 elif isinstance( value, float ): # e.g., crossReferencesPeriodRatio
-                    #print( "fgot", BBB, key, value )
+                    #vPrint( 'Quiet', debuggingThisModule, "fgot", BBB, key, value )
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
                     elif value != -1.0: logging.warning( _("discover: invalid ratio (float) {} {} {!r}").format( BBB, key, value ) )
                 elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
-                    #print( "igot", BBB, key, value )
+                    #vPrint( 'Quiet', debuggingThisModule, "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
                     else: aggregateResults[key] += value
                     if isOT:
@@ -1318,7 +1316,7 @@ class InternalBible:
                         if 'OTHER'+key not in aggregateResults: aggregateResults['OTHER'+key] = value
                         else: aggregateResults['OTHER'+key] += value
                 #elif value==True: # This test must come below the isinstance tests
-                    #print( "tgot", BBB, key, value ); halt
+                    #vPrint( 'Quiet', debuggingThisModule, "tgot", BBB, key, value ); halt
                     #if key not in aggregateResults: aggregateResults[key] = 1
                     #else: aggregateResults[key] += 1
                     #if isOT:
@@ -1338,20 +1336,20 @@ class InternalBible:
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
-            #print( "check", arKey, aggregateResults[arKey] )
+            #vPrint( 'Quiet', debuggingThisModule, "check", arKey, aggregateResults[arKey] )
             if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
                 if BibleOrgSysGlobals.debugFlag: assert arKey.endswith( 'Ratio' )
-                #print( "this", arKey, aggregateResults[arKey] )
+                #vPrint( 'Quiet', debuggingThisModule, "this", arKey, aggregateResults[arKey] )
                 aggregateRatio = round( sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] ), 2 )
                 aggregateFlag = None
                 if aggregateRatio > 0.6: aggregateFlag = True
                 if aggregateRatio < 0.4: aggregateFlag = False
-                #print( "now", arKey, aggregateResults[arKey] )
+                #vPrint( 'Quiet', debuggingThisModule, "now", arKey, aggregateResults[arKey] )
                 del aggregateResults[arKey] # Get rid of the ratio
                 aggregateResults[arKey[:-5]+'Flag'] = aggregateFlag
 
         # Now calculate our overall statistics
-        #print( "pre-aggregateResults", len(self), len(aggregateResults), aggregateResults )
+        #vPrint( 'Quiet', debuggingThisModule, "pre-aggregateResults", len(self), len(aggregateResults), aggregateResults )
         if 'percentageProgressByBook' in aggregateResults:
             aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
         if 'OTpercentageProgressByBook' in aggregateResults:
@@ -1370,28 +1368,28 @@ class InternalBible:
             aggregateResults['DCpercentageProgressByVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
 
         # Save the results
-        #print( "ALL discoveryResults", aggregateResults ); halt
+        #vPrint( 'Quiet', debuggingThisModule, "ALL discoveryResults", aggregateResults ); halt
         #for key,value in aggregateResults.items():
-            #if key.endswith( 'ordCount' ): print( key, value )
+            #if key.endswith( 'ordCount' ): vPrint( 'Quiet', debuggingThisModule, key, value )
         self.discoveryResults['ALL'] = aggregateResults
 
         if BibleOrgSysGlobals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results
-            print( "Discovered Bible parameters:" )
+            vPrint( 'Quiet', debuggingThisModule, "Discovered Bible parameters:" )
             if BibleOrgSysGlobals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print completion level for each book
                 for BBB in self.discoveryResults:
                     if BBB != 'ALL':
                         if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
-                            print( "   ", BBB, 'seems finished' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                            vPrint( 'Quiet', debuggingThisModule, "   ", BBB, 'seems finished' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
                         elif not self.discoveryResults[BBB]['haveVerseText']:
-                            print( "   ", BBB, 'not started' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
-                        else: print( "   ", BBB, 'in progress', (str(self.discoveryResults[BBB]['percentageProgress'])+'%') if 'percentageProgress' in self.discoveryResults[BBB] else '' )
+                            vPrint( 'Quiet', debuggingThisModule, "   ", BBB, 'not started' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        else: vPrint( 'Quiet', debuggingThisModule, "   ", BBB, 'in progress', (str(self.discoveryResults[BBB]['percentageProgress'])+'%') if 'percentageProgress' in self.discoveryResults[BBB] else '' )
             for key,value in sorted(self.discoveryResults['ALL'].items()):
                 if 'percentage' in key or key.endswith('Count') or key.endswith('Flag') or key.endswith('Codes'):
-                    print( " ", key, "is", value )
+                    vPrint( 'Quiet', debuggingThisModule, " ", key, "is", value )
                 elif key.endswith( 'WordCounts' ): pass # ignore these
                 else:
-                    #print( "key", repr(key), "value", repr(value) )
-                    print( " ", key, "in", value if value<len(self) else "all", "books" )
+                    #vPrint( 'Quiet', debuggingThisModule, "key", repr(key), "value", repr(value) )
+                    vPrint( 'Quiet', debuggingThisModule, " ", key, "in", value if value<len(self) else "all", "books" )
     # end of InternalBible.__aggregateDiscoveryResults
 
 
@@ -1443,12 +1441,12 @@ class InternalBible:
 
         If a book list is given, only checks those books.
 
-        getErrors() must be called to request the results.
+        getCheckResults() must be called to request the results.
         """
         # Get our recommendations for added units -- only load this once per Bible
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if givenBookList is None: print( _("Checking {} Bible…").format( self.name ) )
-            else: print( _("Checking {} Bible books {}…").format( self.name, givenBookList ) )
+            if givenBookList is None: vPrint( 'Quiet', debuggingThisModule, _("Checking {} Bible…").format( self.name ) )
+            else: vPrint( 'Quiet', debuggingThisModule, _("Checking {} Bible books {}…").format( self.name, givenBookList ) )
         if 'discoveryResults' not in self.__dict__: self.discover()
 
         import pickle
@@ -1489,7 +1487,7 @@ class InternalBible:
         if givenOutputFolderName == None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
             if not os.access( givenOutputFolderName, os.F_OK ):
-                if 1 or BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
+                if 1 or BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag:
             assert givenOutputFolderName and isinstance( givenOutputFolderName, (str,Path) )
@@ -1497,13 +1495,13 @@ class InternalBible:
             logging.critical( "BibleWriter.doExtensiveChecks: " + _("Given {!r} folder is unwritable" ).format( givenOutputFolderName ) )
             return False
 
-        print( "Should be doing extensive checks here!" )
-        print( "Should be doing extensive checks here!" )
-        print( "Should be doing extensive checks here!" )
+        vPrint( 'Quiet', debuggingThisModule, "Should be doing extensive checks here!" )
+        vPrint( 'Quiet', debuggingThisModule, "Should be doing extensive checks here!" )
+        vPrint( 'Quiet', debuggingThisModule, "Should be doing extensive checks here!" )
     #end of InternalBible.doExtensiveChecks
 
 
-    def getErrors( self, givenBookList=None ):
+    def getCheckResults( self, givenBookList=None ):
         """
         Returns the error dictionary.
             All keys ending in 'Errors' give lists of strings.
@@ -1536,7 +1534,7 @@ class InternalBible:
 
         def appendList( BBB, errorDict, firstKey, secondKey=None ):
             """Appends a list to the ALL BOOKS errors."""
-            #print( "  appendList", BBB, firstKey, secondKey )
+            #vPrint( 'Quiet', debuggingThisModule, "  appendList", BBB, firstKey, secondKey )
             if secondKey is None:
                 if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], list )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = []
@@ -1547,11 +1545,11 @@ class InternalBible:
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = {}
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = []
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
-        # end of getErrors.appendList
+        # end of getCheckResults.appendList
 
         def mergeCount( BBB:str, errorDict, firstKey:str, secondKey:Optional[str]=None ) -> None:
             """Merges the counts together."""
-            #print( "  mergeCount", BBB, firstKey, secondKey )
+            #vPrint( 'Quiet', debuggingThisModule, "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
                 if BibleOrgSysGlobals.debugFlag: assert isinstance (errorDict[BBB][firstKey], dict )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = {}
@@ -1565,7 +1563,7 @@ class InternalBible:
                 for something in errorDict[BBB][firstKey][secondKey]:
                     errorDict['All Books'][firstKey][secondKey][something] = errorDict[BBB][firstKey][secondKey][something] if something not in errorDict['All Books'][firstKey][secondKey] \
                                                                                 else errorDict['All Books'][firstKey][secondKey][something] + errorDict[BBB][firstKey][secondKey][something]
-        # end of getErrors.mergeCount
+        # end of getCheckResults.mergeCount
 
         def getCapsList( lcWord, lcTotal, wordDict ):
             """ Given that a lower case word has a lowercase count of lcTotal,
@@ -1584,7 +1582,7 @@ class InternalBible:
                 if tcCount: tempResult.append( (tcCount,tcWord,) ); total += tcCount
             if total < lcTotal:
                 TcWord = lcWord[0].upper() + lcWord[1:] # NOTE: This can make in-enew into In-enew
-                #print( lcWord, tcWord, TcWord )
+                #vPrint( 'Quiet', debuggingThisModule, lcWord, tcWord, TcWord )
                 #assert TcWord != lcWord
                 if TcWord!=lcWord and TcWord!=tcWord: # The first two can be equal if the first char is non-alphabetic
                     TcCount = wordDict[TcWord] if TcWord in wordDict else 0
@@ -1610,13 +1608,13 @@ class InternalBible:
                         if total == lcTotal: break # no more to find
 
             if total < lcTotal:
-                print( "Couldn't get word total with", lcWord, lcTotal, total, tempResult )
-                print( lcWord, tcWord, TcWord, tCWord, UCWord )
+                vPrint( 'Quiet', debuggingThisModule, "Couldn't get word total with", lcWord, lcTotal, total, tempResult )
+                vPrint( 'Quiet', debuggingThisModule, lcWord, tcWord, TcWord, tCWord, UCWord )
 
             result = [w for c,w in sorted(tempResult)]
-            #if len(tempResult)>2: print( lcWord, lcTotal, total, tempResult, result )
+            #if len(tempResult)>2: vPrint( 'Quiet', debuggingThisModule, lcWord, lcTotal, total, tempResult, result )
             return result
-        # end of getErrors.getCapsList
+        # end of getCheckResults.getCapsList
 
         # Set up
         errors = {}; errors['ByBook'] = {}; errors['ByCategory'] = {}
@@ -1629,7 +1627,7 @@ class InternalBible:
         # Make sure that the error lists come first in the All Books ordered dictionaries (even if there's no errors for the first book)
         for BBB in self.books.keys():
             if BBB in givenBookList:
-                errors['ByBook'][BBB] = self.books[BBB].getErrors()
+                errors['ByBook'][BBB] = self.books[BBB].getCheckResults()
                 for thisKey in errors['ByBook'][BBB]:
                     if thisKey.endswith('Errors'):
                         errors['ByBook']['All Books'][thisKey] = []
@@ -1645,12 +1643,12 @@ class InternalBible:
         # Combine book errors into Bible totals plus into categories
         for BBB in self.books.keys():
             if BBB in givenBookList:
-                #errors['ByBook'][BBB] = self.books[BBB].getErrors()
+                #errors['ByBook'][BBB] = self.books[BBB].getCheckResults()
 
                 # Correlate some of the totals (i.e., combine book totals into Bible totals)
                 # Also, create a dictionary of errors by category (as well as the main one by book reference code BBB)
                 for thisKey in errors['ByBook'][BBB]:
-                    #print( "thisKey", BBB, thisKey )
+                    #vPrint( 'Quiet', debuggingThisModule, "thisKey", BBB, thisKey )
                     if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errors['ByBook'][BBB][thisKey], list )
                         appendList( BBB, errors['ByBook'], thisKey )
@@ -1660,18 +1658,18 @@ class InternalBible:
                         mergeCount( BBB, errors['ByBook'], thisKey )
                     else: # it's things like SFMs, Characters, Words, Headings, Notes
                         for anotherKey in errors['ByBook'][BBB][thisKey]:
-                            #print( " anotherKey", BBB, anotherKey )
+                            #vPrint( 'Quiet', debuggingThisModule, " anotherKey", BBB, anotherKey )
                             if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list )
                                 appendList( BBB, errors['ByBook'], thisKey, anotherKey )
-                                if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = {} #; print( "Added", thisKey )
+                                if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = {} #; vPrint( 'Quiet', debuggingThisModule, "Added", thisKey )
                                 if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
                                 errors['ByCategory'][thisKey][anotherKey].extend( errors['ByBook'][BBB][thisKey][anotherKey] )
                             elif anotherKey.endswith('Counts'):
                                 mergeCount( BBB, errors['ByBook'], thisKey, anotherKey )
                                 # Haven't put counts into category array yet
                             else:
-                                print( anotherKey, "not done yet" )
+                                vPrint( 'Quiet', debuggingThisModule, anotherKey, "not done yet" )
                                 #halt # Not done yet
 
         # Taking those word lists, find uncommon words
@@ -1696,10 +1694,10 @@ class InternalBible:
     	# Remove any unnecessary empty categories
         for category in list( errors['ByCategory'].keys() ):
             if not errors['ByCategory'][category]:
-                #print( "InternalBible.getErrors: Removing empty category", category, "from errors['ByCategory']" )
+                #vPrint( 'Quiet', debuggingThisModule, "InternalBible.getCheckResults: Removing empty category", category, "from errors['ByCategory']" )
                 del errors['ByCategory'][category]
         return errors
-    # end of InternalBible.getErrors
+    # end of InternalBible.getCheckResults
 
 
     def makeErrorHTML( self, givenOutputFolder, givenBookList=None, titlePrefix=None, webPageTemplate=None ):
@@ -1714,11 +1712,11 @@ class InternalBible:
         """
         from datetime import datetime
         if BibleOrgSysGlobals.debugFlag:
-            print( "makeErrorHTML( {!r}, {!r}, {!r} )".format( givenOutputFolder, titlePrefix, webPageTemplate ) )
+            vPrint( 'Quiet', debuggingThisModule, "makeErrorHTML( {!r}, {!r}, {!r} )".format( givenOutputFolder, titlePrefix, webPageTemplate ) )
         #logging.info( "Doing Bible checks…" )
         #vPrint( 'Info', debuggingThisModule, "Doing Bible checks…" )
 
-        errorDictionary = self.getErrors( givenBookList )
+        errorDictionary = self.getCheckResults( givenBookList )
         if givenBookList is None: givenBookList = self.books # this is a dict
 
         # Note that this requires a CSS file called Overall.css
@@ -1769,14 +1767,14 @@ class InternalBible:
             if len(errorDictionary['ByBook']) < 3: # Assume there's only one BBB book, plus 'All Books'
                 del errorDictionary['ByBook']['All Books']
             for BBB in errorDictionary['ByBook']: # Create an error page for each book (and for all books if there's more than one book)
-                #print( "Have errors for", BBB )
+                #vPrint( 'Quiet', debuggingThisModule, "Have errors for", BBB )
                 if not errorDictionary['ByBook'][BBB]: # Then it's blank
-                    print( "HEY 0—Should not have had blank entry for", BBB )
+                    vPrint( 'Quiet', debuggingThisModule, "HEY 0—Should not have had blank entry for", BBB )
                 BBBPart = ""
                 for thisKey in errorDictionary['ByBook'][BBB]:
                     if BibleOrgSysGlobals.debugFlag: assert isinstance( thisKey, str )
-                    if not errorDictionary['ByBook'][BBB][thisKey]: print( "HEY 1—Should not have had", BBB, thisKey )
-                    #print( 'ByBook', BBB, thisKey )
+                    if not errorDictionary['ByBook'][BBB][thisKey]: vPrint( 'Quiet', debuggingThisModule, "HEY 1—Should not have had", BBB, thisKey )
+                    #vPrint( 'Quiet', debuggingThisModule, 'ByBook', BBB, thisKey )
                     if errorDictionary['ByBook'][BBB][thisKey]:
                         BBBPart += "<h1>{}</h1>".format( thisKey )
                         if thisKey == 'Priority Errors': # it should be a list
@@ -1785,7 +1783,7 @@ class InternalBible:
                             #for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], reverse=True ): # Sorts by the first tuple value which is priority
                             for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
                             #for priority,errorText,ref in errorDictionary['ByBook'][BBB][thisKey]: # Sorts by the first tuple value which is priority
-                                #print( 'BBB', priority,errorText,ref )
+                                #vPrint( 'Quiet', debuggingThisModule, 'BBB', priority,errorText,ref )
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( priority, int ) and 0 <= priority <= 100
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( errorText, str ) and errorText
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( ref, tuple ) and len(ref)==3
@@ -1807,7 +1805,7 @@ class InternalBible:
                         elif thisKey.endswith('Errors'): # it should be a list
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], list )
                             for error in errorDictionary['ByBook'][BBB][thisKey]:
-                                #print( "nice1", 'ByBook', BBB, thisKey, error )
+                                #vPrint( 'Quiet', debuggingThisModule, "nice1", 'ByBook', BBB, thisKey, error )
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 BBBPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('List'): # it should be a list
@@ -1824,7 +1822,7 @@ class InternalBible:
                             NEVER_HAPPENS
                             if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey], dict )
                             for subCategory in errorDictionary['ByBook'][BBB][thisKey]:
-                                #print( "subCategory1", subCategory )
+                                #vPrint( 'Quiet', debuggingThisModule, "subCategory1", subCategory )
                                 if subCategory.endswith('Errors'):
                                     BBBPart += "<h2>{}</h2>".format( subCategory )
                                     for error in errorDictionary['ByBook'][BBB][thisKey][subCategory]:
@@ -1834,20 +1832,20 @@ class InternalBible:
                                     for something in sorted(errorDictionary['ByBook'][BBB][thisKey][subCategory]):
                                         BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, errorDictionary['ByBook'][BBB][thisKey][subCategory][something] )
                                     BBBPart += "</p>"
-                                else: print( "A weird 1" ); halt
+                                else: vPrint( 'Quiet', debuggingThisModule, "A weird 1" ); halt
                         else: # Have a category with subcategories
                             for secondKey in errorDictionary['ByBook'][BBB][thisKey]:
-                                if not errorDictionary['ByBook'][BBB][thisKey][secondKey]: print( "HEY 3—Should not have had", BBB, thisKey, secondKey )
+                                if not errorDictionary['ByBook'][BBB][thisKey][secondKey]: vPrint( 'Quiet', debuggingThisModule, "HEY 3—Should not have had", BBB, thisKey, secondKey )
                                 if errorDictionary['ByBook'][BBB][thisKey][secondKey]:
                                     if secondKey.endswith('Errors'): # it should be a list
-                                        #print( "BBB Have ..Errors", BBB, thisKey, secondKey )
+                                        #vPrint( 'Quiet', debuggingThisModule, "BBB Have ..Errors", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         BBBPart += "<h2>{}</h2>".format( secondKey )
                                         for error in errorDictionary['ByBook'][BBB][thisKey][secondKey]:
                                             if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                             BBBPart += "<p>{}</p>".format( error )
                                     elif secondKey.endswith('List'): # it should be a list
-                                        #print( "BBB Have ..List", BBB, thisKey, secondKey, len(errorDictionary['ByBook'][BBB][thisKey][secondKey]), len(errorDictionary['ByBook'][BBB][thisKey][secondKey][0]) )
+                                        #vPrint( 'Quiet', debuggingThisModule, "BBB Have ..List", BBB, thisKey, secondKey, len(errorDictionary['ByBook'][BBB][thisKey][secondKey]), len(errorDictionary['ByBook'][BBB][thisKey][secondKey][0]) )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         if secondKey == "Modified Marker List" and len(errorDictionary['ByBook'][BBB][thisKey][secondKey])>60: # Put onto a separate page
                                             ListPart = '<p>'
@@ -1876,19 +1874,19 @@ class InternalBible:
                                                 BBBPart += "{} ".format( entry )
                                             BBBPart += '</p>'
                                     elif secondKey.endswith('Lines'): # it should be a list
-                                        #print( "BBB Have ..Lines", BBB, thisKey, secondKey )
+                                        #vPrint( 'Quiet', debuggingThisModule, "BBB Have ..Lines", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list )
                                         BBBPart += "<h2>{}</h2><table>".format( secondKey )
                                         for line in errorDictionary['ByBook'][BBB][thisKey][secondKey]: # Line them up nicely in a table
-                                            #print( "line {} {!r}".format( len(line), line ) )
+                                            #vPrint( 'Quiet', debuggingThisModule, "line {} {!r}".format( len(line), line ) )
                                             if BibleOrgSysGlobals.debugFlag: assert isinstance( line, str ) and line[-1]=="'"
-                                            #if line[-1] != "'": print( BBB, thisKey, secondKey, line )
+                                            #if line[-1] != "'": vPrint( 'Quiet', debuggingThisModule, BBB, thisKey, secondKey, line )
                                             bits = line[:-1].split( " '", 1 ); assert len(bits) == 2 # Remove the final quote and split at the first quote
                                             if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
                                             BBBPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
                                         BBBPart += '</table>'
                                     elif secondKey.endswith('Counts'): # it should be an ordered dict
-                                        #print( "BBB Have ..Counts", BBB, thisKey, secondKey )
+                                        #vPrint( 'Quiet', debuggingThisModule, "BBB Have ..Counts", BBB, thisKey, secondKey )
                                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], dict )
                                         if len(errorDictionary['ByBook'][BBB][thisKey][secondKey]) < 50: # Small list -- just include it in this page
                                             BBBPart += "<h2>{}</h2>".format( secondKey ) + "<p>"
@@ -1937,8 +1935,8 @@ class InternalBible:
             BBBIndexPart += '</table>'
             categoryIndexPart += '<table>'
             for category in errorDictionary['ByCategory']: # Create an error page for each book (and for all books)
-                if not errorDictionary['ByCategory'][category]: print( "HEY 2—Should not have had", category )
-                #print( "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "…" )
+                if not errorDictionary['ByCategory'][category]: vPrint( 'Quiet', debuggingThisModule, "HEY 2—Should not have had", category )
+                #vPrint( 'Quiet', debuggingThisModule, "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "…" )
                 categoryPart = ""
                 categoryPart += "<h1>{}</h1>".format( category )
                 if category == 'Priority Errors': # it should be a list
@@ -1947,7 +1945,7 @@ class InternalBible:
                     #for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], reverse=True ): # Sorts by the first tuple value which is priority
                     for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
                     #for priority,errorText,ref in errorDictionary['ByCategory'][category]: # Sorts by the first tuple value which is priority
-                        #print( 'cat', priority,errorText,ref )
+                        #vPrint( 'Quiet', debuggingThisModule, 'cat', priority,errorText,ref )
                         if BibleOrgSysGlobals.debugFlag: assert isinstance( priority, int ) and 0 <= priority <= 100
                         if BibleOrgSysGlobals.debugFlag: assert isinstance( errorText, str ) and errorText
                         if BibleOrgSysGlobals.debugFlag: assert isinstance( ref, tuple ) and len(ref)==3
@@ -1981,7 +1979,7 @@ class InternalBible:
                                 if BibleOrgSysGlobals.debugFlag: assert isinstance( error, str )
                                 categoryPart += "<p>{}</p>".format( error )
                         elif thisKey.endswith('Counts'): # it should be a list
-                            print( "Counts key", thisKey )
+                            vPrint( 'Quiet', debuggingThisModule, "Counts key", thisKey )
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
@@ -1989,7 +1987,7 @@ class InternalBible:
                             #        categoryPart += "<p>{}</p>".format( error )
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], dict ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
-                                    #print( subCategory )
+                                    #vPrint( 'Quiet', debuggingThisModule, subCategory )
                                     if subCategory.endswith('Errors'):
                                         categoryPart += "<h2>{}</h2>".format( subCategory )
                                         for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
@@ -1999,9 +1997,9 @@ class InternalBible:
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
                                             categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
                                         categoryPart += "</p>"
-                                    else: print( "A weird 2" ); halt
+                                    else: vPrint( 'Quiet', debuggingThisModule, "A weird 2" ); halt
                         else:
-                            print( "Have left-over thisKey", thisKey )
+                            vPrint( 'Quiet', debuggingThisModule, "Have left-over thisKey", thisKey )
                             continue # ignore for now temp …
                             raise KeyError# it wasn't a list or a dictionary
                 else: # it's a subcategory
@@ -2031,7 +2029,7 @@ class InternalBible:
                                 categoryPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
                             categoryPart += '</table>'
                         elif thisKey.endswith('Counts'): # it should be a list
-                            print( "Counts key", thisKey )
+                            vPrint( 'Quiet', debuggingThisModule, "Counts key", thisKey )
                             categoryPart += "<h1>{}</h1>".format( thisKey )
                             if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
                             #    for error in errorDictionary['ByCategory'][category][thisKey]:
@@ -2039,7 +2037,7 @@ class InternalBible:
                             #        categoryPart += "<p>{}</p>".format( error )
                             #elif isinstance( errorDictionary['ByCategory'][category][thisKey], dict ):
                                 for subCategory in errorDictionary['ByCategory'][category][thisKey]:
-                                    #print( subCategory )
+                                    #vPrint( 'Quiet', debuggingThisModule, subCategory )
                                     if subCategory.endswith('Errors'):
                                         categoryPart += "<h2>{}</h2>".format( subCategory )
                                         for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
@@ -2049,9 +2047,9 @@ class InternalBible:
                                         for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
                                             categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
                                         categoryPart += "</p>"
-                                    else: print( "A weird 2" ); halt
+                                    else: vPrint( 'Quiet', debuggingThisModule, "A weird 2" ); halt
                         else:
-                            print( "Have left-over thisKey", thisKey )
+                            vPrint( 'Quiet', debuggingThisModule, "Have left-over thisKey", thisKey )
                             continue # ignore for now temp …
                             raise KeyError# it wasn't a list or a dictionary
                 if categoryPart: # Create the error page for this catebory
@@ -2121,10 +2119,10 @@ class InternalBible:
                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
-            if BibleOrgSysGlobals.verbosityLevel>3: print( "Writing error checks web index page at {}".format( webPagePath ) )
+            if BibleOrgSysGlobals.verbosityLevel>3: vPrint( 'Quiet', debuggingThisModule, "Writing error checks web index page at {}".format( webPagePath ) )
             with open( webPagePath, 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
-            #print( "Test web page at {}".format( webPageURL ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Test web page at {}".format( webPageURL ) )
 
         return webPagePath if len(indexPart) > 0 else None
     # end of InternalBible.makeErrorHTML
@@ -2136,14 +2134,14 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("getNumChapters( {} )").format( BBB ) )
+            vPrint( 'Quiet', debuggingThisModule, _("getNumChapters( {} )").format( BBB ) )
             assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
-            #print( "getNumChapters", self, self.books[BBB].getNumChapters() )
+            #vPrint( 'Quiet', debuggingThisModule, "getNumChapters", self, self.books[BBB].getNumChapters() )
             return self.books[BBB].getNumChapters()
         # else return None
     # end of InternalBible.getNumChapters
@@ -2155,7 +2153,7 @@ class InternalBible:
         Returns None if we don't have that book.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("getNumVerses( {}, {!r} )").format( BBB, C ) )
+            vPrint( 'Quiet', debuggingThisModule, _("getNumVerses( {}, {!r} )").format( BBB, C ) )
             assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
@@ -2182,14 +2180,14 @@ class InternalBible:
         Raises a KeyError if there is no such CV reference.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
+            vPrint( 'Quiet', debuggingThisModule, "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
         else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
-        #print( " ", BBB in self.books )
+        #vPrint( 'Quiet', debuggingThisModule, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books: return self.books[BBB].getContextVerseData( BCVReference )
-        #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
+        #else: vPrint( 'Quiet', debuggingThisModule, "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
     # end of InternalBible.getContextVerseData
 
 
@@ -2200,20 +2198,20 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no CV reference.
         """
-        #print( "InternalBible.getVerseDataList( {} )".format( BCVReference ) )
+        #vPrint( 'Quiet', debuggingThisModule, "InternalBible.getVerseDataList( {} )".format( BCVReference ) )
         result = self.getContextVerseData( BCVReference )
-        #print( "  gVD", self.name, BCVReference, verseData )
+        #vPrint( 'Quiet', debuggingThisModule, "  gVD", self.name, BCVReference, verseData )
         if result is None:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                print( "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
+                vPrint( 'Quiet', debuggingThisModule, "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' # Why did we get nothing???
         else:
             verseData, context = result
             if BibleOrgSysGlobals.debugFlag:
                 assert isinstance( verseData, InternalBibleEntryList )
                 # The following numbers include end markers, i.e., \q1 xyz becomes q1,p~ xyz,¬q1
-                if len(verseData)<1 or len(verseData)>30: print( "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
-                if len(verseData)>35: print( verseData )
+                if len(verseData)<1 or len(verseData)>30: vPrint( 'Quiet', debuggingThisModule, "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
+                if len(verseData)>35: vPrint( 'Quiet', debuggingThisModule, verseData )
                 if self.abbreviation not in ('mhl','sua',): # This version has Matt 1:1-11 combined! 57 entries
                     assert 1 <= len(verseData) <= 35 # Smallest is just a chapter number line
             return verseData
@@ -2231,12 +2229,12 @@ class InternalBible:
         Raises a KeyError if the BCVReference isn't found/valid.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
+            vPrint( 'Quiet', debuggingThisModule, _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
             verseData, context = result
-            #print( "gVT", self.name, BCVReference, verseData )
+            #vPrint( 'Quiet', debuggingThisModule, "gVT", self.name, BCVReference, verseData )
             assert isinstance( verseData, InternalBibleEntryList )
             #if BibleOrgSysGlobals.debugFlag: assert 1 <= len(verseData) <= 5
             verseText, firstWord = '', False
@@ -2293,7 +2291,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
-                print( _("findText( {} )").format( optionsDict ) )
+                vPrint( 'Quiet', debuggingThisModule, _("findText( {} )").format( optionsDict ) )
                 assert 'findText' in optionsDict
 
         optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
@@ -2303,7 +2301,7 @@ class InternalBible:
                 'currentBCV', )
         for someKey in optionsDict:
             if someKey not in optionsList:
-                print( "findText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+                vPrint( 'Quiet', debuggingThisModule, "findText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
                 if debuggingThisModule: halt
 
         # Go through all the given options
@@ -2354,15 +2352,15 @@ class InternalBible:
         if optionsDict['caselessFlag']: ourFindText = ourFindText.lower()
         searchLen = len( ourFindText )
         if BibleOrgSysGlobals.debugFlag: assert searchLen
-        #print( "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
+        #vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
 
         # Now do the actual search
         resultSummaryDict = { 'searchedBookList':[], 'foundBookList':[], }
         resultList = [] # Contains 4-tuples or 5-tuples -- first entry is the SimpleVerseKey
         for BBB,bookObject in self.books.items():
-            #print( _("  findText: got book {}").format( BBB ) )
+            #vPrint( 'Quiet', debuggingThisModule, _("  findText: got book {}").format( BBB ) )
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #print( _("  findText: will search book {}").format( BBB ) )
+                #vPrint( 'Quiet', debuggingThisModule, _("  findText: will search book {}").format( BBB ) )
                 #self.loadBookIfNecessary( BBB )
                 resultSummaryDict['searchedBookList'].append( BBB )
                 C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -2381,32 +2379,32 @@ class InternalBible:
                         if marker not in ourMarkerList and not (marker in ('v~','p~') and lastParagraphMarker in ourMarkerList):
                             continue
                     elif C=='-1' and not optionsDict['includeIntroFlag']: continue
-                    #print( "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "Searching in {} {}:{} {} = {}".format( BBB, C, V, marker, cleanText ) )
 
                     if optionsDict['chapterList'] is None \
                     or C in optionsDict['chapterList'] \
                     or int(C) in optionsDict['chapterList']:
                         #if optionsDict['chapterList'] and V=='0':
-                            #print( _("  findText: will search {} chapter {}").format( BBB, C ) )
+                            #vPrint( 'Quiet', debuggingThisModule, _("  findText: will search {} chapter {}").format( BBB, C ) )
 
                         # Get our text to search
                         origTextToBeSearched = lineEntry.getFullText() if optionsDict['includeExtrasFlag'] else cleanText
                         if C != '0' and not optionsDict['includeMainTextFlag']:
-                            #print( "Got {!r} but  don't include main text".format( origTextToBeSearched ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "Got {!r} but  don't include main text".format( origTextToBeSearched ) )
                             if marker in ('v~','p~') or marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                                 origTextToBeSearched = ''
                                 if origTextToBeSearched != cleanText: # we must have extras -- we need to remove the main text
-                                    #print( "  Got extras" )
+                                    #vPrint( 'Quiet', debuggingThisModule, "  Got extras" )
                                     assert optionsDict['includeExtrasFlag']
                                     origTextToBeSearched = ''
                                     for extra in lineEntry.getExtras():
-                                        #print( "extra", extra )
+                                        #vPrint( 'Quiet', debuggingThisModule, "extra", extra )
                                         extraStart = ''
                                         if optionsDict['includeMarkerTextFlag']:
                                             eTypeIndex = BOS_EXTRA_TYPES.index( extra.getType() )
                                             extraStart = '\\{} '.format( BOS_EXTRA_MARKERS[eTypeIndex] )
                                         origTextToBeSearched += ' ' if origTextToBeSearched else '' + extraStart + extra.getText()
-                                    #print( "  Now", repr(origTextToBeSearched) )
+                                    #vPrint( 'Quiet', debuggingThisModule, "  Now", repr(origTextToBeSearched) )
                         if optionsDict['includeMarkerTextFlag']:
                             origTextToBeSearched = '\\{} {}'.format( marker, origTextToBeSearched )
                         if not origTextToBeSearched: continue
@@ -2439,8 +2437,8 @@ class InternalBible:
                                 if ix == -1: break
                                 ixAfter = ix + searchLen
                                 if optionsDict['wordMode'] == 'Whole':
-                                    #print( "BF", repr(textToBeSearched[ix-1]) )
-                                    #print( "AF", repr(textToBeSearched[ixAfter]) )
+                                    #vPrint( 'Quiet', debuggingThisModule, "BF", repr(textToBeSearched[ix-1]) )
+                                    #vPrint( 'Quiet', debuggingThisModule, "AF", repr(textToBeSearched[ixAfter]) )
                                     if ix>0 and textToBeSearched[ix-1].isalpha(): continue
                                     if ixAfter<textLen and textToBeSearched[ixAfter].isalpha(): continue
                                 elif optionsDict['wordMode'] == 'Begins':
@@ -2465,7 +2463,7 @@ class InternalBible:
                                 resultList.append( resultTuple )
                                 if BBB not in resultSummaryDict['foundBookList']: resultSummaryDict['foundBookList'].append( BBB )
 
-        #print( _("findText: returning {}").format( resultList ) )
+        #vPrint( 'Quiet', debuggingThisModule, _("findText: returning {}").format( resultList ) )
         return optionsDict, resultSummaryDict, resultList
     # end of InternalBible.findText
 
@@ -2475,7 +2473,7 @@ class InternalBible:
         Write the internal pseudoUSFM out directly with one file per verse.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( f"writeBOSBCVFiles( {outputFolderPath} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderPath} )" )
 
         BBBList = []
         for BBB,bookObject in self.books.items():
@@ -2511,7 +2509,7 @@ class InternalBible:
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( f"analyseUWalignments() for {self.abbreviation}" )
+            vPrint( 'Quiet', debuggingThisModule, f"analyseUWalignments() for {self.abbreviation}" )
         assert self.uWaligned
 
         # Firstly, aggregate the alignment data from all of the separate books
@@ -2531,7 +2529,7 @@ class InternalBible:
         alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         for BBB,bookObject in self.books.items():
             if 'uWalignments' in bookObject.__dict__:
-                if debuggingThisModule: print( f"Cleaning alignments for {BBB} and aggregating…" )
+                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"Cleaning alignments for {BBB} and aggregating…" )
                 alignedBookList.append( BBB )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     alignedOTBookList.append( BBB )
@@ -2570,8 +2568,8 @@ class InternalBible:
         maxOriginalWords = maxTranslatedWords = 0
         singleTranslatedWordsSet = set()
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
-            # print( f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
-            # if len(originalWordsList) == 0: print( f"tWS='{translatedWordsString}'")
+            # vPrint( 'Quiet', debuggingThisModule, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
+            # if len(originalWordsList) == 0: vPrint( 'Quiet', debuggingThisModule, f"tWS='{translatedWordsString}'")
             assert isinstance( BBB, str ) and len(BBB)==3
             assert isinstance( C, str ) and C
             assert isinstance( V, str ) and V
@@ -2587,12 +2585,12 @@ class InternalBible:
             if len(translatedWordsList) == 1:
                 singleTranslatedWordsSet.add( translatedWordsString )
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( f"Have {len(singleTranslatedWordsSet):,} unique single translated words")
+            vPrint( 'Quiet', debuggingThisModule, f"Have {len(singleTranslatedWordsSet):,} unique single translated words")
 
 
         # Second pass to go through the alignment data for the whole Bible
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
+            vPrint( 'Quiet', debuggingThisModule, f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
         originalFormToTransOccurrencesDict:Dict[str,dict] = {}
         originalFormToTransOccurrencesOTDict:Dict[str,dict] = {}
         originalFormToTransOccurrencesDCDict:Dict[str,dict] = {}
@@ -2618,8 +2616,8 @@ class InternalBible:
         oneToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
         oneToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
-            # print( f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
-            # if len(originalWordsList) == 0: print( f"tWS='{translatedWordsString}'")
+            # vPrint( 'Quiet', debuggingThisModule, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
+            # if len(originalWordsList) == 0: vPrint( 'Quiet', debuggingThisModule, f"tWS='{translatedWordsString}'")
             # assert isinstance( BBB, str ) and len(BBB)==3
             # assert isinstance( C, str ) and C
             # assert isinstance( V, str ) and V
@@ -2725,22 +2723,22 @@ class InternalBible:
                         # TODO: Maybe could use an English dictionary here ???
                         # Then maybe this word was only capitalised because it started a sentence???
                         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-                            print( f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
+                            vPrint( 'Quiet', debuggingThisModule, f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
                         combinedMorphString = ' + '.join( (x[2] for x in originalWordsList) )
                         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-                            print( f"    combinedMorphString='{combinedMorphString}'")
+                            vPrint( 'Quiet', debuggingThisModule, f"    combinedMorphString='{combinedMorphString}'")
                         if ',Np' not in combinedMorphString \
                         and thistranslatedWord not in ('God','Lord','Father',): # special words which might intentionally occur in both cases
                             # Not a Hebrew proper noun -- don't have anything similar for Greek unfortunately
                             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                                print( f"    Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
+                                vPrint( 'Quiet', debuggingThisModule, f"    Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
                             thistranslatedWord = thistranslatedWordLower
                         else:
                             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-                                print( f"    Not converting exception '{thistranslatedWord}'")
+                                vPrint( 'Quiet', debuggingThisModule, f"    Not converting exception '{thistranslatedWord}'")
                     else:
                         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-                            print( f"    Not converting '{thistranslatedWord}'")
+                            vPrint( 'Quiet', debuggingThisModule, f"    Not converting '{thistranslatedWord}'")
 
                 oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
@@ -2757,39 +2755,39 @@ class InternalBible:
 
         if debuggingThisModule and BibleOrgSysGlobals.debugFlag:
             max_each = 6
-            print( f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
             for j, (key,value) in enumerate( originalFormToTransOccurrencesDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, dict )
                 if j > max_each: break
-            print( f"\nHave {len(originalLemmaToTransOccurrencesDict):,} lemma occurrences" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalLemmaToTransOccurrencesDict):,} lemma occurrences" )
             for j, (key,value) in enumerate( originalLemmaToTransOccurrencesDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, dict )
                 if j > max_each: break
-            print( f"\nHave {len(originalFormToTransAlignmentsDict):,} form alignments" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalFormToTransAlignmentsDict):,} form alignments" )
             for j, (key,value) in enumerate( originalFormToTransAlignmentsDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            print( f"\nHave {len(originalLemmaToTransAlignmentsDict):,} lemma alignments" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalLemmaToTransAlignmentsDict):,} lemma alignments" )
             for j, (key,value) in enumerate( originalLemmaToTransAlignmentsDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            print( f"\nHave {len(origStrongsToTransAlignmentsDict):,} Strongs alignments" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(origStrongsToTransAlignmentsDict):,} Strongs alignments" )
             for j, (key,value) in enumerate( origStrongsToTransAlignmentsDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            print( f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
+            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
             for j, (key,value) in enumerate( oneToOneTransToOriginalAlignmentsDict.items(), start=1 ):
-                print( f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
@@ -2855,52 +2853,52 @@ class InternalBible:
                 assert isinstance( originalWord, str )
                 assert originalWord
                 translations = originalFormToTransOccurrencesDict[originalWord]
-                #print( "translations", translations ) # dict of word: numOccurrences
+                #vPrint( 'Quiet', debuggingThisModule, "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
                     assert isinstance( tCount, int )
-                    #print( "translation", translation, "tCount", tCount )
-                    #print( f"For '{originalWord}', have {translation}: {tCount}" )
+                    #vPrint( 'Quiet', debuggingThisModule, "translation", translation, "tCount", tCount )
+                    #vPrint( 'Quiet', debuggingThisModule, f"For '{originalWord}', have {translation}: {tCount}" )
                     if tCount == 1: # Let's find the reference
                         refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
-                        #print( "refList1", refList )
+                        #vPrint( 'Quiet', debuggingThisModule, "refList1", refList )
                         assert isinstance( refList, list )
                         for ref in refList:
-                            #print( "ref", ref )
+                            #vPrint( 'Quiet', debuggingThisModule, "ref", ref )
                             assert isinstance( ref, tuple )
                             assert len(ref) == 4
                             if ref[3] == translation:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
-                                #print( f"Now '{originalWord}', have {translations}" )
+                                #vPrint( 'Quiet', debuggingThisModule, f"Now '{originalWord}', have {translations}" )
                                 break
                 xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
-        #print( "keys", originalLemmaToTransOccurrencesDict.keys() )
-        #print( "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
-        #print( "blank", originalLemmaToTransOccurrencesDict[''] )
+        #vPrint( 'Quiet', debuggingThisModule, "keys", originalLemmaToTransOccurrencesDict.keys() )
+        #vPrint( 'Quiet', debuggingThisModule, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
+        #vPrint( 'Quiet', debuggingThisModule, "blank", originalLemmaToTransOccurrencesDict[''] )
         with open( outputFolderPath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
             for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
                 translations = originalLemmaToTransOccurrencesDict[originalLemma]
-                #print( "translations", translations ) # dict of word: numOccurrences
+                #vPrint( 'Quiet', debuggingThisModule, "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
                     assert isinstance( tCount, int )
-                    #print( "translation", translation, "tCount", tCount )
-                    #print( f"For '{originalLemma}', have {translation}: {tCount}" )
+                    #vPrint( 'Quiet', debuggingThisModule, "translation", translation, "tCount", tCount )
+                    #vPrint( 'Quiet', debuggingThisModule, f"For '{originalLemma}', have {translation}: {tCount}" )
                     if tCount == 1: # Let's find the reference
                         refList = originalLemmaToTransAlignmentsDict[originalLemma] # List of 4-tuples B,C,V,translation
-                        #print( "refList2", refList )
+                        #vPrint( 'Quiet', debuggingThisModule, "refList2", refList )
                         assert isinstance( refList, list )
                         for ref in refList:
-                            #print( "ref", ref )
+                            #vPrint( 'Quiet', debuggingThisModule, "ref", ref )
                             assert isinstance( ref, tuple )
                             assert len(ref) == 4
                             if ref[3] == translation:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
-                                #print( f"Now '{originalLemma}', have {translations}" )
+                                #vPrint( 'Quiet', debuggingThisModule, f"Now '{originalLemma}', have {translations}" )
                                 break
                 xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
 
@@ -2933,16 +2931,16 @@ class InternalBible:
         #             xf.write( outputString )
 
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
-            print( f"Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}" )
-            print( f"  Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry" )
-            print( f"  Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry" )
+            vPrint( 'Quiet', debuggingThisModule, f"Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}" )
+            vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry" )
+            vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry" )
         #halt
     # end of InternalBible.analyseUWalignments
 # end of class InternalBible
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     A very basic test/demo of the InternalBible class.
     """
@@ -2964,7 +2962,7 @@ def demo() -> None:
         iB = result
         if BibleOrgSysGlobals.strictCheckingFlag:
             iB.check()
-            IBErrors = iB.getErrors()
+            IBErrors = iB.getCheckResults()
             vPrint( 'Info', debuggingThisModule, IBErrors )
         iB.doExtensiveChecks()
 
@@ -2973,27 +2971,78 @@ def demo() -> None:
             searchOptions['bookList'] = None #['JNA','PE1']
             searchOptions['chapterList'] = None #[0]
             for searchString in ( "keen", "Keen", "junk", ):
-                print( "\n{}:".format( searchString ) )
+                vPrint( 'Quiet', debuggingThisModule, "\n{}:".format( searchString ) )
                 searchOptions['findText'] = searchString
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = False
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
                 adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "\n  sResult for {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
                 searchOptions['wordMode'] = 'Whole'
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
                 adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "\n  sResult for whole word {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for whole word {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
                 searchOptions['wordMode'] = 'Any'
                 searchOptions['caselessFlag'] = True
                 optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
                 adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( "\n  sResult for caseless {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
-# end of demo
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for caseless {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+# end of InternalBible.briefDemo
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Since this is only designed to be a base class, it can't actually do much at all
+    IB = InternalBible()
+    IB.objectNameString = 'Dummy test Internal Bible object'
+    vPrint( 'Quiet', debuggingThisModule, IB )
+
+    # But we'll load a USFM Bible so we can test some other functions
+    from BibleOrgSys.UnknownBible import UnknownBible
+    from BibleOrgSys.Bible import Bible
+    testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' )
+    uB = UnknownBible( testFolder )
+    result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+    vPrint( 'Normal', debuggingThisModule, "IB Test", result )
+    if isinstance( result, Bible ):
+        iB = result
+        if BibleOrgSysGlobals.strictCheckingFlag:
+            iB.check()
+            IBErrors = iB.getCheckResults()
+            vPrint( 'Info', debuggingThisModule, IBErrors )
+        iB.doExtensiveChecks()
+
+        if 0:
+            searchOptions = {}
+            searchOptions['bookList'] = None #['JNA','PE1']
+            searchOptions['chapterList'] = None #[0]
+            for searchString in ( "keen", "Keen", "junk", ):
+                vPrint( 'Quiet', debuggingThisModule, "\n{}:".format( searchString ) )
+                searchOptions['findText'] = searchString
+                searchOptions['wordMode'] = 'Any'
+                searchOptions['caselessFlag'] = False
+                optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                searchOptions['wordMode'] = 'Whole'
+                optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for whole word {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+                searchOptions['wordMode'] = 'Any'
+                searchOptions['caselessFlag'] = True
+                optionsDict, resultSummaryDict, sResult = iB.findText( searchOptions )
+                adjResult = '({}) {}'.format( len(sResult), sResult if len(sResult)<20 else str(sResult[:20])+' …' )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, "\n  sResult for caseless {!r} is {}  {}".format( searchString, resultSummaryDict, adjResult ) )
+# end of InternalBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -3002,7 +3051,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of InternalBible.py

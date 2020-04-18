@@ -75,25 +75,25 @@ assert len(normalConsonants) == 3
 
 if 0 and BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
-        #print( j, letter )
+        #vPrint( 'Quiet', debuggingThisModule, j, letter )
         assert normalConsonants.count(letter)==1
         assert letter not in vowelPoints
         assert letter not in otherMarks
         assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
-        #print( j, mark )
+        #vPrint( 'Quiet', debuggingThisModule, j, mark )
         assert vowelPoints.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in otherMarks
         assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
-        #print( j, mark )
+        #vPrint( 'Quiet', debuggingThisModule, j, mark )
         assert otherMarks.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in vowelPoints
         assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
-        #print( j, mark )
+        #vPrint( 'Quiet', debuggingThisModule, j, mark )
         assert cantillationMarks.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in vowelPoints
@@ -186,11 +186,11 @@ class Greek():
 
     def printUnicodeData( self, text=None ):
         if text is None: text = self.currentText
-        print( "unicodedata", unicodedata.unidata_version )
+        vPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
-            #print( "{}:".format( description ) )
+            #vPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
             #for j,char in enumerate(text):
-                #print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+                #vPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of printUnicodeData
 
@@ -206,7 +206,7 @@ class Greek():
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -219,15 +219,22 @@ def demo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        print()
+        vPrint( 'Quiet', debuggingThisModule, '' )
         h = Greek( string )
-        print( h )
-        print()
+        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', debuggingThisModule, '' )
         h.removeOtherMarks()
-        print( "Removed other marks" )
-        print( h )
-        print()
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, "Removed other marks" )
+        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', debuggingThisModule, '' )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -237,7 +244,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of Greek.py

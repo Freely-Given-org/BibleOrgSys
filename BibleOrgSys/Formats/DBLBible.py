@@ -6,7 +6,7 @@
 # Module handling Digital Bible Library (DBL) compilations of USX XML Bible books
 #                                               along with XML and other metadata
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,10 +37,10 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2019-12-14' # by RJH
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
 PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
-PROGRAM_VERSION = '0.28'
+PROGRAM_VERSION = '0.29'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -119,7 +119,7 @@ def DBLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     #vPrint( 'Info', debuggingThisModule, UFns )
     #filenameTuples = UFns.getConfirmedFilenames()
     #vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
-    #if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "Found {} USX files.".format( len(filenameTuples) ) )
+    #if BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "Found {} USX files.".format( len(filenameTuples) ) )
     #if filenameTuples:
         #numFound += 1
 
@@ -163,8 +163,8 @@ def DBLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         #vPrint( 'Info', debuggingThisModule, UFns )
         #filenameTuples = UFns.getConfirmedFilenames()
         #vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )
-        #if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
-        #elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX files".format( len(filenameTuples) ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
+        #elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples: vPrint( 'Quiet', debuggingThisModule, "  Found {} USX files".format( len(filenameTuples) ) )
         #if filenameTuples:
             #foundProjects.append( tryFolderName )
             #numFound += 1
@@ -226,7 +226,7 @@ class DBLBible( Bible ):
         Create the internal DBL Bible object.
         """
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-            #print( "__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
+            #vPrint( 'Quiet', debuggingThisModule, "__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
             assert isinstance( givenFolderName, str )
             assert isinstance( givenName, str )
             assert isinstance( encoding, str )
@@ -261,7 +261,7 @@ class DBLBible( Bible ):
         Load the XML metadata files.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "preload() from {}".format( self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
         vPrint( 'Normal', debuggingThisModule, _("DBLBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
@@ -270,9 +270,9 @@ class DBLBible( Bible ):
             somepath = os.path.join( self.sourceFilepath, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
         if not foundFiles:
-            print( "DBLBible.preload: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', debuggingThisModule, "DBLBible.preload: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
             return # No use continuing
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -286,11 +286,11 @@ class DBLBible( Bible ):
         if result: self.suppliedMetadata['DBL']['Versifications'] = result
         result = loadPTX7Languages( self )
         if result: self.suppliedMetadata['DBL']['Languages'] = result
-        #print( 'DBLLicense', len(DBLLicense), DBLLicense )
-        #print( 'DBLMetadata', len(self.suppliedMetadata), self.suppliedMetadata )
-        #print( 'DBLStyles', len(DBLStyles), DBLStyles )
-        #print( 'DBLVersification', len(DBLVersification), DBLVersification )
-        #print( 'DBLLanguage', len(DBLLanguage), DBLLanguage )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLLicense', len(DBLLicense), DBLLicense )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLMetadata', len(self.suppliedMetadata), self.suppliedMetadata )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLStyles', len(DBLStyles), DBLStyles )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLVersification', len(DBLVersification), DBLVersification )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLLanguage', len(DBLLanguage), DBLLanguage )
 
         self.preloadDone = True
     # end of DBLBible.preload
@@ -301,7 +301,7 @@ class DBLBible( Bible ):
         Load the metadata.xml file and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "loadDBLLicense()" )
+            vPrint( 'Quiet', debuggingThisModule, "loadDBLLicense()" )
 
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading license data from {}…".format( licenseFilepath ) )
@@ -329,7 +329,7 @@ class DBLBible( Bible ):
             # Now process the actual metadata
             for element in self.XMLTree:
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}…".format( sublocation ) )
+                #vPrint( 'Quiet', debuggingThisModule, "\nProcessing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                 if element.tag in ( 'dateLicense', 'dateLicenseExpiry' ):
@@ -340,7 +340,7 @@ class DBLBible( Bible ):
                     DBLLicense[element.tag] = {}
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
-                        #print( "  Processing {}…".format( sub2location ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Processing {}…".format( sub2location ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
@@ -356,7 +356,7 @@ class DBLBible( Bible ):
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         vPrint( 'Info', debuggingThisModule, "  Loaded {} license elements.".format( len(DBLLicense) ) )
-        #print( 'DBLLicense', DBLLicense )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLLicense', DBLLicense )
         if DBLLicense: self.suppliedMetadata['DBL']['License'] = DBLLicense
     # end of DBLBible.loadDBLLicense
 
@@ -366,7 +366,7 @@ class DBLBible( Bible ):
         Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "loadDBLMetadata()" )
+            vPrint( 'Quiet', debuggingThisModule, "loadDBLMetadata()" )
 
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
@@ -386,7 +386,7 @@ class DBLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoTail( element, location )
             for subelement in element:
                 sublocation = subelement.tag + ' ' + location
-                #print( "  Processing {}…".format( sublocation ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  Processing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                 assert subelement.tag == 'bookList'
@@ -397,14 +397,14 @@ class DBLBible( Bible ):
                     else:
                         logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                #print( "bookListID={!r} bookListIsDefault={}".format( bookListID, bookListIsDefault ) )
+                #vPrint( 'Quiet', debuggingThisModule, "bookListID={!r} bookListIsDefault={}".format( bookListID, bookListIsDefault ) )
                 bookListTag = '{}-{}{}'.format( subelement.tag, bookListID, ' (default)' if bookListIsDefault=='true' else '' )
                 assert bookListTag not in ourDict
                 ourDict[bookListTag] = {}
                 ourDict[bookListTag]['divisions'] = {}
                 for sub2element in subelement:
                     sub2location = sub2element.tag + ' ' + sublocation
-                    #print( "    Processing {}…".format( sub2location ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( sub2location ) )
                     BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
                     if sub2element.tag in ('name','nameLocal','abbreviation','abbreviationLocal','description','descriptionLocal','range','tradition'):
                         if BibleOrgSysGlobals.debugFlag: assert sub2element.text
@@ -420,7 +420,7 @@ class DBLBible( Bible ):
                         ourDict[bookListTag]['books'] = []
                         for sub3element in sub2element:
                             sub3location = sub3element.tag + ' ' + sub2location
-                            #print( "        Processing {}…".format( sub3location ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "        Processing {}…".format( sub3location ) )
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location )
                             BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                             BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
@@ -436,14 +436,14 @@ class DBLBible( Bible ):
                         #items = sub2element.items()
                         #for sub3element in sub2element:
                             #sub3location = sub3element.tag + ' ' + sub2location
-                            #print( "      Processing {}…".format( sub3location ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub3location ) )
                             #BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location )
                             #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location )
                             #BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location )
                             #assert sub3element.tag == 'books' # Don't bother saving this extra level
                             #for sub4element in sub3element:
                                 #sub4location = sub4element.tag + ' ' + sub3location
-                                #print( "        Processing {}…".format( sub4location ) )
+                                #vPrint( 'Quiet', debuggingThisModule, "        Processing {}…".format( sub4location ) )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location )
                                 #BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location )
                                 #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location )
@@ -452,7 +452,7 @@ class DBLBible( Bible ):
                                 #assert len(items)==1 and items[0][0]=='code'
                                 #bookCode = items[0][1]
                                 #ourDict[bookListTag]['divisions'][divisionID].append( bookCode )
-            #print( "Contents:", self.suppliedMetadata['DBL']['contents'] )
+            #vPrint( 'Quiet', debuggingThisModule, "Contents:", self.suppliedMetadata['DBL']['contents'] )
         # end of getContents
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -477,7 +477,7 @@ class DBLBible( Bible ):
                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
             if BibleOrgSysGlobals.debugFlag:
-                print( "mdType={!r} mdTypeVersion={!r} mdVersion={!r} mdID={!r} mdRevision={!r}".format( mdType, mdTypeVersion, mdVersion, mdID, mdRevision ) )
+                vPrint( 'Quiet', debuggingThisModule, "mdType={!r} mdTypeVersion={!r} mdVersion={!r} mdID={!r} mdRevision={!r}".format( mdType, mdTypeVersion, mdVersion, mdID, mdRevision ) )
                 assert mdType is None or mdType == 'text'
                 assert mdTypeVersion is None or mdTypeVersion in ( '1.2','1.3','1.5', )
                 assert mdVersion is None or mdVersion in ( '2.0','2.1', ) # This is all we know about
@@ -486,9 +486,9 @@ class DBLBible( Bible ):
 
             # Now process the actual metadata
             for element in self.XMLTree:
-                #print( "\nMetadata Top", self.suppliedMetadata['DBL'].keys() )
+                #vPrint( 'Quiet', debuggingThisModule, "\nMetadata Top", self.suppliedMetadata['DBL'].keys() )
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}…".format( sublocation ) )
+                #vPrint( 'Quiet', debuggingThisModule, "\nProcessing {}…".format( sublocation ) )
                 #self.suppliedMetadata['DBL'][element.tag] = {}
                 if element.tag == 'identification':
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation )
@@ -498,7 +498,7 @@ class DBLBible( Bible ):
                     self.suppliedMetadata['DBL']['identification'] = {}
                     for subelement in element:
                         sub2location = subelement.tag + ' ' + sublocation
-                        #print( "  Processing {}…".format( sub2location ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Processing {}…".format( sub2location ) )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sub2location )
                         if subelement.tag in ('name','nameLocal','abbreviation','abbreviationLocal','scope','description','descriptionLocal','dateCompleted','systemId','bundleProducer'):
                             thisTag = subelement.tag
@@ -520,7 +520,7 @@ class DBLBible( Bible ):
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                     BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                     systemId[sub2element.tag] = sub2element.text
-                                #print( "systemId", systemId )
+                                #vPrint( 'Quiet', debuggingThisModule, "systemId", systemId )
                                 pass # Xxxxxxxxxxxxx not stored
                                 #thisTag = thisTag + '-' + items[0][1]
                             else: BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sub2location )
@@ -558,12 +558,12 @@ class DBLBible( Bible ):
                             rightsHolder = {}
                             for sub2element in subelement:
                                 sub3location = sub2element.tag + ' ' + sub2location
-                                #print( "sub3location", sub3location )
+                                #vPrint( 'Quiet', debuggingThisModule, "sub3location", sub3location )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 rightsHolder[sub2element.tag] = sub2element.text
-                            #print( "rightsHolder", rightsHolder )
+                            #vPrint( 'Quiet', debuggingThisModule, "rightsHolder", rightsHolder )
                             if 'uid' in rightsHolder:
                                 assert rightsHolder['uid'] not in rightsHolders
                                 rightsHolders[rightsHolder['uid']] = rightsHolder
@@ -580,7 +580,7 @@ class DBLBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 rightsHolder[sub2element.tag] = sub2element.text
-                            #print( "rightsAdmin", rightsAdmin )
+                            #vPrint( 'Quiet', debuggingThisModule, "rightsAdmin", rightsAdmin )
                             assert 'rightsAdmin' not in agencies
                             agencies['rightsAdmin'] = rightsAdmin
                         elif subelement.tag == 'contributor' and BibleOrgSysGlobals.isBlank( subelement.text ):
@@ -594,14 +594,14 @@ class DBLBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 contributor[sub2element.tag] = sub2element.text
-                            #print( "contributor", contributor )
+                            #vPrint( 'Quiet', debuggingThisModule, "contributor", contributor )
                             if 'uid' in contributor:
                                 assert contributor['uid'] not in contributors
                                 contributors[contributor['uid']] = contributor
                             else:
                                 assert not contributor # empty XML field
                         elif subelement.tag in ('etenPartner','creator','publisher','contributor'):
-                            #print( "AgenciesStuff", sub2location, repr(subelement.text) )
+                            #vPrint( 'Quiet', debuggingThisModule, "AgenciesStuff", sub2location, repr(subelement.text) )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sub2location )
                             #if BibleOrgSysGlobals.debugFlag: assert subelement.text # These can be blank!
                             if subelement.tag in agencies: agencies[subelement.tag].append( subelement.text )
@@ -611,7 +611,7 @@ class DBLBible( Bible ):
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     if rightsHolders: agencies['RightsHolders'] = rightsHolders
                     if contributors: agencies['Contributors'] = contributors
-                    #print( "agencies", agencies )
+                    #vPrint( 'Quiet', debuggingThisModule, "agencies", agencies )
                     assert 'agencies' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['agencies']  = agencies
                 elif element.tag == 'language':
@@ -669,12 +669,12 @@ class DBLBible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub3location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub3location )
                                 country[sub2element.tag] = sub2element.text
-                            #print( "country", country )
+                            #vPrint( 'Quiet', debuggingThisModule, "country", country )
                             countries[country['iso']] = country
                         else:
                             logging.warning( _("KJ79 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #print( "countries", countries )
+                    #vPrint( 'Quiet', debuggingThisModule, "countries", countries )
                     assert 'countries' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['countries']  = countries
                 elif element.tag == 'type':
@@ -748,14 +748,14 @@ class DBLBible( Bible ):
                             else:
                                 logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                        #print( bookCode, stage )
+                        #vPrint( 'Quiet', debuggingThisModule, bookCode, stage )
                         assert len(bookCode) == 3
                         if 'bookNames' in self.suppliedMetadata['DBL']:
                             if bookCode not in self.suppliedMetadata['DBL']['bookNames']:
                                 logging.warning( _("Bookcode {} mentioned in progress but not found in bookNames").format( bookCode ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
                         elif 'names' in self.suppliedMetadata['DBL']:
-                            if debuggingThisModule: print( "Why don't we have a bookNames entry???" )
+                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Why don't we have a bookNames entry???" )
                             if bookCode not in self.suppliedMetadata['DBL']['names']:
                                 logging.warning( _("Bookcode {} mentioned in progress but not found in names").format( bookCode ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
@@ -814,7 +814,7 @@ class DBLBible( Bible ):
                         else:
                             logging.warning( _("ZX23 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #print( "copyright", copyright )
+                    #vPrint( 'Quiet', debuggingThisModule, "copyright", copyright )
                     assert 'copyright' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['copyright']  = copyright
                 elif element.tag == 'promotion':
@@ -871,7 +871,7 @@ class DBLBible( Bible ):
                         else:
                             logging.warning( _("WS23 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #print( "formatDict", formatDict )
+                    #vPrint( 'Quiet', debuggingThisModule, "formatDict", formatDict )
                     assert 'format' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['format']  = formatDict
                 elif element.tag == 'format':
@@ -914,7 +914,7 @@ class DBLBible( Bible ):
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     #if uri2.startswith( 'USX_' ):
                                         #if 'USXFolderName' in self.suppliedMetadata['DBL']:
-                                            #print( "Seem to have multiple USX folders: had {} now {}".format( self.suppliedMetadata['DBL']['USXFolderName'], uri2 ) )
+                                            #vPrint( 'Quiet', debuggingThisModule, "Seem to have multiple USX folders: had {} now {}".format( self.suppliedMetadata['DBL']['USXFolderName'], uri2 ) )
                                         #self.suppliedMetadata['DBL']['USXFolderName'] = uri2
                                     for sub3element in sub2element:
                                         sub4location = sub3element.tag + ' ' + sub3location
@@ -968,7 +968,7 @@ class DBLBible( Bible ):
                             logging.warning( _("YT76 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     manifest['containers'] = containers
-                    #print( "manifest", manifest )
+                    #vPrint( 'Quiet', debuggingThisModule, "manifest", manifest )
                     assert 'manifest' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['manifest']  = manifest
                 elif element.tag == 'names':
@@ -1005,7 +1005,7 @@ class DBLBible( Bible ):
                             logging.warning( _("CD32 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     # TODO: Need to pivot these as well ???
-                    #print( "names", names )
+                    #vPrint( 'Quiet', debuggingThisModule, "names", names )
                     assert 'names' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['names']  = names
                 elif element.tag == 'source':
@@ -1076,7 +1076,7 @@ class DBLBible( Bible ):
                         if structure:
                             assert 'structure' not in source
                             source['structure'] = structure
-                    #print( "source", source )
+                    #vPrint( 'Quiet', debuggingThisModule, "source", source )
                     assert 'source' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['source']  = source
                 elif element.tag == 'publications':
@@ -1161,14 +1161,14 @@ class DBLBible( Bible ):
                         else:
                             logging.warning( _("PZ95 Unprocessed {} subelement '{}' in {}").format( subelement.tag, subelement.text, sub2location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #print( "publications", publications )
+                    #vPrint( 'Quiet', debuggingThisModule, "publications", publications )
                     assert 'publications' not in self.suppliedMetadata['DBL']
                     self.suppliedMetadata['DBL']['publications']  = publications
                 else:
                     logging.warning( _("QT26 Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        #print( '\n', self.suppliedMetadata['DBL'] )
+        #vPrint( 'Quiet', debuggingThisModule, '\n', self.suppliedMetadata['DBL'] )
         vPrint( 'Info', debuggingThisModule, "  Loaded {} supplied metadata elements.".format( len(self.suppliedMetadata['DBL']) ) )
 
         # Find available books
@@ -1179,27 +1179,27 @@ class DBLBible( Bible ):
             for someKey in self.suppliedMetadata['DBL']['contents']:
                 if someKey.startswith( 'bookList' ): possibilities.append( someKey )
                 if '(default)' in someKey: haveDefault = someKey
-            #print( "possibilities", possibilities )
+            #vPrint( 'Quiet', debuggingThisModule, "possibilities", possibilities )
             bookListKey = haveDefault if haveDefault else possibilities[0]
-            #print( "BL", self.suppliedMetadata['DBL']['contents'][bookListKey] )
+            #vPrint( 'Quiet', debuggingThisModule, "BL", self.suppliedMetadata['DBL']['contents'][bookListKey] )
             if 'books' in self.suppliedMetadata['DBL']['contents'][bookListKey]:
                 for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
-                    #print( "USFMBookCode", USFMBookCode )
+                    #vPrint( 'Quiet', debuggingThisModule, "USFMBookCode", USFMBookCode )
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     bookList.append( BBB )
                     self.availableBBBs.add( BBB )
             else: logging.error( "loadDBLMetadata: No books in contents (maybe has divisions?) {}".format( self.sourceFilepath ) ) # need to add code if so
         elif 'publications' in self.suppliedMetadata['DBL']:
             for someKey,pubDict in self.suppliedMetadata['DBL']['publications'].items():
-                #print( someKey, pubDict )
+                #vPrint( 'Quiet', debuggingThisModule, someKey, pubDict )
                 if 'CanonicalContent' in pubDict:
                     for USFMBookCode in pubDict['CanonicalContent']:
-                        #print( "USFMBookCode", USFMBookCode )
+                        #vPrint( 'Quiet', debuggingThisModule, "USFMBookCode", USFMBookCode )
                         BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         bookList.append( BBB )
                         self.availableBBBs.add( BBB )
                     if 'Structure' in pubDict:
-                        #print( 'Structure', pubDict['Structure'] )
+                        #vPrint( 'Quiet', debuggingThisModule, 'Structure', pubDict['Structure'] )
                         for bookSomething,bookInfo in pubDict['Structure'].items():
                             if self.DBLMetadataVersion == '2.0': assert bookInfo[2].startswith( 'USX_' )
                             elif self.DBLMetadataVersion == '2.1': assert bookInfo[2].startswith( 'release/USX_' )
@@ -1207,7 +1207,7 @@ class DBLBible( Bible ):
                             logging.info( "USX folder is {}".format( self.suppliedMetadata['DBL']['USXFolderName'] ) )
                             break
                     break
-        else: print( "No book list" ); halt
+        else: vPrint( 'Quiet', debuggingThisModule, "No book list" ); halt
         self.suppliedMetadata['DBL']['OurBookList']  = bookList
     # end of DBLBible.loadDBLMetadata
 
@@ -1219,7 +1219,7 @@ class DBLBible( Bible ):
             and try to standardise it at the same time.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "applySuppliedMetadata({} )".format( applyMetadataType ) )
+            vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata({} )".format( applyMetadataType ) )
         assert applyMetadataType in ( 'DBL', 'Project', )
 
         if applyMetadataType == 'Project': # This is different stuff
@@ -1233,19 +1233,19 @@ class DBLBible( Bible ):
         # Now we'll flatten the supplied metadata and remove empty values
         flattenedMetadata = {}
         for mainKey,value in self.suppliedMetadata['DBL'].items():
-            #print( "Got {} = {}".format( mainKey, value ) )
+            #vPrint( 'Quiet', debuggingThisModule, "Got {} = {}".format( mainKey, value ) )
             if not value: pass # ignore empty ones
             elif isinstance( value, str ): flattenedMetadata[mainKey] = value # Straight copy
             elif isinstance( value, list ): flattenedMetadata[mainKey] = value # Straight copy
             elif isinstance( value, dict ): # flatten this
                 for subKey,subValue in value.items():
-                    #print( "  Got2 {}--{} = {}".format( mainKey, subKey, subValue ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "  Got2 {}--{} = {}".format( mainKey, subKey, subValue ) )
                     if not subValue: pass # ignore empty ones
                     elif isinstance( subValue, str ):
                         flattenedMetadata[mainKey+'--'+subKey] = subValue # Straight copy
                     elif isinstance( subValue, dict ): # flatten this
                         for sub2Key,sub2Value in subValue.items():
-                            #print( "    Got3 {}--{}--{} = {}".format( mainKey, subKey, sub2Key, sub2Value ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "    Got3 {}--{}--{} = {}".format( mainKey, subKey, sub2Key, sub2Value ) )
                             if not sub2Value:  pass # ignore empty ones
                             elif isinstance( sub2Value, str ):
                                 flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key] = sub2Value # Straight copy
@@ -1256,16 +1256,16 @@ class DBLBible( Bible ):
                                 flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key] = sub2Value # Straight copy
                             elif isinstance( sub2Value, dict ):
                                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                    print( "How do we handle a dict here???" )
+                                    vPrint( 'Quiet', debuggingThisModule, "How do we handle a dict here???" )
                             elif isinstance( sub2Value, tuple ):
                                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                    print( "How do we handle a tuple here???" )
-                            else: print( "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                                    vPrint( 'Quiet', debuggingThisModule, "How do we handle a tuple here???" )
+                            else: vPrint( 'Quiet', debuggingThisModule, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
                     elif isinstance( subValue, list ): # flatten this
                         flattenedMetadata[mainKey+'--'+subKey] = '--'.join( subValue )
-                    else: print( "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
-            else: print( "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
-        #print( "\nflattenedMetadata", flattenedMetadata )
+                    else: vPrint( 'Quiet', debuggingThisModule, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
+            else: vPrint( 'Quiet', debuggingThisModule, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
+        #vPrint( 'Quiet', debuggingThisModule, "\nflattenedMetadata", flattenedMetadata )
 
         nameChangeDict = {'License':'Licence'}
         for oldKey,value in flattenedMetadata.items():
@@ -1288,7 +1288,7 @@ class DBLBible( Bible ):
         Load the styles.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "loadDBLStyles()" )
+            vPrint( 'Quiet', debuggingThisModule, "loadDBLStyles()" )
 
         if self.DBLMetadataVersion == '2.1': styleFilepath = os.path.join( self.sourceFilepath, 'release/', 'styles.xml' )
         else: styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
@@ -1314,14 +1314,14 @@ class DBLBible( Bible ):
                 else:
                     logging.warning( _("Unprocessed style {} attribute ({}) in {}").format( attrib, value, location ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-            #print( "StyleID", styleID )
+            #vPrint( 'Quiet', debuggingThisModule, "StyleID", styleID )
             assert styleID not in ourDict
             ourDict[styleID] = {}
 
             # Now process the style properties
             for subelement in element:
                 sublocation = subelement.tag + ' ' + location
-                #print( "  Processing {}…".format( sublocation ) )
+                #vPrint( 'Quiet', debuggingThisModule, "  Processing {}…".format( sublocation ) )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                 if subelement.tag in ( 'name', 'description' ):
@@ -1343,7 +1343,7 @@ class DBLBible( Bible ):
                 else:
                     logging.warning( _("Unprocessed style {} subelement '{}' in {}").format( subelement.tag, subelement.text, sublocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-            #print( "Styles:", DBLStyles['styles'] )
+            #vPrint( 'Quiet', debuggingThisModule, "Styles:", DBLStyles['styles'] )
         # end of getStyle
 
         DBLStyles = {}
@@ -1359,7 +1359,7 @@ class DBLBible( Bible ):
             # Now process the actual properties and styles
             for element in self.XMLTree:
                 sublocation = element.tag + ' ' + location
-                #print( "\nProcessing {}…".format( sublocation ) )
+                #vPrint( 'Quiet', debuggingThisModule, "\nProcessing {}…".format( sublocation ) )
                 if element.tag == 'property':
                     if 'properties' not in DBLStyles: DBLStyles['properties'] = {}
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
@@ -1379,9 +1379,9 @@ class DBLBible( Bible ):
                     logging.warning( _("Unprocessed {} element in {}").format( element.tag, sublocation ) )
                     #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-        #print( '\n', self.suppliedMetadata['DBL'] )
+        #vPrint( 'Quiet', debuggingThisModule, '\n', self.suppliedMetadata['DBL'] )
         vPrint( 'Info', debuggingThisModule, "  Loaded {} style elements.".format( len(DBLStyles['styles']) ) )
-        #print( 'DBLStyles', DBLStyles )
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLStyles', DBLStyles )
         if DBLStyles: self.suppliedMetadata['DBL']['Styles'] = DBLStyles
     # end of DBLBible.loadDBLStyles
 
@@ -1392,7 +1392,7 @@ class DBLBible( Bible ):
             #and parse it into the ordered dictionary DBLVersification.
         #"""
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            #print( "loadDBLVersification()" )
+            #vPrint( 'Quiet', debuggingThisModule, "loadDBLVersification()" )
 
         #versificationFilename = 'versification.vrs'
         #versificationFilepath = os.path.join( self.sourceFilepath, versificationFilename )
@@ -1411,10 +1411,10 @@ class DBLBible( Bible ):
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
                 #if line[0]=='#' and not line.startswith('#!'): continue # Just discard comment lines
-                ##print( "Versification line", repr(line) )
+                ##vPrint( 'Quiet', debuggingThisModule, "Versification line", repr(line) )
 
                 #if len(line)<7:
-                    #print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
                     #continue
 
                 #if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
@@ -1422,20 +1422,20 @@ class DBLBible( Bible ):
                     #USFMBookCode = line[4:7]
                     #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                     #C,V = line[8:].split( ':', 1 )
-                    ##print( "CV", repr(C), repr(V) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "CV", repr(C), repr(V) )
                     #if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
-                    ##print( "Omitted {} {}:{}".format( BBB, C, V ) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "Omitted {} {}:{}".format( BBB, C, V ) )
                     #DBLVersification['Omitted'].append( (BBB,C,V) )
                 #elif line[0] == '#': # It's a comment line
                     #pass # Just ignore it
                 #elif '=' in line: # it's a verse mapping, e.g.,
                     #left, right = line.split( ' = ', 1 )
-                    ##print( "left", repr(left), 'right', repr(right) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "left", repr(left), 'right', repr(right) )
                     #USFMBookCode1, USFMBookCode2 = left[:3], right[:3]
                     #BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode1 )
                     #BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode2 )
                     #DBLVersification['Mappings'][BBB1+left[3:]] = BBB2+right[3:]
-                    ##print( DBLVersification['Mappings'] )
+                    ##vPrint( 'Quiet', debuggingThisModule, DBLVersification['Mappings'] )
                 #else: # It's a verse count line, e.g., LAM 1:22 2:22 3:66 4:22 5:22
                     #assert line[3] == ' '
                     #USFMBookCode = line[:3]
@@ -1444,18 +1444,18 @@ class DBLBible( Bible ):
                         #BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                         #DBLVersification['VerseCounts'][BBB] = {}
                         #for CVBit in line[4:].split():
-                            ##print( "CVBit", repr(CVBit) )
+                            ##vPrint( 'Quiet', debuggingThisModule, "CVBit", repr(CVBit) )
                             #assert ':' in CVBit
                             #C,V = CVBit.split( ':', 1 )
-                            ##print( "CV", repr(C), repr(V) )
+                            ##vPrint( 'Quiet', debuggingThisModule, "CV", repr(C), repr(V) )
                             #if BibleOrgSysGlobals.debugFlag: assert C.isdigit() and V.isdigit()
                             #DBLVersification['VerseCounts'][BBB][C] = V
                     #except KeyError:
                         #logging.error( "Unknown {!r} USX book code in DBLBible.loading versification from {}".format( USFMBookCode, versificationFilepath ) )
 
-        ##print( '\n', self.suppliedMetadata['DBL'] )
+        ##vPrint( 'Quiet', debuggingThisModule, '\n', self.suppliedMetadata['DBL'] )
         #vPrint( 'Info', debuggingThisModule, "  Loaded {} versification elements.".format( len(DBLVersification) ) )
-        #print( 'DBLVersification', DBLVersification ); halt
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLVersification', DBLVersification ); halt
     ## end of DBLBible.loadDBLVersification
 
 
@@ -1464,7 +1464,7 @@ class DBLBible( Bible ):
         #Load the something.lds file (which is an INI file) and parse it into the ordered dictionary DBLLanguage.
         #"""
         #if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            #print( "loadDBLLanguage()" )
+            #vPrint( 'Quiet', debuggingThisModule, "loadDBLLanguage()" )
 
         #languageFilenames = []
         #for something in os.listdir( self.sourceFilepath ):
@@ -1492,10 +1492,10 @@ class DBLBible( Bible ):
                 #if not line: continue # Just discard blank lines
                 #lastLine = line
                 #if line[0]=='#': continue # Just discard comment lines
-                ##print( "line", repr(line) )
+                ##vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
 
                 #if len(line)<5:
-                    #print( "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
                     #continue
 
                 #if line[0]=='[' and line[-1]==']': # it's a new section name
@@ -1504,13 +1504,13 @@ class DBLBible( Bible ):
                     #DBLLanguage[sectionName] = {}
                 #elif '=' in line: # it's a mapping, e.g., UpperCaseLetters=ABCDEFGHIJKLMNOPQRSTUVWXYZ
                     #left, right = line.split( '=', 1 )
-                    ##print( "left", repr(left), 'right', repr(right) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "left", repr(left), 'right', repr(right) )
                     #DBLLanguage[sectionName][left] = right
-                #else: print( "What's this language line? {!r}".format( line ) )
+                #else: vPrint( 'Quiet', debuggingThisModule, "What's this language line? {!r}".format( line ) )
 
-        ##print( '\n', DBLLanguage )
+        ##vPrint( 'Quiet', debuggingThisModule, '\n', DBLLanguage )
         #vPrint( 'Info', debuggingThisModule, "  Loaded {} language sections.".format( len(DBLLanguage) ) )
-        #print( 'DBLLanguage', DBLLanguage ); halt
+        #vPrint( 'Quiet', debuggingThisModule, 'DBLLanguage', DBLLanguage ); halt
     ## end of DBLBible.loadDBLLanguage
 
 
@@ -1519,9 +1519,9 @@ class DBLBible( Bible ):
         Load the USX XML Bible text files.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "loadBooks()" )
+            vPrint( 'Quiet', debuggingThisModule, "loadBooks()" )
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
+            vPrint( 'Quiet', debuggingThisModule, _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 
         if not self.preloadDone: self.preload()
         if not self.preloadDone: return # coz it must have failed
@@ -1532,7 +1532,7 @@ class DBLBible( Bible ):
             somepath = os.path.join( self.sourceFilepath, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
         if not foundFolders: # We need a USX folder
             logging.critical( "DBLBible.loadBooks: Couldn't find any folders in '{}'".format( self.sourceFilepath ) )
             return # No use continuing
@@ -1546,26 +1546,26 @@ class DBLBible( Bible ):
             for someKey in self.suppliedMetadata['DBL']['contents']:
                 if someKey.startswith( 'bookList' ): possibilities.append( someKey )
                 if '(default)' in someKey: haveDefault = someKey
-            #print( "possibilities", possibilities )
+            #vPrint( 'Quiet', debuggingThisModule, "possibilities", possibilities )
             bookListKey = haveDefault if haveDefault else possibilities[0]
             USXFolderName = 'USX_' + bookListKey[9:10]
-            #print( "USXFolderName", USXFolderName )
+            #vPrint( 'Quiet', debuggingThisModule, "USXFolderName", USXFolderName )
             self.USXFolderPath = os.path.join( self.sourceFilepath, USXFolderName + '/' )
-        #print( "USXFolderPath", self.USXFolderPath )
+        #vPrint( 'Quiet', debuggingThisModule, "USXFolderPath", self.USXFolderPath )
 
         ## Work out our filenames
         #self.USXFilenamesObject = USXFilenames( self.USXFolderPath )
-        #print( "fo", self.USXFilenamesObject )
+        #vPrint( 'Quiet', debuggingThisModule, "fo", self.USXFilenamesObject )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         if 'OurBookList' in self.suppliedMetadata['DBL']:
             for BBB in self.suppliedMetadata['DBL']['OurBookList']:
                 filename = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
-                if debuggingThisModule: print( "About to load {} from {} …".format( BBB, filename ) )
+                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "About to load {} from {} …".format( BBB, filename ) )
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )
                 UBB.validateMarkers()
-                #print( UBB )
+                #vPrint( 'Quiet', debuggingThisModule, UBB )
                 self.books[BBB] = UBB
                 # Make up our book name dictionaries while we're at it
                 assumedBookNames = UBB.getAssumedBookNames()
@@ -1576,15 +1576,15 @@ class DBLBible( Bible ):
                     self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                     if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
         else:
-            #print( "bookListKey", bookListKey )
+            #vPrint( 'Quiet', debuggingThisModule, "bookListKey", bookListKey )
             for USFMBookCode in self.suppliedMetadata['DBL']['contents'][bookListKey]['books']:
-                #print( "USFMBookCode", USFMBookCode )
+                #vPrint( 'Quiet', debuggingThisModule, "USFMBookCode", USFMBookCode )
                 BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                 filename = USFMBookCode + '.usx'
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )
                 UBB.validateMarkers()
-                #print( UBB )
+                #vPrint( 'Quiet', debuggingThisModule, UBB )
                 self.books[BBB] = UBB
                 # Make up our book name dictionaries while we're at it
                 assumedBookNames = UBB.getAssumedBookNames()
@@ -1620,11 +1620,11 @@ def __processDBLBible( parametersTuple ): # for demo
         if BBB in DBL_Bible:
             DBL_Bible.books[BBB].debugPrint()
             for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 # end of __processDBLBible
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
@@ -1659,7 +1659,187 @@ def demo() -> None:
             if BBB in DBL_Bible:
                 DBL_Bible.books[BBB].debugPrint()
                 for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                    print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+
+    if 00: # specified installed modules
+        good = ('eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30',
+                'eng-rv_dbl_40072c4a5aba4022-rev1-2014-09-24',
+                'eng-webbe_dbl_7142879509583d59-rev2-2014-09-24',
+                'engwmb_dbl_f72b840c855f362c-rev1-2014-09-24',
+                'engwmbb_dbl_04da588535d2f823-rev1-2014-09-24',
+                'ton_dbl_25210406001d9aae-rev2-2014-09-24',)
+        nonEnglish = ( 'ton_dbl_25210406001d9aae-rev2-2014-09-24', )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nDBL E{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            DBL_Bible = DBLBible( testFolder, testFilename )
+            DBL_Bible.load()
+            break
+
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    if 1: # Open access Bibles from DBL
+        sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/DBL Open Access Bibles/' )
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( sampleFolder ):
+            somepath = os.path.join( sampleFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            #vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
+                                                for j,folderName in enumerate(sorted(foundFolders))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, folderName in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nDBL F{}/ Trying {}".format( j+1, folderName ) )
+                myTestFolder = os.path.join( sampleFolder, folderName+'/' )
+                DBL_Bible = DBLBible( myTestFolder, folderName )
+                DBL_Bible.load()
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                    BBB = 'JN1'
+                    if BBB in DBL_Bible:
+                        DBL_Bible.books[BBB].debugPrint()
+                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+
+
+    if 1: # Older versions of bundles from Haiola
+        sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/Haiola DBL test versions/' )
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( sampleFolder ):
+            somepath = os.path.join( sampleFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            #vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            parameters = [('G'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
+                                                for j,folderName in enumerate(sorted(foundFolders))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, folderName in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nDBL G{}/ Trying {}".format( j+1, folderName ) )
+                myTestFolder = os.path.join( sampleFolder, folderName+'/' )
+                DBL_Bible = DBLBible( myTestFolder, folderName )
+                DBL_Bible.load()
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                    BBB = 'JN1'
+                    if BBB in DBL_Bible:
+                        DBL_Bible.books[BBB].debugPrint()
+                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+
+
+    if 1: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            #vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
+                                                for j,folderName in enumerate(sorted(foundFolders))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, folderName in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nDBL H{}/ Trying {}".format( j+1, folderName ) )
+                myTestFolder = os.path.join( testFolder, folderName+'/' )
+                DBL_Bible = DBLBible( myTestFolder, folderName )
+                DBL_Bible.load()
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                    BBB = 'JN1'
+                    if BBB in DBL_Bible:
+                        DBL_Bible.books[BBB].debugPrint()
+                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+
+    if 00:
+        testFolders = (
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/'),
+                    ) # You can put your DBL test folder here
+
+        for testFolder in testFolders:
+            if os.access( testFolder, os.R_OK ):
+                DB = DBLBible( testFolder )
+                DB.loadDBLMetadata()
+                DB.preload()
+                vPrint( 'Quiet', debuggingThisModule, DB )
+                if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
+                DB.loadBooks()
+                #DBErrors = DB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, DB.getVersification() )
+                #vPrint( 'Quiet', debuggingThisModule, DB.getAddedUnits() )
+                #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                    ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                    #vPrint( 'Quiet', debuggingThisModule, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
+    #if BibleOrgSysGlobals.commandLineArguments.export:
+    #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #       pass
+# end of DBLBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = DBLBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "DBL TestA1", result1 )
+        result2 = DBLBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "DBL TestA2", result2 )
+        result3 = DBLBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "DBL TestA3", result3 )
+
+    if 00: # demo the file checking code with temp folder
+        resultB = DBLBibleFileCheck( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'TempFiles/' ), autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "DBL TestB", resultB )
+
+    if 00: # specify testFolder containing a single module
+        vPrint( 'Normal', debuggingThisModule, "\nDBL C/ Trying single module in {}".format( testFolder ) )
+        XXXtestDBL_B( testFolder )
+
+    if 00: # specified single installed module
+        singleModule = 'eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30'
+        vPrint( 'Normal', debuggingThisModule, "\nDBL D/ Trying installed {} module".format( singleModule ) )
+        DBL_Bible = DBLBible( testFolder, singleModule )
+        DBL_Bible.load()
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+            BBB = 'JN1'
+            if BBB in DBL_Bible:
+                DBL_Bible.books[BBB].debugPrint()
+                for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                    vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 00: # specified installed modules
         good = ('eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30',
@@ -1709,7 +1889,7 @@ def demo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 1: # Older versions of bundles from Haiola
@@ -1742,7 +1922,7 @@ def demo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 1: # all discovered modules in the test folder
@@ -1774,7 +1954,7 @@ def demo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            print( BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 00:
         testFolders = (
@@ -1789,18 +1969,19 @@ def demo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, DB )
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 DB.loadBooks()
-                #DBErrors = DB.getErrors()
-                # print( DBErrors )
-                #print( DB.getVersification() )
-                #print( DB.getAddedUnits() )
+                #DBErrors = DB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #vPrint( 'Quiet', debuggingThisModule, DB.getVersification() )
+                #vPrint( 'Quiet', debuggingThisModule, DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                    ##print( "Looking for", ref )
-                    #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                    ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                    #vPrint( 'Quiet', debuggingThisModule, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
     #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
+# end of DBLBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -1810,7 +1991,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of DBLBible.py

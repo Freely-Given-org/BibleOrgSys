@@ -71,7 +71,7 @@ def noisyFind( text:str, this:str, reporterFunction=None ):
         if count:
             reporterFunction( "Found {:,} occurrence{} of {!r}".format( count, '' if count==1 else 's', this ) )
         elif debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "No occurrences of {!r} found".format( this ) )
+            vPrint( 'Quiet', debuggingThisModule, "No occurrences of {!r} found".format( this ) )
 # end of noisyFind
 
 
@@ -84,7 +84,7 @@ def noisyRegExFind( text:str, this:str, reporterFunction=None ):
         if count:
             reporterFunction( _("Found {:,} occurrence{} of regex {!r}").format( count, '' if count==1 else 's', this ) )
         elif debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("No occurrences of {!r} regex found").format( this ) )
+            vPrint( 'Quiet', debuggingThisModule, _("No occurrences of {!r} regex found").format( this ) )
 # end of noisyRegExFind
 
 
@@ -106,7 +106,7 @@ def noisyReplaceAll( text:str, this:str, that:str, loop:bool=False ) -> str:
 
     count2 = newText.count( this )
     if count2 and BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "  " + _("NOTE: {:,} occurrence{} of {!r} still remaining!").format( count2, '' if count2==1 else 's', this ) )
+        vPrint( 'Quiet', debuggingThisModule, "  " + _("NOTE: {:,} occurrence{} of {!r} still remaining!").format( count2, '' if count2==1 else 's', this ) )
     return newText
 # end of noisyReplaceAll
 
@@ -124,7 +124,7 @@ def noisyRegExReplaceAll( text:str, this:str, that:str ) -> str:
 
     newText, count2 = re.subn( regex, that, text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "  " + _("Replaced {:,} occurrence{} of regex {!r} with {!r}").format( count2, '' if count2==2 else 's', this, that ) )
+        vPrint( 'Quiet', debuggingThisModule, "  " + _("Replaced {:,} occurrence{} of regex {!r} with {!r}").format( count2, '' if count2==2 else 's', this, that ) )
 
     count3 = len( re.findall( regex, newText ) )
     if count3: # and BibleOrgSysGlobals.verbosityLevel > 0:
@@ -164,7 +164,7 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
     newText, count2 = re.subn( regex, '', text )
     if count2!=count1 and BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "  " + _("Deleted {:,} occurrence{} of regex {!r}").format( count2, '' if count2==2 else 's', this ) )
+        vPrint( 'Quiet', debuggingThisModule, "  " + _("Deleted {:,} occurrence{} of regex {!r}").format( count2, '' if count2==2 else 's', this ) )
 
     count3 = len( re.findall( regex, newText ) )
     if count3: # and BibleOrgSysGlobals.verbosityLevel > 0:
@@ -174,7 +174,7 @@ def noisyRegExDeleteAll( text:str, this:str ) -> str:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demo program to handle command line parameters and then run some short test/demo functions.
     """
@@ -186,11 +186,18 @@ These functions can be used for string find, replace, and delete, but they are n
     in the sense that they print exactly what's happening.
 """
     resultDA_bad = noisyDeleteAll( sampleText, 'xyx' )
-    print( f"resultDA_bad={resultDA_bad}" )
+    vPrint( 'Quiet', debuggingThisModule, f"resultDA_bad={resultDA_bad}" )
     resultDA_good = noisyDeleteAll( sampleText, 'string' )
-    print( f"resultDA_good={resultDA_good}" )
+    vPrint( 'Quiet', debuggingThisModule, f"resultDA_good={resultDA_good}" )
 # end of NoisyReplaceFunctions.demo
 
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -200,7 +207,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of NoisyReplaceFunctions.py

@@ -36,18 +36,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
   Raises IOError if file doesn't exist.
 """
-
-from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
-SHORT_PROGRAM_NAME = "SFMFile"
-PROGRAM_NAME = "SFM Files loader"
-PROGRAM_VERSION = '0.86'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
+# from gettext import gettext as _
 import logging
 import sys
 
@@ -58,6 +47,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "SFMFile"
+PROGRAM_NAME = "SFM Files loader"
+PROGRAM_VERSION = '0.86'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -109,7 +106,7 @@ class SFMLines:
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #print ( 'SFM file line is "' + line + '"' )
+                    #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
 
@@ -117,15 +114,15 @@ class SFMLines:
                         if len(result)==0: # We don't have any SFM data lines yet
                             if BibleOrgSysGlobals.verbosityLevel > 2:
                                 logging.error( "Non-SFM line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
-                            #print( "SFMFile.py: XXZXResult is", result, len(line) )
+                            #vPrint( 'Quiet', debuggingThisModule, "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
-                                #print( x, "'" + str(ord(line[x])) + "'" )
+                                #vPrint( 'Quiet', debuggingThisModule, x, "'" + str(ord(line[x])) + "'" )
                             #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
                         else: # Append this continuation line
                             if marker not in ignoreSFMs:
                                 oldmarker, oldtext = result.pop()
-                                #print ("Popped",oldmarker,oldtext)
-                                #print ("Adding", line, "to", oldmarker, oldtext)
+                                #vPrint( 'Quiet', debuggingThisModule, "Popped",oldmarker,oldtext)
+                                #vPrint( 'Quiet', debuggingThisModule, "Adding", line, "to", oldmarker, oldtext)
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
 
@@ -146,10 +143,10 @@ class SFMLines:
                         result.append( (marker, text) )
 
             except UnicodeError as err:
-                print( "Unicode error:", sys.exc_info()[0], err )
+                vPrint( 'Quiet', debuggingThisModule, "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
-                if lineCount > 1: print( 'Previous line was: ', lastLine )
-                #print( line )
+                if lineCount > 1: vPrint( 'Quiet', debuggingThisModule, 'Previous line was: ', lastLine )
+                #vPrint( 'Quiet', debuggingThisModule, line )
                 #raise
 
             self.lines = result
@@ -209,9 +206,9 @@ class SFMRecords:
         # Main code for SFMRecords.read()
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
-        #print( "ignoreSFMs =", ignoreSFMs )
+        #vPrint( 'Quiet', debuggingThisModule, "ignoreSFMs =", ignoreSFMs )
         if ignoreEntries is None: ignoreEntries = ()
-        #print( "ignoreEntries =", ignoreEntries )
+        #vPrint( 'Quiet', debuggingThisModule, "ignoreEntries =", ignoreEntries )
         if key:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
@@ -233,14 +230,14 @@ class SFMRecords:
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #print ( 'SFM file line is "' + line + '"' )
+                    #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
                     if line[0]!='\\':
                         if len(record)==0:
-                            print( 'SFMFile.py: SFM file line is "' + line + '"' )
-                            print( "First character of line is '" + line[0] + "' (" + str(ord(line[0])) + ")" )
-                            print( "XXXRecord is", record)
+                            vPrint( 'Quiet', debuggingThisModule, 'SFMFile.py: SFM file line is "' + line + '"' )
+                            vPrint( 'Quiet', debuggingThisModule, "First character of line is '" + line[0] + "' (" + str(ord(line[0])) + ")" )
+                            vPrint( 'Quiet', debuggingThisModule, "XXXRecord is", record)
                             raise IOError('Oops: Line break on last line of record not handled here "' + line + '"')
                         else: # Append this continuation line
                             oldmarker, oldtext = record.pop()
@@ -259,10 +256,10 @@ class SFMRecords:
                     else: # The line is only the marker
                         marker = changeMarker( lineAfterBackslash, changePairs )
                         text = ''
-                        if marker==key: print ("Warning: Have a blank key field after", record)
+                        if marker==key: vPrint( 'Quiet', debuggingThisModule, "Warning: Have a blank key field after", record)
 
                     if not key and marker not in ignoreSFMs:
-                        print ('    Assuming', marker, 'to be the SFM key for', SFMFilepath)
+                        vPrint( 'Quiet', debuggingThisModule, '    Assuming', marker, 'to be the SFM key for', SFMFilepath)
                         key = marker
                     if marker==key: # Save the previous record
                         if record and record[0][1] not in ignoreEntries: # Looks at the text associated with the first (record key) marker
@@ -277,10 +274,10 @@ class SFMRecords:
                     record.append( (marker, text) )
 
             except UnicodeError as err:
-                print( "Unicode error:", sys.exc_info()[0], err )
+                vPrint( 'Quiet', debuggingThisModule, "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at " + str(lineCount) )
-                if lineCount > 1: print( 'Previous line was: ', lastLine )
-                else: print( 'Possible encoding error -- expected', encoding )
+                if lineCount > 1: vPrint( 'Quiet', debuggingThisModule, 'Previous line was: ', lastLine )
+                else: vPrint( 'Quiet', debuggingThisModule, 'Possible encoding error -- expected', encoding )
                 #raise
 
             # Write the final record
@@ -347,7 +344,7 @@ class SFMRecords:
                     if isinstance( self.dataDict[key], list ):
                         self.dataDict[key].append( (marker,value) )
                     elif isinstance( self.dataDict[key], dict ):
-                        #print( j, key, marker, value )
+                        #vPrint( 'Quiet', debuggingThisModule, j, key, marker, value )
                         if marker in self.dataDict[key]:
                             logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
                         self.dataDict[key][marker] = value
@@ -357,32 +354,61 @@ class SFMRecords:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and processing some UTF-8 SFM databases.
     """
+    import os.path
+
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
     vPrint( 'Info', debuggingThisModule, "Using {} as test file…".format( filepath ) )
 
     linesDB = SFMLines()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
-    print( len(linesDB.lines), 'lines read from file', filepath )
+    vPrint( 'Quiet', debuggingThisModule, len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
-        print ( i, r)
+        vPrint( 'Quiet', debuggingThisModule, i, r)
         if i>9: break
-    print ( '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    vPrint( 'Quiet', debuggingThisModule, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 
     recordsDB = SFMRecords()
     recordsDB.read( filepath, 'og', ignoreSFMs=('mn','aMU','aMW','cu','cp'))
-    print( len(recordsDB.records), 'records read from file', filepath )
+    vPrint( 'Quiet', debuggingThisModule, len(recordsDB.records), 'records read from file', filepath )
     for i, r in enumerate(recordsDB.records):
-        print ( i, r)
+        vPrint( 'Quiet', debuggingThisModule, i, r)
         if i>3: break
-    print( '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
-# end of demo
+    vPrint( 'Quiet', debuggingThisModule, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+# end of SFMFile.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    import os.path
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
+    vPrint( 'Info', debuggingThisModule, "Using {} as test file…".format( filepath ) )
+
+    linesDB = SFMLines()
+    linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
+    vPrint( 'Quiet', debuggingThisModule, len(linesDB.lines), 'lines read from file', filepath )
+    for i, r in enumerate(linesDB.lines):
+        vPrint( 'Quiet', debuggingThisModule, i, r)
+        if i>9: break
+    vPrint( 'Quiet', debuggingThisModule, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+
+    recordsDB = SFMRecords()
+    recordsDB.read( filepath, 'og', ignoreSFMs=('mn','aMU','aMW','cu','cp'))
+    vPrint( 'Quiet', debuggingThisModule, len(recordsDB.records), 'records read from file', filepath )
+    for i, r in enumerate(recordsDB.records):
+        vPrint( 'Quiet', debuggingThisModule, i, r)
+        if i>3: break
+    vPrint( 'Quiet', debuggingThisModule, '…\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+# end of SFMFile.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -392,7 +418,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of SFMFile.py

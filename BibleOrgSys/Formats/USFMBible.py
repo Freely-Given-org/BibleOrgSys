@@ -28,18 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
     Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
-SHORT_PROGRAM_NAME = "USFMBible"
-PROGRAM_NAME = "USFM Bible handler"
-PROGRAM_VERSION = '0.78'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from pathlib import Path
@@ -56,6 +45,16 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Bible import Bible
+
+
+
+LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+SHORT_PROGRAM_NAME = "USFMBible"
+PROGRAM_NAME = "USFM Bible handler"
+PROGRAM_VERSION = '0.78'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -80,7 +79,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     if discountSSF is set, finding a SSF file prevents a True result.
     """
     if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        print( "USFMBibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
+        vPrint( 'Quiet', debuggingThisModule, "USFMBibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
@@ -88,11 +87,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
-        if debuggingThisModule: print ("  USFM returningA1", False )
+        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
-        if debuggingThisModule: print ("  USFM returningA2", False )
+        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM returningA2", False )
         return False
 
     # Find all the files and folders in this folder
@@ -114,7 +113,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
             #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
-                ##print( 'U1', repr(firstLine) )
+                ##vPrint( 'Quiet', debuggingThisModule, 'U1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
                 #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                     #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
@@ -138,7 +137,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                     goodIndexList.append(n); break # Can't delete it yet
         except TypeError: pass # If file is empty peekIntoFile returns None
     if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples and goodIndexList:
-        print( "  Found {} USFM3 file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM3 file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples and goodIndexList:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
@@ -154,9 +153,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  USFM3 returningB1", uB )
+            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningB1", uB )
             return uB
-        if debuggingThisModule: print ("  USFM3 returningB2", numFound )
+        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -183,7 +182,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                     #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
                     #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                         #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
-                        ##print( 'U2', repr(firstLine) )
+                        ##vPrint( 'Quiet', debuggingThisModule, 'U2', repr(firstLine) )
                         #if firstLine is None: continue # seems we couldn't decode the file
                         #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                             #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
@@ -206,9 +205,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                         goodIndexList.append(n); break # Can't delete it yet
             except TypeError: pass # If file is empty peekIntoFile returns None
         if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples and goodIndexList:
-            print( "  Found {} USFM3 files: {}".format( len(filenameTuples), filenameTuples ) )
+            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM3 files: {}".format( len(filenameTuples), filenameTuples ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and goodIndexList and debuggingThisModule:
-            print( "  Found {} USFM3 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM3 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples and goodIndexList:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
@@ -227,11 +226,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: print ("  USFM3 returningC1", uB )
+            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningC1", uB )
             return uB
-        if debuggingThisModule: print ("  USFM3 returningC2", numFound )
+        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningC2", numFound )
         return numFound
-    if debuggingThisModule: print ("  USFM3 returningN", None )
+    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningN", None )
 # end of USFMBibleFileCheck
 
 
@@ -261,7 +260,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     """
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            print( _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
+            vPrint( 'Quiet', debuggingThisModule, _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
             assert 'findText' in optionsDict
             assert 'replaceText' in optionsDict
 
@@ -272,7 +271,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
             'contextLength', 'bookList', 'regexFlag', 'currentBCV', 'doBackups', )
     for someKey in optionsDict:
         if someKey not in optionsList:
-            print( "findReplaceText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
+            vPrint( 'Quiet', debuggingThisModule, "findReplaceText warning: unexpected {!r} option = {!r}".format( someKey, optionsDict[someKey] ) )
             if debuggingThisModule: halt
 
     # Go through all the given options
@@ -335,7 +334,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     #if optionsDict['caselessFlag']: ourFindText = ourFindText.lower()
     searchLen = len( ourFindText )
     if BibleOrgSysGlobals.debugFlag: assert searchLen
-    #print( "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
+    #vPrint( 'Quiet', debuggingThisModule, "  Searching for {!r} in {} loaded books".format( ourFindText, len(self) ) )
 
     if not self.preloadDone: self.preload()
 
@@ -349,7 +348,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     if self.maximumPossibleFilenameTuples:
         for BBB,filename in self.maximumPossibleFilenameTuples:
             if optionsDict['bookList'] is None or optionsDict['bookList']=='ALL' or BBB in optionsDict['bookList']:
-                #print( _("findReplaceText: will search book {}").format( BBB ) )
+                #vPrint( 'Quiet', debuggingThisModule, _("findReplaceText: will search book {}").format( BBB ) )
                 bookFilepath = os.path.join( self.sourceFolder, filename )
                 with open( bookFilepath, 'rt', encoding=encoding ) as bookFile:
                     bookText = bookFile.read()
@@ -365,11 +364,11 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                         regexFoundText = bookText[ix:ixAfter]
                         try: regexReplacementText = compiledFindText.sub( ourReplaceText, regexFoundText, count=1 )
                         except re.error as err:
-                            print( "Search/Replace regex error: {}".format( err ) )
+                            vPrint( 'Quiet', debuggingThisModule, "Search/Replace regex error: {}".format( err ) )
                             resultDict['hadRegexError'] = True
                             stopFlag = True; break
-                        #print( "Found regex {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
-                        #print( "  Found text was {!r}, replacement will be {!r}".format( regexFoundText, regexReplacementText ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "Found regex {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Found text was {!r}, replacement will be {!r}".format( regexFoundText, regexReplacementText ) )
                         resultDict['numFinds'] += 1
                         if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
 
@@ -377,24 +376,24 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                             contextBefore = bookText[max(0,ix-optionsDict['contextLength']):ix]
                             contextAfter = bookText[ixAfter:ixAfter+optionsDict['contextLength']]
                         else: contextBefore = contextAfter = None
-                        #print( "  After  {!r}".format( contextBefore ) )
-                        #print( "  Before {!r}".format( contextAfter ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  After  {!r}".format( contextBefore ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Before {!r}".format( contextAfter ) )
 
                         result = None
                         if not replaceAllFlag:
                             ref = BBB
                             willBeText = contextBefore + regexReplacementText + contextAfter
                             result = confirmCallback( ref, contextBefore, regexFoundText, contextAfter, willBeText, resultDict['numReplaces']>0 )
-                            #print( "findReplaceText got", result )
+                            #vPrint( 'Quiet', debuggingThisModule, "findReplaceText got", result )
                             assert result in 'YNASU'
                             if result == 'A': replaceAllFlag = True
                             elif result == 'S': stopFlag = True; break
                             elif result == 'U': undoFlag = True; break
                         if replaceAllFlag or result == 'Y':
-                            #print( "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
                             bookText = bookText[:ix] + regexReplacementText + bookText[ixAfter:]
                             ix += len( regexReplacementText ) # Start searching after the replacement
-                            #print( "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
                             resultDict['numReplaces'] += 1
                             if BBB not in resultDict['replacedBookList']: resultDict['replacedBookList'].append( BBB )
                             filesToSave[BBB] = (bookFilepath,bookText)
@@ -404,14 +403,14 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                     while True:
                         ix = bookText.find( ourFindText, ix )
                         if ix == -1: break # none / no more found
-                        #print( "Found {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "Found {!r} at {:,} in {}".format( ourFindText, ix, BBB ) )
                         resultDict['numFinds'] += 1
                         if BBB not in resultDict['foundBookList']: resultDict['foundBookList'].append( BBB )
 
                         ixAfter = ix + searchLen
                         if optionsDict['wordMode'] == 'Whole':
-                            #print( "BF", repr(bookText[ix-1]) )
-                            #print( "AF", repr(bookText[ixAfter]) )
+                            #vPrint( 'Quiet', debuggingThisModule, "BF", repr(bookText[ix-1]) )
+                            #vPrint( 'Quiet', debuggingThisModule, "AF", repr(bookText[ixAfter]) )
                             if ix>0 and bookText[ix-1].isalpha(): ix+=1; continue
                             if ixAfter<len(bookText) and bookText[ixAfter].isalpha(): ix+=1; continue
                         elif optionsDict['wordMode'] == 'Begins':
@@ -425,24 +424,24 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                             contextBefore = bookText[max(0,ix-optionsDict['contextLength']):ix]
                             contextAfter = bookText[ixAfter:ixAfter+optionsDict['contextLength']]
                         else: contextBefore = contextAfter = None
-                        #print( "  After  {!r}".format( contextBefore ) )
-                        #print( "  Before {!r}".format( contextAfter ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  After  {!r}".format( contextBefore ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "  Before {!r}".format( contextAfter ) )
 
                         result = None
                         if not replaceAllFlag:
                             ref = BBB
                             willBeText = contextBefore + ourReplaceText + contextAfter
                             result = confirmCallback( ref, contextBefore, ourFindText, contextAfter, willBeText, resultDict['numReplaces']>0 )
-                            #print( "findReplaceText got", result )
+                            #vPrint( 'Quiet', debuggingThisModule, "findReplaceText got", result )
                             assert result in 'YNASU'
                             if result == 'A': replaceAllFlag = True
                             elif result == 'S': stopFlag = True; break
                             elif result == 'U': undoFlag = True; break
                         if replaceAllFlag or result == 'Y':
-                            #print( "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "  ix={:,}, ixAfter={:,}, diffLen={}".format( ix, ixAfter, diffLen ) )
                             bookText = bookText[:ix] + ourReplaceText + bookText[ixAfter:]
                             ix += replaceLen # Start searching after the replacement
-                            #print( "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "  ix={:,}, ixAfter={:,}, now={!r}".format( ix, ixAfter, bookText ) )
                             resultDict['numReplaces'] += 1
                             if BBB not in resultDict['replacedBookList']: resultDict['replacedBookList'].append( BBB )
                             filesToSave[BBB] = (bookFilepath,bookText)
@@ -450,15 +449,15 @@ def findReplaceText( self, optionsDict, confirmCallback ):
 
             if stopFlag:
                 if BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "Search/Replace was aborted in {} after {} replaces.".format( BBB, resultDict['numReplaces'] ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted in {} after {} replaces.".format( BBB, resultDict['numReplaces'] ) )
                 resultDict['aborted'] = True
                 break
             if undoFlag:
                 if resultDict['numReplaces']>0:
                     if BibleOrgSysGlobals.verbosityLevel > 2:
-                        print( "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
+                        vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
                 elif BibleOrgSysGlobals.verbosityLevel > 2:
-                    print( "Search/Replace was aborted (by undo) in {}.".format( BBB ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted (by undo) in {}.".format( BBB ) )
                 filesToSave = {}
                 resultDict['replacedBookList'] = []
                 resultDict['numReplaces'] = 0
@@ -473,14 +472,14 @@ def findReplaceText( self, optionsDict, confirmCallback ):
             vPrint( 'Info', debuggingThisModule, "Making backup copy of {} file: {}…".format( BBB, filepath ) )
             BibleOrgSysGlobals.backupAnyExistingFile( filepath, numBackups=5 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
+            vPrint( 'Quiet', debuggingThisModule, "Writing {:,} bytes for {} to {}…".format( len(fileText), BBB, filepath ) )
         elif BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "Saving {} with {} encoding".format( filepath, encoding ) )
+            vPrint( 'Quiet', debuggingThisModule, "Saving {} with {} encoding".format( filepath, encoding ) )
         with open( filepath, 'wt', encoding=encoding, newline='\r\n' ) as bookFile:
             bookFile.write( fileText )
         self.bookNeedsReloading[BBB] = True
 
-    #print( _("findReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
+    #vPrint( 'Quiet', debuggingThisModule, _("findReplaceText: returning {}/{}  {}/{}/{} books  {}").format( resultDict['numReplaces'], resultDict['numFinds'], len(resultDict['replacedBookList']), len(resultDict['foundBookList']), len(resultDict['searchedBookList']), optionsDict ) )
     return optionsDict, resultDict
 # end of findReplaceText
 
@@ -498,7 +497,7 @@ class USFMBible( Bible ):
         Note that sourceFolder can be None if we don't know that yet.
         """
         if debuggingThisModule:
-            print( f"USFMBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+            vPrint( 'Quiet', debuggingThisModule, f"USFMBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -517,14 +516,14 @@ class USFMBible( Bible ):
         Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( _("preload() from {}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
             assert not self.preloadDone
             assert self.sourceFolder is not None
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
-            #print( repr(something) )
+            #vPrint( 'Quiet', debuggingThisModule, repr(something) )
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
@@ -544,14 +543,14 @@ class USFMBible( Bible ):
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
         if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
-            print( "USFMFilenamesObject", self.USFMFilenamesObject )
+            vPrint( 'Quiet', debuggingThisModule, "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         #if self.ssfFilepath is None: # it might have been loaded first
             ## Attempt to load the SSF file
             ##self.suppliedMetadata, self.settingsDict = {}, {}
             #ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-            ##print( "ssfFilepathList", ssfFilepathList )
+            ##vPrint( 'Quiet', debuggingThisModule, "ssfFilepathList", ssfFilepathList )
             #if len(ssfFilepathList) > 1:
                 #logging.error( _("preload: Found multiple possible SSF files -- using first one: {}").format( ssfFilepathList ) )
             #if len(ssfFilepathList) >= 1: # Seems we found the right one
@@ -581,12 +580,12 @@ class USFMBible( Bible ):
         NOTE: You should ensure that preload() has been called first.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
+            vPrint( 'Quiet', debuggingThisModule, "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
@@ -594,7 +593,7 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         try:
             if filename is None and BBB in self.possibleFilenameDict:
                 filename = self.possibleFilenameDict[BBB]
@@ -612,7 +611,7 @@ class USFMBible( Bible ):
     # end of USFMBible.loadBook
 
 
-    def _loadBookMP( self, BBB_Filename_duple ):
+    def _loadBookMP( self, BBB_Filename_duple ) -> USFMBibleBook:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -621,11 +620,11 @@ class USFMBible( Bible ):
 
         Returns the book info.
         """
-        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB_Filename_duple ) )
+        vPrint( 'Verbose', debuggingThisModule, f"loadBookMP( {BBB_Filename_duple} )…" )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: print( "  {} is already loaded -- returning".format( BBB ) )
+            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return self.books[BBB] # Already loaded
         #if BBB in self.triedLoadingBook:
             #logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
@@ -633,11 +632,11 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            print( '  ' + _("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, '  ' + _("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("    Finishing loading USFM book {}.").format( BBB ) )
         return UBB
     # end of USFMBible.loadBookMP
 
@@ -656,8 +655,8 @@ class USFMBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( _("Loading {} {} books using {} processes…").format( len(self.maximumPossibleFilenameTuples), 'USFM', BibleOrgSysGlobals.maxProcesses ) )
-                    print( _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} USFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -668,12 +667,12 @@ class USFMBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #print( _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #vPrint( 'Quiet', debuggingThisModule, _("  USFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     #loadedBook = self.loadBook( BBB, filename ) # also saves it
                     self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( "USFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #print( self.getBookList() )
+        #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
         self.doPostLoadProcessing()
     # end of USFMBible.loadBooks
 
@@ -683,10 +682,12 @@ class USFMBible( Bible ):
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
+    import random
+
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -714,9 +715,9 @@ def demo() -> None:
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #print( result3.books['GEN']._processedLines[0:40] )
-                    UsfmBErrors = result3.getErrors()
-                    # print( UBErrors )
+                    #vPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    UsfmBErrors = result3.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -724,7 +725,7 @@ def demo() -> None:
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     if 1: # Load and process some of our test versions
-        for j,(name, encoding, testFolder) in enumerate( (
+        name, encoding, testFolder = random.choice( (
                         ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/' ) ),
                         ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/' ) ),
                         #('ULT', 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
@@ -737,60 +738,60 @@ def demo() -> None:
                         #("UEP", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/') ),
                         #("Exported2", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/') ),
                         #("Exported3", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/') ),
-                        ) ):
-            if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', debuggingThisModule, "\nUSFM B{}/".format( j+1 ) )
-                UsfmB = USFMBible( testFolder, name, encoding=encoding )
-                UsfmB.abbreviation = name
-                if name in ('ULT','UST'): UsfmB.uWaligned = True
-                UsfmB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 1:
-                    print( "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
-                    print( "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
-                    print( "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
-                    print( "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, UsfmB )
-                UsfmB.analyseUWalignments()
-                if BibleOrgSysGlobals.strictCheckingFlag:
-                    UsfmB.check()
-                    #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    UsfmBErrors = UsfmB.getErrors()
-                    # print( UBErrors )
-                if BibleOrgSysGlobals.commandLineArguments.export:
-                    UsfmB.pickle()
-                    ##UsfmB.toDrupalBible()
-                    UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
-                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-                if 0:
-                    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                        ) )
+        if os.access( testFolder, os.R_OK ):
+            vPrint( 'Quiet', debuggingThisModule, "\nUSFM B/" )
+            UsfmB = USFMBible( testFolder, name, encoding=encoding )
+            UsfmB.abbreviation = name
+            if name in ('ULT','UST'): UsfmB.uWaligned = True
+            UsfmB.load()
+            if BibleOrgSysGlobals.verbosityLevel > 1:
+                vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+            vPrint( 'Quiet', debuggingThisModule, UsfmB )
+            UsfmB.analyseUWalignments()
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                UsfmB.check()
+                #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                UsfmBErrors = UsfmB.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+            if BibleOrgSysGlobals.commandLineArguments.export:
+                UsfmB.pickle()
+                ##UsfmB.toDrupalBible()
+                UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
+            if 0:
+                from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+                from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, "Displaying text from some given references…")
+                for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
+                    svk = SimpleVerseKey( BBB, C, V )
+                    shortText = svk.getShortText()
+                    verseDataList = UsfmB.getVerseDataList( svk )
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        print("Displaying text from some given references…")
-                    for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
-                        svk = SimpleVerseKey( BBB, C, V )
-                        shortText = svk.getShortText()
-                        verseDataList = UsfmB.getVerseDataList( svk )
+                        vPrint( 'Quiet', debuggingThisModule, "\n{}\n{}".format( shortText, verseDataList ) )
+                    if verseDataList is None: continue
+                    for verseDataEntry in verseDataList:
+                        # This loop is used for several types of data
+                        assert isinstance( verseDataEntry, InternalBibleEntry )
+                        marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                        adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                        fullText = verseDataEntry.getFullText()
                         if BibleOrgSysGlobals.verbosityLevel > 0:
-                            print( "\n{}\n{}".format( shortText, verseDataList ) )
-                        if verseDataList is None: continue
-                        for verseDataEntry in verseDataList:
-                            # This loop is used for several types of data
-                            assert isinstance( verseDataEntry, InternalBibleEntry )
-                            marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                            adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
-                            fullText = verseDataEntry.getFullText()
-                            if BibleOrgSysGlobals.verbosityLevel > 0:
-                                print( "marker={} cleanText={!r}{}".format( marker, cleanText,
-                                                        " extras={}".format( extras ) if extras else '' ) )
-                                if adjustedText and adjustedText!=cleanText:
-                                    print( ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
-                                if fullText and fullText!=cleanText:
-                                    print( ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
-                                if originalText and originalText!=cleanText:
-                                    print( ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
-                print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+                            vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                                    " extras={}".format( extras ) if extras else '' ) )
+                            if adjustedText and adjustedText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                            if fullText and fullText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                            if originalText and originalText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
     if 0: # Test a whole folder full of folders of USFM Bibles
@@ -820,7 +821,7 @@ def demo() -> None:
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
                         BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
-                        #print( USFM_BBB, BBB, name )
+                        #vPrint( 'Quiet', debuggingThisModule, USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
         # end of findInfo
@@ -830,7 +831,7 @@ def demo() -> None:
         if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
             for something in sorted( os.listdir( testBaseFolder ) ):
                 somepath = os.path.join( testBaseFolder, something )
-                if os.path.isfile( somepath ): print( "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
+                if os.path.isfile( somepath ): vPrint( 'Quiet', debuggingThisModule, "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
                 elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
                     #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
                     count += 1
@@ -846,16 +847,190 @@ def demo() -> None:
                         vPrint( 'Quiet', debuggingThisModule, UsfmB )
                         if BibleOrgSysGlobals.strictCheckingFlag:
                             UsfmB.check()
-                            UsfmBErrors = UsfmB.getErrors()
-                            #print( UsfmBErrors )
+                            UsfmBErrors = UsfmB.getCheckResults()
+                            #vPrint( 'Quiet', debuggingThisModule, UsfmBErrors )
                         if BibleOrgSysGlobals.commandLineArguments.export:
                             UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
-            if count: print( f"\n{count} total USFM (partial) Bibles processed." )
-            if totalBooks: print( f"{totalBooks} total books ({round(totalBooks/count)} average per folder)" )
+                    else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+            if count: vPrint( 'Quiet', debuggingThisModule, f"\n{count} total USFM (partial) Bibles processed." )
+            if totalBooks: vPrint( 'Quiet', debuggingThisModule, f"{totalBooks} total books ({round(totalBooks/count)} average per folder)" )
         elif BibleOrgSysGlobals.verbosityLevel > 0:
-            print( f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
-#end of demo
+            vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
+#end of USFMBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+        for j,testFolder in enumerate( (
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/' ),
+                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
+                            BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
+                            'MadeUpFolder/',
+                            ) ):
+            vPrint( 'Quiet', debuggingThisModule, "\nUSFM A{} testfolder is: {}".format( j+1, testFolder ) )
+            result1 = USFMBibleFileCheck( testFolder )
+            vPrint( 'Normal', debuggingThisModule, "USFM TestAa", result1 )
+            result2 = USFMBibleFileCheck( testFolder, autoLoad=True )
+            vPrint( 'Normal', debuggingThisModule, "USFM TestAb", result2 )
+            result3 = USFMBibleFileCheck( testFolder, autoLoadBooks=True )
+            vPrint( 'Normal', debuggingThisModule, "USFM TestAc", result3 )
+            if isinstance( result3, Bible ):
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    result3.check()
+                    #vPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    UsfmBErrors = result3.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    result3.pickle()
+                    ##result3.toDrupalBible()
+                    result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    if 1: # Load and process some of our test versions
+        for j,(name, encoding, testFolder) in enumerate( (
+                        ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/' ) ),
+                        ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/' ) ),
+                        #('ULT', 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
+                        #('UST', 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ust/en_ust/' ) ),
+                        #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/') ),
+                        #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/') ),
+                        #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/') ),
+                        #("USFM2", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/') ),
+                        #("USFM3", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/') ),
+                        #("UEP", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/') ),
+                        #("Exported2", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/') ),
+                        #("Exported3", 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/') ),
+                        ) ):
+            if os.access( testFolder, os.R_OK ):
+                vPrint( 'Quiet', debuggingThisModule, "\nUSFM B{}/".format( j+1 ) )
+                UsfmB = USFMBible( testFolder, name, encoding=encoding )
+                UsfmB.abbreviation = name
+                if name in ('ULT','UST'): UsfmB.uWaligned = True
+                UsfmB.load()
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, UsfmB )
+                UsfmB.analyseUWalignments()
+                if BibleOrgSysGlobals.strictCheckingFlag:
+                    UsfmB.check()
+                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    UsfmBErrors = UsfmB.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, UBErrors )
+                if BibleOrgSysGlobals.commandLineArguments.export:
+                    UsfmB.pickle()
+                    ##UsfmB.toDrupalBible()
+                    UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
+                if 0:
+                    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+                    from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        vPrint( 'Quiet', debuggingThisModule, "Displaying text from some given references…")
+                    for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
+                        svk = SimpleVerseKey( BBB, C, V )
+                        shortText = svk.getShortText()
+                        verseDataList = UsfmB.getVerseDataList( svk )
+                        if BibleOrgSysGlobals.verbosityLevel > 0:
+                            vPrint( 'Quiet', debuggingThisModule, "\n{}\n{}".format( shortText, verseDataList ) )
+                        if verseDataList is None: continue
+                        for verseDataEntry in verseDataList:
+                            # This loop is used for several types of data
+                            assert isinstance( verseDataEntry, InternalBibleEntry )
+                            marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                            adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                            fullText = verseDataEntry.getFullText()
+                            if BibleOrgSysGlobals.verbosityLevel > 0:
+                                vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                                        " extras={}".format( extras ) if extras else '' ) )
+                                if adjustedText and adjustedText!=cleanText:
+                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                                if fullText and fullText!=cleanText:
+                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                                if originalText and originalText!=cleanText:
+                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
+            elif BibleOrgSysGlobals.verbosityLevel > 0:
+                vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+
+
+    if 0: # Test a whole folder full of folders of USFM Bibles
+        testBaseFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
+
+        def findInfo( somepath ):
+            """ Find out info about the project from the included copyright.htm file """
+            cFilepath = os.path.join( somepath, "copyright.htm" )
+            if not os.path.exists( cFilepath ): return
+            with open( cFilepath ) as myFile: # Automatically closes the file when done
+                lastLine, lineCount = None, 0
+                title, nameDict = None, {}
+                for line in myFile:
+                    lineCount += 1
+                    if lineCount==1:
+                        if line[0]==chr(65279): #U+FEFF
+                            logging.info( "USFMBible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
+                            line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
+                        elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
+                            logging.info( "USFMBible.findInfo2: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
+                            line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
+                    if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if not line: continue # Just discard blank lines
+                    lastLine = line
+                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                    if line.startswith('<option value="'):
+                        adjLine = line.replace('<option value="','').replace('</option>','')
+                        USFM_BBB, name = adjLine[:3], adjLine[11:]
+                        BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFM_BBB )
+                        #vPrint( 'Quiet', debuggingThisModule, USFM_BBB, BBB, name )
+                        nameDict[BBB] = name
+            return title, nameDict
+        # end of findInfo
+
+
+        count = totalBooks = 0
+        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testBaseFolder ) ):
+                somepath = os.path.join( testBaseFolder, something )
+                if os.path.isfile( somepath ): vPrint( 'Quiet', debuggingThisModule, "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
+                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                    #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
+                    count += 1
+                    title = None
+                    findInfoResult = findInfo( somepath )
+                    if findInfoResult: title, bookNameDict = findInfoResult
+                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                    name, encoding, testFolder = title, 'utf-8', somepath
+                    if os.access( testFolder, os.R_OK ):
+                        vPrint( 'Quiet', debuggingThisModule, "\nUSFM C{}/".format( count ) )
+                        UsfmB = USFMBible( testFolder, name, encoding=encoding )
+                        UsfmB.load()
+                        vPrint( 'Quiet', debuggingThisModule, UsfmB )
+                        if BibleOrgSysGlobals.strictCheckingFlag:
+                            UsfmB.check()
+                            UsfmBErrors = UsfmB.getCheckResults()
+                            #vPrint( 'Quiet', debuggingThisModule, UsfmBErrors )
+                        if BibleOrgSysGlobals.commandLineArguments.export:
+                            UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                    else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+            if count: vPrint( 'Quiet', debuggingThisModule, f"\n{count} total USFM (partial) Bibles processed." )
+            if totalBooks: vPrint( 'Quiet', debuggingThisModule, f"{totalBooks} total books ({round(totalBooks/count)} average per folder)" )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
+# end of USFMBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -864,7 +1039,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFMBible.py

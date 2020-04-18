@@ -5,7 +5,7 @@
 #
 # Module handling DrupalBible Bible files
 #
-# Copyright (C) 2013-2019 Robert Hunt
+# Copyright (C) 2013-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -71,19 +71,9 @@ Limitations:
     <…> were converted to \\it …\\it* (Psalms and signatures to Paul's letters.)
     Need to do Bible books codes properly -- current implementation is just a hack
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-04' # by RJH
-SHORT_PROGRAM_NAME = "DrupalBible"
-PROGRAM_NAME = "DrupalBible Bible format handler"
-PROGRAM_VERSION = '0.13'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os
+import logging
+import os
 import multiprocessing
 
 if __name__ == '__main__':
@@ -94,6 +84,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "DrupalBible"
+PROGRAM_NAME = "DrupalBible Bible format handler"
+PROGRAM_VERSION = '0.13'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
@@ -188,7 +187,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                         vPrint( 'Verbose', debuggingThisModule, "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
-                #print( "BFC_here", repr(tryFolderName), repr(thisFilename) )
+                #vPrint( 'Quiet', debuggingThisModule, "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
@@ -258,7 +257,7 @@ class DrupalBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
 
-                #print ( 'DB file line is "' + line + '"' )
+                #vPrint( 'Quiet', debuggingThisModule, 'DB file line is "' + line + '"' )
                 if line[0] == '#': continue # Just discard comment lines
                 lastLine = line
                 if lineCount == 1:
@@ -286,7 +285,7 @@ class DrupalBible( Bible ):
                     bits = line.split( '|' )
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
-                    if lineMark: print( repr(lineMark) ); halt
+                    if lineMark: vPrint( 'Quiet', debuggingThisModule, repr(lineMark) ); halt
                     BBBresult = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                     BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
@@ -334,7 +333,7 @@ def testDB( TUBfilename ):
         if t=='NT' and len(db)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(db)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = db.getVerseText( svk )
@@ -344,9 +343,67 @@ def testDB( TUBfilename ):
 # end of testDB
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = DrupalBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "DrupalBible TestA1", result1 )
+        result2 = DrupalBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "DrupalBible TestA2", result2 )
+        result3 = DrupalBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "DrupalBible TestA3", result3 )
+        #testSubfolder = os.path.join( testFolder, 'kjv/' )
+        #result3 = DrupalBibleFileCheck( testSubfolder )
+        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB1", result3 )
+        #result4 = DrupalBibleFileCheck( testSubfolder, autoLoad=True )
+        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB2", result4 )
+
+
+    if 1: # specified modules
+        single = ( 'kjv', )
+        good = ( 'kjv', )
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
+            vPrint( 'Normal', debuggingThisModule, "\nDrupalBible C{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testDB( testFilename )
+            break
+
+
+    if 1: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something ); break
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testDB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testDB( someFolder )
+# end of DrupalBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -399,8 +456,7 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testDB( someFolder )
-# end of demo
-
+# end of DrupalBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -410,7 +466,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of DrupalBible.py

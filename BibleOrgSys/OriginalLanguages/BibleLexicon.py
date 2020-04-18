@@ -67,7 +67,7 @@ class BibleLexiconIndex:
         Loads (and crudely validates the XML file) into an element tree.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         self.hIndex = None
         if preload: self.load()
@@ -179,7 +179,7 @@ class BibleLexicon:
         Does not actually cause the XML to be loaded (very slow).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         fnfCount = 0
         try: self.hLexicon = HebrewLexicon.HebrewLexicon( self.HebrewXMLFolder, preload ) # Create the object
@@ -229,7 +229,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getStrongsEntryData( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getStrongsEntryData( {} )").format( repr(key) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryData( key )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryData( key )
     # end of BibleLexicon.getStrongsEntryData
@@ -244,7 +244,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryField( key, fieldName )
     # end of BibleLexicon.getStrongsEntryField
@@ -269,7 +269,7 @@ class BibleLexicon:
 
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getStrongsEntryHTML( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getStrongsEntryHTML( {} )").format( repr(key) ) )
         if key.startswith( 'H' ): return self.hLexicon.getStrongsEntryHTML( key )
         if key.startswith( 'G' ): return self.gLexicon.getStrongsEntryHTML( key )
     # end of BibleLexicon.getStrongsEntryHTML
@@ -285,7 +285,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryData( key )
     # end of BibleLexicon.getBrDrBrEntryData
 
@@ -299,7 +299,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         return self.hLexicon.getBrDrBrEntryField( key, fieldName )
     # end of BibleLexicon.getBrDrBrEntryField
 
@@ -312,7 +312,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryHTML( key )
     # end of BibleLexicon.getBrDrBrEntryHTML
 
@@ -327,7 +327,7 @@ class BibleLexicon:
         Returns None if the key is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryData( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryData( key )
@@ -344,7 +344,7 @@ class BibleLexicon:
         Returns None if the key or fieldName is not found.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryField( key, fieldName )
@@ -371,7 +371,7 @@ class BibleLexicon:
 
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( _("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
+            vPrint( 'Quiet', debuggingThisModule, _("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryHTML( key )
         if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryHTML( key )
@@ -381,7 +381,7 @@ class BibleLexicon:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -394,34 +394,41 @@ def demo() -> None:
     if 0: # demonstrate the Bible Lexicon Index class
         vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Bible Lexicon Index class…" )
         blix = BibleLexiconIndex( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
-        print( blix ) # Just print a summary
-        print()
-        print( "Code for 2 is", blix.getLexiconCodeFromStrongsNumber( '2' ) )
-        print( "Code for H8674 is", blix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
-        print( "Code for H8675 is", blix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
-        print( "Codes for aac are", blix.getStrongsNumberFromLexiconCode('aac'), blix.getBrDrBrCodeFromLexiconCode('aac'), blix.getTWOTCodeFromLexiconCode('aac') )
-        print( "Codes for nyy are", blix.getStrongsNumberFromLexiconCode('nyy'), blix.getBrDrBrCodeFromLexiconCode('nyy'), blix.getTWOTCodeFromLexiconCode('nyy') )
-        print( "Codes for pdc are", blix.getStrongsNumberFromLexiconCode('pdc'), blix.getBrDrBrCodeFromLexiconCode('pdc'), blix.getTWOTCodeFromLexiconCode('pdc') )
-        print( "Codes for pdd are", blix.getStrongsNumberFromLexiconCode('pdd'), blix.getBrDrBrCodeFromLexiconCode('pdd'), blix.getTWOTCodeFromLexiconCode('pdd') )
+        vPrint( 'Quiet', debuggingThisModule, blix ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', debuggingThisModule, "Code for 2 is", blix.getLexiconCodeFromStrongsNumber( '2' ) )
+        vPrint( 'Quiet', debuggingThisModule, "Code for H8674 is", blix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
+        vPrint( 'Quiet', debuggingThisModule, "Code for H8675 is", blix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
+        vPrint( 'Quiet', debuggingThisModule, "Codes for aac are", blix.getStrongsNumberFromLexiconCode('aac'), blix.getBrDrBrCodeFromLexiconCode('aac'), blix.getTWOTCodeFromLexiconCode('aac') )
+        vPrint( 'Quiet', debuggingThisModule, "Codes for nyy are", blix.getStrongsNumberFromLexiconCode('nyy'), blix.getBrDrBrCodeFromLexiconCode('nyy'), blix.getTWOTCodeFromLexiconCode('nyy') )
+        vPrint( 'Quiet', debuggingThisModule, "Codes for pdc are", blix.getStrongsNumberFromLexiconCode('pdc'), blix.getBrDrBrCodeFromLexiconCode('pdc'), blix.getTWOTCodeFromLexiconCode('pdc') )
+        vPrint( 'Quiet', debuggingThisModule, "Codes for pdd are", blix.getStrongsNumberFromLexiconCode('pdd'), blix.getBrDrBrCodeFromLexiconCode('pdd'), blix.getTWOTCodeFromLexiconCode('pdd') )
 
 
     if 1: # demonstrate the Bible Lexicon class
         vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Bible Lexicon class…" )
         bl = BibleLexicon( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
-        print( bl ) # Just print a summary
-        print()
+        vPrint( 'Quiet', debuggingThisModule, bl ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',
                            'G1','G123','G165','G1732','G1979','G2011','G5624','G5625',): # Last ones of each are invalid
-            print( '\n' + strongsKey )
-            print( " Data (all):", bl.getStrongsEntryData( strongsKey ) )
-            print( " 'Usage' field:", bl.getStrongsEntryField( strongsKey, 'usage' ) )
-            print( " HTML entry:", bl.getStrongsEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
+            vPrint( 'Quiet', debuggingThisModule, " Data (all):", bl.getStrongsEntryData( strongsKey ) )
+            vPrint( 'Quiet', debuggingThisModule, " 'Usage' field:", bl.getStrongsEntryField( strongsKey, 'usage' ) )
+            vPrint( 'Quiet', debuggingThisModule, " HTML entry:", bl.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            print( '\n' + BrDrBrKey )
-            print( " Data (all):", bl.getBrDrBrEntryData( BrDrBrKey ) )
-            print( " 'Status' field:", bl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            print( " HTML entry:", bl.getBrDrBrEntryHTML( BrDrBrKey ) )
-# end of demo
+            vPrint( 'Quiet', debuggingThisModule, '\n' + BrDrBrKey )
+            vPrint( 'Quiet', debuggingThisModule, " Data (all):", bl.getBrDrBrEntryData( BrDrBrKey ) )
+            vPrint( 'Quiet', debuggingThisModule, " 'Status' field:", bl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            vPrint( 'Quiet', debuggingThisModule, " HTML entry:", bl.getBrDrBrEntryHTML( BrDrBrKey ) )
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -431,7 +438,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of BibleLexicon.py

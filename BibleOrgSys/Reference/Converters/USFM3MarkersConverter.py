@@ -37,7 +37,8 @@ programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-import logging, os.path
+import logging
+import os.path
 from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
@@ -95,7 +96,7 @@ class USFM3MarkersConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATA_FILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
                 XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
 
@@ -272,7 +273,7 @@ class USFM3MarkersConverter:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
-            #print("Processing", nameEnglish )
+            #vPrint( 'Quiet', debuggingThisModule, "Processing", nameEnglish )
             marker = element.find('marker').text
             if marker.lower() != marker:
                 logging.error( _("Marker {!r} should be lower case").format( marker ) )
@@ -332,7 +333,7 @@ class USFM3MarkersConverter:
                     if marker.endswith('-s') or marker.endswith('-e'):
                         # Numberical suffix can't just be appended to the end of these
                         numberedMarker = f'{marker[:-2]}{suffix}{marker[-2:]}'
-                        # print( f"Marker '{marker}' led to '{numberedMarker}'" )
+                        # vPrint( 'Quiet', debuggingThisModule, f"Marker '{marker}' led to '{numberedMarker}'" )
                     else: # not a milestone start/end marker
                         numberedMarker = marker + str(suffix)
                     backConversionDict[numberedMarker] = marker
@@ -352,12 +353,12 @@ class USFM3MarkersConverter:
                 else: numberedInternalMarkersList.append( marker )
                 if deprecatedFlag: deprecatedMarkersList.append( marker )
 
-        #print( conversionDict ); print( backConversionDict )
-        #print( "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
-        #print( "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
-        #print( "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
-        #print( "internalMarkersList", len(internalMarkersList), internalMarkersList )
-        #print( "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
+        #vPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
+        #vPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
+        #vPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
+        #vPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
+        #vPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        #vPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
@@ -581,7 +582,7 @@ class USFM3MarkersConverter:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -597,8 +598,15 @@ def demo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         umc = USFM3MarkersConverter().loadAndValidate() # Load the XML
-        print( umc ) # Just print a summary
-# end of demo
+        vPrint( 'Quiet', debuggingThisModule, umc ) # Just print a summary
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -608,7 +616,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of USFM3MarkersConverter.py

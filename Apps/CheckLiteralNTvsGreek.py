@@ -76,7 +76,7 @@ from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door4
 
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
 
@@ -93,8 +93,8 @@ def main():
     vPrint( 'Info', debuggingThisModule, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 2:
-        print()
-        print( door43CatalogResources, end='\n\n' )
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', debuggingThisModule, door43CatalogResources, end='\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
@@ -140,16 +140,23 @@ def main():
                 J2 = 'Jesus' in text2
                 if J1 and not J2:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
-                        print( f"                              {text2}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"                              {text2}" )
                     count1 += 1
                 if J2 and not J1:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
-                        print( f"                              {text1}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"                              {text1}" )
                     count2 += 1
     vPrint( 'Quiet', debuggingThisModule, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

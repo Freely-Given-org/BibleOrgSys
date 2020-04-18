@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2019 Robert Hunt
+# Copyright (C) 2014-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -68,19 +68,10 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
     $$ Ge 1:3
     And God rested.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-05-13' # by RJH
-SHORT_PROGRAM_NAME = "VPLBible"
-PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.38'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
-import logging, os, re
+import logging
+import os
+import re
 import multiprocessing
 
 if __name__ == '__main__':
@@ -92,6 +83,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+
+
+LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+SHORT_PROGRAM_NAME = "VPLBible"
+PROGRAM_NAME = "VPL Bible format handler"
+PROGRAM_VERSION = '0.38'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 BOS66 = BOS81 = BOSx = None
@@ -154,7 +154,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
-                #print( '1', repr(firstLine) )
+                #vPrint( 'Quiet', debuggingThisModule, '1', repr(firstLine) )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                     logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
@@ -174,7 +174,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                             #if match: vplType = 4
                 if match:
                     if BibleOrgSysGlobals.debugFlag:
-                        print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                        vPrint( 'Quiet', debuggingThisModule, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                 else:
                     vPrint( 'Verbose', debuggingThisModule, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
@@ -187,7 +187,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -217,7 +217,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
-                    #print( '2', repr(firstLine) )
+                    #vPrint( 'Quiet', debuggingThisModule, '2', repr(firstLine) )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                         logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
@@ -237,7 +237,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                                 #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                            vPrint( 'Quiet', debuggingThisModule, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
                     else:
                         vPrint( 'Verbose', debuggingThisModule, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -326,14 +326,14 @@ class VPLBible( Bible ):
                                 #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
+                            vPrint( 'Quiet', debuggingThisModule, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
                     else:
                         vPrint( 'Verbose', debuggingThisModule, "VPLBible.load: (unexpected) first line was {!r} in {}".format( line, self.sourceFilepath ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         continue
-                    #print( 'vplType', vplType )
+                    #vPrint( 'Quiet', debuggingThisModule, 'vplType', vplType )
 
-                #print ( 'VPL file line is "' + line + '"' )
+                #vPrint( 'Quiet', debuggingThisModule, 'VPL file line is "' + line + '"' )
                 lastLine = line
 
                 # Process header stuff
@@ -405,16 +405,16 @@ class VPLBible( Bible ):
                 # Process the main segment
                 if vplType == 1:
                     bits = line.split( ' ', 2 )
-                    #print( self.givenName, BBB, bits )
+                    #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                     if len(bits) == 3 and ':' in bits[1]:
                         bookCodeText, CVString, vText = bits
                         chapterNumberString, verseNumberString = CVString.split( ':' )
-                        #print( "{} {} bc={!r} c={!r} v={!r} txt={!r}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, vText ) )
+                        #vPrint( 'Quiet', debuggingThisModule, "{} {} bc={!r} c={!r} v={!r} txt={!r}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, vText ) )
                         if chapterNumberString == '': chapterNumberString = '1' # Handle a bug in some single chapter books in VPL
-                    else: print( "Unexpected number of bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
+                    else: vPrint( 'Quiet', debuggingThisModule, "Unexpected number of bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
 
                     if not bookCodeText and not chapterNumberString and not verseNumberString:
-                        print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString ) )
+                        vPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString ) )
                         continue
                     if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCodeText) <= 4
                     if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -455,10 +455,10 @@ class VPLBible( Bible ):
                     vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
                         .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
                     if vText and vText[0]=='«':
-                        #print( "Oh!", BBB, chapterNumberString, verseNumberString, repr(vText) )
+                        #vPrint( 'Quiet', debuggingThisModule, "Oh!", BBB, chapterNumberString, verseNumberString, repr(vText) )
                         if BBB=='PSA' and verseNumberString=='1': # Psalm title
                             vBits = vText[1:].split( '»' )
-                            #print( "vBits", vBits )
+                            #vPrint( 'Quiet', debuggingThisModule, "vBits", vBits )
                             thisBook.addLine( 'd', vBits[0] ) # Psalm title
                             vText = vBits[1].lstrip()
 
@@ -479,9 +479,9 @@ class VPLBible( Bible ):
 
                 elif vplType in (2,3):
                     bits = line.split( '\t', 1 )
-                    #print( self.givenName, BBB, bits )
+                    #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                     bookNumberString, chapterNumberString, verseNumberString = bits[0][:2], bits[0][2:5], bits[0][5:]
-                    #print( bookNumberString, chapterNumberString, verseNumberString )
+                    #vPrint( 'Quiet', debuggingThisModule, bookNumberString, chapterNumberString, verseNumberString )
                     while len(chapterNumberString)>1 and chapterNumberString[0]=='0':
                         chapterNumberString = chapterNumberString[1:] # Remove leading zeroes
                     while len(verseNumberString)>1 and verseNumberString[0]=='0':
@@ -505,11 +505,11 @@ class VPLBible( Bible ):
                             #settingsDict[metadataName] = metadataContents
                             #metadataName = None
                         #pointer = line[3:]
-                        ##print( "pointer", repr(pointer) )
+                        ##vPrint( 'Quiet', debuggingThisModule, "pointer", repr(pointer) )
                         #if pointer and pointer[0]=='{' and pointer[-1]=='}':
                             #metadataName = pointer[1:-1]
                             #if metadataName:
-                                ##print( "metadataName", repr(metadataName) )
+                                ##vPrint( 'Quiet', debuggingThisModule, "metadataName", repr(metadataName) )
                                 #metadataContents = ''
                         #else: # let's assume it's a BCV reference
                             #pointer = pointer.replace( '1 K','1K' ).replace( '2 K','2K' ) \
@@ -530,17 +530,17 @@ class VPLBible( Bible ):
                                     #elif bookCodeText in ('Le',): BBB = 'LEV'
                                     #elif bookCodeText in ('La',): BBB = 'LAM'
                                     #else:
-                                        ##print( "4bookCodeText =", repr(bookCodeText) )
+                                        ##vPrint( 'Quiet', debuggingThisModule, "4bookCodeText =", repr(bookCodeText) )
                                         ##BBB = BOS.getBBBFromText( bookCodeText )  # Try to guess
                                         #BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                                         #if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                                         #if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                                        ##print( "4BBB =", repr(BBB) )
-                            #else: print( "Unexpected number of bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
+                                        ##vPrint( 'Quiet', debuggingThisModule, "4BBB =", repr(BBB) )
+                            #else: vPrint( 'Quiet', debuggingThisModule, "Unexpected number of bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
                         #continue # Just save the pointer information which refers to the text on the next line
                     #else: # it's not a $$ line
                         #text = line
-                        ##print( "text", repr(text) )
+                        ##vPrint( 'Quiet', debuggingThisModule, "text", repr(text) )
                         #if metadataName:
                             #metadataContents += ('\n' if metadataContents else '') + text
                             #continue
@@ -549,22 +549,22 @@ class VPLBible( Bible ):
                             ## Handle bits like (<scripref>Pr 2:7</scripref>)
                             #vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
                             #vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
-                            ##if '\\' in vText: print( 'VPL vText', repr(vText) )
+                            ##if '\\' in vText: vPrint( 'Quiet', debuggingThisModule, 'VPL vText', repr(vText) )
                             #if vplType == 4: # Forge for SwordSearcher
-                                ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                ##vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
                                 ## Convert {stuff} to footnotes
                                 #match = re.search( '\\{(.+?)\\}', vText )
                                 #while match:
                                     #footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
                                     #vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
-                                    ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    ##vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
                                     #match = re.search( '\\{(.+?)\\}', vText )
                                 ## Convert [stuff] to added fields
                                 #match = re.search( '\\[(.+?)\\]', vText )
                                 #while match:
                                     #addText = '\\add {}\\add*'.format( match.group(1) )
                                     #vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                                    ##print( BBB, chapterNumber, verseNumber, repr(vText) )
+                                    ##vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
                                     #match = re.search( '\\[(.+?)\\]', vText )
                                 #for badChar in '{}[]':
                                     #if badChar in vText:
@@ -622,7 +622,7 @@ class VPLBible( Bible ):
                             thisBook.addLine( 'p', '' )
                             vText = vText[1:].lstrip()
 
-                        #print( '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
+                        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
                         thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                         lastVText = vText
                         lastVerseNumber = verseNumber
@@ -635,7 +635,7 @@ class VPLBible( Bible ):
 
         # Clean up
         if settingsDict:
-            #print( "VPL settingsDict", settingsDict )
+            #vPrint( 'Quiet', debuggingThisModule, "VPL settingsDict", settingsDict )
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['VPL'] = settingsDict
             self.applySuppliedMetadata( 'VPL' ) # Copy some to self.settingsDict
@@ -657,9 +657,9 @@ def testVPL( VPLfolder ):
     vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #print( UsfmB.books['GEN']._processedLines[0:40] )
-        vBErrors = vb.getErrors()
-        # print( vBErrors )
+        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        vBErrors = vb.getCheckResults()
+        # vPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -672,7 +672,7 @@ def testVPL( VPLfolder ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
+        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
@@ -682,9 +682,77 @@ def testVPL( VPLfolder ):
 # end of testVPL
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
+    """
+    import random
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        testFolder  = random.choice( (
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest1/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
+                    ) )
+        result1 = VPLBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "\nVPL TestA1", result1 )
+
+        result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
+        if result2 is not None:
+            try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+            except FileNotFoundError: pass # it's not compulsory
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                result2.check()
+                #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                vBErrors = result2.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+            if BibleOrgSysGlobals.commandLineArguments.export:
+                ##result2.toDrupalBible()
+                result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+        result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
+        if result3 is not None:
+            try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+            except FileNotFoundError: pass # it's not compulsory
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                result3.check()
+                #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                vBErrors = result3.getCheckResults()
+                # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+            if BibleOrgSysGlobals.commandLineArguments.export:
+                ##result3.toDrupalBible()
+                result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
+
+    if 0: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testVPL, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                vPrint( 'Normal', debuggingThisModule, "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testVPL( someFolder )
+# end of VPLBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -704,9 +772,9 @@ def demo() -> None:
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result2.check()
-                    #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    vBErrors = result2.getErrors()
-                    # print( vBErrors )
+                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    vBErrors = result2.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -718,9 +786,9 @@ def demo() -> None:
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    vBErrors = result3.getErrors()
-                    # print( vBErrors )
+                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    vBErrors = result3.getCheckResults()
+                    # vPrint( 'Quiet', debuggingThisModule, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -746,8 +814,7 @@ def demo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testVPL( someFolder )
-# end of demo
-
+# end of VPLBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
@@ -757,7 +824,7 @@ if __name__ == '__main__':
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of VPLBible.py

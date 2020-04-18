@@ -55,7 +55,7 @@ class TextFile:
     """
     def __init__( self, filepath=None, folderPathname=None, filename=None, encoding=None, autoLoad=True ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding, autoLoad ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding, autoLoad ) )
 
         self.encoding = encoding if encoding else 'utf-8'
         if folderPathname and filename:
@@ -84,7 +84,7 @@ class TextFile:
 
     def replace( self, findString, replaceString, replaceCount=None ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
         assert self.fileText is not None
 
         self.originalText = self.fileText
@@ -96,7 +96,7 @@ class TextFile:
 
     def save( self ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( "TextFile.save()" )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.save()" )
         assert self.fileText is not None
 
         if self.changed:
@@ -108,7 +108,7 @@ class TextFile:
 
     def saveAs( self, filepath=None, folderPathname=None, filename=None, encoding=None ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>1:
-            print( "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding ) )
         assert self.fileText is not None
 
         encoding = encoding if encoding else 'utf-8'
@@ -139,7 +139,7 @@ class TextFile:
 
 
 
-def demo() -> None:
+def briefDemo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
@@ -147,17 +147,24 @@ def demo() -> None:
 
     #tf = TextFile( 'TextFile.py' ) # Read myself!
     #tf.replace( "TextFile", "ABRACADABRA" )
-    #print( tf.fileText )
+    #vPrint( 'Quiet', debuggingThisModule, tf.fileText )
     ##tf.saveAs( "/tmp/fred.py" )
 
     tf = TextFile( folderPathname=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!
     tf.replace( "TextFile", "ABRACADABRA" )
-    print( tf.fileText )
+    vPrint( 'Quiet', debuggingThisModule, tf.fileText )
     #tf.saveAs( "/tmp/fred.py" )
 
     #with TextFile( 'TextFile.py' ) as tf:
         #tf.replace( "TextFile", "ABRACADABRA-DOOOOOOOOOOO" )
-# end of demo
+# end of fullDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
@@ -167,7 +174,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    demo()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of TextFile.py
