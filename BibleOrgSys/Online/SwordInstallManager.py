@@ -5,7 +5,7 @@
 #
 # Module handling downloading and installing of Sword resources
 #
-# Copyright (C) 2016-2018 Robert Hunt
+# Copyright (C) 2016-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,27 +29,17 @@ This is the interface module used to give a unified interface to either:
     2/ Our own (still primitive module that reads Sword files directly
         called SwordModules.py
 
-Currently only uses FTP.
+TODO: Currently only uses FTP which is about to be obsoleted!!!!
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-12-22' # by RJH
-SHORT_PROGRAM_NAME = "SwordInstallManager"
-PROGRAM_NAME = "Sword download handler"
-PROGRAM_VERSION = '0.12'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 from typing import Dict, Any
 import os
 import logging
-import ftplib
 from pathlib import Path
+import ftplib
 #import urllib.request
-import tempfile, tarfile
+import tempfile
+import tarfile
 import shutil
 
 if __name__ == '__main__':
@@ -60,29 +50,33 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
-#from BibleOrgSys.Misc.singleton import singleton
-#from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
-#from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+SHORT_PROGRAM_NAME = "SwordInstallManager"
+PROGRAM_NAME = "Sword download handler"
+PROGRAM_VERSION = '0.12'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 DEFAULT_SWORD_DOWNLOAD_SOURCES = { # Put these in priority order -- highest priority first
-    ('CrossWire Main', ('FTP', 'ftp.CrossWire.org', '/pub/sword/raw/' )),
-    ('CrossWire Attic', ('FTP', 'ftp.CrossWire.org', '/pub/sword/atticraw/' )),
-    ('Crosswire Beta', ('FTP', 'ftp.CrossWire.org', '/pub/sword/betaraw/' )),
-    ('Crosswire Wycliffe', ('FTP', 'ftp.CrossWire.org', '/pub/sword/wyclifferaw/' )),
-    ('Crosswire Alt Versification', ('FTP', 'ftp.CrossWire.org', '/pub/sword/avraw/' )),
-    # Seems gone ('Crosswire Alt Vrsfctn Attic', ('FTP', 'ftp.CrossWire.org', '/pub/sword/avatticraw/' )),
-    ('Crosswire IBT', ('FTP', 'ftp.CrossWire.org', '/pub/modsword/raw/' )),
-    ('NET Bible', ('FTP', 'ftp.bible.org', '/sword/' )),
-    ('Xiphos', ('FTP', 'ftp.Xiphos.org', '' )),
-    ('eBible', ('FTP', 'ftp.eBible.org', '/pub/sword/' )),
-    ('eBible Beta', ('FTP', 'ftp.eBible.org', '/pub/swordbeta/' )),
-    }
+    'CrossWire Main': ('FTP', 'ftp.CrossWire.org', '/pub/sword/raw/' ),
+    'CrossWire Attic': ('FTP', 'ftp.CrossWire.org', '/pub/sword/atticraw/' ),
+    'Crosswire Beta': ('FTP', 'ftp.CrossWire.org', '/pub/sword/betaraw/' ),
+    'Crosswire Wycliffe': ('FTP', 'ftp.CrossWire.org', '/pub/sword/wyclifferaw/' ),
+    'Crosswire Alt Versification': ('FTP', 'ftp.CrossWire.org', '/pub/sword/avraw/' ),
+    # Seems gone 'Crosswire Alt Vrsfctn Attic': ('FTP', 'ftp.CrossWire.org', '/pub/sword/avatticraw/' ),
+    'Crosswire IBT': ('FTP', 'ftp.CrossWire.org', '/pub/modsword/raw/' ),
+    'NET Bible': ('FTP', 'ftp.bible.org', '/sword/' ),
+    'Xiphos': ('FTP', 'ftp.Xiphos.org', '' ),
+    'eBible': ('FTP', 'ftp.eBible.org', '/pub/sword/' ),
+    'eBible Beta': ('FTP', 'ftp.eBible.org', '/pub/swordbeta/' ),
+}
 
 DEFAULT_SWORD_INSTALL_FOLDERS = (
-    'usr/share/sword/',
-    os.path.join( os.path.expanduser('~'), '.sword/'),
+    Path( 'usr/share/sword/' ), # Traditional Linux global install folder
+    os.path.join( os.path.expanduser('~'), '.sword/'), # Traditional local install folder
     )
 
 DEFAULT_SWORD_CONF_ENCODING = 'iso-8859-1'
@@ -328,8 +322,11 @@ class SwordInstallManager():
         Places the information in self.availableModules
             (which may need to be cleared to prevent obsolete entries being held).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource( {} )").format( clearFirst ) )
+        vPrint( 'Verbose', debuggingThisModule, f"SwordInstallManager.refreshRemoteSource( clearFirst={clearFirst} )…" )
+        vPrint( 'Never', debuggingThisModule, f"self.downloadSources ({len(self.downloadSources)}) {self.downloadSources}" )
+        vPrint( 'Never', debuggingThisModule, f"self.currentRepoName='{self.currentRepoName}'" )
+        vPrint( 'Never', debuggingThisModule, f"self.userDisclaimerConfirmed={self.userDisclaimerConfirmed}" )
+        vPrint( 'Never', debuggingThisModule, f"self.downloadSources[self.currentRepoName] ({len(self.downloadSources[self.currentRepoName])}) {self.downloadSources[self.currentRepoName]}" )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -680,15 +677,103 @@ def briefDemo() -> None:
             swM.loadBooks( inMemoryFlag=True )
             vPrint( 'Verbose', debuggingThisModule, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
-
-# end of fullDemo
+# end of SwordInstallManager.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    from BibleOrgSys.Formats import SwordModules
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    im = SwordInstallManager()
+    if 0 and __name__ == '__main__': im.isUserDisclaimerConfirmed()
+    else: im.setUserDisclaimerConfirmed()
+
+    if 1: # try refreshing one repository
+        getRepoName = 'NET Bible'
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        im.currentRepoName = getRepoName
+        im.currentInstallFolderpath = im.currentTempFolder
+        im.refreshRemoteSource()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                for modName in im.availableModules:
+                    vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+
+        if 1: # try installing and testing a module from the above repository
+            getModuleName = 'NETfree'
+            vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
+            im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
+            if im.installModule( getModuleName ):
+                confData = im.availableModules[getModuleName]
+                if isinstance( confData, tuple ): confName = confData[1]
+                elif isinstance( confData, list ): confName = confData[0][1]
+                swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolderpath )
+                swMC.loadConf()
+                vPrint( 'Quiet', debuggingThisModule, swMC )
+
+                swM = SwordModules.SwordModule( swMC )
+                swM.loadBooks( inMemoryFlag=True )
+                vPrint( 'Verbose', debuggingThisModule, swM )
+                if not swM.SwordModuleConfiguration.locked: swM.test()
+
+
+    if 0: # try refreshing one repository
+        getRepoName = 'eBible'
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh {} repository…".format( getRepoName ) )
+        im.currentRepoName = getRepoName
+        im.currentInstallFolderpath = im.currentTempFolder
+        im.refreshRemoteSource()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                for modName in im.availableModules:
+                    vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+
+        if 1: # try installing and testing a module from the above repository
+            getModuleName = 'engWEBBE2015eb'
+            vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
+            im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
+            if im.installModule( getModuleName ):
+                swMC = SwordModules.SwordModuleConfiguration( getModuleName, im.currentInstallFolderpath )
+                swMC.loadConf()
+                vPrint( 'Quiet', debuggingThisModule, swMC )
+
+                swM = SwordModules.SwordModule( swMC )
+                swM.loadBooks( inMemoryFlag=True )
+                vPrint( 'Verbose', debuggingThisModule, swM )
+                if not swM.SwordModuleConfiguration.locked: swM.test()
+
+
+    if 0: # try refreshing all repositories
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Refresh all repositories…" )
+        im.refreshAllRemoteSources()
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            vPrint( 'Quiet', debuggingThisModule, "{} modules: {}".format( len(im.availableModules), im.availableModules.keys() ) )
+            for modName in im.availableModules:
+                vPrint( 'Quiet', debuggingThisModule, "  {}: {}".format( modName, im.availableModules[modName][0] ) )
+
+    if 1: # try installing another module
+        getModuleName = 'JPS'
+        vPrint( 'Quiet', debuggingThisModule, "\nDemo: Install {}…".format( getModuleName ) )
+        im.currentRepoName = 'CrossWire Main'
+        im.currentInstallFolderpath = 'TempSwInstMgrTestData/'
+        if im.installModule( getModuleName ): # See if we can read it
+            confData = im.availableModules[getModuleName]
+            if isinstance( confData, tuple ): confName = confData[1]
+            elif isinstance( confData, list ): confName = confData[0][1]
+            swMC = SwordModules.SwordModuleConfiguration( confName, im.currentInstallFolderpath )
+            swMC.loadConf()
+            vPrint( 'Quiet', debuggingThisModule, swMC )
+
+            swM = SwordModules.SwordModule( swMC )
+            swM.loadBooks( inMemoryFlag=True )
+            vPrint( 'Verbose', debuggingThisModule, swM )
+            if not swM.SwordModuleConfiguration.locked: swM.test()
+# end of SwordInstallManager.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
