@@ -33,18 +33,7 @@ Contains functions:
 
 Contains the singleton class: USFM2Markers
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
-SHORT_PROGRAM_NAME = "USFM2Markers"
-PROGRAM_NAME = "USFM2 Markers handler"
-PROGRAM_VERSION = '0.75'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 
@@ -57,6 +46,14 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+SHORT_PROGRAM_NAME = "USFM2Markers"
+PROGRAM_NAME = "USFM2 Markers handler"
+PROGRAM_VERSION = '0.75'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 # STATIC USFM TABLES
@@ -784,7 +781,7 @@ def briefDemo() -> None:
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
-                 '\\v 7 \\wj \+nd Jesus said \+add this \+em nested\+em*\+add*\+nd* \+bd 3 levels\+bd*.\wj* maybe.'
+                 '\\v 7 \\wj \+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
                  ):
         vPrint( 'Quiet', debuggingThisModule, "\nFor text {!r} got markers:".format( text ) )
         vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
@@ -808,14 +805,79 @@ def briefDemo() -> None:
     vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
     replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
     vPrint( 'Quiet', debuggingThisModule, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
-# end of fullDemo
+# end of USFM2Markers.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Demo the USFM2Markers object
+    um = USFM2Markers().loadData() # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, um ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, 'c' in um, 'p' in um, 'tr' in um )
+    vPrint( 'Quiet', debuggingThisModule, "\nMarkers can occur in", um.getOccursInList() )
+    pm = um.getNewlineMarkersList( 'Raw' )
+    vPrint( 'Quiet', debuggingThisModule, "\nRaw New line markers are", len(pm), pm )
+    pm = um.getNewlineMarkersList( 'Numbered' )
+    vPrint( 'Quiet', debuggingThisModule, "\nNumbered New line markers are", len(pm), pm )
+    for m in pm:
+        vPrint( 'Quiet', debuggingThisModule, m, um.markerOccursIn( m ) )
+    pm = um.getNewlineMarkersList( 'Combined' )
+    vPrint( 'Quiet', debuggingThisModule, "\nCombined New line markers are", len(pm), pm )
+    pm = um.getNewlineMarkersList( 'CanonicalText' )
+    vPrint( 'Quiet', debuggingThisModule, "\nCanonical text New line markers are", len(pm), pm )
+    im = um.getInternalMarkersList()
+    vPrint( 'Quiet', debuggingThisModule, "\nInternal (character) markers are", len(im), im )
+
+    cm = um.getCharacterMarkersList()
+    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (standard) are", len(cm), cm )
+    cm = um.getCharacterMarkersList( includeNestedMarkers=True )
+    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (incl. nested) are", len(cm), cm )
+
+    nm = um.getNoteMarkersList()
+    vPrint( 'Quiet', debuggingThisModule, "\nNote markers are", len(nm), nm )
+    for m in ('ab', 'h', 'toc1', 'toc4', 'toc5', 'q', 'q1', 'q2', 'q3', 'q4', 'q5', 'p', 'p1', 'P', 'f', 'f1', 'f*' ):
+        vPrint( 'Quiet', debuggingThisModule, _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
+        if um.isValidMarker(m):
+            vPrint( 'Quiet', debuggingThisModule, '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
+            vPrint( 'Info', debuggingThisModule, '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
+            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
+            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
+    for text in ('This is a bit of plain text',
+                 '\\v 1 This is some \\it italicised\\it* text.',
+                 '\\v 2 This \\it is\\it* \\bd more\\bd* complicated.\\f + \\fr 2 \\ft footnote.\\f*',
+                 '\\v 3 This \\add contains \\+it embedded\\+it* codes\\add* with everything closed separately.',
+                 '\\v 4 This \\add contains \\+it embedded codes\\+it*\\add* with an simultaneous closure of the two fields.',
+                 '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
+                 '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
+                 '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
+                 '\\v 7 \\wj \+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
+                 ):
+        vPrint( 'Quiet', debuggingThisModule, "\nFor text {!r} got markers:".format( text ) )
+        vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+
+
+    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
+    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
+
+    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
+    replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
+    vPrint( 'Quiet', debuggingThisModule, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
+# end of USFM2Markers.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

@@ -73,7 +73,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, Int
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-04-17' # by RJH
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -355,7 +355,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addPriorityError
 
 
-    def __makeErrorRef( self, C, V ):
+    def __makeErrorRef( self, C:str, V:str ) -> str:
         """
         Makes up an error reference string consisting of the BCV reference,
             and if verbose enough, preceded by the work name.
@@ -369,17 +369,19 @@ class InternalBibleBook:
     # end of InternalBibleBook.__makeErrorRef
 
 
-    def addLine( self, marker, text ):
+    def addLine( self, marker:str, text:str ) -> None:
         """
         Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function,
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
         forceDebugHere = False
-        if forceDebugHere or BibleOrgSysGlobals.debugFlag:
-            if forceDebugHere or debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.addLine( {!r}, {!r} ) for {} {!r} {}".format( marker, text, self.objectTypeString, self.workName, self.BBB ) )
+        vPrint( 'Never', forceDebugHere or debuggingThisModule,
+                f"InternalBibleBook.addLine( {marker}= '{text}' ) for {self.objectTypeString} '{self.workName} …" )
             #if len(self._rawLines ) > 200: halt
             #if 'xyz' in text: halt
+        assert marker and isinstance( marker, str )
+
         if text and ( '\n' in text or '\r' in text ):
             logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
             if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
@@ -430,7 +432,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addLine
 
 
-    def appendToLastLine( self, additionalText, expectedLastMarker=None ):
+    def appendToLastLine( self, additionalText:str, expectedLastMarker=None ) -> None:
         """
         Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
@@ -4866,6 +4868,7 @@ class InternalBibleBook:
             metadataFile.write( metadataLines )
     # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook
+
 
 
 def briefDemo() -> None:
