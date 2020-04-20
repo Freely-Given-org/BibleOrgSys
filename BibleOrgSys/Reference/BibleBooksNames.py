@@ -39,7 +39,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-04-20' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
 PROGRAM_VERSION = '0.41'
@@ -533,7 +533,7 @@ class BibleBooksNamesSystem:
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
 
-        If it fails, tries BibleBooksCodes
+        If it fails, tries the same named function from BibleBooksCodes
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )

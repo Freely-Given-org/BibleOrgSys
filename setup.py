@@ -252,19 +252,21 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.UnknownBible import UnknownBible
 
 PROGRAM_NAME = "Bible to USX (minimal)"
-PROGRAM_VERSION = '0.06'
+PROGRAM_VERSION = '0.09'
 
 # Configure basic Bible Organisational System (BOS) set-up
 parser = BibleOrgSysGlobals.setup( PROGRAM_NAME, PROGRAM_VERSION )
 parser.add_argument( "inputBibleFileOrFolder", help="path/to/BibleFileOrFolder" )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-# Do the actual Bible load and export work that we want
+# Search for a Bible and attempt to load it
 unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder )
 loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
+
+# See if we were successful at loading one (and only one), and if so, do the export
 if not isinstance( loadedBible, str ): # i.e., not an error message
-    loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
-    vPrint( 'Quiet', debuggingThisModule, f"\\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )}/ folder." )
+    loadedBible.toUSXXML() # Export as USX files (USFM inside XML)
+    vPrint( 'Quiet', False, f"\\nOutput should be in {BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )}/ folder." )
 
 # Do the BOS close-down stuff
 BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
@@ -275,6 +277,9 @@ The BOS is developed and well-tested on Linux (Ubuntu) but also runs on Windows 
 See https://ubsicap.github.io/usfm/ for more information about USFM.
 
 See https://ubsicap.github.io/usx/ for more information about USX.
+
+This library forms the basis of the experimental
+[Biblelator](https://pypi.org/project/Biblelator/) Bible translation editor.
 """,
 #    long_description=long_description,
 

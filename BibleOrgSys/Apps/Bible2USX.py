@@ -60,10 +60,10 @@ The BOS is developed and well-tested on Linux (Ubuntu)
 
 # from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+LAST_MODIFIED_DATE = '2020-04-20' # by RJH
 SHORT_PROGRAM_NAME = "Bible2USX"
 PROGRAM_NAME = "Bible to USX"
-PROGRAM_VERSION = '0.04'
+PROGRAM_VERSION = '0.06'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -116,7 +116,7 @@ def main() -> None:
     vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
     vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
 
-    # If we were successful, do the export
+    # If we were successful at loading one (and only one) Bible, do the export
     if isinstance( loadedBible, Bible ):
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
 
@@ -128,7 +128,7 @@ def main() -> None:
         vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
-        result = loadedBible.toUSX2XML() # Export as USX files (USFM inside XML)
+        result = loadedBible.toUSXXML() # Export as USX files (USFM inside XML)
         # However, you could easily change this to do all exports
         #result = loadedBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         # Or you could choose a different export, for example:

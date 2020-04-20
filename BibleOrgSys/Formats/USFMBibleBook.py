@@ -43,7 +43,7 @@ from BibleOrgSys.Bible import BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
 
-LAST_MODIFIED_DATE = '2020-04-17' # by RJH
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.54'
@@ -567,7 +567,7 @@ class USFMBibleBook( BibleBook ):
             marker, text = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
-        if marker: doaddLine( marker, text ) # Process the final line
+        # if marker: print("2", marker, text);doaddLine( marker, text ) # Process the final line
 
         if gotUWAligning or alignmentVariables['saved']:
             assert alignmentVariables['level'] == 0

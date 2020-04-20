@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.78'
@@ -369,10 +369,10 @@ class InternalBibleExtra:
     # end of InternalBibleExtra.__init__
 
 
-    #def __eq__( self, other ):
-        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        #return False
-    #def __ne__(self, other): return not self.__eq__(other)
+    def __eq__( self, other ):
+        if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        return False
+    def __ne__(self, other): return not self.__eq__(other)
 
 
     def __str__( self ):
@@ -612,9 +612,12 @@ class InternalBibleEntry:
         """
         Display a fuller form of the entry.
         """
-        abbreviatedAdjText = self.adjustedText if len(self.adjustedText)<100 else (self.adjustedText[:50]+'…'+self.adjustedText[-50:])
-        abbreviatedCleanText = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'…'+self.cleanText[-50:])
-        abbreviatedOrigText = self.originalText if len(self.originalText)<100 else (self.originalText[:50]+'…'+self.originalText[-50:])
+        abbreviatedAdjText = self.adjustedText if self.adjustedText is None or len(self.adjustedText)<100 \
+                                else (self.adjustedText[:50]+'…'+self.adjustedText[-50:])
+        abbreviatedCleanText = self.cleanText if self.cleanText is None or len(self.cleanText)<100 \
+                                else (self.cleanText[:50]+'…'+self.cleanText[-50:])
+        abbreviatedOrigText = self.originalText if self.originalText is None or len(self.originalText)<100 \
+                                else (self.originalText[:50]+'…'+self.originalText[-50:])
         return 'InternalBibleEntry object:' \
             + '\n    {} = {!r}'.format( self.marker, abbreviatedCleanText ) \
             + ('\n  from Original {} = {!r}'.format( self.originalMarker, abbreviatedOrigText ) if self.originalMarker!=self.marker or self.originalText!=self.cleanText else '' ) \
@@ -857,15 +860,50 @@ def briefDemo() -> None:
                     bookObject._SectionIndex.makeSectionIndex()
                     if BBB=='GEN': halt
             else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
-# end of fullDemo
+# end of InternalBibleInternals.briefDemo
 
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    global debuggingThisModule
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    vPrint( 'Quiet', debuggingThisModule, "Since these are only helper classes, they can't actually do much at all." )
+    vPrint( 'Quiet', debuggingThisModule, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
+
+    #IBB = InternalBibleInternals( 'GEN' )
+    ## The following fields would normally be filled in a by "load" routine in the derived class
+    #IBB.objectNameString = 'Dummy test Internal Bible Book object'
+    #IBB.objectTypeString = 'DUMMY'
+    #IBB.sourceFilepath = 'Nowhere'
+    #vPrint( 'Quiet', debuggingThisModule, IBB )
+
+    if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
+        import os
+        from BibleOrgSys.Formats.USFMBible import USFMBible
+
+        testData = ( # name, abbreviation, folderpath for USFM files
+                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                ) # You can put your USFM test folder here
+
+        for j, (name, abbrev, testFolder) in enumerate( testData ):
+            vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+            if os.access( testFolder, os.R_OK ):
+                UB = USFMBible( testFolder, name, abbrev )
+                UB.load()
+                UB.discover() # Why does this only help if -1 flag is enabled???
+                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
+                if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+                #debuggingThisModule = False
+                for BBB,bookObject in UB.books.items():
+                    bookObject._SectionIndex = InternalBibleSectionIndex( bookObject )
+                    bookObject._SectionIndex.makeSectionIndex()
+                    if BBB=='GEN': halt
+            else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+# end of InternalBibleInternals.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

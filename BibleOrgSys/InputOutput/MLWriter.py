@@ -34,18 +34,7 @@ TODO: Add buffering
 TODO: Add writeAutoDTD
 
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
-SHORT_PROGRAM_NAME = "MLWriter"
-PROGRAM_NAME = "ML Writer"
-PROGRAM_VERSION = '0.37'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from pathlib import Path
@@ -58,6 +47,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+SHORT_PROGRAM_NAME = "MLWriter"
+PROGRAM_NAME = "ML Writer"
+PROGRAM_VERSION = '0.37'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
@@ -648,14 +645,88 @@ def briefDemo() -> None:
         mlWr.autoClose()
         vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
         vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
-# end of fullDemo
+# end of MLWriter.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # Demo the writer object with XML
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
+        outputFilename = 'test.xml'
+        if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
+        #schema = "http://someURL.net/myOwn.xsd"
+        schema = "~/imaginary.xsd"
+        mlWr = MLWriter( outputFilename, outputFolderpath )
+        mlWr.setHumanReadable( 'All' )
+        mlWr.start()
+        mlWr.setSectionName( 'Header' )
+        mlWr.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
+        mlWr.writeLineOpen( 'header' )
+        mlWr.writeLineOpenClose( 'title', "myTitle" )
+        mlWr.writeLineClose( 'header' )
+        mlWr.setSectionName( 'Main' )
+        mlWr.writeLineOpen( 'body' )
+        mlWr.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
+        mlWr.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
+        mlWr.autoClose()
+        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+
+        from BibleOrgSys.InputOutput.XMLFile import XMLFile
+        xf = XMLFile( outputFilename, outputFolderpath )
+        try:
+            xf.validateByLoading()
+            xf.validateWithLint()
+        except FileNotFoundError:
+            logging.warning( "Unable to try validating XML file for some reason" )
+        #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+        vPrint( 'Quiet', debuggingThisModule, xf )
+
+    if 1: # Demo the writer object with HTML5
+        import datetime
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
+        outputFilename = 'test.html'
+        if not os.access( outputFolderpath, os.F_OK ): os.mkdir( outputFolderpath ) # Make the empty folder if there wasn't already one there
+        schema = ""
+        mlWr = MLWriter( outputFilename, outputFolderpath, 'HTML' )
+        mlWr.setHumanReadable( 'All' )
+        mlWr.start()
+        mlWr.setSectionName( 'Header' )
+        mlWr.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+        mlWr.writeLineOpen( 'html' )
+        mlWr.writeLineOpen( 'head' )
+        mlWr.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
+        mlWr.writeLineText( '<link rel="stylesheet" type="text/css" href="CSS/BibleBook.css">', noTextCheck=True )
+        mlWr.writeLineOpenClose( 'title' , "My HTML5 Test Page" )
+        mlWr.writeLineClose( 'head' )
+
+        mlWr.setSectionName( 'Main' )
+        mlWr.writeLineOpen( 'body' )
+        mlWr.writeLineOpen( 'header' )
+        mlWr.writeLineText( 'HEADER STUFF GOES HERE' )
+        mlWr.writeLineClose( 'header' )
+        mlWr.writeLineOpen( 'nav' )
+        mlWr.writeLineText( 'NAVIGATION STUFF GOES HERE' )
+        mlWr.writeLineClose( 'nav' )
+        #mlWr.writeLineOpen( "div", [('id','Div1'),('name','First division')] )
+        mlWr.writeLineOpenClose( "h1", "myHeading in here", ('class','testHeading') )
+        mlWr.writeLineOpenClose( "p", "myText in here", [("class","funParagraph"),('id','myAnchor'),] )
+        mlWr.writeLineOpen( 'footer' )
+        mlWr.writeLineOpen( 'p', ('class','footerLine') )
+        mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
+        mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
+        mlWr.writeLineClose( 'a' )
+        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( PROGRAM_NAME, PROGRAM_VERSION, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineClose( 'p' )
+        mlWr.writeLineClose( 'footer' )
+        mlWr.writeLineClose( 'body' )
+        mlWr.autoClose()
+        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+# end of MLWriter.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support
