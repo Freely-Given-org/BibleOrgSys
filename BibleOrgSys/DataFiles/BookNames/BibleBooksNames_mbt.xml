@@ -71,8 +71,8 @@ See the supplied ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.23</version>
-      <date>2016-06-23</date>
+      <version>0.24</version>
+      <date>2020-04-21</date>
       <title>Matigsalug Bible books names list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -178,6 +178,14 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Duwa</inputAbbreviation>
     <inputAbbreviation>Daruwan</inputAbbreviation>
   </BibleBooknameLeaders>
+  <BibleBooknameLeaders standardLeader="3">
+    <inputAbbreviation>III</inputAbbreviation>
+    <inputAbbreviation>Igkatelu ne</inputAbbreviation>
+    <inputAbbreviation>Thrd</inputAbbreviation>
+    <inputAbbreviation>3rd</inputAbbreviation>
+    <inputAbbreviation>Telu</inputAbbreviation>
+    <inputAbbreviation>Tatelun</inputAbbreviation>
+  </BibleBooknameLeaders>
   <BibleBooknameLeaders standardLeader="Saint">
     <inputAbbreviation>Santu</inputAbbreviation>
     <inputAbbreviation>Santo</inputAbbreviation>
@@ -190,16 +198,24 @@ See the supplied ReadMe.txt for more details.
   <BibleBookNames referenceAbbreviation="GEN">
     <defaultName>Hinisis</defaultName>
     <defaultAbbreviation>Hin</defaultAbbreviation>
+    <inputAbbreviation>Hinesis</inputAbbreviation>
+    <inputAbbreviation>Henesis</inputAbbreviation>
+    <inputAbbreviation>Henisis</inputAbbreviation>
     <inputAbbreviation>Hn</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EXO">
     <defaultName>Iksudu</defaultName>
     <defaultAbbreviation>Iks</defaultAbbreviation>
+    <inputAbbreviation>Eksudu</inputAbbreviation>
     <inputAbbreviation>Iksd</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LEV">
     <defaultName>Libitiku</defaultName>
     <defaultAbbreviation>Lib</defaultAbbreviation>
+    <inputAbbreviation>Lebitiku</inputAbbreviation>
+    <inputAbbreviation>Lebetiku</inputAbbreviation>
+    <inputAbbreviation>Lebeteku</inputAbbreviation>
+    <inputAbbreviation>Lebiteku</inputAbbreviation>
     <inputAbbreviation>Lbtk</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NUM">
@@ -210,18 +226,23 @@ See the supplied ReadMe.txt for more details.
   <BibleBookNames referenceAbbreviation="DEU">
     <defaultName>Diyuturunumiyu</defaultName>
     <defaultAbbreviation>Diy</defaultAbbreviation>
+    <inputAbbreviation>Deyuturunumiyu</inputAbbreviation>
     <inputAbbreviation>Dytrnmy</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JOS">
     <defaultName>Huswi</defaultName>
     <defaultAbbreviation>Huswi</defaultAbbreviation>
     <inputAbbreviation>Hswi</inputAbbreviation>
+    <inputAbbreviation>Huswe</inputAbbreviation>
     <inputAbbreviation>Juswi</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JDG">
     <defaultName>Me Talewukum</defaultName>
     <defaultAbbreviation>Tal</defaultAbbreviation>
     <inputAbbreviation>Tlwkm</inputAbbreviation>
+    <inputAbbreviation>Me Talawukum</inputAbbreviation>
+    <inputAbbreviation>Talawukum</inputAbbreviation>
+    <inputAbbreviation>Talaukum</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="RUT">
     <defaultName>Rut</defaultName>
@@ -232,20 +253,24 @@ See the supplied ReadMe.txt for more details.
     <defaultName>1 Samwil</defaultName>
     <defaultAbbreviation>1 Sam</defaultAbbreviation>
     <inputAbbreviation>1 Smwl</inputAbbreviation>
+    <inputAbbreviation>1 Samwel</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SA2">
     <defaultName>2 Samwil</defaultName>
     <defaultAbbreviation>2 Sam</defaultAbbreviation>
     <inputAbbreviation>2 Smwl</inputAbbreviation>
+    <inputAbbreviation>2 Samwel</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI1">
-    <defaultName>1 Me Hari</defaultName>
+    <defaultName>1 Hari</defaultName>
     <defaultAbbreviation>1 Hari</defaultAbbreviation>
+    <inputAbbreviation>1 Me Hari</inputAbbreviation>
     <inputAbbreviation>1 Hri</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="KI2">
-    <defaultName>2 Me Hari</defaultName>
+    <defaultName>2 Hari</defaultName>
     <defaultAbbreviation>2 Hari</defaultAbbreviation>
+    <inputAbbreviation>2 Me Hari</inputAbbreviation>
     <inputAbbreviation>2 Hri</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CH1">
@@ -259,18 +284,26 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>2 Krnks</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EZR">
-    <defaultName>Isdras</defaultName>
-    <defaultAbbreviation>Isd</defaultAbbreviation>
+    <defaultName>Isra</defaultName>
+    <defaultAbbreviation>Isr</defaultAbbreviation>
+    <inputAbbreviation>Isdras</inputAbbreviation>
     <inputAbbreviation>Isdrs</inputAbbreviation>
+    <inputAbbreviation>Esdras</inputAbbreviation>
+    <inputAbbreviation>Esdrs</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NEH">
     <defaultName>Nihimiyas</defaultName>
     <defaultAbbreviation>Nih</defaultAbbreviation>
     <inputAbbreviation>Nhmys</inputAbbreviation>
+    <inputAbbreviation>Nehimiyas</inputAbbreviation>
+    <inputAbbreviation>Nehemiyas</inputAbbreviation>
+    <inputAbbreviation>Nehemeyas</inputAbbreviation>
+    <inputAbbreviation>Nehimeyas</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EST">
     <defaultName>Istir</defaultName>
     <defaultAbbreviation>Ist</defaultAbbreviation>
+    <inputAbbreviation>Estir</inputAbbreviation>
     <inputAbbreviation>Istr</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JOB">
@@ -287,77 +320,109 @@ See the supplied ReadMe.txt for more details.
   <BibleBookNames referenceAbbreviation="PRO">
     <defaultName>Lalahen</defaultName>
     <defaultAbbreviation>Lal</defaultAbbreviation>
+    <inputAbbreviation>Me Lalahen</inputAbbreviation>
+    <inputAbbreviation>Lalahon</inputAbbreviation>
     <inputAbbreviation>Llhn</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ECC">
     <defaultName>Iklisyastis</defaultName>
     <defaultAbbreviation>Ikl</defaultAbbreviation>
+    <inputAbbreviation>Iklisiyastis</inputAbbreviation>
+    <inputAbbreviation>Eklisyastis</inputAbbreviation>
+    <inputAbbreviation>Eklesyastis</inputAbbreviation>
     <inputAbbreviation>Iklsysts</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="SNG">
     <defaultName>Ulahingen ni Sulumun</defaultName>
     <defaultAbbreviation>UNS</defaultAbbreviation>
     <inputAbbreviation>Ulahingen ni Slmn</inputAbbreviation>
+    <inputAbbreviation>Ulahengen ni Slmn</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ISA">
     <defaultName>Isayas</defaultName>
     <defaultAbbreviation>Isa</defaultAbbreviation>
+    <inputAbbreviation>Esayas</inputAbbreviation>
     <inputAbbreviation>Isys</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JER">
     <defaultName>Hirimiyas</defaultName>
     <defaultAbbreviation>Hir</defaultAbbreviation>
+    <inputAbbreviation>Hirmiyas</inputAbbreviation>
+    <inputAbbreviation>Herimiyas</inputAbbreviation>
+    <inputAbbreviation>Hiremiyas</inputAbbreviation>
     <inputAbbreviation>Hrmys</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LAM">
-    <defaultName>Pegkalange</defaultName>
+    <defaultName>Pegkalange ni Hirimiyas</defaultName>
     <defaultAbbreviation>Peg</defaultAbbreviation>
+    <inputAbbreviation>Pigkalange</inputAbbreviation>
+    <inputAbbreviation>Pogkalange</inputAbbreviation>
     <inputAbbreviation>Pgklange</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="EZE">
     <defaultName>Isikil</defaultName>
     <defaultAbbreviation>Isi</defaultAbbreviation>
+    <inputAbbreviation>Isikyil</inputAbbreviation>
+    <inputAbbreviation>Isekil</inputAbbreviation>
+    <inputAbbreviation>Esikil</inputAbbreviation>
     <inputAbbreviation>Iskl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="DAN">
     <defaultName>Danyil</defaultName>
     <defaultAbbreviation>Dan</defaultAbbreviation>
+    <inputAbbreviation>Danil</inputAbbreviation>
     <inputAbbreviation>Dnyl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="HOS">
-    <defaultName>Husiya</defaultName>
+    <defaultName>Husiyas</defaultName>
     <defaultAbbreviation>Hus</defaultAbbreviation>
+    <inputAbbreviation>Husiya</inputAbbreviation>
+    <inputAbbreviation>Hosiyas</inputAbbreviation>
+    <inputAbbreviation>Huseyas</inputAbbreviation>
     <inputAbbreviation>Hsya</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JOL">
     <defaultName>Huwil</defaultName>
     <defaultAbbreviation>Huwil</defaultAbbreviation>
+    <inputAbbreviation>Howil</inputAbbreviation>
+    <inputAbbreviation>Huwl</inputAbbreviation>
     <inputAbbreviation>Hwl</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="AMO">
     <defaultName>Amus</defaultName>
     <defaultAbbreviation>Amu</defaultAbbreviation>
+    <inputAbbreviation>Amos</inputAbbreviation>
     <inputAbbreviation>Ams</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="OBA">
-    <defaultName>Abdiyas</defaultName>
-    <defaultAbbreviation>Abd</defaultAbbreviation>
+    <defaultName>Ubadiya</defaultName>
+    <defaultAbbreviation>Ubd</defaultAbbreviation>
+    <inputAbbreviation>Ubadiyas</inputAbbreviation>
+    <inputAbbreviation>Obadiyas</inputAbbreviation>
+    <inputAbbreviation>Ubdiyas</inputAbbreviation>
+    <inputAbbreviation>Abdiyas</inputAbbreviation>
     <inputAbbreviation>Abdy</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JNA">
     <defaultName>Hunas</defaultName>
     <defaultAbbreviation>Hun</defaultAbbreviation>
+    <inputAbbreviation>Junas</inputAbbreviation>
     <inputAbbreviation>Juns</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MIC">
     <defaultName>Mikiyas</defaultName>
     <defaultAbbreviation>Mic</defaultAbbreviation>
+    <inputAbbreviation>Mikyas</inputAbbreviation>
+    <inputAbbreviation>Miciyas</inputAbbreviation>
+    <inputAbbreviation>Miceyas</inputAbbreviation>
+    <inputAbbreviation>Meciyas</inputAbbreviation>
     <inputAbbreviation>Mkys</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="NAH">
     <defaultName>Nahum</defaultName>
     <defaultAbbreviation>Nah</defaultAbbreviation>
     <inputAbbreviation>Nahm</inputAbbreviation>
+    <inputAbbreviation>Nahom</inputAbbreviation>
     <inputAbbreviation>Nhum</inputAbbreviation>
     <inputAbbreviation>Nhm</inputAbbreviation>
   </BibleBookNames>
@@ -369,11 +434,15 @@ See the supplied ReadMe.txt for more details.
     <inputAbbreviation>Habbakkuk</inputAbbreviation>
     <inputAbbreviation>Habbakuk</inputAbbreviation>
     <inputAbbreviation>Habakkuk</inputAbbreviation>
+    <inputAbbreviation>Habakok</inputAbbreviation>
     <inputAbbreviation>Hbbkk</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ZEP">
     <defaultName>Supuniyas</defaultName>
     <defaultAbbreviation>Sup</defaultAbbreviation>
+    <inputAbbreviation>Supunyas</inputAbbreviation>
+    <inputAbbreviation>Sopuniyas</inputAbbreviation>
+    <inputAbbreviation>Suponiyas</inputAbbreviation>
     <inputAbbreviation>Spnys</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="HAG">
@@ -381,39 +450,52 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Hag</defaultAbbreviation>
     <inputAbbreviation>Hgy</inputAbbreviation>
     <inputAbbreviation>Haggiyu</inputAbbreviation>
+    <inputAbbreviation>Hageyu</inputAbbreviation>
+    <inputAbbreviation>Hagiyo</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ZEC">
     <defaultName>Sakariyas</defaultName>
     <defaultAbbreviation>Sak</defaultAbbreviation>
     <inputAbbreviation>Skrys</inputAbbreviation>
+    <inputAbbreviation>Sakkariyas</inputAbbreviation>
+    <inputAbbreviation>Sakareyas</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MAL">
     <defaultName>Malakyas</defaultName>
     <defaultAbbreviation>Mal</defaultAbbreviation>
     <inputAbbreviation>Mlkys</inputAbbreviation>
+    <inputAbbreviation>Malakiyas</inputAbbreviation>
   </BibleBookNames>
 
   <BibleBookNames referenceAbbreviation="MAT">
     <defaultName>Matiyu</defaultName>
     <defaultAbbreviation>Mat</defaultAbbreviation>
     <inputAbbreviation>Mtyu</inputAbbreviation>
+    <inputAbbreviation>Matyu</inputAbbreviation>
     <inputAbbreviation>Mattiyu</inputAbbreviation>
+    <inputAbbreviation>Mateyu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="MRK">
     <defaultName>Markus</defaultName>
     <defaultAbbreviation>Mar</defaultAbbreviation>
     <inputAbbreviation>Mrks</inputAbbreviation>
     <inputAbbreviation>Mks</inputAbbreviation>
+    <inputAbbreviation>Marcus</inputAbbreviation>
+    <inputAbbreviation>Markos</inputAbbreviation>
+    <inputAbbreviation>Marcos</inputAbbreviation>
+    <inputAbbreviation>Malkus</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="LUK">
     <defaultName>Lukas</defaultName>
     <defaultAbbreviation>Luk</defaultAbbreviation>
     <inputAbbreviation>Lks</inputAbbreviation>
+    <inputAbbreviation>Lucas</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JHN">
     <defaultName>Huwan</defaultName>
     <defaultAbbreviation>Huw</defaultAbbreviation>
     <inputAbbreviation>Hwn</inputAbbreviation>
+    <inputAbbreviation>Juwan</inputAbbreviation>
     <inputAbbreviation>Juan</inputAbbreviation>
     <inputAbbreviation>Jn</inputAbbreviation>
   </BibleBookNames>
@@ -421,6 +503,7 @@ See the supplied ReadMe.txt for more details.
     <defaultName>Me Himu</defaultName>
     <defaultAbbreviation>Himu</defaultAbbreviation>
     <inputAbbreviation>Hmu</inputAbbreviation>
+    <inputAbbreviation>MeHimu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="ROM">
     <defaultName>Matig-Ruma</defaultName>
@@ -434,20 +517,31 @@ See the supplied ReadMe.txt for more details.
     <defaultName>1 Matig-Kurintu</defaultName>
     <defaultAbbreviation>1 Kur</defaultAbbreviation>
     <inputAbbreviation>1 MatigKurintu</inputAbbreviation>
+    <inputAbbreviation>1 Matig-Korintu</inputAbbreviation>
+    <inputAbbreviation>1 MatigKorintu</inputAbbreviation>
     <inputAbbreviation>1 Kurintu</inputAbbreviation>
+    <inputAbbreviation>1 Korintu</inputAbbreviation>
+    <inputAbbreviation>1 Kurentu</inputAbbreviation>
     <inputAbbreviation>1 Krntu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="CO2">
     <defaultName>2 Matig-Kurintu</defaultName>
     <defaultAbbreviation>2 Kur</defaultAbbreviation>
     <inputAbbreviation>2 MatigKurintu</inputAbbreviation>
+    <inputAbbreviation>2 Matig-Korintu</inputAbbreviation>
+    <inputAbbreviation>2 MatigKorintu</inputAbbreviation>
     <inputAbbreviation>2 Kurintu</inputAbbreviation>
+    <inputAbbreviation>2 Korintu</inputAbbreviation>
+    <inputAbbreviation>2 Kurentu</inputAbbreviation>
     <inputAbbreviation>2 Krntu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="GAL">
     <defaultName>Matig-Galasya</defaultName>
     <defaultAbbreviation>Gal</defaultAbbreviation>
     <inputAbbreviation>MatigGalasya</inputAbbreviation>
+    <inputAbbreviation>MatigGalasoya</inputAbbreviation>
+    <inputAbbreviation>Matig-Galasoya</inputAbbreviation>
+    <inputAbbreviation>Galasiya</inputAbbreviation>
     <inputAbbreviation>Galasya</inputAbbreviation>
     <inputAbbreviation>Glsya</inputAbbreviation>
   </BibleBookNames>
@@ -455,20 +549,26 @@ See the supplied ReadMe.txt for more details.
     <defaultName>Matig-Ipisu</defaultName>
     <defaultAbbreviation>Ipi</defaultAbbreviation>
     <inputAbbreviation>MatigIpisu</inputAbbreviation>
+    <inputAbbreviation>Matig-Episu</inputAbbreviation>
+    <inputAbbreviation>MatigEpisu</inputAbbreviation>
     <inputAbbreviation>Ipisu</inputAbbreviation>
     <inputAbbreviation>Ipsu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PHP">
-    <defaultName>Matig-Pilipu</defaultName>
+    <defaultName>Matig-Pilipus</defaultName>
     <defaultAbbreviation>Pil</defaultAbbreviation>
-    <inputAbbreviation>MatigPilipu</inputAbbreviation>
-    <inputAbbreviation>Pilipu</inputAbbreviation>
-    <inputAbbreviation>Plpu</inputAbbreviation>
+    <inputAbbreviation>MatigPilipus</inputAbbreviation>
+    <inputAbbreviation>Matig-Pelipus</inputAbbreviation>
+    <inputAbbreviation>MatigPelipus</inputAbbreviation>
+    <inputAbbreviation>Pilipus</inputAbbreviation>
+    <inputAbbreviation>Plpus</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="COL">
     <defaultName>Matig-Kulusas</defaultName>
     <defaultAbbreviation>Kul</defaultAbbreviation>
     <inputAbbreviation>MatigKulusas</inputAbbreviation>
+    <inputAbbreviation>Matig-Kolusas</inputAbbreviation>
+    <inputAbbreviation>MatigKolusas</inputAbbreviation>
     <inputAbbreviation>Kulusas</inputAbbreviation>
     <inputAbbreviation>Klss</inputAbbreviation>
   </BibleBookNames>
@@ -476,6 +576,8 @@ See the supplied ReadMe.txt for more details.
     <defaultName>1 Matig-Tisalunika</defaultName>
     <defaultAbbreviation>1 Tis</defaultAbbreviation>
     <inputAbbreviation>1 MatigTisalunika</inputAbbreviation>
+    <inputAbbreviation>1 Matig-Tisalonika</inputAbbreviation>
+    <inputAbbreviation>1 MatigTisalonika</inputAbbreviation>
     <inputAbbreviation>1 Tisalunika</inputAbbreviation>
     <inputAbbreviation>1 Tslnka</inputAbbreviation>
   </BibleBookNames>
@@ -483,27 +585,34 @@ See the supplied ReadMe.txt for more details.
     <defaultName>2 Matig-Tisalunika</defaultName>
     <defaultAbbreviation>2 Tis</defaultAbbreviation>
     <inputAbbreviation>2 MatigTisalunika</inputAbbreviation>
+    <inputAbbreviation>2 Matig-Tisalonika</inputAbbreviation>
+    <inputAbbreviation>2 MatigTisalonika</inputAbbreviation>
     <inputAbbreviation>2 Tisalunika</inputAbbreviation>
     <inputAbbreviation>2 Tslnka</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TI1">
     <defaultName>1 Timutiyu</defaultName>
     <defaultAbbreviation>1 Tim</defaultAbbreviation>
+    <inputAbbreviation>1 Timityu</inputAbbreviation>
     <inputAbbreviation>1 Tmtyu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TI2">
     <defaultName>2 Timutiyu</defaultName>
     <defaultAbbreviation>2 Tim</defaultAbbreviation>
+    <inputAbbreviation>2 Timityu</inputAbbreviation>
     <inputAbbreviation>2 Tmtyu</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="TIT">
     <defaultName>Titu</defaultName>
     <defaultAbbreviation>Tit</defaultAbbreviation>
     <inputAbbreviation>Ttu</inputAbbreviation>
+    <inputAbbreviation>Tito</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PHM">
     <defaultName>Pilimun</defaultName>
     <defaultAbbreviation>Pilim</defaultAbbreviation>
+    <inputAbbreviation>Pelimun</inputAbbreviation>
+    <inputAbbreviation>Pilemun</inputAbbreviation>
     <inputAbbreviation>Plmn</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="HEB">
@@ -511,6 +620,9 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Heb</defaultAbbreviation>
     <inputAbbreviation>Hibruhanen</inputAbbreviation>
     <inputAbbreviation>Hibruhanun</inputAbbreviation>
+    <inputAbbreviation>Hibruhanun</inputAbbreviation>
+    <inputAbbreviation>Hibruwanon</inputAbbreviation>
+    <inputAbbreviation>Hebruwanen</inputAbbreviation>
     <inputAbbreviation>Hbrws</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JAM">
@@ -518,6 +630,7 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>San</defaultAbbreviation>
     <inputAbbreviation>Sntygu</inputAbbreviation>
     <inputAbbreviation>Hakubu</inputAbbreviation>
+    <inputAbbreviation>Hakobu</inputAbbreviation>
     <!-- Include mispellings -->
     <inputAbbreviation>Santiyaggu</inputAbbreviation>
     <inputAbbreviation>Sandiyagu</inputAbbreviation>
@@ -526,11 +639,17 @@ See the supplied ReadMe.txt for more details.
   <BibleBookNames referenceAbbreviation="PE1">
     <defaultName>1 Pidru</defaultName>
     <defaultAbbreviation>1 Pid</defaultAbbreviation>
+    <inputAbbreviation>1 Pidro</inputAbbreviation>
+    <inputAbbreviation>1 Pedru</inputAbbreviation>
+    <inputAbbreviation>1 Pedro</inputAbbreviation>
     <inputAbbreviation>1 Pdru</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="PE2">
     <defaultName>2 Pidru</defaultName>
     <defaultAbbreviation>2 Pid</defaultAbbreviation>
+    <inputAbbreviation>2 Pidro</inputAbbreviation>
+    <inputAbbreviation>2 Pedru</inputAbbreviation>
+    <inputAbbreviation>2 Pedro</inputAbbreviation>
     <inputAbbreviation>2 Pdru</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="JN1">
@@ -561,11 +680,13 @@ See the supplied ReadMe.txt for more details.
     <defaultName>Hudas</defaultName>
     <defaultAbbreviation>Hud</defaultAbbreviation>
     <inputAbbreviation>Hds</inputAbbreviation>
+    <inputAbbreviation>Huddas</inputAbbreviation>
     <inputAbbreviation>Judas</inputAbbreviation>
   </BibleBookNames>
   <BibleBookNames referenceAbbreviation="REV">
     <defaultName>Impakita</defaultName>
     <defaultAbbreviation>Imp</defaultAbbreviation>
+    <inputAbbreviation>Empakita</inputAbbreviation>
     <inputAbbreviation>Impkta</inputAbbreviation>
     <inputAbbreviation>Gipadayag</inputAbbreviation>
   </BibleBookNames>
