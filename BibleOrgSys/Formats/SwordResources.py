@@ -1872,7 +1872,7 @@ def briefDemo() -> None:
                 vk.setTestament( t )
                 for i in range( 1, vk.getBookMax()+1 ):
                     vk.setBook( i )
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, t, i, vk.getBookName() )
+                    vPrint( 'Never', debuggingThisModule, t, i, vk.getBookName() )
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
@@ -1882,12 +1882,12 @@ def briefDemo() -> None:
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
             if tk and tk.firstChild():
                 while True:
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, " ", tk.getText() )
+                    vPrint( 'Never', debuggingThisModule, " ", tk.getText() )
                     # Keep track of the information for custom implementation
                     #Class *item = storeItemInfoForLaterUse(parent, text);
                     item = (parent) # temp ……
                     if tk.hasChildren():
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  Getting children…" )
+                        vPrint( 'Never', debuggingThisModule, "  Getting children…" )
                         getGenBookTOC( tk, item )
                     if not tk.nextSibling(): break
         # end of getGenBookTOC
@@ -2178,7 +2178,7 @@ def fullDemo() -> None:
                 vk.setTestament( t )
                 for i in range( 1, vk.getBookMax()+1 ):
                     vk.setBook( i )
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, t, i, vk.getBookName() )
+                    vPrint( 'Never', debuggingThisModule, t, i, vk.getBookName() )
 
         # Try a tree key on a GenBook
         module = library.getModule( 'Westminster' )
@@ -2188,12 +2188,12 @@ def fullDemo() -> None:
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books
             if tk and tk.firstChild():
                 while True:
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, " ", tk.getText() )
+                    vPrint( 'Never', debuggingThisModule, " ", tk.getText() )
                     # Keep track of the information for custom implementation
                     #Class *item = storeItemInfoForLaterUse(parent, text);
                     item = (parent) # temp ……
                     if tk.hasChildren():
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  Getting children…" )
+                        vPrint( 'Never', debuggingThisModule, "  Getting children…" )
                         getGenBookTOC( tk, item )
                     if not tk.nextSibling(): break
         # end of getGenBookTOC

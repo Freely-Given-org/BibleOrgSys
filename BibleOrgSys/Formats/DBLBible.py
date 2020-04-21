@@ -755,7 +755,7 @@ class DBLBible( Bible ):
                                 logging.warning( _("Bookcode {} mentioned in progress but not found in bookNames").format( bookCode ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
                         elif 'names' in self.suppliedMetadata['DBL']:
-                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Why don't we have a bookNames entry???" )
+                            vPrint( 'Never', debuggingThisModule, "Why don't we have a bookNames entry???" )
                             if bookCode not in self.suppliedMetadata['DBL']['names']:
                                 logging.warning( _("Bookcode {} mentioned in progress but not found in names").format( bookCode ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag: halt
@@ -1561,7 +1561,7 @@ class DBLBible( Bible ):
         if 'OurBookList' in self.suppliedMetadata['DBL']:
             for BBB in self.suppliedMetadata['DBL']['OurBookList']:
                 filename = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "About to load {} from {} …".format( BBB, filename ) )
+                vPrint( 'Never', debuggingThisModule, "About to load {} from {} …".format( BBB, filename ) )
                 UBB = USXXMLBibleBook( self, BBB )
                 UBB.load( filename, self.USXFolderPath, self.encoding )
                 UBB.validateMarkers()

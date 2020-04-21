@@ -51,7 +51,7 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-21' # by RJH
 SHORT_PROGRAM_NAME = "PDBBible"
 PROGRAM_NAME = "PDB Bible format handler"
 PROGRAM_VERSION = '0.67'
@@ -348,7 +348,7 @@ class PalmDBBible( Bible ):
                             #binary += myFile.read( 256 )
                         wordBytes = binary[byteOffset:byteOffset+wordLength]; byteOffset += wordLength
                         word = getBinaryString( wordBytes, wordLength )
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "@{:04x}={} {} {!r}".format( len(words), len(words), wordLength, word ) )
+                        vPrint( 'Never', debuggingThisModule, "@{:04x}={} {} {!r}".format( len(words), len(words), wordLength, word ) )
                         if word == '\t': word = '    '
                         elif word == '\n': word = '<NEWLINE>'
                         elif '\\' in repr(word):
@@ -369,7 +369,7 @@ class PalmDBBible( Bible ):
                     else: # it's a compressed word
                         # We have pointers to smaller words
                         assert wordLength == 4 # But this is the number of bytes, not the number of word characters!
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "compressed", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
+                        vPrint( 'Never', debuggingThisModule, "compressed", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
                         ix1,ix2 = struct.unpack( ">HH",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
                         if   ix1 == 0xFFFF: word1 = '<BOOK>'
                         elif ix1 == 0xFFFE: word1 = '<CHAPTER>'
@@ -381,7 +381,7 @@ class PalmDBBible( Bible ):
                         elif ix2 == 0xFFFD: word2 = '<DESC>'
                         elif ix2 == 0xFFFC: word2 = '<VERSE>'
                         else: word2 = words[ix2-1]
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "@{:04x}={} word1={!r} word2={!r}".format( len(words), len(words), word1, word2 ) )
+                        vPrint( 'Never', debuggingThisModule, "@{:04x}={} word1={!r} word2={!r}".format( len(words), len(words), word1, word2 ) )
                         word = word1 + separatorCharacter + word2
                         if 0:
                             vPrint( 'Quiet', debuggingThisModule, ' ix1={:04x}={}'.format( ix1, ix1 ) )
@@ -411,7 +411,7 @@ class PalmDBBible( Bible ):
                 #vPrint( 'Quiet', debuggingThisModule, _("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
             if binary16: next16, = struct.unpack( ">H", binary16 )
             else:
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Added error zero bits (should only be at the end of a book)" )
+                vPrint( 'Never', debuggingThisModule, "Added error zero bits (should only be at the end of a book)" )
                 next16 = 0
             #vPrint( 'Quiet', debuggingThisModule, "next16 {:04x} {}".format( next16, next16 ) )
             if remainder14count == 0:
@@ -507,7 +507,7 @@ class PalmDBBible( Bible ):
             if adjText.startswith( '<BOOK>' ):
                 assert C == 0
                 adjText = adjText[6:].lstrip()
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  adjText BOOK={!r}".format( adjText ) )
+                vPrint( 'Never', debuggingThisModule, "  adjText BOOK={!r}".format( adjText ) )
                 thisBook.addLine( 'mt', adjText ); adjText = ''
             elif adjText.startswith( '<CHAPTER>' ):
                 assert C > 0
@@ -520,7 +520,7 @@ class PalmDBBible( Bible ):
                 adjText = adjText[7:].lstrip()
             elif adjText.startswith( '<DESC>' ):
                 adjText = adjText[6:].lstrip()
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  adjText DESC={!r}".format( adjText ) )
+                vPrint( 'Never', debuggingThisModule, "  adjText DESC={!r}".format( adjText ) )
                 marker = 'ip' if C==0 else 's'
                 thisBook.addLine( marker, adjText ); adjText = ''
                 if marker == 's': thisBook.addLine( 'p', '' ); hadP = True
@@ -620,7 +620,7 @@ class PalmDBBible( Bible ):
             # Now load the word lists
             loadWordlists()
             numWords = len(words)
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "numWords =", numWords )
+            vPrint( 'Never', debuggingThisModule, "numWords =", numWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #vPrint( 'Quiet', debuggingThisModule, "words", numWords, words[:200], words[-80:] )
                 #halt
@@ -753,7 +753,7 @@ class PalmDBBible( Bible ):
                         byteOffset += bytesUsed
                         if ix >= 0x3FF0: ix = ix | 0xC000 # To get it into the original range
                     else: ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  here bO was {} ix={:04x}={}".format( byteOffset-2, ix, ix ) )
+                    vPrint( 'Never', debuggingThisModule, "  here bO was {} ix={:04x}={}".format( byteOffset-2, ix, ix ) )
                     if ix > len(words):
                         #vPrint( 'Quiet', debuggingThisModule, "Got HUGE ix {:04x} {}/{}".format( ix, ix, len(words) ) )
                         #ix = ix | 0xC000 # To get it into the original range
@@ -773,7 +773,7 @@ class PalmDBBible( Bible ):
                     else:
                         if ix == 0: word = ''
                         else: word = words[ix-1]
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  {} {}:{} {}word={!r}".format( BBB, C, V, 'compressed ' if ix>numRegularWords else '', word ) )
+                    vPrint( 'Never', debuggingThisModule, "  {} {}:{} {}word={!r}".format( BBB, C, V, 'compressed ' if ix>numWords else '', word ) )
                     for wordBit in word.split(): # Handle each part of combined words separately to ensure correct handling of each part
                         if wordBit.startswith( '<BOOK>' ):
                             #vPrint( 'Quiet', debuggingThisModule, "\n<BOOK>" )
@@ -788,7 +788,7 @@ class PalmDBBible( Bible ):
                             verseCount = 0
                             C += 1; V = 0
                         elif wordBit.startswith( '<DESC>' ):
-                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\n<DESC>" )
+                            vPrint( 'Never', debuggingThisModule, "\n<DESC>" )
                             #if not word.startswith( '<DESC>' ): vPrint( 'Quiet', debuggingThisModule, repr(verse), '+', repr(word) ); halt
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         elif wordBit.startswith( '<VERSE>' ):
@@ -798,7 +798,7 @@ class PalmDBBible( Bible ):
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             if V==0: V = 1
                         elif wordBit.startswith( '<UNKNOWN>' ):
-                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\n<UNKNOWN>" )
+                            vPrint( 'Never', debuggingThisModule, "\n<UNKNOWN>" )
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         verse += wordBit + separatorCharacter
                     #vPrint( 'Quiet', debuggingThisModule, repr(word), repr(verse) )

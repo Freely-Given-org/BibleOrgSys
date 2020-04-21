@@ -349,7 +349,7 @@ class OSISXMLBible( Bible ):
             if not os.access( self.sourceFilepath, os.R_OK ):
                 logging.critical( 'OSISXMLBible: ' + _("File {!r} is unreadable").format( self.sourceFilepath ) )
                 return # No use continuing
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"OSISXMLBible possibleFilenames: {self.possibleFilenames}" )
+            vPrint( 'Never', debuggingThisModule, f"OSISXMLBible possibleFilenames: {self.possibleFilenames}" )
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
         self.workNames, self.workPrefixes = [], {}
@@ -419,7 +419,7 @@ class OSISXMLBible( Bible ):
             #assert self.preloadDone
 
         if not self.possibleFilenames: # then the whole Bible was probably in one file
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  Unable to load OSIS by book -- returning" )
+            vPrint( 'Never', debuggingThisModule, "  Unable to load OSIS by book -- returning" )
             return # nothing to do here
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
@@ -660,7 +660,7 @@ class OSISXMLBible( Bible ):
                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} -element of {} at {} (lj06)".format( attrib, value, element.tag, location, verseMilestone ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 
-        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "khf8", "Have", location, repr(element.text), repr(theType) )
+        #vPrint( 'Never', debuggingThisModule, "khf8", "Have", location, repr(element.text), repr(theType) )
         markerOpen = False
         if theType:
             if theType=='verseNumber': marker = 'fv'
@@ -1008,7 +1008,7 @@ class OSISXMLBible( Bible ):
             thisBook.appendToLastLine( '\\str {} '.format( noteN ) )
             openFieldname = 'str'
         else:
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "validateCrossReferenceOrFootnote note1", repr(noteType) )
+            vPrint( 'Never', debuggingThisModule, "validateCrossReferenceOrFootnote note1", repr(noteType) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
         noteText = clean( element.text, loadErrors, location, verseMilestone )
         #if not noteText or noteText.isspace(): # Maybe we can infer the anchor reference
@@ -1233,7 +1233,7 @@ class OSISXMLBible( Bible ):
                     thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh38', loadErrors )
                 else:
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "{!r} note not handled FG35".format( noteType ) )
+                    vPrint( 'Never', debuggingThisModule, "{!r} note not handled FG35".format( noteType ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
                 if catchWordTail:
                     thisBook.appendToLastLine( '\\fq* {}'.format( clean(catchWordTail) ) ) # Do we need the space
@@ -1996,7 +1996,7 @@ class OSISXMLBible( Bible ):
                                 logging.warning( "1s3d Unprocessed {!r} attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} (1s3d)".format( attrib, value, sublocation ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "copyrightType", copyrightType )
+                        vPrint( 'Never', debuggingThisModule, "copyrightType", copyrightType )
                         if BibleOrgSysGlobals.debugFlag:
                             assert copyrightType in (None,'x-copyright','x-license','x-license-url','x-BY-SA','x-BY','x-comments-to')
                         if BibleOrgSysGlobals.verbosityLevel > 2:

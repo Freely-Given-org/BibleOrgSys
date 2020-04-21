@@ -396,7 +396,7 @@ class Door43CatalogBible( USFMBible ):
         #vPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict )
         #vPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict.keys() )
 
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'formats', resourceDict['formats'] )
+        vPrint( 'Never', debuggingThisModule, 'formats', resourceDict['formats'] )
         if 'formats' in resourceDict:
             formats = resourceDict['formats']
         else:

@@ -292,12 +292,12 @@ class USFMBibleBook( BibleBook ):
 
             # Look for any self-closed end-alignment milestones
             if variables['level'] > 0:
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"      Looking for {variables['level']} end markers…" )
+                vPrint( 'Never', debuggingThisModule, f"      Looking for {variables['level']} end markers…" )
                 endMarkers = '\\zaln-e\\*' * variables['level']
                 ixEndMarkers = text.find( endMarkers )
                 assert ixEndMarkers != 0 # Not expected at the beginning of a line
                 if ixEndMarkers > 0: # Found end alignment marker(s)
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"        Found {variables['level']} end markers" )
+                    vPrint( 'Never', debuggingThisModule, f"        Found {variables['level']} end markers" )
                     assert variables['text']
                     if marker == 'SWAPPED': assert not variables['words']
                     variables['words'] += text[:ixEndMarkers] if marker=='SWAPPED' \
@@ -310,8 +310,8 @@ class USFMBibleBook( BibleBook ):
                     text = text[:ixEndMarkers] + text[ixEndMarkers+len(endMarkers):] # Could be punctuation or more on the end
                     variables['text'] = variables['words'] = ''
                     variables['level'] = 0
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Reset level to zero" )
-                    #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"      Decreased level to {variables['level']}" )
+                    vPrint( 'Never', debuggingThisModule, "      Reset level to zero" )
+                    #vPrint( 'Never', debuggingThisModule, f"      Decreased level to {variables['level']}" )
                     #assert variables['level'] >= 0
                 elif '\\zaln-e' in text:
                     logging.critical( f"Not enough zaln-e markers (expected {variables['level']}) in {marker}={text}" )
@@ -325,15 +325,15 @@ class USFMBibleBook( BibleBook ):
                     #vPrint( 'Quiet', debuggingThisModule, "words3b", variables['words'] )
                     #assert '\\w*\\w' not in variables['words']
 
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"Got near end1 with {marker}='{text}'" )
+            vPrint( 'Never', debuggingThisModule, f"Got near end1 with {marker}='{text}'" )
             # vPrint( 'Quiet', debuggingThisModule, "rawLines", self._rawLines[-4:] )
             if 'zaln' in text: # error because we have no open levels
                 logging.critical( f"Why is zaln in {self.BBB} text???" )
             if marker == 'SWAPPED': # then we need to supply a remaining marker
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"Got near end2 with {marker}='{text}'" )
+                vPrint( 'Never', debuggingThisModule, f"Got near end2 with {marker}='{text}'" )
                 if text.startswith( '\\w ' ): marker = 'p~'
             if marker == 'SWAPPED': logging.critical( f"Programming error in {self.BBB}" )
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"  handleUWAlignment returning {marker!r}, {text!r} with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
+            vPrint( 'Never', debuggingThisModule, f"  handleUWAlignment returning {marker!r}, {text!r} with lev={variables['level']}, aText='{variables['text']}', aWords='{variables['words']}'" )
             assert 'zaln' not in variables['text']
             assert '\\w' not in variables['text']
             assert 'zaln' not in variables['words']

@@ -390,7 +390,7 @@ class MyBibleBible( Bible ):
         for row in rows:
             assert len(row) == 2 # name, value
             name, value = row
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '  INFO', name, repr(value) )
+            vPrint( 'Never', debuggingThisModule, '  INFO', name, repr(value) )
             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 assert name in KNOWN_INFO_FIELD_NAMES
             # NOTE: detailed_info may contain HTML formatting

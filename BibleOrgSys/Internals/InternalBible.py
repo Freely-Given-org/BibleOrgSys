@@ -2529,7 +2529,7 @@ class InternalBible:
         alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         for BBB,bookObject in self.books.items():
             if 'uWalignments' in bookObject.__dict__:
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"Cleaning alignments for {BBB} and aggregating…" )
+                vPrint( 'Never', debuggingThisModule, f"Cleaning alignments for {BBB} and aggregating…" )
                 alignedBookList.append( BBB )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     alignedOTBookList.append( BBB )

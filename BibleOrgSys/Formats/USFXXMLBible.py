@@ -977,7 +977,7 @@ class USFXXMLBible( Bible ):
                             if target: self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else: halt
                         else: # Why do we get xt's embedded inside other xt's???
-                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "USFXXMLBible.loadCrossreference: m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
+                            vPrint( 'Never', debuggingThisModule, "USFXXMLBible.loadCrossreference: m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
                             logging.critical( _("USFXXMLBible.loadCrossreference: Bad nesting of xt:"), "m={!r} xTxt={!r} m2={!r} xTxt2={!r} xTl2={!r} at {}".format( marker, xText, marker2, xText2, xTail2, sub2location ) )
                         if xTail2: self.thisBook.appendToLastLine( xTail2 )
                 else: halt

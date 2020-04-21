@@ -624,7 +624,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:
                 for line in possibleBibleFile:
                     lineNumber += 1
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, filenameOrFilepath, lineNumber, line )
+                    #vPrint( 'Never', debuggingThisModule, filenameOrFilepath, lineNumber, line )
                     if numLines==1: return line # Always returns the first line (string)
                     lines.append( line )
                     if lineNumber >= numLines: return lines # Return a list of lines

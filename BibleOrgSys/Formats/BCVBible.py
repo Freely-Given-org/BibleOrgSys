@@ -299,7 +299,7 @@ class BCVBible( Bible ):
 
         if self.suppliedMetadata['BCV']:
             self.applySuppliedMetadata( 'BCV' ) # Copy some to self.settingsDict
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 's.SD', self.settingsDict )
+            vPrint( 'Never', debuggingThisModule, 's.SD', self.settingsDict )
     # end of BCVBible.loadMetadata
 
 

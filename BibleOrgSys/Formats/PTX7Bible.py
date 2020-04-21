@@ -99,17 +99,17 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("PTX7BibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningA1", False )
+        vPrint( 'Never', debuggingThisModule, "  PTX7 returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("PTX7BibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningA2", False )
+        vPrint( 'Never', debuggingThisModule, "  PTX7 returningA2", False )
         return False
 
     # Check that there's a USFM Bible here first
     from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
     if not USFM2BibleFileCheck( givenFolderName, strictCheck, discountSSF=False ): # no autoloads
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningA3", False )
+        vPrint( 'Never', debuggingThisModule, "  PTX7 returningA3", False )
         return False
 
     # Find all the files and folders in this folder
@@ -156,9 +156,9 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningB1", dB )
+            vPrint( 'Never', debuggingThisModule, "  PTX7 returningB1", dB )
             return dB
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningB2", numFound )
+        vPrint( 'Never', debuggingThisModule, "  PTX7 returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -212,11 +212,11 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             if autoLoad or autoLoadBooks:
                 dB.preload() # Load and process the metadata files
                 if autoLoadBooks: dB.loadBooks() # Load and process the book files
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningC1", dB )
+            vPrint( 'Never', debuggingThisModule, "  PTX7 returningC1", dB )
             return dB
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningC2", numFound )
+        vPrint( 'Never', debuggingThisModule, "  PTX7 returningC2", numFound )
         return numFound
-    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  PTX7 returningN", None )
+    vPrint( 'Never', debuggingThisModule, "  PTX7 returningN", None )
 # end of PTX7BibleFileCheck
 
 
@@ -383,7 +383,7 @@ def loadPTX7Languages( BibleObject ):
                 #vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
 
                 if len(line)<5:
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    vPrint( 'Never', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
                     continue
 
                 if line[0]=='[' and line[-1]==']': # it's a new section name

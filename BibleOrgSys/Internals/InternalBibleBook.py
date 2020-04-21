@@ -134,7 +134,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
     maxOriginalWords = maxTranslatedWords = 0
     cleanedAlignmentList:List[Tuple[str,str,str,str]] = []
     for j, (C,V, textString,wordsString) in enumerate( originalAlignments, start=1 ):
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"{j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
+        vPrint( 'Never', debuggingThisModule, f"{j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
 
         assert isinstance( C, str ) and C
         assert isinstance( V, str ) and V
@@ -159,7 +159,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
             changedSomething = False
             for paragraphMarker in ('q','q1','q2','q3', 'p','m','pi','pi1',):
                 if wordsString.startswith( f'\\{paragraphMarker} ' ):
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"             Removing \\{paragraphMarker} number from '{wordsString}'" )
+                    vPrint( 'Never', debuggingThisModule, f"             Removing \\{paragraphMarker} number from '{wordsString}'" )
                     wordsString = wordsString[len(paragraphMarker)+2:] # Remove the unwanted paragraph formatting
                     changedSomething = True
                     break
@@ -169,12 +169,12 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         while '\\v ' in wordsString: # Remove the verse number
             ix = wordsString.find( '\\v ' )
             assert ix != -1
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"             Removing verse number from '{wordsString}'" )
+            vPrint( 'Never', debuggingThisModule, f"             Removing verse number from '{wordsString}'" )
             assert wordsString[ix+3].isdigit()
             ixSpace = wordsString[ix+3:].find( ' ' )
             assert ixSpace != -1
             wordsString = wordsString[:ix] + wordsString[ix+ixSpace+4:]
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"               Removed verse number now '{wordsString[:20]}'…" )
+            vPrint( 'Never', debuggingThisModule, f"               Removed verse number now '{wordsString[:20]}'…" )
         assert '\\v' not in wordsString
 
         if wordsString.startswith( '\\q '): wordsString = wordsString[3:] # Handle a bug in ULT Acts 4:25
@@ -213,7 +213,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         wordsCount = wordsString.count( '\\w ' )
         if wordsCount > maxTranslatedWords: maxTranslatedWords = wordsCount
         assert wordsString.count( '\\w*' ) == wordsCount
-        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"  This one has {wordsCount} translated words" )
+        #vPrint( 'Never', debuggingThisModule, f"  This one has {wordsCount} translated words" )
         wordRE = re.compile( r'\\w (.+?)\|x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})"\\w\*' )
         wordsList = []
         match =  wordRE.search( wordsString )
@@ -2588,7 +2588,7 @@ class InternalBibleBook:
         Extract a SFM field from the loaded book.
         """
         if not self._processedFlag:
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {}: calling processLines from 'getField'".format( self.BBB ) )
+            vPrint( 'Never', debuggingThisModule, "InternalBibleBook {}: calling processLines from 'getField'".format( self.BBB ) )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
@@ -2865,7 +2865,7 @@ class InternalBibleBook:
                 vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook._discover() for {self.BBB}…" )
+        vPrint( 'Never', debuggingThisModule, f"InternalBibleBook._discover() for {self.BBB}…" )
 
         bkDict = {}
         bkDict['chapterCount'] = bkDict['verseCount'] = bkDict['percentageProgress'] = None

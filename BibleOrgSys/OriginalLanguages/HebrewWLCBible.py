@@ -115,7 +115,7 @@ class HebrewWLCBibleAddon():
         """
         Create an empty object.
         """
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "HebrewWLCBibleAddon.__init__()" )
+        vPrint( 'Never', debuggingThisModule, "HebrewWLCBibleAddon.__init__()" )
 
         self.glossingDict, self.haveGlossingDictChanges, self.loadedGlossEntryCount = None, False, 0
     # end of HebrewWLCBibleAddon.__init__
@@ -128,7 +128,7 @@ class HebrewWLCBibleAddon():
 
         e.g., {'word': 'הַ/מַּיִם', 'strong': 'd/4325', 'morph': 'HTd/Ncmpa', 'cantillationLevel': '0.1.1.0'}
         """
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+        vPrint( 'Never', debuggingThisModule, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
         assert isinstance( verseDataEntry, InternalBibleEntry )
 
         def handleExtra( thisExtra ):
@@ -138,7 +138,7 @@ class HebrewWLCBibleAddon():
             If so, returns wwDict with word attributes.
             Otherwise, returns None.
             """
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "handleExtra", thisExtra )
+            vPrint( 'Never', debuggingThisModule, "handleExtra", thisExtra )
 
             if thisExtra.getType() == 'ww':
                 wwField = thisExtra.getText()
@@ -147,7 +147,7 @@ class HebrewWLCBibleAddon():
                     wwDict['morph'] = wwDict['morph'][5:]
                 #if 'morph' in wwDict and wwDict['morph'].startswith( 'H' ): # H for Hebrew, A for Aramaic
                     #wwDict['morph'] = wwDict['morph'][1:]
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "wwDict", wwDict )
+                vPrint( 'Never', debuggingThisModule, "wwDict", wwDict )
                 return wwDict
             else:
                 logging.warning( "WLC ignoring {} extra {} at {} for {}".format( thisExtra.getType(), thisExtra.getText(), ref, token ) )
@@ -165,12 +165,12 @@ class HebrewWLCBibleAddon():
 
         BBB,C,V = ref.getBCV()
 
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "adjText", repr(adjText) )
+        vPrint( 'Never', debuggingThisModule, "adjText", repr(adjText) )
         resultList = []
         ix = ixAdd = 0
         punctuation = ''
         for j,token in enumerate( adjText.split() ):
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "token", j, repr(token) )
+            vPrint( 'Never', debuggingThisModule, "token", j, repr(token) )
             ix += len(token)
             if token != '\\w': # ignore these:
                 if token.endswith( '\\w*' ): token = token[:-3]
@@ -180,21 +180,21 @@ class HebrewWLCBibleAddon():
                     ix -= 2
                 if '\\w*' in token: # e.g., 'הָ/אָֽרֶץ\\w*׃'
                     token, punctuation = token.split( '\\w*', 1 )
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "t,p", repr(token), repr(punctuation) )
+                    vPrint( 'Never', debuggingThisModule, "t,p", repr(token), repr(punctuation) )
                     #ixAdd += len( punctuation )
                     ix -= len( punctuation )
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ix, "token", repr(token) )
+                vPrint( 'Never', debuggingThisModule, ix, "token", repr(token) )
                 something = lineExtras.checkForIndex( ix ) if lineExtras else None # Could be moved lower if we remove assert after debugging
                 wwDict = None
                 if isinstance( something, InternalBibleExtra ):
                     wwDict = handleExtra( something )
-                    #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "extra", something )
+                    #vPrint( 'Never', debuggingThisModule, "extra", something )
                     #if something.getType() == 'ww':
                         #wwField = something.getText()
                         #wwDict = parseWordAttributes( 'WLC', BBB, C, V, wwField, errorList=None )
                         #if 'morph' in wwDict and wwDict['morph'].startswith( 'OSHM:' ):
                             #wwDict['morph'] = wwDict['morph'][5:]
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "wwDict", wwDict )
+                        #vPrint( 'Never', debuggingThisModule, "wwDict", wwDict )
                     #else:
                         #logging.error( "Ignoring {} extra {} at {} for {}".format( something.getType(), something.getText(), ref, token ) )
                 elif isinstance( something, list ):
@@ -214,14 +214,14 @@ class HebrewWLCBibleAddon():
                 if punctuation:
                     ix += len( punctuation )
                     something = lineExtras.checkForIndex( ix ) # Could be moved lower if we remove assert after debugging
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "have punctuation", repr(punctuation), something )
+                    vPrint( 'Never', debuggingThisModule, "have punctuation", repr(punctuation), something )
                     resultList.append( {'word':punctuation} )
                     punctuation = ''
-            #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
+            #vPrint( 'Never', debuggingThisModule, "{}/{} ix={} token={!r} lemma={!r}".format( j+1, count, ix, token, lemma ) )
             ix += ixAdd + 1 # for space between words
             ixAdd = 0
 
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getVerseDictList returning: {}".format( resultList ) )
+        vPrint( 'Never', debuggingThisModule, "getVerseDictList returning: {}".format( resultList ) )
         return resultList
     # end of HebrewWLCBibleAddon.getVerseDictList
 
@@ -425,7 +425,7 @@ class HebrewWLCBibleAddon():
         """
         Save the glossing dictionary to a pickle file.
         """
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "saveAnyChangedGlosses()" )
+        vPrint( 'Never', debuggingThisModule, "saveAnyChangedGlosses()" )
 
         if self.haveGlossingDictChanges:
             BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, numBackups=9 )
@@ -678,7 +678,7 @@ class OSISHebrewWLCBible( OSISXMLBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFileOrFilepath ) )
+        vPrint( 'Never', debuggingThisModule, "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFileOrFilepath ) )
 
         if not OSISXMLFileOrFilepath: OSISXMLFileOrFilepath = DEFAULT_OSIS_WLC_FILEPATH
         OSISXMLBible.__init__( self, OSISXMLFileOrFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
@@ -698,7 +698,7 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
+        vPrint( 'Never', debuggingThisModule, "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
 
         if not zippedPickleFilepath: zippedPickleFilepath = DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH
         if not os.path.exists( zippedPickleFilepath ):

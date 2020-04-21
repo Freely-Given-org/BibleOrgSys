@@ -414,7 +414,7 @@ class EasyWorshipBible( Bible ):
         index = 0
 
         # Block 1 is 32-bytes long and always the same for EW2009 Bibles
-        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
+        #vPrint( 'Never', debuggingThisModule, 'introBlock', hexlify( fileBytes[index:index+32] ), fileBytes[index:index+32] )
         keep['introBlock'] = (index,fileBytes[index:index+32])
         hString = ''
         for j in range( 32 ):
@@ -434,7 +434,7 @@ class EasyWorshipBible( Bible ):
         # Block 2 is 56-bytes long
         moduleNameBlock = fileBytes[index:index+56]
         keep['moduleNameBlock'] = (index,moduleNameBlock)
-        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
+        #vPrint( 'Never', debuggingThisModule, 'moduleNameBlock', hexlify( moduleNameBlock ), moduleNameBlock )
         nString = ''
         for j in range( 32 ):
             char8 = fileBytes[index+j]
@@ -462,7 +462,7 @@ class EasyWorshipBible( Bible ):
             bookInfoBlock = fileBytes[index:index+51]
             blockName = 'bookInfoBlock-{}'.format( bookNumber )
             keep[blockName] = (index,bookInfoBlock)
-            #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, blockName, hexlify( bookInfoBlock ), bookInfoBlock )
+            #vPrint( 'Never', debuggingThisModule, blockName, hexlify( bookInfoBlock ), bookInfoBlock )
             bookName = ''
             for j in range( 32 ):
                 char8 = fileBytes[index+j]

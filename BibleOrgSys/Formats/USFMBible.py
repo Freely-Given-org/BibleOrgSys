@@ -87,11 +87,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM returningA1", False )
+        vPrint( 'Never', debuggingThisModule, "  USFM returningA1", False )
         return False
     if not os.path.isdir( givenFolderName ):
         logging.critical( _("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM returningA2", False )
+        vPrint( 'Never', debuggingThisModule, "  USFM returningA2", False )
         return False
 
     # Find all the files and folders in this folder
@@ -153,9 +153,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( givenFolderName )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningB1", uB )
+            vPrint( 'Never', debuggingThisModule, "  USFM3 returningB1", uB )
             return uB
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningB2", numFound )
+        vPrint( 'Never', debuggingThisModule, "  USFM3 returningB2", numFound )
         return numFound
 
     # Look one level down
@@ -226,11 +226,11 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
             uB = USFMBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: uB.preload()
             if autoLoadBooks: uB.loadBooks() # Load and process the book files
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningC1", uB )
+            vPrint( 'Never', debuggingThisModule, "  USFM3 returningC1", uB )
             return uB
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningC2", numFound )
+        vPrint( 'Never', debuggingThisModule, "  USFM3 returningC2", numFound )
         return numFound
-    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  USFM3 returningN", None )
+    vPrint( 'Never', debuggingThisModule, "  USFM3 returningN", None )
 # end of USFMBibleFileCheck
 
 

@@ -59,7 +59,7 @@ from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Reference.LDML import LDMLFile
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-21' # by RJH
 SHORT_PROGRAM_NAME = "Paratext8Bible"
 PROGRAM_NAME = "Paratext-8 Bible handler"
 PROGRAM_VERSION = '0.27'
@@ -308,7 +308,7 @@ def loadPTX8ProjectData( BibleObject, sourceFolder, encoding='utf-8' ):
         for key in sorted(PTXSettingsDict):
             vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( key, PTXSettingsDict[key] ) )
 
-    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTX8SettingsDict', len(PTXSettingsDict), PTXSettingsDict )
+    vPrint( 'Never', debuggingThisModule, '\nPTX8SettingsDict', len(PTXSettingsDict), PTXSettingsDict )
     return PTXSettingsDict
 # end of loadPTX8ProjectData
 
@@ -361,7 +361,7 @@ def loadPTX8Languages( BibleObject ):
             vPrint( 'Quiet', debuggingThisModule, "    {}:".format( lgKey ) )
             for key in PTXLanguages[lgKey]:
                 vPrint( 'Quiet', debuggingThisModule, "      {}: ({}) {}".format( key, len(PTXLanguages[lgKey][key]), PTXLanguages[lgKey][key] ) )
-    elif debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTX8Languages', len(PTXLanguages), PTXLanguages )
+    else: vPrint( 'Never', debuggingThisModule, '\nPTX8Languages', len(PTXLanguages), PTXLanguages )
     return PTXLanguages
 # end of PTX8Bible.loadPTX8Languages
 
@@ -415,7 +415,7 @@ def loadPTX8Versifications( BibleObject ):
                 #vPrint( 'Quiet', debuggingThisModule, versificationName, "versification line", repr(line) )
 
                 if len(line)<7:
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
+                    vPrint( 'Never', debuggingThisModule, "Why was line #{} so short? {!r}".format( lineCount, line ) )
                     continue
 
                 if line.startswith( '#! -' ): # It's an excluded verse (or passage???)
@@ -475,7 +475,7 @@ def loadPTX8Versifications( BibleObject ):
         except ValueError: logging.critical( "PTX8 versification file seemed unexpected: {}".format( versificationFilepath ) )
 
     vPrint( 'Info', debuggingThisModule, "  Loaded {} versifications.".format( len(PTXVersifications) ) )
-    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTXVersifications', len(PTXVersifications), PTXVersifications )
+    vPrint( 'Never', debuggingThisModule, '\nPTXVersifications', len(PTXVersifications), PTXVersifications )
     return PTXVersifications
 # end of PTX8Bible.loadPTX8Versifications
 
@@ -733,7 +733,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 autocorrect file seemed unexpected: {}".format( autocorrectFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} autocorrect elements.".format( len(PTXAutocorrects) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
+        vPrint( 'Never', debuggingThisModule, '\nPTXAutocorrects', len(PTXAutocorrects), PTXAutocorrects )
         if PTXAutocorrects: self.suppliedMetadata['PTX8']['Autocorrects'] = PTXAutocorrects
     # end of PTX8Bible.loadPTX8Autocorrects
 
@@ -798,7 +798,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 books names file seemed unexpected: {}".format( bookNamesFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} book names.".format( len(booksNamesDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
+        vPrint( 'Never', debuggingThisModule, "\nbooksNamesDict", len(booksNamesDict), booksNamesDict )
         if booksNamesDict: self.suppliedMetadata['PTX8']['BooksNames'] = booksNamesDict
     # end of PTX8Bible.loadPTX8BooksNames
 
@@ -948,7 +948,7 @@ class PTX8Bible( Bible ):
             totalEntries = 0
             for lType in lexiconDict['Entries']: totalEntries += len( lexiconDict['Entries'][lType] )
             vPrint( 'Quiet', debuggingThisModule, "  Loaded {} lexicon types ({:,} total entries).".format( len(lexiconDict['Entries']), totalEntries ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nlexiconDict", len(lexiconDict), lexiconDict )
+        vPrint( 'Never', debuggingThisModule, "\nlexiconDict", len(lexiconDict), lexiconDict )
         if lexiconDict: self.suppliedMetadata['PTX8']['Lexicon'] = lexiconDict
     # end of PTX8Bible.loadPTX8Lexicon
 
@@ -1183,7 +1183,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 checking status file seemed unexpected: {}".format( canonsFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} canons.".format( len(canonsDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\ncanonsDict", len(canonsDict), canonsDict )
+        vPrint( 'Never', debuggingThisModule, "\ncanonsDict", len(canonsDict), canonsDict )
         #for something in canonsDict:
             #vPrint( 'Quiet', debuggingThisModule, "\n  {} = {}".format( something, canonsDict[something] ) )
         if canonsDict: self.suppliedMetadata['PTX8']['Canons'] = canonsDict
@@ -1329,7 +1329,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 comment tag file seemed unexpected: {}".format( commentTagFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} comment tags.".format( len(commentTagDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\ncommentTagDict", len(commentTagDict), commentTagDict )
+        vPrint( 'Never', debuggingThisModule, "\ncommentTagDict", len(commentTagDict), commentTagDict )
         if commentTagDict: self.suppliedMetadata['PTX8']['CommentTags'] = commentTagDict
     # end of PTX8Bible.loadPTX8CommentTags
 
@@ -1437,7 +1437,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 license file seemed unexpected: {}".format( licenceFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} license elements.".format( len(jsonData) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTX8Licence', len(jsonData), jsonData )
+        vPrint( 'Never', debuggingThisModule, '\nPTX8Licence', len(jsonData), jsonData )
         if jsonData: self.suppliedMetadata['PTX8']['Licence'] = jsonData
     # end of PTX8Bible.loadPTX8Licence
 
@@ -1581,7 +1581,7 @@ class PTX8Bible( Bible ):
             vPrint( 'Quiet', debuggingThisModule, "    Now have {} remaining conflicts".format( len(self.conflicts) ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} noters.".format( len(notesDictByName) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nnotesDictByName", len(notesDictByName), notesDictByName )
+        vPrint( 'Never', debuggingThisModule, "\nnotesDictByName", len(notesDictByName), notesDictByName )
         # Call this 'PTXNotes' rather than just 'Notes' which might just be a note on the particular version
         if notesDictByName: self.suppliedMetadata['PTX8']['PTXNotesByName'] = notesDictByName
         if notesDictByThread: self.suppliedMetadata['PTX8']['PTXNotesByThread'] = notesDictByThread
@@ -1676,7 +1676,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 parallel passage status file seemed unexpected: {}".format( parallelPassageStatusFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} parallel passage status entries.".format( len(parallelPassageStatusDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nparallelPassageStatusDict", len(parallelPassageStatusDict), parallelPassageStatusDict )
+        vPrint( 'Never', debuggingThisModule, "\nparallelPassageStatusDict", len(parallelPassageStatusDict), parallelPassageStatusDict )
         if parallelPassageStatusDict: self.suppliedMetadata['PTX8']['ParallelPassageStatus'] = parallelPassageStatusDict
     # end of PTX8Bible.loadPTX8ParallelPassageStatus
 
@@ -1771,7 +1771,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 project Biblical terms file seemed unexpected: {}".format( projectBiblicalTermsFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} project Biblical terms entries.".format( len(projectBiblicalTermsDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nprojectBiblicalTermsDict", len(projectBiblicalTermsDict), projectBiblicalTermsDict )
+        vPrint( 'Never', debuggingThisModule, "\nprojectBiblicalTermsDict", len(projectBiblicalTermsDict), projectBiblicalTermsDict )
         #for someKey, someValue in projectBiblicalTermsDict.items():
             #vPrint( 'Quiet', debuggingThisModule, "\n  {} = {}".format( someKey, someValue ) )
         if projectBiblicalTermsDict: self.suppliedMetadata['PTX8']['ProjectBiblicalTerms'] = projectBiblicalTermsDict
@@ -2094,7 +2094,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 project progress file seemed unexpected: {}".format( projectProgressFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} project progress entries.".format( len(projectProgressDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nprojectProgressDict", len(projectProgressDict), projectProgressDict )
+        vPrint( 'Never', debuggingThisModule, "\nprojectProgressDict", len(projectProgressDict), projectProgressDict )
         #for someKey, someValue in projectProgressDict.items():
             #vPrint( 'Quiet', debuggingThisModule, "\n  {} = {}".format( someKey, someValue ) )
         if projectProgressDict: self.suppliedMetadata['PTX8']['ProjectProgress'] = projectProgressDict
@@ -2226,7 +2226,7 @@ class PTX8Bible( Bible ):
             except ValueError: logging.critical( "PTX8 print config file seemed unexpected: {}".format( progressFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} printConfig.".format( len(printConfigDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nprintConfigDict", len(printConfigDict), printConfigDict )
+        vPrint( 'Never', debuggingThisModule, "\nprintConfigDict", len(printConfigDict), printConfigDict )
         if printConfigDict: self.suppliedMetadata['PTX8']['PrintConfig'] = printConfigDict
     # end of PTX8Bible.loadPTX8PrintConfig
 
@@ -2394,7 +2394,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 print draft changes file seemed unexpected: {}".format( autocorrectFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} print draft changes elements.".format( len(PTXPrintDraftChanges) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
+        vPrint( 'Never', debuggingThisModule, '\nPTXPrintDraftChanges', len(PTXPrintDraftChanges), PTXPrintDraftChanges )
         if PTXPrintDraftChanges: self.suppliedMetadata['PTX8']['PrintDraftChanges'] = PTXPrintDraftChanges
     # end of PTX8Bible.loadPTX8PrintDraftChanges
 
@@ -2468,7 +2468,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 spelling status file seemed unexpected: {}".format( spellingStatusFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} spelling status entries.".format( len(spellingStatusDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
+        vPrint( 'Never', debuggingThisModule, "\nspellingStatusDict", len(spellingStatusDict), spellingStatusDict )
         if spellingStatusDict: self.suppliedMetadata['PTX8']['SpellingStatus'] = spellingStatusDict
     # end of PTX8Bible.loadPTX8SpellingStatus
 
@@ -2557,7 +2557,7 @@ class PTX8Bible( Bible ):
             except ValueError: logging.critical( "PTX8 style file seemed unexpected: {}".format( styleFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {} style files.".format( len(PTXStyles) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '\nPTXStyles', len(PTXStyles), PTXStyles )
+        vPrint( 'Never', debuggingThisModule, '\nPTXStyles', len(PTXStyles), PTXStyles )
         if PTXStyles: self.suppliedMetadata['PTX8']['Styles'] = PTXStyles
     # end of PTX8Bible.loadPTX8Styles
 
@@ -2666,7 +2666,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 rendering terms file seemed unexpected: {}".format( renderingTermsFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} term renderings.".format( len(TermRenderingsDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nTermRenderingsDict", len(TermRenderingsDict), TermRenderingsDict )
+        vPrint( 'Never', debuggingThisModule, "\nTermRenderingsDict", len(TermRenderingsDict), TermRenderingsDict )
         #vPrint( 'Quiet', debuggingThisModule, TermRenderingsDict['חָנוּן'] )
         if TermRenderingsDict: self.suppliedMetadata['PTX8']['TermRenderings'] = TermRenderingsDict
     # end of PTX8Bible.loadPTX8TermRenderings
@@ -2803,7 +2803,7 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 word analyses file seemed unexpected: {}".format( wordAnalysesFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} word analysis entries.".format( len(wordAnalysesDict) ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
+        vPrint( 'Never', debuggingThisModule, "\nwordAnalysesDict", len(wordAnalysesDict), wordAnalysesDict )
         if wordAnalysesDict: self.suppliedMetadata['PTX8']['WordAnalyses'] = wordAnalysesDict
     # end of PTX8Bible.loadPTX8WordAnalyses
 

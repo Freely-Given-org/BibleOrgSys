@@ -516,7 +516,7 @@ def briefDemo() -> None:
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No hijkl in stylesheet!" )
         try: vPrint( 'Quiet', debuggingThisModule, ss.getValue( 'h', 'FontSizeImaginary' ) )
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No h or FontSizeImaginary in stylesheet!" )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 
     if 1: # Try importing one
         vPrint( 'Quiet', debuggingThisModule, "\nTrying Bible stylesheet import…" )
@@ -526,7 +526,7 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         vPrint( 'Quiet', debuggingThisModule, ss )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', debuggingThisModule, "h FontSize:", ss.getValue( 'h', 'FontSize' ) )
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No h or FontSize in stylesheet!" )
@@ -539,7 +539,7 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getDict( 'h' ) )
         vPrint( 'Quiet', debuggingThisModule, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 
     if 1: # Try a full one
         vPrint( 'Quiet', debuggingThisModule, "\nTrying full PT stylesheet…" )
@@ -550,7 +550,7 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getDict( 'h' ) )
         vPrint( 'Quiet', debuggingThisModule, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 # end of BibleStylesheets.briefDemo
 
 def fullDemo() -> None:
@@ -575,7 +575,7 @@ def fullDemo() -> None:
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No hijkl in stylesheet!" )
         try: vPrint( 'Quiet', debuggingThisModule, ss.getValue( 'h', 'FontSizeImaginary' ) )
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No h or FontSizeImaginary in stylesheet!" )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 
     if 1: # Try importing one
         vPrint( 'Quiet', debuggingThisModule, "\nTrying Bible stylesheet import…" )
@@ -585,7 +585,7 @@ def fullDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         vPrint( 'Quiet', debuggingThisModule, ss )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getTKStyleDict( 'h' ) )
         try: vPrint( 'Quiet', debuggingThisModule, "h FontSize:", ss.getValue( 'h', 'FontSize' ) )
         except KeyError: vPrint( 'Quiet', debuggingThisModule, "No h or FontSize in stylesheet!" )
@@ -598,7 +598,7 @@ def fullDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getDict( 'h' ) )
         vPrint( 'Quiet', debuggingThisModule, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 
     if 1: # Try a full one
         vPrint( 'Quiet', debuggingThisModule, "\nTrying full PT stylesheet…" )
@@ -609,7 +609,7 @@ def fullDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, ss )
         vPrint( 'Quiet', debuggingThisModule, "h style:", ss.getDict( 'h' ) )
         vPrint( 'Quiet', debuggingThisModule, "h fontsize:", ss.getValue( 'h', 'FontSize' ) )
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, ss.dataDict )
+        vPrint( 'Never', debuggingThisModule, ss.dataDict )
 # end of BibleStylesheets.fullDemo
 
 if __name__ == '__main__':

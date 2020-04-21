@@ -226,7 +226,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
@@ -258,7 +258,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -286,7 +286,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -369,7 +369,7 @@ class LDMLFile:
                     characters[subelement.tag] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         secType = None
@@ -412,7 +412,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag in ('quotationStart','quotationEnd','alternateQuotationStart','alternateQuotationEnd'):
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
@@ -433,7 +433,7 @@ class LDMLFile:
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
                         adjusted2Tag = removeSILPrefix( sub2element.tag )
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if adjusted2Tag not in delimiters:
@@ -448,7 +448,7 @@ class LDMLFile:
                         for sub3element in sub2element:
                             sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
                             adjusted3Tag = removeSILPrefix( sub3element.tag )
-                            #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
+                            #vPrint( 'Never', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
                             #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation, "ABC" )
                             BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
@@ -492,7 +492,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -501,7 +501,7 @@ class LDMLFile:
                     layout[subelement.tag] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         if sub2element.tag == 'orientation':
@@ -578,7 +578,7 @@ class LDMLFile:
                         symbols[numberSystem] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.tag.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.tag.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         sAlt = sDraft = sSource = sPath = None
@@ -612,7 +612,7 @@ class LDMLFile:
                         currencyFormats[numberSystem] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.tag.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.tag.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         #if sub2element.tag not in currencyFormats[numberSystem]:
                             #currencyFormats[numberSystem][sub2element.tag] = sub2element.text
@@ -627,7 +627,7 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'currencyFormat':
@@ -640,7 +640,7 @@ class LDMLFile:
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingCF {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingCF {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -698,7 +698,7 @@ class LDMLFile:
                                     #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        ProcessingCS {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        ProcessingCS {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag in ('beforeCurrency','afterCurrency'):
@@ -712,7 +712,7 @@ class LDMLFile:
                                             #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingBfC {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingBfC {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
@@ -772,7 +772,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'currency':
@@ -788,7 +788,7 @@ class LDMLFile:
                             currencies[cuType] = {}
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 displayNames = []
@@ -846,14 +846,14 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'percentFormat':
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 displayNames = []
@@ -883,14 +883,14 @@ class LDMLFile:
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'percentFormat':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -950,7 +950,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'decimalFormatLength':
@@ -963,14 +963,14 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'decimalFormat':
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -991,7 +991,7 @@ class LDMLFile:
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'xpattern':
@@ -1057,7 +1057,7 @@ class LDMLFile:
                     miscPatterns = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'pattern':
@@ -1099,7 +1099,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag in ('traditional','native','finance'):
@@ -1133,20 +1133,20 @@ class LDMLFile:
                     scientificFormats = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'scientificFormatLength':
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation )
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'scientificFormat':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'pattern':
@@ -1209,7 +1209,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing NumberingSystems {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing NumberingSystems {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'numberingSystem':
                     BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
@@ -1240,7 +1240,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'defaultCollation':
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
@@ -1267,14 +1267,14 @@ class LDMLFile:
                     collations[subelement.tag][cType] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2elementLocation, "DGD561" )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag not in collations[subelement.tag][cType]:
                             collations[subelement.tag][cType][sub2element.tag] = {}
                         for sub3element in sub2element:
                             sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                            #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
+                            #vPrint( 'Never', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
                             BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation, "DSD354" )
                             BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
@@ -1310,7 +1310,7 @@ class LDMLFile:
                     languages = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingLgs3a {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingLgs3a {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'language':
@@ -1335,7 +1335,7 @@ class LDMLFile:
                 elif subelement.tag == 'territories':
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3b {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3b {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'territory':
@@ -1360,7 +1360,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3k {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3k {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'key':
@@ -1384,7 +1384,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3t {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3t {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'type':
@@ -1410,7 +1410,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3scr {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3scr {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'script':
@@ -1435,7 +1435,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingV3 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingV3 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'variant':
@@ -1460,7 +1460,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingCP6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingCP6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'codePattern':
@@ -1483,7 +1483,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingMSN6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingMSN6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'measurementSystemName':
@@ -1506,7 +1506,7 @@ class LDMLFile:
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingLDP6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingLDP6 {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag in ('localeSeparator','localeKeyTypePattern','localePattern'):
@@ -1579,7 +1579,7 @@ class LDMLFile:
             timeZoneNames = {}
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing2 {} ({})…".format( subelementLocation, subelement.text.strip() ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing2 {} ({})…".format( subelementLocation, subelement.text.strip() ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -1587,7 +1587,7 @@ class LDMLFile:
                     dCalendar = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3a {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3a {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'calendar':
@@ -1602,21 +1602,21 @@ class LDMLFile:
                             dayPeriods = {}
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        ProcessingD-C {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        ProcessingD-C {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'dateTimeFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingDTF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingDTF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'intervalFormats':
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'intervalFormatFallback':
                                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
@@ -1631,7 +1631,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoText( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
@@ -1653,7 +1653,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if 1: pass
@@ -1668,7 +1668,7 @@ class LDMLFile:
                                             BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingAF5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingAF5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'dateFormatItem':
                                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
@@ -1701,7 +1701,7 @@ class LDMLFile:
                                             BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingAF5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingAF5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'appendItem':
                                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
@@ -1734,13 +1734,13 @@ class LDMLFile:
                                 elif sub3element.tag == 'dateFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingDF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingDF4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'intervalFormats':
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'intervalFormatFallback':
                                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
@@ -1755,7 +1755,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoText( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
@@ -1777,7 +1777,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if 1: pass
@@ -1801,14 +1801,14 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'dateFormat':
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'pattern':
@@ -1844,13 +1844,13 @@ class LDMLFile:
                                 elif sub3element.tag == 'dayPeriods':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingDP1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingDP1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'dayPeriodContext':
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'dayPeriodWidth':
                                                     dpwType = None
@@ -1863,7 +1863,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         dpwType = dpwDraft = dpwAlt = dpwSource = dpwPath = None
@@ -1895,7 +1895,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if 1: pass
@@ -1922,7 +1922,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'months':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingMn1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingMn1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'monthContext':
@@ -1935,7 +1935,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'monthWidth':
@@ -1948,7 +1948,7 @@ class LDMLFile:
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'month':
@@ -1995,7 +1995,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'monthPatterns':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingMP4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingMP4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'monthPatternContext':
@@ -2008,7 +2008,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'monthPatternWidth':
@@ -2022,7 +2022,7 @@ class LDMLFile:
                                                     pass # Save text XXXXXXXXXXXXXXX
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingMPW6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingMPW6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'monthPattern':
@@ -2069,7 +2069,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'days':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingDays1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingDays1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'dayContext':
@@ -2082,7 +2082,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'dayWidth':
@@ -2095,7 +2095,7 @@ class LDMLFile:
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'day':
@@ -2141,7 +2141,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'timeFormats':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingTF1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingTF1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'timeFormatLength':
@@ -2154,7 +2154,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
@@ -2168,7 +2168,7 @@ class LDMLFile:
                                                             #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'pattern':
@@ -2203,7 +2203,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'cyclicNameSets':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingCNS1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingCNS1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'cyclicNameSet':
@@ -2216,7 +2216,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingD5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoText( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'cyclicNameContext':
@@ -2229,7 +2229,7 @@ class LDMLFile:
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoText( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'cyclicNameWidth':
@@ -2242,7 +2242,7 @@ class LDMLFile:
                                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                             for sub7element in sub6element:
                                                                 sub7elementLocation = sub7element.tag + ' in ' + sub6elementLocation
-                                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                                #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub7element, sub7elementLocation )
                                                                 BibleOrgSysGlobals.checkXMLNoTail( sub7element, sub7elementLocation )
                                                                 if sub7element.tag == 'cyclicName':
@@ -2301,7 +2301,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'eras':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'eraAbbr':
@@ -2315,7 +2315,7 @@ class LDMLFile:
                                                     #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingEA5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingEA5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'era':
@@ -2343,7 +2343,7 @@ class LDMLFile:
                                                     #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingEN5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingEN5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'era':
@@ -2381,7 +2381,7 @@ class LDMLFile:
                                                     #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingEN6 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingEN6 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5elementLocation )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'era':
@@ -2424,7 +2424,7 @@ class LDMLFile:
                                 elif sub3element.tag == 'quarters':
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingE1 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'quarterContext':
@@ -2437,7 +2437,7 @@ class LDMLFile:
                                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                             for sub5element in sub4element:
                                                 sub5elementLocation = sub5element.tag + ' in ' + sub4elementLocation
-                                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "            ProcessingEA5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
+                                                #vPrint( 'Never', debuggingThisModule, "            ProcessingEA5 {} ({})…".format( sub5elementLocation, sub5element.text.strip() ) )
                                                 BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5elementLocation )
                                                 if sub5element.tag == 'quarterWidth':
                                                     eDraft = qwType = None
@@ -2450,7 +2450,7 @@ class LDMLFile:
                                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                                     for sub6element in sub5element:
                                                         sub6elementLocation = sub6element.tag + ' in ' + sub5elementLocation
-                                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
+                                                        #vPrint( 'Never', debuggingThisModule, "              ProcessingD6 {} ({})…".format( sub6elementLocation, sub6element.text.strip() ) )
                                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub6element, sub6elementLocation )
                                                         BibleOrgSysGlobals.checkXMLNoTail( sub6element, sub6elementLocation )
                                                         if sub6element.tag == 'quarter':
@@ -2513,7 +2513,7 @@ class LDMLFile:
                 elif subelement.tag == 'fields':
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3b {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3b {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'field':
@@ -2527,7 +2527,7 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {}…".format( sub3elementLocation ) )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'displayName':
                                     BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
@@ -2552,7 +2552,7 @@ class LDMLFile:
                                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          ProcessingRT4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          ProcessingRT4 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag == 'relativeTimePattern':
@@ -2613,7 +2613,7 @@ class LDMLFile:
                     regionFormats = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing3g {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing3g {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         metazones = {}
                         if sub2element.tag == 'metazone':
@@ -2628,7 +2628,7 @@ class LDMLFile:
                             metazone = {}
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing8 {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing8 {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
@@ -2643,7 +2643,7 @@ class LDMLFile:
                                         metazone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         draft = None
@@ -2668,7 +2668,7 @@ class LDMLFile:
                                         metazone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         draft = None
@@ -2700,7 +2700,7 @@ class LDMLFile:
                             zone = {}
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing8 {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing8 {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'short':
                                     BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
@@ -2709,7 +2709,7 @@ class LDMLFile:
                                         zone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag in ('generic','standard','daylight'):
@@ -2735,7 +2735,7 @@ class LDMLFile:
                                         zone[sub3element.tag] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
                                         if sub4element.tag in ('generic','standard','daylight'):
@@ -2822,7 +2822,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'unitLength':
@@ -2836,7 +2836,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'unit':
@@ -2850,7 +2850,7 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'displayName':
@@ -2905,7 +2905,7 @@ class LDMLFile:
                                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'compoundUnitPattern':
@@ -2978,7 +2978,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'durationUnitPattern':
@@ -3009,7 +3009,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'characterLabel':
@@ -3052,7 +3052,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'listPattern':
@@ -3066,7 +3066,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'listPatternPart':
@@ -3080,7 +3080,7 @@ class LDMLFile:
                             pass # Save Text XXXXX
                             #for sub3element in sub2element:
                                 #sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                ##if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                ##vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 #BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
@@ -3115,7 +3115,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'contextTransformUsage':
@@ -3130,7 +3130,7 @@ class LDMLFile:
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {} ({})…".format( sub2elementLocation, sub2element.text.strip() ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'contextTransform':
@@ -3145,7 +3145,7 @@ class LDMLFile:
                             pass # Save Text XXXXX
                             #for sub3element in sub2element:
                                 #sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                ##if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                ##vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 #BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 #BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
@@ -3168,7 +3168,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    ProcessingPlurals {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    ProcessingPlurals {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'pluralRule':
@@ -3194,7 +3194,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    ProcessingSegmentations {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    ProcessingSegmentations {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 if subelement.tag == 'segmentation':
@@ -3212,7 +3212,7 @@ class LDMLFile:
                     segmentations[segType] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'suppressions':
@@ -3228,7 +3228,7 @@ class LDMLFile:
                                 segmentations[segType][sub2element.tag] = []
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
@@ -3252,7 +3252,7 @@ class LDMLFile:
                                 segmentations[sub2element.tag] = []
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'variable':
@@ -3287,7 +3287,7 @@ class LDMLFile:
                                 segmentations[sub2element.tag] = []
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag == 'rule':
@@ -3321,7 +3321,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -3331,7 +3331,7 @@ class LDMLFile:
                     metadata[adjustedTag] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag == 'casingItem':
@@ -3366,7 +3366,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    Processing {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
@@ -3376,7 +3376,7 @@ class LDMLFile:
                     posix[subelement.tag] = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      Processing {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         mDraft = None
@@ -3405,7 +3405,7 @@ class LDMLFile:
             """
             for subelement in element:
                 subelementLocation = subelement.tag + ' in ' + elementLocation
-                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "    ProcessingSpecial {}…".format( subelementLocation ) )
+                #vPrint( 'Never', debuggingThisModule, "    ProcessingSpecial {}…".format( subelementLocation ) )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, subelementLocation )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, subelementLocation )
                 assert subelement.tag not in special
@@ -3416,7 +3416,7 @@ class LDMLFile:
                     fonts = {}
                     for sub2element in subelement:
                         sub2elementLocation = sub2element.tag + ' in ' + subelementLocation
-                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "      ProcessingER1 {}…".format( sub2elementLocation ) )
+                        #vPrint( 'Never', debuggingThisModule, "      ProcessingER1 {}…".format( sub2elementLocation ) )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2elementLocation )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2elementLocation )
                         if sub2element.tag.endswith( 'font' ):
@@ -3438,7 +3438,7 @@ class LDMLFile:
                             fonts[fName] = sub2element.text
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
@@ -3468,7 +3468,7 @@ class LDMLFile:
                             #assert erName
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
                                 if sub3element.tag.endswith( 'font' ):
@@ -3485,7 +3485,7 @@ class LDMLFile:
                                     fonts[fName] = {}
                                     for sub4element in sub3element:
                                         sub4elementLocation = sub4element.tag + ' in ' + sub3elementLocation
-                                        #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
+                                        #vPrint( 'Never', debuggingThisModule, "          Processing9 {} ({})…".format( sub4elementLocation, sub4element.text.strip() if sub4element.text else sub4element.text ) )
                                         BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4elementLocation )
                                         BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4elementLocation )
@@ -3512,7 +3512,7 @@ class LDMLFile:
                             #assert erName
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )
@@ -3536,7 +3536,7 @@ class LDMLFile:
                             #assert erName
                             for sub3element in sub2element:
                                 sub3elementLocation = sub3element.tag + ' in ' + sub2elementLocation
-                                #if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
+                                #vPrint( 'Never', debuggingThisModule, "        Processing {} ({})…".format( sub3elementLocation, sub3element.text.strip() ) )
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3elementLocation )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3elementLocation )

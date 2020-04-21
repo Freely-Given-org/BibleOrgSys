@@ -93,22 +93,22 @@ def main() -> None:
     #   (We get the \s field, plus keep track of the index of each record)
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
-        if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "songRecord", songRecord )
+        vPrint( 'Never', debuggingThisModule, "songRecord", songRecord )
         sFieldData = songRecord[1] # Get the second line of the song record (assumed to be the \s or title line )
         assert sFieldData[0] == 's' # This is a 2-tuple of marker (without backslash) and marker contents
         keyPairs.append( (sFieldData[1],j) ) # Store the contents of the \s field, along with the index of this record
-    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "keyPairs", keyPairs )
+    vPrint( 'Never', debuggingThisModule, "keyPairs", keyPairs )
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
     vPrint( 'Quiet', debuggingThisModule, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "keyPair", keyPair )
+            vPrint( 'Never', debuggingThisModule, "keyPair", keyPair )
             outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record
             songRecord = songs.records[ keyPair[1] ] # Get the record (song) that we need
             for s,songLine in enumerate( songRecord ):
-                if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "songLine", s, songLine )
+                vPrint( 'Never', debuggingThisModule, "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
     vPrint( 'Normal', debuggingThisModule, "  {} songs written".format( k+1 ) )
