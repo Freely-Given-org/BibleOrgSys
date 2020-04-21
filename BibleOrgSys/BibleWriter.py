@@ -110,7 +110,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
+LAST_MODIFIED_DATE = '2020-04-21' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -235,7 +235,7 @@ class BibleWriter( InternalBible ):
 
 
     def toPickledBible( self, outputFolderpath:Optional[Path]=None,
-                            metadataDict:Optional[Dict[str,Any]]=None, dataLevel=None, zipOnly:bool=False ):
+                            metadataDict:Optional[Dict[str,Any]]=None, dataLevel=1, zipOnly:bool=False ):
         """
         Saves the Python book objects as pickle files
             then the Bible object (less books)
@@ -990,7 +990,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, processedBibleEntry in enumerate( internalBibleBookData ):
                     pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                    if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
+                    vPrint( 'Never', debuggingThisModule, "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
                         #vPrint( 'Quiet', debuggingThisModule, "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
@@ -2667,7 +2667,7 @@ class BibleWriter( InternalBible ):
                     if currentText: # start a new section
                         if pseudoMarker=='s1':
                             assert haveSectionHeadingsForBook
-                            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Saving at s1 section heading" )
+                            vPrint( 'Never', debuggingThisModule, "Saving at s1 section heading" )
                         elif pseudoMarker=='c':
                             assert C=='I' or needToSaveByChapter or BBB=='PRO'
                             if debuggingThisModule:
@@ -3740,12 +3740,15 @@ class BibleWriter( InternalBible ):
 
     def toUSX2XML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
         """
+        DEPRECATED
+
         Using settings from the given control file,
             converts the USFM information to UTF-8 USX XML files.
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSX2XML…" )
+        logging.critical( "toUSX2XML is DEPRECATED and will soon be removed!!!" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -4288,14 +4291,14 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
+        from BibleOrgSys.Formats.USXXMLBible import createUSXXMLBible
+
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toUSXXML…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX3_Export/' )
-        #if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
-        filesFolder = os.path.join( outputFolderpath, 'USX3Files/' )
-        if not os.access( filesFolder, os.F_OK ): os.makedirs( filesFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolderpath, defaultControlFilename, controlDict )
@@ -4306,661 +4309,7 @@ class BibleWriter( InternalBible ):
             rncFilepath = 'ExternalSchemas/DerivedFiles/usx_3.0.rng'
             if os.path.exists( rncFilepath ): validationSchema = rncFilepath
 
-        bkName_RE = '[1-3]? ?[A-Z][a-zA-Z]{1,4}'
-        CorV_RE = '[1-9][0-9]{0,2}'
-        CV_RE = f'{CorV_RE}:{CorV_RE}'
-        IOR_RE = re.compile( r'<char style="ior">(.+?)</char>' )
-
-        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
-
-
-        def writeUSX3Book( BBB, bkData ):
-            """ Writes a book to the filesFolder. """
-
-
-            def makeRefs( text:str ) -> str:
-                """
-                Used for ior and xt fields to make computer-readable ref fields
-
-                TODO: Handle refs with commas, e.g., Mal 3:1,4
-                """
-                vPrint( 'Verbose', debuggingThisModule, f'makeRefs( {text} )…' )
-                currentBBB = BBB
-                bitResults = []
-                for bit in text.split( ';' ):
-                    bitResult = bit
-                    match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
-                    if match:
-                        # print( f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                        currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                        if USFMBookCode:
-                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                    else:
-                        match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
-                        if match:
-                            # print( f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                            currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                            if USFMBookCode:
-                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                        else:
-                            match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE})(\s*\.?)$', bit )
-                            if match:
-                                # print( f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                                currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                if USFMBookCode:
-                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                            else:
-                                match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE})(\s*\.?)$', bit )
-                                if match:
-                                    # print( f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                                    currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                                    # print( currentBBB )
-                                    assert BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( currentBBB )
-                                    USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                    if USFMBookCode:
-                                        bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                                else:
-                                    match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
-                                    if match:
-                                        # print( f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                        if USFMBookCode:
-                                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
-                                    else:
-                                        match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
-                                        if match:
-                                            # print( f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                            if USFMBookCode:
-                                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
-                                        else:
-                                            match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
-                                            if match:
-                                                # print( f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                                if USFMBookCode:
-                                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
-                                            else: logging.critical( f"toUSX3 makeRefs unable to parse '{bit}'")
-                    bitResults.append( bitResult )
-                refString = ';'.join( bitResults )
-                vPrint( 'Never', debuggingThisModule, f"  makeRefs returning {refString}" )
-                return refString
-            # end of makeRefs for USX3
-
-
-            def handleInternalTextMarkersForUSX3( originalText ):
-                """
-                Handles character formatting markers within the originalText.
-                Tries to find pairs of markers and replaces them with html char segments.
-                """
-                if not originalText: return ''
-                if '\\' not in originalText: return originalText
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSXXML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
-                markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
-                                            key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
-                # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
-                #     pass
-
-                adjText = originalText
-                haveOpenChar = False
-                for charMarker in ALL_CHAR_MARKERS:
-                    #vPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSX3", charMarker )
-                    # Handle USFM character markers
-                    fullCharMarker = '\\' + charMarker + ' '
-                    if fullCharMarker in adjText:
-                        if haveOpenChar:
-                            adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logger.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
-                        adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
-                        haveOpenChar = True
-                    endCharMarker = '\\' + charMarker + '*'
-                    if endCharMarker in adjText:
-                        if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logger.error( "toUSXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
-                            adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
-                        else: # looks good
-                            adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
-                            adjText = adjText.replace( endCharMarker, '</char>' )
-                            haveOpenChar = False
-                if '\\z' in adjText:
-                    # Handle custom (character) markers
-                    while True:
-                        matchOpen = re.search( r'\\z([\w\d]+?) ', adjText )
-                        if not matchOpen: break
-                        #vPrint( 'Quiet', debuggingThisModule, f"Matched custom marker open '{matchOpen.group(0)}'" )
-                        adjText = adjText[:matchOpen.start(0)] + f'<char style="z{matchOpen.group(1)}"CLOSED_BIT>' + adjText[matchOpen.end(0):]
-                        haveOpenChar = True
-                        #vPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
-                        matchClose = re.search( r'\\z{}\*'.format( matchOpen.group(1) ), adjText )
-                        if matchClose:
-                            #vPrint( 'Quiet', debuggingThisModule, f"Matched custom marker close '{matchClose.group(0)}'" )
-                            adjText = adjText[:matchClose.start(0)] + '</char>' + adjText[matchClose.end(0):]
-                            if haveOpenChar:
-                                adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
-                                haveOpenChar = False
-                            #vPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
-                if haveOpenChar:
-                    adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                    adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                    logger.info( "toUSXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                if '\\' in adjText:
-                    logger.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                    halt
-                if 'CLOSED_BIT' in adjText:
-                    logger.critical( "toUSXXML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                if '"ior"' in adjText: # Usually in \\iot lines
-                    # Make these into live references
-                    match = IOR_RE.search( adjText, 0 )
-                    while match:
-                        adjText = f'{adjText[:match.start()]}<char style="ior">{makeRefs( match.group(1) )}</char>{adjText[match.end():]}'
-                        match = IOR_RE.search( adjText, match.end() )
-                return adjText
-            # end of toUSXXML.handleInternalTextMarkersForUSX3
-
-
-            def handleNotes( text:str, extras ) -> str:
-                """ Integrate notes into the text again. """
-
-                def processXRef( USXxref:str ) -> str:
-                    """
-                    Return the USX XML for the processed cross-reference (xref).
-
-                    NOTE: The parameter here already has the /x and /x* removed.
-
-                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                        gives
-                    <note style="x" caller="-"><char style="xo" closed="false">1:3: </char><char style="xt">2Kur 4:6.</char></note>
-                    """
-                    USXxrefXML = '\n    <note '
-                    xoOpen = xtOpen = False
-                    for j,token in enumerate(USXxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "toUSXXML:processXRef", j, "'"+token+"'", "from", '"'+USXxref+'"', xoOpen, xtOpen )
-                        lcToken = token.lower()
-                        if j==0: # The first token (but the x has already been removed)
-                            USXxrefXML += ('caller="{}" style="x">' if version>=2 else 'caller="{}">') \
-                                .format( token.rstrip() )
-                        elif lcToken.startswith('xo '): # xref reference follows
-                            if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xtOpen
-                                USXxrefXML += ' closed="false">' + adjToken + '</char>'
-                                xoOpen = False
-                            if xtOpen: # if we have multiple cross-references one after the other
-                                USXxrefXML += ' closed="false">' + adjToken + '</char>'
-                                xtOpen = False
-                            adjToken = token[3:]
-                            USXxrefXML += '<char style="xo"'
-                            xoOpen = True
-                        elif lcToken.startswith('xo*'):
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xoOpen and not xtOpen
-                            USXxrefXML += '>' + adjToken + '</char>'
-                            xoOpen = False
-                        elif lcToken.startswith('xt '): # xref text follows
-                            if xtOpen: # Multiple xt's in a row
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
-                                USXxrefXML += f' closed="false">{makeRefs( adjToken )}</char>'
-                            if xoOpen:
-                                USXxrefXML += f' closed="false">{adjToken}</char>'
-                                xoOpen = False
-                            adjToken = token[3:]
-                            USXxrefXML += '<char style="xt"'
-                            xtOpen = True
-                        elif lcToken.startswith('xt*'):
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
-                            USXxrefXML += f'>{makeRefs( adjToken )}</char>'
-                            xtOpen = False
-                        #elif lcToken in ('xo*','xt*','x*',):
-                        #    pass # We're being lazy here and not checking closing markers properly
-                        else:
-                            logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USXxref ) )
-                    if xoOpen:
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xtOpen
-                        USXxrefXML += f' closed="false">{adjToken}</char>'
-                        xoOpen = False
-                    if xtOpen:
-                        USXxrefXML += f' closed="false">{makeRefs( adjToken )}</char>'
-                    USXxrefXML += '</note>'
-                    return USXxrefXML
-                # end of toUSXXML.processXRef
-
-                def processFootnote( USXfootnote:str ) -> str:
-                    """
-                    Return the USX XML for the processed footnote.
-
-                    NOTE: The parameter here already has the /f and /f* removed.
-
-                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
-                        gives
-                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
-                    """
-                    USXfootnoteXML = '\n    <note '
-                    frOpen = fTextOpen = fCharOpen = xtOpen = False
-                    for j,token in enumerate(USXfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j}: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
-                        lcToken = token.lower()
-                        if j==0:
-                            USXfootnoteXML += f'caller="{token.rstrip()}" style="f">'
-                        elif lcToken.startswith('fr '): # footnote reference follows
-                            if frOpen:
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                                logger.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
-                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                frOpen = False
-                            if fTextOpen:
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                fTextOpen = False
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
-                            adjToken = token[3:]
-                            USXfootnoteXML += '<char style="fr"'
-                            frOpen = True
-                        elif lcToken.startswith('fr* '):
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert frOpen and not fTextOpen and not fCharOpen
-                            USXfootnoteXML += f'>{adjToken}</char>'
-                            frOpen = False
-                        elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
-                            if fCharOpen:
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                USXfootnoteXML += f'>{adjToken}</char>'
-                                fCharOpen = False
-                            if frOpen:
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                frOpen = False
-                            if fTextOpen:
-                                USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                fTextOpen = False
-                            fMarker = lcToken.split()[0] # Get the bit before the space
-                            USXfootnoteXML += f'<char style="{fMarker}"'
-                            adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #vPrint( 'Quiet', debuggingThisModule, "{!r} {!r}".format( fMarker, adjToken ) )
-                            fTextOpen = True
-                        elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            #if BibleOrgSysGlobals.debugFlag:
-                                #vPrint( 'Quiet', debuggingThisModule, "toUSXXML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
-                                #assert fTextOpen and not frOpen and not fCharOpen
-                            if frOpen or fCharOpen or not fTextOpen:
-                                logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
-                            USXfootnoteXML += f'>{adjToken}</char>'
-                            fTextOpen = False
-                        elif lcToken.startswith('xt '): # xref text follows
-                            if xtOpen: # Multiple xt's in a row
-                                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
-                                USXfootnoteXML += f' closed="false">{makeRefs( adjToken )}</char>'
-                            adjToken = token[3:]
-                            USXfootnoteXML += '<char style="xt"'
-                            xtOpen = True
-                        elif lcToken.startswith('xt*'):
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
-                            USXfootnoteXML += f'>{makeRefs( adjToken )}</char>'
-                            xtOpen = False
-                        elif lcToken.startswith('z'):
-                            #vPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
-                            ixSpace = lcToken.find( ' ' )
-                            if ixSpace == -1: ixSpace = 9999
-                            ixAsterisk = lcToken.find( '*' )
-                            if ixAsterisk == -1: ixAsterisk = 9999
-                            if ixSpace < ixAsterisk: # Must be an opening marker
-                                if fCharOpen:
-                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                    USXfootnoteXML += f'>{adjToken}</char>'
-                                    fCharOpen = False
-                                if frOpen:
-                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                    frOpen = False
-                                if fTextOpen:
-                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                    fTextOpen = False
-                                marker = lcToken[:ixSpace]
-                                USXfootnoteXML += f'<char style="{marker}"'
-                                adjToken = token[len(marker)+1:] # Get the bit after the space
-                                fCharOpen = marker
-                            elif ixAsterisk < ixSpace: # Must be an closing marker
-                                if not fCharOpen:
-                                    logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
-                                USXfootnoteXML += f'>{adjToken}</char>'
-                                fCharOpen = False
-                            else:
-                                logger.error( "toUSXXML.processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
-                        else: # Could be character formatting (or closing of character formatting)
-                            subTokens = lcToken.split()
-                            firstToken = subTokens[0]
-                            #vPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
-                            if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
-                                if fCharOpen: # assume that the last one is closed by this one
-                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                    USXfootnoteXML += f'>{adjToken}</char>'
-                                    fCharOpen = False
-                                if frOpen:
-                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen
-                                    USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                                    frOpen = False
-                                USXfootnoteXML += f'<char style="{firstToken}"'
-                                adjToken = token[len(firstToken)+1:] # Get the bit after the space
-                                fCharOpen = firstToken
-                            else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
-                                    if fCharOpen:
-                                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
-                                        if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                        USXfootnoteXML += f'>{adjToken}</char>'
-                                        fCharOpen = False
-                                    logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                else:
-                                    ixAS = firstToken.find( '*' )
-                                    #vPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
-                                        if fCharOpen:
-                                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-                                                assert not frOpen
-                                            if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                                logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
-                                            USXfootnoteXML += f'>{adjToken}</char>'
-                                            fCharOpen = False
-                                        logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                    else:
-                                        logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        vPrint( 'Quiet', debuggingThisModule, "toUSXXML ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
-                                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: halt
-                    #vPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
-                    if frOpen:
-                        logger.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
-                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                    if fCharOpen:
-                        logger.info( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
-                    if fTextOpen or fCharOpen:
-                        USXfootnoteXML += f' closed="false">{adjToken}</char>'
-                    if xtOpen:
-                        USXfootnoteXML += f' closed="false">{makeRefs( adjToken )}</char>'
-                    USXfootnoteXML += '</note>'
-                    #vPrint( 'Quiet', debuggingThisModule, '', USXfootnote, USXfootnoteXML )
-                    return USXfootnoteXML
-                # end of toUSXXML.processFootnote
-
-
-                # Main code for handleNotes
-                adjText = text
-                if extras:
-                    offset = 0
-                    for extra in extras: # do any footnotes and cross-references
-                        extraType, extraIndex, extraText, cleanExtraText = extra
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                        adjIndex = extraIndex - offset
-                        lenT = len( adjText )
-                        if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                            logger.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                            # No need to adjust adjIndex because the code below still works
-                        elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                            vPrint( 'Quiet', debuggingThisModule, "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                            vPrint( 'Quiet', debuggingThisModule, "  Verse={!r}".format( text ) )
-                            vPrint( 'Quiet', debuggingThisModule, "  Extras={!r}".format( extras ) )
-                        #assert 0 <= adjIndex <= len(verse)
-                        #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                        #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                        if extraType == 'fn':
-                            extra = processFootnote( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
-                        elif extraType == 'xr':
-                            extra = processXRef( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
-                        elif extraType == 'fig':
-                            logger.critical( "USXXML figure not handled yet" )
-                            extra = '' # temp
-                            #extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
-                        elif extraType == 'str':
-                            extra = '' # temp
-                        elif extraType == 'sem':
-                            extra = '' # temp
-                        elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
-                        adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
-                        offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
-                return adjText
-            # end of toUSXXML.handleNotes
-
-
-            # Main code for writeUSX3Book
-            USXAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
-            USXNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumber( BBB )
-            if not USXAbbrev:
-                logger.error( "toUSXXML: Can't write {} USX book because no USFM code available".format( BBB ) )
-                unhandledBooks.append( BBB )
-                return
-            if not USXNumber:
-                logger.error( "toUSXXML: Can't write {} USX book because no USX number available".format( BBB ) )
-                unhandledBooks.append( BBB )
-                return
-
-            version = 3.0
-            C, V = '-1', '-1' # So first/id line starts at -1:0
-            xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( USXNumber+USXAbbrev+'.usx' ), filesFolder )
-            xw.setHumanReadable()
-            xw.spaceBeforeSelfcloseTag = True
-            xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
-            xw.writeLineOpen( 'usx', (('version','3.0') if version>=3 else None ) )
-            haveOpenPara = paraJustOpened = False
-            haveOpenVerse = needToCloseVerse = False
-            gotVP = None
-            # marker = None
-            # closedV = False
-            for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
-                # lastMarker = marker
-                marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if marker == '¬v':
-                    assert haveOpenVerse
-                    haveOpenVerse = False
-                    assert not needToCloseVerse
-                    needToCloseVerse = True
-                    continue
-                elif '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('v=','cl¤'):
-                    continue # Just ignore added markers — not needed here
-                if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert C=='-1' or marker=='rem' or marker.startswith('mte')
-                    V = str( int(V) + 1 )
-                getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
-                # if BBB=='RUT': vPrint( 'Quiet', debuggingThisModule,
-                #     f"{BBB} {C}:{V} {marker}({originalMarker})='{text}'{'+extras' if extras else ''} mCT={getMarkerContentType} hOP={haveOpenPara} pJO={paraJustOpened} hOV={haveOpenVerse} nCV={needToCloseVerse}" )
-
-                adjText = handleNotes( text, extras )
-                if marker == 'id':
-                    if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
-                        logger.critical( "toUSXXML: Book {}{} has a id line inside an open paragraph: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw.writeLineClose( 'para' )
-                        haveOpenPara = False
-                    adjTxLen = len( adjText )
-                    if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
-                        logger.warning( "toUSXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
-                    if adjText[0:3] != USXAbbrev:
-                        logger.error( "toUSXXML: Book {}{} might have incorrect code on id line — we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
-                    adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
-                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX3(adjText), [('code',USXAbbrev),('style',marker)] )
-                    else: xw.writeLineOpenSelfclose( 'book', [('code',USXAbbrev),('style',marker)] )
-                    #elif not text: logger.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
-
-                elif marker == 'c':
-                    assert not haveOpenVerse
-                    if haveOpenPara:
-                        if needToCloseVerse:
-                            xw.removeFinalNewline( suppressFollowingIndent=True )
-                            xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                            needToCloseVerse = False # So we don't do it again
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw.writeLineClose( 'para' )
-                        haveOpenPara = False
-                    else: assert not needToCloseVerse
-                    if C != '-1':
-                        xw.writeLineOpenSelfclose( 'chapter', [('eid',f'{USXAbbrev} {C}')] )
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
-                    C, V = text, '0' # not adjText!
-                    xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c'),('sid',f'{USXAbbrev} {C}')] )
-                    if adjText != text:
-                        logger.warning( "toUSXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
-                elif marker == 'c~': # Don't really know what this stuff is!!!
-                    if not adjText: logger.warning( "toUSXXML: Missing text for c~" ); continue
-                    # TODO: We haven't stripped out character fields from within the text — not sure how USX handles them yet
-                    xw.removeFinalNewline( suppressFollowingIndent=True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
-                elif marker == 'c#': # Chapter number added for printing
-                    ignoredMarkers.add( marker ) # Just ignore it completely
-                elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
-                    gotVP = adjText # Just remember it for now
-                elif marker == 'v':
-                    if needToCloseVerse:
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw._writeToBuffer( ' ' ) # Space between verses (unless at end of paragraph)
-                        xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                        needToCloseVerse = False
-                    else: assert not haveOpenVerse
-                    V = adjText
-                    haveOpenVerse = True
-                    if gotVP: # this is the verse number to be published
-                        adjText = gotVP
-                        gotVP = None
-                    if paraJustOpened: paraJustOpened = False
-                    else:
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        # xw._writeToBuffer( ' ' ) # Space between verses
-                     # Remove anything that'll cause a big XML problem later
-                    if adjText:
-                        xw.writeLineOpenSelfclose ( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),
-                                                              ('style','v'),('sid',f'{USXAbbrev} {C}:{V}')] )
-
-                elif marker in ('v~','p~',):
-                    if not adjText: logger.critical( "toUSXXML: Missing text for {}".format( marker ) ); continue
-                    xw.removeFinalNewline( suppressFollowingIndent=True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX3(adjText), noTextCheck=True ) # no checks coz might already have embedded XML
-                    paraJustOpened = False
-                elif getMarkerContentType == 'N': # N = never, e.g., b, nb
-                    if haveOpenPara:
-                        if needToCloseVerse:
-                            xw.removeFinalNewline( suppressFollowingIndent=True )
-                            xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                            needToCloseVerse = False # So we don't do it again
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw.writeLineClose( 'para' )
-                        haveOpenPara = False
-                    if adjText:
-                        logger.error( "toUSXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
-                    xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
-                elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
-                    if haveOpenPara:
-                        if needToCloseVerse:
-                            xw.removeFinalNewline( suppressFollowingIndent=True )
-                            xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                            needToCloseVerse = False # So we don't do it again
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw.writeLineClose( 'para' )
-                        haveOpenPara = False
-                    # if BBB=='RUT': print( f"S Have {C}:{V} oM={originalMarker} adjTxt={adjText}")
-                    styles = [('style',originalMarker),('vid',f'{USXAbbrev} {C}:{V}')] \
-                                    if haveOpenVerse else ('style',originalMarker)
-                    if adjText:
-                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX3(adjText),
-                                    styles, noTextCheck=True ) # no checks coz might already have embedded XML
-                    else:
-                        xw.writeLineOpen( 'para', styles )
-                        paraJustOpened = True
-                    haveOpenPara = True
-                else:
-                    #assert getMarkerContentType == 'A' # A = always, e.g.,  ide, mt, h, s, ip, etc.
-                    if getMarkerContentType != 'A':
-                        logger.critical( "BibleWriter.toUSXXML: ToProgrammer — markerContentType should be 'A': {!r} is {!r} Why?".format( marker, getMarkerContentType ) )
-                    if haveOpenPara:
-                        if needToCloseVerse:
-                            xw.removeFinalNewline( suppressFollowingIndent=True )
-                            xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                            needToCloseVerse = False # So we don't do it again
-                        xw.removeFinalNewline( suppressFollowingIndent=True )
-                        xw.writeLineClose( 'para' )
-                        haveOpenPara = False
-                    xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX3(adjText), ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
-            if haveOpenPara:
-                if needToCloseVerse:
-                    xw.removeFinalNewline( suppressFollowingIndent=True )
-                    xw.writeLineOpenSelfclose( 'verse', [('eid',f'{USXAbbrev} {C}:{V}')] )
-                    needToCloseVerse = False # So we don't do it again
-                xw.removeFinalNewline( suppressFollowingIndent=True )
-                xw.writeLineClose( 'para' )
-            xw.writeLineClose( 'usx' )
-            xw.close( writeFinalNL=True ) # Try to imitate Paratext output as closely as possible
-            if validationSchema: return xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
-        # end of toUSXXML.writeUSX3Book
-
-        # Set-up our Bible reference system
-        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == 'GENERIC':
-            BOS = self.genericBOS
-            BRL = self.genericBRL
-        else:
-            BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
-            BRL = BibleReferenceList( BOS, BibleObject=None )
-
-        vPrint( 'Info', debuggingThisModule, _("  Exporting to USX format…") )
-        #USXOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( "USX output/' )
-        #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
-
-        validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
-        for BBB,bookData in self.books.items():
-            bookResults = writeUSX3Book( BBB, bookData )
-            if validationSchema:
-                if bookResults[0] > validationResults[0]: validationResults = ( bookResults[0], validationResults[1], validationResults[2], )
-                if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
-                if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
-        if validationSchema:
-            if validationResults[0] > 0:
-                with open( os.path.join( outputFolderpath, 'ValidationErrors.txt' ), 'wt', encoding='utf-8' ) as veFile:
-                    if validationResults[1]: veFile.write( validationResults[1] + '\n\n\n' ) # Normally empty
-                    if validationResults[2]: veFile.write( validationResults[2] )
-
-        if ignoredMarkers:
-            logger.info( "toUSXXML: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', debuggingThisModule, "  " + _("ERROR: Ignored toUSXXML markers were {}").format( ignoredMarkers ) )
-        if unhandledMarkers:
-            logger.error( "toUSXXML: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', debuggingThisModule, "  " + _("ERROR: Unhandled toUSXXML markers were {}").format( unhandledMarkers ) )
-        if unhandledBooks:
-            logger.warning( "toUSXXML: Unhandled books were {}".format( unhandledBooks ) )
-            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toUSXXML books were {}").format( unhandledBooks ) )
-
-        # Now create a zipped collection
-        vPrint( 'Info', debuggingThisModule, "  Zipping USX3 files…" )
-        zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllUSX3Files.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( filesFolder ):
-            #if not filename.endswith( '.zip' ):
-            filepath = os.path.join( filesFolder, filename )
-            zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
-        # Now create the gzipped file
-        vPrint( 'Info', debuggingThisModule, "  GZipping USX3 files…" )
-        tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX3Files.gzip' ), 'w:gz' )
-        for filename in os.listdir( filesFolder ):
-            if filename.endswith( '.usx' ):
-                filepath = os.path.join( filesFolder, filename )
-                tar.add( filepath, arcname=filename, recursive=False )
-        tar.close()
-        # Now create the bz2 file
-        vPrint( 'Info', debuggingThisModule, "  BZipping USX3 files…" )
-        tar = tarfile.open( os.path.join( outputFolderpath, 'AllUSX3Files.bz2' ), 'w:bz2' )
-        for filename in os.listdir( filesFolder ):
-            if filename.endswith( '.usx' ):
-                filepath = os.path.join( filesFolder, filename )
-                tar.add( filepath, arcname=filename, recursive=False )
-        tar.close()
-
-        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-            vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toUSXXML finished successfully." )
-        if validationSchema: return validationResults
-        return True
+        return createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema )
     # end of BibleWriter.toUSXXML
 
 
@@ -9904,7 +9253,7 @@ class BibleWriter( InternalBible ):
             # Save the created document
             document.storeAsURL( 'file://{}'.format( filepath ), () )
             document.dispose() # Close the document (even though it might be a headless server anyway)
-            if debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "Finished {}".format( BBB ) )
+            vPrint( 'Never', debuggingThisModule, "Finished {}".format( BBB ) )
             return True
         # end of toODF.createODFBook
 

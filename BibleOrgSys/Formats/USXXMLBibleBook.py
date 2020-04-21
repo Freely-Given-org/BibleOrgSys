@@ -95,7 +95,8 @@ class USXXMLBibleBook( BibleBook ):
             BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( chapterNumberElement, chapterNumberLocation )
 
-            if version.startswith('3.') and 'eid' in chapterNumberElement.keys():
+            if ( version is None or version.startswith('3.') ) \
+            and 'eid' in chapterNumberElement.keys():
                 # It's a chapter end marker
                 BibleOrgSysGlobals.checkXMLNoTail( chapterNumberElement, chapterNumberLocation )
                 chapterEndId = None
@@ -151,7 +152,8 @@ class USXXMLBibleBook( BibleBook ):
             BibleOrgSysGlobals.checkXMLNoText( verseNumberElement, verseNumberLocation )
             BibleOrgSysGlobals.checkXMLNoSubelements( verseNumberElement, verseNumberLocation )
 
-            if version.startswith('3.') and 'eid' in verseNumberElement.keys():
+            if ( version is None or version.startswith('3.') ) \
+            and 'eid' in verseNumberElement.keys():
                 # It's a verse end marker
                 BibleOrgSysGlobals.checkXMLNoTail( verseNumberElement, verseNumberLocation )
                 verseEndId = None
@@ -266,7 +268,7 @@ class USXXMLBibleBook( BibleBook ):
                     assert '\n' not in charLine
                     assert '\t' not in charLine
             if charClosed != False: # None or True
-                assert not charLine.endswith( ' ' )
+                # assert not charLine.endswith( ' ' )
                 charLine += '\\{}*'.format( charStyle )
             # A character field must be added to the previous field
             #if charElement.tail is not None: vPrint( 'Quiet', debuggingThisModule, " tail2", repr(charElement.tail) )
@@ -283,7 +285,7 @@ class USXXMLBibleBook( BibleBook ):
             charLine += charTail
             vPrint( 'Never', debuggingThisModule, f"USX.loadCharField: {self.BBB} {C}:{V} {charStyle} {charLine!r}" )
             assert '\n' not in charLine
-            assert ' \\bk*' not in charLine
+            # assert ' \\bk*' not in charLine
             return charLine
         # end of load.loadCharField
 
@@ -867,7 +869,8 @@ def fullDemo() -> None:
         for BBB,filename in fileList:
             if BBB in (
                     #  'GEN',
-                    'RUT',
+                    # 'RUT',
+                    'JOS',
                     #  'EST',
                     # 'DAN', 'JNA',
                     # 'MAT','MRK','LUK','JHN','ACT',
