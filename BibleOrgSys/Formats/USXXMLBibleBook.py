@@ -868,14 +868,16 @@ def fullDemo() -> None:
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenameTuples()
         for BBB,filename in fileList:
             if BBB in (
-                    #  'GEN',
-                    # 'RUT',
-                    'JOS',
-                    #  'EST',
-                    # 'DAN', 'JNA',
-                    # 'MAT','MRK','LUK','JHN','ACT',
-                    # 'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
-                    # 'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
+                    'GEN','EXO','LEV','NUM','DEU',
+                    'JOS','JDG',
+                    'RUT','SA1','SA2','KI1','KI2','CH1','CH2'
+                    'EZR','NEH','EST',
+                    'PSA','PRO','SNG',
+                    'ISA','JER',
+                    'DAN', 'JNA',
+                    'MAT','MRK','LUK','JHN','ACT',
+                    'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
+                    'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
                 vPrint( 'Normal', debuggingThisModule, _("Loading USX {} from {}…").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )

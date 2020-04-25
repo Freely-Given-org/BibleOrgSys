@@ -44,7 +44,7 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2020-04-22' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
 PROGRAM_VERSION = '0.38'
@@ -232,7 +232,6 @@ class USXXMLBible( Bible ):
         #for j, something in enumerate( sorted(UBB._CVIndex) ):
             #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 50: break
-        #halt
         self.stashBook( UBB )
         self.bookNeedsReloading[BBB] = False
     # end of USXXMLBible.loadBook
@@ -265,7 +264,6 @@ class USXXMLBible( Bible ):
         #for j, something in enumerate( sorted(UBB._CVIndex) ):
             #vPrint( 'Quiet', debuggingThisModule, j, something )
             #if j > 50: break
-        #halt
         return UBB
     # end of USXXMLBible._loadBookMP
 
@@ -375,6 +373,105 @@ CorV_RE = '[1-9][0-9]{0,2}'
 CV_RE = f'{CorV_RE}:{CorV_RE}'
 IOR_RE = re.compile( r'<char style="ior">(.+?)</char>' )
 
+def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
+    """
+    Used for ior and xt fields to make computer-readable ref fields
+
+    TODO: Still need to handle these refs:
+            'Lib 23:33-36,39-43'
+            '1Har 10:14-22,27'
+            'Diy 31:6-7,23.'
+    """
+    vPrint( 'Verbose', debuggingThisModule, f'makeRefs( {text} )…' )
+    currentBBB = BBB
+    bitResults = []
+    for bit in text.split( ';' ):
+        bitResult = bit
+        match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
+        if match:  # e.g., Jos 3:4-4:5
+            # print( f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+            currentBBB = BRL.getBBBFromText( match.group(2) )
+            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+            if USFMBookCode:
+                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
+        else:
+            match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE}):({CorV_RE})([-–])({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
+            if match: # e.g., Jos 3:4-7,12
+                # print( f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}' '{match.group(8)}' '{match.group(9)}'")
+                currentBBB = BRL.getBBBFromText( match.group(2) )
+                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                if USFMBookCode:
+                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}{match.group(5).replace("–","-")}{match.group(6)}">{match.group(2)} {match.group(3)}:{match.group(4)}{match.group(5)}{match.group(6)}</ref>{match.group(7)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(8)}">{match.group(8)}</ref>{match.group(9)}'
+            else:
+                match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
+                if match: # e.g., Jos 3:4-7
+                    # print( f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                    currentBBB = BRL.getBBBFromText( match.group(2) )
+                    USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                    if USFMBookCode:
+                        bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
+                else:
+                    match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
+                    if match: # e.g., Jos 3:4,9
+                        # print( f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
+                        currentBBB = BRL.getBBBFromText( match.group(2) )
+                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                        if USFMBookCode:
+                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}">{match.group(2)} {match.group(3)}:{match.group(4)}</ref>{match.group(5)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(6)}">{match.group(6)}</ref>{match.group(7)}'
+                    else:
+                        match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE})(\s*\.?)$', bit )
+                        if match: # e.g., Jos 3:4
+                            # print( f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                            currentBBB = BRL.getBBBFromText( match.group(2) )
+                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                            if USFMBookCode:
+                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
+                        else:
+                            match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE})(\s*\.?)$', bit )
+                            if match: # e.g., Jud 4
+                                # print( f"MatchF '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                                currentBBB = BRL.getBBBFromText( match.group(2) )
+                                # print( currentBBB )
+                                assert BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( currentBBB )
+                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                                if USFMBookCode:
+                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
+                            else:
+                                match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
+                                if match: # e.g., 1:2-3:4
+                                    # print( f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                    USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                                    if USFMBookCode:
+                                        bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
+                                else:
+                                    match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
+                                    if match: # e.g., 1:2-6
+                                        # print( f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                                        if USFMBookCode:
+                                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
+                                    else:
+                                        match = re.match( rf'(\s*)({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
+                                        if match: # e.g., 3:5,9
+                                            # print( f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}'")
+                                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                                            if USFMBookCode:
+                                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(3)}">{match.group(2)}:{match.group(3)}</ref>{match.group(4)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(5)}">{match.group(5)}</ref>{match.group(6)}'
+                                        else:
+                                            match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
+                                            if match: # e.g., 3:5
+                                                # print( f"MatchDD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
+                                                if USFMBookCode:
+                                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
+                                            else: logging.critical( f"toUSX makeRefs unable to parse {BBB} {C}:{V} '{bit}'")
+        bitResults.append( bitResult )
+    refString = ';'.join( bitResults )
+    vPrint( 'Never', debuggingThisModule, f"  makeRefs returning {refString}" )
+    return refString
+# end of makeRefs for USX3
+
+
 def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -> bool:
     """
     Or toUSX3XML
@@ -388,6 +485,8 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
 
     If a schema is given (either a path or URL), the XML output files are validated.
     """
+    import zipfile
+
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
     from BibleOrgSys.Reference.USFM3Markers import USFM_PRECHAPTER_MARKERS
     from BibleOrgSys.InputOutput.MLWriter import MLWriter
@@ -409,87 +508,6 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
         """ Writes a book to the filesFolder. """
 
 
-        def makeRefs( text:str ) -> str:
-            """
-            Used for ior and xt fields to make computer-readable ref fields
-
-            TODO: Handle refs with commas, e.g., Mal 3:1,4
-            """
-            vPrint( 'Verbose', debuggingThisModule, f'makeRefs( {text} )…' )
-            currentBBB = BBB
-            bitResults = []
-            for bit in text.split( ';' ):
-                bitResult = bit
-                match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
-                if match:  # e.g., Jos 3:4-4:5
-                    # print( f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                    currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                    USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                    if USFMBookCode:
-                        bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                else:
-                    match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
-                    if match: # e.g., Jos 3:4-7
-                        # print( f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                        currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                        if USFMBookCode:
-                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3).replace("–","-")}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                    else:
-                        match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
-                        if match: # e.g., Jos 3:4,9
-                            # print( f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
-                            currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                            if USFMBookCode:
-                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(4)}">{match.group(2)} {match.group(3)}:{match.group(4)}</ref>{match.group(5)}<ref loc="{USFMBookCode} {match.group(3)}:{match.group(6)}">{match.group(6)}</ref>{match.group(7)}'
-                        else:
-                            match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE})(\s*\.?)$', bit )
-                            if match: # e.g., Jos 3:4
-                                # print( f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                                currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                if USFMBookCode:
-                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                            else:
-                                match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE})(\s*\.?)$', bit )
-                                if match: # e.g., Jud 4
-                                    # print( f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
-                                    currentBBB = self.genericBRL.getBBBFromText( match.group(2) )
-                                    # print( currentBBB )
-                                    assert BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( currentBBB )
-                                    USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                    if USFMBookCode:
-                                        bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(3)}">{match.group(2)} {match.group(3)}</ref>{match.group(4)}'
-                                else:
-                                    match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
-                                    if match:
-                                        # print( f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                        USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                        if USFMBookCode:
-                                            bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
-                                    else:
-                                        match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
-                                        if match:
-                                            # print( f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                            USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                            if USFMBookCode:
-                                                bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
-                                        else:
-                                            match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
-                                            if match:
-                                                # print( f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
-                                                USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
-                                                if USFMBookCode:
-                                                    bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
-                                            else: logging.critical( f"toUSX makeRefs unable to parse {BBB} {C}:{V} '{bit}'")
-                bitResults.append( bitResult )
-            refString = ';'.join( bitResults )
-            vPrint( 'Never', debuggingThisModule, f"  makeRefs returning {refString}" )
-            return refString
-        # end of makeRefs for USX3
-
-
         def handleInternalTextMarkersForUSX3( originalText ):
             """
             Handles character formatting markers within the originalText.
@@ -497,7 +515,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
             """
             if not originalText: return ''
             if '\\' not in originalText: return originalText
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSXXML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSXXML:hITM4USX:", BBB, C,V, marker, "'"+originalText+"'" )
             markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
                                         key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
             # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -512,13 +530,13 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                 if fullCharMarker in adjText:
                     if haveOpenChar:
                         adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                        logger.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                        logger.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                     adjText = adjText.replace( fullCharMarker, f'{"</char>" if haveOpenChar else ""}<char style="{charMarker}"CLOSED_BIT>' )
                     haveOpenChar = True
                 endCharMarker = '\\' + charMarker + '*'
                 if endCharMarker in adjText:
                     if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                        logger.error( "toUSXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
+                        logger.error( "toUSXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C,V, marker, originalText, adjText ) )
                         adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                     else: # looks good
                         adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -544,17 +562,17 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
             if haveOpenChar:
                 adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                 adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                logger.info( "toUSXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                logger.info( "toUSXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
             if '\\' in adjText:
-                logger.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
-                halt
+                logger.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
+                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
             if 'CLOSED_BIT' in adjText:
-                logger.critical( "toUSXXML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                logger.critical( "toUSXXML: Didn't handle a character style correctly in {} {}:{} {}:{!r} now {!r}".format( BBB, C,V, marker, originalText, adjText ) )
             if '"ior"' in adjText: # Usually in \\iot lines
                 # Make these into live references
                 match = IOR_RE.search( adjText, 0 )
                 while match:
-                    adjText = f'{adjText[:match.start()]}<char style="ior">{makeRefs( match.group(1) )}</char>{adjText[match.end():]}'
+                    adjText = f'{adjText[:match.start()]}<char style="ior">{makeRefs( BBB, C,V, self.genericBRL, match.group(1) )}</char>{adjText[match.end():]}'
                     match = IOR_RE.search( adjText, match.end() )
             return adjText
         # end of toUSXXML.handleInternalTextMarkersForUSX3
@@ -599,7 +617,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                     elif lcToken.startswith('xt '): # xref text follows
                         if xtOpen: # Multiple xt's in a row
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
-                            USXxrefXML += f' closed="false">{makeRefs( adjToken )}</char>'
+                            USXxrefXML += f' closed="false">{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         if xoOpen:
                             USXxrefXML += f' closed="false">{adjToken}</char>'
                             xoOpen = False
@@ -608,18 +626,18 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                         xtOpen = True
                     elif lcToken.startswith('xt*'):
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
-                        USXxrefXML += f'>{makeRefs( adjToken )}</char>'
+                        USXxrefXML += f'>{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         xtOpen = False
                     #elif lcToken in ('xo*','xt*','x*',):
                     #    pass # We're being lazy here and not checking closing markers properly
                     else:
-                        logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USXxref ) )
+                        logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C,V, USXxref ) )
                 if xoOpen:
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xtOpen
                     USXxrefXML += f' closed="false">{adjToken}</char>'
                     xoOpen = False
                 if xtOpen:
-                    USXxrefXML += f' closed="false">{makeRefs( adjToken )}</char>'
+                    USXxrefXML += f' closed="false">{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                 USXxrefXML += '</note>'
                 return USXxrefXML
             # end of toUSXXML.processXRef
@@ -644,7 +662,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                     elif lcToken.startswith('fr '): # footnote reference follows
                         if frOpen:
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fTextOpen
-                            logger.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
+                            logger.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C,V, USXfootnote ) )
                             USXfootnoteXML += f' closed="false">{adjToken}</char>'
                             frOpen = False
                         if fTextOpen:
@@ -678,22 +696,22 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                         fTextOpen = True
                     elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                         #if BibleOrgSysGlobals.debugFlag:
-                            #vPrint( 'Quiet', debuggingThisModule, "toUSXXML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
+                            #vPrint( 'Quiet', debuggingThisModule, "toUSXXML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C,V, USXfootnote, lcToken ) )
                             #assert fTextOpen and not frOpen and not fCharOpen
                         if frOpen or fCharOpen or not fTextOpen:
-                            logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                            logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C,V, USXfootnote ) )
                         USXfootnoteXML += f'>{adjToken}</char>'
                         fTextOpen = False
                     elif lcToken.startswith('xt '): # xref text follows
                         if xtOpen: # Multiple xt's in a row
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
-                            USXfootnoteXML += f' closed="false">{makeRefs( adjToken )}</char>'
+                            USXfootnoteXML += f' closed="false">{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         adjToken = token[3:]
                         USXfootnoteXML += '<char style="xt"'
                         xtOpen = True
                     elif lcToken.startswith('xt*'):
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
-                        USXfootnoteXML += f'>{makeRefs( adjToken )}</char>'
+                        USXfootnoteXML += f'>{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         xtOpen = False
                     elif lcToken.startswith('z'):
                         #vPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
@@ -719,11 +737,11 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                             fCharOpen = marker
                         elif ixAsterisk < ixSpace: # Must be an closing marker
                             if not fCharOpen:
-                                logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                                logger.error( "toUSXXML.processFootnote: Closing problem at {} {}:{} in custom footnote {!r}".format( BBB, C,V, USXfootnote ) )
                             USXfootnoteXML += f'>{adjToken}</char>'
                             fCharOpen = False
                         else:
-                            logger.error( "toUSXXML.processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C, V, USXfootnote ) )
+                            logger.error( "toUSXXML.processFootnote: Marker roblem at {} {}:{} in custom footnote {!r}".format( BBB, C,V, USXfootnote ) )
                     else: # Could be character formatting (or closing of character formatting)
                         subTokens = lcToken.split()
                         firstToken = subTokens[0]
@@ -745,10 +763,10 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                                 if fCharOpen:
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                        logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
+                                        logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C,V, USXfootnote ) )
                                     USXfootnoteXML += f'>{adjToken}</char>'
                                     fCharOpen = False
-                                logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
+                                logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
                             else:
                                 ixAS = firstToken.find( '*' )
                                 #vPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
@@ -757,25 +775,25 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
                                             assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
+                                            logger.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C,V, USXfootnote ) )
                                         USXfootnoteXML += f'>{adjToken}</char>'
                                         fCharOpen = False
-                                    logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
+                                    logger.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
                                 else:
-                                    logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
+                                    logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
                                     vPrint( 'Quiet', debuggingThisModule, "toUSXXML ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
-                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: halt
+                                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
                 #vPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                 if frOpen:
-                    logger.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
+                    logger.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C,V, USXfootnote) )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
                     USXfootnoteXML += f' closed="false">{adjToken}</char>'
                 if fCharOpen:
-                    logger.info( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
+                    logger.info( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C,V, USXfootnote) )
                 if fTextOpen or fCharOpen:
                     USXfootnoteXML += f' closed="false">{adjToken}</char>'
                 if xtOpen:
-                    USXfootnoteXML += f' closed="false">{makeRefs( adjToken )}</char>'
+                    USXfootnoteXML += f' closed="false">{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                 USXfootnoteXML += '</note>'
                 #vPrint( 'Quiet', debuggingThisModule, '', USXfootnote, USXfootnoteXML )
                 return USXfootnoteXML
@@ -788,14 +806,14 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                 offset = 0
                 for extra in extras: # do any footnotes and cross-references
                     extraType, extraIndex, extraText, cleanExtraText = extra
-                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C,V, text, extraType, extraIndex, extraText ) )
                     adjIndex = extraIndex - offset
                     lenT = len( adjText )
                     if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
                         logger.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
                         # No need to adjust adjIndex because the code below still works
                     elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        vPrint( 'Quiet', debuggingThisModule, "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                        vPrint( 'Quiet', debuggingThisModule, "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C,V, extraIndex, offset, len(text), adjIndex ) )
                         vPrint( 'Quiet', debuggingThisModule, "  Verse={!r}".format( text ) )
                         vPrint( 'Quiet', debuggingThisModule, "  Extras={!r}".format( extras ) )
                     #assert 0 <= adjIndex <= len(verse)
@@ -950,7 +968,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                     xw.writeLineClose( 'para' )
                     haveOpenPara = False
                 if adjText:
-                    logger.error( "toUSXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                    logger.error( "toUSXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C,V, originalMarker, adjText ) )
                 xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
             elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                 if haveOpenPara:
@@ -993,7 +1011,6 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
             xw.writeLineClose( 'para' )
         xw.writeLineClose( 'usx' )
         xw.close( writeFinalNL=False ) # Try to imitate Paratext output as closely as possible
-        if BBB=='RUT': halt
         if validationSchema: return xw.validate( validationSchema ) # Returns a 3-tuple: intCode, logString, errorLogString
     # end of toUSXXML.writeUSX3Book
 
@@ -1065,6 +1082,49 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
 
 
 
+def testMakeRefs() -> None:
+    """
+    USX3 includes livened references, e.g., for \\ior1 and \\xt fields
+    """
+    from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+    from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
+
+    genericBOS = BibleOrganisationalSystem( 'GENERIC-KJV-80-ENG' )
+    genericBRL = BibleReferenceList( genericBOS, None )
+    BBB, C, V = 'GEN', '1', '2'
+
+    for j, (string1,string2) in enumerate( (
+            ('xyz', 'xyz'),
+            ('EXO 3:4', '<ref loc="EXO 3:4">EXO 3:4</ref>'),
+            ('EXO 3:4-5', '<ref loc="EXO 3:4-5">EXO 3:4-5</ref>'),
+            ('EXO 3:4,6', '<ref loc="EXO 3:4">EXO 3:4</ref>,<ref loc="EXO 3:6">6</ref>'),
+            ('EXO 3:4, 7', '<ref loc="EXO 3:4">EXO 3:4</ref>, <ref loc="EXO 3:7">7</ref>'),
+            ('EXO 3:4–5:6', '<ref loc="EXO 3:4-5:6">EXO 3:4–5:6</ref>'), # en-dash
+            ('EXO 3:4-5:6', '<ref loc="EXO 3:4-5:6">EXO 3:4-5:6</ref>'), # hyphen
+            ('EXO 3:4-5,7', '<ref loc="EXO 3:4-5">EXO 3:4-5</ref>,<ref loc="EXO 3:7">7</ref>'),
+            ('PSA 118:1–119:123', '<ref loc="PSA 118:1-119:123">PSA 118:1–119:123</ref>'), # en-dash
+
+            ('3JN 4',   '<ref loc="3JN 4">3JN 4</ref>'),
+            # ('3JN 4-5', '<ref loc="3JN 4-5">3JN 4-5</ref>'),
+            # ('3JN 4,6', '<ref loc="3JN 4">3JN 4</ref>,<ref loc="3JN 6">6</ref>'),
+
+            ('3:4', f'<ref loc="{BBB} 3:4">3:4</ref>'),
+            ('3:4-5', f'<ref loc="{BBB} 3:4-5">3:4-5</ref>'),
+            ('3:4,6', f'<ref loc="{BBB} 3:4">3:4</ref>,<ref loc="{BBB} 3:6">6</ref>'),
+            ('3:4, 7', f'<ref loc="{BBB} 3:4">3:4</ref>, <ref loc="{BBB} 3:7">7</ref>'),
+            ('3:4–5:6', f'<ref loc="{BBB} 3:4-5:6">3:4–5:6</ref>'), # en-dash
+            ('3:4-5:6', f'<ref loc="{BBB} 3:4-5:6">3:4-5:6</ref>'), # hyphen
+            # ('3:4-5,7', f'<ref loc="{BBB} 3:4-5:6">3:4-5:6</ref>'),
+            ), start=1 ):
+        result = makeRefs( BBB, C,V, genericBRL, string1 )
+        vPrint( 'Normal', debuggingThisModule, f"  {j}/ Got '{result}' from '{string1}'" )
+        if result != string2:
+            logging.critical( f"{j}/ Got bad  '{result}' from makeRefs()" )
+            logging.critical( f"{j}/ Expected '{string2}' from '{string1}'" )
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+# end of testMakeRefs()
+
+
 def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
@@ -1072,6 +1132,8 @@ def briefDemo() -> None:
     import random
 
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testMakeRefs()
 
     testData = (
             ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
@@ -1138,6 +1200,8 @@ def fullDemo() -> None:
     Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testMakeRefs()
 
     testData = (
             ('MS1', Path('/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV')),
