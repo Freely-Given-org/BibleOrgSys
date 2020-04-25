@@ -73,7 +73,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, Int
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2020-04-24' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -335,23 +335,26 @@ class InternalBibleBook:
     # end of InternalBibleBook.__iter__
 
 
-    def addPriorityError( self, priority, C, V, string ):
+    def addPriorityError( self, priority:int, C:str, V:str, errorString:str ) -> None:
         """
         Adds a priority error to self.checkResultsDictionary.
         """
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( priority, int ) and ( 0 <= priority <= 100 )
-            assert isinstance( string, str ) and string
-        if 'Priority Errors' not in self.checkResultsDictionary: self.checkResultsDictionary['Priority Errors'] = [] # Just in case getCheckResults() deleted it
+            assert isinstance( errorString, str ) and errorString
+        if 'Priority Errors' not in self.checkResultsDictionary:
+            self.checkResultsDictionary['Priority Errors'] = [] # Just in case getCheckResults() deleted it
 
-        BBB = self.BBB
-        if self.checkResultsDictionary['Priority Errors']:
-            LastPriority, lastString, (lastBBB,lastC,lastV,) = self.checkResultsDictionary['Priority Errors'][-1]
-            if priority==LastPriority and string==lastString and BBB==lastBBB: # Remove unneeded repetitive information
-                BBB = ''
-                if C==lastC: C = ''
+        # TODO: Why did we ever have this code ???
+        # Maybe to reduce data structure size, but it was confusing
+        # BBB = self.BBB
+        # if self.checkResultsDictionary['Priority Errors']:
+        #     LastPriority, lastString, (lastBBB,lastC,lastV,) = self.checkResultsDictionary['Priority Errors'][-1]
+        #     if priority==LastPriority and errorString==lastString and BBB==lastBBB: # Remove unneeded repetitive information
+        #         BBB = ''
+        #         if C==lastC: C = ''
 
-        self.checkResultsDictionary['Priority Errors'].append( (priority,string,(BBB,C,V,),) )
+        self.checkResultsDictionary['Priority Errors'].append( (priority,errorString,(self.BBB,C,V,),) )
     # end of InternalBibleBook.addPriorityError
 
 
@@ -3986,7 +3989,6 @@ class InternalBibleBook:
                 startsWithOpen = True
                 openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[1] )
 
-            # if C=='49' and V in ('1','2','3','4'):
             vPrint( 'Never', debuggingThisModule, f"{C}:{V} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openChars} {marker} '{cleanText}'" )
             if openChars:
                 if newSection and closeQuotesAtSectionEnd \
