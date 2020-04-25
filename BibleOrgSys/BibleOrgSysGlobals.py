@@ -106,10 +106,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderPath )
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-04-25' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.87'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -188,6 +188,33 @@ BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' )
 
 # Resources like original language lexicons should be based from this folder
 BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
+
+
+##########################################################################################################
+#
+
+LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
+                    'Normal':2, 'N':2,
+                    'Informative':3, 'Info':3, 'I':3,
+                    'Verbose':4, 'V':4,
+                    'Never': 5, # Will only ever print if increaseLevel is set
+                    }
+def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
+    """
+    Only print the given string, if the verbosity level is correct.
+    """
+    if isinstance( requestedLevel, str ):
+        try: requestedLevel = LEVEL_NAME_DICT[requestedLevel]
+        except KeyError: requestedLevel = 4 # default to verbose
+    if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( requestedLevel, int )
+    if increaseLevel is True:
+        increaseLevel = 1
+    if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
+    # Make one or more levels more verbose if this is set
+    if increaseLevel: requestedLevel -= 1 # Doesn't matter if it goes negative
+    if verbosityLevel >= requestedLevel:
+        print( *args, **kwargs )
+# end of BibleOrgSysGlobals.vPrint function
 
 
 ##########################################################################################################
@@ -1324,25 +1351,6 @@ def setVerbosity( verbosityLevelParameter ):
         vPrint( 'Quiet', debuggingThisModule, '  Verbosity =', verbosityString )
         vPrint( 'Quiet', debuggingThisModule, '  VerbosityLevel =', verbosityLevel )
 # end of BibleOrgSysGlobals.setVerbosity function
-
-
-LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
-                    'Normal':2, 'N':2,
-                    'Informative':3, 'Info':3, 'I':3,
-                    'Verbose':4, 'V':4,
-                    'Never': 5, # Will only ever print if increaseOneLevel is set
-                    }
-def vPrint( requestedLevel:Union[int,str], increaseOneLevel:bool, *args, **kwargs ) -> None:
-    """
-    Only print the given string, if the verbosity level is correct.
-    """
-    if isinstance( requestedLevel, str ):
-        try: requestedLevel = LEVEL_NAME_DICT[requestedLevel]
-        except KeyError: requestedLevel = 4 # default to verbose
-    if increaseOneLevel: requestedLevel -= 1 # Make one level more verbose if this is set
-    if verbosityLevel >= requestedLevel:
-        print( *args, **kwargs )
-# end of BibleOrgSysGlobals.vPrint function
 
 
 def introduceProgram( theirName:str, theirProgramNameVersion:str, theirLastModifiedDate:str ) -> None:
