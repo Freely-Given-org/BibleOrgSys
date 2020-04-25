@@ -53,7 +53,8 @@ TODO: I think this entire module is very messy and needs to be completely rewrit
 """
 from gettext import gettext as _
 import os
-import logging, time
+import logging
+import time
 import multiprocessing
 import struct, zlib
 

@@ -44,7 +44,8 @@ programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-import logging, sys
+import logging
+import sys
 
 if __name__ == '__main__':
     import os.path

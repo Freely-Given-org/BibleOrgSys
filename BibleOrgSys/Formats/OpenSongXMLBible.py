@@ -87,7 +87,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-22' # by RJH
 SHORT_PROGRAM_NAME = "OpenSongBible"
 PROGRAM_NAME = "OpenSong XML Bible format handler"
 PROGRAM_VERSION = '0.39'
@@ -470,6 +470,10 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectTypeString = 'OpenSong'
                 #thisBook.sourceFilepath = self.sourceFilepath
                 USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
+                if not USFMAbbreviation:
+                    logging.critical( f"Unable to find USFM abbreviation for '{BBB}'" )
+                    if BibleOrgSysGlobals.strictCheckingFlag: halt
+                    USFMAbbreviation = 'XXA'
                 thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), programNameVersion ) )
                 thisBook.addLine( 'h', bookName )
                 thisBook.addLine( 'mt1', bookName )

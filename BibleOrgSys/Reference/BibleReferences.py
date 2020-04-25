@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2018 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -79,18 +79,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
     Also, I think it's easier to make it more generic/international this way.
     If I'm wrong, please show me.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2018-12-12' # by RJH
-SHORT_PROGRAM_NAME = "BibleReferences"
-PROGRAM_NAME = "Bible References handler"
-PROGRAM_VERSION = '0.35'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 
 if __name__ == '__main__':
@@ -102,6 +91,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+
+
+LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+SHORT_PROGRAM_NAME = "BibleReferences"
+PROGRAM_NAME = "Bible References handler"
+PROGRAM_VERSION = '0.35'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 # This is a hack because it's language dependant :-(
@@ -2029,13 +2027,131 @@ def briefDemo() -> None:
             result = BAR.matchesAnchorString( ourAnchor )
             if result: vPrint( 'Quiet', debuggingThisModule, "  Matched {!r}".format( ourAnchor ) )
             else: vPrint( 'Quiet', debuggingThisModule, "  DIDN'T MATCH {!r} <--------------------- Oops!".format( ourAnchor ) )
+# end of BibleReferences.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    ourBOS = BibleOrganisationalSystem( 'RSV' )
+    printProcessingMessages = True
+
+    if 1: # test BibleSingleReference
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        BSR = BibleSingleReference( ourBOS )
+        vPrint( 'Quiet', debuggingThisModule, BSR ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (good)" )
+        for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
+            if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+            vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
+        vPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (bad)" )
+        for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
+            if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+            vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
+
+    if 1: # test BibleSingleReferences
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        BSRs = BibleSingleReferences( ourBOS )
+        vPrint( 'Quiet', debuggingThisModule, BSRs ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, "\nSingle References (good)" )
+        for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b"):
+            if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+            vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
+        for ref in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
+            if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+            vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
+        vPrint( 'Quiet', debuggingThisModule, "\nSingle References (bad)" )
+        for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
+            if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+            vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSRs got {}".format(ref, BSRs.parseReferenceString(ref)) )
+
+    if 1: # test BibleReferenceList
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        BRL = BibleReferenceList( ourBOS )
+        vPrint( 'Quiet', debuggingThisModule, BRL ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, BRL.makeReferenceString(("MAT",'7','3')), BRL.makeReferenceString(("PHM",'1','3')), BRL.makeReferenceString(("CO1",'2','1','a')), BRL.makeReferenceString(("CO2",'7')) )
+        if 1:
+            vPrint( 'Quiet', debuggingThisModule, "\n\nSingle References for Ranges (good)" )
+            for ref in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
+                        "Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
+            vPrint( 'Quiet', debuggingThisModule, "\nSingle References for Ranges (bad)" )
+            for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSRs got {}".format(ref, BRL.parseReferenceString(ref)) )
+            vPrint( 'Quiet', debuggingThisModule, "\n\nSingle Ranges (good)" )
+            for ref in ("Mat 7:3-7","Mat.7:3-11","Mat. 7:13-8:2","Mt. 7:3,5-9","Mt.7:3-4,6-9","Jde 7-8","Jde. 1-3","Jde 1:7-8","Jud. 1:1-3,5,7-9","EXO.4:14,27c-30;  5:1,4,20; 6:13,20,23,25-27a; 7:1,2,6b-10a,10,12,19,20; 8:1,2,4,8,12,13,21;"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
+                vPrint( 'Quiet', debuggingThisModule, "OSIS result is {!r}".format( BRL.getOSISRefList() ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nSingle Ranges (bad)" )
+            for ref in ("EXO.4:14-12; NUM.3:12-1:5; JOS.4:5-5","Mt. 7:7;"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
+            vPrint( 'Quiet', debuggingThisModule, "\n\nNow some chapter Ranges (good)" )
+            for ref in ("Dan. 5","Gen. 1-11","Act.4-7; Mat.5-7"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
+                #vPrint( 'Quiet', debuggingThisModule, "OSIS result is {!r}".format( BRL.getOSISRefList() ) )
+            vPrint( 'Quiet', debuggingThisModule, "\nNow some chapter Ranges (bad)" )
+            for ref in ("Tit. 1:2; 1:2-7","Jer. 95","Exo. 23-99","1 Cor.9-7; 1Tim.5-7:2"):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got {}".format(ref, BRL.parseReferenceString(ref)) )
+            for ref in ("Jhn. 3:16", "Rev. 2:1-3" ):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got OSIS {!r}".format(ref, BRL.parseToOSIS(ref)) )
+        if 1:
+            for ref in ("Mat. 27:15a-Mrk. 2:4b", "1Sml. 16:1-1Kngs. 2:11", "Eze. 27:12-13,22", ):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "\nProcessing {!r} reference string…".format( ref ) )
+                vPrint( 'Quiet', debuggingThisModule, "  From {!r} BRL got OSIS {!r}".format(ref, BRL.parseToOSIS(ref)) )
+                l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
+                vPrint( 'Quiet', debuggingThisModule, "List is: ", l1 )
+                if l2!=l1: vPrint( 'Quiet', debuggingThisModule, "Expanded:", l2 )
+        if 1:
+            originalRefs = ( \
+                    #"Mt 3:2; 4:17;  9:35; 10:7; 11:12,13; 12:28; 13:11, 19, 44, 45, 47, 52; 18:23; 19:12; 20:1; 22:2; 24:14, 25:1, 14, 31; Mk 1:15; 4:11; 9:1; 10:15; 11:10; 15:43; Lk 1:32, 33; 3:1,2; 4:43; 8:1, 10; 9:1,2, 11, 27, 60, 62; 10:9, 11; 16:16; 17:19, 20, 22; 18:17, 29; 19:11, 15; 21:31; 22:18, 28-29; 23:43, 50-52; Jn 18:36; Ac 1:2,3,30; 7:18; 8:12; 13:22; 19:8; 20:25; 28:23, 31; Rm 15:12; Col 4:10,11; 2 Ti 4:1; Rev 11:17; 12:10", \
+                    #"Mt 5:3, 10, 19, 20; 11:11; 13:24, 31, 33 41; 18:1, 3, 4; 19:14, 23, 24; 21:31, 43; 23:13; Mk 4:30; 10:14, 23, 24, 25; 12:34; Lk 6:20; 7:28; 12:32; 13:18,20, 18:16, 24,25; 19:14, 27; John 3:3, 3:5; Ac 1:6; 7:10; Ac 1 Co 6:9, 10; 15:24-25, 50; Gal 5:21; Eph 5:5; Col 1:12", \
+                    #"Mt 7:21; 8:11; 11:12,13; 13:43; 16:19; 24:7; 25:34; 26:29; Mk 6:23; 9:47; 10:37; 13:8; 14:25; Lk 13:21, 24-25; 13:28, 29; 14:15; 17:21; 21:10; 22:16, 30; Ac 1:6; 7:10; 14:22; 15:16,50; Col 1:12; 1 Th 2:11,12; 2 Th 1:5; 4:18; Heb 12:28; Jas 2:5; 2 Pe 1:11; Rev 3:7; 16:10", \
+                )
+            fixedRefs = ( \
+                    "Mt. 3:2; 4:17; 9:35; 10:7; 11:12,13; 12:28; 13:11,19,44,45,47,52; 18:23; 19:12; 20:1; 22:2; 24:14; 25:1,14,31; Mk. 1:15; 4:11; 9:1; 10:15; 11:10; 15:43; Lk. 1:32,33; 3:1,2; 4:43; 8:1,10; 9:1,2,11,27,60,62; 10:9,11; 16:16; 17:19,20,22; 18:17,29; 19:11,15; 21:31; 22:18,28-29; 23:43,50-52; Jn 18:36; Ac. 1:2,3,30; 7:18; 8:12; 13:22; 19:8; 20:25; 28:23,31; Rm. 15:12; Col. 4:10,11; 2 Ti. 4:1; Rev. 11:17; 12:10", \
+                    "Mt. 5:3,10,19,20; 11:11; 13:24,31,33,41; 18:1,3,4; 19:14,23,24; 21:31,43; 23:13; Mk. 4:30; 10:14,23,24,25; 12:34; Lk 6:20; 7:28; 12:32; 13:18,20; 18:16,24,25; 19:14,27; John 3:3; 3:5; Ac. 1:6; 7:10; 1 Co. 6:9,10; 15:24-25,50; Gal. 5:21; Eph. 5:5; Col. 1:12", \
+                    "Mt. 7:21; 8:11; 11:12,13; 13:43; 16:19; 24:7; 25:34; 26:29; Mk. 6:23; 9:47; 10:37; 13:8; 14:25; Lk 13:21,24-25; 13:28,29; 14:15; 17:21; 21:10; 22:16,30; Ac 1:6; 7:10; 14:22; 15:16,50; Col. 1:12; 1 Th. 2:11,12; 2 Th. 1:5; 4:18; Heb. 12:28; Jas. 2:5; 2 Pe. 1:11; Rev. 3:7; 16:10", \
+                )
+            for ref in fixedRefs:
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "\nProcessing {!r} reference string…".format( ref ) )
+                oL = BRL.parseToOSIS( ref )
+                vPrint( 'Quiet', debuggingThisModule, "From {!r}\n  BRL got OSIS {!r}".format(ref, oL) )
+                l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
+                vPrint( 'Quiet', debuggingThisModule, "List is: ", l1 )
+                #if l2!=l1: vPrint( 'Quiet', debuggingThisModule, "Expanded:", l2 )
+                if oL is not None:
+                    sucessFlag, hvWarnings, l3 = BRL.parseOSISReferenceString( oL )
+                    vPrint( 'Quiet', debuggingThisModule, "Now got: ", l3 )
+        if 1:
+            for ref in ( "1Cor.3.5-1Cor.3.9", ):
+                if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "\nProcessing {!r} OSIS reference string…".format( ref ) )
+                sucessFlag, hvWarnings, resultList = BRL.parseOSISReferenceString( ref )
+                vPrint( 'Quiet', debuggingThisModule, "From {!r}\n  BRL got {!r}".format(ref, resultList) )
+                l1, l2 = BRL.getReferenceList(), BRL.getReferenceList( expanded=True )
+                vPrint( 'Quiet', debuggingThisModule, "List is: ", l1 )
+                if l2!=l1: vPrint( 'Quiet', debuggingThisModule, "Expanded:", l2 )
+
+    if 1: # test BibleAnchorReference
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        for ourBBB, ourC, ourV, ourAnchor in ( ('GEN','17','25', '17:25'), \
+                                            ('EXO','12','17-18', '12:17'), ('LEV','12','17-18', '12:18'), ('NUM','12','17', '12:17-18'), ('DEU','12','18', '12:17-18'), \
+                                            ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
+                                            ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
+            BAR = BibleAnchorReference( ourBBB, ourC, ourV )
+            vPrint( 'Quiet', debuggingThisModule, BAR ) # Just print a summary
+            result = BAR.matchesAnchorString( ourAnchor )
+            if result: vPrint( 'Quiet', debuggingThisModule, "  Matched {!r}".format( ourAnchor ) )
+            else: vPrint( 'Quiet', debuggingThisModule, "  DIDN'T MATCH {!r} <--------------------- Oops!".format( ourAnchor ) )
+# end of BibleReferences.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

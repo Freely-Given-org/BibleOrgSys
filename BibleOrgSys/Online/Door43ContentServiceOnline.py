@@ -5,7 +5,7 @@
 #
 # Module handling online DCS resources
 #
-# Copyright (C) 2019 Robert Hunt
+# Copyright (C) 2019-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,23 +34,13 @@ This module is up-to-date for version 1.9.5 of the DCS/Gitea.
 More details are available from https://api-info.readthedocs.io/en/latest/dcs.html
                             and https://git.door43.org/api/swagger.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-12-18' # by RJH
-SHORT_PROGRAM_NAME = "Door43ContentService"
-PROGRAM_NAME = "Door43 Content Service online handler"
-PROGRAM_VERSION = '0.04'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 import urllib.request
 import json
-import tempfile, zipfile
+import tempfile
+import zipfile
 from datetime import datetime
 
 if __name__ == '__main__':
@@ -62,6 +52,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
+
+
+LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+SHORT_PROGRAM_NAME = "Door43ContentService"
+PROGRAM_NAME = "Door43 Content Service online handler"
+PROGRAM_VERSION = '0.04'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 URL_BASE = 'https://git.door43.org/api/' # API endpoint
@@ -504,6 +503,86 @@ def briefDemo() -> None:
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     vPrint( 'Quiet', debuggingThisModule, verseKey )
                     vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
+                break
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
+    # end of processSearchResult function
+
+    if 1: # Test the DCSBible class with the ULT
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nB/ ULT test")
+        downloadAllBooks = True
+        searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ult' )
+        if searchResult:
+            #vPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            if isinstance(searchResult, dict):
+                processSearchResult( searchResult, downloadAllBooks )
+            elif isinstance(searchResult, list):
+                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ult' repos!" )
+                searchResults = searchResult
+                for searchResult in searchResults:
+                    processSearchResult( searchResult, downloadAllBooks )
+            else:
+                logging.critical( f"Bad search result {type(searchResult)} ({len(searchResult)}): {searchResult}" )
+        else:
+            logging.critical( f"Empty search result: {searchResult}" )
+
+    else: # Test the DCSBible class with the UST
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nC/ UST test")
+        downloadAllBooks = False
+        searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ust' )
+        if searchResult:
+            #vPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            if isinstance(searchResult, dict):
+                processSearchResult( searchResult, downloadAllBooks )
+            elif isinstance(searchResult, list):
+                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ust' repos!" )
+                searchResults = searchResult
+                for searchResult in searchResults:
+                    processSearchResult( searchResult, downloadAllBooks )
+            else:
+                logging.critical( f"Bad search result {type(searchResult)} ({len(searchResult)}): {searchResult}" )
+        else:
+            logging.critical( f"Empty search result: {searchResult}" )
+# end of Door43ContentServiceOnline.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Test the DCSBibles class (also used later)
+    if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nA/ DCSBibles class test…")
+    dcsBibles = DCSBibles()
+    vPrint( 'Quiet', debuggingThisModule, dcsBibles, end='\n\n' )
+    #dcsBibles.load() # takes a minute
+    #vPrint( 'Quiet', debuggingThisModule, dcsBibles )
+    dcsBibles.fetchAllBibles()
+
+    if 0: # print the list
+        vPrint( 'Quiet', debuggingThisModule, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
+            ownerName = BibleDict['owner']['full_name']
+            if not ownerName: ownerName = BibleDict['owner']['username']
+            vPrint( 'Normal', debuggingThisModule, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
+
+
+    testRefs = ( ('GEN','1','1'), ('GEN','2','2'), ('JER','33','3'), ('MAL','4','6'),
+                 ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
+
+    def processSearchResult( searchResult:dict, downloadAllBooks:bool=False ) -> None:
+        if searchResult and isinstance( searchResult, dict ):
+            dcsBible1 = DCSBible( searchResult, downloadAllBooks=downloadAllBooks )
+            try: dcsBible1.preload()
+            except FileNotFoundError: assert downloadAllBooks == False
+            vPrint( 'Normal', debuggingThisModule, dcsBible1, end='\n\n' )
+            for testRef in testRefs:
+                verseKey = SimpleVerseKey( *testRef )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, verseKey )
+                    vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
         elif BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
@@ -543,14 +622,7 @@ def briefDemo() -> None:
                 logging.critical( f"Bad search result {type(searchResult)} ({len(searchResult)}): {searchResult}" )
         else:
             logging.critical( f"Empty search result: {searchResult}" )
-# end of fullDemo
-
-def fullDemo() -> None:
-    """
-    Full demo to check class is working
-    """
-    briefDemo()
-# end of fullDemo
+# end of Door43ContentServiceOnline.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

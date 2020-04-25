@@ -2445,6 +2445,14 @@
         "Duwa ",
         "Daruwan "
       ],
+      "3 ": [
+        "III ",
+        "Igkatelu ne ",
+        "Thrd ",
+        "3rd ",
+        "Telu ",
+        "Tatelun "
+      ],
       "Saint ": [
         "Santu ",
         "Santo ",
@@ -2460,6 +2468,9 @@
         "inputFields": [
           "Hinisis",
           "Hin",
+          "Hinesis",
+          "Henesis",
+          "Henisis",
           "Hn"
         ]
       },
@@ -2469,6 +2480,7 @@
         "inputFields": [
           "Iksudu",
           "Iks",
+          "Eksudu",
           "Iksd"
         ]
       },
@@ -2478,6 +2490,10 @@
         "inputFields": [
           "Libitiku",
           "Lib",
+          "Lebitiku",
+          "Lebetiku",
+          "Lebeteku",
+          "Lebiteku",
           "Lbtk"
         ]
       },
@@ -2496,6 +2512,7 @@
         "inputFields": [
           "Diyuturunumiyu",
           "Diy",
+          "Deyuturunumiyu",
           "Dytrnmy"
         ]
       },
@@ -2505,6 +2522,7 @@
         "inputFields": [
           "Huswi",
           "Hswi",
+          "Huswe",
           "Juswi"
         ]
       },
@@ -2514,7 +2532,10 @@
         "inputFields": [
           "Me Talewukum",
           "Tal",
-          "Tlwkm"
+          "Tlwkm",
+          "Me Talawukum",
+          "Talawukum",
+          "Talaukum"
         ]
       },
       "RUT": {
@@ -2531,7 +2552,8 @@
         "inputFields": [
           "1 Samwil",
           "1 Sam",
-          "1 Smwl"
+          "1 Smwl",
+          "1 Samwel"
         ]
       },
       "SA2": {
@@ -2540,24 +2562,25 @@
         "inputFields": [
           "2 Samwil",
           "2 Sam",
-          "2 Smwl"
+          "2 Smwl",
+          "2 Samwel"
         ]
       },
       "KI1": {
-        "defaultName": "1 Me Hari",
+        "defaultName": "1 Hari",
         "defaultAbbreviation": "1 Hari",
         "inputFields": [
-          "1 Me Hari",
           "1 Hari",
+          "1 Me Hari",
           "1 Hri"
         ]
       },
       "KI2": {
-        "defaultName": "2 Me Hari",
+        "defaultName": "2 Hari",
         "defaultAbbreviation": "2 Hari",
         "inputFields": [
-          "2 Me Hari",
           "2 Hari",
+          "2 Me Hari",
           "2 Hri"
         ]
       },
@@ -2580,12 +2603,15 @@
         ]
       },
       "EZR": {
-        "defaultName": "Isdras",
-        "defaultAbbreviation": "Isd",
+        "defaultName": "Isra",
+        "defaultAbbreviation": "Isr",
         "inputFields": [
+          "Isra",
+          "Isr",
           "Isdras",
-          "Isd",
-          "Isdrs"
+          "Isdrs",
+          "Esdras",
+          "Esdrs"
         ]
       },
       "NEH": {
@@ -2594,7 +2620,11 @@
         "inputFields": [
           "Nihimiyas",
           "Nih",
-          "Nhmys"
+          "Nhmys",
+          "Nehimiyas",
+          "Nehemiyas",
+          "Nehemeyas",
+          "Nehimeyas"
         ]
       },
       "EST": {
@@ -2603,6 +2633,7 @@
         "inputFields": [
           "Istir",
           "Ist",
+          "Estir",
           "Istr"
         ]
       },
@@ -2630,6 +2661,8 @@
         "inputFields": [
           "Lalahen",
           "Lal",
+          "Me Lalahen",
+          "Lalahon",
           "Llhn"
         ]
       },
@@ -2639,6 +2672,9 @@
         "inputFields": [
           "Iklisyastis",
           "Ikl",
+          "Iklisiyastis",
+          "Eklisyastis",
+          "Eklesyastis",
           "Iklsysts"
         ]
       },
@@ -2648,7 +2684,8 @@
         "inputFields": [
           "Ulahingen ni Sulumun",
           "UNS",
-          "Ulahingen ni Slmn"
+          "Ulahingen ni Slmn",
+          "Ulahengen ni Slmn"
         ]
       },
       "ISA": {
@@ -2657,6 +2694,7 @@
         "inputFields": [
           "Isayas",
           "Isa",
+          "Esayas",
           "Isys"
         ]
       },
@@ -2666,15 +2704,20 @@
         "inputFields": [
           "Hirimiyas",
           "Hir",
+          "Hirmiyas",
+          "Herimiyas",
+          "Hiremiyas",
           "Hrmys"
         ]
       },
       "LAM": {
-        "defaultName": "Pegkalange",
+        "defaultName": "Pegkalange ni Hirimiyas",
         "defaultAbbreviation": "Peg",
         "inputFields": [
-          "Pegkalange",
+          "Pegkalange ni Hirimiyas",
           "Peg",
+          "Pigkalange",
+          "Pogkalange",
           "Pgklange"
         ]
       },
@@ -2684,6 +2727,9 @@
         "inputFields": [
           "Isikil",
           "Isi",
+          "Isikyil",
+          "Isekil",
+          "Esikil",
           "Iskl"
         ]
       },
@@ -2693,15 +2739,19 @@
         "inputFields": [
           "Danyil",
           "Dan",
+          "Danil",
           "Dnyl"
         ]
       },
       "HOS": {
-        "defaultName": "Husiya",
+        "defaultName": "Husiyas",
         "defaultAbbreviation": "Hus",
         "inputFields": [
-          "Husiya",
+          "Husiyas",
           "Hus",
+          "Husiya",
+          "Hosiyas",
+          "Huseyas",
           "Hsya"
         ]
       },
@@ -2710,6 +2760,8 @@
         "defaultAbbreviation": "Huwil",
         "inputFields": [
           "Huwil",
+          "Howil",
+          "Huwl",
           "Hwl"
         ]
       },
@@ -2719,15 +2771,20 @@
         "inputFields": [
           "Amus",
           "Amu",
+          "Amos",
           "Ams"
         ]
       },
       "OBA": {
-        "defaultName": "Abdiyas",
-        "defaultAbbreviation": "Abd",
+        "defaultName": "Ubadiya",
+        "defaultAbbreviation": "Ubd",
         "inputFields": [
+          "Ubadiya",
+          "Ubd",
+          "Ubadiyas",
+          "Obadiyas",
+          "Ubdiyas",
           "Abdiyas",
-          "Abd",
           "Abdy"
         ]
       },
@@ -2737,6 +2794,7 @@
         "inputFields": [
           "Hunas",
           "Hun",
+          "Junas",
           "Juns"
         ]
       },
@@ -2746,6 +2804,10 @@
         "inputFields": [
           "Mikiyas",
           "Mic",
+          "Mikyas",
+          "Miciyas",
+          "Miceyas",
+          "Meciyas",
           "Mkys"
         ]
       },
@@ -2756,6 +2818,7 @@
           "Nahum",
           "Nah",
           "Nahm",
+          "Nahom",
           "Nhum",
           "Nhm"
         ]
@@ -2770,6 +2833,7 @@
           "Habbakkuk",
           "Habbakuk",
           "Habakkuk",
+          "Habakok",
           "Hbbkk"
         ]
       },
@@ -2779,6 +2843,9 @@
         "inputFields": [
           "Supuniyas",
           "Sup",
+          "Supunyas",
+          "Sopuniyas",
+          "Suponiyas",
           "Spnys"
         ]
       },
@@ -2789,7 +2856,9 @@
           "Hagiyu",
           "Hag",
           "Hgy",
-          "Haggiyu"
+          "Haggiyu",
+          "Hageyu",
+          "Hagiyo"
         ]
       },
       "ZEC": {
@@ -2798,7 +2867,9 @@
         "inputFields": [
           "Sakariyas",
           "Sak",
-          "Skrys"
+          "Skrys",
+          "Sakkariyas",
+          "Sakareyas"
         ]
       },
       "MAL": {
@@ -2807,7 +2878,8 @@
         "inputFields": [
           "Malakyas",
           "Mal",
-          "Mlkys"
+          "Mlkys",
+          "Malakiyas"
         ]
       },
       "MAT": {
@@ -2817,7 +2889,9 @@
           "Matiyu",
           "Mat",
           "Mtyu",
-          "Mattiyu"
+          "Matyu",
+          "Mattiyu",
+          "Mateyu"
         ]
       },
       "MRK": {
@@ -2827,7 +2901,11 @@
           "Markus",
           "Mar",
           "Mrks",
-          "Mks"
+          "Mks",
+          "Marcus",
+          "Markos",
+          "Marcos",
+          "Malkus"
         ]
       },
       "LUK": {
@@ -2836,7 +2914,8 @@
         "inputFields": [
           "Lukas",
           "Luk",
-          "Lks"
+          "Lks",
+          "Lucas"
         ]
       },
       "JHN": {
@@ -2846,6 +2925,7 @@
           "Huwan",
           "Huw",
           "Hwn",
+          "Juwan",
           "Juan",
           "Jn"
         ]
@@ -2856,7 +2936,8 @@
         "inputFields": [
           "Me Himu",
           "Himu",
-          "Hmu"
+          "Hmu",
+          "MeHimu"
         ]
       },
       "ROM": {
@@ -2878,7 +2959,11 @@
           "1 Matig-Kurintu",
           "1 Kur",
           "1 MatigKurintu",
+          "1 Matig-Korintu",
+          "1 MatigKorintu",
           "1 Kurintu",
+          "1 Korintu",
+          "1 Kurentu",
           "1 Krntu"
         ]
       },
@@ -2889,7 +2974,11 @@
           "2 Matig-Kurintu",
           "2 Kur",
           "2 MatigKurintu",
+          "2 Matig-Korintu",
+          "2 MatigKorintu",
           "2 Kurintu",
+          "2 Korintu",
+          "2 Kurentu",
           "2 Krntu"
         ]
       },
@@ -2900,6 +2989,9 @@
           "Matig-Galasya",
           "Gal",
           "MatigGalasya",
+          "MatigGalasoya",
+          "Matig-Galasoya",
+          "Galasiya",
           "Galasya",
           "Glsya"
         ]
@@ -2911,19 +3003,23 @@
           "Matig-Ipisu",
           "Ipi",
           "MatigIpisu",
+          "Matig-Episu",
+          "MatigEpisu",
           "Ipisu",
           "Ipsu"
         ]
       },
       "PHP": {
-        "defaultName": "Matig-Pilipu",
+        "defaultName": "Matig-Pilipus",
         "defaultAbbreviation": "Pil",
         "inputFields": [
-          "Matig-Pilipu",
+          "Matig-Pilipus",
           "Pil",
-          "MatigPilipu",
-          "Pilipu",
-          "Plpu"
+          "MatigPilipus",
+          "Matig-Pelipus",
+          "MatigPelipus",
+          "Pilipus",
+          "Plpus"
         ]
       },
       "COL": {
@@ -2933,6 +3029,8 @@
           "Matig-Kulusas",
           "Kul",
           "MatigKulusas",
+          "Matig-Kolusas",
+          "MatigKolusas",
           "Kulusas",
           "Klss"
         ]
@@ -2944,6 +3042,8 @@
           "1 Matig-Tisalunika",
           "1 Tis",
           "1 MatigTisalunika",
+          "1 Matig-Tisalonika",
+          "1 MatigTisalonika",
           "1 Tisalunika",
           "1 Tslnka"
         ]
@@ -2955,6 +3055,8 @@
           "2 Matig-Tisalunika",
           "2 Tis",
           "2 MatigTisalunika",
+          "2 Matig-Tisalonika",
+          "2 MatigTisalonika",
           "2 Tisalunika",
           "2 Tslnka"
         ]
@@ -2965,6 +3067,7 @@
         "inputFields": [
           "1 Timutiyu",
           "1 Tim",
+          "1 Timityu",
           "1 Tmtyu"
         ]
       },
@@ -2974,6 +3077,7 @@
         "inputFields": [
           "2 Timutiyu",
           "2 Tim",
+          "2 Timityu",
           "2 Tmtyu"
         ]
       },
@@ -2983,7 +3087,8 @@
         "inputFields": [
           "Titu",
           "Tit",
-          "Ttu"
+          "Ttu",
+          "Tito"
         ]
       },
       "PHM": {
@@ -2992,6 +3097,8 @@
         "inputFields": [
           "Pilimun",
           "Pilim",
+          "Pelimun",
+          "Pilemun",
           "Plmn"
         ]
       },
@@ -3003,6 +3110,8 @@
           "Heb",
           "Hibruhanen",
           "Hibruhanun",
+          "Hibruwanon",
+          "Hebruwanen",
           "Hbrws"
         ]
       },
@@ -3014,6 +3123,7 @@
           "San",
           "Sntygu",
           "Hakubu",
+          "Hakobu",
           "Santiyaggu",
           "Sandiyagu",
           "Sandiyaggu"
@@ -3025,6 +3135,9 @@
         "inputFields": [
           "1 Pidru",
           "1 Pid",
+          "1 Pidro",
+          "1 Pedru",
+          "1 Pedro",
           "1 Pdru"
         ]
       },
@@ -3034,6 +3147,9 @@
         "inputFields": [
           "2 Pidru",
           "2 Pid",
+          "2 Pidro",
+          "2 Pedru",
+          "2 Pedro",
           "2 Pdru"
         ]
       },
@@ -3080,6 +3196,7 @@
           "Hudas",
           "Hud",
           "Hds",
+          "Huddas",
           "Judas"
         ]
       },
@@ -3089,6 +3206,7 @@
         "inputFields": [
           "Impakita",
           "Imp",
+          "Empakita",
           "Impkta",
           "Gipadayag"
         ]
