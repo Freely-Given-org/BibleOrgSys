@@ -8,8 +8,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.13'
-LAST_MODIFIED_DATE = '2020-04-14' # by RJH — when setup.py was modified below
+VERSION = '0.0.14'
+LAST_MODIFIED_DATE = '2020-04-25' # by RJH — when setup.py was modified below
 
 
 INCLUDE_DATA_SOURCE_FILES = False
@@ -378,7 +378,7 @@ This library forms the basis of the experimental
     # },
     entry_points={
         'console_scripts': [
-            'myBible2USX=BibleOrgSys.Apps.myBible2USX:run',
+            'Bible2USX=BibleOrgSys.Apps.Bible2USX:run',
         ],
     },
 )
