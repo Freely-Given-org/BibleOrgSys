@@ -121,10 +121,12 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             continue
         vPrint( 'Verbose', debuggingThisModule, "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ): foundSubfiles.append( something )
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ): foundSubfiles.append( something )
+        except PermissionError: pass # can't read folder, e.g., system folder
 
         # See if there's an USX Bible with standard Paratext style filenames here in this folder
         UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
@@ -486,6 +488,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
     If a schema is given (either a path or URL), the XML output files are validated.
     """
     import zipfile
+    import tarfile
 
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
     from BibleOrgSys.Reference.USFM3Markers import USFM_PRECHAPTER_MARKERS

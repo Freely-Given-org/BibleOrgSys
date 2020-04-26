@@ -169,14 +169,16 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             continue
         vPrint( 'Verbose', debuggingThisModule, "    DrupalBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                if somethingUpperExt in filenameEndingsToAccept:
-                    foundSubfiles.append( something )
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    if somethingUpperExt in filenameEndingsToAccept:
+                        foundSubfiles.append( something )
+        except PermissionError: pass # can't read folder, e.g., system folder
 
         # See if there's an DrupalBible project here in this folder
         for thisFilename in sorted( foundSubfiles ):

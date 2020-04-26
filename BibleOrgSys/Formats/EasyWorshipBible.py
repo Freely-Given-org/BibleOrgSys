@@ -129,14 +129,16 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             continue
         vPrint( 'Verbose', debuggingThisModule, "    EasyWorshipBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                if somethingUpper.endswith( FILENAME_ENDING ):
-                    foundProjects.append( (tryFolderName,something) )
-                    numFound += 1
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    if somethingUpper.endswith( FILENAME_ENDING ):
+                        foundProjects.append( (tryFolderName,something) )
+                        numFound += 1
+        except PermissionError: pass # can't read folder, e.g., system folder
         #if foundFileCount >= len(compulsoryFiles):
             #foundProjects.append( tryFolderName )
             #numFound += 1

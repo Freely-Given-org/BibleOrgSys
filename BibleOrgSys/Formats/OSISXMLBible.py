@@ -161,23 +161,25 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         vPrint( 'Verbose', debuggingThisModule, "    OSISXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles, foundSubBookFiles = [], [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                ignore = False
-                for ending in FILENAME_ENDINGS_TO_IGNORE:
-                    if somethingUpper.endswith( ending): ignore=True; break
-                if ignore: continue
-                if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
-                    foundSubfiles.append( something )
-                    for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
-                        # osisBkCodes are all UPPERCASE
-                        #vPrint( 'Quiet', debuggingThisModule, 'obc', osisBkCode, upperFilename )
-                        if osisBkCode in somethingUpper:
-                            foundSubBookFiles.append( something ); break
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    ignore = False
+                    for ending in FILENAME_ENDINGS_TO_IGNORE:
+                        if somethingUpper.endswith( ending): ignore=True; break
+                    if ignore: continue
+                    if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
+                        foundSubfiles.append( something )
+                        for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
+                            # osisBkCodes are all UPPERCASE
+                            #vPrint( 'Quiet', debuggingThisModule, 'obc', osisBkCode, upperFilename )
+                            if osisBkCode in somethingUpper:
+                                foundSubBookFiles.append( something ); break
+        except PermissionError: pass # can't read folder, e.g., system folder
         #vPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles, foundSubBookFiles )
 
         # See if there's an OSIS project here in this folder

@@ -155,14 +155,16 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
             continue
         vPrint( 'Verbose', debuggingThisModule, "    PickledBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                #somethingUpper = something.upper()
-                if something in (ZIPPED_PICKLE_FILENAME_END, VERSION_FILENAME):
-                    foundSubfiles.append( something )
-                    numFound += 1
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    #somethingUpper = something.upper()
+                    if something in (ZIPPED_PICKLE_FILENAME_END, VERSION_FILENAME):
+                        foundSubfiles.append( something )
+                        numFound += 1
+        except PermissionError: pass # can't read folder, e.g., system folder
 
     # See if there's an Pickle Bible here in this folder
     if numFound:

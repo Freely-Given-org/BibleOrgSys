@@ -219,14 +219,16 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
             continue
         vPrint( 'Verbose', debuggingThisModule, "    SwordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ):
-                foundSubfolders.append( something )
-                if something in compulsoryTopFolders: foundFolderCount += 1
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                if somethingUpper in compulsoryFiles: foundFileCount += 1
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ):
+                    foundSubfolders.append( something )
+                    if something in compulsoryTopFolders: foundFolderCount += 1
+                elif os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    if somethingUpper in compulsoryFiles: foundFileCount += 1
+        except PermissionError: pass # can't read folder, e.g., system folder
         if foundFolderCount == len(compulsoryTopFolders):
             assert foundFileCount == 0
             foundConfNames = confirmThisFolder( tryFolderName )

@@ -133,15 +133,17 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
             continue
         vPrint( 'Verbose', debuggingThisModule, "    GoBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                #somethingUpper = something.upper()
-                if something.endswith( GOBIBLE_FILENAME_END ):
-                    foundSubfiles.append( something )
-                    foundProjects.append( os.path.join( tryFolderName, something ) )
-                    numFound += 1
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    #somethingUpper = something.upper()
+                    if something.endswith( GOBIBLE_FILENAME_END ):
+                        foundSubfiles.append( something )
+                        foundProjects.append( os.path.join( tryFolderName, something ) )
+                        numFound += 1
+        except PermissionError: pass # can't read folder, e.g., system folder
 
     # See if there's an GoBible here in this folder
     if numFound:

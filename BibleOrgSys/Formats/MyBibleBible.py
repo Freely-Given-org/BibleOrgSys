@@ -301,19 +301,21 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             continue
         vPrint( 'Verbose', debuggingThisModule, "    MyBibleBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
-        for something in os.listdir( tryFolderName ):
-            somepath = os.path.join( givenFolderName, thisFolderName, something )
-            if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ):
-                somethingUpper = something.upper()
-                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                ignore = False
-                for stuff in FILENAME_PARTS_TO_REJECT:
-                    if stuff in somethingUpper: ignore=True; break
-                if ignore: continue
-                #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
-                    foundSubfiles.append( something )
+        try:
+            for something in os.listdir( tryFolderName ):
+                somepath = os.path.join( givenFolderName, thisFolderName, something )
+                if os.path.isdir( somepath ): foundSubfolders.append( something )
+                elif os.path.isfile( somepath ):
+                    somethingUpper = something.upper()
+                    somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                    ignore = False
+                    for stuff in FILENAME_PARTS_TO_REJECT:
+                        if stuff in somethingUpper: ignore=True; break
+                    if ignore: continue
+                    #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
+                        foundSubfiles.append( something )
+        except PermissionError: pass # can't read folder, e.g., system folder
 
         # See if there's an MyBible project here in this folder
         for thisFilename in sorted( foundSubfiles ):
