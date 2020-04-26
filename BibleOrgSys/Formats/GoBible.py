@@ -505,11 +505,11 @@ class GoBibleBook( BibleBook ):
         """
         vPrint( 'Info', debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
-        folderPath = os.path.join( self.containerBibleObject.dataFolderPath, filenameBase+'/' )
+        folderpath = os.path.join( self.containerBibleObject.dataFolderPath, filenameBase+'/' )
         loadErrors = []
 
         # Load the book index first
-        indexPath = os.path.join( folderPath, 'Index' )
+        indexPath = os.path.join( folderpath, 'Index' )
         vPrint( 'Info', debuggingThisModule, "  " + _("Loading book index {}…").format( indexPath ) )
         with open( indexPath, 'rb' ) as bookIndexFile:
             bookIndexContents = bookIndexFile.read()
@@ -548,7 +548,7 @@ class GoBibleBook( BibleBook ):
                     #vPrint( 'Quiet', debuggingThisModule, chapterText[chapterOffset:] )
                     #assert chapterOffset == dataLength # Check we used all of the last one
                     chapterText = chapterText[chapterOffset:]
-                textFilepath = os.path.join( folderPath, f'{filenameBase} {fileIndexNumber}' )
+                textFilepath = os.path.join( folderpath, f'{filenameBase} {fileIndexNumber}' )
                 if BibleOrgSysGlobals.verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, f"At book {indexToBook+1} chapter {chapterNumberIndex+1}: loading Bible text from '{textFilepath}'…" )
                 with open( textFilepath, 'rb' ) as chapterFile:

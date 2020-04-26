@@ -8,11 +8,11 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.14'
-LAST_MODIFIED_DATE = '2020-04-25' # by RJH — when setup.py was modified below
+VERSION = '0.0.15'
+LAST_MODIFIED_DATE = '2020-04-26' # by RJH — when setup.py was modified below
 
 
-INCLUDE_DATA_SOURCE_FILES = False
+# NOTE: The package doesn't include the XML data files, only the derived pickles
 INCLUDE_DERIVED_DATA_PICKLE_FILES = True
 # INCLUDE_DERIVED_DATA_JSON_FILES = False
 
@@ -24,77 +24,78 @@ INCLUDE_DERIVED_DATA_PICKLE_FILES = True
 #    long_description = f.read()
 
 
-package_data_list = [
-            'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
-            'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
-            'DataFiles/iso_639_3.xml', 'DataFiles/iso_639_3.rnc',
-            'DataFiles/USFM2Markers.xml', 'DataFiles/USFM2Markers.rnc',
-            'DataFiles/USFM3Markers.xml', 'DataFiles/USFM3Markers.rnc',
+package_data_list = []
+# package_data_list += [
+#             'DataFiles/BibleBooksCodes.xml', 'DataFiles/BibleBooksCodes.rnc',
+#             'DataFiles/BibleOrganisationalSystems.xml', 'DataFiles/BibleOrganisationalSystems.rnc',
+#             'DataFiles/iso_639_3.xml', 'DataFiles/iso_639_3.rnc',
+#             'DataFiles/USFM2Markers.xml', 'DataFiles/USFM2Markers.rnc',
+#             'DataFiles/USFM3Markers.xml', 'DataFiles/USFM3Markers.rnc',
 
-            'DataFiles/BookNames/BibleBooksNames.rnc',
-            'DataFiles/BookNames/BibleBooksNames_deu_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_dut_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_eng_deuterocanon.xml',
-            'DataFiles/BookNames/BibleBooksNames_eng_extensive.xml',
-            'DataFiles/BookNames/BibleBooksNames_eng_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_fra_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_mbt.xml',
-            'DataFiles/BookNames/BibleBooksNames_por_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_rus_traditional.xml',
-            'DataFiles/BookNames/BibleBooksNames_spa_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames.rnc',
+#             'DataFiles/BookNames/BibleBooksNames_deu_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_dut_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_eng_deuterocanon.xml',
+#             'DataFiles/BookNames/BibleBooksNames_eng_extensive.xml',
+#             'DataFiles/BookNames/BibleBooksNames_eng_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_fra_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_mbt.xml',
+#             'DataFiles/BookNames/BibleBooksNames_por_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_rus_traditional.xml',
+#             'DataFiles/BookNames/BibleBooksNames_spa_traditional.xml',
 
-            'DataFiles/BookOrders/BibleBookOrder.rnc',
-            'DataFiles/BookOrders/BibleBookOrder_ALL.xml',
-            'DataFiles/BookOrders/BibleBookOrder_ArmenianNewTestament.xml',
-            'DataFiles/BookOrders/BibleBookOrder_EthiopianProtestantBible.xml',
-            'DataFiles/BookOrders/BibleBookOrder_EuropeanBible.xml',
-            'DataFiles/BookOrders/BibleBookOrder_GutenbergNewTestament.xml',
-            'DataFiles/BookOrders/BibleBookOrder_HebrewLetteris.xml',
-            'DataFiles/BookOrders/BibleBookOrder_HebrewStuttgart.xml',
-            'DataFiles/BookOrders/BibleBookOrder_KJVwithApocrypha.xml',
-            'DataFiles/BookOrders/BibleBookOrder_Leningradensis.xml',
-            'DataFiles/BookOrders/BibleBookOrder_LutheranBible.xml',
-            'DataFiles/BookOrders/BibleBookOrder_MasoreticText.xml',
-            'DataFiles/BookOrders/BibleBookOrder_ModernJewish.xml',
-            'DataFiles/BookOrders/BibleBookOrder_NRSVwithApocrypha.xml',
-            'DataFiles/BookOrders/BibleBookOrder_Septuagint.xml',
-            'DataFiles/BookOrders/BibleBookOrder_SynodalBible.xml',
-            'DataFiles/BookOrders/BibleBookOrder_SyriacNewTestament.xml',
-            'DataFiles/BookOrders/BibleBookOrder_VulgateBible.xml',
+#             'DataFiles/BookOrders/BibleBookOrder.rnc',
+#             'DataFiles/BookOrders/BibleBookOrder_ALL.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_ArmenianNewTestament.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_EthiopianProtestantBible.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_EuropeanBible.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_GutenbergNewTestament.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_HebrewLetteris.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_HebrewStuttgart.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_KJVwithApocrypha.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_Leningradensis.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_LutheranBible.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_MasoreticText.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_ModernJewish.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_NRSVwithApocrypha.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_Septuagint.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_SynodalBible.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_SyriacNewTestament.xml',
+#             'DataFiles/BookOrders/BibleBookOrder_VulgateBible.xml',
 
-            'DataFiles/PunctuationSystems/BiblePunctuationSystem.rnc',
-            'DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml',
-            'DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml',
-            'DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml',
+#             'DataFiles/PunctuationSystems/BiblePunctuationSystem.rnc',
+#             'DataFiles/PunctuationSystems/BiblePunctuationSystem_English_brief.xml',
+#             'DataFiles/PunctuationSystems/BiblePunctuationSystem_English.xml',
+#             'DataFiles/PunctuationSystems/BiblePunctuationSystem_Matigsalug.xml',
 
-            'DataFiles/VersificationSystems/BibleVersificationSystem.rnc',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_BibMaxRef.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_CatholicEsther16.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Catholic.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Cebuano_BUGV.xml',
-            '/DataFiles/VersificationSystems/BibleVersificationSystem_DutchTraditional.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_GNT92.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_GNTUK.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_KJV.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Luther.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_NIV84.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_NLT96.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_NRS89.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_NRSV.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Original.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Rahlfs.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_REB89.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_RSV52.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_RussianCanonical.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_RussianOrthodox.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Septuagint.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Spanish.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Synodal.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Syriac.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate1.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate2.xml',
-            'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate.xml',
-            ]
+#             'DataFiles/VersificationSystems/BibleVersificationSystem.rnc',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_BibMaxRef.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_CatholicEsther16.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Catholic.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Cebuano_BUGV.xml',
+#             '/DataFiles/VersificationSystems/BibleVersificationSystem_DutchTraditional.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_GNT92.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_GNTUK.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_KJV.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Luther.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_NIV84.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_NLT96.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_NRS89.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_NRSV.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Original.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Rahlfs.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_REB89.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_RSV52.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_RussianCanonical.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_RussianOrthodox.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Septuagint.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Spanish.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Synodal.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Syriac.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate1.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate2.xml',
+#             'DataFiles/VersificationSystems/BibleVersificationSystem_Vulgate.xml',
+#             ]
 if INCLUDE_DERIVED_DATA_PICKLE_FILES:
     package_data_list += [
             'DataFiles/DerivedFiles/iso_639_3_Languages_Tables.pickle',
@@ -184,6 +185,7 @@ You can discover the version with:
     `Bible2USX --version`
 
 The BibleOrgSys reads or creates a `BibleOrgSysData` folder in your home folder.
+(The folder is not hidden like many typical settings folders so that it's easier for non-expert users to find.)
 Log files are stored in a subfolder there and may be useful for reporting errors.
 Output files will also be written by default into a sub-folder there.
 

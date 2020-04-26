@@ -537,14 +537,14 @@ class PTX8Bible( Bible ):
 
         #if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
-        def recurseFolder( folderPath, level=1 ):
+        def recurseFolder( folderpath, level=1 ):
             """
             """
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, ('  '*level) + "recurseFolder( {}, {} )".format( folderPath, level ) )
-            for something in os.listdir( folderPath ):
+                vPrint( 'Quiet', debuggingThisModule, ('  '*level) + "recurseFolder( {}, {} )".format( folderpath, level ) )
+            for something in os.listdir( folderpath ):
                 somethingUPPER = something.upper()
-                somepath = os.path.join( folderPath, something )
+                somepath = os.path.join( folderpath, something )
                 if os.path.isfile( somepath ):
                     foundFiles.append( something ) # Adds even .BAK files, but result is not used much anyway!
                     if not somethingUPPER.endswith( '.BAK' ):

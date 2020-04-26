@@ -48,7 +48,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-04-26' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.78'
@@ -515,8 +515,8 @@ class USFMBible( Bible ):
         """
         Tries to determine USFM filename pattern.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        vPrint( 'Info', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             assert not self.preloadDone
             assert self.sourceFolder is not None
 

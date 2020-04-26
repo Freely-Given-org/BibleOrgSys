@@ -317,22 +317,22 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter:str, folderPath:Optional[Path]=None ) -> None:
+def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter:str, folderpath:Optional[Path]=None ) -> None:
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderPath!r} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderpath!r} )" )
 
     filename = SHORT_PROGRAM_NAMEParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
-    if folderPath is None: folderPath = DEFAULT_WRITEABLE_LOG_FOLDERPATH
-    filepath = Path( folderPath, filename )
+    if folderpath is None: folderpath = DEFAULT_WRITEABLE_LOG_FOLDERPATH
+    filepath = Path( folderpath, filename )
 
-    # Create the folderPath if necessary
-    if not os.access( folderPath, os.W_OK ):
-        os.makedirs( folderPath ) # Works for an absolute or a relative pathname
+    # Create the folderpath if necessary
+    if not os.access( folderpath, os.W_OK ):
+        os.makedirs( folderpath ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
     backupAnyExistingFile( filepath, numBackups=4 )
@@ -1286,7 +1286,7 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
     """
     if debuggingThisModule:
         vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderPath!r} )" )
-    setupLoggingToFile( shortProgName, progVersion, folderPath=loggingFolderPath )
+    setupLoggingToFile( shortProgName, progVersion, folderpath=loggingFolderPath )
     logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
 
     if verbosityLevel > 2:
