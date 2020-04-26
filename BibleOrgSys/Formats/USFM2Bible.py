@@ -46,10 +46,10 @@ from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-04-26' # by RJH
 SHORT_PROGRAM_NAME = "USFM2Bible"
 PROGRAM_NAME = "USFM2 Bible handler"
-PROGRAM_VERSION = '0.77'
+PROGRAM_VERSION = '0.78'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -114,22 +114,24 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
     # Check they are USFM2 (not 3)
     #saveFilenameTuples = filenameTuples.copy()
-    badIndexList = []
+    USFM3List = []
     for n,(BBB,filename) in enumerate(filenameTuples):
         try:
             for line in BibleOrgSysGlobals.peekIntoFile( filename, givenFolderName, numLines=4 ):
                 if line.lower().startswith('\\usfm 3') or line.lower().startswith('\\usfm3'):
-                    badIndexList.append(n); break # Can't delete it yet
+                    USFM3List.append(n); break # Can't delete it yet
         except TypeError: pass # If file is empty peekIntoFile returns None
-    for ix in reversed(badIndexList):
+    for ix in reversed(USFM3List):
         filenameTuples.pop(ix)
     #if filenameTuples!=saveFilenameTuples:
         #vPrint( 'Quiet', debuggingThisModule, "Was", saveFilenameTuples )
         #vPrint( 'Quiet', debuggingThisModule, "Now", filenameTuples )
         #halt
-    if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
-        vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM2 file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if USFM3List:
+        vPrint( 'Info', debuggingThisModule, "  Found {} USFM3 files: {}".format( len(USFM3List), USFM3List ) )
     if filenameTuples:
+        vPrint( 'Info', debuggingThisModule, "  Found {} USFM2 file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+    if filenameTuples and not USFM3List:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
             vPrint( 'Info', debuggingThisModule, "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
@@ -216,24 +218,26 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
         # Check they are USFM2 (not 3)
         #saveFilenameTuples = filenameTuples.copy()
-        badIndexList = []
+        USFM3List = []
         for n,(BBB,filename) in enumerate(filenameTuples):
             try:
                 for line in BibleOrgSysGlobals.peekIntoFile( filename, tryFolderName, numLines=4 ):
                     if line.lower().startswith('\\usfm 3') or line.lower().startswith('\\usfm3'):
-                        badIndexList.append(n); break # Can't delete it yet
+                        USFM3List.append(n); break # Can't delete it yet
             except TypeError: pass # If file is empty peekIntoFile returns None
-        for ix in reversed(badIndexList):
+        for ix in reversed(USFM3List):
             filenameTuples.pop(ix)
         #if filenameTuples!=saveFilenameTuples:
             #vPrint( 'Quiet', debuggingThisModule, "Was", saveFilenameTuples )
             #vPrint( 'Quiet', debuggingThisModule, "Now", filenameTuples )
             #halt
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples:
-            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM2 files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM2 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        if USFM3List:
+            vPrint( 'Info', debuggingThisModule, "  Found {} USFM3 files: {}".format( len(USFM3List), USFM3List ) )
         if filenameTuples:
+            vPrint( 'Info', debuggingThisModule, "  Found {} USFM2 files: {}".format( len(filenameTuples), filenameTuples ) )
+        elif filenameTuples and debuggingThisModule:
+            vPrint( 'Info', debuggingThisModule, "  Found {} USFM2 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        if filenameTuples and not USFM3List:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:
                 vPrint( 'Info', debuggingThisModule, "Got USFM2 SSFs: ({}) {}".format( len(SSFs), SSFs ) )
