@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-04-27' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.77'
@@ -507,7 +507,7 @@ class InternalBibleCVIndex:
                         #vPrint( 'Quiet', debuggingThisModule, 'makeCVIndex: contextMarkerList = {}'.format( contextMarkerList ) )
                         logging.critical( "makeCVIndex found an unknown nesting error for {} {} around {}:{}".format( self.workName, self.BBB, C, V ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         if contextMarkerList.count( originalMarker ):
                             vPrint( 'Quiet', debuggingThisModule, "{}/ {} {}:{} {!r} {}".format( j, self.BBB, C, V, originalMarker, contextMarkerList ) )
                         assert contextMarkerList.count( originalMarker ) == 0
