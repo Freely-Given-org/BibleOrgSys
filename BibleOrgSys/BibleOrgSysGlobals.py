@@ -606,7 +606,7 @@ def removeAccents( someString:str ) -> str:
 # Make a backup copy of a file that's about to be written by renaming it
 #   Note that this effectively "deletes" the file.
 
-def backupAnyExistingFile( filenameOrFilepath:Union[Path,str], /, numBackups:int=1, extension:str='bak' ) -> None:
+def backupAnyExistingFile( filenameOrFilepath:Union[Path,str], numBackups:int=1, extension:str='bak' ) -> None:
     """
     Make a backup copy/copies of a file if it exists.
     """
