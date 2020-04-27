@@ -8,8 +8,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.16'
-LAST_MODIFIED_DATE = '2020-04-26' # by RJH — when setup.py was modified below
+VERSION = '0.0.17'
+LAST_MODIFIED_DATE = '2020-04-27' # by RJH — when setup.py was modified below
 
 
 # NOTE: The package doesn't include the XML data files, only the derived pickles
@@ -176,27 +176,41 @@ A library of modules for importing and processing various book/chapter/verse (BC
 including Bibles of course, but also other related BCV materials like Bible commentaries.
 Multiprocessing is used by default to load Bibles that have separate books in separate files.
 
+On many systems, BibleOrgSys can be installed with:
+
+    `python3 -m pip install BibleOrgSys`
+
+but if it complains, maybe
+
+    `python3 -m pip install --user BibleOrgSys`
+
 This library also includes one app (similar to the demo app below) named **Bible2USX**
 which can be run with:
+
     `Bible2USX path/to/BibleFileOrFolder`
+
 or to view all the available options:
+
     `Bible2USX --help`
+
 You can discover the version with:
+
     `Bible2USX --version`
 
 The BibleOrgSys reads or creates a `BibleOrgSysData` folder in your home folder.
 (The folder is not hidden like many typical settings folders so that it's easier for non-expert users to find.)
-Log files are stored in a subfolder there and may be useful for reporting errors.
-Output files will also be written by default into a sub-folder there.
+Log files are stored in a subfolder there, and may be useful for reporting errors.
+Output files will also be written by default into a subfolder there.
 
 NOTE: This packaging is still being tested following massive restructuring,
 and is not necessarily fully functional until it is marked as v0.1.0 or higher.
 We also have hopes to improve documentation before v0.2.0.
 
 A future package of apps that use the BOS is also planned for release.
-After that point, we also hope to release Docker and Snap versions.
+After that point, we also hope to release some prepackaged versions—
+probably including Docker and Snap.
 
-This software has been developed in small chunks of spare time since 2010
+This software has been developed in very small chunks of spare time since 2010
 (so it's not necessarily well-thought out, and definitely not polished).
 However, it has been tested on hundreds of Bible filesets,
 including USFM, OSIS, USX, USFX, and many other import formats.
@@ -205,7 +219,6 @@ This library forms the basis of the online Bible Drop Box service
 hosted at http://Freely-Given.org/Software/BibleDropBox/.
 
 This package will not reach v1.0.0 until versification mapping is added.
-
 The API will not become fixed/stable until the v1.0.0 release.
 
 Other than the multiprocessing mentioned above,
