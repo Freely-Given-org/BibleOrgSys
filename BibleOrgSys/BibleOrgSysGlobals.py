@@ -27,12 +27,12 @@ Module handling global variables
     and some useful general functions.
 
 Contains functions:
-    setupLoggingToFile( PROGRAM_NAME, PROGRAM_VERSION, loggingFolderPath=None )
+    setupLoggingToFile( PROGRAM_NAME, PROGRAM_VERSION, loggingFolderpath=None )
     addConsoleLogging()
     addLogfile( projectName, folderName=None )
     removeLogfile( projectHandler )
 
-    findHomeFolderPath()
+    findHomeFolderpath()
     findUsername()
 
     getLatestPythonModificationDate()
@@ -101,12 +101,12 @@ except ImportError:
     import getpass
 
 if __name__ == '__main__':
-    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveFolderPath )
+    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-04-25' # by RJH
+LAST_MODIFIED_DATE = '2020-04-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.87'
@@ -211,7 +211,7 @@ def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args,
         increaseLevel = 1
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
     # Make one or more levels more verbose if this is set
-    if increaseLevel: requestedLevel -= 1 # Doesn't matter if it goes negative
+    if increaseLevel: requestedLevel -= increaseLevel # Doesn't matter if it goes negative
     if verbosityLevel >= requestedLevel:
         print( *args, **kwargs )
 # end of BibleOrgSysGlobals.vPrint function
@@ -220,7 +220,7 @@ def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args,
 ##########################################################################################################
 #
 
-def findHomeFolderPath() -> Optional[Path]:
+def findHomeFolderpath() -> Optional[Path]:
     """
     Attempt to find the path to the user's home folder and return it.
     """
@@ -231,7 +231,7 @@ def findHomeFolderPath() -> Optional[Path]:
         thisPath = Path( folder )
         if thisPath.is_dir and os.access( folder, os.W_OK ):
             return thisPath
-# end of BibleOrgSysGlobals.findHomeFolderPath
+# end of BibleOrgSysGlobals.findHomeFolderpath
 
 
 ##########################################################################################################
@@ -240,7 +240,7 @@ def findHomeFolderPath() -> Optional[Path]:
 
 APP_NAME = 'BibleOrgSys'
 SETTINGS_VERSION = '1.00'
-BOS_HOME_FOLDERPATH = findHomeFolderPath().joinpath( f'{APP_NAME}Data/' )
+BOS_HOME_FOLDERPATH = findHomeFolderpath().joinpath( f'{APP_NAME}Data/' )
 if not BOS_HOME_FOLDERPATH.exists():
     os.mkdir( BOS_HOME_FOLDERPATH )
 
@@ -1274,7 +1274,7 @@ def unpickleObject( filename, folderName=None ):
 #
 # Default program setup routine
 
-def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolderPath=None ) -> ArgumentParser:
+def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolderpath=None ) -> ArgumentParser:
     """
     Does the initial set-up for our scripts / programs.
 
@@ -1285,8 +1285,8 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderPath!r} )" )
-    setupLoggingToFile( shortProgName, progVersion, folderpath=loggingFolderPath )
+        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderpath!r} )" )
+    setupLoggingToFile( shortProgName, progVersion, folderpath=loggingFolderpath )
     logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
 
     if verbosityLevel > 2:

@@ -70,21 +70,20 @@ from gettext import gettext as _
 import re
 import logging
 
-
 if __name__ == '__main__':
     import os.path
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2019-12-29' # by RJH
+LAST_MODIFIED_DATE = '2020-04-29' # by RJH
 SHORT_PROGRAM_NAME = "VerseReferences"
 PROGRAM_NAME = "Bible verse reference handler"
-PROGRAM_VERSION = '0.39'
+PROGRAM_VERSION = '0.40'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -444,11 +443,12 @@ class SimpleVersesKey():
     def __repr__(self): return self.__str__()
     def __str__( self ): return "SimpleVersesKey object: {}".format( self.getShortText() )
     def getShortText( self ):
-        resultStr = ''
-        for svk in self.verseKeysList:
-            if resultStr: resultStr += ', '
-            resultStr += svk.getShortText()
-        return resultStr
+        return ', '.join( [svk.getShortText() for svk in self.verseKeysList] )
+        # resultStr = ''
+        # for svk in self.verseKeysList:
+        #     if resultStr: resultStr += ', '
+        #     resultStr += svk.getShortText()
+        # return resultStr
         #if self.keyType=='2V': return "{} {}:{}(?:!{})?,{}(?:!{})?".format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2 )
         #if self.keyType=='2CV': return "{} {}:{}(?:!{})?;{}:{}(?:!{})?".format( self.BBB, self.C1, self.V1, self.S1, self.C2, self.V2, self.S2 )
         #vPrint( 'Quiet', debuggingThisModule, self.keyType ); halt

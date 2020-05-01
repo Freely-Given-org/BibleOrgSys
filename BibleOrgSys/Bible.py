@@ -35,9 +35,9 @@ import logging
 if __name__ == '__main__':
     import os.path
     import sys
-    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveFolderPath )
+    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook

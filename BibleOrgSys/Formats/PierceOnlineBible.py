@@ -41,19 +41,19 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-04-30' # by RJH
 SHORT_PROGRAM_NAME = "PierceOnlineBible"
 PROGRAM_NAME = "Pierce Online Bible format handler"
-PROGRAM_VERSION = '0.21'
+PROGRAM_VERSION = '0.22'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -335,9 +335,9 @@ class PierceOnlineBible( Bible ):
                 vLen = vBytes[0]
                 if vLen > 0 and vBytes[1]:
                     vString = vBytes[1:vLen+1].decode()
-                    #vPrint( 'Quiet', debuggingThisModule, 'Vstring', vString )
-                    #vPrint( 'Quiet', debuggingThisModule, "    vBl1 {} {!r}".format( vLen, vString ), end='' )
-                    assert not vString[0].islower()
+                    # vPrint( 'Quiet', debuggingThisModule, 'Vstring', vString )
+                    # vPrint( 'Quiet', debuggingThisModule, "    vBl1 {} {!r}".format( vLen, vString ), end='' )
+                    # assert not vString[0].islower()
                     strings1.append( vString )
                 index += length
             numStrings1 = len( strings1 )
@@ -426,7 +426,7 @@ class PierceOnlineBible( Bible ):
                     vString += chr( char16 )
                 #vString = vBytes[2:vLen+1].decode( 'utf-16' )
                 #vPrint( 'Quiet', debuggingThisModule, "    vBl2 {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
-                assert not vString[0].islower()
+                # assert not vString[0].islower()
                 strings2.append( vString )
                 index += length
             numStrings2 = len( strings2 )
@@ -718,7 +718,7 @@ class PierceOnlineBible( Bible ):
                     #vString = vBytes[2:vLen+1].decode( 'utf-16' )
                     #vPrint( 'Quiet', debuggingThisModule, "    tO {}/{} {!r}".format( vLen, int(vLen/2), vString ), end='' )
                     index += 19
-                    assert not vString[0].islower()
+                    # assert not vString[0].islower()
                     self.optWords.append( vString )
             numOptWords = len( self.optWords )
             if BibleOrgSysGlobals.debugFlag:
@@ -757,14 +757,13 @@ class PierceOnlineBible( Bible ):
             key, size0, size1, indexSize, tokenBlkSize = struct.unpack( "<BBBHH", xrefIndexBytes[0:7] )
             size = size0 + size1
             #vPrint( 'Quiet', debuggingThisModule, "  prelude length = {:04x} {}".format( size, size ) )
-            if BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, "    Key={}, line entry size {}+{}={} index size={} tokenBlkSize={}*2={}".format( key, size0, size1, size, indexSize, tokenBlkSize, tokenBlkSize*2 ) )
+            vPrint( 'Normal', debuggingThisModule, "    Key={}, line entry size {}+{}={} index size={} tokenBlkSize={}*2={}".format( key, size0, size1, size, indexSize, tokenBlkSize, tokenBlkSize*2 ) )
             assert key == 2
             assert size0 == 35 # 35-3=32
             assert size1 == 67 # 67-3=64
             assert size == 102
             assert indexSize == 0
-            assert 90 <= tokenBlkSize <= 215 # AV=195, YLT=206, CEV=186
+            # assert 90 <= tokenBlkSize <= 215 # AV=195, YLT=206, CEV=186
             index = 7
             header = xrefIndexBytes[index:size]
             if BibleOrgSysGlobals.debugFlag:
@@ -804,8 +803,8 @@ class PierceOnlineBible( Bible ):
             numXrefIndexEntries = len(self.xrefIndex)
             vPrint( 'Info', debuggingThisModule, "    {:,} xref index duples loaded from {} double lines".format( numXrefIndexEntries, count ) )
             #vPrint( 'Quiet', debuggingThisModule, self.xrefIndex )
-            assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
-            assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
+            # assert 231 <= count <= 428 # AV=417, YLT=385, CEV=338
+            # assert 7365 <= numXrefIndexEntries <= 13694 # AV=13,316, YLT=12,289, CEV=10,796
             #vPrint( 'Quiet', debuggingThisModule, "    Final total was {} (should equal length of Text.Dat)".format( total + iE ) )
             #for index in range( 150 ):
                 #vPrint( 'Quiet', debuggingThisModule, "      {}: {:02x} @ {:04x}={}".format( index, self.xrefIndex[index][0], self.xrefIndex[index][1], self.xrefIndex[index][1] ) )

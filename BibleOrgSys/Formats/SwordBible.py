@@ -46,9 +46,9 @@ import multiprocessing
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible #, BibleBook
@@ -104,7 +104,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         logging.critical( _("SwordBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
-    def confirmThisFolder( checkFolderPath ):
+    def confirmThisFolder( checkFolderpath ):
         """
         We are given the path to a folder that contains the two main top level folders.
 
@@ -112,10 +112,10 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
         Returns a list of Bible module names (without the .conf) -- they are the case of the folder name.
         """
-        vPrint( 'Verbose', debuggingThisModule, " SwordBibleFileCheck.confirmThisFolder: Looking for files in given {}".format( checkFolderPath ) )
+        vPrint( 'Verbose', debuggingThisModule, " SwordBibleFileCheck.confirmThisFolder: Looking for files in given {}".format( checkFolderpath ) )
 
         # See if there's any .conf files in the mods.d folder
-        confFolder = os.path.join( checkFolderPath, 'mods.d/' )
+        confFolder = os.path.join( checkFolderpath, 'mods.d/' )
         foundConfFiles = []
         for something in os.listdir( confFolder ):
             somepath = os.path.join( confFolder, something )
@@ -132,10 +132,10 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
         #vPrint( 'Quiet', debuggingThisModule, "confirmThisFolder:foundConfFiles", foundConfFiles )
 
         # See if there's folders for the Sword module files matching the .conf files
-        compressedFolder = os.path.join( checkFolderPath, 'modules/', 'texts/', 'ztext/' )
+        compressedFolder = os.path.join( checkFolderpath, 'modules/', 'texts/', 'ztext/' )
         foundTextFolders = []
         for folderType,subfolderType in ( ('texts','rawtext'), ('texts','ztext'), ('comments','zcom'), ('comments','rawcom'), ('comments','rawcom4'), ):
-            mainTextFolder = os.path.join( checkFolderPath, 'modules/', folderType+'/', subfolderType+'/' )
+            mainTextFolder = os.path.join( checkFolderpath, 'modules/', folderType+'/', subfolderType+'/' )
             if os.access( mainTextFolder, os.R_OK ): # The subfolder is readable
                 for something in os.listdir( mainTextFolder ):
                     somepath = os.path.join( mainTextFolder, something )
@@ -161,7 +161,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                                     elif subfolderType == 'zcom' and something2 in ( 'ot.czs','ot.czv','ot.czz', 'nt.czs','nt.czv','nt.czz' ):
                                         foundTextFiles.append( something2 )
                                     elif subfolderType in ('rawcom','rawcom4',):
-                                        logging.critical( "Program not finished yet: confirmThisFolder( {} ) for rawcom/rawcom4".format( checkFolderPath ) )
+                                        logging.critical( "Program not finished yet: confirmThisFolder( {} ) for rawcom/rawcom4".format( checkFolderpath ) )
                                     else:
                                         if something2 not in ( 'errata', 'appendix', ):
                                             logging.warning( _("SwordBibleFileCheck1: Didn't expect this file in {} text folder: {}").format( something, something2 ) )
@@ -483,15 +483,15 @@ class SwordBible( Bible ):
 
 
 
-def testSwB( SwFolderPath, SwModuleName=None ):
+def testSwB( SwFolderpath, SwModuleName=None ):
     """
     Crudely demonstrate and test the Sword Bible class
     """
     from BibleOrgSys.Reference import VerseReferences
 
     vPrint( 'Normal', debuggingThisModule, _("Demonstrating the Sword Bible class…") )
-    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( SwFolderPath, SwModuleName ) )
-    SwBible = SwordBible( SwFolderPath, SwModuleName )
+    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( SwFolderpath, SwModuleName ) )
+    SwBible = SwordBible( SwFolderpath, SwModuleName )
     SwBible.loadBooks() # Load and process the file
     vPrint( 'Normal', debuggingThisModule, SwBible ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:

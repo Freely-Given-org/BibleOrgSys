@@ -415,20 +415,20 @@ class Door43CatalogBible( USFMBible ):
 
         # See if files already exist and are current (so don't download again)
         alreadyDownloadedFlag = False
-        unzippedFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath(
+        unzippedFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath(
                                 'Door43Catalog/', f"{resourceDict['language']}_{resourceDict['title']}/" )
-        if os.path.isdir( unzippedFolderPath ):
+        if os.path.isdir( unzippedFolderpath ):
             #vPrint( 'Quiet', debuggingThisModule, f"Issued: {resourceDict['issued']}" )
             issuedDatetime = datetime.strptime( resourceDict['issued'], '%Y-%m-%dT%H:%M:%S+00:00' )
             #vPrint( 'Quiet', debuggingThisModule, f"issuedDatetime: {issuedDatetime}" )
-            #vPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderPath).st_mtime}" )
-            folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderPath).st_mtime)
+            #vPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
+            folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderpath).st_mtime)
             #vPrint( 'Quiet', debuggingThisModule, f"folderModifiedDatetime: {folderModifiedDatetime}" )
             alreadyDownloadedFlag = folderModifiedDatetime > issuedDatetime
             #vPrint( 'Quiet', debuggingThisModule, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
 
         if alreadyDownloadedFlag:
-            vPrint( 'Normal', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderPath ) )
+            vPrint( 'Normal', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
         else: # Download the zip file (containing all the USFM files, LICENSE.md, manifest.yaml, etc.)
             vPrint( 'Normal', debuggingThisModule, "Downloading {:,} bytes from '{}'…".format( size, zipURL ) )
             try: HTTPResponseObject = urllib.request.urlopen( zipURL )
@@ -442,7 +442,7 @@ class Door43CatalogBible( USFMBible ):
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
             if contentType == 'application/zip':
-                try: os.makedirs( unzippedFolderPath )
+                try: os.makedirs( unzippedFolderpath )
                 except FileExistsError: pass
                 # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
                 # myTempFile = tempfile.SpooledTemporaryFile()
@@ -450,17 +450,17 @@ class Door43CatalogBible( USFMBible ):
                 myTempFile.write( HTTPResponseObject.read() )
                 with zipfile.ZipFile( myTempFile ) as myzip:
                     # NOTE: Could be a security risk here
-                    myzip.extractall( unzippedFolderPath )
+                    myzip.extractall( unzippedFolderpath )
             else: halt # unknown content type
 
         # There's probably a folder inside this folder
-        folders = os.listdir( unzippedFolderPath )
+        folders = os.listdir( unzippedFolderpath )
         #vPrint( 'Quiet', debuggingThisModule, 'folders', folders )
         assert len(folders) == 1
         desiredFolderName = folders[0] + '/'
         #vPrint( 'Quiet', debuggingThisModule, 'desiredFolderName', desiredFolderName )
 
-        USFMBible.__init__( self, os.path.join( unzippedFolderPath, desiredFolderName ),
+        USFMBible.__init__( self, os.path.join( unzippedFolderpath, desiredFolderName ),
                                     givenName=resourceDict['title'], givenAbbreviation=resourceDict['identifier'] )
         self.objectNameString = 'Door43 USFM Bible object'
     # end of Door43CatalogBible.__init__

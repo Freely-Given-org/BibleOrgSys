@@ -42,9 +42,9 @@ import logging
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
@@ -53,21 +53,21 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 class TextFile:
     """
     """
-    def __init__( self, filepath=None, folderPathname=None, filename=None, encoding=None, autoLoad=True ):
+    def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding, autoLoad ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, Folderpath, filename, encoding, autoLoad ) )
 
         self.encoding = encoding if encoding else 'utf-8'
-        if folderPathname and filename:
+        if folderpath and filename:
             assert filepath is None
-            self.folderPathname, self.filename = folderPathname, filename
-            self.filepath = os.path.join( self.folderPathname, self.filename )
+            self.folderpath, self.filename = folderpath, filename
+            self.filepath = os.path.join( self.folderpath, self.filename )
         elif filepath:
-            assert folderPathname is None and filename is None
+            assert folderpath is None and filename is None
             self.filepath = filepath
-            self.folderPathname, self.filename = os.path.split( self.filepath )
+            self.folderpath, self.filename = os.path.split( self.filepath )
         else:
-            logging.critical( "TextFile.__init__ seems to have too little or too much information: {} {} {}".format( filepath, folderPathname, filename ) )
+            logging.critical( "TextFile.__init__ seems to have too little or too much information: {} {} {}".format( filepath, folderpath, filename ) )
 
         if autoLoad:
             with open( self.filepath, mode='rt', encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -106,20 +106,20 @@ class TextFile:
     # end of TextFile.save
 
 
-    def saveAs( self, filepath=None, folderPathname=None, filename=None, encoding=None ):
+    def saveAs( self, filepath=None, folderpath=None, filename=None, encoding=None ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>1:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderPathname, filename, encoding ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding ) )
         assert self.fileText is not None
 
         encoding = encoding if encoding else 'utf-8'
-        if folderPathname and filename:
+        if folderpath and filename:
             assert filepath is None
-            filepath = os.path.join( folderPathname, filename )
+            filepath = os.path.join( folderpath, filename )
         elif filepath:
-            assert folderPathname is None and filename is None
-            folderPathname, filename = os.path.split( filepath )
+            assert folderpath is None and filename is None
+            folderpath, filename = os.path.split( filepath )
         else:
-            logging.critical( "TextFile.saveAs seems to have too little or too much information: {} {} {}".format( filepath, folderPathname, filename ) )
+            logging.critical( "TextFile.saveAs seems to have too little or too much information: {} {} {}".format( filepath, folderpath, filename ) )
 
         with open( filepath, mode='wt', encoding=encoding ) as myFile: # Automatically closes the file when done
             myFile.write( self.fileText )
@@ -150,7 +150,7 @@ def briefDemo() -> None:
     #vPrint( 'Quiet', debuggingThisModule, tf.fileText )
     ##tf.saveAs( "/tmp/fred.py" )
 
-    tf = TextFile( folderPathname=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!
+    tf = TextFile( folderpath=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!
     tf.replace( "TextFile", "ABRACADABRA" )
     vPrint( 'Quiet', debuggingThisModule, tf.fileText )
     #tf.saveAs( "/tmp/fred.py" )

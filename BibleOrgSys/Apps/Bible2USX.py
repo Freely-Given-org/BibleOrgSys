@@ -35,18 +35,18 @@ Of course, you must already have Python3 installed on your system.
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/Bible2USX.py path/to/BibleFileOrFolder
+        BibleOrgSys/Apps/Bible2USX.py path/to/BibleFileOrFolder
 
 You can discover the version with
-        Apps/Bible2USX.py --version
+        BibleOrgSys/Apps/Bible2USX.py --version
 
 You can discover the available command line parameters with
-        Apps/Bible2USX.py --help
+        BibleOrgSys/Apps/Bible2USX.py --help
 
     e.g., for verbose mode
-        Apps/Bible2USX.py --verbose path/to/BibleFileOrFolder
+        BibleOrgSys/Apps/Bible2USX.py --verbose path/to/BibleFileOrFolder
     or
-        Apps/Bible2USX.py -v path/to/BibleFileOrFolder
+        BibleOrgSys/Apps/Bible2USX.py -v path/to/BibleFileOrFolder
 
 This app also demonstrates how little actual code is required to use the BOS
     to load a Bible (in any of a large range of formats — see UnknownBible.py)
@@ -57,25 +57,24 @@ There is also a minimum version of this same app (Apps/Bible2USX.minimal.py)
 The BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
 """
-
 # from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
-SHORT_PROGRAM_NAME = "Bible2USX"
-PROGRAM_NAME = "Bible to USX"
-PROGRAM_VERSION = '0.06'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import shutil
 
+# BibleOrgSys imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.UnknownBible import UnknownBible
+
+
+LAST_MODIFIED_DATE = '2020-04-30' # by RJH
+SHORT_PROGRAM_NAME = "Bible2USX"
+PROGRAM_NAME = "Bible to USX"
+PROGRAM_VERSION = '0.07'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 

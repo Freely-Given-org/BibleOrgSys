@@ -45,9 +45,9 @@ from datetime import datetime
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
@@ -335,24 +335,24 @@ class DCSBible( USFMBible ):
         adjustedRepoName = resourceDict['full_name'].replace( '/', '--' )
         #vPrint( 'Quiet', debuggingThisModule, 'adjustedRepoName', adjustedRepoName )
         desiredFolderName = BibleOrgSysGlobals.makeSafeFilename( adjustedRepoName )
-        unzippedFolderPath = DEFAULT_DOWNLOAD_FOLDERPATH.joinpath( f'{adjustedRepoName}/' )
+        unzippedFolderpath = DEFAULT_DOWNLOAD_FOLDERPATH.joinpath( f'{adjustedRepoName}/' )
 
         if downloadAllBooks:
             # See if files already exist and are current (so don't download again)
             alreadyDownloadedFlag = False
-            if os.path.isdir( unzippedFolderPath ):
+            if os.path.isdir( unzippedFolderpath ):
                 #vPrint( 'Quiet', debuggingThisModule, f"Issued: {resourceDict['issued']}" )
                 updatedDatetime = datetime.strptime( resourceDict['updated_at'], '%Y-%m-%dT%H:%M:%SZ' )
                 #vPrint( 'Quiet', debuggingThisModule, f"updatedDatetime: {updatedDatetime}" )
-                #vPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderPath).st_mtime}" )
-                folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderPath).st_mtime)
+                #vPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
+                folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderpath).st_mtime)
                 #vPrint( 'Quiet', debuggingThisModule, f"folderModifiedDatetime: {folderModifiedDatetime}" )
                 alreadyDownloadedFlag = folderModifiedDatetime > updatedDatetime
                 #vPrint( 'Quiet', debuggingThisModule, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
 
             if alreadyDownloadedFlag:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderPath ) )
+                    vPrint( 'Quiet', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
             else: # Download the zip file (containing all the USFM files, README.md, LICENSE.md, manifest.yaml, etc.)
                 # TODO: Change to .tar.gz instead of zip
                 zipURL = self.baseURL + '/archive/master.zip' # '/archive/master.tar.gz'
@@ -369,7 +369,7 @@ class DCSBible( USFMBible ):
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
                 if contentType == 'application/octet-stream':
-                    try: os.makedirs( unzippedFolderPath )
+                    try: os.makedirs( unzippedFolderpath )
                     except FileExistsError: pass
                     downloadedData = HTTPResponseObject.read()
                     if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -380,7 +380,7 @@ class DCSBible( USFMBible ):
                     myTempFile.write( downloadedData )
                     with zipfile.ZipFile( myTempFile ) as myzip:
                         # NOTE: Could be a security risk here
-                        myzip.extractall( unzippedFolderPath )
+                        myzip.extractall( unzippedFolderpath )
                     myTempFile.close() # Automatically deletes the file
                 else:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
@@ -388,19 +388,19 @@ class DCSBible( USFMBible ):
             self.downloadedAllBooks = True
 
             # There's probably a folder inside this folder
-            folders = os.listdir( unzippedFolderPath )
+            folders = os.listdir( unzippedFolderpath )
             #vPrint( 'Quiet', debuggingThisModule, 'folders', folders )
             assert len(folders) == 1 # else maybe a previous download failed -- just manually delete the folder
             desiredFolderName = folders[0] + '/'
             #vPrint( 'Quiet', debuggingThisModule, 'desiredFolderName', desiredFolderName )
-            USFMBible.__init__( self, os.path.join( unzippedFolderPath, desiredFolderName ),
+            USFMBible.__init__( self, os.path.join( unzippedFolderpath, desiredFolderName ),
                                                             givenName=resourceDict['name'] )
         else: # didn't request all books to be downloaded at once
             self.downloadedAllBooks = False
             self.attemptedDownload = {}
-            try: os.makedirs( unzippedFolderPath )
+            try: os.makedirs( unzippedFolderpath )
             except FileExistsError: pass
-            USFMBible.__init__( self, unzippedFolderPath, givenName=resourceDict['name'] )
+            USFMBible.__init__( self, unzippedFolderpath, givenName=resourceDict['name'] )
         self.objectNameString = 'DCS USFM Bible object'
         self.uWaligned = True
     # end of DCSBible.__init__

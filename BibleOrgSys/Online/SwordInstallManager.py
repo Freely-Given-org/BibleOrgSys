@@ -44,14 +44,14 @@ import shutil
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2020-05-01' # by RJH
 SHORT_PROGRAM_NAME = "SwordInstallManager"
 PROGRAM_NAME = "Sword download handler"
 PROGRAM_VERSION = '0.12'
@@ -533,7 +533,8 @@ class SwordInstallManager():
         moduleName = confDict['Name']
         moduleRelativePath = confDict['DataPath']
         if moduleRelativePath.startswith( './' ): moduleRelativePath = moduleRelativePath[2:]
-        if moduleRelativePath[-1] != '/': moduleRelativePath += '/'
+        if str(moduleRelativePath)[-1] != '/':
+            moduleRelativePath = f'{moduleRelativePath}/'
         #vPrint( 'Quiet', debuggingThisModule, repr(moduleName), repr(moduleRelativePath) )
         fileSaveFolder = os.path.join( self.currentInstallFolderpath, moduleRelativePath )
         #vPrint( 'Quiet', debuggingThisModule, "Save folder is", fileSaveFolder )
@@ -570,9 +571,9 @@ class SwordInstallManager():
 
         # Finally download and install the .conf file
         confFullname = confName+'.conf'
-        confFolderPath = os.path.join( self.currentInstallFolderpath, 'mods.d/' )
-        if not os.path.isdir( confFolderPath): os.makedirs( confFolderPath )
-        confFilePath = os.path.join( confFolderPath, confFullname )
+        confFolderpath = os.path.join( self.currentInstallFolderpath, 'mods.d/' )
+        if not os.path.isdir( confFolderpath): os.makedirs( confFolderpath )
+        confFilePath = os.path.join( confFolderpath, confFullname )
         vPrint( 'Quiet', debuggingThisModule, 'confFilePath', confFilePath )
         ftp.retrbinary( 'RETR ' + 'mods.d/' + confFullname,
                         open( confFilePath, 'wb' ).write ) # , encoding=DEFAULT_SWORD_CONF_ENCODING

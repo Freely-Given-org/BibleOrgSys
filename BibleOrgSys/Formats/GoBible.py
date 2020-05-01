@@ -29,7 +29,6 @@ See https://github.com/xkjyeah/gobible-creator
 and https://github.com/DavidHaslam/GoBibleCore.
 """
 from gettext import gettext as _
-
 import logging
 import os
 import struct
@@ -40,16 +39,16 @@ from shutil import rmtree
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-21' # by RJH
+LAST_MODIFIED_DATE = '2020-04-29' # by RJH
 SHORT_PROGRAM_NAME = "GoBible"
 PROGRAM_NAME = "Go Bible format handler"
 PROGRAM_VERSION = '0.04'
@@ -202,20 +201,20 @@ class GoBible( Bible ):
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, "preload() from {}".format( self.sourceFilepath ) )
 
-        self.unzippedFolderPath = tempfile.mkdtemp( suffix='_GoBible', prefix='BOS_' )
+        self.unzippedFolderpath = tempfile.mkdtemp( suffix='_GoBible', prefix='BOS_' )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "Extracting files into {}…".format( self.unzippedFolderPath ) )
+            vPrint( 'Quiet', debuggingThisModule, "Extracting files into {}…".format( self.unzippedFolderpath ) )
         with zipfile.ZipFile( self.sourceFilepath ) as myzip:
             # NOTE: Could be a security risk here
-            myzip.extractall( self.unzippedFolderPath )
+            myzip.extractall( self.unzippedFolderpath )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
-        for something in os.listdir( self.unzippedFolderPath ):
-            somepath = os.path.join( self.unzippedFolderPath, something )
+        for something in os.listdir( self.unzippedFolderpath ):
+            somepath = os.path.join( self.unzippedFolderpath, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "GoBible.preload: Not sure what {!r} is in {}!".format( somepath, self.unzippedFolderPath ) )
+            else: logging.error( "GoBible.preload: Not sure what {!r} is in {}!".format( somepath, self.unzippedFolderpath ) )
         numVitalFolders = 0
         if foundFolders:
             unexpectedFolders = []
@@ -227,26 +226,26 @@ class GoBible( Bible ):
                     continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.unzippedFolderPath, unexpectedFolders ) )
+                logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.unzippedFolderpath, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.unzippedFolderPath ) )
+            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.unzippedFolderpath ) )
             raise FileNotFoundError # No use continuing
         if not numVitalFolders:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any vital folders in {!r}".format( self.unzippedFolderPath ) )
+            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any vital folders in {!r}".format( self.unzippedFolderpath ) )
             raise FileNotFoundError # No use continuing
 
-        self.dataFolderPath = os.path.join( self.unzippedFolderPath, 'Bible Data/' )
-        if not os.path.isdir( self.dataFolderPath ):
-            logging.critical( _("GoBible.preload: Unable to find folder: {}").format( self.dataFolderPath ) )
+        self.dataFolderpath = os.path.join( self.unzippedFolderpath, 'Bible Data/' )
+        if not os.path.isdir( self.dataFolderpath ):
+            logging.critical( _("GoBible.preload: Unable to find folder: {}").format( self.dataFolderpath ) )
 
         # Do a preliminary check on the contents of our subfolder
         #self.discoveredBookList = []
         foundFiles, foundFolders = [], []
-        for something in os.listdir( self.dataFolderPath ):
-            somepath = os.path.join( self.dataFolderPath, something )
+        for something in os.listdir( self.dataFolderpath ):
+            somepath = os.path.join( self.dataFolderpath, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "GoBible.preload: Not sure what {!r} is in {}!".format( somepath, self.dataFolderPath ) )
+            else: logging.error( "GoBible.preload: Not sure what {!r} is in {}!".format( somepath, self.dataFolderpath ) )
         numBookFolders = 0
         if foundFolders:
             unexpectedFolders = []
@@ -263,12 +262,12 @@ class GoBible( Bible ):
                     continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.dataFolderPath, unexpectedFolders ) )
+                logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.dataFolderpath, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.dataFolderPath ) )
+            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.dataFolderpath ) )
             raise FileNotFoundError # No use continuing
         if not numBookFolders:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any book folders in {!r}".format( self.dataFolderPath ) )
+            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any book folders in {!r}".format( self.dataFolderpath ) )
             raise FileNotFoundError # No use continuing
         #vPrint( 'Never', debuggingThisModule, "GoBible.preload: Discovered", self.discoveredBookList )
 
@@ -286,7 +285,7 @@ class GoBible( Bible ):
             return result, stringLength+2
 
         # Load the Index file
-        with open( os.path.join( self.dataFolderPath, 'Index' ), 'rb' ) as main_index_file:
+        with open( os.path.join( self.dataFolderpath, 'Index' ), 'rb' ) as main_index_file:
             mainIndexContents = main_index_file.read()
         index = 0
         numBooks, = struct.unpack( "<H", mainIndexContents[index:index+2] ); index += 2
@@ -319,8 +318,8 @@ class GoBible( Bible ):
 
             # Read in the file number, verse offset, and number of verses for each chapter
             versesPerChapter = []
-            previousFileNumber = 0;
-            verseDataOffset = 0;
+            previousFileNumber = 0
+            verseDataOffset = 0
             for chapterIndex in range( numChapters ):
                 # Seems that each entry is six bytes
                 vPrint( 'Never', debuggingThisModule, chapterIndex, mainIndexContents[index:index+6] )
@@ -337,8 +336,8 @@ class GoBible( Bible ):
                         fileNumber = previousFileNumber
 
                     if fileNumber != previousFileNumber:
-                        verseDataOffset = 0;
-                        previousFileNumber = fileNumber;
+                        verseDataOffset = 0
+                        previousFileNumber = fileNumber
                 else:
                     fileNumber, = struct.unpack( "<H", mainIndexContents[index:index+2] ); index += 2
                     allVersesLength, = struct.unpack( "<I", mainIndexContents[index:index+4] ); index += 3
@@ -347,8 +346,8 @@ class GoBible( Bible ):
                     except struct.error: numVerses = -1 # Why does it fail for the last chapter of Revelation???
 
                     if fileNumber != previousFileNumber:
-                        verseDataOffset = 0;
-                        previousFileNumber = fileNumber;
+                        verseDataOffset = 0
+                        previousFileNumber = fileNumber
 
                 versesPerChapter.append( (numVerses, fileNumber, verseDataOffset, allVersesLength) )
                 if debuggingThisModule:
@@ -465,8 +464,8 @@ class GoBible( Bible ):
         #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
 
         # Delete the temporary folder (where .jar was unzipped)
-        rmtree( self.unzippedFolderPath )
-        self.unzippedFolderPath = None
+        rmtree( self.unzippedFolderpath )
+        self.unzippedFolderpath = None
 
         self.doPostLoadProcessing()
     # end of GoBible.load
@@ -507,7 +506,7 @@ class GoBibleBook( BibleBook ):
         """
         vPrint( 'Info', debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
-        folderpath = os.path.join( self.containerBibleObject.dataFolderPath, filenameBase+'/' )
+        folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
         loadErrors = []
 
         # Load the book index first
@@ -667,7 +666,7 @@ def briefDemo() -> None:
 
         result2 = GoBibleFileCheck( testFolder, autoLoad=True )
         vPrint( 'Normal', debuggingThisModule, "GoBible TestA2", result2 )
-        if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderPath )
+        if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderpath )
 
         result3 = GoBibleFileCheck( testFolder, autoLoadBooks=True )
         vPrint( 'Normal', debuggingThisModule, "GoBible TestA3", result3 )
@@ -726,7 +725,7 @@ def fullDemo() -> None:
 
             result2 = GoBibleFileCheck( testFolder, autoLoad=True )
             vPrint( 'Normal', debuggingThisModule, "GoBible TestA2", result2 )
-            if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderPath )
+            if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderpath )
 
             result3 = GoBibleFileCheck( testFolder, autoLoadBooks=True )
             vPrint( 'Normal', debuggingThisModule, "GoBible TestA3", result3 )

@@ -54,9 +54,9 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible
@@ -1541,7 +1541,7 @@ class DBLBible( Bible ):
 
         # Determine which is the USX subfolder
         if 'USXFolderName' in self.suppliedMetadata['DBL']:
-            self.USXFolderPath = os.path.join( self.sourceFilepath, self.suppliedMetadata['DBL']['USXFolderName'] + '/' )
+            self.USXFolderpath = os.path.join( self.sourceFilepath, self.suppliedMetadata['DBL']['USXFolderName'] + '/' )
         else:
             possibilities = []
             haveDefault = False
@@ -1552,11 +1552,11 @@ class DBLBible( Bible ):
             bookListKey = haveDefault if haveDefault else possibilities[0]
             USXFolderName = 'USX_' + bookListKey[9:10]
             #vPrint( 'Quiet', debuggingThisModule, "USXFolderName", USXFolderName )
-            self.USXFolderPath = os.path.join( self.sourceFilepath, USXFolderName + '/' )
-        #vPrint( 'Quiet', debuggingThisModule, "USXFolderPath", self.USXFolderPath )
+            self.USXFolderpath = os.path.join( self.sourceFilepath, USXFolderName + '/' )
+        #vPrint( 'Quiet', debuggingThisModule, "USXFolderpath", self.USXFolderpath )
 
         ## Work out our filenames
-        #self.USXFilenamesObject = USXFilenames( self.USXFolderPath )
+        #self.USXFilenamesObject = USXFilenames( self.USXFolderpath )
         #vPrint( 'Quiet', debuggingThisModule, "fo", self.USXFilenamesObject )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -1565,7 +1565,7 @@ class DBLBible( Bible ):
                 filename = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper() + '.usx'
                 vPrint( 'Never', debuggingThisModule, "About to load {} from {} …".format( BBB, filename ) )
                 UBB = USXXMLBibleBook( self, BBB )
-                UBB.load( filename, self.USXFolderPath, self.encoding )
+                UBB.load( filename, self.USXFolderpath, self.encoding )
                 UBB.validateMarkers()
                 #vPrint( 'Quiet', debuggingThisModule, UBB )
                 self.books[BBB] = UBB
@@ -1584,7 +1584,7 @@ class DBLBible( Bible ):
                 BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
                 filename = USFMBookCode + '.usx'
                 UBB = USXXMLBibleBook( self, BBB )
-                UBB.load( filename, self.USXFolderPath, self.encoding )
+                UBB.load( filename, self.USXFolderpath, self.encoding )
                 UBB.validateMarkers()
                 #vPrint( 'Quiet', debuggingThisModule, UBB )
                 self.books[BBB] = UBB
@@ -1598,7 +1598,7 @@ class DBLBible( Bible ):
                     if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            vPrint( 'Info', debuggingThisModule, "DBLBible.loadBooks: Didn't find any regularly named USX files in '{}'".format( self.USXFolderPath ) )
+            vPrint( 'Info', debuggingThisModule, "DBLBible.loadBooks: Didn't find any regularly named USX files in '{}'".format( self.USXFolderpath ) )
 
         self.doPostLoadProcessing()
     # end of DBLBible.loadBooks

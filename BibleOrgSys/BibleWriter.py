@@ -92,9 +92,9 @@ import multiprocessing
 import signal
 
 if __name__ == '__main__':
-    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveFolderPath )
+    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput import ControlFiles
@@ -110,7 +110,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2020-04-21' # by RJH
+LAST_MODIFIED_DATE = '2020-04-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -329,7 +329,7 @@ class BibleWriter( InternalBible ):
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
             Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
-        from BibleOrgSys.Internals import InternalBibleBook
+        # from BibleOrgSys.Internals import InternalBibleBook
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:makeLists…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert self.books
 
@@ -7838,16 +7838,16 @@ class BibleWriter( InternalBible ):
                 if numVerses > 80: filenameTemplate = filenameTemplate.replace( '{:02}-{}', '{:03}-{}' )
             else: halt
 
-            chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
-            if not os.access( chapterFolderPath, os.F_OK ): os.makedirs( chapterFolderPath ) # Make the empty folder if there wasn't already one there
+            chapterFolderpath = os.path.join( bookFolderName, chapterFolderName )
+            if not os.access( chapterFolderpath, os.F_OK ): os.makedirs( chapterFolderpath ) # Make the empty folder if there wasn't already one there
 
             pagesWritten = 0
             leftoverText = text
             while leftoverText:
                 if namingFormat == 'Short':
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( pagesWritten ) )
+                    jpegOutputFilepath = os.path.join( chapterFolderpath, filenameTemplate.format( pagesWritten ) )
                 elif namingFormat == 'Long':
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
+                    jpegOutputFilepath = os.path.join( chapterFolderpath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
@@ -7885,8 +7885,8 @@ class BibleWriter( InternalBible ):
                 subfolderName = 'Other/'
             if BBBnum < 100: bookFolderName = '{:02}-{}/'.format( BBBnum, bookAbbrev )
             else: bookFolderName = '{:03}-{}/'.format( BBBnum, bookAbbrev ) # Should rarely happen
-            bookFolderPath = os.path.join( outputFolderpath, subfolderName, bookFolderName )
-            if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
+            bookFolderpath = os.path.join( outputFolderpath, subfolderName, bookFolderName )
+            if not os.access( bookFolderpath, os.F_OK ): os.makedirs( bookFolderpath ) # Make the empty folder if there wasn't already one there
 
             # First of all, get the text (by chapter) into textBuffer
             C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -7916,7 +7916,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
-                    if textBuffer: renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ''
+                    if textBuffer: renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderpath ); textBuffer = ''
                     C, V = cleanText, '0'
                     if marker == 'c':
                         try: intC = int( C ) # But cp text might not be an integer
@@ -7978,7 +7978,7 @@ class BibleWriter( InternalBible ):
                     #logger.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     #if BibleOrgSysGlobals.debugFlag: halt
                 lastMarker = marker
-            if textBuffer: renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
+            if textBuffer: renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderpath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): {!r} {!r} {}\n" \

@@ -48,9 +48,9 @@ from xml.etree.ElementTree import ElementTree
 import json
 
 if __name__ == '__main__':
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible
@@ -3072,10 +3072,10 @@ def briefDemo() -> None:
                 #     from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                 #     readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
                 #     from ProcessLoadedBible import makeSettingsPage
-                #     outputFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
-                #     if not os.path.exists( outputFolderPath ):
-                #             os.makedirs( outputFolderPath, 0o755 )
-                #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderPath )
+                #     outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
+                #     if not os.path.exists( outputFolderpath ):
+                #             os.makedirs( outputFolderpath, 0o755 )
+                #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderpath )
                 break
             else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
@@ -3252,10 +3252,10 @@ def fullDemo() -> None:
                 #     from ProcessTemplates import webPageTemplate, doGlobalTemplateFixes
                 #     readyWebPageTemplate = doGlobalTemplateFixes( 'Test', testName, "Test", webPageTemplate )
                 #     from ProcessLoadedBible import makeSettingsPage
-                #     outputFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
-                #     if not os.path.exists( outputFolderPath ):
-                #             os.makedirs( outputFolderPath, 0o755 )
-                #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderPath )
+                #     outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BDBSettingsPages/' )
+                #     if not os.path.exists( outputFolderpath ):
+                #             os.makedirs( outputFolderpath, 0o755 )
+                #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderpath )
             else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     if 1:

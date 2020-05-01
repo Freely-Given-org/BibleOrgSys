@@ -57,9 +57,9 @@ import unicodedata
 
 if __name__ == '__main__':
     import sys
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
@@ -1710,7 +1710,7 @@ class InternalBibleBook:
                     markerContext.append( marker )
                     indentLevel += 1
                     if indentLevel > maxNestingLevel: maxNestingLevel = indentLevel
-                vPrint( 'Quiet', debuggingThisModule, f"CheckingNesting: {j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanTextString} {markerContext} ({lastMarker}… …{nextMarker} {nextNextMarker})" )
+                vPrint( 'Never', debuggingThisModule, f"CheckingNesting: {j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanTextString} {markerContext} ({lastMarker}… …{nextMarker} {nextNextMarker})" )
                 if marker[0] == '¬':
                     if indentLevel > 0: indentLevel -= 1
                     else: vPrint( 'Quiet', debuggingThisModule, "INDENT LEVEL PROBLEM" ); halt
@@ -4813,7 +4813,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getContextVerseData
 
 
-    def writeBOSBCVFiles( self, bookFolderPath ):
+    def writeBOSBCVFiles( self, bookFolderpath ):
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
@@ -4844,18 +4844,18 @@ class InternalBibleBook:
             if C != '-1':
                 if introLines:
                     # Double underline in filename for better dir sorting/display
-                    with open( os.path.join( bookFolderPath, self.BBB+'__Intro.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                    with open( os.path.join( bookFolderpath, self.BBB+'__Intro.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( introLines )
                     introLines = None # Will now cause an error if we try to do more introduction bits -- should only be one intro
                     CVList.append( ('-1',) )
                 elif verseLines:
-                    with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                    with open( os.path.join( bookFolderpath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
                         myFile.write( verseLines )
                     verseLines = '' # Empty ready for the next verse
                     CVList.append( CVKey )
         if introLines: # handle left-overs for books without chapters
             assert not CVList
-            with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
+            with open( os.path.join( bookFolderpath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
                 myFile.write( introLines )
             CVList.append( ('-1',) )
         if verseLines: vPrint( 'Quiet', debuggingThisModule, f"verseLines = {verseLines}" )
@@ -4866,7 +4866,7 @@ class InternalBibleBook:
         if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
         metadataLines += 'CVList = {}\n'.format( CVList )
          # Double underline in filename for better dir sorting/display
-        with open( os.path.join( bookFolderPath, self.BBB+'__BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
+        with open( os.path.join( bookFolderpath, self.BBB+'__BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             metadataFile.write( metadataLines )
     # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook

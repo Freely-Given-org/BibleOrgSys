@@ -33,9 +33,9 @@ from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
     import sys
-    aboveAboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) ) )
-    if aboveAboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveAboveFolderPath )
+    aboveAboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) ) )
+    if aboveAboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint

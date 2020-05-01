@@ -8,8 +8,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.17'
-LAST_MODIFIED_DATE = '2020-04-27' # by RJH — when setup.py was modified below
+VERSION = '0.0.18'
+LAST_MODIFIED_DATE = '2020-04-30' # by RJH — when setup.py was modified below
 
 
 # NOTE: The package doesn't include the XML data files, only the derived pickles
@@ -176,26 +176,30 @@ A library of modules for importing and processing various book/chapter/verse (BC
 including Bibles of course, but also other related BCV materials like Bible commentaries.
 Multiprocessing is used by default to load Bibles that have separate books in separate files.
 
-On many systems, BibleOrgSys can be installed with:
+On most systems, BibleOrgSys can be installed (as shown above) with:
 
-    `python3 -m pip install BibleOrgSys`
+    `pip install BibleOrgSys`
 
-but if it complains, maybe
+but if it complains, maybe:
 
-    `python3 -m pip install --user BibleOrgSys`
+    python3 -m pip install --user BibleOrgSys
+
+or if you only want the library, and don't care about the included app:
+
+    python3 -m pip install --user BibleOrgSys
 
 This library also includes one app (similar to the demo app below) named **Bible2USX**
 which can be run with:
 
-    `Bible2USX path/to/BibleFileOrFolder`
+    Bible2USX path/to/BibleFileOrFolder
 
 or to view all the available options:
 
-    `Bible2USX --help`
+    Bible2USX --help
 
 You can discover the version with:
 
-    `Bible2USX --version`
+    Bible2USX --version
 
 The BibleOrgSys reads or creates a `BibleOrgSysData` folder in your home folder.
 (The folder is not hidden like many typical settings folders so that it's easier for non-expert users to find.)
@@ -211,7 +215,7 @@ After that point, we also hope to release some prepackaged versions—
 probably including Docker and Snap.
 
 This software has been developed in very small chunks of spare time since 2010
-(so it's not necessarily well-thought out, and definitely not polished).
+(so it's not necessarily well structured, and definitely not polished).
 However, it has been tested on hundreds of Bible filesets,
 including USFM, OSIS, USX, USFX, and many other import formats.
 
