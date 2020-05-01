@@ -64,9 +64,9 @@ import re
 import multiprocessing
 
 if __name__ == '__main__':
-    aboveAboveFolderPath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderPath )
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
@@ -74,10 +74,10 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-05-01' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.83'
+PROGRAM_VERSION = '0.84'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -566,13 +566,13 @@ class InternalBible:
             Abbreviation
             FullName, Workname, Name, ProjectName
             ShortName
-            Language
-            Copyright
-            Rights
+            Language, ISOLanguageCode
+            Copyright, Rights
+            Creator, Publisher
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )" )
-            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS',
+            assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'uW',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
                                          'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
 
@@ -729,6 +729,39 @@ class InternalBible:
                     logging.critical( _("__init__: We were already set to  {!r} file encoding").format( self.encoding ) )
                     self.encoding = adjSettingsEncoding
                     logging.critical( _("__init__: Switched now to  {!r} file encoding").format( self.encoding ) )
+
+        elif applyMetadataType == 'uW':
+            # This is a special case (coz it's inside 'Manifest' inside the uW metadata)
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
+                vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata is processing {} {!r} metadata items".format( len(self.suppliedMetadata['uW']['Manifest']), applyMetadataType ) )
+                assert len(self.suppliedMetadata['uW']['Manifest']) >= 3
+                assert 'dublin_core' in self.suppliedMetadata['uW']['Manifest']
+                assert 'checking' in self.suppliedMetadata['uW']['Manifest']
+                assert 'projects' in self.suppliedMetadata['uW']['Manifest']
+                assert isinstance( self.suppliedMetadata['uW']['Manifest']['dublin_core'], dict )
+                assert isinstance( self.suppliedMetadata['uW']['Manifest']['checking'], dict )
+                assert isinstance( self.suppliedMetadata['uW']['Manifest']['projects'], list )
+            manifestDict = self.suppliedMetadata['uW']['Manifest']
+            dublinCoreDict = manifestDict['dublin_core']
+            projectsList = manifestDict['projects']
+            self.FullName = self.Workname = self.Name= self.ProjectName = dublinCoreDict['title']
+            self.Abbreviation = dublinCoreDict['identifier'].upper()
+            self.Creator = dublinCoreDict['creator']
+            self.Rights = dublinCoreDict['rights']
+            self.Language = dublinCoreDict['language']['title']
+            self.ISOLanguageCode = dublinCoreDict['language']['identifier']
+            self.Publisher = dublinCoreDict['publisher']
+            self.encoding = 'utf-8'
+            self.possibleFilenameDict = {}
+            # print( "projectsList", len(projectsList), projectsList )
+            for bookDict in projectsList:
+                # print( "bookDict", len(bookDict), bookDict )
+                USFMBookCode = bookDict['identifier']
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                self.availableBBBs.add( BBB )
+                filename = bookDict['path']
+                if filename.startswith( './' ): filename = filename[2:]
+                self.possibleFilenameDict[BBB] = filename
 
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
@@ -2468,19 +2501,19 @@ class InternalBible:
     # end of InternalBible.findText
 
 
-    def writeBOSBCVFiles( self, outputFolderPath ):
+    def writeBOSBCVFiles( self, outputFolderpath ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderPath} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderpath} )" )
 
         BBBList = []
         for BBB,bookObject in self.books.items():
             BBBList.append( BBB )
-            bookFolderPath = os.path.join( outputFolderPath, BBB + '/' )
-            os.mkdir( bookFolderPath )
-            bookObject.writeBOSBCVFiles( bookFolderPath )
+            bookFolderpath = os.path.join( outputFolderpath, BBB + '/' )
+            os.mkdir( bookFolderpath )
+            bookObject.writeBOSBCVFiles( bookFolderpath )
 
         # Write the Bible metadata
         vPrint( 'Info', debuggingThisModule, "  " + _("Writing BCV metadata…") )
@@ -2489,7 +2522,7 @@ class InternalBible:
         if self.name: metadataLines += 'Name = {}\n'.format( self.name )
         if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
         metadataLines += 'BookList = {}\n'.format( BBBList )
-        with open( os.path.join( outputFolderPath, 'Metadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
+        with open( os.path.join( outputFolderpath, 'Metadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
             metadataFile.write( metadataLines )
     # end of InternalBible.writeBOSBCVFiles
 
@@ -2801,8 +2834,8 @@ class InternalBible:
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
         import json
-        outputFolderPath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
-        try: os.makedirs( outputFolderPath )
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
+        try: os.makedirs( outputFolderpath )
         except FileExistsError: pass
         for dataObject, objectName in (
                 (alignedBookList, 'alignedBookList'),
@@ -2844,11 +2877,11 @@ class InternalBible:
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
-                with open( outputFolderPath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
+                with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
                     json.dump( dataObject, xf )
 
         # Save some text files for manually looking through
-        with open( outputFolderPath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
+        with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
             for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
                 assert isinstance( originalWord, str )
                 assert originalWord
@@ -2876,7 +2909,7 @@ class InternalBible:
         #vPrint( 'Quiet', debuggingThisModule, "keys", originalLemmaToTransOccurrencesDict.keys() )
         #vPrint( 'Quiet', debuggingThisModule, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
         #vPrint( 'Quiet', debuggingThisModule, "blank", originalLemmaToTransOccurrencesDict[''] )
-        with open( outputFolderPath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
+        with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
             for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
@@ -2904,7 +2937,7 @@ class InternalBible:
 
         # Best to make these decisions in the analysis -- not here
         # if self.abbreviation == 'ULT':
-        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
+        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
         #         fromList, toList = [], []
         #         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
         #             if len(originalWordsList) == 1:
@@ -2923,10 +2956,10 @@ class InternalBible:
         #             if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
         #             or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
         #                 xf.write( outputString )
-        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
+        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
         #         for count,outputString in sorted( fromList, reverse=True ):
         #             xf.write( outputString )
-        #     with open( outputFolderPath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
+        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
         #         for count,outputString in sorted( toList, reverse=True ):
         #             xf.write( outputString )
 
