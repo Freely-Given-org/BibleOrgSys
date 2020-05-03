@@ -170,7 +170,7 @@ class Greek():
         self.currentText = text
     # end of __init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of the Greek object.
 

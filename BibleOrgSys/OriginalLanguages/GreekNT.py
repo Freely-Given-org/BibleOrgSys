@@ -118,7 +118,7 @@ class GreekNT( Bible ):
     # end of __init__
 
 
-    #def x__str__( self ):
+    #def x__str__( self ) -> str:
         #"""
         #This method returns the string representation of a Bible book code.
 
@@ -132,7 +132,7 @@ class GreekNT( Bible ):
         #if len(self.books)==1:
             #for BBB in self.books: break # Just get the first one
             #result += ('\n' if result else '') + "  " + _("Contains one book: {}").format( BBB )
-        #else: result += ('\n' if result else '') + "  " + _("Number of books = {}").format( len(self.books) )
+        #else: result += ('\n' if result else '') + "  " + _("Number of books = {:,}").format( len(self.books) )
         #return result
     ## end of __str__
 
@@ -157,7 +157,7 @@ class GreekNT( Bible ):
         self.loadBooks()
 
 
-    def loadBook( self, BBB, filename, encoding='utf-8' ):
+    def loadBook( self, BBB:str, filename, encoding='utf-8' ):
 
         def unpackLine( line ):
             # Should be seven parts in the line

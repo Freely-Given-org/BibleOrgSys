@@ -45,7 +45,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 
-LAST_MODIFIED_DATE = '2020-04-15' # by RJH
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
 PROGRAM_VERSION = '0.26'
@@ -345,7 +345,7 @@ class HebrewWLCBibleAddon():
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.glossingDict
 
-        vPrint( 'Quiet', debuggingThisModule, "Checking {} loaded Hebrew gloss entries for consistency…".format( self.loadedGlossEntryCount ) )
+        vPrint( 'Quiet', debuggingThisModule, f"Checking {self.loadedGlossEntryCount:,} loaded Hebrew gloss entries for consistency…" )
         for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.copy().items(): # Use a copy because we can modify it
             #vPrint( 'Quiet', debuggingThisModule, repr(word), repr(genericGloss), genericReferencesList )
             assert isinstance( word, str ) and word
@@ -413,7 +413,7 @@ class HebrewWLCBibleAddon():
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "  "+_("{} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
+            vPrint( 'Quiet', debuggingThisModule, "  "+_("{:,} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             self._checkLoadedDict()
