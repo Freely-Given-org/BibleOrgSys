@@ -343,7 +343,7 @@ class BibleStylesheet():
         return 0
     # end of BibleStylesheet.__len__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a USFM stylesheet object.
 
@@ -449,7 +449,7 @@ class ParatextStylesheet():
         return 0
     # end of ParatextStylesheet.__len__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a USFM stylesheet object.
 

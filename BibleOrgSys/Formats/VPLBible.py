@@ -85,7 +85,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
 PROGRAM_VERSION = '0.38'
@@ -484,10 +484,8 @@ class VPLBible( Bible ):
                     #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                     bookNumberString, chapterNumberString, verseNumberString = bits[0][:2], bits[0][2:5], bits[0][5:]
                     #vPrint( 'Quiet', debuggingThisModule, bookNumberString, chapterNumberString, verseNumberString )
-                    while len(chapterNumberString)>1 and chapterNumberString[0]=='0':
-                        chapterNumberString = chapterNumberString[1:] # Remove leading zeroes
-                    while len(verseNumberString)>1 and verseNumberString[0]=='0':
-                        verseNumberString = verseNumberString[1:] # Remove leading zeroes
+                    chapterNumberString = chapterNumberString.lstrip( '0' ) # Remove leading zeroes
+                    verseNumberString = verseNumberString.lstrip( '0' ) # Remove leading zeroes
                     bookCodeText, chapterNumber, verseNumber = int( bookNumberString), int(chapterNumberString), int(verseNumberString)
                     vText = bits[1].replace(' ,',',').replace(' .','.').replace(' ;',';').replace(' :',':') \
                                     .replace(' !','!').replace(' )',')').replace(' ]',']').replace(' ”','”') \

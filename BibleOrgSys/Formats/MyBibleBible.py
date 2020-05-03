@@ -81,18 +81,7 @@ NOTE that MyBible can put different parts of the translation into different data
     This code does not (yet?) handle combining multiple MyBible databases into one InternalBible,
         i.e., you can only have the text module OR the footnote module, but not both together.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-01-06' # by RJH
-SHORT_PROGRAM_NAME = "MyBibleBible"
-PROGRAM_NAME = "MyBible Bible format handler"
-PROGRAM_VERSION = '0.21'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os
 import sqlite3
@@ -111,6 +100,14 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
+
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+SHORT_PROGRAM_NAME = "MyBibleBible"
+PROGRAM_NAME = "MyBible Bible format handler"
+PROGRAM_VERSION = '0.21'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 FILENAME_ENDINGS_TO_ACCEPT = ( '.SQLITE3', ) # Must be UPPERCASE
@@ -369,8 +366,7 @@ class MyBibleBible( Bible ):
         """
         Load the metadata from the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("preload()") )
+        vPrint( 'Never', debuggingThisModule, _("preload()…") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -475,8 +471,7 @@ class MyBibleBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("loadBooks()") )
+        vPrint( 'Never', debuggingThisModule, _("loadBooks()…") )
         assert self.preloadDone
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -499,8 +494,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:
@@ -522,8 +516,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
 
         lastC = None
         def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
@@ -634,8 +627,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("__loadBibleCommentaryBook( {} )").format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, _("__loadBibleCommentaryBook( {} )").format( BBB ) )
 
         lastC = None
         def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
@@ -1083,8 +1075,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         """
         Writes a book to the MyBible sqlObject file.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
+        vPrint( 'Never', debuggingThisModule, "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False
@@ -1414,6 +1405,180 @@ def briefDemo() -> None:
                 indexString = f'B{j}'
                 vPrint( 'Normal', debuggingThisModule, "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
                 testMyBB( indexString, testFolder, fullname )
+                break
+
+
+    if 1: # C: individual modules in the output folder
+        testFolder = "BOSOutputFiles/BOS_MyBibleExport"
+        names = ("Matigsalug",)
+        for j, name in enumerate( names, start=1 ):
+            fullname = name + '.SQLite3'
+            pathname = os.path.join( testFolder, fullname )
+            if os.path.exists( pathname ):
+                indexString = f'C{j}'
+                vPrint( 'Normal', debuggingThisModule, "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
+                testMyBB( indexString, testFolder, fullname )
+                break
+
+
+    if 1: # D: all discovered modules in the test folder
+        testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
+                ignore = False
+                somethingUpper = something.upper()
+                for rejectStuff in FILENAME_PARTS_TO_REJECT:
+                    if rejectStuff in somethingUpper: ignore=True; break
+                if ignore: continue
+                foundFiles.append( something )
+                break
+
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nD: Trying all {} discovered modules…".format( len(foundFiles) ) )
+            parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
+                indexString = f'D{j}'
+                vPrint( 'Normal', debuggingThisModule, "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testMyBB( indexString, testFolder, someFile )
+                #break # only do the first one…temp
+
+    if 1: # E: all discovered modules in the test folder
+        testFolder = BiblesFolderpath.joinpath( 'MyBible modules/' )
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ) and somepath.endswith('.SQLite3'):
+                ignore = False
+                somethingUpper = something.upper()
+                for rejectStuff in FILENAME_PARTS_TO_REJECT:
+                    if rejectStuff in somethingUpper: ignore=True; break
+                if ignore: continue
+                foundFiles.append( something )
+                break
+
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+            vPrint( 'Normal', debuggingThisModule, "\nMyBib E: Trying all {} discovered modules…".format( len(foundFiles) ) )
+            parameters = [(f'E{j}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles),start=1)]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.starmap( testMyBB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, someFile in enumerate( sorted( foundFiles ), start=1 ):
+                indexString = f'E{j}'
+                vPrint( 'Normal', debuggingThisModule, "\nMyBib {}/ Trying {}".format( indexString, someFile ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testMyBB( indexString, testFolder, someFile )
+                #break # only do the first one…temp
+
+    if 0: # F: test the export of various kinds of Bibles
+        testFolders = ( os.path.join(
+                    os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
+                    BiblesFolderpath.joinpath( 'theWord modules/' ),
+                    BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
+                    BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),
+                    BiblesFolderpath.joinpath( 'OpenSong Bibles/' ),
+                    BiblesFolderpath.joinpath( 'Zefania modules/' ),
+                    BiblesFolderpath.joinpath( 'YET modules/' ),
+                    BiblesFolderpath.joinpath( 'MyBible modules/' ),
+                    Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                    Path( '/srv/AutoProcesses/Processed/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFX-ASV/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFX-WEB/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'HaggaiTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'e-SwordTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MySwordTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'YETTest/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PierceOnlineBible/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DrupalTest/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'CSVTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest3/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH, # Up a level
+                    )
+        if BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+            # This fails with "daemonic processes are not allowed to have children"
+            #   -- InternalBible (used by UnknownBible) already uses pools for discovery (and possibly for loading)
+            vPrint( 'Normal', debuggingThisModule, "\n\nMyBib F: Export all {} discovered Bibles…".format( len(foundFiles) ) )
+            parameters = [(f'F{j}',testFolder) for j,testFolder in enumerate( testFolders, start=1 )]
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                results = pool.starmap( exportMyBB, parameters ) # have the pool do our loads
+                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+            BibleOrgSysGlobals.alreadyMultiprocessing = False
+        else: # Just single threaded
+            for j, testFolder in enumerate( testFolders, start=1 ):
+                indexString = f'F{j}'
+                vPrint( 'Quiet', debuggingThisModule, "\ntoMyBible {}/ Export MyBible module for {}…".format( indexString, testFolder ) )
+                exportMyBB( indexString, testFolder )
+                #uB = UnknownBible( testFolder )
+                #result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
+                #vPrint( 'Info', debuggingThisModule, "  {} result is: {}".format( indexString, result ) )
+                #vPrint( 'Quiet', debuggingThisModule, uB )
+                #try: result.toMyBible()
+                #except AttributeError:
+                    #errorClass, exceptionInstance, traceback = sys.exc_info()
+                    ##vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #if "object has no attribute 'toMyBible'" in str(exceptionInstance):
+                        #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
+                    #else: # it's some other attribute error in the loadBook function
+                        #raise
+# end of MyBibleBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+
+
+    if 1: # A: demo the file checking code
+        testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MyBibleTest/' )
+        result1 = MyBibleBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "TestA1", result1 )
+        result2 = MyBibleBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "TestA2", result2 )
+        result3 = MyBibleBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "TestA3", result3 )
+
+
+    if 1: # B: individual modules in the test folder
+        testFolder = BiblesFolderpath.joinpath( 'MyBible modules/' )
+        names = ('CSLU',)
+        for j, name in enumerate( names, start=1 ):
+            fullname = name + '.SQLite3'
+            pathname = os.path.join( testFolder, fullname )
+            if os.path.exists( pathname ):
+                indexString = f'B{j}'
+                vPrint( 'Normal', debuggingThisModule, "\nMyBib {}/ Trying {}".format( indexString, fullname ) )
+                testMyBB( indexString, testFolder, fullname )
 
 
     if 1: # C: individual modules in the output folder
@@ -1553,14 +1718,7 @@ def briefDemo() -> None:
                         #logging.info( "No 'toMyBible()' function to export Bible" ) # Ignore errors
                     #else: # it's some other attribute error in the loadBook function
                         #raise
-# end of fullDemo
-
-def fullDemo() -> None:
-    """
-    Full demo to check class is working
-    """
-    briefDemo()
-# end of fullDemo
+# end of MyBibleBible.fullDemo
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables

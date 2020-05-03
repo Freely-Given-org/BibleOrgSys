@@ -239,7 +239,7 @@ class USFMFilenames:
     # end of __init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of an object.
 
@@ -371,7 +371,7 @@ class USFMFilenames:
     # end of getAllFilenames
 
 
-    def doListAppend( self, BBB, filename, givenList, caller ):
+    def doListAppend( self, BBB:str, filename, givenList, caller ):
         """
         Check that BBB and filename are not in the givenList,
                 then add them as a 2-tuple.

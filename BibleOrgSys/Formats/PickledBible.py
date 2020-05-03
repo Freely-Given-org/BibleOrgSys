@@ -527,8 +527,7 @@ class PickledBible( Bible ):
             self.pickleIsZipped = False
             filepath = os.path.join( self.pickleSourceFolder, VERSION_FILENAME )
             if os.path.exists( filepath ):
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading pickle version info from pickle file {}…").format( filepath ) )
+                vPrint( 'Info', debuggingThisModule, _("Loading pickle version info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     self.pickleVersionData = loadVersionStuff( pickleInputFile )
             else: logging.critical( "PickledBible: "+_("Unable to find {!r}").format( VERSION_FILENAME ) )
@@ -537,7 +536,7 @@ class PickledBible( Bible ):
     # end of PickledBible.__init_
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible.
 
@@ -615,8 +614,7 @@ class PickledBible( Bible ):
         else: # it's not zipped
             filepath = os.path.join( self.pickleSourceFolder, INFO_FILENAME )
             if os.path.exists( filepath ):
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading PickledBible info from pickle file {}…").format( filepath ) )
+                vPrint( 'Info', debuggingThisModule, _("Loading PickledBible info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     loadedCount = _loadObjectAttributes( pickleInputFile, self )
             else: logging.critical( _("PickledBible: unable to find {!r}").format( INFO_FILENAME ) )

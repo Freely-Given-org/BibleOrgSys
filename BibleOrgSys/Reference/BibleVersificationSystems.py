@@ -51,29 +51,19 @@ BibleVersificationSystem class:
     getVersificationSystemName( self )
     getNumChapters( self, BBB )
     isSingleChapterBook( self, BBB )
-    getNumVerses( self, BBB, C )
+    getNumVerses( self, BBB:str, C )
     getNumVersesList( self, BBB )
     getTotalNumVerses( self, BBB )
-    getOmittedVerseList( self, BBB, fullRefs=False )
+    getOmittedVerseList( self, BBB:str, fullRefs=False )
     isOmittedVerse( self, referenceTuple )
     getAuxilliaryVerseList( self, listName )
     isValidBCVRef( self, referenceTuple, referenceString=None, extended=False )
     expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
-    convertToReferenceVersification( self, BBB, C, V, S=None )
+    convertToReferenceVersification( self, BBB:str, C, V, S=None )
     convertfrom BibleOrgSys.ReferenceVersification( self, refBBB, refC, refV, refS=None )
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-09' # by RJH
-SHORT_PROGRAM_NAME = "BibleVersificationSystems"
-PROGRAM_NAME = "Bible Versification Systems handler"
-PROGRAM_VERSION = '0.61'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
+from typing import List
 import os
 import logging
 
@@ -85,6 +75,15 @@ if __name__ == '__main__':
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
+
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+SHORT_PROGRAM_NAME = "BibleVersificationSystems"
+PROGRAM_NAME = "Bible Versification Systems handler"
+PROGRAM_VERSION = '0.61'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -126,8 +125,7 @@ class BibleVersificationSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -138,8 +136,7 @@ class BibleVersificationSystems:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDict = json.load( JsonFile )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
@@ -185,7 +182,7 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of the Bible versification systems object.
         Will return more information if the verbosity setting is higher.
@@ -194,7 +191,7 @@ class BibleVersificationSystems:
         @rtype: string
         """
         result = "BibleVersificationSystems object"
-        result += ('\n' if result else '') + "  " + _("Number of systems = {}").format( len(self.__DataDict) )
+        result += ('\n' if result else '') + "  " + _("Number of systems = {:,}").format( len(self.__DataDict) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for systemName in self.__DataDict:
                 CVData, OVData, CombVData, ReordVData = self.__DataDict[systemName]['CV'], self.__DataDict[systemName]['omitted'], self.__DataDict[systemName]['combined'], self.__DataDict[systemName]['reordered']
@@ -613,7 +610,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible versification system.
         Will return more information if the verbosity setting is higher.
@@ -714,14 +711,14 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.isSingleChapterBook
 
 
-    def getNumVerses( self, BBB, C ):
+    def getNumVerses( self, BBB:str, C:str ) -> int:
         """
         C is normally a string.
 
         Returns the number of verses (int) in the given book and chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
+        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
@@ -733,7 +730,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVerses
 
 
-    def getNumVersesList( self, BBB ):
+    def getNumVersesList( self, BBB ) -> List[int]:
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 
@@ -747,7 +744,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVersesList
 
 
-    def getTotalNumVerses( self, BBB ):
+    def getTotalNumVerses( self, BBB ) -> int:
         """
         Returns an integer indicating the total number of verses in the book.
         """
@@ -759,7 +756,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getTotalNumVerses
 
 
-    def getOmittedVerseList( self, BBB, fullRefs=False ):
+    def getOmittedVerseList( self, BBB:str, fullRefs=False ):
         """ Returns a list of (C,V) tuples noting omitted verses in the given book.
 
         If fullRefs are requested, the list consists of (BBB,C,V) tuples instead. """
@@ -802,8 +799,7 @@ class BibleVersificationSystem:
         Extended flag allows chapter and verse numbers of zero
             but it allows almost any number of verses in chapter zero (up to 199).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
 
         BBB, C, V, S = referenceTuple
         assert len(BBB) == 3
@@ -831,8 +827,7 @@ class BibleVersificationSystem:
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
+        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
         assert startRef and len(startRef)==4
         assert endRef and len(endRef)==4
 
@@ -933,7 +928,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.expandCVRange
 
 
-    def convertToReferenceVersification( self, BBB, C, V, S=None ):
+    def convertToReferenceVersification( self, BBB:str, C, V, S=None ):
         """
         Convert the given reference (in this versification system)
             to the reference versification.
@@ -1012,7 +1007,47 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Demo the BibleVersificationSystems object
+    bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bvss ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format( bvss.getAvailableVersificationSystemNames() ) )
+    if 0:
+        for systemName in ('RSV52','NLT96','KJV'): # Test the system against itself
+            vPrint( 'Quiet', debuggingThisModule, "\nTesting {} against the system…".format( systemName ) )
+            testSystem = bvss.getVersificationSystem( systemName )
+            bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
+            bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
+    #bvss.compareVersificationSystems( "Septuagint", "SeptuagintBE" )
+    #bvss.compareVersificationSystems( "SeptuagintBE", "Septuagint" )
+    #bvss.compareVersificationSystems( "NRSV", "NRS89" )
+    #bvss.compareVersificationSystems( "NRS89", "NRSV" )
+    bvss.compareVersificationSystems( "Vulgate", ["Vulgate1","Vulgate2"] )
+    #bvss.compareVersificationSystems( "Vulgate1", ["Vulgate","Vulgate2"] )
+    #bvss.compareVersificationSystems( "Vulgate2", ["Vulgate","Vulgate1"] )
+    #bvss.compareVersificationSystems( "NRSV" )
+
+    # Demo a BibleVersificationSystem object -- this is the one most likely to be wanted by a user
+    bvs = BibleVersificationSystem( 'KJV' )
+    if bvs is not None:
+        vPrint( 'Quiet', debuggingThisModule, bvs ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, "Number of available books for {} is {}".format(bvs.getVersificationSystemName(),bvs.numAvailableBooks()) )
+        BBB = 'PRO'
+        vPrint( 'Quiet', debuggingThisModule, "{} has {} chapters in {}".format(BBB,bvs.getNumChapters(BBB),bvs.getVersificationSystemName()) )
+        BBB = 'MAT'; C='1'
+        vPrint( 'Quiet', debuggingThisModule, "{} {} has {} verses".format(BBB,C,bvs.getNumVerses(BBB,C)) )
+        BBB = 'DAN'
+        vPrint( 'Quiet', debuggingThisModule, "Verse list for the {} chapters in {} is: {}".format(bvs.getNumChapters(BBB),BBB,bvs.getNumVersesList(BBB)) )
+        BBB = 'MAT'; C='17'; V='21'; S=''; refTuple = (BBB,C,V,S,)
+        vPrint( 'Quiet', debuggingThisModule, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        BBB = 'MAT'; C='17'; V='22'; S=''; refTuple = (BBB,C,V,S,)
+        vPrint( 'Quiet', debuggingThisModule, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        BBB = 'MRK'; C='7'; V='16'; S=''; refTuple = (BBB,C,V,S,)
+        vPrint( 'Quiet', debuggingThisModule, "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
+        vPrint( 'Quiet', debuggingThisModule, "Omitted verses in {} are: {}".format(BBB,bvs.getOmittedVerseList(BBB)) )
+        for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
+            vPrint( 'Quiet', debuggingThisModule, "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1]) ) )
 # end of BibleVersificationSystem.fullDemo
 
 if __name__ == '__main__':

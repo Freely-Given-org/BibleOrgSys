@@ -227,8 +227,7 @@ class SwordInstallManager():
     def __init__( self ) -> None:
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.__init__()") )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.__init__()…") )
 
         self.userDisclaimerConfirmed = False
 
@@ -249,8 +248,7 @@ class SwordInstallManager():
         """
         Clear our list of available sources.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.clearSources()") )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.clearSources()…") )
 
         self.downloadSources = {}
         self.currentRepoName = None
@@ -267,8 +265,8 @@ class SwordInstallManager():
             3/ Site url (not including folders)
             4/ Site folders (starts with '/' )
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert repoType in ( 'FTP', )
 
         self.downloadSources[repoName] = (repoType,repoSite,repoFolderpath)
@@ -282,8 +280,7 @@ class SwordInstallManager():
 
         This function can be overriden (esp. if you have a GUI).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.isUserDisclaimerConfirmed()") )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.isUserDisclaimerConfirmed()…") )
 
         prompt1 = _("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
                     "components, it also uses a systematic method for accessing sites which gives packet " \
@@ -307,8 +304,8 @@ class SwordInstallManager():
 
         Use this if you don't want to override isUserDisclaimerConfirmed().
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert flag in (True, False)
 
         self.userDisclaimerConfirmed = flag
@@ -450,8 +447,7 @@ class SwordInstallManager():
         Places the information in self.availableModules
             (which is cleared first).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource()") )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource()…") )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -479,8 +475,7 @@ class SwordInstallManager():
         Read a conf file that has already been download from a repository
             and parse the information into self.availableModules.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
 
         # Read the conf file
         confDict = {}
@@ -496,8 +491,7 @@ class SwordInstallManager():
         """
         Install the requested module from the remote repository.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInstallManager.installModule( {} )").format( moduleName ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.installModule( {} )").format( moduleName ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )

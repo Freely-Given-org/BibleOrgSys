@@ -77,8 +77,7 @@ class USXXMLBibleBook( BibleBook ):
         """
         Load a single source USX XML file and extract the information.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "load( {}, {}, {} )".format( filename, folder, encoding ) )
+        vPrint( 'Never', debuggingThisModule, "load( {}, {}, {} )".format( filename, folder, encoding ) )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors:List[str] = []

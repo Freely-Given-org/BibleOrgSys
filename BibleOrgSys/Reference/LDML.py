@@ -134,7 +134,7 @@ class LDMLFile:
         LDML = Locale Data Markup Language (see http://unicode.org/reports/tr35/tr35-4.html)
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("load()") )
+            vPrint( 'Quiet', debuggingThisModule, _("load()…") )
 
         SIL_URN_Prefix = '{urn://www.sil.org/ldml/0.1}'
         lenSILURNPrefix = len( SIL_URN_Prefix )

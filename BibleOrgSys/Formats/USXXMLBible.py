@@ -206,12 +206,12 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.preload
 
 
-    def loadBook( self, BBB, filename=None ):
+    def loadBook( self, BBB:str, filename=None ):
         """
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        vPrint( 'Never', debuggingThisModule, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
@@ -239,14 +239,14 @@ class USXXMLBible( Bible ):
     # end of USXXMLBible.loadBook
 
 
-    def _loadBookMP( self, BBB, filename=None ):
+    def _loadBookMP( self, BBB:str, filename=None ):
         """
         Used for multiprocessing.
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+        vPrint( 'Never', debuggingThisModule, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB in self.books: return # Already loaded

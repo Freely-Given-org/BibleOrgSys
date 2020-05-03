@@ -116,7 +116,7 @@ class UnknownBible:
     # end of UnknownBible.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible.
 

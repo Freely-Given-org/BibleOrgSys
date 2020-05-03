@@ -556,8 +556,7 @@ class ESwordBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+        vPrint( 'Never', debuggingThisModule, "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -781,8 +780,7 @@ class ESwordBible( Bible ):
     def checkForExtraMaterial( self, cursor, BOS ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("checkForExtraMaterial( …, … )") )
+        vPrint( 'Never', debuggingThisModule, _("checkForExtraMaterial( …, … )") )
 
         vPrint( 'Quiet', debuggingThisModule, _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
@@ -805,8 +803,7 @@ class ESwordBible( Bible ):
         """
         Load Bible details out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "preload()" )
+        vPrint( 'Never', debuggingThisModule, "preload()" )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -900,8 +897,7 @@ class ESwordBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("load()") )
+        vPrint( 'Never', debuggingThisModule, _("load()…") )
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -1084,8 +1080,7 @@ class ESwordBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )

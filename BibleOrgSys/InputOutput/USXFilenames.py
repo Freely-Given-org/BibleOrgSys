@@ -185,7 +185,7 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
-        # vPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )" )
+        # vPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -286,8 +286,7 @@ class USXFilenames:
                                 continue
                             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                                if BibleOrgSysGlobals.verbosityLevel > 3:
-                                    vPrint( 'Quiet', debuggingThisModule, "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                                vPrint( 'Verbose', debuggingThisModule, "USXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                             if '<usx' not in firstLines[0] and '<usx' not in firstLines[1]:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )

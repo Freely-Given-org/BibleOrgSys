@@ -93,7 +93,7 @@ class XMLFile():
     # end of XMLFile.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible.
 
@@ -123,7 +123,7 @@ class XMLFile():
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
         try:
             self.XMLTree = ElementTree().parse( self.sourceFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
             vPrint( 'Info', debuggingThisModule, "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:

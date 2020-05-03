@@ -93,7 +93,7 @@ from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
 PROGRAM_VERSION = '0.35'
@@ -189,7 +189,7 @@ class BibleSingleReference( BibleReferenceBase ):
         self.reference = ()
     # end of BibleSingleReference:__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible object.
 
@@ -384,7 +384,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         self.referenceList = []
     # end of BibleSingleReferences:__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible object.
 
@@ -665,7 +665,7 @@ class BibleReferenceList( BibleReferenceBase ):
         self.referenceList = []
     # end of BibleReferenceList.__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns- the string representation of a Bible Range References object.
 
@@ -793,8 +793,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
 
         if location is None: location = '(unknown)'
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleReferences.parseReferenceString {!r} from {}".format( referenceString, location ) )
+        vPrint( 'Never', debuggingThisModule, "BibleReferences.parseReferenceString {!r} from {}".format( referenceString, location ) )
         assert referenceString and isinstance( referenceString, str )
         assert location and isinstance( location, str )
         haveWarnings, haveErrors, totalVerseList = False, False, []
@@ -1215,8 +1214,8 @@ class BibleReferenceList( BibleReferenceBase ):
             status = 9
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleReferences.parseReferenceString BRL final status: {}:{} -- got {!r}from {!r}\n".format(status,statusList[status],self.referenceList,referenceString) )
-            vPrint( 'Quiet', debuggingThisModule, "BibleReferences.parseReferenceString here", len(totalVerseList), totalVerseList )
+            vPrint( 'Info', debuggingThisModule, "BibleReferences.parseReferenceString BRL final status: {}:{} -- got {!r}from {!r}\n".format(status,statusList[status],self.referenceList,referenceString) )
+            vPrint( 'Info', debuggingThisModule, "BibleReferences.parseReferenceString here", len(totalVerseList), totalVerseList )
 
         singleVerseSet = set( totalVerseList )
         if len(singleVerseSet) < len(totalVerseList):
@@ -1349,7 +1348,7 @@ class BibleReferenceList( BibleReferenceBase ):
     ## end of BibleReferenceList.containsReferenceTuple
 
 
-    def containsReference( self, BBB, C, V, S=None ):
+    def containsReference( self, BBB:str, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
         #vPrint( 'Verbose', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert BBB and len(BBB)==3
@@ -1436,7 +1435,7 @@ class BibleAnchorReference:
     containsReference see if the BBB,C,V,S reference is in our internal list
     """
 
-    def __init__( self, BBB, chapterString, verseString, suffixString=None ):
+    def __init__( self, BBB:str, chapterString, verseString, suffixString=None ):
         """ Initialize the object with known information.
         """
         self.objectNameString = 'Bible anchor reference object'
@@ -1461,7 +1460,7 @@ class BibleAnchorReference:
         self.referenceList = [] # Will be filled in when we get a string to parse
     # end of BibleAnchorReference:__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns- the string representation of a Bible Anchor Reference object.
 
@@ -1487,8 +1486,7 @@ class BibleAnchorReference:
 
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        vPrint( 'Never', debuggingThisModule, "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if location is None: location = '(unknown)'
         #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} from {}".format( anchorString, location ) )
         assert anchorString and isinstance( anchorString, str )
@@ -1802,7 +1800,7 @@ class BibleAnchorReference:
     # end of BibleAnchorReference:getReferenceList
 
 
-    #def xxxcontainsReference( self, BBB, C, V, S=None ):
+    #def xxxcontainsReference( self, BBB:str, C, V, S=None ):
         #""" Returns True/False if the internal reference list contains the given reference. """
         #assert BBB and len(BBB)==3
         #assert C and C.isdigit()
@@ -1867,8 +1865,7 @@ class BibleAnchorReference:
 
         Returns True or False.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        vPrint( 'Never', debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             assert anchorString
         elif not anchorString: return False

@@ -84,7 +84,7 @@ class USFM3MarkersConverter:
         self._uniqueElements = ( 'nameEnglish', 'marker', )
 
         # These are fields that we will fill later
-        self._XMLheader, self._XMLtree = None, None
+        self._XMLheader, self._XMLTree = None, None
         self.__DataDicts = {} # Used for import
         self.titleString = self.PROGRAM_VERSION = self.dateString = ''
     # end of __init__
@@ -94,7 +94,7 @@ class USFM3MarkersConverter:
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
         """
-        if self._XMLtree is None: # We mustn't have already have loaded the data
+        if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
                 # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
@@ -115,17 +115,17 @@ class USFM3MarkersConverter:
         """
         assert XMLFileOrFilepath
         self.__XMLFileOrFilepath = XMLFileOrFilepath
-        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
+        assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
         vPrint( 'Info', debuggingThisModule, _("Loading USFM3Markers XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
-        self._XMLtree = ElementTree().parse( self.__XMLFileOrFilepath )
-        assert self._XMLtree # Fail here if we didn't load anything at all
+        self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
+        assert self._XMLTree # Fail here if we didn't load anything at all
 
-        if self._XMLtree.tag == self._treeTag:
-            header = self._XMLtree[0]
+        if self._XMLTree.tag == self._treeTag:
+            header = self._XMLTree[0]
             if header.tag == self._headerTag:
                 self.XMLheader = header
-                self._XMLtree.remove( header )
+                self._XMLTree.remove( header )
                 BibleOrgSysGlobals.checkXMLNoText( header, 'header' )
                 BibleOrgSysGlobals.checkXMLNoTail( header, 'header' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( header, 'header' )
@@ -148,21 +148,21 @@ class USFM3MarkersConverter:
                 logging.warning( _("Missing header element (looking for {!r} tag)".format( self._headerTag ) ) )
             if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( element.tail ) )
         else:
-            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLTree.tag ) )
     # end of __load
 
     def __validate( self ):
         """
         Check/validate the loaded data.
         """
-        assert self._XMLtree
+        assert self._XMLTree
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
         for attributeName in self._uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
         expectedID = 1
-        for j,element in enumerate(self._XMLtree):
+        for j,element in enumerate(self._XMLTree):
             if element.tag == self._mainElementTag:
                 BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
@@ -229,10 +229,10 @@ class USFM3MarkersConverter:
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
             if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element in record {}").format( element.tail, element.tag, j ) )
-        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
+        if self._XMLTree.tail is not None and self._XMLTree.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element").format( self._XMLTree.tail, self._XMLTree.tag ) )
     # end of __validate
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 
@@ -244,21 +244,21 @@ class USFM3MarkersConverter:
         if self.titleString: result += ('\n' if result else '') + ' '*indent + _("Title: {}").format( self.titleString )
         if self.PROGRAM_VERSION: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.PROGRAM_VERSION )
         if self.dateString: result += ('\n' if result else '') + ' '*indent + _("Date: {}").format( self.dateString )
-        if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self._XMLtree) )
+        if self._XMLTree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self._XMLTree) )
         return result
     # end of __str__
 
     def __len__( self ):
         """ Returns the number of SFM markers loaded. """
-        return len( self._XMLtree )
+        return len( self._XMLTree )
     # end of __len__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
+        (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        assert self._XMLtree
+        assert self._XMLTree
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
@@ -269,7 +269,7 @@ class USFM3MarkersConverter:
         newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
         internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList = [], [], []
         noteMarkersList, deprecatedMarkersList = [], []
-        for element in self._XMLtree:
+        for element in self._XMLTree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
@@ -373,7 +373,7 @@ class USFM3MarkersConverter:
         """
         import pickle
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -424,7 +424,7 @@ class USFM3MarkersConverter:
             theFile.write( "], # end of {} ({} entries)\n\n".format( listName, len(theList) ) )
         # end of exportPythonList
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -436,7 +436,7 @@ class USFM3MarkersConverter:
             if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
             if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
             if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
-            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
             #myFile.write( "from collections import OrderedDict\n\n" )
             dictInfo = { "rawMarkerDict":(exportPythonDict, "rawMarker (in the original XML order)","specified"),
                             "numberedMarkerList":(exportPythonList, "marker","rawMarker"),
@@ -465,7 +465,7 @@ class USFM3MarkersConverter:
         """
         import json
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -528,7 +528,7 @@ class USFM3MarkersConverter:
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -554,7 +554,7 @@ class USFM3MarkersConverter:
             if self.dateString:
                 lines = "//  Date: {}\n//\n".format( self.dateString )
                 myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLTree), self._treeTag ) )
             myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
             myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
 

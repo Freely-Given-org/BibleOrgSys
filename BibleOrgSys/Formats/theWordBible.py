@@ -383,14 +383,14 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+        vPrint( 'Never', debuggingThisModule, "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return composedLine
 # end of theWordHandleIntroduction
 
 
-def theWordAdjustLine( BBB, C, V, originalLine ):
+def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
     """
     Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -467,14 +467,14 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
     # Check what's left at the end
     if '\\' in line:
         logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        vPrint( 'Never', debuggingThisModule, "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return line
 # end of theWordAdjustLine
 
 
-def resettheWordMargins( ourGlobals, setKey=None ):
+def resettheWordMargins( ourGlobals, setKey=None ) -> None:
     """
     Reset all of our persistent margin variables.
 
@@ -491,7 +491,7 @@ def resettheWordMargins( ourGlobals, setKey=None ):
 # end of resettheWordMargins
 
 
-def handleRTFLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, myGlobals ):
     """
     Adjusts the formatting of the line for Bible reference BBB C:V
         and then writes it to the bookObject.
@@ -1140,8 +1140,8 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        vPrint( 'Never', debuggingThisModule, "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return composedLine.rstrip()
 # end of theWordComposeVerseLine

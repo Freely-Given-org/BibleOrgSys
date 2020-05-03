@@ -48,24 +48,13 @@ BibleOrganisationalSystem class:
     getPreviousBookCode( self, BBB )
     getNextBookCode( self, BBB )
     getAlternativeBBBIfNecessary( self, BBB )
-    getNumVersesList( self, BBB, allowAlternatives=False )
+    getNumVersesList( self, BBB:str, allowAlternatives=False )
     isValidBCVRef( self, referenceTuple, referenceString, extended=False )
     __makeAbsoluteVerseList( self )
-    getAbsoluteVerseNumber( self, BBB, C, V )
+    getAbsoluteVerseNumber( self, BBB:str, C, V )
     convertAbsoluteVerseNumber( self, avNumber )
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
-SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
-PROGRAM_NAME = "Bible Organisation Systems handler"
-PROGRAM_VERSION = '0.35'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os
 
@@ -83,6 +72,15 @@ from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystem
 from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSystem
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+
+
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
+PROGRAM_NAME = "Bible Organisation Systems handler"
+PROGRAM_VERSION = '0.35'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -136,7 +134,7 @@ class BibleOrganisationalSystems:
     # end of BibleOrganisationalSystems.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible organisational system.
 
@@ -188,8 +186,7 @@ class BibleOrganisationalSystems:
 
         Returns the system dictionary.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
+        vPrint( 'Never', debuggingThisModule, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
         assert systemName
         assert isinstance( systemName, str )
 
@@ -220,8 +217,7 @@ class BibleOrganisationalSystems:
         """
         Gets a value for the system.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
+        vPrint( 'Never', debuggingThisModule, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
         assert systemName and isinstance( systemName, str )
         assert valueName and isinstance( valueName, str )
         thisSystem = self.getOrganisationalSystem( systemName, suppressErrors )
@@ -343,7 +339,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible organisational system.
 
@@ -485,14 +481,14 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getAlternativeBBBIfNecessary
 
 
-    def getNumVersesList( self, BBB, allowAlternatives=False ):
+    def getNumVersesList( self, BBB:str, allowAlternatives=False ):
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 
         The length of the list is the number of chapters in the book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getNumVersesList( {} )".format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, "getNumVersesList( {} )".format( BBB ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
         if not allowAlternatives: return BibleVersificationSystem.getNumVersesList( self, BBB )
@@ -516,8 +512,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        vPrint( 'Never', debuggingThisModule, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
 
@@ -552,7 +548,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.__makeAbsoluteVerseList
 
 
-    def getAbsoluteVerseNumber( self, BBB, C, V ):
+    def getAbsoluteVerseNumber( self, BBB:str, C, V ):
         """
         Convert the given reference (in this versification system)
             to an absolute verse number.
@@ -632,7 +628,39 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # Demo the BibleOrganisationalSystems object
+        vPrint( 'Normal', debuggingThisModule, "\nTesting load of ALL Bible organisational systems…" )
+        boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
+        vPrint( 'Normal', debuggingThisModule, boss ) # Just print a summary
+        vPrint( 'Normal', debuggingThisModule, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
+
+    if 1: # Demo a BibleOrganisationalSystem object -- this is the one most likely to be wanted by a user
+        vPrint( 'Normal', debuggingThisModule, "\nTesting varying Bible organisational systems…" )
+        for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
+            vPrint( 'Normal', debuggingThisModule, "\nTrying: {!r}".format( testString ) )
+            bos = BibleOrganisationalSystem( testString )
+            vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
+            vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
+            # vPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            # vPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
+            #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
+            #    vPrint( 'Quiet', debuggingThisModule, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
+            #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
+            #    vPrint( 'Quiet', debuggingThisModule, "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
+
+    if 1:
+        version = 'KJV-1769_edition'
+        vPrint( 'Normal', debuggingThisModule, "\nTesting absolute verse numbers for", version )
+        bos = BibleOrganisationalSystem( version )
+        for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
+            vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            vPrint( 'Quiet', debuggingThisModule, '' )
+        for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
+            vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of BibleOrganisationalSystem.fullDemo
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
 #
 # Base module handling generic online websites
 #
-# Copyright (C) 2019 Robert Hunt
+# Copyright (C) 2019-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,18 +24,7 @@
 
 """
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-03-17' # by RJH
-SHORT_PROGRAM_NAME = "GenericOnlineBible"
-PROGRAM_NAME = "Generic online Bible handler"
-PROGRAM_VERSION = '0.02'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 import urllib.request
@@ -43,12 +32,20 @@ import json
 from collections import OrderedDict
 
 if __name__ == '__main__':
-    import sys
     import re
 import logging # Append the containing folder to the path to search for the BOS
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
+
+
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+SHORT_PROGRAM_NAME = "GenericOnlineBible"
+PROGRAM_NAME = "Generic online Bible handler"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 MAX_CACHED_VERSES = 100 # Per Bible version in use
@@ -69,8 +66,7 @@ class GenericOnlineBible:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "GenericOnlineBible.__init__()" )
+        vPrint( 'Never', debuggingThisModule, "GenericOnlineBible.__init__()" )
 
         self.bookList = None
         self.books = {}
@@ -79,7 +75,7 @@ class GenericOnlineBible:
     # end of GenericOnlineBible.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Create a string representation of the Bible object.
         """
@@ -114,8 +110,7 @@ class GenericOnlineBible:
         """
         Given an index, return the book object (or raise an IndexError)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )" )
+        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of GenericOnlineBible.__getitem__
@@ -150,8 +145,7 @@ class GenericOnlineBible:
         """
         Given a BCV key, add the data to the cache.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )" )
+        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
@@ -171,8 +165,7 @@ class GenericOnlineBible:
 
         Return None if not.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )" )
+        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
@@ -190,8 +183,7 @@ class GenericOnlineBible:
 
         (Most platforms don't provide the context so an empty list is returned.)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )" )
+        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )…" )
 
         return self.getVerseDataList( key ), [] # No context
     # end of GenericOnlineBible.getContextVerseData
@@ -225,14 +217,35 @@ def briefDemo() -> None:
             verseKey = SimpleVerseKey( *testRef )
             vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
             vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
-# end of fullDemo
+# end of GenericOnlineBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
+
+    if 1: # Test the GenericOnlineBible class
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        dbpBible1 = GenericOnlineBible()
+        vPrint( 'Quiet', debuggingThisModule, dbpBible1 )
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            vPrint( 'Quiet', debuggingThisModule, verseKey )
+            dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
+            vPrint( 'Quiet', debuggingThisModule, f"  Cache length: {len(dbpBible1.cache)}" )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+         # Now test the GenericOnlineBible class caching
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+# end of GenericOnlineBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

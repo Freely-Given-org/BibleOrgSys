@@ -398,7 +398,7 @@ class ESFMBible( Bible ):
     ## end of ESFMBible.loadMetadata
 
 
-    def loadSemanticDictionary( self, BBB, filename ):
+    def loadSemanticDictionary( self, BBB:str, filename ):
         """
         """
         vPrint( 'Normal', debuggingThisModule, "    " + _("Loading possible semantic dictionary from {}…").format( filename ) )
@@ -427,7 +427,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadSemanticDictionary
 
 
-    def loadStrongsDictionary( self, BBB, filename ):
+    def loadStrongsDictionary( self, BBB:str, filename ):
         """
         """
         vPrint( 'Normal', debuggingThisModule, "    " + _("Loading possible Strong's dictionary from {}…").format( filename ) )
@@ -467,7 +467,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadDictionaries
 
 
-    def loadBook( self, BBB, filename=None ):
+    def loadBook( self, BBB:str, filename=None ):
         """
         Load the requested book if it's not already loaded.
 

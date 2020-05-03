@@ -31,18 +31,7 @@ Filenames usually end with .ewb and contain some header info
 
 Seems that some non-UTF8 versions can't be read yet. :(
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-07' # by RJH
-SHORT_PROGRAM_NAME = "EasyWorshipBible"
-PROGRAM_NAME = "EasyWorship Bible format handler"
-PROGRAM_VERSION = '0.14'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os.path
 from pathlib import Path
@@ -62,6 +51,14 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
+
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+SHORT_PROGRAM_NAME = "EasyWorshipBible"
+PROGRAM_NAME = "EasyWorship Bible format handler"
+PROGRAM_VERSION = '0.15'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 FILENAME_ENDING = '.EWB' # Must be UPPERCASE
@@ -342,8 +339,8 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         for BBB in BOS.getBookList():
             if BBB in compressedDictionary:
                 myFile.write( compressedDictionary[BBB] ) # Write zlib output
-            elif BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, '  Book {} is not available for EasyWorship export'.format( BBB ) )
+            else:
+                vPrint( 'Info', debuggingThisModule, '  Book {} is not available for EasyWorship export'.format( BBB ) )
 
         # Write the end of file stuff
         myFile.write( b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' )
@@ -766,6 +763,110 @@ def briefDemo() -> None:
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEWB( testFilename )
+            break
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(allModulesKeepDict)>1:
+            vPrint( 'Quiet', debuggingThisModule, "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
+            # Print the various binary blocks together by block number
+            #vPrint( 'Quiet', debuggingThisModule, allModulesKeepDict['alb.ewb'].keys() )
+            #for blockName in ('introBlock','moduleNameBlock','byte84','workNameBlock','workName','bookDataStartIndex','block0080','endBytes'):
+            for blockName in allModulesKeepDict['alb.ewb'].keys():
+                vPrint( 'Quiet', debuggingThisModule, '' )
+                for moduleFilename,stuff in allModulesKeepDict.items():
+                    if blockName in stuff:
+                        index,result = stuff[blockName]
+                        if blockName == 'introBlock': # Nice and consistent (32-bytes)
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert index == 0
+                            assert result == b'EasyWorship Bible Text\x1a\x02<\x00\x00\x00\xe0\x00\x00\x00'
+                        elif blockName == 'moduleNameBlock':
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'byte84': # revision number or something ???
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
+                        #elif blockName in ('bookInfoBlock-1','bookInfoBlock-66'):
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'workNameBlock':
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                        elif blockName == 'length3':
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
+                            #vPrint( 'Quiet', debuggingThisModule, result )
+                            assert 26 <= result <= 32
+                        elif blockName == 'workName':
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), result, moduleFilename )
+                            assert index == 14876
+                        elif blockName == 'workNameAppendage': # Nice and consistent (4-bytes)
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert len(result) == 6
+                            assert result[:4] == b'QK\x03\x04'
+                            assert result[4] < 16 # Length of uncompressed work name
+                            assert result[5:] == b'\x00'
+                        elif blockName == 'block0080': # Nice and consistent (4-bytes)
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert result == b'\x00\x00\x08\x00'
+                        elif blockName == 'bookDataStartIndex':
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, result, moduleFilename, )
+                            assert 14902 <= result <= 14908
+                        elif blockName == 'endBytes': # Nice and consistent (16-bytes)
+                            #vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            assert result == b'\x18:\x00\x00\x00\x00\x00\x00ezwBible' # b'183a000000000000657a774269626c65'
+                        elif not blockName.startswith( 'bookInfoBlock-' ) \
+                        and not blockName.startswith( 'bookExtra-' ):
+                            # Shouldn't get here
+                            vPrint( 'Quiet', debuggingThisModule, blockName, index, len(result), hexlify(result), result, moduleFilename, )
+                            if debuggingThisModule: halt
+# end of EasyWorshipBible.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
+    testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
+
+
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        result1 = EasyWorshipBibleFileCheck( testFolder )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA1", result1 )
+        result2 = EasyWorshipBibleFileCheck( testFolder, autoLoad=True )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA2", result2 )
+        result3 = EasyWorshipBibleFileCheck( testFolder, autoLoadBooks=True )
+        vPrint( 'Normal', debuggingThisModule, "EasyWorship TestA3", result3 )
+
+        #testSubfolder = os.path.join( testFolder, 'AV/' )
+        #result3 = EasyWorshipBibleFileCheck( testSubfolder )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB1", result3 )
+        #result4 = EasyWorshipBibleFileCheck( testSubfolder, autoLoad=True )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB2", result4 )
+        #result5 = EasyWorshipBibleFileCheck( testSubfolder, autoLoadBooks=True )
+        #vPrint( 'Normal', debuggingThisModule, "EasyWorship TestB3", result5 )
+
+    if 0: # specified module
+        singleModule = 'mbtv.ewb'
+        vPrint( 'Normal', debuggingThisModule, "\nEasyWorship C/ Trying {}".format( singleModule ) )
+        #myTestFolder = os.path.join( testFolder, singleModule+'/' )
+        #testFilepath = os.path.join( testFolder, singleModule+'/', singleModule+'_utf8.txt' )
+        testEWB( singleModule )
+
+    if 1: # specified modules
+        allModulesKeepDict = {}
+        one = ( 'asv.ewb', )
+        good = ( 'alb.ewb','amp.ewb','asv.ewb','bbe.ewb','cei.ewb','darby.ewb',
+                'dn1933.ewb','dnb1930.ewb','drv.ewb',
+                'esv.ewb','esv.ewb_0','esv.ewb_2',
+                'fn1938.ewb', 'hcv.ewb','kar.ewb','kjv.ewb',
+                'lsg.ewb','luth1545.ewb', 'maori.ewb', 'mbtv.ewb',
+                'nasb.ewb','niv.ewb','nkjv.ewb', 'sv1917.ewb', 'TB.ewb',
+                'vul.ewb', 'wb.ewb', 'ylt.ewb' )
+        nonEnglish = (  )
+        bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
+        allModules = good + bad
+        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
+            vPrint( 'Normal', debuggingThisModule, "\nEasyWorship D{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            allModulesKeepDict[testFilename] = testEWB( testFilename )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(allModulesKeepDict)>1:
             vPrint( 'Quiet', debuggingThisModule, "\n\nCollected data blocks from all {} processed versions:".format( len(allModulesKeepDict) ) )
             # Print the various binary blocks together by block number
@@ -837,15 +938,7 @@ def briefDemo() -> None:
                 vPrint( 'Normal', debuggingThisModule, "\nEasyWorship E{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testEWB( someFolder )
-# end of fullDemo
-
-
-def fullDemo() -> None:
-    """
-    Full demo to check class is working
-    """
-    briefDemo()
-# end of fullDemo
+# end of EasyWorshipBible.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

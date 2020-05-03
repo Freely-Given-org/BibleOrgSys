@@ -82,7 +82,7 @@ class BibleReferencesLinks:
     # end of BibleReferencesLinks.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of this object.
 
@@ -218,7 +218,7 @@ class BibleReferencesLinks:
     ## end of BibleReferencesLinks.loadData
 
 
-    #def __str__( self ):
+    #def __str__( self ) -> str:
         #"""
         #This method returns the string representation of this object.
 

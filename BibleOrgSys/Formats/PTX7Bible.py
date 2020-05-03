@@ -188,8 +188,7 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 if filenameUpper.endswith( extension ): numFilesFound += 1; break
             for extension in EXCLUDE_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound -= 2; break
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "PTX7 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+        vPrint( 'Never', debuggingThisModule, "PTX7 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
             #if folderName.upper().startswith('USX_'): numFoldersFound += 1
         if numFilesFound >= MARKER_THRESHOLD:
@@ -349,7 +348,7 @@ def loadPTX7Languages( BibleObject ):
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, _("loadPTX7Languages()") )
+        vPrint( 'Quiet', debuggingThisModule, _("loadPTX7Languages()…") )
 
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
@@ -411,7 +410,7 @@ def loadPTXVersifications( BibleObject ):
         and parse it into the dictionary PTXVersifications.
     """
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, _("loadPTXVersifications()") )
+        vPrint( 'Quiet', debuggingThisModule, _("loadPTXVersifications()…") )
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
@@ -686,7 +685,7 @@ class PTX7Bible( Bible ):
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBooksNames()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBooksNames()…") )
 
         thisFilename = 'BookNames.xml'
         bookNamesFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -694,7 +693,7 @@ class PTX7Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.XMLTree = ElementTree().parse( bookNamesFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
         #loadErrors = []
@@ -745,7 +744,7 @@ class PTX7Bible( Bible ):
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUsers()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUsers()…") )
 
         thisFilename = 'ProjectUsers.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -753,7 +752,7 @@ class PTX7Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
         #loadErrors = []
@@ -818,7 +817,7 @@ class PTX7Bible( Bible ):
         Load the ProjectUserFields.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUserFields()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUserFields()…") )
 
         thisFilename = 'ProjectUserFields.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -826,7 +825,7 @@ class PTX7Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user field data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
         #loadErrors = []
@@ -891,7 +890,7 @@ class PTX7Bible( Bible ):
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXLexicon()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXLexicon()…") )
 
         thisFilename = 'Lexicon.xml'
         lexiconFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -899,7 +898,7 @@ class PTX7Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading project user data from {}…".format( lexiconFilepath ) )
         self.XMLTree = ElementTree().parse( lexiconFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
         #loadErrors = []
@@ -1028,7 +1027,7 @@ class PTX7Bible( Bible ):
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXSpellingStatus()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXSpellingStatus()…") )
 
         thisFilename = 'SpellingStatus.xml'
         spellingStatusFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -1036,7 +1035,7 @@ class PTX7Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( spellingStatusFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
         #loadErrors = []
@@ -1102,7 +1101,7 @@ class PTX7Bible( Bible ):
         Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXComments()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXComments()…") )
 
         commentFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1126,7 +1125,7 @@ class PTX7Bible( Bible ):
             vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading comments from {}…".format( commentFilepath ) )
 
             self.XMLTree = ElementTree().parse( commentFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag=='CommentList':
@@ -1204,7 +1203,7 @@ class PTX7Bible( Bible ):
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBiblicalTermRenderings()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBiblicalTermRenderings()…") )
 
         BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1228,7 +1227,7 @@ class PTX7Bible( Bible ):
             vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading BiblicalTerms from {}…".format( BiblicalTermsFilepath ) )
 
             self.XMLTree = ElementTree().parse( BiblicalTermsFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag=='TermRenderingsList':
@@ -1317,7 +1316,7 @@ class PTX7Bible( Bible ):
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXProgress()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXProgress()…") )
 
         progressFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1341,7 +1340,7 @@ class PTX7Bible( Bible ):
             vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading Progress from {}…".format( progressFilepath ) )
 
             self.XMLTree = ElementTree().parse( progressFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag=='ProjectProgress':
@@ -1505,7 +1504,7 @@ class PTX7Bible( Bible ):
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXPrintConfig()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXPrintConfig()…") )
 
         printConfigFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1529,7 +1528,7 @@ class PTX7Bible( Bible ):
             vPrint( 'Info', debuggingThisModule, "PTX7Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.XMLTree = ElementTree().parse( printConfigFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag=='PrintDraftConfiguration':
@@ -1594,7 +1593,7 @@ class PTX7Bible( Bible ):
             and parse it into the ordered dictionary PTXAutocorrects.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXAutocorrects()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXAutocorrects()…") )
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -1640,7 +1639,7 @@ class PTX7Bible( Bible ):
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXStyles()") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadPTXStyles()…") )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1709,7 +1708,7 @@ class PTX7Bible( Bible ):
     # end of PTX7Bible.loadPTXStyles
 
 
-    def loadBook( self, BBB, filename=None ):
+    def loadBook( self, BBB:str, filename=None ):
         """
         Load the requested book into self.books if it's not already loaded.
 

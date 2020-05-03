@@ -26,6 +26,7 @@
 Module handling BibleBooksNames.
 """
 from gettext import gettext as _
+from typing import Optional
 import os
 import logging
 
@@ -39,7 +40,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNames"
 PROGRAM_NAME = "Bible Books Names Systems handler"
 PROGRAM_VERSION = '0.41'
@@ -237,8 +238,7 @@ class BibleBooksNamesSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                         # self.__ExpandedDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -250,8 +250,7 @@ class BibleBooksNamesSystems:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                         # self.__ExpandedDicts = json.load( JsonFile )
@@ -299,7 +298,7 @@ class BibleBooksNamesSystems:
         # return self
     # end of BibleBooksNamesSystems.loadData
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 
@@ -308,7 +307,7 @@ class BibleBooksNamesSystems:
         """
         result = "BibleBooksNamesSystems object"
         if self.__ExpandedDicts: assert len(self.__DataDicts) == len(self.__ExpandedDicts)
-        result += ('\n' if result else '') + '  ' + _("Number of loaded bookname systems = {}").format( len(self.__DataDicts) )
+        result += ('\n' if result else '') + '  ' + _("Number of loaded bookname systems = {:,}").format( len(self.__DataDicts) )
         return result
     # end of BibleBooksNamesSystems.__str__
 
@@ -359,15 +358,15 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.getAvailableLanguageCodes
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation ):
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> Optional[str]:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
 
         Tries all the known Bible Books Names systems.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        vPrint( 'Never', debuggingThisModule, "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
@@ -483,7 +482,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible books names system.
 
@@ -494,11 +493,11 @@ class BibleBooksNamesSystem:
         result += ('\n' if result else '') + "  " + _("{} Bible books names system").format( self.__systemName )
         result += ('\n' if result else '') + "  " + _("Language code = {}").format( self.__languageCode )
         if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
-            result += ('\n' if result else '') + "    " + _("Number of divisions = {}").format( len(self.__divisionsNamesDict) )
-            result += ('\n' if result else '') + "    " + _("Number of bookname leaders = {}").format( len(self.__booknameLeadersDict) )
-            result += ('\n' if result else '') + "    " + _("Number of books = {}").format( len(self.__bookNamesDict) )
-            result += ('\n' if result else '') + "    " + _("Number of expanded division name abbreviations = {}").format( len(self.__sortedDivisionNamesDict) )
-            result += ('\n' if result else '') + "    " + _("Number of expanded book name abbreviations = {}").format( len(self.__sortedBookNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Number of divisions = {:,}").format( len(self.__divisionsNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Number of bookname leaders = {:,}").format( len(self.__booknameLeadersDict) )
+            result += ('\n' if result else '') + "    " + _("Number of books = {:,}").format( len(self.__bookNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Number of expanded division name abbreviations = {:,}").format( len(self.__sortedDivisionNamesDict) )
+            result += ('\n' if result else '') + "    " + _("Number of expanded book name abbreviations = {:,}").format( len(self.__sortedBookNamesDict) )
         return result
     # end of BibleBooksNamesSystem.__str__
 
@@ -519,7 +518,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookName
 
 
-    def getBookAbbreviation( self, BBB ):
+    def getBookAbbreviation( self, BBB:str ) -> str:
         """
         Get the default book abbreviation from the given referenceAbbreviation.
         """
@@ -528,15 +527,15 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation ):
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> Optional[str]:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
 
         If it fails, tries the same named function from BibleBooksCodes
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        vPrint( 'Never', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()

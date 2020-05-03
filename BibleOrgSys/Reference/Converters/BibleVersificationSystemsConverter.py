@@ -5,7 +5,7 @@
 #
 # Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2017 Robert Hunt
+# Copyright (C) 2010-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,18 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 NOTE: We still lack a REFERENCE Bible versification system
         with back-and-forth mappings. This is a MAJOR outstanding deficiency.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2017-12-09' # by RJH
-SHORT_PROGRAM_NAME = "BibleVersificationSystemsConverter"
-PROGRAM_NAME = "Bible Versification Systems converter"
-PROGRAM_VERSION = '0.51'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from datetime import datetime
@@ -53,6 +42,15 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
+
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+SHORT_PROGRAM_NAME = "BibleVersificationSystemsConverter"
+PROGRAM_NAME = "Bible Versification Systems converter"
+PROGRAM_VERSION = '0.51'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -130,8 +128,7 @@ class BibleVersificationSystemsConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[versificationSystemCode]['tree']:
                         bookCount += 1
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
+                    vPrint( 'Info', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -214,7 +211,7 @@ class BibleVersificationSystemsConverter:
     # end of BibleVersificationSystemsConverter._validateSystem
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible versification system.
 
@@ -488,7 +485,7 @@ class BibleVersificationSystemsConverter:
             #if self.__titleString: myFile.write( "#{} data\n".format( self.__titleString ) )
             #if self.__ProgVersion: myFile.write( "#  Version:{}\n".format( self.__ProgVersion ) )
             #if self.__dateString: myFile.write( "#  Date:{}\n#\n".format( self.__dateString ) )
-            #myFile.write( "#  {}{} loaded from the original XML file.\n#\n\n".format( len(self.__XMLtree), self.__treeTag ) )
+            #myFile.write( "#  {}{} loaded from the original XML file.\n#\n\n".format( len(self.__XMLTree), self.__treeTag ) )
             json.dump( self.__DataDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of BibleVersificationSystemsConverter.exportDataToJSON

@@ -326,7 +326,7 @@ class USFM2Markers:
     # end of USFM2Markers.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of the USFM markers object.
 
@@ -335,12 +335,12 @@ class USFM2Markers:
         """
         indent = 2
         result = "USFM Markers object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDict['rawMarkerDict']) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self.__DataDict['rawMarkerDict']) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             indent = 4
-            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict['newlineMarkersList']) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of note markers = {}").format( len(self.__DataDict["noteMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {:,}").format( len(self.__DataDict['newlineMarkersList']) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {:,}").format( len(self.__DataDict["internalMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of note markers = {:,}").format( len(self.__DataDict["noteMarkersList"]) )
         return result
     # end of USFM2Markers.__str__
 
@@ -519,8 +519,7 @@ class USFM2Markers:
         These are fields that need to be displayed inline with the text, albeit with special formatting.
         This excludes footnote and xref markers.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
+        vPrint( 'Never', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #vPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )

@@ -345,6 +345,7 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
 # end of USFMBookCompare.fullDemo
 
+
 def main() -> None:
     """
     Main program to handle command line parameters and then run what they want.

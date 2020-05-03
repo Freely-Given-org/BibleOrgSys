@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2020-04-29' # by RJH
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.77'
@@ -163,7 +163,7 @@ class InternalBibleCVIndex:
     # end of InternalBibleCVIndex.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Just display a simplified view of the list of entries.
         """
@@ -317,7 +317,7 @@ class InternalBibleCVIndex:
 
 
         # Main code of InternalBibleCVIndex.makeCVIndex
-        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {:,} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:
@@ -751,7 +751,7 @@ class InternalBibleSectionIndexEntry:
         self.context = context
     # end of InternalBibleSectionIndexEntry.__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Just display a simplified view of the index entry.
         """
@@ -1025,7 +1025,7 @@ class InternalBibleSectionIndex:
 
 
         # Main code of InternalBibleSectionIndex.makeSectionIndex
-        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, "    " + _("Indexing {:,} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
         if self.BBB in BOS_NON_CHAPTER_BOOKS:

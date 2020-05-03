@@ -166,7 +166,7 @@ class GoBible( Bible ):
         Constructor: just sets up the Bible object.
         """
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )…" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -504,7 +504,7 @@ class GoBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        vPrint( 'Info', debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
+        vPrint( 'Info', debuggingThisModule, f"GoBibleBook.load( {indexToBook} )…" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
         folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
         loadErrors = []
@@ -550,8 +550,7 @@ class GoBibleBook( BibleBook ):
                     #assert chapterOffset == dataLength # Check we used all of the last one
                     chapterText = chapterText[chapterOffset:]
                 textFilepath = os.path.join( folderpath, f'{filenameBase} {fileIndexNumber}' )
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, f"At book {indexToBook+1} chapter {chapterNumberIndex+1}: loading Bible text from '{textFilepath}'…" )
+                vPrint( 'Info', debuggingThisModule, f"At book {indexToBook+1} chapter {chapterNumberIndex+1}: loading Bible text from '{textFilepath}'…" )
                 with open( textFilepath, 'rb' ) as chapterFile:
                     chapterDataFull = chapterFile.read()
                 lastFileIndexNumber = fileIndexNumber

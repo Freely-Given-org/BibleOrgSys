@@ -223,8 +223,7 @@ class MySwordBible( Bible ):
         """
         Load the metadata from the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("preload()") )
+        vPrint( 'Never', debuggingThisModule, _("preload()…") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -261,8 +260,7 @@ class MySwordBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("load()") )
+        vPrint( 'Never', debuggingThisModule, _("load()…") )
         assert self.preloadDone
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -366,8 +364,7 @@ class MySwordBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:

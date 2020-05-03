@@ -495,7 +495,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
@@ -544,7 +544,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractParagraph( self, BBB, chapterNumber, thisBook, paragraph ):
+    def __validateAndExtractParagraph( self, BBB:str, chapterNumber, thisBook, paragraph ):
         """
         Check/validate and extract paragraph data from the given XML book record
             finding and saving paragraphs and
@@ -586,7 +586,7 @@ class HaggaiXMLBible( Bible ):
     # end of HaggaiXMLBible.__validateAndExtractParagraph
 
 
-    def __validateAndExtractVerse( self, BBB, chapterNumber, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:str, chapterNumber, thisBook, verse ):
         """
         Check/validate and extract verse data from the given XML book record
             finding and saving verse elements.

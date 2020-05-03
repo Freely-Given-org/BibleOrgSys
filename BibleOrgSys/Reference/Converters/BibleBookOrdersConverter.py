@@ -134,8 +134,7 @@ class BibleBookOrdersConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[bookOrderSystemCode]['tree']:
                         bookCount += 1
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
+                    vPrint( 'Info', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, bookOrderSystemCode ) )
 
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -231,7 +230,7 @@ class BibleBookOrdersConverter:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
     # end of __validateSystem
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book order system.
 

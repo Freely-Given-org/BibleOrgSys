@@ -1302,8 +1302,7 @@ class BibleWriter( InternalBible ):
             if ignoredMarkers:
                 #vPrint( 'Quiet', debuggingThisModule, "Ignored", ignoredMarkers )
                 logger.info( "toVPL: Ignored markers were {}".format( ignoredMarkers ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
+                vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
 
             # Now create a zipped collection
             vPrint( 'Info', debuggingThisModule, "  Zipping VPL text files…" )
@@ -3677,9 +3676,8 @@ class BibleWriter( InternalBible ):
                 elif count < 100: logger.warning( "Compression code {} is under-used".format( key ) )
             if bytesRaw and BibleOrgSysGlobals.verbosityLevel > 2:
                 vPrint( 'Quiet', debuggingThisModule, "  Compression ratio: {}".format( round( bytesCompressed / bytesRaw, 3 ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, f"    Raw bytes: {bytesRaw:,}" )
-                    vPrint( 'Quiet', debuggingThisModule, f"    Compressed bytes: {bytesCompressed:,}" )
+                vPrint( 'Info', debuggingThisModule, f"    Raw bytes: {bytesRaw:,}" )
+                vPrint( 'Info', debuggingThisModule, f"    Compressed bytes: {bytesCompressed:,}" )
 
         ## Now create a zipped collection
         #vPrint( 'Info', debuggingThisModule, "  Zipping BibleDoor files…" )

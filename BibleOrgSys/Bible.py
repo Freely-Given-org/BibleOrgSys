@@ -69,7 +69,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
         #self.sections = []
     ## end of __init__
 
-    #def __str__( self ):
+    #def __str__( self ) -> str:
         #"""
         #This method returns the string representation of a Bible extra section.
 
@@ -77,7 +77,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
         #@rtype: string
         #"""
         #result = _("BibleExtra object")
-        #result += ('\n' if result else '') + "  " + _("Number of sections = {}").format(len(self.sections) )
+        #result += ('\n' if result else '') + "  " + _("Number of sections = {:,}").format(len(self.sections) )
         #return result
     ## end of __str__
 ## end of class BibleExtra
@@ -97,7 +97,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
         #self.bookCodes = []
     ## end of __init__
 
-    #def __str__( self ):
+    #def __str__( self ) -> str:
         #"""
         #This method returns the string representation of a Bible division.
 

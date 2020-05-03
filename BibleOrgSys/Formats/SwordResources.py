@@ -50,14 +50,13 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "SwordResources"
 PROGRAM_NAME = "Sword resource handler"
 PROGRAM_VERSION = '0.30'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
-
 
 
 logger = logging.getLogger(SHORT_PROGRAM_NAME)
@@ -359,8 +358,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/?> ?<title>(.+?)</title>', verseLine )
         if not match: break
         attributes, sectionType, words = match.group(1) + match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Div title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Div title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
         elif sectionType == 'majorSection': titleMarker = 'ms'
@@ -380,8 +378,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
     match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/><title>', verseLine )
     if match: # handle left over div/title start fields
         attributes, sectionType = match.group(1) + match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Section title start {!r} attributes={!r}'.format( sectionType, attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'Section title start {!r} attributes={!r}'.format( sectionType, attributes ) )
         if sectionType == 'section': titleMarker = 's1'
         elif sectionType == 'subSection': titleMarker = 's2'
         elif sectionType == 'x-subSubSection': titleMarker = 's3'
@@ -482,8 +479,10 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
             if BibleOrgSysGlobals.debugFlag: halt
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+    q_leftover_RE = re.compile( '<q ([^/>]+?)>' )
+    ix = 0
     while True:
-        match = re.search( '<q ([^/>]+?)>', verseLine ) # Leftovers (no </q>)
+        match = q_leftover_RE.search( verseLine, ix ) # Leftovers (no </q>)
         if not match: break
         attributes = match.group(1)
         if 'who="Jesus"' in attributes:
@@ -492,10 +491,12 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
                 if BibleOrgSysGlobals.debugFlag: halt
             replacement = '\\wj '
         else:
+            replacement = ''
             #vPrint( 'Quiet', debuggingThisModule, 'AttributesQ={!r} Words={!r}'.format( attributes, words ) )
             if BibleOrgSysGlobals.debugFlag: halt
-        #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
+        vPrint( 'Verbose', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
+        ix = match.start() + 2
     while True:
         match = re.search( '<q ([^/>]*?)sID="(.+?)"(.*?)/>', verseLine )
         if not match: break
@@ -536,8 +537,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<l ([^/>]*?)level="([^/>]+?)"([^/>]*?)/>', verseLine ) # self-closing l
         if not match: break
         attributes, level = match.group(1)+match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'filterOSISVerseLine AD354 {} {} {}:{} AttributesL={!r} Level={!r} \n  from {!r}'.format( moduleName, BBB, C, V, attributes, level, verseLine ) )
+        vPrint( 'Never', debuggingThisModule, 'filterOSISVerseLine AD354 {} {} {}:{} AttributesL={!r} Level={!r} \n  from {!r}'.format( moduleName, BBB, C, V, attributes, level, verseLine ) )
         assert level in '1234'
         if 'sID="' in attributes:
             replacement = '\\NL**\\q{} '.format( level )
@@ -552,8 +552,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<l ([^/>]+?)/>', verseLine )
         if not match: break
         attributes = match.group(1)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'filterOSISVerseLine SJ430 Level Attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'filterOSISVerseLine SJ430 Level Attributes={!r}'.format( attributes ) )
         if 'sID="' in attributes:
             replacement = '\\NL**\\q1 '
         elif 'eID="' in attributes:
@@ -567,8 +566,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<item ([^/>]*?)type="(.+?)"([^/>]*?)>(.+?)</item>', verseLine )
         if not match: break
         attributes, itemType, item = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'filterOSISVerseLine ND463 {} Item={!r} Type={!r} attributes={!r}'.format( moduleName, item, itemType, attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'filterOSISVerseLine ND463 {} Item={!r} Type={!r} attributes={!r}'.format( moduleName, item, itemType, attributes ) )
         assert itemType in ( 'x-indent-1', 'x-indent-2', 'x-listitem', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
         replacement = '\\NL**\\{} {}\\NL**'.format( marker+itemType[-1], item )
@@ -646,8 +644,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<hi ([^/>]+?)>(.+?)</hi>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Highlight attributes={!r} Words={!r}'.format( attributes, words ) )
         if '"italic"' in attributes: marker = 'it'
         elif '"small-caps"' in attributes: marker = 'sc'
         elif '"super"' in attributes: marker = 'ord' # We don't have anything exact for this XXXXXXXXXXXXXXXX
@@ -667,8 +664,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<hi>(.+?)</hi>', verseLine )
         if not match: break
         words = match.group(1)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Highlight Words={!r}'.format( words ) )
+        vPrint( 'Never', debuggingThisModule, 'Highlight Words={!r}'.format( words ) )
         #if moduleName in ( 'LITV', 'MKJV', 'TS1998', ):
         marker = 'add'
         replacement = '\\{} {}\\{}*'.format( marker, words, marker )
@@ -681,8 +677,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<milestone ([^/>]*?)type="x-usfm-(.+?)"([^/>]*?)/>', verseLine )
         if not match: break
         attributes, marker = match.group(1)+match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f'Milestone attributes={attributes!r} marker={marker!r}' )
+        vPrint( 'Never', debuggingThisModule, f'Milestone attributes={attributes!r} marker={marker!r}' )
         match2 = re.search( 'n="(.*?)"', attributes ) # Can be empty string in JPS!!!
         if match2:
             if match.group(1):
@@ -700,16 +695,14 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<milestone ([^/>]*?)type="x-strongsMarkup"([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)+match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Strongs milestone attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'Strongs milestone attributes={!r}'.format( attributes ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
         #vPrint( 'Quiet', debuggingThisModule, "verseLineC", repr(verseLine) )
     while True:
         match = re.search( '<milestone ([^/>]*?)type="x-p"([^/>]*?)/>', verseLine )
         if not match: break
         attributes = match.group(1)+match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'x-p milestone attributes={!r}'.format( attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'x-p milestone attributes={!r}'.format( attributes ) )
         match2 = re.search( 'marker="(.+?)"', attributes )
         if match2:
             replacement = '\\p {}\\NL**'.format( match2.group(1) )
@@ -730,8 +723,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<closer ([^/>]*?)sID="([^/>]+?)"([^/>]*?)/>(.*?)<closer ([^/>]*?)eID="([^/>]+?)"([^/>]*?)/>', verseLine )
         if not match: break
         attributes1, sID, words, attributes2, eID = match.group(1) + match.group(3), match.group(2), match.group(4), match.group(5) + match.group(7), match.group(6)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Closer attributes1={!r} words={!r}'.format( attributes1, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Closer attributes1={!r} words={!r}'.format( attributes1, words ) )
         replacement = '\\sig {}\\sig*'.format( words )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -739,8 +731,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<note ([^/>]*?)swordFootnote="([^/>]+?)"([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
         attributes, number, noteContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Note attributes={!r} Number={!r}'.format( attributes, number ) )
+        vPrint( 'Never', debuggingThisModule, 'Note attributes={!r} Number={!r}'.format( attributes, number ) )
         if 'crossReference' in attributes:
             assert noteContents == ''
             replacement = '\\x {}\\x*'.format( number )
@@ -751,8 +742,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<note([^/>]*?)>(.*?)</note>', verseLine )
         if not match: break
         attributes, noteContents = match.group(1), match.group(2).rstrip().replace( '\\NL**\\q1\\NL**', '//' ) # was <l />
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Note attributes={!r} contents={!r}'.format( attributes, noteContents ) )
+        vPrint( 'Never', debuggingThisModule, 'Note attributes={!r} contents={!r}'.format( attributes, noteContents ) )
         replacement = '\\f + \\ft {}\\f*'.format( noteContents )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -761,8 +751,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<abbr([^/>]*?)>(.*?)</abbr>', verseLine )
         if not match: break
         attributes, abbr = match.group(1), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Abbr attributes={!r} abbr={!r}'.format( attributes, abbr ) )
+        vPrint( 'Never', debuggingThisModule, 'Abbr attributes={!r} abbr={!r}'.format( attributes, abbr ) )
         replacement = '{}'.format( abbr )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -770,8 +759,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
         if not match: break
         attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        vPrint( 'Never', debuggingThisModule, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
         replacement = linkContents
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -1066,8 +1054,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
         match = re.search( '<a ([^/>]*?)href="([^>]+?)"([^/>]*?)>(.+?)</a>', verseLine )
         if not match: break
         attributes, linkHREF, linkContents = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
+        vPrint( 'Never', debuggingThisModule, 'Link attributes={!r} HREF={!r} contents={!r}'.format( attributes, linkHREF, linkContents ) )
         replacement = linkContents
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -1168,8 +1155,8 @@ class SwordInterface():
         """
         Adds another path to search for modules in.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"SwordInterface.augmentModules( {newPath} )" )
+        vPrint( 'Never', debuggingThisModule, f"SwordInterface.augmentModules( {newPath} )…" )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.library is not None
 
         someFlag = 0 # Don't know what this means in undocumented Sword library
@@ -1186,8 +1173,7 @@ class SwordInterface():
 
         Returns a list of available Sword module codes.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1212,8 +1198,7 @@ class SwordInterface():
 
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1240,14 +1225,13 @@ class SwordInterface():
     # end of SwordInterface.getAvailableModuleCodeDuples
 
 
-    def getModule( self, moduleAbbreviation='KJV' ):
+    def getModule( self, moduleAbbreviation:str='KJV' ):
         """
         Get the requested module.
 
         (Doesn't load books)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
+        vPrint( 'Never', debuggingThisModule, "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
 
         if SwordType == 'CrosswireLibrary':
             #vPrint( 'Quiet', debuggingThisModule, "gM", module.getName() )
@@ -1268,12 +1252,12 @@ class SwordInterface():
     # end of SwordInterface.getModule
 
 
-    def loadBook( self, BBB, BibleObject, moduleAbbreviation='KJV' ):
+    def loadBook( self, BBB:str, BibleObject, moduleAbbreviation:str='KJV' ) -> None:
         """
         Load the given book from a Sword Module into the given BibleObject.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SwordInterface.loadBook( {}, …, {} )".format( BBB, moduleAbbreviation ) )
+        vPrint( 'Never', debuggingThisModule, "SwordInterface.loadBook( {}, …, {} )".format( BBB, moduleAbbreviation ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert BBB not in BibleObject
 
         module = self.getModule( moduleAbbreviation )
@@ -1390,12 +1374,11 @@ class SwordInterface():
     # end of SwordInterface.loadBook
 
 
-    def loadBooks( self, BibleObject, moduleAbbreviation='KJV' ):
+    def loadBooks( self, BibleObject, moduleAbbreviation:str='KJV' ):
         """
         Load all the books from a Sword Module into the given BibleObject.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SwordInterface.loadBooks( …, {} )".format( moduleAbbreviation ) )
+        vPrint( 'Never', debuggingThisModule, "SwordInterface.loadBooks( …, {} )".format( moduleAbbreviation ) )
 
         module = self.getModule( moduleAbbreviation )
         if module is None:
@@ -1517,7 +1500,7 @@ class SwordInterface():
     # end of SwordInterface.loadBooks
 
 
-    def makeKey( self, BBB, C, V ):
+    def makeKey( self, BBB:str, C, V ):
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #vPrint( 'Quiet', debuggingThisModule, "SwordInterface.makeKey( {} {}:{} )".format( BBB, C, V ) )
 
@@ -1547,8 +1530,7 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
+        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
 
         if SwordType == 'CrosswireLibrary':
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -1664,8 +1646,7 @@ class SwordInterface():
         #if cacheKey in self.verseCache:
             #vPrint( 'Quiet', debuggingThisModule, "Cached", cacheKey )
             #return self.verseCache[cacheKey]
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
+        vPrint( 'Never', debuggingThisModule, "SwordInterface.getVerseText({},{})".format( module.getName(), key.getText() ) )
 
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key ) #.encode( 'utf-8', 'namereplace' )

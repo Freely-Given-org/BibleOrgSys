@@ -303,7 +303,7 @@ class PalmDBBible( Bible ):
             """
             nonlocal words
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, _("loadWordlists()") )
+                vPrint( 'Quiet', debuggingThisModule, _("loadWordlists()…") )
 
             # Now read the word index info
             vPrint( 'Normal', debuggingThisModule, "Loading word index info…" )
@@ -333,8 +333,7 @@ class PalmDBBible( Bible ):
             wordCountIndexes = {}
             for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
                 #vPrint( 'Quiet', debuggingThisModule, "   Got {} {:04x}".format( len(words), len(words) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}…".format( wordLength, numFixedLengthWords, compressedFlag ) )
+                vPrint( 'Info', debuggingThisModule, "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}…".format( wordLength, numFixedLengthWords, compressedFlag ) )
                 wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
                 #else: vPrint( 'Quiet', debuggingThisModule, wordCountIndexes )
                 for n in range( numFixedLengthWords ):
@@ -645,8 +644,7 @@ class PalmDBBible( Bible ):
                             #'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
                             #'JUDE':'JDE', 'JUD':'JDE', }
             for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "\n{!r} {!r} bookNumber={} bookRecordLocation={} numBookRecords={}".format( shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
+                vPrint( 'Info', debuggingThisModule, "\n{!r} {!r} bookNumber={} bookRecordLocation={} numBookRecords={}".format( shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
                 #myFile.seek( mainDBIndex[bookRecordLocation] )
                 #binary = myFile.read( 102400 )
                 # Read the header record
@@ -688,8 +686,7 @@ class PalmDBBible( Bible ):
                 #vPrint( 'Quiet', debuggingThisModule, "totalCharacters", totalCharacters )
 
                 # Read the Bible word data records
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "\nReading {}{} Bible words for {} {}/{}…".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
+                vPrint( 'Info', debuggingThisModule, "\nReading {}{} Bible words for {} {}/{}…".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
                 BBB = None
                 if bookNumber % 10 == 0:
                     if bookNumber <= 160:

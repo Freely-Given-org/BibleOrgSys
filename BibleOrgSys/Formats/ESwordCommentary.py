@@ -193,8 +193,7 @@ class ESwordCommentary( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "ESwordCommentary.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+        vPrint( 'Never', debuggingThisModule, "ESwordCommentary.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -248,8 +247,7 @@ class ESwordCommentary( Bible ):
         """
         Load Bible details out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("ESwordCommentary.preload()") )
+        vPrint( 'Never', debuggingThisModule, _("ESwordCommentary.preload()…") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -344,8 +342,7 @@ class ESwordCommentary( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("load()") )
+        vPrint( 'Never', debuggingThisModule, _("load()…") )
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -486,8 +483,7 @@ class ESwordCommentary( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
             if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )

@@ -322,7 +322,7 @@ class USFM3Markers:
     # end of USFM3Markers.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of the USFM markers object.
 
@@ -331,12 +331,12 @@ class USFM3Markers:
         """
         indent = 2
         result = "USFM Markers object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDict['rawMarkerDict']) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self.__DataDict['rawMarkerDict']) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             indent = 4
-            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict['newlineMarkersList']) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of note markers = {}").format( len(self.__DataDict["noteMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {:,}").format( len(self.__DataDict['newlineMarkersList']) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {:,}").format( len(self.__DataDict["internalMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of note markers = {:,}").format( len(self.__DataDict["noteMarkersList"]) )
         return result
     # end of USFM3Markers.__str__
 
@@ -516,8 +516,7 @@ class USFM3Markers:
         These are fields that need to be displayed inline with the text, albeit with special formatting.
         This excludes footnote and xref markers.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
+        vPrint( 'Never', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #vPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
@@ -583,7 +582,7 @@ class USFM3Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        vPrint( 'Never', debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )" )
+        vPrint( 'Never', debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )…" )
         if not text: return []
 
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above

@@ -168,7 +168,7 @@ def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=Non
     TODO: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )…" )
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
@@ -375,7 +375,7 @@ class InternalBibleExtra:
     def __ne__(self, other): return not self.__eq__(other)
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Just display a very abbreviated form of the entry.
         """
@@ -421,7 +421,7 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Just display a simplified view of the list of entries.
 
@@ -735,7 +735,7 @@ class InternalBibleEntryList:
     #def __ne__(self, other): return not self.__eq__(other)
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Just display a simplified view of the list of entries.
 

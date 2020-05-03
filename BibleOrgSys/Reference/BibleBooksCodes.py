@@ -88,8 +88,7 @@ class BibleBooksCodes:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -100,8 +99,7 @@ class BibleBooksCodes:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                     # NOTE: We have to convert str referenceNumber keys back to ints
@@ -121,7 +119,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.loadData
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 
@@ -130,7 +128,7 @@ class BibleBooksCodes:
         """
         indent = 2
         result = "BibleBooksCodes object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts['referenceAbbreviationDict']) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {:,}").format( len(self.__DataDicts['referenceAbbreviationDict']) )
         return result
     # end of BibleBooksCodes.__str__
 
@@ -243,17 +241,17 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
-    def getUSFMNumber( self, BBB ):
+    def getUSFMNumber( self, BBB:str ):
         """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMNumberString']
 
 
-    def getUSXNumber( self, BBB ):
+    def getUSXNumber( self, BBB:str ):
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USXNumberString']
 
 
-    def getUnboundBibleCode( self, BBB ):
+    def getUnboundBibleCode( self, BBB:str ):
         """
         Return the three character (two-digits and one uppercase letter) Unbound Bible code
             for the given book code (referenceAbbreviation).
@@ -261,35 +259,35 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['UnboundCodeString']
 
 
-    def getBibleditNumber( self, BBB ):
+    def getBibleditNumber( self, BBB:str ):
         """
         Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['BibleditNumberString']
 
 
-    def getNETBibleAbbreviation( self, BBB ):
+    def getNETBibleAbbreviation( self, BBB:str ):
         """
         Return the NET Bible abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['NETBibleAbbreviation']
 
 
-    def getDrupalBibleAbbreviation( self, BBB ):
+    def getDrupalBibleAbbreviation( self, BBB:str ):
         """
         Return the DrupalBible abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['DrupalBibleAbbreviation']
 
 
-    def getByzantineAbbreviation( self, BBB ):
+    def getByzantineAbbreviation( self, BBB:str ):
         """
         Return the Byzantine abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
-    def getBBBFromOSISAbbreviation( self, osisAbbreviation, strict=False ):
+    def getBBBFromOSISAbbreviation( self, osisAbbreviation:str, strict=False ):
         """
         Return the reference abbreviation string for the given OSIS book code string.
 
@@ -301,7 +299,7 @@ class BibleBooksCodes:
             except KeyError: # Maybe Sword has an informal abbreviation???
                 return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
 
-    def getBBBFromUSFMAbbreviation( self, USFMAbbreviation, strict=False ):
+    def getBBBFromUSFMAbbreviation( self, USFMAbbreviation:str, strict=False ):
         """
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
@@ -313,7 +311,7 @@ class BibleBooksCodes:
         return result[0] # Assume that the first entry is the best pick
 
 
-    def getBBBFromUnboundBibleCode( self, UnboundBibleCode ):
+    def getBBBFromUnboundBibleCode( self, UnboundBibleCode:str ):
         """
         Return the reference abbreviation string for the given Unbound Bible book code string.
         """
@@ -321,7 +319,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromUnboundBibleCode
 
 
-    def getBBBFromDrupalBibleCode( self, DrupalBibleCode ):
+    def getBBBFromDrupalBibleCode( self, DrupalBibleCode:str ):
         """
         Return the reference abbreviation string for the given DrupalBible book code string.
         """
@@ -329,7 +327,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
 
-    def getBBBFromText( self, someText ):
+    def getBBBFromText( self, someText:str ):
         """
         Attempt to return the BBB reference abbreviation string for the given book information (text).
 
@@ -338,8 +336,8 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+        vPrint( 'Never', debuggingThisModule, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert someText and isinstance( someText, str )
 
         SomeUppercaseText = someText.upper()
@@ -596,7 +594,7 @@ class BibleBooksCodes:
         Sort an iterable containing 3-tuples of BBB,C,V
             or 4-tuples of BBB,C,V,S
         """
-        # vPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )" )
+        # vPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
         # vPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
         # assert len(sortedList) == len(referencesList)

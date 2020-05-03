@@ -88,7 +88,7 @@ class BibleOrganisationalSystemsConverter:
 
         # These are fields that we will fill later
         self.title, self.version, self.date = None, None, None
-        self.header, self._XMLtree = None, None
+        self.header, self._XMLTree = None, None
         self.__dataDicts = None
 
         # Get the data tables that we need for proper checking
@@ -100,7 +100,7 @@ class BibleOrganisationalSystemsConverter:
     # end of BibleOrganisationalSystemsConverter.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 
@@ -111,14 +111,14 @@ class BibleOrganisationalSystemsConverter:
         if self.title: result += ('\n' if result else '') + self.title
         if self.version: result += ('\n' if result else '') + "  Version: {}".format( self.version )
         if self.date: result += ('\n' if result else '') + "  Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  Number of entries = {}".format( len(self._XMLtree) )
+        result += ('\n' if result else '') + "  Number of entries = {}".format( len(self._XMLTree) )
         return result
     # end of BibleOrganisationalSystemsConverter.__str__
 
 
     def __len__( self ):
         """ Returns the number of items loaded. """
-        return len( self._XMLtree )
+        return len( self._XMLTree )
     # end of BibleOrganisationalSystemsConverter.__len__
 
 
@@ -127,7 +127,7 @@ class BibleOrganisationalSystemsConverter:
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
         """
-        if self._XMLtree is None: # We mustn't have already have loaded the data
+        if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
                 # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
@@ -147,17 +147,17 @@ class BibleOrganisationalSystemsConverter:
         """
         assert XMLFileOrFilepath
         self.__XMLFileOrFilepath = XMLFileOrFilepath
-        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
+        assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
         vPrint( 'Info', debuggingThisModule, _("Loading BibleOrganisationalSystems XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
-        self._XMLtree = ElementTree().parse( self.__XMLFileOrFilepath )
-        assert self._XMLtree # Fail here if we didn't load anything at all
+        self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
+        assert self._XMLTree # Fail here if we didn't load anything at all
 
-        if self._XMLtree.tag  == self._treeTag:
-            header = self._XMLtree[0]
+        if self._XMLTree.tag  == self._treeTag:
+            header = self._XMLTree[0]
             if header.tag == self._headerTag:
                 self.header = header
-                self._XMLtree.remove( header )
+                self._XMLTree.remove( header )
                 if len(header)>1:
                     logging.info( _("Unexpected elements in header") )
                 elif len(header)==0:
@@ -173,7 +173,7 @@ class BibleOrganisationalSystemsConverter:
             else:
                 logging.warning( _("Missing header element (looking for {!r} tag)").format( self._headerTag ) )
         else:
-            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLTree.tag ) )
     # end of BibleOrganisationalSystemsConverter._load
 
 
@@ -181,14 +181,14 @@ class BibleOrganisationalSystemsConverter:
         """
         Check/validate the loaded data.
         """
-        assert self._XMLtree
+        assert self._XMLTree
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
         for attributeName in self._uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
         expectedID = 1
-        for j,element in enumerate(self._XMLtree):
+        for j,element in enumerate(self._XMLTree):
             if element.tag == self._mainElementTag:
                 # Check compulsory attributes on this main element
                 for attributeName in self._compulsoryAttributes:
@@ -264,15 +264,15 @@ class BibleOrganisationalSystemsConverter:
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
+        (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        assert self._XMLtree
+        assert self._XMLTree
         if self.__dataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__dataDicts
 
         # We'll create a number of dictionaries with different elements as the key
         dataDict, indexDict, combinedIndexDict = {}, {}, {}
-        for element in self._XMLtree:
+        for element in self._XMLTree:
             bits = {}
             # Get the required information out of the tree for this element
             # Start with the compulsory elements and type attribute
@@ -374,7 +374,7 @@ class BibleOrganisationalSystemsConverter:
         """
         import pickle
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__dataDicts
 
@@ -402,7 +402,7 @@ class BibleOrganisationalSystemsConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__dataDicts
 
@@ -416,7 +416,7 @@ class BibleOrganisationalSystemsConverter:
             if self.title: myFile.write( "# {}\n".format( self.title ) )
             if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
-            myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "#   {} {} entries loaded from the original XML file.\n".format( len(self._XMLTree), self._treeTag ) )
             #myFile.write( "#   {} {} loaded from the original XML files.\n#\n\n".format( len(self.systems), self._treeTag ) )
             exportPythonDict( myFile, dataDict, "dataDict", "extendedReferenceAbbreviation", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
             exportPythonDict( myFile, indexDict, "indexDict", "referenceAbbreviation", "id, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
@@ -432,7 +432,7 @@ class BibleOrganisationalSystemsConverter:
         """
         import json
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__dataDicts
 
@@ -444,7 +444,7 @@ class BibleOrganisationalSystemsConverter:
             #if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
             #if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
-            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
+            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
             json.dump( self.__dataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToJSON
@@ -480,7 +480,7 @@ class BibleOrganisationalSystemsConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__dataDicts
 
@@ -495,7 +495,7 @@ class BibleOrganisationalSystemsConverter:
             if self.title: myFile.write( "// {}\n".format( self.title ) )
             if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
             if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
-            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLTree), self._treeTag ) )
             myFile.write( "#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
             exportPythonDict( myFile, IDDict, "IDDict", "{int id; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "id (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
             exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int id; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNum; char* EngName;}", "referenceAbbreviation (sorted), SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, id, nameEnglish (comment only)" )

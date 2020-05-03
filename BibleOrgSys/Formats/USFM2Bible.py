@@ -477,14 +477,12 @@ def findReplaceText( self, optionsDict, confirmCallback ):
                         else: ix += 1 # So don't keep repeating the same find
 
             if stopFlag:
-                if BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted in {} after {} replaces.".format( BBB, resultDict['numReplaces'] ) )
+                vPrint( 'Info', debuggingThisModule, "Search/Replace was aborted in {} after {} replaces.".format( BBB, resultDict['numReplaces'] ) )
                 resultDict['aborted'] = True
                 break
             if undoFlag:
                 if resultDict['numReplaces']>0:
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
+                      vPrint( 'Info', debuggingThisModule, "Search/Replace was aborted in {} for undo in {} books.".format( BBB, len(resultDict['replacedBookList']) ) )
                 elif BibleOrgSysGlobals.verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "Search/Replace was aborted (by undo) in {}.".format( BBB ) )
                 filesToSave = {}
@@ -600,7 +598,7 @@ class USFM2Bible( Bible ):
     # end of USFM2Bible.preload
 
 
-    def loadBook( self, BBB, filename=None ):
+    def loadBook( self, BBB:str, filename=None ):
         """
         Load the requested book into self.books if it's not already loaded.
 

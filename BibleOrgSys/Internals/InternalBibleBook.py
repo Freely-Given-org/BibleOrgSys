@@ -1300,8 +1300,7 @@ class InternalBibleBook:
         Note: the six parameters for InternalBibleEntry are
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
+        vPrint( 'Never', debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
 
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         openMarkers:List[str] = []
@@ -1779,8 +1778,7 @@ class InternalBibleBook:
 
         Note: we don't number lines in the introduction (i.e., before c 1).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"addVerseStartMarkers() for {self.BBB}" )
+        vPrint( 'Never', debuggingThisModule, f"addVerseStartMarkers() for {self.BBB}" )
 
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         fieldsPreceded = ('s','s1','s2','s3','s4','sp')
@@ -4771,8 +4769,7 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "getNumVerses( {!r} )".format( C ) )
+        vPrint( 'Never', debuggingThisModule, "getNumVerses( {!r} )".format( C ) )
 
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( "getNumVerses was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )

@@ -25,18 +25,7 @@
 """
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
-SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
-PROGRAM_NAME = "Bible Punctuation Systems handler"
-PROGRAM_VERSION = '0.45'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 
@@ -48,6 +37,15 @@ if __name__ == '__main__':
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
+
+LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
+PROGRAM_NAME = "Bible Punctuation Systems handler"
+PROGRAM_VERSION = '0.45'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -83,8 +81,7 @@ class BiblePunctuationSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -95,8 +92,7 @@ class BiblePunctuationSystems:
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDict = json.load( JsonFile )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
@@ -109,8 +105,8 @@ class BiblePunctuationSystems:
             from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
             if XMLFolder is not None:
                 logging.warning( _("Bible Punctuation systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
-            bvsc = BiblePunctuationSystemsConverter( XMLFolder )
-            bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+            bvsc = BiblePunctuationSystemsConverter()
+            bvsc.loadAndValidate( standardXMLFileOrFilepath ) # Load the XML (if not done already)
             self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
         #     # See if we can load from the pickle file (faster than loading from the XML)
@@ -141,7 +137,7 @@ class BiblePunctuationSystems:
         # return self
     # end of loadData
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible punctuation.
 
@@ -150,7 +146,7 @@ class BiblePunctuationSystems:
         """
         assert self.__DataDict
         result = "BiblePunctuationSystems object"
-        result += ('\n  ' if result else '  ') + _("Number of systems = {}").format( len(self.__DataDict) )
+        result += ('\n  ' if result else '  ') + _("Number of systems = {:,}").format( len(self.__DataDict) )
         return result
     # end of __str__
 
@@ -258,7 +254,7 @@ class BiblePunctuationSystem:
         #vPrint( 'Quiet', debuggingThisModule, "xxx", self.__punctuationDict )
     # end of __init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible punctuation system.
 
@@ -267,7 +263,7 @@ class BiblePunctuationSystem:
         """
         result = "BiblePunctuationSystem object"
         result += ('\n' if result else '') + "  " + _("{} Bible punctuation system").format( self.__systemName )
-        result += ('\n' if result else '') + "  " + _("Number of values = {}").format( len(self.__punctuationDict) )
+        result += ('\n' if result else '') + "  " + _("Number of values = {:,}").format( len(self.__punctuationDict) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for key in self.__punctuationDict.keys(): # List the contents of the dictionary
                 result += ('\n' if result else '') + "    " + _("{} is {!r}").format( key, self.__punctuationDict[key] )
@@ -335,7 +331,19 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Demo the BiblePunctuationSystems object
+    bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bpss ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+
+    # Demo the BiblePunctuationSystem object
+    bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
+    vPrint( 'Quiet', debuggingThisModule, bps ) # Just print a summary
+    vPrint( 'Quiet', debuggingThisModule, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    name = 'chapterVerseSeparator'
+    vPrint( 'Quiet', debuggingThisModule, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
 # end of BiblePunctuationSystem.fullDemo
 
 if __name__ == '__main__':

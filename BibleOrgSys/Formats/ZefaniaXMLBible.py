@@ -279,7 +279,7 @@ class ZefaniaXMLBible( Bible ):
         """
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.XMLTree.tag == ZefaniaXMLBible.treeTag:
@@ -501,7 +501,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
@@ -553,7 +553,7 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractVerse( self, BBB, chapterNumber, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:str, chapterNumber, thisBook, verse ):
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and

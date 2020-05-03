@@ -80,8 +80,7 @@ class DCSBibles:
         """
         Create the internal Bibles object.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DCSBibles.__init__()…") )
+        vPrint( 'Never', debuggingThisModule, _("DCSBibles.__init__()…") )
 
         # See if the site is online by making a small call to get the API version
         self.onlineVersion = None
@@ -95,7 +94,7 @@ class DCSBibles:
     # end of DCSBibles.__init__
 
 
-    def getOnlineData( self, fieldREST, additionalParameters=None ):
+    def getOnlineData( self, fieldREST:str, additionalParameters=None ):
         """
         Given a string, e.g., "api/apiversion"
             Does an HTTP GET to our site.
@@ -106,12 +105,10 @@ class DCSBibles:
 
         Returns None if the data cannot be fetched.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
+        vPrint( 'Never', debuggingThisModule, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
+        vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
         try: HTTPResponseObject = urllib.request.urlopen( requestString )
         except urllib.error.URLError as err:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
@@ -120,8 +117,7 @@ class DCSBibles:
             return None
         #vPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"    contentType='{contentType}'" )
+        vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if 'application/json' in contentType:
             responseJSON = HTTPResponseObject.read()
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -134,8 +130,7 @@ class DCSBibles:
                 vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
             return json.loads( responseSTR )
         else:
-            if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
+            vPrint( 'Verbose', debuggingThisModule, "    contentType", contentType )
             halt # Haven't had this contentType before
     # end of DCSBibles.getOnlineData
 
@@ -147,8 +142,7 @@ class DCSBibles:
         This can be quite slow.
 
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DCSBibles.fetchAllBibles()…" )
+        vPrint( 'Never', debuggingThisModule, "DCSBibles.fetchAllBibles()…" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
         vPrint( 'Normal', debuggingThisModule, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
@@ -201,7 +195,7 @@ class DCSBibles:
             #{'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         #"""
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, _("DCSBibles.fetchAllVersions()") )
+            #vPrint( 'Quiet', debuggingThisModule, _("DCSBibles.fetchAllVersions()…") )
 
         #if BibleOrgSysGlobals.verbosityLevel > 2:
             #vPrint( 'Quiet', debuggingThisModule, _("Downloading list of available versions from unfoldingWord…") )
@@ -213,7 +207,7 @@ class DCSBibles:
     ## end of DCSBibles.fetchAllVersions
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Create a string representation of the DCSBibles object.
         """
@@ -257,8 +251,7 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        vPrint( 'Never', debuggingThisModule, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
@@ -282,8 +275,7 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        vPrint( 'Never', debuggingThisModule, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
@@ -316,8 +308,7 @@ class DCSBible( USFMBible ):
         or
             an index into the BibleList in the resourcesObject passed as the second parameter
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
+        vPrint( 'Never', debuggingThisModule, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
 
         if isinstance( parameterOne, dict ):
             assert resourcesObject is None
@@ -413,8 +404,7 @@ class DCSBible( USFMBible ):
         TODO: This function doesn't check if the USFM book was downloaded by a previous run
                 (and is still up-to-date)
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DCSBible.loadBookIfNecessary( {BBB} )…" )
+        vPrint( 'Never', debuggingThisModule, f"DCSBible.loadBookIfNecessary( {BBB} )…" )
 
         if not self.downloadedAllBooks:
             if BBB not in self.attemptedDownload or not self.attemptedDownload[BBB]:

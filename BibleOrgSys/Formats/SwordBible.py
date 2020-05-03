@@ -260,8 +260,7 @@ class SwordBible( Bible ):
         The module name (if needed) should be the name of one of the .conf files in the mods.d folder
             (with or without the .conf on it).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
+        vPrint( 'Never', debuggingThisModule, f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
 
         if not sourceFolder and not moduleName:
             logging.critical( _("SwordBible must be passed either a folder path or a module name!" ) )
@@ -352,8 +351,7 @@ class SwordBible( Bible ):
         """
         Load the compressed data file and import book elements.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("SwordBible.loadBooks()") )
+        vPrint( 'Never', debuggingThisModule, _("SwordBible.loadBooks()…") )
 
         vPrint( 'Normal', debuggingThisModule, _("\nLoading {} module…").format( self.moduleName ) )
 

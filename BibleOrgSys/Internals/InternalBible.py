@@ -132,7 +132,7 @@ class InternalBible:
     # end of InternalBible.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible.
 
@@ -353,14 +353,13 @@ class InternalBible:
     # end of InternalBible.getAName
 
 
-    def loadBookIfNecessary( self, BBB:str ) -> None:
+    def loadBookIfNecessary( self, BBB ) -> None:
         """
         Checks to see if a requested book has already been loaded
             or already failed at loading.
         If not, tries to load the book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.loadBookIfNecessary( {BBB} )…" )
+        vPrint( 'Never', debuggingThisModule, f"InternalBible.loadBookIfNecessary( {BBB} )…" )
             #vPrint( 'Quiet', debuggingThisModule, "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
             #vPrint( 'Quiet', debuggingThisModule, "bnr {}".format( self.bookNeedsReloading ) )
 
@@ -398,8 +397,7 @@ class InternalBible:
         """
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.reloadBook( {BBB} )…" )
+        vPrint( 'Never', debuggingThisModule, f"InternalBible.reloadBook( {BBB} )…" )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -438,8 +436,7 @@ class InternalBible:
         Doesn't do a "discover" yet, in case it's not really required yet,
             coz discover() is quite time-consuming.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "InternalBible.doPostLoadProcessing()…" )
+        vPrint( 'Never', debuggingThisModule, "InternalBible.doPostLoadProcessing()…" )
 
         self.loadedAllBooks = True
 
@@ -571,7 +568,7 @@ class InternalBible:
             Creator, Publisher
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )" )
+            vPrint( 'Quiet', debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )…" )
             assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'uW',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
                                          'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
@@ -1179,7 +1176,7 @@ class InternalBible:
     # end of InternalBible.getAddedUnits
 
 
-    def _discoverBookMP( self, BBB:str ):
+    def _discoverBookMP( self, BBB ):
         """
         """
         # TODO: Make this a lambda function
@@ -1426,7 +1423,7 @@ class InternalBible:
     # end of InternalBible.__aggregateDiscoveryResults
 
 
-    def _makeSectionIndexMP( self, BBB:str ):
+    def _makeSectionIndexMP( self, BBB ):
         """
         """
         # TODO: Make this a lambda function
@@ -2161,14 +2158,13 @@ class InternalBible:
     # end of InternalBible.makeErrorHTML
 
 
-    def getNumChapters( self, BBB ):
+    def getNumChapters( self, BBB:str ) -> int:
         """
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("getNumChapters( {} )").format( BBB ) )
-            assert len(BBB) == 3
+        vPrint( 'Never', debuggingThisModule, _("getNumChapters( {} )").format( BBB ) )
+        assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
@@ -2180,14 +2176,13 @@ class InternalBible:
     # end of InternalBible.getNumChapters
 
 
-    def getNumVerses( self, BBB, C ):
+    def getNumVerses( self, BBB:str, C:str ) -> int:
         """
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("getNumVerses( {}, {!r} )").format( BBB, C ) )
-            assert len(BBB) == 3
+        vPrint( 'Never', debuggingThisModule, _("getNumVerses( {}, {!r} )").format( BBB, C ) )
+        assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
@@ -2212,8 +2207,7 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
+        vPrint( 'Never', debuggingThisModule, "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
         else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
@@ -2261,8 +2255,7 @@ class InternalBible:
 
         Raises a KeyError if the BCVReference isn't found/valid.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
+        vPrint( 'Never', debuggingThisModule, _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
@@ -2505,8 +2498,7 @@ class InternalBible:
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderpath} )" )
+        vPrint( 'Never', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderpath} )…" )
 
         BBBList = []
         for BBB,bookObject in self.books.items():

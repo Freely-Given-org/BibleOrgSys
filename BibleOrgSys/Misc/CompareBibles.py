@@ -872,8 +872,7 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
                     #vPrint( 'Quiet', debuggingThisModule, lEntry, foundLPhrases ); halt
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
+                      vPrint( 'Info', debuggingThisModule, "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
                 else:
                     resultsList.append( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
                     #resultsList.append( ((' ',' ',' '), rEntry) )
@@ -1243,6 +1242,7 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, "  {:,} results in {}".format( len(awResult), BBB ) )
         vPrint( 'Quiet', debuggingThisModule, "{:,} total results in {} books ({:,} segments)".format( totalCount, len(UB1), totalSegments ) )
 # end of CompareBibles.fullDemo
+
 
 def main() -> None:
     """

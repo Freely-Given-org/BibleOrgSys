@@ -291,7 +291,7 @@ class USFXXMLBible( Bible ):
             errorString = sys.exc_info()[1]
             logging.critical( "USFXXMLBible.load: failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             return
-        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
         prefix = self.XMLTree.tag[:-4] if self.XMLTree.tag[0]=='{' and self.XMLTree.tag[-5]=='}' else ''
@@ -794,8 +794,7 @@ class USFXXMLBible( Bible ):
     def loadTable( self, element, location, BBB, C, V ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
+        vPrint( 'Never', debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
 
         BibleOrgSysGlobals.checkXMLNoText( element, location, 'kg92' )
         BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ka92' )

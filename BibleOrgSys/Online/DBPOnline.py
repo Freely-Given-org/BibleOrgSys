@@ -130,8 +130,7 @@ class DBPBibles:
         """
         Create the internal Bibles object.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBibles.__init__()") )
+        vPrint( 'Never', debuggingThisModule, _("DBPBibles.__init__()…") )
 
         self.key = getSecurityKey() # Our personal key
         self.URLFixedData = "?v={}&key={}".format( DBP_VERSION, self.key )
@@ -157,8 +156,7 @@ class DBPBibles:
 
         Returns None if the data cannot be fetched.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+        vPrint( 'Never', debuggingThisModule, _("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
         requestString = '{}{}{}{}'.format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
@@ -192,12 +190,10 @@ class DBPBibles:
 
         Returns the DAM ID which is typically something like: ENGNLVN2ET
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"DBPBibles.getDAM( {refNumber} )" )
+        vPrint( 'Never', debuggingThisModule, f"DBPBibles.getDAM( {refNumber} )…" )
 
         gotDAM = self.volumeList[refNumber]['dam_id']
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"  got DAM='{gotDAM}'" )
+        vPrint( 'Never', debuggingThisModule, f"  got DAM='{gotDAM}'" )
         return gotDAM
     # end of DBPBibles.getDAM
 
@@ -225,8 +221,7 @@ class DBPBibles:
                 'english_name': 'Zuni', 'language_code': 'ZUN', 'language_iso_2B': 'zun', 'language_iso': 'zun',
                 'language_iso_1': '', 'language_iso_2T': 'zun'}
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DBPBibles.fetchAllLanguages()" )
+        vPrint( 'Never', debuggingThisModule, "DBPBibles.fetchAllLanguages()" )
 
         vPrint( 'Info', debuggingThisModule, _("Downloading list of available languages from FCBH…") )
 
@@ -258,8 +253,7 @@ class DBPBibles:
             {'version_name': 'Yessan-Mayo Yawu', 'version_code': 'YWV', 'english_name': 'Yessan-Mayo Yawu'}
             {'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DBPBibles.fetchAllVersions()" )
+        vPrint( 'Never', debuggingThisModule, "DBPBibles.fetchAllVersions()" )
 
         vPrint( 'Info', debuggingThisModule, _("Downloading list of available versions from FCBH…") )
 
@@ -323,8 +317,7 @@ class DBPBibles:
                 'language_name': 'Zapoteco de Yatee', 'right_to_left': 'false', 'num_art': '0', 'version_code': 'TBL',
                 'collection_code': 'NT'}
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DBPBibles.fetchAllVolumes()" )
+        vPrint( 'Never', debuggingThisModule, "DBPBibles.fetchAllVolumes()" )
 
         vPrint( 'Info', debuggingThisModule, _("Downloading list of available volumes from FCBH…") )
 
@@ -357,8 +350,7 @@ class DBPBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DBPBibles.fetchAllTextVolumes()" )
+        vPrint( 'Never', debuggingThisModule, "DBPBibles.fetchAllTextVolumes()" )
 
         vPrint( 'Info', debuggingThisModule, _("Creating list of available text volumes from FCBH…") )
 
@@ -417,8 +409,7 @@ class DBPBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "DBPBibles.fetchAllEnglishTextVolumes()" )
+        vPrint( 'Never', debuggingThisModule, "DBPBibles.fetchAllEnglishTextVolumes()" )
 
         vPrint( 'Info', debuggingThisModule, _("Creating list of available English text volumes from FCBH…") )
 
@@ -446,7 +437,7 @@ class DBPBibles:
     # end of DBPBibles.fetchAllEnglishTextVolumes
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Create a string representation of the DBPBibles object.
         """
@@ -464,8 +455,7 @@ class DBPBibles:
     def searchNames( self, searchText ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBibles.searchNames( {!r} )").format( searchText ) )
+        vPrint( 'Never', debuggingThisModule, _("DBPBibles.searchNames( {!r} )").format( searchText ) )
 
         searchTextUC = searchText.upper()
         resultsList = []
@@ -491,15 +481,15 @@ class DBPBible( GenericOnlineBible ):
     Note that this Bible class is NOT based on the Bible class
         because it's so unlike most Bibles which are local.
     """
-    def __init__( self, damRoot ):
+    def __init__( self, damRoot ) -> None:
         """
         Create the Digital Bible Platform Bible object.
             Accepts a 6-character code which is the initial part of the DAM:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBible.__init__( {!r} )").format( damRoot ) )
+        vPrint( 'Never', debuggingThisModule, _("DBPBible.__init__( {!r} )").format( damRoot ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert damRoot and isinstance( damRoot, str ) and len(damRoot)==6
 
          # Setup and initialise the base class first
@@ -546,7 +536,7 @@ class DBPBible( GenericOnlineBible ):
     # end of DBPBible.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         Create a string representation of the Bible object.
         """
@@ -569,8 +559,7 @@ class DBPBible( GenericOnlineBible ):
             Returns the dictionary.
         Returns None if the data cannot be fetched.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+        vPrint( 'Never', debuggingThisModule, _("DBPBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
         vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
@@ -588,8 +577,7 @@ class DBPBible( GenericOnlineBible ):
         """
         Equivalent to the one in InternalBible, except we may have to fetch the data.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
+        vPrint( 'Never', debuggingThisModule, _("DBPBible.getVerseDataList( {!r} ) for {!r}").format( key, self.damRoot ) )
 
         cachedResult = GenericOnlineBible.getCachedVerseDataList( self, key )
         if isinstance( cachedResult, list): return cachedResult
@@ -714,14 +702,93 @@ def briefDemo() -> None:
             verseKey = SimpleVerseKey( *testRef )
             vPrint( 'Quiet', debuggingThisModule, verseKey )
             vPrint( 'Quiet', debuggingThisModule, " ", dbpBible2.getVerseDataList( verseKey ) )
-# end of fullDemo
+# end of DBPOnline.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
-# end of fullDemo
+    from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    if 1: # Test the DBPBibles class
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        dbpBibles = DBPBibles()
+        vPrint( 'Quiet', debuggingThisModule, dbpBibles )
+        #dbpBibles.load() # takes a minute
+        #vPrint( 'Quiet', debuggingThisModule, dbpBibles )
+
+        if 0:
+            dbpBibles.fetchAllLanguages()
+            vPrint( 'Quiet', debuggingThisModule, "\nLanguage list ({}):".format( len(dbpBibles.languageList) ) )
+            for j, lgDict in enumerate( dbpBibles.languageList ):
+                vPrint( 'Quiet', debuggingThisModule, 'Lg', j, repr(lgDict) )
+
+        if 0:
+            dbpBibles.fetchAllVersions()
+            vPrint( 'Quiet', debuggingThisModule, "\nVersion list ({}):".format( len(dbpBibles.versionList) ) )
+            for j, verDict in enumerate( dbpBibles.versionList ):
+                vPrint( 'Quiet', debuggingThisModule, 'Ver', j, repr(verDict) )
+
+        if 0:
+            dbpBibles.fetchAllVolumes()
+            vPrint( 'Quiet', debuggingThisModule, "\nVolume list ({}):".format( len(dbpBibles.volumeList) ) )
+            for j, volDict in enumerate( dbpBibles.volumeList ):
+                vPrint( 'Quiet', debuggingThisModule, ' ', j, repr(volDict) )
+            vPrint( 'Quiet', debuggingThisModule, "393", dbpBibles.volumeList[393] )
+            vPrint( 'Quiet', debuggingThisModule, "394", dbpBibles.volumeList[394] )
+            vPrint( 'Quiet', debuggingThisModule, "395", dbpBibles.volumeList[395] )
+
+        if 0:
+            dbpBibles.fetchAllTextVolumes()
+            vPrint( 'Quiet', debuggingThisModule, "\nVolume name dict ({}):".format( len(dbpBibles.volumeNameDict) ) )
+            for j, someName in enumerate( dbpBibles.volumeNameDict ):
+                #if 'English' in someName:
+                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                vPrint( 'Quiet', debuggingThisModule, j, repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                #if 'English' in someName:
+                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+            vPrint( 'Quiet', debuggingThisModule, "English search", dbpBibles.searchNames( "English" ) )
+            vPrint( 'Quiet', debuggingThisModule, "MS search", dbpBibles.searchNames( "Salug" ) )
+
+        if 1:
+            dbpBibles.fetchAllEnglishTextVolumes()
+            vPrint( 'Quiet', debuggingThisModule, "\nEnglish volume name dict ({}):".format( len(dbpBibles.EnglishVolumeNameDict) ) )
+            for j, someName in enumerate( dbpBibles.EnglishVolumeNameDict ):
+                #if 'English' in someName:
+                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+                vPrint( 'Quiet', debuggingThisModule, "  {}/ {!r} {!r}".format( j, someName, dbpBibles.EnglishVolumeNameDict[someName] ) )
+                #if 'English' in someName:
+                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+
+
+    testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
+
+    if 1: # Test the DBPBible class with the ESV
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        dbpBible1 = DBPBible( 'ENGESV' )
+        vPrint( 'Quiet', debuggingThisModule, dbpBible1 )
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            vPrint( 'Quiet', debuggingThisModule, verseKey )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getVerseDataList( verseKey ) )
+         # Now test the DBPBible class caching
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getVerseDataList( verseKey ) )
+
+
+    if 1: # Test the DBPBible class with the MS
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        dbpBible2 = DBPBible( 'MBTWBT' )
+        vPrint( 'Quiet', debuggingThisModule, dbpBible2 )
+        for testRef in testRefs:
+            verseKey = SimpleVerseKey( *testRef )
+            vPrint( 'Quiet', debuggingThisModule, verseKey )
+            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible2.getVerseDataList( verseKey ) )
+# end of DBPOnline.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

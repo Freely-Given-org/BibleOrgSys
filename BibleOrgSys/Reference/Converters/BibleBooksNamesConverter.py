@@ -131,8 +131,7 @@ class BibleBooksNamesConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[booksNamesSystemCode]['tree']:
                         bookCount += 1
-                    if BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
+                    vPrint( 'Info', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -226,7 +225,7 @@ class BibleBooksNamesConverter:
                 logging.warning( _("Unexpected element: {} in record {} in {}").format( element.tag, k, systemName ) )
     # end of __validateSystem
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible booksNames system.
 
@@ -246,7 +245,7 @@ class BibleBooksNamesConverter:
                 if version: result += ('\n' if result else '') + '    ' + _("Version: {}").format( version )
                 date = self.__XMLSystems[x]['date']
                 if date: result += ('\n' if result else '') + '    ' + _("Last updated: {}").format( date )
-                result += ('\n' if result else '') + '    ' + _("Number of entries = {}").format( len(self.__XMLSystems[x]['tree']) )
+                result += ('\n' if result else '') + '    ' + _("Number of entries = {:,}").format( len(self.__XMLSystems[x]['tree']) )
                 numDivisions, numLeaders, numBooks = 0, 0, 0
                 for element in self.__XMLSystems[x]['tree']:
                     if element.tag == "BibleDivisionNames":
@@ -255,9 +254,9 @@ class BibleBooksNamesConverter:
                         numLeaders += 1
                     elif element.tag == "BibleBookNames":
                         numBooks += 1
-                if numDivisions: result += ('\n' if result else '') + '      ' + _("Number of divisions = {}").format( numDivisions )
-                if numLeaders: result += ('\n' if result else '') + '      ' + _("Number of bookname leaders = {}").format( numLeaders )
-                if numBooks: result += ('\n' if result else '') + '      ' + _("Number of books = {}").format( numBooks )
+                if numDivisions: result += ('\n' if result else '') + '      ' + _("Number of divisions = {:,}").format( numDivisions )
+                if numLeaders: result += ('\n' if result else '') + '      ' + _("Number of bookname leaders = {:,}").format( numLeaders )
+                if numBooks: result += ('\n' if result else '') + '      ' + _("Number of books = {:,}").format( numBooks )
         return result
     # end of __str__
 
@@ -500,7 +499,7 @@ class BibleBooksNamesConverter:
             #if self.titleString: myFile.write( "# {} data\n".format( self.titleString ) )
             #if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
-            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.XMLtree), self.XMLTreeTag ) )
+            #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.XMLTree), self.XMLTreeTag ) )
             json.dump( self.__BookNamesSystemsDict, myFile, indent=2 )
             #myFile.write( "\n\n# end of {}".format(os.path.basename(filepath) )
     # end of exportDataToJSON

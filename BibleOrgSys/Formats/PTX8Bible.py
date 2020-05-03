@@ -97,7 +97,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
         returns the loaded PTX8Bible object.
     """
     if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, f"PTX8BibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"PTX8BibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )…" )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert givenFolderName and isinstance( givenFolderName, str )
         assert strictCheck in (True,False,)
@@ -198,8 +198,7 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 if filenameUpper.endswith( extension ): numFilesFound += 1; break
             for extension in EXCLUDE_FILE_EXTENSIONS:
                 if filenameUpper.endswith( extension ): numFilesFound -= 2; break
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "PTX8 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
+        vPrint( 'Never', debuggingThisModule, "PTX8 numFilesFound2 is", numFilesFound, "Threshold is >=", MARKER_THRESHOLD )
         #for folderName in foundSubfolders:
             #if folderName.upper().startswith('USX_'): numFoldersFound += 1
         if numFilesFound >= MARKER_THRESHOLD:
@@ -752,7 +751,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.XMLTree = ElementTree().parse( bookNamesFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
         #loadErrors = []
@@ -817,7 +816,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading project lexicon data from {}…".format( lexiconFilepath ) )
         self.XMLTree = ElementTree().parse( lexiconFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
         #loadErrors = []
@@ -967,7 +966,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
         #loadErrors = []
@@ -1104,7 +1103,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading canons data from {}…".format( canonsFilepath ) )
         self.XMLTree = ElementTree().parse( canonsFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         canonsDict = {}
         #loadErrors = []
@@ -1204,7 +1203,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading checking status data from {}…".format( checkingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( checkingStatusFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         checkingStatusByBookDict, checkingStatusByCheckDict = {}, {}
         #loadErrors = []
@@ -1287,7 +1286,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
 
         self.XMLTree = ElementTree().parse( commentTagFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag == 'TagList':
@@ -1351,7 +1350,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading derived translation status data from {}…".format( derivedTranslationStatusFilepath ) )
         self.XMLTree = ElementTree().parse( derivedTranslationStatusFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         derivedTranslationStatusByBookDict = {}
         #loadErrors = []
@@ -1602,7 +1601,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading parallel passage status data from {}…".format( parallelPassageStatusFilepath ) )
         self.XMLTree = ElementTree().parse( parallelPassageStatusFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         parallelPassageStatusDict = {}
         #loadErrors = []
@@ -1699,7 +1698,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
 
         self.XMLTree = ElementTree().parse( projectBiblicalTermsFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='BiblicalTermsList':
@@ -1796,7 +1795,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
 
         self.XMLTree = ElementTree().parse( projectProgressFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='ProgressInfo':
@@ -2167,7 +2166,7 @@ class PTX8Bible( Bible ):
             vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.XMLTree = ElementTree().parse( printConfigFilepath )
-            assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+            assert self.XMLTree # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag == 'PrintDraftConfiguration':
@@ -2413,7 +2412,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( spellingStatusFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
         #loadErrors = []
@@ -2579,7 +2578,7 @@ class PTX8Bible( Bible ):
         TermRenderingsDict = {}
 
         self.XMLTree = ElementTree().parse( renderingTermsFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag == 'TermRenderingsList':
@@ -2722,7 +2721,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading word analysis data from {}…".format( wordAnalysesFilepath ) )
         self.XMLTree = ElementTree().parse( wordAnalysesFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         wordAnalysesDict = {}
         #loadErrors = []
@@ -2811,7 +2810,7 @@ class PTX8Bible( Bible ):
 
 
 
-    def loadBook( self, BBB, filename=None ):
+    def loadBook( self, BBB:str, filename=None ):
         """
         Load the requested book into self.books if it's not already loaded.
 

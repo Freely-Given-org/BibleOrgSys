@@ -92,9 +92,7 @@ def main() -> None:
     door43CatalogResources = Door43CatalogResources()
     vPrint( 'Info', debuggingThisModule, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, '' )
-        vPrint( 'Quiet', debuggingThisModule, door43CatalogResources, end='\n\n' )
+    vPrint( 'Info', debuggingThisModule, '\n{door43CatalogResources}\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )

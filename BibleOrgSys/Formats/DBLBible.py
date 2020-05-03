@@ -308,7 +308,7 @@ class DBLBible( Bible ):
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading license data from {}…".format( licenseFilepath ) )
         self.XMLTree = ElementTree().parse( licenseFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         DBLLicense = {}
         #loadErrors = []
@@ -373,7 +373,7 @@ class DBLBible( Bible ):
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
         self.XMLTree = ElementTree().parse( mdFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         def getContents( element, location ):
             """
@@ -1296,7 +1296,7 @@ class DBLBible( Bible ):
         else: styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading styles from {}…".format( styleFilepath ) )
         self.XMLTree = ElementTree().parse( styleFilepath )
-        assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        assert self.XMLTree # Fail here if we didn't load anything at all
 
         def getStyle( element, location ):
             """

@@ -201,11 +201,10 @@ class SimpleVerseKey():
     A BCVS string to be parsed can also be passed as the first (and only) parameter.
         e.g. 'SA2_12:9b'
     """
-    def __init__( self, BBB, C=None, V=None, SI=None, OSIS=False, ignoreParseErrors=False ):
+    def __init__( self, BBB:str, C=None, V=None, SI=None, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
+        vPrint( 'Never', debuggingThisModule, "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
 
         self.ignoreParseErrors = ignoreParseErrors
 
@@ -253,7 +252,7 @@ class SimpleVerseKey():
     def __ne__(self, other): return not self.__eq__(other)
 
     def __repr__(self): return self.__str__()
-    def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
+    def __str__( self ) -> str: return "SimpleVerseKey object: {}".format( self.getShortText() )
     def getShortText( self ):
         return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S if self.I is None else ('!'+self.I) )
         #except AttributeError: return 'Invalid'
@@ -337,8 +336,7 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS1_RE, referenceString )
         if match:
@@ -380,8 +378,7 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
@@ -423,8 +420,7 @@ class SimpleVersesKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -441,7 +437,7 @@ class SimpleVersesKey():
     def __ne__(self, other): return not self.__eq__(other)
 
     def __repr__(self): return self.__str__()
-    def __str__( self ): return "SimpleVersesKey object: {}".format( self.getShortText() )
+    def __str__( self ) -> str: return "SimpleVersesKey object: {}".format( self.getShortText() )
     def getShortText( self ):
         return ', '.join( [svk.getShortText() for svk in self.verseKeysList] )
         # resultStr = ''
@@ -490,8 +486,7 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS2_RE, referenceString )
         if match:
@@ -724,8 +719,7 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
@@ -815,8 +809,7 @@ class VerseRangeKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -833,7 +826,7 @@ class VerseRangeKey():
     def __ne__(self, other): return not self.__eq__(other)
 
     def __repr__(self): return self.__str__()
-    def __str__( self ): return "VerseRangeKey object: {}".format( self.getShortText() )
+    def __str__( self ) -> str: return "VerseRangeKey object: {}".format( self.getShortText() )
     def getShortText( self ):
         return '{}-{}'.format( self.rangeStart.getShortText(), self.rangeEnd.getShortText() )
         #if self.keyType=='V-V': return "{} {}:{}(?:!{})?-{}(?:!{})?".format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2 )
@@ -874,8 +867,7 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
@@ -957,8 +949,7 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
@@ -1050,8 +1041,7 @@ class FlexibleVersesKey():
     def __init__( self, referenceString, OSIS=False ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
 
@@ -1067,7 +1057,7 @@ class FlexibleVersesKey():
     def __ne__(self, other): return not self.__eq__(other)
 
     def __repr__(self): return self.__str__()
-    def __str__( self ): return "FlexibleVersesKey object: {}".format( self.getShortText() )
+    def __str__( self ) -> str: return "FlexibleVersesKey object: {}".format( self.getShortText() )
     def getShortText( self ):
         resultText = ''
         for verseKeyObject in self.verseKeyObjectList:
@@ -1118,8 +1108,7 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1630,8 +1619,7 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )

@@ -109,7 +109,7 @@ class MLWriter:
     # end of MLWriter.__init__
 
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of the XML writer system.
 

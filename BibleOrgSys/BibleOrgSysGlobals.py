@@ -106,7 +106,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-04-29' # by RJH
+LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.87'
@@ -119,10 +119,16 @@ haltOnXMLWarning = False # Used for XML debugging
 # Global variables
 #=================
 
+# Online settings
+# TODO: Should be https as soon as supported by the site
+SUPPORT_SITE_NAME = 'Freely-Given.org'
+SUPPORT_SITE_URL = f'http://{SUPPORT_SITE_NAME}/'
+DISTRIBUTABLE_RESOURCES_URL = f'{SUPPORT_SITE_URL}Software/BibleOrganisationalSystem/DistributableResources/'
+
 PICKLED_BIBLE_VERSION = '1' # Must be incremented if Bible internals get changed
 
-programStartTime = datetime.now()
 
+programStartTime = datetime.now()
 commandLineArguments = Namespace()
 
 strictCheckingFlag = debugFlag = False
@@ -130,9 +136,6 @@ maxProcesses = 1
 alreadyMultiprocessing = False # Not used in this module, but set to prevent multiple levels of multiprocessing (illegal)
 verbosityLevel = 2
 verbosityString = 'Normal'
-
-# TODO: Should be https as soon as supported by the site
-DISTRIBUTABLE_RESOURCES_URL = 'http://Freely-Given.org/Software/BibleOrganisationalSystem/DistributableResources/'
 
 
 ##########################################################################################################
@@ -180,6 +183,7 @@ BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containi
 #vPrint( 'Quiet', debuggingThisModule, f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
 BOS_DATAFILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DataFiles/' )
 BOS_DERIVED_DATAFILES_FOLDERPATH = BOS_DATAFILES_FOLDERPATH.joinpath( 'DerivedFiles/' )
+BOS_DISTRIBUTED_FILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DistributedFiles/' )
 
 BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
 #vPrint( 'Quiet', debuggingThisModule, f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
@@ -324,7 +328,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderpath!r} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderpath!r} )…" )
 
     filename = SHORT_PROGRAM_NAMEParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderpath is None: folderpath = DEFAULT_WRITEABLE_LOG_FOLDERPATH
@@ -361,7 +365,7 @@ def addConsoleLogging( consoleLoggingLevel:Optional[int]=None ) -> None:
     Adds a handler to also send ERROR and higher to console (depending on verbosity)
     """
     if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.addConsoleLogging( {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.addConsoleLogging( {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]} )…" )
 
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
@@ -1073,7 +1077,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
     """
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
-        for subelement in element.getchildren():
+        for subelement in element:
             warningString = "{}Unexpected {!r} XML sub-element ({}) in {} with text/tail {}/{}" \
                             .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
                                 element.text.strip() if element.text else element.text,
@@ -1285,7 +1289,7 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
         then addStandardOptionsAndProcess must be called on it.
     """
     if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderpath!r} )" )
+        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderpath!r} )…" )
     setupLoggingToFile( shortProgName, progVersion, folderpath=loggingFolderpath )
     logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
 

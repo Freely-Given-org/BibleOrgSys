@@ -67,7 +67,7 @@ class ISO_639_3_Languages:
         self.__IDDict, self.__NameDict = None, None # We'll import into this in loadData
     # end of ISO_639_3_Languages.__init__
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 

@@ -82,7 +82,7 @@ class ISO_639_3_LanguagesConverter:
         self.title = "ISO 639-3 language codes"
 
         # These are fields that we will fill later
-        self._XMLtree, self.__DataDicts = None, None
+        self._XMLTree, self.__DataDicts = None, None
     # end of __init__
 
     def loadAndValidate( self, XMLFileOrFilepath=None ):
@@ -90,7 +90,7 @@ class ISO_639_3_LanguagesConverter:
         Loads (and crudely validates the XML file) into an element tree.
             Allows the filepath of the source XML file to be specified, otherwise uses the default.
         """
-        if self._XMLtree is None: # We mustn't have already have loaded the data
+        if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
                 # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
@@ -111,27 +111,27 @@ class ISO_639_3_LanguagesConverter:
         """
         assert XMLFileOrFilepath
         self.__XMLFileOrFilepath = XMLFileOrFilepath
-        assert self._XMLtree is None or len(self._XMLtree)==0 # Make sure we're not doing this twice
+        assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
         vPrint( 'Info', debuggingThisModule, "Loading ISO 639-3 languages XML file from {!r}…".format( XMLFileOrFilepath ) )
-        self._XMLtree = ElementTree().parse( XMLFileOrFilepath )
-        assert self._XMLtree # Fail here if we didn't load anything at all
+        self._XMLTree = ElementTree().parse( XMLFileOrFilepath )
+        assert self._XMLTree # Fail here if we didn't load anything at all
 
-        if self._XMLtree.tag  != self._treeTag:
-            logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLtree.tag ) )
+        if self._XMLTree.tag  != self._treeTag:
+            logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLTree.tag ) )
     # end of _load
 
     def _validate( self ):
         """
         Check/validate the loaded data.
         """
-        assert self._XMLtree
+        assert self._XMLTree
 
         uniqueDict = {}
         #for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
         for attributeName in self._uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
-        for j,element in enumerate(self._XMLtree):
+        for j,element in enumerate(self._XMLTree):
             if element.tag == self._mainElementTag:
                 BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
@@ -169,7 +169,7 @@ class ISO_639_3_LanguagesConverter:
                 logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
     # end of _validate
 
-    def __str__( self ):
+    def __str__( self ) -> str:
         """
         This method returns the string representation of a Bible book code.
 
@@ -178,27 +178,27 @@ class ISO_639_3_LanguagesConverter:
         """
         result = "ISO_639_3_Languages_Converter object"
         if self.title: result += ('\n' if result else '') + self.title
-        result += ('\n' if result else '') + "  Number of entries = " + str(len(self._XMLtree))
+        result += ('\n' if result else '') + "  Number of entries = " + str(len(self._XMLTree))
         return result
     # end of __str__
 
     def __len__( self ):
         """ Returns the number of languages loaded. """
-        return len( self._XMLtree )
+        return len( self._XMLTree )
     # end of __len__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data into suitable Python containers to use in a Python program.
-        (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
+        (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        assert self._XMLtree
+        assert self._XMLTree
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different Attributes as the key
         myIDDict, myNameDict = {}, {}
-        for element in self._XMLtree:
+        for element in self._XMLTree:
             # Get the required information out of the tree for this element
             # Start with the compulsory attributes
             ID = element.get("id")
@@ -228,7 +228,7 @@ class ISO_639_3_LanguagesConverter:
         """
         import pickle
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -254,7 +254,7 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -269,7 +269,7 @@ class ISO_639_3_LanguagesConverter:
             myFile.write( "# {}\n#\n".format( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by ISO_639_3_Languages_Converter.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
             if self.title: myFile.write( "# {}\n".format( self.title ) )
-            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
             exportPythonDict( myFile, IDDict, "ISO639_3_Languages_IDDict", "id", "Name, Type, Scope, Part1Code, Part2Code" )
             exportPythonDict( myFile, NameDict, "ISO639_3_Languages_NameDict", "name", "ID" )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
@@ -283,7 +283,7 @@ class ISO_639_3_LanguagesConverter:
         """
         import json
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -345,7 +345,7 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLtree
+        assert self._XMLTree
         self.importDataToPython()
         assert self.__DataDicts
 
@@ -364,7 +364,7 @@ class ISO_639_3_LanguagesConverter:
             myCFile.write( "// {}\n//\n".format( cFilepath ) )
             lines = "// This UTF-8 file was automatically generated by ISO_639_3_Languages.py V{} on {}\n//\n".format( PROGRAM_VERSION, datetime.now() )
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLtree), self._treeTag ) )
+            myCFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self._XMLTree), self._treeTag ) )
             myHFile.write( "\n#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
             myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
 

@@ -410,7 +410,7 @@ class OpenSongXMLBible( Bible ):
         """
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
-        if BibleOrgSysGlobals.debugFlag: assert len( self.XMLTree ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.XMLTree.tag == OpenSongXMLBible.treeTag:
@@ -493,7 +493,7 @@ class OpenSongXMLBible( Bible ):
     # end of OpenSongXMLBible.__validateAndExtractBook
 
 
-    def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
+    def __validateAndExtractChapter( self, BBB:str, thisBook, chapter ):
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
