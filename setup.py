@@ -9,11 +9,12 @@ from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
 VERSION = '0.0.18'
-LAST_MODIFIED_DATE = '2020-04-30' # by RJH — when setup.py was modified below
+LAST_MODIFIED_DATE = '2020-05-04' # by RJH — when setup.py was modified below
 
 
 # NOTE: The package doesn't include the XML data files, only the derived pickles
 INCLUDE_DERIVED_DATA_PICKLE_FILES = True
+INCLUDE_DISTRIBUTABLE_DATA_PICKLE_FILES = True
 # INCLUDE_DERIVED_DATA_JSON_FILES = False
 
 
@@ -108,8 +109,12 @@ if INCLUDE_DERIVED_DATA_PICKLE_FILES:
             'DataFiles/DerivedFiles/BiblePunctuationSystems_Tables.pickle',
             'DataFiles/DerivedFiles/BibleVersificationSystems_Tables.pickle',
             'DataFiles/DerivedFiles/BibleOrganisationalSystems_Tables.pickle',
-
-            'DistributedFiles/'
+            ]
+if INCLUDE_DISTRIBUTABLE_DATA_PICKLE_FILES:
+    package_data_list += [
+            'DistributedFiles/DistributedFiles.ReadMe.txt',
+            'DistributedFiles/HebrewLexicon_Tables.1.pickle',
+            'DistributedFiles/GreekLexicon_Strongs_Table.1.pickle',
             ]
 # if INCLUDE_DERIVED_DATA_JSON_FILES:
 #     package_data_list += [
@@ -178,11 +183,7 @@ Multiprocessing is used by default to load Bibles that have separate books in se
 
 On most systems, BibleOrgSys can be installed (as shown above) with:
 
-    `pip install BibleOrgSys`
-
-but if it complains, maybe:
-
-    python3 -m pip install --user BibleOrgSys
+    pip install BibleOrgSys
 
 or if you only want the library, and don't care about the included app:
 
@@ -291,7 +292,7 @@ if not isinstance( loadedBible, str ): # i.e., not an error message
 BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 ```
 
-The BOS is developed and well-tested on Linux (Ubuntu) but also runs on Windows (although not so well tested).
+The BOS is developed and well-tested on Linux (Ubuntu) but should also run on Windows and OS X (although not so well tested).
 
 See https://ubsicap.github.io/usfm/ for more information about USFM.
 

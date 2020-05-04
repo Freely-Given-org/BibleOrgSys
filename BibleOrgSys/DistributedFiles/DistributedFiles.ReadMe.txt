@@ -1,0 +1,35 @@
+DistributedFiles.ReadMe.txt
+
+Last updated: 2020-05-04 by RJH
+
+This folder contains adapted materials from other sources.
+We are very grateful to be able to freely use and distribute the work of others.
+
+
+These may include:
+
+1. HebrewLexicon_Tables.pickle
+
+This is material from the Open Scriptures Hebrew Bible (OSHB) Lexicon project.
+The source files can be viewed at https://github.com/openscriptures/HebrewLexicon.
+The online lexicon can be viewed at http://openscriptures.github.io/HebrewLexicon/.
+
+According to the readme.md:
+
+These files are released under the
+[Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by/4.0/)
+license. The actual text of Brown, Driver, Briggs and Strong’s Hebrew
+dictionary remain in the public domain.  For attribution purposes,
+credit the Open Scriptures Hebrew Bible Project.
+
+
+2. GreekLexicon_Strongs_Table.pickle
+
+This is material from
+The source files can be viewed at https://github.com/morphgnt/strongs-dictionary-xml.
+The online lexicon can be viewed at https://greeklexicon.org/.
+
+According to the README.md:
+
+Released under the Creative Commons CC0 waiver.
+http://creativecommons.org/publicdomain/zero/1.0/

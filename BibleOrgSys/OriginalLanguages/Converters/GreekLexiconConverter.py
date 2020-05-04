@@ -43,13 +43,17 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-04' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexiconConverter"
 PROGRAM_NAME = "Greek Lexicon XML format handler"
 PROGRAM_VERSION = '0.17'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
+
+
+# Greek lexicon folder
+DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
 
 
 
@@ -114,11 +118,12 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Normal', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Never', debuggingThisModule, f"loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
-            XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+            XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
+        vPrint( 'Normal', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( _("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
@@ -170,9 +175,9 @@ class GreekStrongsFileConverter:
         # Process the entry attributes first
         strongs5 = None
         for attrib,value in entry.items():
-            if attrib ==  "strongs":
+            if attrib ==  'strongs':
                 strongs5 = value
-                vPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
+                # vPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 

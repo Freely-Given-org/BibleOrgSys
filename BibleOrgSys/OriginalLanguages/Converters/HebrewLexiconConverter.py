@@ -42,13 +42,17 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-04' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon format handler"
 PROGRAM_VERSION = '0.20'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
+
+
+# Hebrew lexicon folder
+DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' )
 
 
 
@@ -109,11 +113,12 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
-            XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
+            XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
+        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( _("AugmentedStrongsIndexFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
@@ -258,11 +263,12 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
-            XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
+            XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
+        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -483,11 +489,12 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
-            XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
+            XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
+        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -515,7 +522,7 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                vPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
+                # vPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
@@ -692,11 +699,12 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFolder ) )
+        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
-            XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
+            XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
+        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
@@ -724,7 +732,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                vPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
+                # vPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
@@ -753,7 +761,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                vPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
+                # vPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -779,7 +787,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                vPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
+                # vPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
