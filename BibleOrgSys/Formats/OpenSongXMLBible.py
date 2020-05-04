@@ -87,7 +87,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
 
 
-LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+LAST_MODIFIED_DATE = '2020-05-04' # by RJH
 SHORT_PROGRAM_NAME = "OpenSongBible"
 PROGRAM_NAME = "OpenSong XML Bible format handler"
 PROGRAM_VERSION = '0.39'
@@ -682,7 +682,10 @@ def fullDemo() -> None:
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
-                    vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
+                    try:
+                        vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
+                    except KeyError:
+                        vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), "KEY ERROR: Verse doesn't seem to exist!" )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not xb: halt # if no books
 # end of OpenSongXMLBible.fullDemo
 
