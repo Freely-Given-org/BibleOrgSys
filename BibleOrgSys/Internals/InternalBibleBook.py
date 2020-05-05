@@ -73,7 +73,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, Int
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-04-24' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -323,7 +323,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.__len__
 
 
-    def __iter__( self ):
+    def __iter__( self ) -> InternalBibleEntry:
         """
         Yields the next processed line.
 

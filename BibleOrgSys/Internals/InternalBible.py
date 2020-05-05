@@ -54,7 +54,7 @@ The calling class then fills
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Union
 import os
 import sys
 import logging
@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-01' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -446,7 +446,8 @@ class InternalBible:
         # Discover what we've got loaded so we don't have to worry about doing it later
         #self.discover() # Removed from here coz it's quite time consuming if we don't really need it yet
 
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: self.discoverProperties()
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            self.discoverProperties()
     # end of InternalBible.doPostLoadProcessing
 
 
@@ -741,13 +742,14 @@ class InternalBible:
             manifestDict = self.suppliedMetadata['uW']['Manifest']
             dublinCoreDict = manifestDict['dublin_core']
             projectsList = manifestDict['projects']
-            self.FullName = self.Workname = self.Name= self.ProjectName = dublinCoreDict['title']
-            self.Abbreviation = dublinCoreDict['identifier'].upper()
-            self.Creator = dublinCoreDict['creator']
-            self.Rights = dublinCoreDict['rights']
-            self.Language = dublinCoreDict['language']['title']
-            self.ISOLanguageCode = dublinCoreDict['language']['identifier']
-            self.Publisher = dublinCoreDict['publisher']
+            # Where exactly should we be putting this stuff ???
+            self.settingsDict['FullName'] = self.Workname = self.Name= self.ProjectName = dublinCoreDict['title']
+            self.settingsDict['Abbreviation'] = dublinCoreDict['identifier'].upper()
+            self.settingsDict['Creator'] = dublinCoreDict['creator']
+            self.settingsDict['Rights'] = dublinCoreDict['rights']
+            self.settingsDict['Language'] = dublinCoreDict['language']['title']
+            self.settingsDict['ISOLanguageCode'] = dublinCoreDict['language']['identifier']
+            self.settingsDict['Publisher'] = dublinCoreDict['publisher']
             self.encoding = 'utf-8'
             self.possibleFilenameDict = {}
             # print( "projectsList", len(projectsList), projectsList )
@@ -759,6 +761,7 @@ class InternalBible:
                 filename = bookDict['path']
                 if filename.startswith( './' ): filename = filename[2:]
                 self.possibleFilenameDict[BBB] = filename
+            self.givenBookList = self.availableBBBs # TODO: Clean this up
 
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
@@ -2194,7 +2197,7 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference ):
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2218,7 +2221,7 @@ class InternalBible:
     # end of InternalBible.getContextVerseData
 
 
-    def getVerseDataList( self, BCVReference ):
+    def getVerseDataList( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
         """
         Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
 
@@ -2245,7 +2248,7 @@ class InternalBible:
     # end of InternalBible.getVerseDataList
 
 
-    def getVerseText( self, BCVReference, fullTextFlag=False ):
+    def getVerseText( self, BCVReference, fullTextFlag:bool=False ) -> str:
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
 
