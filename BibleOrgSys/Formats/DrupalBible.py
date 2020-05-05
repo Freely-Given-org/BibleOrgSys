@@ -99,7 +99,7 @@ filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
 
 
 
-def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for DrupalBible Bible files or folders in the folder and in the next level down.
 

@@ -95,7 +95,7 @@ filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
 
 
 
-def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for YET Bible files or folders in the folder and in the next level down.
 

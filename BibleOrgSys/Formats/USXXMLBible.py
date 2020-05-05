@@ -55,7 +55,7 @@ debuggingThisModule = False
 logger = logging.getLogger( SHORT_PROGRAM_NAME )
 
 
-def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def USXXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for USX Bible files or folders in the folder and in the next level down.
 

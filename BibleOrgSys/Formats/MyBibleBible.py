@@ -226,7 +226,7 @@ assert len(BOOKNUMBER_TABLE) == len(BOOK_TABLE)
 
 
 
-def MyBibleBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for MyBible Bible files or folders in the folder and in the next level down.
 

@@ -94,7 +94,7 @@ def t( messageString ):
 ## end of removeUnwantedTupleExtensions
 
 
-def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for ESFM Bible files or folders in the folder and in the next level down.
 

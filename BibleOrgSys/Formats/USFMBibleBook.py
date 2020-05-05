@@ -61,7 +61,7 @@ class USFMBibleBook( BibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
         """
         Create the USFM Bible book object.
         """

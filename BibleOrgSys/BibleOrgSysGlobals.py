@@ -106,7 +106,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.87'
@@ -141,7 +141,7 @@ verbosityString = 'Normal'
 ##########################################################################################################
 
 
-COMMONLY_IGNORED_FOLDERS = '.hg/', '.git/', '__MACOSX' # Used when searching for Bibles
+COMMONLY_IGNORED_FOLDERS = '.hg', '.git','.gitignore','.github', '__MACOSX' # Used when searching for Bibles
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
 

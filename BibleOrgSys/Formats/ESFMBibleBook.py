@@ -64,7 +64,7 @@ class ESFMBibleBook( BibleBook ):
     Class to load and manipulate a single ESFM file / book.
     """
 
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
         """
         Create the ESFM Bible book object.
         """

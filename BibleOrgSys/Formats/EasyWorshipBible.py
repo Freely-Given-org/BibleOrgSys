@@ -65,7 +65,7 @@ FILENAME_ENDING = '.EWB' # Must be UPPERCASE
 
 
 
-def EasyWorshipBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def EasyWorshipBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for EasyWorship Bible files or folders in the folder and in the next level down.
 

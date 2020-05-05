@@ -64,7 +64,7 @@ filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
 
 
 
-def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for PDB Bible files or folders in the folder and in the next level down.
 

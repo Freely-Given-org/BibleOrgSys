@@ -59,7 +59,7 @@ class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
         """
         Create the USX Bible book object.
         """

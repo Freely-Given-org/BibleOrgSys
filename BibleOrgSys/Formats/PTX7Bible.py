@@ -76,7 +76,7 @@ MARKER_THRESHOLD = 3 # How many of the above must be found
 
 
 
-def PTX7BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PTX7BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for Paratext Bible bundles in the folder and in the next level down.
 

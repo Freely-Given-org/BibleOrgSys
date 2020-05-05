@@ -84,7 +84,7 @@ EXPECTED_FOLDER_NAMES = ( 'Figures', 'PrintDraft', 'Interlinear_en', 'shared', #
 
 
 
-def PTX8BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for Paratext Bible bundles in the folder and in the next level down.
 

@@ -58,7 +58,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT'
 METADATA_FILENAME = 'Metadata.txt'
 
 
-def BCVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for BCV Bible files or folders in the folder and in the next level down.
 
@@ -230,7 +230,7 @@ class BCVBible( Bible ):
 
     def loadMetadata( self, metadataFilepath ):
         """
-        Process the netadata from the given filepath.
+        Process the metadata from the given filepath.
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
@@ -391,7 +391,7 @@ class BCVBibleBook( BibleBook ):
     Class to load and manipulate a single BCV file / book.
     """
 
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
         """
         Create the BCV Bible book object.
         """

@@ -478,7 +478,7 @@ class GoBibleBook( BibleBook ):
     Class to load and manipulate a single GoBible file / book.
     """
 
-    def __init__( self, containerBibleObject, BBB ):
+    def __init__( self, containerBibleObject:Bible, BBB:str ) -> None:
         """
         Create the Go Bible book object.
         """

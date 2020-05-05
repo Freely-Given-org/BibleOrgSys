@@ -117,7 +117,7 @@ for count in theWordBookLines: total += count
 assert total == theWordTotalLines
 
 
-def theWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
+def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
 
