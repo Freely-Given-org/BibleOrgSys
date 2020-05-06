@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-05-06' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -756,11 +756,16 @@ class InternalBible:
             for bookDict in projectsList:
                 # print( "bookDict", len(bookDict), bookDict )
                 USFMBookCode = bookDict['identifier']
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                if USFMBookCode == 'obs':
+                    BBB = 'OBS' # Special case
+                    contentPath = bookDict['path']
+                    assert contentPath == './content' # No need to save this here
+                else:
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode )
+                    filename = bookDict['path']
+                    if filename.startswith( './' ): filename = filename[2:]
+                    self.possibleFilenameDict[BBB] = filename
                 self.availableBBBs.add( BBB )
-                filename = bookDict['path']
-                if filename.startswith( './' ): filename = filename[2:]
-                self.possibleFilenameDict[BBB] = filename
             self.givenBookList = self.availableBBBs # TODO: Clean this up
 
         elif applyMetadataType == 'OSIS':

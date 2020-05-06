@@ -73,7 +73,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, Int
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-05-06' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -266,7 +266,8 @@ class InternalBibleBook:
             self.containerBibleObject = parameter1
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
-        if BibleOrgSysGlobals.debugFlag: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
 
         self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( self.BBB )
 

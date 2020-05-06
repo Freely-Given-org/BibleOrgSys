@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-01' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "SwordInstallManager"
 PROGRAM_NAME = "Sword download handler"
 PROGRAM_VERSION = '0.12'
@@ -103,6 +103,7 @@ IMPORTANT_SWORD_CONF_FIELD_NAMES = ( 'Name', 'Abbreviation', 'Font', 'Lang', 'Di
 TECHNICAL_SWORD_CONF_FIELD_NAMES = ( 'ModDrv', 'DataPath', 'Encoding', 'SourceType', 'GlobalOptionFilter',
             'CaseSensitiveKeys',
             'KeyType', # e.g., TreeKey
+            'KeySort', # Seems to contain binary info
             'SearchOption',
             'CompressType', 'BlockType',
             'MinimumVersion', 'MinimumSwordVersion', 'SwordVersion', 'SwordVersionDate', 'OSISVersion', 'minMKVersion',

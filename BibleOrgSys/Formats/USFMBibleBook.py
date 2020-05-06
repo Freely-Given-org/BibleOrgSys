@@ -39,11 +39,11 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
-from BibleOrgSys.Bible import BibleBook
+from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.54'
@@ -90,7 +90,7 @@ class USFMBibleBook( BibleBook ):
         #vPrint( 'Quiet', debuggingThisModule, f"load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
-        def doaddLine( originalMarker, originalText ):
+        def doaddLine( originalMarker:str, originalText:str ) -> None:
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 

@@ -29,12 +29,14 @@ See https://github.com/xkjyeah/gobible-creator
 and https://github.com/DavidHaslam/GoBibleCore.
 """
 from gettext import gettext as _
+from typing import Optional
 import logging
 import os
 import struct
 from pathlib import Path
 import multiprocessing
-import tempfile, zipfile
+import tempfile
+import zipfile
 from shutil import rmtree
 
 if __name__ == '__main__':
@@ -410,7 +412,7 @@ class GoBible( Bible ):
     # end of GoBible.loadBook
 
 
-    def _loadBookMP( self, BBB ):
+    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)

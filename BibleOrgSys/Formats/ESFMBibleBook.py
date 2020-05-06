@@ -25,21 +25,10 @@
 """
 Module for defining and manipulating ESFM Bible books.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-13' # by RJH
-SHORT_PROGRAM_NAME = "ESFMBibleBook"
-PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.48'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
-import logging
 from pathlib import Path
+import logging
 
 if __name__ == '__main__':
     import sys
@@ -50,7 +39,16 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
-from BibleOrgSys.Bible import BibleBook
+from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-03-13' # by RJH
+SHORT_PROGRAM_NAME = "ESFMBibleBook"
+PROGRAM_NAME = "ESFM Bible book handler"
+PROGRAM_VERSION = '0.48'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 ESFM_SEMANTIC_TAGS = 'AGLOPQTS' # S is put last coz it must be the last tag if there are multiple tags
@@ -58,6 +56,7 @@ ESFM_STRONGS_TAGS = 'HG'
 
 
 sortedNLMarkers = None
+
 
 class ESFMBibleBook( BibleBook ):
     """
@@ -578,6 +577,57 @@ def briefDemo() -> None:
             demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
+    if 0: # Test a whole folder full of files
+        name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, testFolder = "WEB", Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
+        if os.access( testFolder, os.R_OK ):
+            vPrint( 'Normal', debuggingThisModule, _("Scanning {} from {}…").format( name, testFolder ) )
+            fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
+            for BBB,filename in fileList:
+                demoFile( name, filename, testFolder, BBB )
+        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+# end of ESFMBibleBook.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    def demoFile( name, filename, folder, BBB ):
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        EBB = ESFMBibleBook( name, BBB )
+        EBB.load( filename, folder )
+        vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( EBB.getField( 'h' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, EBB )
+        EBB.validateMarkers()
+        EBBVersification = EBB.getVersification()
+        vPrint( 'Info', debuggingThisModule, EBBVersification )
+        UBBAddedUnits = EBB.getAddedUnits()
+        vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
+        discoveryDict = EBB._discover()
+        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        EBB.check()
+        EBErrors = EBB.getCheckResults()
+        vPrint( 'Info', debuggingThisModule, EBErrors )
+    # end of fullDemoFile
+
+
+    from BibleOrgSys.InputOutput import USFMFilenames
+
+    if 1: # Test individual files
+        #name, testFolder, filename, BBB = "WEB", Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, testFolder, filename, BBB = "WEB", Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        if os.access( testFolder, os.R_OK ):
+            demoFile( name, filename, testFolder, BBB )
+        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+
     if 1: # Test a whole folder full of files
         name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
@@ -587,14 +637,7 @@ def briefDemo() -> None:
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
-# end of fullDemo
-
-def fullDemo() -> None:
-    """
-    Full demo to check class is working
-    """
-    briefDemo()
-# end of fullDemo
+# end of ESFMBibleBook.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

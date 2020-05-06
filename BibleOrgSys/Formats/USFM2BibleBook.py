@@ -25,18 +25,8 @@
 """
 Module for defining and manipulating USFM2 Bible books.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-11' # by RJH
-SHORT_PROGRAM_NAME = "USFM2BibleBook"
-PROGRAM_NAME = "USFM2 Bible book handler"
-PROGRAM_VERSION = '0.53'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
+from pathlib import Path
 import os
 import logging
 
@@ -48,12 +38,20 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
-from BibleOrgSys.Bible import BibleBook
-
+from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
+
+
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+SHORT_PROGRAM_NAME = "USFM2BibleBook"
+PROGRAM_NAME = "USFM2 Bible book handler"
+PROGRAM_VERSION = '0.53'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
+
 USFM2Markers = USFM2Markers().loadData()
-
-
 sortedNLMarkers = None
 
 
@@ -309,6 +307,58 @@ def briefDemo() -> None:
             demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
+    if 1: # Test a whole folder full of files
+        name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, encoding, testFolder = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
+        if os.access( testFolder, os.R_OK ):
+            vPrint( 'Normal', debuggingThisModule, _("Scanning {} from {}…").format( name, testFolder ) )
+            fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
+            for BBB,filename in fileList:
+                demoFile( name, filename, testFolder, BBB )
+        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+# end of USFM2BibleBook.briefDemo
+
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    def demoFile( name, filename, folder, BBB ):
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        UBB = USFM2BibleBook( name, BBB )
+        UBB.load( filename, folder, encoding )
+        vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+        vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, UBB )
+        UBB.validateMarkers()
+        UBBVersification = UBB.getVersification()
+        vPrint( 'Info', debuggingThisModule, UBBVersification )
+        UBBAddedUnits = UBB.getAddedUnits()
+        vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
+        discoveryDict = UBB._discover()
+        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        UBB.check()
+        UBErrors = UBB.getCheckResults()
+        vPrint( 'Info', debuggingThisModule, UBErrors )
+    # end of fullDemoFile
+
+
+    from BibleOrgSys.InputOutput import USFMFilenames
+
+    if 1: # Test individual files -- choose one of these or add your own
+        name, encoding, testFolder, filename, BBB = "USFM2Test", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/'), '70-MATeng-amp.usfm', 'MAT' # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        if os.access( testFolder, os.R_OK ):
+            demoFile( name, filename, testFolder, BBB )
+        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
@@ -318,14 +368,7 @@ def briefDemo() -> None:
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
-# end of fullDemo
-
-def fullDemo() -> None:
-    """
-    Full demo to check class is working
-    """
-    briefDemo()
-# end of fullDemo
+# end of USFM2BibleBook.fullDemo
 
 if __name__ == '__main__':
     from multiprocessing import freeze_support

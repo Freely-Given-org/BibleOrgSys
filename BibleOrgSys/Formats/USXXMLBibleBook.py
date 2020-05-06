@@ -39,10 +39,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
-from BibleOrgSys.Bible import BibleBook
+from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
+LAST_MODIFIED_DATE = '2020-05-05' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
 PROGRAM_VERSION = '0.27'
@@ -738,8 +738,6 @@ def briefDemo() -> None:
         if len(someString)<maxLen: return someString
         return someString[:int(maxLen/2)]+'…'+someString[-int(maxLen/2):]
 
-    #name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/' ) # You can put your USX test folder here
-    #name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/' ) # You can put your USX test folder here
     name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):

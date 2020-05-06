@@ -696,7 +696,7 @@ class PickledBible( Bible ):
     # end of PickledBible.loadBook
 
 
-    def _loadBookMP( self, BBB ):
+    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
