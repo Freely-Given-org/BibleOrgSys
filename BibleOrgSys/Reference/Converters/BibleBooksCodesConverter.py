@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
 PROGRAM_VERSION = '0.81'
@@ -51,7 +51,7 @@ programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-SPECIAL_BOOK_CODES = 'ALL', 'UNK', 'OBS' # We check these aren't used for other things
+SPECIAL_BOOK_CODES = ('ALL',) # We check these aren't used for other things
 
 
 

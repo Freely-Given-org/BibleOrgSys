@@ -4642,6 +4642,25 @@
       "nameEnglish": "Unspecified extra XXG",
       "typicalSection": "BAK"
     },
+    "997": {
+      "referenceAbbreviation": "OBS",
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": "50",
+      "possibleAlternativeBooks": null,
+      "nameEnglish": "Open Bible Stories",
+      "typicalSection": "???"
+    },
     "998": {
       "referenceAbbreviation": "TST",
       "SBLAbbreviation": null,
@@ -9324,6 +9343,25 @@
       "nameEnglish": "Unspecified extra XXG",
       "typicalSection": "BAK"
     },
+    "OBS": {
+      "referenceNumber": 997,
+      "SBLAbbreviation": null,
+      "OSISAbbreviation": null,
+      "SwordAbbreviation": null,
+      "CCELNumberString": null,
+      "USFMAbbreviation": null,
+      "USFMNumberString": null,
+      "USXNumberString": null,
+      "UnboundCodeString": null,
+      "BibleditNumberString": null,
+      "NETBibleAbbreviation": null,
+      "DrupalBibleAbbreviation": null,
+      "ByzantineAbbreviation": null,
+      "numExpectedChapters": "50",
+      "possibleAlternativeBooks": null,
+      "nameEnglish": "Open Bible Stories",
+      "typicalSection": "???"
+    },
     "TST": {
       "referenceNumber": 998,
       "SBLAbbreviation": null,
@@ -9602,6 +9640,7 @@
     "HYP",
     "STR",
     "SEM",
+    "OBS",
     "TST",
     "UNK"
   ],
@@ -16027,6 +16066,10 @@
     "UNSPECIFIED EXTRA XXG": [
       860,
       "XXG"
+    ],
+    "OPEN BIBLE STORIES": [
+      997,
+      "OBS"
     ],
     "TEST": [
       998,
