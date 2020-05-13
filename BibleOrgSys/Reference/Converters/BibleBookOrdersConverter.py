@@ -90,7 +90,7 @@ class BibleBookOrdersConverter:
         Load and pre-process the specified book order systems.
         """
         if not self._XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
+            if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookOrders/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
             vPrint( 'Info', debuggingThisModule, _("Loading book order systems from {}…").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"

@@ -257,10 +257,10 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     startedCVs1 = startedCVs2 = False
     while True:
         if lineIndex >= resultDict['File1']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "File1 done" )
+            vPrint( 'Never', debuggingThisModule, "File1 done" )
             break
         if lineIndex >= resultDict['File2']['LineCount']:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "File2 done" )
+            vPrint( 'Never', debuggingThisModule, "File2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
         #vPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )

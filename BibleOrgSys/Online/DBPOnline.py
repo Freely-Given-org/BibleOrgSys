@@ -512,7 +512,7 @@ class DBPBible( GenericOnlineBible ):
         #self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "DBPBible.__init__: bookList", len(bookList))#, bookList )
+            vPrint( 'Never', debuggingThisModule, "DBPBible.__init__: bookList", len(bookList))#, bookList )
 
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )

@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-05-07' # by RJH
 SHORT_PROGRAM_NAME = "SwordInstallManager"
 PROGRAM_NAME = "Sword download handler"
 PROGRAM_VERSION = '0.12'
@@ -115,7 +115,8 @@ ALL_SWORD_CONF_FIELD_NAMES = IMPORTANT_SWORD_CONF_FIELD_NAMES + TECHNICAL_SWORD_
 # Ones that have an underline and then a subfield such as a language _en or _ru
 SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING = ('History', 'Description', 'About',
                                              'Copyright', 'CopyrightHolder', 'CopyrightContactAddress',
-                                             'DistributionNotes', 'DistributionLicense', )
+                                             'DistributionNotes', 'DistributionLicense',
+                                             'TextSource', 'ShortPromo' )
 
 # These are the only ones where we expect multiple values (and some of these are probably module bugs)
 SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES = ('Feature', 'GlobalOptionFilter', 'DistributionLicense', 'LCSH',
@@ -127,7 +128,7 @@ SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES = ('Feature', 'GlobalOptionFilter', 'D
 
 
 
-def processConfLines( abbreviation:str, openFile, confDict ):
+def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> None:
     """
     Process a line from a Sword .conf file
         and saves the results in the given confDict.
@@ -155,7 +156,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
         if abbreviation=='burjudson' and thisLine.endswith(" available from "): continuationFlag = True # Bad module it seems
 
         if not continuationFlag: # process the line
-            if lineCount==1 or lastLine==None: # First (non-blank) line should contain a name in square brackets
+            if lineCount==1 or lastLine is None: # First (non-blank) line should contain a name in square brackets
                 assert '=' not in thisLine and thisLine[0]=='[' and thisLine[-1]==']'
                 confDict['Name'] = thisLine[1:-1]
             else: # not the first line in the conf file
@@ -166,6 +167,7 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                     continue
                 if 'History=1.4-081031=' in thisLine and not BibleOrgSysGlobals.strictCheckingFlag:
                     thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
+                thisLine = thisLine.replace( 'Hisotry', 'History' ) # Fix module error in 'twenty'
                 bits = thisLine.split( '=', 1 )
                 #vPrint( 'Quiet', debuggingThisModule, "processConfLines", abbreviation, bits )
                 assert len(bits) == 2
@@ -190,7 +192,8 @@ def processConfLines( abbreviation:str, openFile, confDict ):
                     #vPrint( 'Quiet', debuggingThisModule, "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
                     assert len(fieldContents) == 2
                     #vPrint( 'Quiet', debuggingThisModule, j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
-                if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+                if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+                    # print( f"fieldName: '{fieldName}'")
                     assert '_' not in fieldName # now
                 if fieldName=='MinumumVersion': fieldName = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
                 if fieldName=='CompressType' and fieldContents=='Zip': fieldContents = 'ZIP' # Fix error in romcor.conf
@@ -479,7 +482,7 @@ class SwordInstallManager():
         vPrint( 'Never', debuggingThisModule, _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
 
         # Read the conf file
-        confDict = {}
+        confDict:Dict[str,str] = {}
         with open( confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as confFile:
             processConfLines( confName, confFile, confDict )
 

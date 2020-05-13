@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2020-05-10' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -86,10 +86,10 @@ debuggingThisModule = False
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
         'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
         'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
-assert len(OT39_BOOKLIST) == 39
+assert len( OT39_BOOKLIST ) == 39
 NT27_BOOKLIST = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
         'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
-assert len(NT27_BOOKLIST) == 27
+assert len( NT27_BOOKLIST ) == 27
 
 
 
@@ -120,6 +120,7 @@ class InternalBible:
         # Set up empty containers for the object
         self.books = {}
         self.availableBBBs = set() # Will eventually contain a set of the books codes which we know are in this particular Bible (even if the book is not loaded yet)
+        self.givenBookList = [] # Only if we're given this (cf. deduced)
         self.suppliedMetadata = None
         self.settingsDict = {} # This is often filled from self.suppliedMetadata in applySuppliedMetadata()
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
@@ -139,7 +140,7 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "InternalBible.__str__()…" )
+        vPrint( 'Never', debuggingThisModule, "InternalBible.__str__()…" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
@@ -765,8 +766,8 @@ class InternalBible:
                     filename = bookDict['path']
                     if filename.startswith( './' ): filename = filename[2:]
                     self.possibleFilenameDict[BBB] = filename
+                self.givenBookList.append( BBB )
                 self.availableBBBs.add( BBB )
-            self.givenBookList = self.availableBBBs # TODO: Clean this up
 
         elif applyMetadataType == 'OSIS':
             # Available fields include: Version, Creator, Contributor, Subject, Format, Type, Identifier, Source,
@@ -866,7 +867,7 @@ class InternalBible:
 
         Returns None if nothing found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, _("getSetting( {} )").format( settingName ) )
+        vPrint( 'Never', debuggingThisModule, _("getSetting( {} )").format( settingName ) )
         #vPrint( 'Quiet', debuggingThisModule, "\nSettingsDict:", self.settingsDict )
         #vPrint( 'Quiet', debuggingThisModule, "\nSupplied Metadata:", self.suppliedMetadata )
 
@@ -1024,7 +1025,7 @@ class InternalBible:
         for BBB in self.reverseDict: assert self.reverseDict[BBB] != referenceString
 
         # See if a book name starts with this string
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using startswith1…" )
+        vPrint( 'Never', debuggingThisModule, "  getXRefBBB using startswith1…" )
         count = 0
         for bookName in self.bookNameDict:
             if bookName.startswith( adjRefString ):
@@ -1049,7 +1050,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
             vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using startswith2…" )
+            vPrint( 'Never', debuggingThisModule, "  getXRefBBB using startswith2…" )
             for bookName in self.combinedBookNameDict:
                 if bookName.startswith( adjRefString ):
                     BBB = self.combinedBookNameDict[bookName]
@@ -1073,7 +1074,7 @@ class InternalBible:
 
         # See if a book name contains a word that starts with this string
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using word startswith…" )
+            vPrint( 'Never', debuggingThisModule, "  getXRefBBB using word startswith…" )
             for bookName in self.bookNameDict:
                 if ' ' in bookName:
                     for bit in bookName.split():
@@ -1090,7 +1091,7 @@ class InternalBible:
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, _("  guessXRefBBB using first plus other characters…") )
+            vPrint( 'Never', debuggingThisModule, _("  guessXRefBBB using first plus other characters…") )
             for bookName in self.bookNameDict:
                 if not bookName: vPrint( 'Quiet', debuggingThisModule, self.bookNameDict ); halt # temp……
                 #vPrint( 'Quiet', debuggingThisModule, "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
@@ -1114,7 +1115,7 @@ class InternalBible:
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
             if count == 0:
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  getXRefBBB using characters…" )
+                vPrint( 'Never', debuggingThisModule, "  getXRefBBB using characters…" )
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
@@ -1501,7 +1502,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag: assert self.discoveryResults
         vPrint( 'Info', debuggingThisModule, _("Running checks on {}…").format( self.name ) )
         if givenBookList is None:
-            givenBookList = self.books # this is a dict
+            givenBookList = self.books.keys()
         for BBB in givenBookList: # Do individual book checks
             vPrint( 'Info', debuggingThisModule, "  " + _("Checking {}…").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
@@ -1522,7 +1523,7 @@ class InternalBible:
         """
         vPrint( 'Normal', debuggingThisModule, "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
 
-        if givenOutputFolderName == None:
+        if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
             if not os.access( givenOutputFolderName, os.F_OK ):
                 if 1 or BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
@@ -1568,7 +1569,7 @@ class InternalBible:
                             ['Headings']: dict
                     ['ByCategory']: dict
         """
-        if givenBookList is None: givenBookList = self.books # this is a dict
+        if givenBookList is None: givenBookList = self.books.keys() # this is a dict
 
         def appendList( BBB, errorDict, firstKey, secondKey=None ):
             """Appends a list to the ALL BOOKS errors."""
@@ -1755,7 +1756,7 @@ class InternalBible:
         #vPrint( 'Info', debuggingThisModule, "Doing Bible checks…" )
 
         errorDictionary = self.getCheckResults( givenBookList )
-        if givenBookList is None: givenBookList = self.books # this is a dict
+        if givenBookList is None: givenBookList = self.books.keys() # this is a dict
 
         # Note that this requires a CSS file called Overall.css
         if webPageTemplate is None:
@@ -2328,7 +2329,7 @@ class InternalBible:
                 vPrint( 'Quiet', debuggingThisModule, _("findText( {} )").format( optionsDict ) )
                 assert 'findText' in optionsDict
 
-        optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
+        optionsList = ( 'parentWindow', 'parentBox', 'givenBible', 'workName',
                 'findText', 'findHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
                 'includeIntroFlag', 'includeMainTextFlag', 'includeMarkerTextFlag', 'includeExtrasFlag',
                 'contextLength', 'bookList', 'chapterList', 'markerList', 'regexFlag',

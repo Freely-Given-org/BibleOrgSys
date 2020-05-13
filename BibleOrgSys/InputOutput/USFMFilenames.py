@@ -98,7 +98,7 @@ class USFMFilenames:
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
                 dd = digits
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "USFMFilenames( {} )".format( givenFolderName ) )
+        vPrint( 'Never', debuggingThisModule, "USFMFilenames( {} )".format( givenFolderName ) )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -319,7 +319,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getUSFMIDsFromFiles( {} )".format( repr(givenFolder) ) )
+        vPrint( 'Never', debuggingThisModule, "getUSFMIDsFromFiles( {} )".format( repr(givenFolder) ) )
 
         # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
@@ -436,7 +436,7 @@ class USFMFilenames:
         resultList = []
         for BBB,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
+            vPrint( 'Never', debuggingThisModule, '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if strictCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )

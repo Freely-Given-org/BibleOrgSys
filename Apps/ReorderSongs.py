@@ -45,20 +45,9 @@ Basically, read the file in, sort by the contents of \s and write it out with ne
 
     etc.
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2017-09-27' # by RJH
-SHORT_PROGRAM_NAME = "ReorderSongs"
-PROGRAM_NAME = "Reorder Songs"
-PROGRAM_VERSION = '0.03'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import sys
-import os #, logging
+import os
 
 if __name__ == '__main__':
     import sys
@@ -67,6 +56,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.InputOutput import SFMFile
+
+
+LAST_MODIFIED_DATE = '2017-09-27' # by RJH
+SHORT_PROGRAM_NAME = "ReorderSongs"
+PROGRAM_NAME = "Reorder Songs"
+PROGRAM_VERSION = '0.03'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 testFolder = 'Tests/DataFilesForTests/'
@@ -87,7 +85,7 @@ def main() -> None:
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
     vPrint( 'Normal', debuggingThisModule, "  {} songs loaded".format( len(songs.records) ) )
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, songs )
+    vPrint( 'Never', debuggingThisModule, songs )
 
     # Extract the information out of the file that we want to use for sorting
     #   (We get the \s field, plus keep track of the index of each record)

@@ -45,6 +45,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
         loadBooks( self )
 """
 from gettext import gettext as _
+from typing import Optional
 import os
 from pathlib import Path
 import logging
@@ -59,13 +60,13 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
-from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
 
 
-LAST_MODIFIED_DATE = '2020-04-15' # by RJH
+LAST_MODIFIED_DATE = '2020-05-07' # by RJH
 SHORT_PROGRAM_NAME = "PickledBible"
 PROGRAM_NAME = "Pickle Bible handler"
 PROGRAM_VERSION = '0.17'
@@ -546,7 +547,7 @@ class PickledBible( Bible ):
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "PickledBible.__str__()" )
+        vPrint( 'Never', debuggingThisModule, "PickledBible.__str__()" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2

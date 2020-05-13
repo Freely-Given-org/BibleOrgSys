@@ -90,7 +90,7 @@ class BibleVersificationSystemsConverter:
         Load and pre-process the specified versification systems.
         """
         if not self.__XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "VersificationSystems" ) # Relative to module, not cwd
+            if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "VersificationSystems" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
             vPrint( 'Info', debuggingThisModule, _("Loading versification systems from {}…").format( XMLFolder ) )
             filenamePrefix = "BIBLEVERSIFICATIONSYSTEM_"

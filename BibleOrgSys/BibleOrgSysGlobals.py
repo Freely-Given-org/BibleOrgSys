@@ -1314,8 +1314,8 @@ def setVerbosity( verbosityLevelParameter ):
     """
     Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control.
     """
-
     global verbosityString, verbosityLevel
+
     if isinstance( verbosityLevelParameter, str ):
         if verbosityLevelParameter == 'Silent':
             verbosityString = verbosityLevelParameter
@@ -1333,6 +1333,7 @@ def setVerbosity( verbosityLevelParameter ):
             verbosityString = verbosityLevelParameter
             verbosityLevel = 4
         else: logging.error( f"Invalid '{verbosityLevelParameter}' verbosity parameter" )
+        
     else: # assume it's an integer
         if verbosityLevelParameter == 0:
             verbosityLevel = verbosityLevelParameter

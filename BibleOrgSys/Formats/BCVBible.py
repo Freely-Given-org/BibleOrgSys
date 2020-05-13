@@ -26,6 +26,7 @@
 Module for defining and manipulating complete or partial BCV Bibles.
 """
 from gettext import gettext as _
+from typing import Optional
 import os
 import logging
 import multiprocessing
@@ -41,7 +42,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BCVBible"
 PROGRAM_NAME = "BCV Bible handler"
 PROGRAM_VERSION = '0.22'

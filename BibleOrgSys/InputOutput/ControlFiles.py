@@ -136,7 +136,7 @@ def booleanValue ( value ):
 def booleanControl( controlName, controlDict=None ):
     """Return True if the given control name exists in the control dictionary
         and has a suitable value such as TRUE or ON."""
-    if controlDict==None: controlDict = Controls
+    if controlDict is None: controlDict = Controls
 
     if controlName not in controlDict:
         return False

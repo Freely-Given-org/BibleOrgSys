@@ -1237,9 +1237,9 @@ class BibleReferenceList( BibleReferenceBase ):
 
         Basically just returns the first result (if any) from parseReferenceString.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
+        vPrint( 'Never', debuggingThisModule, "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
         hE, hW, refList = self.parseReferenceString( referenceString, location )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "gFR", hE, hW, refList )
+        vPrint( 'Never', debuggingThisModule, "gFR", hE, hW, refList )
         for something in refList: # Just return the first one
             if isinstance( something, tuple ):
                 if len(something)==4: return something

@@ -54,7 +54,7 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
-LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+LAST_MODIFIED_DATE = '2020-05-06' # by RJH
 SHORT_PROGRAM_NAME = "Door43ContentService"
 PROGRAM_NAME = "Door43 Content Service online handler"
 PROGRAM_VERSION = '0.04'
@@ -460,6 +460,7 @@ def briefDemo() -> None:
     Demonstrate how some of the above classes can be used.
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+    import random
 
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
@@ -498,7 +499,7 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
 
-    if 1: # Test the DCSBible class with the ULT
+    if random.random() > 0.5: # Test the DCSBible class with the ULT
         if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nB/ ULT test")
         downloadAllBooks = True
         searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ult' )

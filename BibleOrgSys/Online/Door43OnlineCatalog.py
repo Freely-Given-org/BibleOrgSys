@@ -44,18 +44,20 @@ import json
 import tempfile
 import zipfile
 from datetime import datetime
+import logging
 
 if __name__ == '__main__':
     import sys
-    import re
-import logging # Append the containing folder to the path to search for the BOS
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2020-05-07' # by RJH
 SHORT_PROGRAM_NAME = "Door43OnlineCatalog"
 PROGRAM_NAME = "Door43 Online Catalog online handler"
 PROGRAM_VERSION = '0.08'
@@ -549,7 +551,7 @@ def briefDemo() -> None:
                  ('MAT','1','1'), ('JHN','3','16'), ('TIT','2','2'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the Door43CatalogBible class by finding a Bible
-        for lgCode, desiredTitle in random.choice( (
+        lgCode, desiredTitle = random.choice( (
                                         ('ru','Russian Synodal Bible'),
                                         ('ru','Russian Unlocked Literal Bible'),
                                         ('ru','Russian Open Bible'),
@@ -558,23 +560,22 @@ def briefDemo() -> None:
                                         ('en', 'unfoldingWord Simplified Text'),
                                         ('fr','unfoldingWord Literal Text'),
                                         ('el-x-koine','unfoldingWord Greek New Testament'),
-                                    ) ):
-            vPrint( 'Quiet', debuggingThisModule, '' )
-            searchResultDict = door43CatalogResources.searchBibles( lgCode, desiredTitle )
-            if searchResultDict:
-                Door43CatalogBible1 = Door43CatalogBible( searchResultDict )
-                vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
-                Door43CatalogBible1.preload()
-                vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
-                for testRef in testRefs:
-                    verseKey = SimpleVerseKey( *testRef )
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, verseKey )
-                        vPrint( 'Quiet', debuggingThisModule, " ", Door43CatalogBible1.getVerseDataList( verseKey ) )
-                vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
-                break
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
-                vPrint( 'Quiet', debuggingThisModule, f"{lgCode} '{desiredTitle}' was not found!" )
+                                    ) )
+        vPrint( 'Quiet', debuggingThisModule, '' )
+        searchResultDict = door43CatalogResources.searchBibles( lgCode, desiredTitle )
+        if searchResultDict:
+            Door43CatalogBible1 = Door43CatalogBible( searchResultDict )
+            vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
+            Door43CatalogBible1.preload()
+            vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
+            for testRef in testRefs:
+                verseKey = SimpleVerseKey( *testRef )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', debuggingThisModule, verseKey )
+                    vPrint( 'Quiet', debuggingThisModule, " ", Door43CatalogBible1.getVerseDataList( verseKey ) )
+            vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
+        elif BibleOrgSysGlobals.verbosityLevel > 0:
+            vPrint( 'Quiet', debuggingThisModule, f"{lgCode} '{desiredTitle}' was not found!" )
 # end of Door43OnlineCatalog.briefDemo
 
 def fullDemo() -> None:

@@ -2634,7 +2634,7 @@ class PTX8Bible( Bible ):
                                 BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location )
                                 BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location )
-                                if termRenderingEntryDict[subelement.tag] == None:
+                                if termRenderingEntryDict[subelement.tag] is None:
                                     termRenderingEntryDict[subelement.tag] = []
                                 #if sub2element.tag == 'VerseRef':
                                     ## Process the VerseRef attributes first

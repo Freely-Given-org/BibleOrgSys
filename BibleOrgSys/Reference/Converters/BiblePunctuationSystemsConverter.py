@@ -91,7 +91,7 @@ class BiblePunctuationSystemsConverter:
         Load and pre-process the specified punctuation systems.
         """
         if not self._XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'PunctuationSystems/' ) # Relative to module, not cwd
+            if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'PunctuationSystems/' ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
             vPrint( 'Info', debuggingThisModule, _("Loading punctuations systems from {}…").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"

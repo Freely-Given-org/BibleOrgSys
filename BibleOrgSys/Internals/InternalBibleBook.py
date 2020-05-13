@@ -73,7 +73,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, Int
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2020-05-12' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -2727,8 +2727,8 @@ class InternalBibleBook:
                 #vPrint( 'Quiet', debuggingThisModule, "{} chapter {}".format( self.BBB, chapterText ) )
                 chapterNumber = int( chapterText)
                 if chapterNumber != lastChapterNumber+1:
-                    versificationErrors.append( _("{} ({} after {}) USFM chapter numbers out of sequence in Bible book").format( self.BBB, chapterNumber, lastChapterNumber ) )
-                    logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.BBB, chapterNumber, lastChapterNumber ) )
+                    versificationErrors.append( _("{} ({} after {}) USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
+                    logging.error( _("USFM chapter numbers out of sequence in {} Bible book {} ({} after {})").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
                 verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
@@ -2838,7 +2838,7 @@ class InternalBibleBook:
 
         Stores it in self.versification and self.missingVersesList
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getVersificationIfNecessary()" )
+        vPrint( 'Never', debuggingThisModule, "getVersificationIfNecessary()" )
         if self.versificationList is None:
             assert self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None # also
             versificationResult = self.getVersification()
@@ -4752,7 +4752,7 @@ class InternalBibleBook:
         """
         Returns the number of chapters (int) in this book.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getNumChapters()" )
+        vPrint( 'Never', debuggingThisModule, "getNumChapters()" )
 
         self.getVersificationIfNecessary()
         #vPrint( 'Quiet', debuggingThisModule, self.getVersification() )
@@ -4792,8 +4792,8 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
                 vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
-            assert self._processedFlag
-            assert self._indexedCVFlag
+            # assert self._processedFlag
+            # assert self._indexedCVFlag
 
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB

@@ -343,7 +343,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
                               'mapm','oshb','oss','porcap','ruscars','russynodal',) \
             and BBB not in ('EZR','NEH','EST','JOB','PSA','PRO','ECC',): # not sure what this is about---------needs attention
                 assert V == '0'
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "CCCC {!r}(:{!r})".format( C, V ) )
+        #vPrint( 'Never', debuggingThisModule, "CCCC {!r}(:{!r})".format( C, V ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     match = re.search( '<chapter ([^/>]*?)osisID="([^/>]+?)"([^/>]*?)>', verseLine ) # open chapter container
     if match:
@@ -351,7 +351,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         #vPrint( 'Quiet', debuggingThisModule, 'Chapter osisID {!r} attributes={!r} @ {} {}:{}'.format( osisID, attributes, BBB, C, V ) )
         #assert C and C != '0'
         assert V == '0'
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "CCCC {!r}(:{!r})".format( C, V ) )
+        #vPrint( 'Never', debuggingThisModule, "CCCC {!r}(:{!r})".format( C, V ) )
         verseLine = verseLine[:match.start()] + verseLine[match.end():]
     verseLine = verseLine.replace( '</chapter>', '' )
     while True:
@@ -390,7 +390,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/>.NL..<head>(.+?)</head>', verseLine )
         if not match: break
         attributes, sectionType, words = match.group(1) + match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Section title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Section title {!r} attributes={!r} Words={!r}'.format( sectionType, attributes, words ) )
         if sectionType == 'outline': titleMarker = 'iot'
         else: vPrint( 'Quiet', debuggingThisModule, 'filterOSISVerseLine KG535 matched:', repr(match.group(0)) ); halt
         replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
@@ -400,7 +400,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<div ([^/>]*?)type="([^/>]+?)"([^/>]*?)/?>', verseLine )
         if not match: break
         attributes, divType = match.group(1) + match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Div type={!r} attributes={!r}'.format( divType, attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'Div type={!r} attributes={!r}'.format( divType, attributes ) )
         if divType == 'x-p': replacement = '\\NL**\\p\\NL**'
         elif divType == 'glossary': replacement = '\\NL**\\id GLO\\NL**' #### WEIRD -- appended to 3 John
         elif divType == 'book': replacement = '' # We don't need this
@@ -426,7 +426,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<title type="parallel"><reference type="parallel">(.+?)</reference></title>', verseLine )
         if not match: break
         reference = match.group(1)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Parallel reference={!r}'.format( reference ) )
+        vPrint( 'Never', debuggingThisModule, 'Parallel reference={!r}'.format( reference ) )
         replacement = '\\NL**\\r {}\\NL**'.format( reference )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -434,7 +434,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<title type="scope"><reference>(.+?)</reference></title>', verseLine )
         if not match: break
         reference = match.group(1)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Section Parallel reference={!r}'.format( reference ) )
+        vPrint( 'Never', debuggingThisModule, 'Section Parallel reference={!r}'.format( reference ) )
         replacement = '\\NL**\\sr {}\\NL**'.format( reference )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
@@ -442,7 +442,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<title ([^/>]+?)>(.+?)</title>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Title attributes={!r} Words={!r}'.format( attributes, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Title attributes={!r} Words={!r}'.format( attributes, words ) )
         titleMarker = 's1'
         replacement = '\\NL**\\{} {}\\NL**'.format( titleMarker, words )
         #vPrint( 'Quiet', debuggingThisModule, 'replacement', repr(replacement) )
@@ -575,7 +575,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
     match = re.search( '<item ([^/>]*?)type="(.+?)"([^/>]*?)>', verseLine )
     if match: # Handle left-over list items
         attributes, itemType = match.group(1)+match.group(3), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Item Type={!r} attributes={!r}'.format( itemType, attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'Item Type={!r} attributes={!r}'.format( itemType, attributes ) )
         assert itemType in ( 'x-indent-1', 'x-indent-2', )
         marker = 'io' if 'x-introduction' in attributes else 'li'
         replacement = '\\NL**\\{}\\NL**'.format( marker+itemType[-1] )
@@ -586,7 +586,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<name ([^/>]*?)type="(.+?)"([^/>]*?)>(.+?)</name>', verseLine )
         if not match: break
         attributes, nameType, name = match.group(1)+match.group(3), match.group(2), match.group(4)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Name={!r} Type={!r} attributes={!r}'.format( name, nameType, attributes ) )
+        vPrint( 'Never', debuggingThisModule, 'Name={!r} Type={!r} attributes={!r}'.format( name, nameType, attributes ) )
         if nameType == 'x-workTitle': marker = 'bk'
         else: halt
         replacement = '\\{} {}\\{}*'.format( marker, name, marker )
@@ -596,7 +596,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
         match = re.search( '<seg ([^/>]+?)>([^<]+?)</seg>', verseLine )
         if not match: break
         attributes, words = match.group(1), match.group(2)
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'Seg attributes={!r} Words={!r}'.format( attributes, words ) )
+        vPrint( 'Never', debuggingThisModule, 'Seg attributes={!r} Words={!r}'.format( attributes, words ) )
         if 'type="keyword"' in attributes: replacement = '\\k {}\\k*'.format( words)
         elif 'type="verseNumber"' in attributes: replacement = '\\vp {}\\NL**'.format( words)
         elif 'type="x-us-time"' in attributes: replacement = '{}'.format( words)

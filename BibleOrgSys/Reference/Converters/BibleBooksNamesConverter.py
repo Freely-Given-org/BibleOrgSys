@@ -87,7 +87,7 @@ class BibleBooksNamesConverter:
         Load and pre-process the specified booksNames systems.
         """
         if not self.__XMLSystems: # Only ever do this once
-            if folder==None: folder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
+            if folder is None: folder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
             self.__XMLFolder = folder
             vPrint( 'Info', debuggingThisModule, _("Loading book names systems from {}…").format( folder ) )
             for filename in os.listdir( folder ):

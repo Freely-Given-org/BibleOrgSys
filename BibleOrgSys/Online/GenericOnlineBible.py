@@ -148,7 +148,7 @@ class GenericOnlineBible:
         vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             cachedVerseData = self.cache[str(key)]
             if cachedVerseData != verseData:
@@ -168,7 +168,7 @@ class GenericOnlineBible:
         vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
 

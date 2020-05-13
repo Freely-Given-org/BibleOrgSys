@@ -518,7 +518,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
             """
             if not originalText: return ''
             if '\\' not in originalText: return originalText
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSXXML:hITM4USX:", BBB, C,V, marker, "'"+originalText+"'" )
+            vPrint( 'Never', debuggingThisModule, "toUSXXML:hITM4USX:", BBB, C,V, marker, "'"+originalText+"'" )
             markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
                                         key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
             # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -839,7 +839,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
                         extra = '' # temp
                     elif extraType == 'vp':
                         extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                    elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
+                    elvPrint( 'Never', debuggingThisModule, extraType ); halt
                     #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                     adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                     offset -= len( extra )

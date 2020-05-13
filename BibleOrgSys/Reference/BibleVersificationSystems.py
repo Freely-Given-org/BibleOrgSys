@@ -923,7 +923,7 @@ class BibleVersificationSystem:
                     else: S = ''
                     resultList.append( (BBB2, str(Cint), str(Vint), S,) )
 
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, startRef, endRef, resultList, haveErrors, haveWarnings )
+        vPrint( 'Never', debuggingThisModule, startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings
     # end of BibleVersificationSystem.expandCVRange
 

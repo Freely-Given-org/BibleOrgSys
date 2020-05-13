@@ -293,7 +293,7 @@ def findReplaceText( self, optionsDict, confirmCallback ):
             assert 'findText' in optionsDict
             assert 'replaceText' in optionsDict
 
-    optionsList = ( 'parentApp', 'parentWindow', 'parentBox', 'givenBible', 'workName',
+    optionsList = ( 'parentWindow', 'parentBox', 'givenBible', 'workName',
             'findText', 'replaceText', 'findHistoryList', 'replaceHistoryList', 'wordMode',
             #'caselessFlag', 'ignoreDiacriticsFlag', 'includeIntroFlag', 'includeMainTextFlag',
             #'includeMarkerTextFlag', 'includeExtrasFlag', 'markerList', 'chapterList',

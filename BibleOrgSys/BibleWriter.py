@@ -673,7 +673,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #fullText = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -844,7 +844,7 @@ class BibleWriter( InternalBible ):
                     addedUSFMfield = True
 
                 #fullText = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -1019,7 +1019,7 @@ class BibleWriter( InternalBible ):
                             continue
 
                         #value = cleanText # (temp)
-                        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
+                        #vPrint( 'Never', debuggingThisModule, "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                         if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
                             if vBridgeStartInt and vBridgeEndInt:
                                 for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -1583,7 +1583,7 @@ class BibleWriter( InternalBible ):
                             extra = ''
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'eT', extraType ); halt
+                        elvPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
                         #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                         if extra:
                             adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
@@ -1964,7 +1964,7 @@ class BibleWriter( InternalBible ):
                     extra = ''
                 elif extraType == 'vp':
                     extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, 'eT', extraType ); halt
+                elvPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
                 #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                 adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                 offset -= len( extra )
@@ -2654,7 +2654,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #fullText = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 #vPrint( 'Quiet', debuggingThisModule, 'BDText2', BBB, pseudoMarker, repr(fullText) )
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
@@ -3776,7 +3776,7 @@ class BibleWriter( InternalBible ):
                 """
                 if not originalText: return ''
                 if '\\' not in originalText: return originalText
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
+                vPrint( 'Never', debuggingThisModule, "toUSX2XML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
                 markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 # for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -4081,7 +4081,7 @@ class BibleWriter( InternalBible ):
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
+                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
                         #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
@@ -4347,7 +4347,7 @@ class BibleWriter( InternalBible ):
                 """
                 if not originalText: return ''
                 if '\\' not in originalText: return originalText
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+originalText+"'" )
+                vPrint( 'Never', debuggingThisModule, "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+originalText+"'" )
                 markerList = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( originalText ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -4591,7 +4591,7 @@ class BibleWriter( InternalBible ):
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
+                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
                         #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
@@ -5142,7 +5142,7 @@ class BibleWriter( InternalBible ):
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
+                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
                         #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
@@ -5927,7 +5927,7 @@ class BibleWriter( InternalBible ):
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, extraType ); halt
+                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
                         #vPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
@@ -9710,7 +9710,7 @@ class BibleWriter( InternalBible ):
 
         if not self.projectName: self.projectName = self.getAName() # Seems no post-processing was done???
 
-        if givenOutputFolderName == None:
+        if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
             if not os.access( givenOutputFolderName, os.F_OK ):
                 vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )

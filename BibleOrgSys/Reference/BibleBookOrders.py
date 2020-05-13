@@ -63,7 +63,7 @@ class BibleBookOrderSystems:
         """
         Constructor:
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "BibleBookOrderSystems:__init__()" )
+        vPrint( 'Never', debuggingThisModule, "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of BibleBookOrderSystems.__init__
 
@@ -272,7 +272,7 @@ class BibleBookOrderSystem:
         """
         Constructor:
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "BibleBookOrderSystem:__init__({})".format( systemName ) )
+        vPrint( 'Never', debuggingThisModule, "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         results = self.__bbos.getBookOrderSystem( self.__systemName )
