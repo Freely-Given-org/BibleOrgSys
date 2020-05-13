@@ -26,14 +26,14 @@
 Module for defining and manipulating complete or partial uW Notes Bibles.
 
 Note that we squeeze the TSV format into pseudo-USFM.
-We choose "self-contained heading/label" type fields for convenience
-    (unlike say p fields which get split up into p,p~ fields).
 We only save non-blank fields.
-    SupportReference    sr
-    OrigQuote           mr
-    Occurrence (digit)  r (if non-zero)
-    GLQuote             sp
-    OccurrenceNote      ms (Saved as markdown containing <br> fields for newLines)
+    SupportReference    m
+    OrigQuote           q1
+    Occurrence (digit)  pi (if non-zero and not '1')
+    GLQuote             q2
+    OccurrenceNote      p (Saved as markdown containing <br> fields for newLines)
+There might be some intro versions of the above fields before chapter 1.
+There might be some verse 0 fields for chapter introductions.
 There might be several notes for one verse.
 Some verses might have no notes.
 """
@@ -56,10 +56,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2020-05-12' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.01'
+PROGRAM_VERSION = '0.03'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -81,7 +81,12 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
     debuggingThisFunction = False
     vPrint( 'Never', debuggingThisModule or debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )…" )
 
+    # import yaml
+    # yamlDict = yaml.safe_load( YAMLFilepath )
+    # print( f"yaml.load got ({len(yamlDict)}) {yamlDict!r}"); halt
+
     dataDict = {}
+    key1 = key2 = None
     if YAMLFilepath and os.path.isfile( YAMLFilepath ) and os.access( YAMLFilepath, os.R_OK ):
         with open( YAMLFilepath, 'rt' ) as yamlFile:
             state = None
@@ -92,37 +97,46 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                 if line.startswith( '#' ): continue # comment line
                 if line == '---': state = 0; continue # start of table
                 numLeadingSpaces = len(line) - len( line.lstrip( ' ' ) )
-                if debuggingThisFunction: print( f'Line {j:3} State {state} numLS={numLeadingSpaces}: "{line}"' )
+                if debuggingThisFunction:
+                    print( f"\nResult dict ({len(dataDict)}) = {dataDict}")
+                    print( f'Line {j}  State={state}  k1={key1!r} k2={key2!r}  numLS={numLeadingSpaces}: {line!r}' )
 
                 # Check if we need to go back a level
                 if numLeadingSpaces==0:
-                    if debuggingThisFunction: print( f"S-0: Returned to 0" )
+                    if debuggingThisFunction and state and state>0: print( f"S-0: No leading spaces so returned to 0 from {state}" )
+                    key1 = key2 = None
                     state = 0
-                if numLeadingSpaces==indent:
-                    if debuggingThisFunction: print( f"S-1: Returned to 1" )
+                if numLeadingSpaces==indent and line[indent] != '-':
+                    if debuggingThisFunction and state>1: print( f"S-1: Returned to 1 from {state}" )
+                    key2= None
                     state = 1
 
                 if state == 0:
-                    match = re.match( r"([^ :]+?): ?'(.+?)'$", line )
+                    match = re.match( r'''([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
                         if debuggingThisFunction: print( f"0-0: 1={match.group(1)}' 2='{match.group(2)}'" )
                         dataDict[match.group(1)] = match.group(2); continue
                     match = re.match( r"([^ :]+?): ?(\d+?)$", line )
-                    if match: dataDict[match.group(1)] = int(match.group(2)); continue
-
+                    if match:
+                        if debuggingThisFunction: print( f"0-1: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        dataDict[match.group(1)] = int(match.group(2)); continue
                     match = re.match( r"([^ :]+?):$", line )
-                    if match: key1 = match.group(1); state = 1; continue
+                    if match:
+                        if debuggingThisFunction: print( f"0-2: 1={match.group(1)!r} => 1" )
+                        key1 = match.group(1)
+                        state = 1; continue
 
                 elif state == 1:
+                    assert key1
                     if line == f"{' '*indent}-":
-                        if debuggingThisFunction: print( f"1-0: '{line}' with k1='{key1}'" )
+                        if debuggingThisFunction: print( f"1-0: {line!r} with k1={key1!r} => 3" )
                         if key1 not in dataDict: dataDict[key1] = [{}]
                         else:
                             assert isinstance( dataDict[key1], list )
                             assert isinstance( dataDict[key1][-1], dict )
                             dataDict[key1].append( {} )
                         state = 3; continue
-                    match = re.match( rf"{' '*indent}([^ :]+?): ?'(.+?)'$", line )
+                    match = re.match( rf'''{' '*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
                         if debuggingThisFunction: print( f"1-1: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = {}
@@ -141,9 +155,27 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                         if key1 not in dataDict: dataDict[key1] = {}
                         key2 = match.group(1); state = 2; continue
 
+                    match = re.match( rf'''{' '*indent}- ([^ :]+?): ?['"](.+?)['"]$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"1-4: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
+                        if key2:
+                            if key2 not in dataDict[key1]:
+                                dataDict[key1][key2] = []
+                            dataDict[key1][key2].append( {} )
+                            dataDict[key1][key2][-1][match.group(1)] = match.group(2)
+                            state = 3; continue
+                        else:
+                            if key1 not in dataDict: dataDict[key1] = []
+                            else: assert isinstance( dataDict[key1], list )
+                            dataDict[key1].append( {} )
+                            dataDict[key1][-1][match.group(1)] = match.group(2)
+                            state = 3; continue
+
                 elif state == 2:
+                    assert key1
+                    assert key2
                     if line == f"{' '*2*indent}-":
-                        if debuggingThisFunction: print( f"2-0: '{line}' with k1='{key1}' k2='{key2}'" )
+                        if debuggingThisFunction: print( f"2-0: '{line}' with k1={key1!r} k2={key2!r}" )
                         if key2 not in dataDict[key1]:
                             dataDict[key1][key2] = [{}]
                         else:
@@ -151,47 +183,62 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                             assert isinstance( dataDict[key1][key2][-1], dict )
                             dataDict[key1][key2].append( {} )
                         state = 4; continue
-                    match = re.match( rf"{' '*2*indent}([^ :]+?): ?'(.+?)'$", line )
+                    match = re.match( rf'''{' '*indent}- ['"]([^:'"]+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"2-1: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if debuggingThisFunction: print( f"2-1: k1={key1!r} k2={key2!r} 1={match.group(1)}'" )
+                        if key2 not in dataDict[key1]: dataDict[key1][key2] = []
+                        else: assert isinstance( dataDict[key1][key2], list )
+                        dataDict[key1][key2].append( match.group(1) ); continue
+                    match = re.match( rf'''{' '*2*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"2-2: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
                         else: assert isinstance( dataDict[key1][key2], dict )
                         dataDict[key1][key2][match.group(1)] = match.group(2); continue
                     match = re.match( rf"{' '*2*indent}([^ :]+?): ?(\d+?)$", line )
                     if match:
-                        if debuggingThisFunction: print( f"2-2: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if debuggingThisFunction: print( f"2-3: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
                         else: assert isinstance( dataDict[key1][key2], dict )
                         dataDict[key1][key2][match.group(1)] = int(match.group(2)); continue
-                    match = re.match( rf"{' '*2*indent}- '(.+?)'$", line )
+                    match = re.match( rf'''{' '*2*indent}- ['"](.+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"2-3: 1={match.group(1)}'" )
+                        if debuggingThisFunction: print( f"2-4: 1={match.group(1)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = []
                         else: assert isinstance( dataDict[key1][key2], list )
                         dataDict[key1][key2].append( match.group(1) ); continue
 
                 elif state == 3:
+                    assert key1
                     if line == f"{' '*indent}-":
-                        if debuggingThisFunction: print( f"3-0: '{line}' with k1='{key1}'" )
+                        if debuggingThisFunction: print( f"3-0: '{line}' with k1={key1!r}" )
                         assert isinstance( dataDict[key1], list )
                         assert isinstance( dataDict[key1][-1], dict )
                         dataDict[key1].append( {} )
                         continue
-                    match = re.match( rf"{' '*2*indent}([^ :]+?): ?'(.+?)'$", line )
+                    match = re.match( rf'''{' '*2*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"3-1: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if debuggingThisFunction: print( f"3-1: k1={key1!r} k2={key2!r} mg1={match.group(1)}' mg2='{match.group(2)}'" )
+                        if key1 not in dataDict: dataDict[key1] = [{}]
+                        else: assert isinstance( dataDict[key1], list )
+                        dataDict[key1][-1][match.group(1)] = match.group(2); continue
+                    match = re.match( rf'''{' '*2*indent}([^ :]+?): ?(.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"3-2: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = [{}]
                         else: assert isinstance( dataDict[key1], list )
                         dataDict[key1][-1][match.group(1)] = match.group(2); continue
 
                 elif state == 4:
+                    assert key1
+                    assert key2
                     if line == f"{' '*2*indent}-":
-                        if debuggingThisFunction: print( f"4-0: '{line}' with k1='{key1}' k2='{key2}'" )
+                        if debuggingThisFunction: print( f"4-0: '{line}' with k1={key1!r} k2={key2!r}" )
                         assert isinstance( dataDict[key1][key2], list )
                         assert isinstance( dataDict[key1][key2][-1], dict )
                         dataDict[key1][key2].append( {} )
                         continue
-                    match = re.match( rf"{' '*3*indent}([^ :]+?): ?'(.+?)'$", line )
+                    match = re.match( rf'''{' '*3*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
                         if debuggingThisFunction: print( f"4-1: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = [{}]
@@ -203,8 +250,8 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
 
     # print( "\nSettings", len(dataDict), dataDict.keys() )
     if debuggingThisFunction or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        for section, value in dataDict.items():
-            vPrint( 'Quiet', debuggingThisModule, f"  loadYAML.load: {section} = {value!r}" )
+        for j, (section,value) in enumerate( dataDict.items(), start=1 ):
+            vPrint( 'Normal', debuggingThisModule, f"  loadYAML.load {j}: {section} = {value!r}" )
 
     return dataDict
 # end of loadYAML function
@@ -469,7 +516,7 @@ class uWNotesBible( Bible ):
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
                         #vPrint( 'Quiet', debuggingThisModule, _("  uWNotesBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-                    loadedBook = self.loadBook( BBB ) # also saves it
+                    self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "uWNotesBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
@@ -569,14 +616,17 @@ class uWNotesBibleBook( BibleBook ):
                     assert BBB == self.BBB
                 if C=='front': C = '-1'
                 if C != lastC: doAddLine( 'c', C )
-                if V=='intro': V = '0'
-                if V != lastV: doAddLine( 'v', V )
+                try: intC = int(C)
+                except ValueError: intC = -999
+                if (V != lastV or C != lastC) and intC > 0:
+                    doAddLine( 'v', '0' if V=='intro' else V )
                 # NOTE: We don't save the ID field (nor the BBB field, of course)
-                if supportReference: doAddLine( 'sr', supportReference )
-                if origQuote: doAddLine( 'mr', origQuote )
-                if occurrence and occurrence!='0': doAddLine( 'r', occurrence )
-                if GLQuote: doAddLine( 'sp', GLQuote )
-                if occurrenceNote: doAddLine( 'ms', occurrenceNote )
+                if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
+                if origQuote: doAddLine( 'q1' if intC>0 else 'iq1', origQuote )
+                if occurrence and occurrence not in ('0','1'):
+                    doAddLine( 'pi' if intC>0 else 'ipi', occurrence )
+                if GLQuote: doAddLine( 'q2' if intC>0 else 'iq2', GLQuote )
+                if occurrenceNote: doAddLine( 'p' if intC>0 else 'ip', occurrenceNote )
 
                 lastC, lastV = C, V
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
@@ -688,6 +738,25 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tn/' )
+
+    # Demo our YAML loading
+    for j, testFilepath in enumerate( (
+                        '/mnt/SSDs/Bibles/Original languages/UHB/manifest.yaml',
+                        '/mnt/SSDs/Bibles/Original languages/UGNT/manifest.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/manifest.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/intro/toc.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/intro/config.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tn/manifest.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tw/manifest.yaml',
+                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ult/manifest.yaml',
+                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ult/media.yaml',
+                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ust/manifest.yaml',
+                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ust/media.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordLexicons/en_ugl/manifest.yaml',
+                        '/mnt/SSDs/Bibles/unfoldingWordLexicons/en_uhal/manifest.yaml',
+                        ), start=1 ):
+        yamlResult = loadYAML( testFilepath )
+        vPrint( 'Quiet', debuggingThisModule, f"Y{j}/ {testFilepath} gave ({len(yamlResult)}) {yamlResult.keys()}")
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
