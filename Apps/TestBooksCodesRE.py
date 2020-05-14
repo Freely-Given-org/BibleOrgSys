@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # TestBooksCodesRE.py
@@ -6,7 +6,7 @@
 # Module which checks regular expressions.
 #
 # Copyright (C) 2015-2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,12 +28,11 @@ Module which tests the regular expression for Bible Books Codes.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-05-12' # by RJH
-ShortProgName = "TestBooksCodesRE"
-ProgName = "TestBooksCodes Regular Expressions"
-ProgVersion = '0.20'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+SHORT_PROGRAM_NAME = "TestBooksCodesRE"
+PROGRAM_NAME = "TestBooksCodes Regular Expressions"
+PROGRAM_VERSION = '0.20'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
@@ -41,9 +40,13 @@ debuggingThisModule = False
 import sys, re
 
 # Allow the app to run from either the BOS folder or in this Apps subfolder
-sys.path.append( '.' )
-sys.path.append( '..' )
-import BibleOrgSysGlobals
+if __name__ == '__main__':
+    import sys
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
+
 
 
 # Regular expressions to be searched for
@@ -64,39 +67,39 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 
 
 def doBBB():
-    print( "\ndoBBB" )
+    vPrint( 'Quiet', debuggingThisModule, "\ndoBBB" )
     L0, L1, L2 = {}, {}, {}
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
-        #print( BBB )
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         if BBB[0] in L0: L0[BBB[0]] += 1
         else: L0[BBB[0]] = 1
         if BBB[1] in L1: L1[BBB[1]] += 1
         else: L1[BBB[1]] = 1
         if BBB[2] in L2: L2[BBB[2]] += 1
         else: L2[BBB[2]] = 1
-    print( ' ', sorted(L0) )
-    print( ' ', sorted(L1) )
-    print( ' ', sorted(L2) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L0) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L1) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L2) )
 
     # Now test the RE on the books codes
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
-        #print( BBB )
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
-            print( BBB )
+            vPrint( 'Quiet', debuggingThisModule, BBB )
             halt # Got a BBB that can't be found by the RE
 # end of doBBB
 
 
 def doOSIS():
-    print( "\ndoOSIS" )
+    vPrint( 'Quiet', debuggingThisModule, "\ndoOSIS" )
     minL, maxL = 999, 0
     L = {}
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
-        #print( BBB )
-        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
-        #print( OB )
+        #vPrint( 'Quiet', debuggingThisModule, OB )
         lOB = len( OB )
         if lOB < minL: minL = lOB
         if lOB > maxL: maxL = lOB
@@ -105,32 +108,42 @@ def doOSIS():
             if OB[j] in L[j]: L[j][OB[j]] += 1
             else: L[j][OB[j]] = 1
     for k in range( maxL ):
-        print( ' ', k, sorted(L[k]) )
-    print( ' ', minL, maxL )
+        vPrint( 'Quiet', debuggingThisModule, ' ', k, sorted(L[k]) )
+    vPrint( 'Quiet', debuggingThisModule, ' ', minL, maxL )
 
     # Now test the RE on the books codes
-    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
-        #print( BBB )
-        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+    for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
+        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )
         if not match:
-            print( OB )
+            vPrint( 'Quiet', debuggingThisModule, OB )
             halt # Got a OB that can't be found by the RE
 # end of doOSIS
 
 
-def main():
+def main() -> None:
     doBBB()
     doOSIS()
 # end of main
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of TestBooksCodesRE.py

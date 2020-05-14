@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 Door43Language = en
 Door43Publisher = __PUBLISHER__
-Door43Rights = Copyright (C) 2014 __NAME__
+Door43Rights = Copyright (C) 2020 __NAME__
 Door43Contributors =
 Door43Source = __NAME__
 Door43Coverage = People around the world

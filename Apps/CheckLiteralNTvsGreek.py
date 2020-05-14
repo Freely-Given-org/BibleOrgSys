@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # CheckLiteralNTvsGreek.py
@@ -7,7 +7,7 @@
 #   and then do some automated comparisons of the two texts.
 #
 # Copyright (C) 2019 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -56,26 +56,27 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-02-24' # by RJH
-ShortProgName = "CheckLiteralNTvsGreek"
-ProgName = "Check Literal NT vs Greek"
-ProgVersion = '0.02'
-ProgNameVersion = f'{ProgName} v{ProgVersion}'
-ProgNameVersionDate = f'{ProgNameVersion} {_("last modified")} {LastModifiedDate}'
+LAST_MODIFIED_DATE = '2019-02-24' # by RJH
+SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
+PROGRAM_NAME = "Check Literal NT vs Greek"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-sys.path.append( '..' ) # Append the above folder to the path to search for the BOS (so it can also be run dirrect from the Apps folder)
-import BibleOrgSysGlobals
-from VerseReferences import SimpleVerseKey
-from Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
+if __name__ == '__main__':
+    import sys
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
 
@@ -85,34 +86,31 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion, end='\n\n' )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( door43CatalogResources )
+    vPrint( 'Info', debuggingThisModule, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
-    if BibleOrgSysGlobals.verbosityLevel > 2:
-        print()
-        print( door43CatalogResources, end='\n\n' )
+    vPrint( 'Info', debuggingThisModule, '\n{door43CatalogResources}\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.preload()
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogUGNTBible, end='\n\n' )
+        vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible, end='\n\n' )
 
     # Download the ULT = unfoldingWord Literal Text
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogULTBible )
+        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
-        if BibleOrgSysGlobals.verbosityLevel > 0: print( Door43CatalogULTBible, end='\n\n' )
+        vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible, end='\n\n' )
 
     # Go through the UGNT verse by verse
     #   and do some comparisions with the matching ULT verses
@@ -140,25 +138,34 @@ def main():
                 J2 = 'Jesus' in text2
                 if J1 and not J2:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
-                        print( f"                              {text2}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"                              {text2}" )
                     count1 += 1
                 if J2 and not J1:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        print( f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
-                        print( f"                              {text1}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
+                        vPrint( 'Quiet', debuggingThisModule, f"                              {text1}" )
                     count2 += 1
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
+    vPrint( 'Quiet', debuggingThisModule, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
     # Do the BOS close-down stuff
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CheckLiteralNTvsGreek.py

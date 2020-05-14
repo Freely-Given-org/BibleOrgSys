@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # GetKJVVerseNumber.py
@@ -6,7 +6,7 @@
 # App to convert between Bible references and absolute verse numbers.
 #
 # Copyright (C) 2015-2018 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -54,27 +54,29 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LastModifiedDate = '2018-12-12' # by RJH
-ShortProgName = "GetKJVVerseNumber"
-ProgName = "Get KJV Verse Number"
-ProgVersion = '0.10'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
+PROGRAM_NAME = "Get KJV Verse Number"
+PROGRAM_VERSION = '0.10'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys
-sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-import BibleOrgSysGlobals
-from BibleOrganisationalSystems import BibleOrganisationalSystem
-from BibleReferences import BibleSingleReference
+if __name__ == '__main__':
+    import sys
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
+from BibleOrgSys.Reference.BibleReferences import BibleSingleReference
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a PhotoBible (in the default OutputFiles folder).
+        and then export a PhotoBible (in the default BOSOutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -82,14 +84,13 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     ourBibleOrganisationalSystem = BibleOrganisationalSystem( "GENERIC-KJV-66-ENG" )
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
     ourBibleSingleReference = BibleSingleReference( ourBibleOrganisationalSystem )
 
-    print( _("Use QUIT or EXIT to finish.") )
+    vPrint( 'Quiet', debuggingThisModule, _("Use QUIT or EXIT to finish.") )
 
     while True: # Loop until they stop it
         userInput = input( '\n' + _("Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): ") )
@@ -102,9 +103,9 @@ def main():
         if userInt:
             if 1 <= userInt <= 31102:
                 BBB, C, V = ourBibleOrganisationalSystem.convertAbsoluteVerseNumber( userInt )
-                print( _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
+                vPrint( 'Quiet', debuggingThisModule, _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
             else:
-                print( _("Absolute verse numbers must be in range 1..31,102.") )
+                vPrint( 'Quiet', debuggingThisModule, _("Absolute verse numbers must be in range 1..31,102.") )
 
         else: # assume it's a Bible reference
             adjustedUserInput = userInput
@@ -114,24 +115,34 @@ def main():
                         adjustedUserInput = adjustedUserInput.replace( alternative, ':', 1 )
                         break
             results = ourBibleSingleReference.parseReferenceString( adjustedUserInput )
-            #print( results )
+            #vPrint( 'Quiet', debuggingThisModule, results )
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
-                print( _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
+                vPrint( 'Quiet', debuggingThisModule, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
                 absoluteVerseNumber = ourBibleOrganisationalSystem.getAbsoluteVerseNumber( BBB, C, V )
-                print( _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
                 if BibleOrgSysGlobals.debugFlag:
-                    print( _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
             else:
-                print( _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
+                vPrint( 'Quiet', debuggingThisModule, _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
 # end of main
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of GetKJVVerseNumber.py

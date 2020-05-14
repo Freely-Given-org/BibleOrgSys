@@ -1,0 +1,59 @@
+# USFM3Markers.rnc           Relax NG Compact Syntax schema file
+#   Version 0.02
+#   Last modified: 2020-02-24
+#
+# On Linux, to convert to RNG, use
+#       trang USFM3Markers.rnc DerivedFiles/USFM3Markers.rng
+# On Linux, to validate against the .rng file, use
+#       xmllint --noout --relaxng DerivedFiles/USFM3Markers.rng USFM3Markers.xml
+# or to validate against both this and the internal DTD, use
+#       xmllint --noout --relaxng DerivedFiles/USFM3Markers.rng --valid USFM3Markers.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
+
+# The root element
+start = USFM3Markers
+
+# A single header, then multiple USFMMarker entries
+USFM3Markers = element USFM3Markers
+{   header,
+    USFMMarker+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { fractionDigits="2" totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }+,
+    element originalRights { xsd:string },
+    element derivedRights { xsd:string }
+}
+
+USFMMarker = element USFMMarker
+{   element nameEnglish { xsd:string { minLength="5" maxLength="60" } },
+    element marker { xsd:string { minLength="1" maxLength="6" } },
+    element compulsory { "Yes"|"No" },
+    element level { "Newline"|"Internal"|"Note" },
+    element highestNumberSuffix { "None"|"3"|"4"|"5"|"6" },
+    element nests { "Yes"|"No" },
+    element hasContent { "Always"|"Sometimes"|"Never" },
+    element printed { "Yes"|"No" },
+    element closed { "No"|"Always"|"Optional|Self" },
+    element occursIn { xsd:string { minLength="4" maxLength="25" } },
+    element deprecated { "Yes"|"No" },
+    element description { xsd:string { minLength="5" maxLength="520" } }?
+}

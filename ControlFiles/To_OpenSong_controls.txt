@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 OpenSongLanguage = en
 OpenSongPublisher = __PUBLISHER__
-OpenSongRights = Copyright (C) 2014 __NAME__
+OpenSongRights = Copyright (C) 2020 __NAME__
 OpenSongContributors =
 OpenSongSource = __NAME__
 OpenSongCoverage = People around the world

@@ -1,0 +1,2461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of available Bible organizational systems including
+    A unique English organizational system name (as a comment only)
+        (This table should be language agnostic although English is used as a meta-language.)
+    A unique reference abbreviation
+    The type:   original    e.g., Hebrew/Greek scriptures
+                translation e.g., 1611grep  King James Version (KJV)
+                revision    e.g., 1769 King James Version
+                edition     e.g., NIV Women's Study Bible (An edition uses a translation)
+    The definitive names with the language specified as an ISO 639-3 code in an attribute.
+    A versificationSystem name field which directs to that versification system.
+    A punctuationSystem name field which directs to the punctuation system.
+        None and Unknown are also valid entries for the system name fields.
+
+The historical data encoded in this document is approximate only.
+It's impossible to accurately list all of the adjustments and revisions of texts that were made,
+especially since the text of some early versions is no longer available.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Note that most of the data is supplied as XML elements, not attributes.
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+
+See the supplied ReadMe.txt for more details.
+-->
+
+<!DOCTYPE BibleOrganisationalSystems [
+    <!ELEMENT BibleOrganisationalSystems (header,BibleOrganisationalSystem+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier*,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|cre|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT BibleOrganisationalSystem (referenceAbbreviation,languageCode,name+,derivedFrom*,translator*,completionDate*,publicationDate*,
+                        versificationSystem*,punctuationSystem*,bookOrderSystem*,booksNamesSystem*,usesText*,url*)>
+            <!ATTLIST BibleOrganisationalSystem type CDATA #REQUIRED>
+            <!ELEMENT referenceAbbreviation (#PCDATA)>
+            <!ELEMENT languageCode (#PCDATA)>
+            <!ELEMENT name (#PCDATA)>
+            <!ELEMENT translator (#PCDATA)>
+            <!ELEMENT derivedFrom (#PCDATA)>
+            <!ELEMENT publicationDate (#PCDATA)>
+            <!ELEMENT versificationSystem (#PCDATA)>
+            <!ELEMENT punctuationSystem (#PCDATA)>
+            <!ELEMENT bookOrderSystem (#PCDATA)>
+            <!ELEMENT booksNamesSystem (#PCDATA)>
+            <!ELEMENT usesText (#PCDATA)>
+            <!ELEMENT url (#PCDATA)>
+]>
+
+<BibleOrganisationalSystems>
+
+  <header>
+    <work>
+      <version>0.29</version>
+      <date>2019-11-10</date>
+      <title>Bible organizational systems list</title>
+      <contributor role="com">Robert Hunt</contributor>
+      <rights>Public Domain</rights>
+      <identifier type="URL">http://en.wikipedia.org/wiki/English_translations_of_the_Bible</identifier>
+      <identifier type="URL">http://en.wikipedia.org/wiki/List_of_English_Bible_translations</identifier>
+      <identifier type="URL">http://www.biblicaltraining.org/history-english-bible/daniel-wallace/foundations</identifier>
+      <identifier type="URL">http://www.lockman.org/nasb/nasbprin.php</identifier>
+</work>
+  </header>
+
+
+<!-- Original Bible texts -->
+  <BibleOrganisationalSystem type="original">
+    <referenceAbbreviation>HEB</referenceAbbreviation>
+    <languageCode>hbo</languageCode>
+    <name>Hebrew Scriptures</name>
+    <versificationSystem>Hebrew</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Hebrew</bookOrderSystem>
+    <booksNamesSystem>None</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Hebrew_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="original">
+    <referenceAbbreviation>NTG</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Greek Scriptures</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Unknown</bookOrderSystem>
+    <booksNamesSystem>None</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Greek_New_Testament</url>
+  </BibleOrganisationalSystem>
+
+
+<!-- Translations from originals, and -->
+<!-- Revisions of earlier translations -->
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>LXX</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Septuagint</name>
+    <name>LXX</name>
+    <publicationDate>300 BC</publicationDate>
+    <derivedFrom>HEB</derivedFrom>
+    <versificationSystem>Septuagint</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Septuagint</bookOrderSystem>
+    <booksNamesSystem>None</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Septuagint</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>VUL</referenceAbbreviation>
+    <languageCode>lat</languageCode>
+    <name>Vulgate</name>
+    <name>Versio Vulgata</name>
+    <translator>Jerome</translator>
+    <translator>others</translator>
+    <comment>Commissioned by Pope Damasus in 382</comment>
+    <derivedFrom>HEB</derivedFrom>
+    <derivedFrom>LXX</derivedFrom>
+    <publicationDate>405</publicationDate>
+    <versificationSystem>Vulgate</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    JDT TOB WIS SIR MAC
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/St_Jerome</url>
+    <url>http://en.wikipedia.org/wiki/Vulgate</url>
+    <url>http://en.wikipedia.org/wiki/Pope_Damasus_I</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>BJ</referenceAbbreviation>
+    <languageCode>ang</languageCode>
+    <name>Unknown</name>
+    <translator>The Venerable Bede</translator>
+    <publicationDate>735</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>JHN</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Venerable_Bede</url>
+    <url>http://en.wikipedia.org/wiki/List_of_works_by_Bede</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>AGP</referenceAbbreviation>
+    <languageCode>ang</languageCode>
+    <name>Unknown</name>
+    <translator>King Alfred the Great</translator>
+    <derivedFrom>VUL</derivedFrom>
+    <publicationDate>900</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Alfred_the_Great</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WYC-1382</referenceAbbreviation>
+    <languageCode>enm</languageCode>
+    <name>Wycliffe Bible</name>
+    <translator>John Wycliffe</translator>
+    <translator>others</translator>
+    <derivedFrom>VUL</derivedFrom>
+    <publicationDate>1382</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/John_Wycliffe</url>
+    <url>http://en.wikipedia.org/wiki/Wycliffe's_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>WYC-1395</referenceAbbreviation>
+    <languageCode>enm</languageCode>
+    <name>Wycliffe Bible</name>
+    <translator>John Purvey</translator>
+    <derivedFrom>WYC-1382</derivedFrom>
+    <publicationDate>1395</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/John_Wycliffe</url>
+    <url>http://en.wikipedia.org/wiki/John_Purvey</url>
+    <url>http://en.wikipedia.org/wiki/Wycliffe's_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MENTEL</referenceAbbreviation>
+    <languageCode>deu</languageCode>
+    <name>Mentel Bible</name>
+    <translator>Johannes_Mentelin</translator>
+    <publicationDate>1466</publicationDate>
+    <comment>Printed at Strassburg</comment>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>Unknown</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>deu_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Johannes_Mentelin</url>
+    <url>http://en.wikipedia.org/wiki/German_Bible_translations</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>EL-1</referenceAbbreviation>
+    <languageCode>lat</languageCode>
+    <name>Erasmus' Latin New Testament -- 1st edition</name>
+    <translator>Desiderius Erasmus</translator>
+    <derivedFrom>VUL</derivedFrom>
+    <publicationDate>1516</publicationDate>
+    <comment>Produced in a rush to be first</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ENTG-1</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Erasmus' Greek New Testament -- 1st edition</name>
+    <translator>Desiderius Erasmus</translator>
+    <publicationDate>1 March 1516</publicationDate>
+    <comment>Produced in a rush to be first</comment>
+    <comment>The final six verses of Greek Revelation were back-translated from the Latin</comment>
+    <comment>Called the most poorly edited book in the world</comment>
+    <usesText>EL-1</usesText>
+    <usesText>NTG</usesText>
+    <comment>Latin/Greek diglot</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ENTG-2</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Erasmus' Greek New Testament -- 2nd edition</name>
+    <translator>Desiderius Erasmus</translator>
+    <publicationDate>1519</publicationDate>
+    <usesText>EL</usesText>
+    <usesText>NTG</usesText>
+    <comment>Latin/Greek diglot</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TYN-NT-1526</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament</name>
+    <translator>William Tyndale</translator>
+    <derivedFrom>EGNT</derivedFrom>
+    <completionDate>1525</completionDate>
+    <publicationDate>1526</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/William_Tyndale</url>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TYN-1526</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale Bible</name>
+    <translator>William Tyndale</translator>
+    <derivedFrom>NTG</derivedFrom>
+    <completionDate>1525</completionDate>
+    <publicationDate>1526</publicationDate>
+    <comment>Used italics for words not in the original</comment>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/William_Tyndale</url>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>LUT</referenceAbbreviation>
+    <languageCode>deu</languageCode>
+    <name>Luther Bible</name>
+    <translator>Martin Luther</translator>
+    <derivedFrom>NTG</derivedFrom>
+    <publicationDate>1534</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Martin_Luther</url>
+    <url>http://en.wikipedia.org/wiki/Luther_Bible</url>
+    </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>TYN-NT-2</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 2nd edition</name>
+    <derivedFrom>TYN-NT-1526</derivedFrom>
+    <publicationDate>1534</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ENTG-3</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Erasmus' Greek New Testament -- 3rd edition</name>
+    <translator>Desiderius Erasmus</translator>
+    <publicationDate>1522</publicationDate>
+    <usesText>EL</usesText>
+    <usesText>NTG</usesText>
+    <comment>Latin/Greek diglot</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ENTG-4</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <translator>Desiderius Erasmus</translator>
+    <name>Erasmus' Greek New Testament -- nth edition</name>
+    <publicationDate>1532</publicationDate>
+    <usesText>EL</usesText>
+    <usesText>NTG</usesText>
+    <comment>Latin/Greek diglot</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ENTG-5</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <translator>Desiderius Erasmus</translator>
+    <name>Erasmus' Greek New Testament -- nth edition</name>
+    <publicationDate>1532</publicationDate>
+    <usesText>EL</usesText>
+    <usesText>NTG</usesText>
+    <usesText>ENTG</usesText>
+    <comment>Latin/Greek diglot</comment>
+    <url>http://en.wikipedia.org/wiki/Erasmus</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>CB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Coverdale Bible</name>
+    <comment>Title was "Biblia, The Bible, that is to say, the Holy Scriptures of Old and New Testament"</comment>
+    <translator>Myles Coverdale</translator>
+    <derivedFrom>LUT</derivedFrom>
+    <derivedFrom>VUL</derivedFrom>
+    <derivedFrom>TYN</derivedFrom>
+    <comment>Also derived from: the Latin version of Paginus, the Zurich version</comment>
+    <publicationDate>October 4, 1535</publicationDate>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Myles_Coverdale</url>
+    <url>http://en.wikipedia.org/wiki/Coverdale_Bible</url>
+    <url>http://creation.com/coverdale</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>TYN-NT-3</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 3rd edition</name>
+    <derivedFrom>TYN-NT-2</derivedFrom>
+    <publicationDate>1536</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>TYN-NT-4</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 4th edition</name>
+    <derivedFrom>TYN-NT-3</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>TYN-NT-5</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 5th edition</name>
+    <derivedFrom>TYN-NT-4</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Tyndale_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Matthew's Bible</name>
+    <comment>Known as "The Wife beater's Bible"</comment>
+    <translator>John Rogers</translator>
+    <comment>Pen name Thomas Matthew</comment>
+    <derivedFrom>CB</derivedFrom>
+    <derivedFrom>TYN</derivedFrom>
+    <publicationDate>1537</publicationDate>
+    <comment>Large folio size with extensive marginal notes</comment>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA3 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/John_Rogers_(Bible_editor_and_martyr)</url>
+    <url>http://en.wikipedia.org/wiki/Matthew's_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GrtB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Great Bible</name>
+    <name>Cromwell Bible</name>
+    <name>Whitchurch's Bible</name>
+    <name>The Chained Bible</name>
+    <translator>Myles Coverdale</translator>
+    <derivedFrom>MB</derivedFrom>
+    <publicationDate>April 1539</publicationDate>
+    <comment>Extra large folio version</comment>
+    <versificationSystem>None</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Myles_Coverdale</url>
+    <url>http://en.wikipedia.org/wiki/Great_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>SNTG-1</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Stephanus' Greek New Testament -- 1st edition</name>
+    <translator>Robert Estienne</translator>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Robert_Estienne</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>SNTG-2</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <translator>Robert Estienne</translator>
+    <derivedFrom>SNTG-1</derivedFrom>
+    <name>Stephanus' Greek New Testament -- 2nd edition</name>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Robert_Estienne</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>SNTG-3</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Stephanus' Greek New Testament -- 3rd edition</name>
+    <translator>Robert Estienne</translator>
+    <derivedFrom>SNTG-2</derivedFrom>
+    <derivedFrom>ENTG-3</derivedFrom>
+    <publicationDate>1550</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Robert_Estienne</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>SNTG-4</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <translator>Robert Estienne</translator>
+    <derivedFrom>SNTG-3</derivedFrom>
+    <name>Stephanus' Greek New Testament -- 4th edition</name>
+    <publicationDate>1551</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Robert_Estienne</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-1</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 1st edition</name>
+    <derivedFrom>SNTG-4</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-2</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 2nd edition</name>
+    <derivedFrom>BNTG-1</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-3</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 3rd edition</name>
+    <derivedFrom>BNTG-2</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-4</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 4th edition</name>
+    <derivedFrom>BNTG-3</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-5</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 5th edition</name>
+    <derivedFrom>BNTG-4</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-6</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 6th edition</name>
+    <derivedFrom>BNTG-5</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-7</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 7th edition</name>
+    <derivedFrom>BNTG-6</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-8</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 8th edition</name>
+    <derivedFrom>BNTG-7</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-9</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 9th edition</name>
+    <derivedFrom>BNTG-8</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-10</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 10th edition</name>
+    <derivedFrom>BNTG-9</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>BNTG-11</referenceAbbreviation>
+    <languageCode>grc</languageCode>
+    <name>Theodore Beza's Greek New Testament -- 11th edition</name>
+    <derivedFrom>BNTG-10</derivedFrom>
+    <publicationDate>???</publicationDate>
+    <usesText>NTG</usesText>
+    <url>http://en.wikipedia.org/wiki/Theodore_Beza</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GenB-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Geneva Bible New Testament</name>
+    <translator>William Whittingham</translator>
+    <derivedFrom>TYN</derivedFrom>
+    <publicationDate>1557</publicationDate>
+    <comment>Including Calvanistic notes</comment>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Geneva_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GenB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Geneva Bible</name>
+    <comment>Known as "The Breeches Bible"</comment>
+    <translator>William Whittingham</translator>
+    <translator>Myles Coverdale</translator>
+    <translator>Christopher Goodman</translator>
+    <translator>Anthony Gilby</translator>
+    <translator>Thomas Sampson</translator>
+    <translator>Willian Cole</translator>
+    <derivedFrom>TYN</derivedFrom>
+    <derivedFrom>GenB-NT</derivedFrom>
+    <publicationDate>1560</publicationDate>
+    <comment>Produced in quarto size with Calvanistic notes</comment>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Geneva_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>BishB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Bishops' Bible</name>
+    <translator>Nine bishops</translator>
+    <derivedFrom>GrtB</derivedFrom>
+    <derivedFrom>GenB</derivedFrom>
+    <publicationDate>1568</publicationDate>
+    <comment>Last printed in 1606</comment>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Bishops'_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>DRB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Douay-Rheims Bible</name>
+    <name>The Rheims-Douay Bible</name>
+    <derivedFrom>VUL</derivedFrom>
+    <publicationDate>1582</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Douay–Rheims_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>KJV-1611</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <derivedFrom>BNTG-9</derivedFrom>
+    <derivedFrom>TYN</derivedFrom>
+    <derivedFrom>BishB</derivedFrom>
+    <publicationDate>1611</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <comment>14 minor editions in the first three years</comment>
+    <url>http://en.wikipedia.org/wiki/Authorized_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJV-1629</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version -- 1st revision</name>
+    <name>Authorized Version -- 1st revision</name>
+    <derivedFrom>KJV-1611</derivedFrom>
+    <publicationDate>1629</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Authorized_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJV-1638</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version -- 2nd revision</name>
+    <name>Authorized Version -- 2nd revision</name>
+    <derivedFrom>KJV-1629</derivedFrom>
+    <publicationDate>1638</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Authorized_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WHITBY</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Whitby Version</name>
+    <translator>Daniel Whitby (1638–1725)</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Paraphrase of KJV</comment>
+    <publicationDate>1703</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Daniel_Whitby</url>
+    <url>http://en.wikipedia.org/wiki/Textus_Receptus</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WELLS</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Common Translation Corrected</name>
+    <translator>Edward Wells(1667–1727)</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1724</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Edward_Wells</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MACE</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Mace Bible</name>
+    <translator>Daniel Mace</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1729</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>DRB-1</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Douay-Rheims Bible revision</name>
+    <translator>Richard Challoner</translator>
+    <derivedFrom>DRB</derivedFrom>
+    <publicationDate>1730</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Richard_Challoner</url>
+    <url>http://en.wikipedia.org/wiki/Douay%E2%80%93Rheims_Bible#Challoner_Revision</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WISTON</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Primitive New Testament</name>
+    <translator>William Wiston</translator>
+    <comment>Translator of Josephus' works</comment>
+    <derivedFrom>KJV</derivedFrom>
+    <derivedFrom>NTG</derivedFrom>
+    <publicationDate>1745</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJV-1762</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version -- 3rd revision</name>
+    <name>Authorized Version -- 3rd revision</name>
+    <derivedFrom>KJV-1638</derivedFrom>
+    <publicationDate>1762</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Authorized_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WESLEY</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Wesley Bible</name>
+    <translator>John Wesley (1703-1791)</translator>
+    <publicationDate>1768</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/John_Wesley</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>HARWOOD</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Harwood Bible</name>
+    <translator>Edward Harwood (1729–1794)</translator>
+    <comment>Lord's prayer: Thou great governor and parent of universal nature</comment>
+    <publicationDate>1768</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Edward_Harwood</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJV-1769</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version -- 4th revision</name>
+    <name>Authorized Version -- 4th revision</name>
+    <derivedFrom>KJV-1762</derivedFrom>
+    <comment>Nearly 100,000 changes from 1611 version including spelling and punctuation changes</comment>
+    <publicationDate>1769</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Authorized_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>WEBSTER</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Common Version</name>
+    <name>Webster Bible</name>
+    <name>Webster's Revision</name>
+    <translator>Noah Webster</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Focused mainly on replacing archaic words and making simple grammatical changes</comment>
+    <publicationDate>1833</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Noah_Webster</url>
+    <url>http://en.wikipedia.org/wiki/Webster's_Revision</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>YLT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Young's Literal Translation</name>
+    <translator>Robert Young</translator>
+    <derivedFrom>HEB</derivedFrom>
+    <derivedFrom>NTG</derivedFrom>
+    <publicationDate>1833</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Young's_Literal_Translation</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>EBR-NT-1</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Testament Critically Emphasised</name>
+    <translator>Joseph Bryant Rotherham</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1872</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Emphasized_Bible</url>
+    <url>http://en.wikipedia.org/wiki/Joseph_Bryant_Rotherham</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>EBR-NT-2</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Testament Critically Emphasised</name>
+    <translator>Joseph Bryant Rotherham</translator>
+    <derivedFrom>EBR-NT-1</derivedFrom>
+    <publicationDate>1872</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Emphasized_Bible</url>
+    <url>http://en.wikipedia.org/wiki/Joseph_Bryant_Rotherham</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>CPB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Cambridge Paragraph Bible</name>
+    <translator>F.H.A. Scrivener</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1873</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_Cambridge_Paragraph_Bible</url>
+    <url>http://en.wikipedia.org/wiki/Frederick_Henry_Ambrose_Scrivener</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>SPORREL</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Sporrel Old Testament</name>
+    <translator>Helen Sporrel</translator>
+    <comment>First woman translator (used unpointed Hebrew)</comment>
+    <derivedFrom>HEB</derivedFrom>
+    <publicationDate>1885</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>YLT2</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Young's Literal Translation</name>
+    <translator>Robert Young</translator>
+    <derivedFrom>YLT</derivedFrom>
+    <publicationDate>1887</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Young's_Literal_Translation</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>Alford</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Alford Bible</name>
+    <translator>Henry Alford</translator>
+    <comment>Dean of Canterbury</comment>
+    <publicationDate>1869</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>RV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Version New Testament</name>
+    <translator>Brooke Foss Westcott</translator>
+    <translator>Fenton John Anthony Hort</translator>
+    <translator>others</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Produced in England but with input from American scholars</comment>
+    <publicationDate>1881</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>RV-OT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Version Old Testament</name>
+    <translator>Brooke Foss Westcott</translator>
+    <translator>Fenton John Anthony Hort</translator>
+    <translator>others</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Produced in England but with input from American scholars</comment>
+    <publicationDate>1885</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>RV-DC</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Version Apocrypha</name>
+    <translator>Brooke Foss Westcott</translator>
+    <translator>Fenton John Anthony Hort</translator>
+    <translator>others</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Produced in England but with input from American scholars</comment>
+    <publicationDate>1895</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>TOB JDT ESG WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>EBR-NT-3</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Testament Critically Emphasised</name>
+    <translator>Joseph Bryant Rotherham</translator>
+    <derivedFrom>EBR-NT-2</derivedFrom>
+    <publicationDate>1897</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Joseph_Bryant_Rotherham</url>
+    <url>http://en.wikipedia.org/wiki/Emphasized_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>YLT3</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Young's Literal Translation</name>
+    <translator>Robert Young</translator>
+    <derivedFrom>YLT2</derivedFrom>
+    <publicationDate>1898</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/Young's_Literal_Translation</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>ASV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>American Standard Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1901</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>EBR</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Emphasized Bible</name>
+    <translator>Joseph Bryant Rotherham</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1902</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Joseph_Bryant_Rotherham</url>
+    <url>http://en.wikipedia.org/wiki/Emphasized_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TCNT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Twentieth Century New Testament</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1904</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MRK MAT LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Twentieth_Century_New_Testament</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>RSV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Standard Version New Testament</name>
+    <comment>Work began in 1937 by International Council of Religious Education's (America and Canada) team of 32 scholars</comment>
+    <derivedFrom>KJV</derivedFrom>
+    <derivedFrom>ASV</derivedFrom>
+    <publicationDate>1946</publicationDate>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Revised_Standard_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>RSV52</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Standard Version</name>
+    <comment>Work began in 1937 by International Council of Religious Education's (America and Canada) team of 32 scholars</comment>
+    <derivedFrom>KJV</derivedFrom>
+    <derivedFrom>ASV</derivedFrom>
+    <publicationDate>30 September 1952</publicationDate>
+    <comment>Sold 1 million copies on its first day of sale</comment>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Revised_Standard_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NTLT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The New Testament in the Language of Today: An American Translation</name>
+    <translator>William F. Beck (1904–1966)</translator>
+    <publicationDate>1963</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/God's_Word_Translation_(GW)</url>
+    <url>http://en.wikipedia.org/wiki/William_F._Beck</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>NASB-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New American Standard Bible New Testament</name>
+    <derivedFrom>ASV</derivedFrom>
+    <comment>Translation project started in 1959 by The Lockman Foundation of La Habra, California.</comment>
+    <comment>NT mostly followed 26th edition of Eberhard Nestle's NOVUM TESTAMENTUM GRAECE.</comment>
+    <publicationDate>1963</publicationDate>
+    <copyright>(C) the Lockman Foundation, 1960, 1962, 1963</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_American_Standard_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GNT-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Good News Bible New Testament</name>
+    <name>Good News Translation New Testament</name>
+    <name>Today's English Version New Testament</name>
+    <publicationDate>1966</publicationDate>
+    <publisher>Bible Societies, HarperCollins</publisher>
+    <copyright>© American Bible Society 1966</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Good_News_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NEB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New English Bible</name>
+    <translator>C. H. Dodd</translator>
+    <comment>A completely new work -- not based on previous translations</comment>
+    <comment>Conceived in 1946 in Scotland; primarily done by British scholars</comment>
+    <publicationDate>1970</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>NASB71</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New American Standard Bible</name>
+    <translator>Dr. Peter Ahn</translator>
+    <translator>Dr. Warren Allen</translator>
+    <translator>Dr. Gleason Archer</translator>
+    <translator>Dr. Herman Austel</translator>
+    <translator>Dr. Kenneth Lee Barker</translator>
+    <translator>Dr. Fred Bush</translator>
+    <translator>Dr. David L. Cooper</translator>
+    <translator>Dr. Richard W. Cramer</translator>
+    <translator>Dr. Edward R. Dalglish</translator>
+    <translator>Dr. Charles Lee Feinberg</translator>
+    <translator>Dr. Harvey Finley</translator>
+    <translator>Dr. Paul Gray</translator>
+    <translator>Dr. Edward F. Harrison</translator>
+    <translator>Dr. John Hartley</translator>
+    <translator>Dr. F. B Huey, Jr.</translator>
+    <translator>Dr. Charles Isbell</translator>
+    <translator>Dr. David W. Kerr</translator>
+    <translator>Dr. William L. Lane</translator>
+    <translator>Dr. Timothy Lin</translator>
+    <translator>Dr. Oscar Lowry</translator>
+    <translator>Dr. Elmer Martens</translator>
+    <translator>Dr. Henry R. Moeller</translator>
+    <translator>Dr. Reuben A. Olson</translator>
+    <translator>Dr. J. Barton Payne</translator>
+    <translator>Dr. Walter Penner</translator>
+    <translator>Dr. John Rea</translator>
+    <translator>Dr. W.L. Reed</translator>
+    <translator>Dr. Robert N. Schaper</translator>
+    <translator>Dr. Moisés Silva</translator>
+    <translator>Dr. Ralph L. Smith</translator>
+    <translator>Dr. Merrill C. Tenney</translator>
+    <translator>Dr. Robert L. Thomas</translator>
+    <translator>Dr. George Townsend</translator>
+    <translator>Dr. Bruce Waltke</translator>
+    <translator>Dr. Lowell C. Wendt</translator>
+    <translator>Dr. William C. Williams</translator>
+    <translator>Dr. Herbert M. Wolf</translator>
+    <translator>Dr. Kenneth Wuest</translator>
+    <translator>Dr. Fred Young</translator>
+    <comment>Translators came from Presbyterian, Methodist, American Baptist, Disciples, Southern Baptist, Nazarene, General Association of Regular Baptist, Congregational, Independent Baptist, Free Methodist, and still other denominations.</comment>
+    <derivedFrom>ASV</derivedFrom>
+    <comment>OT used the latest edition of Rudolf Kittel's BIBLIA HEBRAICA together with the most recent light from lexicography, cognate languages, and the Dead Sea Scrolls.</comment>
+    <publicationDate>1971</publicationDate>
+    <copyright>(C) the Lockman Foundation, 1960, 1962, 1963, 1968, 1971</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_American_Standard_Bible</url>
+    <url>http://www.lockman.org/nasb/nasbprin.php</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>RSV71</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Standard Version</name>
+    <derivedFrom>RSV-NT</derivedFrom>
+    <publicationDate>1971</publicationDate>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Revised_Standard_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TLB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Living Bible</name>
+    <translator>Kenneth N. Taylor</translator>
+    <derivedFrom>ASB</derivedFrom>
+    <publicationDate>1971</publicationDate>
+    <copyright>Copyright 1971 Tyndale House Publishers</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/The_Living_Bible</url>
+    <url>http://en.wikipedia.org/wiki/Kenneth_N._Taylor</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Version Bible New Testament</name>
+    <comment>A completely new work -- not based on previous translations</comment>
+    <publicationDate>1973</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GNT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Good News Bible</name>
+    <name>Good News Translation</name>
+    <name>Today's English Version</name>
+    <publicationDate>1976</publicationDate>
+    <publisher>Bible Societies, HarperCollins</publisher>
+    <copyright>© American Bible Society 1966, 1971, 1976</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Good_News_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Version Bible</name>
+    <comment>A completely new work by over 100 scholars -- not based on previous translations</comment>
+    <publicationDate>1978</publicationDate>
+    <comment>Outsold the KJV by 1995; #1 best-selling book of all time</comment>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NKJV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Mew King James Bible New Testament</name>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Based on "Textus Receptus"</comment>
+    <publicationDate>1979</publicationDate>
+    <copyright>Copyright 1979 Thomas Nelson, Inc.</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NKJV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Mew King James Bible</name>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Based on "Textus Receptus"</comment>
+    <publicationDate>1983</publicationDate>
+    <copyright>Copyright 1979, 1980, 1982 Thomas Nelson, Inc.</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NRSV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Revised Standard Version</name>
+    <derivedFrom>RSV</derivedFrom>
+    <comment>Gender inclusive</comment>
+    <publicationDate>1989</publicationDate>
+    <copyright>© 1989 by the Division of Christian Education of the National Council of the Churches of Christ in the USA</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_Revised_Standard_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>REB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised English Version</name>
+    <derivedFrom>NEB</derivedFrom>
+    <publicationDate>1989</publicationDate>
+    <copyright>© Oxford University Press and Cambridge University Press 1989</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Revised_English_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>JNT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Jewish New Testament</name>
+    <translator>David H. Stern</translator>
+    <publicationDate>1989</publicationDate>
+    <publisher>Jewish New Testament Publications</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Complete_Jewish_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>CEV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Contemporary English Version New Testament</name>
+    <translator>Barclay Newman</translator>
+    <publicationDate>1991</publicationDate>
+    <copyright>© American Bible Society 1991</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Contemporary_English_Version</url>
+  </BibleOrganisationalSystem>
+
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MSG-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Message New Testament</name>
+    <translator>Eugene H. Peterson</translator>
+    <derivedFrom>NTG</derivedFrom>
+    <publicationDate>1993</publicationDate>
+    <copyright>Copyright 1993 Eugene H. Peterson</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/The_Message_(Bible)</url>
+    <url>http://en.wikipedia.org/wiki/Eugene_H._Peterson</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>KJ21</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>21st Century King James Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1994</publicationDate>
+    <copyright>Copyright © 1994 by Deuel Enterprises, Inc., Gary, SD 57237. All rights reserved.</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://www.kj21.com/</url>
+    <url>http://en.wikipedia.org/wiki/21st_Century_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIrV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Readers Version Bible New Testament</name>
+    <publicationDate>1994</publicationDate>
+    <publisher>International Bible Society</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Reader's_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>CEV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Contemporary English Version</name>
+    <translator>Barclay Newman</translator>
+    <publicationDate>1995</publicationDate>
+    <copyright>© American Bible Society 1991, 1992, 1995; Anglicizations © British and Foreign Bible Society 1996</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Contemporary_English_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GW</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>God's Word</name>
+    <derivedFrom>NTLT</derivedFrom>
+    <publicationDate>1995</publicationDate>
+    <publisher>Baker Publishing Group</publisher>
+    <copyright>Copyright 1995 by God's Word to the Nations</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>www.godsword.org</url>
+    <url>http://en.wikipedia.org/wiki/God's_Word_Translation_(GW)</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>NASB95</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New American Standard Bible</name>
+    <translator>Dr. Timothy L. Deahl</translator>
+    <translator>Dr. Paul Enns</translator>
+    <translator>Dr. Buist M. Fanning</translator>
+    <translator>Dr. Thomas Finley</translator>
+    <translator>Dr. Osvaldo Garcia</translator>
+    <translator>Dr. Kenneth Hanna</translator>
+    <translator>Dr. W. Hall Harris</translator>
+    <translator>Rev. Eduardo Hernandez</translator>
+    <translator>Dr. Harold Hoehner</translator>
+    <translator>Dr. J. Carl Laney</translator>
+    <translator>Dr. David K. Lowery</translator>
+    <translator>Dr. Ted Martin</translator>
+    <translator>Dr. H. Bruce Stokes</translator>
+    <translator>Dr. Duane Wetzler</translator>
+    <translator>Dr. Dale Wheeler</translator>
+    <translator>Dr. Don Wilkins</translator>
+    <derivedFrom>NASB71</derivedFrom>
+    <comment>OT used the latest edition of Rudolf Kittel's BIBLIA HEBRAICA together with the most recent light from lexicography, cognate languages, and the Dead Sea Scrolls.</comment>
+    <publicationDate>1995</publicationDate>
+    <copyright>(C) the Lockman Foundation, 1960, 1962, 1963, 1968, 1971, 1995</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_American_Standard_Bible</url>
+    <url>http://www.lockman.org/nasb/nasbprin.php</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIrV-OT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Readers Version Bible Old Testament</name>
+    <publicationDate>1995</publicationDate>
+    <publisher>International Bible Society</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Reader's_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIrV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Readers Version Bible</name>
+    <publicationDate>1996</publicationDate>
+    <publisher>International Bible Society</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Reader's_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NIVI</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Version Inclusive Language Bible</name>
+    <publicationDate>1996</publicationDate>
+    <publisher>Hodder and Stoughton</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Version_Inclusive_Language_Edition</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NLT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Living Translation</name>
+    <derivedFrom>TLB</derivedFrom>
+    <publicationDate>1996</publicationDate>
+    <copyright>Copyright (C) 1996 by Tyndale House Foundation</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_Living_Translation</url>
+    <url>http://en.wikipedia.org/wiki/Kenneth_N._Taylor</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>CJB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Complete Jewish Bible</name>
+    <translator>David H. Stern</translator>
+    <publicationDate>1998</publicationDate>
+    <publisher>Jewish New Testament Publications</publisher>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Complete_Jewish_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>HCSB-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Holman Christian Standard Bible New Testament</name>
+    <comment>Sponsored by Southern Baptist Convention</comment>
+    <publicationDate>1999</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Holman_Christian_Standard_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>MKJV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Modern King James Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>1999</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>AKJV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>American King James Version</name>
+    <translator>Michael Peter (Stone) Engelbrite</translator>
+    <derivedFrom>KJV</derivedFrom>
+    <comment>Spelling and vocabulary update only</comment>
+    <publicationDate>8 November 1999</publicationDate>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://en.wikipedia.org/wiki/American_King_James_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJV2000</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James 2000 Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>2000</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>UKJV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Updated King James Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>2000</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>WEB-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>World English Bible New Testament</name>
+    <translator>Michael Paul Johnson</translator>
+    <derivedFrom>ASV</derivedFrom>
+    <publicationDate>2000</publicationDate>
+    <publisher>Rainbow Missions</publisher>
+    <copyright>Public Domain</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://www.ebible.org/</url>
+    <url>http://en.wikipedia.org/wiki/World_English_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>KJVER</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version Easy Reading</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>2001</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>HSE</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Holy Scriptures in English</name>
+    <publicationDate>2001</publicationDate>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>ESV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>English Standard Version</name>
+    <derivedFrom>RSV</derivedFrom>
+    <publisher>Crossway Bibles</publisher>
+    <publicationDate>2001</publicationDate>
+    <copyright>Copyright © 2001 by Crossway Bibles, a ministry of the Good News Publishers of Wheaton, IL.</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/English_Standard_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TNIV-NT</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Today's New International Version Bible New Testament</name>
+    <publicationDate>2002</publicationDate>
+    <publisher>Zondervan</publisher>
+    <copyright>Copyright 2002 International Bible Society</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Today's_New_International_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MSG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>The Message</name>
+    <translator>Eugene H. Peterson</translator>
+    <derivedFrom>HEB</derivedFrom>
+    <derivedFrom>NTG</derivedFrom>
+    <publicationDate>2002</publicationDate>
+    <copyright>Copyright 2002 Eugene H. Peterson</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/The_Message_(Bible)</url>
+    <url>http://en.wikipedia.org/wiki/Eugene_H._Peterson</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>CKJV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Comfort-able King James Version</name>
+    <derivedFrom>KJV</derivedFrom>
+    <publicationDate>2003</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>HCSB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Holman Christian Standard Bible</name>
+    <comment>Sponsored by Southern Baptist Convention</comment>
+    <publicationDate>2004</publicationDate>
+    <copyright>Copyright 2004 Holman Bible Publishers</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Holman_Christian_Standard_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NLTse</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Living Translation Second Edition</name>
+    <derivedFrom>NLT</derivedFrom>
+    <publicationDate>2004</publicationDate>
+    <copyright>Copyright (C) 1996, 2004 by Tyndale House Foundation</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_Living_Translation</url>
+    <url>http://en.wikipedia.org/wiki/Kenneth_N._Taylor</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>NCPB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Cambridge Paragraph Bible</name>
+    <derivedFrom>CPB</derivedFrom>
+    <translator>Prof. David Norton</translator>
+    <publicationDate>2005</publicationDate>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <url>http://www.cambridge.org/uk/catalogue/catalogue.asp?isbn=0521843863</url>
+    <url>http://en.wikipedia.org/wiki/New_Cambridge_Paragraph_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NET</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New English Translation</name>
+    <publicationDate>2005</publicationDate>
+    <comment>Available for free download</comment>
+    <comment>Extensive translators' notes also available</comment>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>NETBible.org</url>
+    <url>http://en.wikipedia.org/wiki/NET_Bible</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>NLTse-2</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New Living Translation Second Edition</name>
+    <derivedFrom>NLTse</derivedFrom>
+    <publicationDate>2007</publicationDate>
+    <copyright>Copyright (C) 1996, 2004, 2007 by Tyndale House Foundation</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_Living_Translation</url>
+    <url>http://en.wikipedia.org/wiki/Kenneth_N._Taylor</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>TNIV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Today's New International Version Bible</name>
+    <publicationDate>2005</publicationDate>
+    <publisher>Zondervan</publisher>
+    <copyright>Copyright 2005 International Bible Society</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Today's_New_International_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MYB</referenceAbbreviation>
+    <languageCode>ceb</languageCode>
+    <name>Maayong Balita</name>
+    <publicationDate>???</publicationDate>
+    <versificationSystem>GNT</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>Unknown</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="revision">
+    <referenceAbbreviation>NIV-2011</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>New International Version Bible</name>
+    <derivedFrom>NIV</derivedFrom>
+    <publicationDate>2011</publicationDate>
+    <copyright>Copyright 1973, 1978, 1984, 2011 (Biblica)</copyright>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/New_International_Version</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MBT-2010</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug</name>
+    <translator>Robert Hunt</translator>
+    <translator>Jeffrey McGriff</translator>
+    <translator>Rosalyn Lacubay</translator>
+    <translator>Alexander Agdahan</translator>
+    <translator>Tano Emboc</translator>
+    <derivedFrom>MYB</derivedFrom>
+    <completionDate>2010</completionDate>
+    <publicationDate>2011</publicationDate>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>Matigsalug</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>mbt</booksNamesSystem>
+    <includesBooks>GEN RUT EST JNA
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>MBT</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug</name>
+    <translator>Robert Hunt</translator>
+    <translator>Jeffrey McGriff</translator>
+    <translator>Rosalyn Lacubay</translator>
+    <translator>Alexander Agdahan</translator>
+    <translator>Tano Emboc</translator>
+    <derivedFrom>MBT-2010</derivedFrom>
+    <derivedFrom>MYB</derivedFrom>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>Matigsalug</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>mbt</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>OEB</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Open English Bible</name>
+    <translator>Russell Allen</translator>
+    <derivedFrom>TCNT</derivedFrom>
+    <versificationSystem>???</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://en.wikipedia.org/wiki/Open_English_Bible</url>
+  </BibleOrganisationalSystem>
+
+
+  <!-- Generic (fictional) "translations" that can be used if we have no better information -->
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-KJV-66-ENG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic English Protestant</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-KJV-66</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic Protestant</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-KJV-80-ENG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic English with Deuterocanon</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>eng_deuterocanon</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-80-RUS</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic Russian with Deuterocanon</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>English</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <booksNamesSystem>rus_traditional</booksNamesSystem>
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-KJV-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-RSV-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>RSV52</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-NRSV-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>NRSV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-Original-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Original</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-Leningrad-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Original</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>Leningradensis</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-Vulgate-82</referenceAbbreviation>
+    <languageCode>lat</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Vulgate1</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV MAN GES LES PS2 LAO</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-Synodal-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Synodal</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-Catholic-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Catholic</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-CatholicEsther16-80</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>CatholicEsther16</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-German-80</referenceAbbreviation>
+    <languageCode>deu</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>Luther</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>EuropeanBible</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZE DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-KJV-ENG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic English with Deuterocanon</name>
+    <versificationSystem>KJV</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>ALL</bookOrderSystem>
+    <booksNamesSystem>eng_extensive</booksNamesSystem>
+    <includesBooks>PRF ACK INT FRT TOC
+                    MOS GEN EXO LEV NUM DEU JOS JDG RUT SAM SA1 SA2 KGS KI1 KI2 CHR CH1 CH2 EZR EZN NEH EST ESA ESC JOB
+                        PSA PB1 PB2 PB3 PB4 PB5 PSB PS2 PS3 PSS PRO ECC SNG ISA JER LAM EZE DAN DNG DNA DNC P12 HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJB LBA LB2 BA2 BA3 BA4 LJE PAZ SUS BEL MAC MA1 MA2 MA3 MA4 MA5 GES LES EZA EZ5 EZ6 MAN ODE PSO PJE WSI TTP JUB ENO EN2 REP CL1 CL2 SHE DID
+                    MAT MRK LUK JHN LKA ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV LAO
+                    COP CO3 EUT DOJ LBB MQ1 MQ2 MQ3 TAD LAE ASS TSO TJB MAI AEZ EZT EUP PEU VAM LAR ARI ABL ART CLM ELM HRE LPR EPL TEO RVE
+                    GHE GTR GMA GMC GTW GPH GTH GJU GBA AJA WJC
+                    GLS CNC TPC IXN IXP IXT BAK MAP XXA XXB XXC XXD XXE XXF XXG</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC-ENG</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>BibMaxRef</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>ALL</bookOrderSystem>
+    <booksNamesSystem>eng_extensive</booksNamesSystem>
+    <includesBooks>PRF ACK INT FRT TOC
+                    MOS GEN EXO LEV NUM DEU JOS JDG RUT SAM SA1 SA2 KGS KI1 KI2 CHR CH1 CH2 EZR EZN NEH EST ESA ESC JOB
+                        PSA PB1 PB2 PB3 PB4 PB5 PSB PS2 PS3 PSS PRO ECC SNG ISA JER LAM EZE DAN DNG DNA DNC P12 HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJB LBA LB2 BA2 BA3 BA4 LJE PAZ SUS BEL MAC MA1 MA2 MA3 MA4 MA5 GES LES EZA EZ5 EZ6 MAN ODE PSO PJE WSI TTP JUB ENO EN2 REP CL1 CL2 SHE DID
+                    MAT MRK LUK JHN LKA ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV LAO
+                    COP CO3 EUT DOJ LBB MQ1 MQ2 MQ3 TAD LAE ASS TSO TJB MAI AEZ EZT EUP PEU VAM LAR ARI ABL ART CLM ELM HRE LPR EPL TEO RVE
+                    GHE GTR GMA GMC GTW GPH GTH GJU GBA AJA WJC
+                    GLS CNC TPC IXN IXP IXT BAK MAP XXA XXB XXC XXD XXE XXF XXG</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="translation">
+    <referenceAbbreviation>GENERIC</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Generic with Deuterocanon</name>
+    <versificationSystem>BibMaxRef</versificationSystem>
+    <punctuationSystem>None</punctuationSystem>
+    <bookOrderSystem>ALL</bookOrderSystem>
+    <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
+    <includesBooks>PRF ACK INT FRT TOC
+                    MOS GEN EXO LEV NUM DEU JOS JDG RUT SAM SA1 SA2 KGS KI1 KI2 CHR CH1 CH2 EZR EZN NEH EST ESA ESC JOB
+                        PSA PB1 PB2 PB3 PB4 PB5 PSB PS2 PS3 PSS PRO ECC SNG ISA JER LAM EZE DAN DNG DNA DNC P12 HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
+                    TOB JDT ESG WIS SIR BAR LJB LBA LB2 BA2 BA3 BA4 LJE PAZ SUS BEL MAC MA1 MA2 MA3 MA4 MA5 GES LES EZA EZ5 EZ6 MAN ODE PSO PJE WSI TTP JUB ENO EN2 REP CL1 CL2 SHE DID
+                    MAT MRK LUK JHN LKA ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV LAO
+                    COP CO3 EUT DOJ LBB MQ1 MQ2 MQ3 TAD LAE ASS TSO TJB MAI AEZ EZT EUP PEU VAM LAR ARI ABL ART CLM ELM HRE LPR EPL TEO RVE
+                    GHE GTR GMA GMC GTW GPH GTH GJU GBA AJA WJC
+                    GLS CNC TPC IXN IXP IXT BAK MAP XXA XXB XXC XXD XXE XXF XXG</includesBooks>
+  </BibleOrganisationalSystem>
+
+
+
+
+
+
+<!-- Bible editions that use one or more of the above translations and/or originals -->
+
+  <!-- Gutenberg's moveable type printing press invented around 1454 -->
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>ORIGINAL</referenceAbbreviation>
+    <languageCode>???</languageCode>
+    <name>Original Hebrew and Greek</name>
+    <usesText>HEB</usesText>
+    <usesText>NTG</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>TYN-2nd</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 2nd edition</name>
+    <publicationDate>Unknown</publicationDate>
+    <usesText>TYN-NT-2</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>TYN-3rd</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Tyndale New Testament -- 3rd edition</name>
+    <publicationDate>1534</publicationDate>
+    <usesText>TYN-NT-3</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1611</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <name>Also known as "The Basketball Bible"</name>
+    <comment>Has "hoops" instead of "hooks" used in the construction of the tabernacle</comment>
+    <publicationDate>1611</publicationDate>
+    <usesText>KJV-1611</usesText>
+    <comment>14 minor editions in the first three years</comment>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1611a</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Also known as "The Judas Bible"</name>
+    <comment>Famous error in Matthew 26:36</comment>
+    <publicationDate>1611</publicationDate>
+    <usesText>KJV-1611</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1631</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Also known as "The Wicked Bible"</name>
+    <comment>Exodus 20 Thou shalt (not) commit adultery</comment>
+    <comment>Printer Robert Barker fined 300 pounds</comment>
+    <publicationDate>1631</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1653</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Also known as "The Unrighteous Bible"</name>
+    <comment>1 Corinthians 6:9 The unrighteous shall (not) inherit the Kingdom of God</comment>
+    <publicationDate>1653</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1726</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <comment>"Sin on more" in John 5:14</comment>
+    <publicationDate>1726</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1727</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Also known as "The Vinegar Bible"</name>
+    <comment>Luke 20 title is "The Parable of the Vinegar"</comment>
+    <publicationDate>1727</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1769</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Authorized Version</name>
+    <publicationDate>1769</publicationDate>
+    <usesText>KJV-1769</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1792</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <comment>Philip rather than Peter denied the Lord three times</comment>
+    <publicationDate>1792</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1795</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <name>Also known as "The Murderers Bible"</name>
+    <comment>Mark 7:27 Let the children first be killed (filled)</comment>
+    <publicationDate>1795</publicationDate>
+    <usesText>KJV-1795</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1807</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version Oxford Edition</name>
+    <comment>Hebrews 9:14 Purge your conscience from good (dead) works</comment>
+    <publicationDate>1807</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>RSV</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>Revised Standard Version</name>
+    <publicationDate>1952</publicationDate>
+    <usesText>RSV52</usesText>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>KJV-1964</referenceAbbreviation>
+    <languageCode>eng</languageCode>
+    <name>King James Version</name>
+    <comment>1 Timothy 2:9 Women are to adorn themselves in modern (modest) apparel</comment>
+    <publicationDate>1964</publicationDate>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>MBT-MB-2002</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug MiniBible</name>
+    <publisher>The Matigsalug Manobo Language Christian Association</publisher>
+    <publicationDate>2002</publicationDate>
+    <usesText>MBT-2002</usesText>
+    <includesBooks>GEN RUT EST JNA
+                    LUK JHN ACT TI1 TI2 JAM</includesBooks>
+    <url>http://MLCA.info/Resources</url>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>MBT-MB-2005</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug MiniBible</name>
+    <publisher>Bible League</publisher>
+    <publicationDate>2005</publicationDate>
+    <usesText>MBT-2005</usesText>
+    <includesBooks>GEN RUT EST JNA
+                    LUK JHN ACT TH1 TI1 TI2 JAM</includesBooks>
+  </BibleOrganisationalSystem>
+
+  <BibleOrganisationalSystem type="edition">
+    <referenceAbbreviation>MBT-2010</referenceAbbreviation>
+    <languageCode>mbt</languageCode>
+    <name>Matigsalug NT+</name>
+    <publicationDate>2011</publicationDate>
+    <usesText>MBT-2010</usesText>
+    <includesBooks>GEN RUT EST JNA
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+    <url>http://MLCA.info/Resources</url>
+  </BibleOrganisationalSystem>
+
+</BibleOrganisationalSystems>

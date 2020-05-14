@@ -1,0 +1,3400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of Bible booknames codes including
+these four compulsory fields:
+    An English book name (as a comment only)
+    A three-character reference code (upper case, no spaces, begins with a letter)
+        This reference code should reflect book contents (not book names) and is used to link to other tables.
+        These reference codes are guaranteed to be stable after V1.00
+            i.e., they will not change or be reused for different books.
+    A reference number (1..899 for processing only - not necessarily consecutive or sequential)
+        Reference numbers are guaranteed to be stable after V1.00
+            i.e., they will not change or be reused for different books.
+        Can be used as a unique ID instead of the reference code if you prefer an integer.
+        1..66 are guaranteed to match the common Protestant Bible book orders.
+        900..999 are reserved for user defined books and are not defined here.
+    A sequence number or typical book order number (1..999 for comparing the order only - not necessarily consecutive)
+        Only to be used if there is no better information about which order that books are intended to be published in.
+        Only the relative value of this field is important (smaller or bigger) - the actual values are meaningless.
+and then these optional fields (optional because not all systems handle the less common or more disputed books)
+    The number of expected chapters in this book (alternatives are separated by commas).
+        This is not authorative, but can assist in identifying books where the encoding is otherwise ambiguous.
+    The SBL abbreviation (can include spaces)
+    The OSIS abbreviation (no spaces but may begin with a digit)
+    The Sword abbreviation
+    The 1-2 digit CCEL ID number
+    The three-character USFM abbreviation (no spaces but may begin with a digit)
+        Also used for Paratext Bible editor and Digital Bible Library (DBL) bundles
+    The two-digit USFM ID number
+        UBS/SIL Paratext uses both the number and the abbreviation above (and USFM format)
+    The three-digit USX ID number
+        UBS/SIL Paratext can export to USX files
+    The 1-2 digit Bibledit ID number
+    The three-character NET Bible abbreviation
+    The three-character DrupalBible abbreviation
+    The 2-4 character Bible abbreviation used for the Robinson-Pierpont Byzantine Greek text
+    Alternative abbreviations (upper case, separated by commas, optional)
+        These abbreviations might typically be used in VPL (verse per line) Bibles
+    Possible alternative book codes (separated by commas)
+        This is not precise but roughly shows which book this book might be confused with.
+        It is used for automatic mapping of book codes (also using the expected number of chapters)
+    The name of a typical section containing this book (in the set OT, OT+, NT, NT+, DC, PS, FRT, BAK)
+Most of the above fields should individually be unique, but there are some many-to-one mappings.
+    e.g., Paratext uses the same code for Ezra as for Ezra-Nehemiah. (We make available separate codes.)
+
+The information in this table should be language agnostic although English is used as a meta-language.
+It should also be independent of any theological judgements but mostly based on historical publications.
+The main aim is to supply an inventory of book codes which are recognised by the BibleOrgSsy Bible Organisational System.
+
+Deutero-canonical/Apocryphal and less common books are included, even pseudegrapha.
+"Combined" books are included.
+This table does not infer any information about the quality or theological usefulness of any particular book.
+This table does not infer any information about the presence or the order of the books within any particular publication.
+This table is not authoritative about the number of chapters (or verses) in any given book in any particular publication.
+There should be exactly one entry for each possible Bible book which is printed separately in some publications
+    and one entry for each possible combination of those Bible books.
+For example:
+    If Ezra and Nehemiah are sometimes published as individual books, and sometimes combined, there should be three entries in this database.
+    If Hebrew Esther and Greek Esther are sometimes published as individual books, and sometimes combined, there should be 3 entries in this database.
+        However, if Greek Esther was never published singly, but only in combination with Hebrew Esther, there would only be 2 entries (Hebrew Esther and Combined Esther).
+    This is because mappings between/across Bible books in different publications will be dependent on this file.
+        (If it's JUST that chapters and verses are divided up differently WITHIN a book, that's handled elsewhere.)
+    If a book is a translation of another book, that is not usually a good enough reason to include multiple entries here
+        (unless say, both the original and a translation were published in the same "Bible").
+
+This file can never adequately represent all possible historical Bible books codes (and their mappings),
+    especially since it attempts to avoid including historic codes which were not consistent or logical.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Note that the data is supplied as XML elements (not attributes).
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+
+See the supplied BibleBooksCodes.ReadMe.txt for more details.
+-->
+
+<!DOCTYPE BibleBooksCodes [
+    <!ELEMENT BibleBooksCodes (header,BibleBookCodes+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier+,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,sequenceNumber,expectedChapters?,
+                        SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,USFMAbbreviation?,USFMNumber?,
+                        USXNumber?,UnboundCode?,BibleditNumber?,NETBibleAbbreviation?,DrupalBibleAbbreviation?,
+                        BibleWorksAbbreviation?, ByzantineAbbreviation?,
+                        possibleAlternativeAbbreviations?,possibleAlternativeBooks?,
+                        typicalSection)>
+            <!ELEMENT nameEnglish (#PCDATA)>
+            <!ELEMENT referenceAbbreviation (#PCDATA)>
+            <!ELEMENT referenceNumber (#PCDATA)>
+            <!ELEMENT sequenceNumber (#PCDATA)>
+            <!ELEMENT expectedChapters (#PCDATA)>
+            <!ELEMENT SBLAbbreviation (#PCDATA)>
+            <!ELEMENT OSISAbbreviation (#PCDATA)>
+            <!ELEMENT SwordAbbreviation (#PCDATA)>
+            <!ELEMENT CCELNumber (#PCDATA)>
+            <!ELEMENT USFMAbbreviation (#PCDATA)>
+            <!ELEMENT USFMNumber (#PCDATA)>
+            <!ELEMENT USXNumber (#PCDATA)>
+            <!ELEMENT UnboundCode (#PCDATA)>
+            <!ELEMENT BibleditNumber (#PCDATA)>
+            <!ELEMENT NETBibleAbbreviation (#PCDATA)>
+            <!ELEMENT DrupalBibleAbbreviation (#PCDATA)>
+            <!ELEMENT BibleWorksAbbreviation (#PCDATA)>
+            <!ELEMENT ByzantineAbbreviation (#PCDATA)>
+            <!ELEMENT possibleAlternativeAbbreviations (#PCDATA)>
+            <!ELEMENT possibleAlternativeBooks (#PCDATA)>
+            <!ELEMENT typicalSection (#PCDATA)>
+]>
+
+<BibleBooksCodes>
+
+  <header>
+    <work>
+      <version>0.80</version>
+      <date>2020-05-06</date>
+      <title>Bible books codes list</title>
+      <contributor role="com">Robert Hunt</contributor>
+      <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
+      <identifier type="URL">http://www.bibletechnologies.net</identifier>
+      <identifier type="URL">http://lc.bfbs.org.uk/news.php?item.9.4</identifier>
+      <identifier type="URL">http://lc.bfbs.org.uk/request.php?canonicalissuesinparatext.pdf</identifier>
+      <identifier type="URL">http://lc.bfbs.org.uk/e107_files/downloads/canonicalissuesinparatext.pdf</identifier> <!-- Alternative to above -->
+      <identifier type="URL">http://www.crosswire.org/wiki/OSIS_Book_Abbreviations</identifier>
+      <identifier type="URL">http://www.ethiopianorthodox.org/biography/01thelawofkings.pdf</identifier>
+      <identifier type="URL">http://unbound.biola.edu/index.cfm?method=unbound.showFAQ&amp;faq_name=Bible_Index_Codes</identifier>
+      <identifier type="URL">http://www.bibleworks.com/bw9help/bwh42_Abbreviations.htm</identifier>
+      <rights>Public Domain</rights>
+    </work>
+  </header>
+
+<!-- Old Testament -->
+  <BibleBookCodes>
+    <nameEnglish>Genesis / 1 Moses</nameEnglish>
+    <referenceAbbreviation>GEN</referenceAbbreviation>
+    <referenceNumber>1</referenceNumber>
+    <sequenceNumber>20</sequenceNumber>
+    <expectedChapters>50</expectedChapters>
+    <SBLAbbreviation>Gen</SBLAbbreviation>
+    <OSISAbbreviation>Gen</OSISAbbreviation>
+    <SwordAbbreviation>Gen</SwordAbbreviation>
+    <CCELNumber>1</CCELNumber>
+    <USFMAbbreviation>Gen</USFMAbbreviation>
+    <USFMNumber>01</USFMNumber>
+    <USXNumber>001</USXNumber>
+    <UnboundCode>01O</UnboundCode>
+    <BibleditNumber>1</BibleditNumber>
+    <NETBibleAbbreviation>Gen</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Gen</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>GEN</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>GE,GN,GNS,1MOS,1MO,1MS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Exodus / 2 Moses</nameEnglish>
+    <referenceAbbreviation>EXO</referenceAbbreviation>
+    <referenceNumber>2</referenceNumber>
+    <sequenceNumber>22</sequenceNumber>
+    <expectedChapters>40</expectedChapters>
+    <SBLAbbreviation>Exod</SBLAbbreviation>
+    <OSISAbbreviation>Exod</OSISAbbreviation>
+    <SwordAbbreviation>Exod</SwordAbbreviation>
+    <CCELNumber>2</CCELNumber>
+    <USFMAbbreviation>Exo</USFMAbbreviation>
+    <USFMNumber>02</USFMNumber>
+    <USXNumber>002</USXNumber>
+    <UnboundCode>02O</UnboundCode>
+    <BibleditNumber>2</BibleditNumber>
+    <NETBibleAbbreviation>Exo</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Exo</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>EXO</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>EX,EXD,2MOS,2MO,2MS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Leviticus / 3 Moses</nameEnglish>
+    <referenceAbbreviation>LEV</referenceAbbreviation>
+    <referenceNumber>3</referenceNumber>
+    <sequenceNumber>24</sequenceNumber>
+    <expectedChapters>27</expectedChapters>
+    <SBLAbbreviation>Lev</SBLAbbreviation>
+    <OSISAbbreviation>Lev</OSISAbbreviation>
+    <SwordAbbreviation>Lev</SwordAbbreviation>
+    <CCELNumber>3</CCELNumber>
+    <USFMAbbreviation>Lev</USFMAbbreviation>
+    <USFMNumber>03</USFMNumber>
+    <USXNumber>003</USXNumber>
+    <UnboundCode>03O</UnboundCode>
+    <BibleditNumber>3</BibleditNumber>
+    <NETBibleAbbreviation>Lev</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Lev</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>LEV</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>LV,3MOS,3MO,3MS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Numbers / 4 Moses</nameEnglish>
+    <referenceAbbreviation>NUM</referenceAbbreviation>
+    <referenceNumber>4</referenceNumber>
+    <sequenceNumber>26</sequenceNumber>
+    <expectedChapters>36</expectedChapters>
+    <SBLAbbreviation>Num</SBLAbbreviation>
+    <OSISAbbreviation>Num</OSISAbbreviation>
+    <SwordAbbreviation>Num</SwordAbbreviation>
+    <CCELNumber>4</CCELNumber>
+    <USFMAbbreviation>Num</USFMAbbreviation>
+    <USFMNumber>04</USFMNumber>
+    <USXNumber>004</USXNumber>
+    <UnboundCode>04O</UnboundCode>
+    <BibleditNumber>4</BibleditNumber>
+    <NETBibleAbbreviation>Num</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Num</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>NUM</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>NM,NMB,4MOS,4MO,4MS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Deuteronomy / 5 Moses</nameEnglish>
+    <referenceAbbreviation>DEU</referenceAbbreviation>
+    <referenceNumber>5</referenceNumber>
+    <sequenceNumber>28</sequenceNumber>
+    <expectedChapters>34</expectedChapters>
+    <SBLAbbreviation>Deut</SBLAbbreviation>
+    <OSISAbbreviation>Deut</OSISAbbreviation>
+    <SwordAbbreviation>Deut</SwordAbbreviation>
+    <CCELNumber>5</CCELNumber>
+    <USFMAbbreviation>Deu</USFMAbbreviation>
+    <USFMNumber>05</USFMNumber>
+    <USXNumber>005</USXNumber>
+    <UnboundCode>05O</UnboundCode>
+    <BibleditNumber>5</BibleditNumber>
+    <NETBibleAbbreviation>Deu</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Deu</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>DEU</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>DT,5MOS,5MO,5MS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Joshua / Joshua son of Nun</nameEnglish>
+    <referenceAbbreviation>JOS</referenceAbbreviation>
+    <referenceNumber>6</referenceNumber>
+    <sequenceNumber>30</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
+    <SBLAbbreviation>Josh</SBLAbbreviation>
+    <OSISAbbreviation>Josh</OSISAbbreviation>
+    <SwordAbbreviation>Josh</SwordAbbreviation>
+    <CCELNumber>6</CCELNumber>
+    <USFMAbbreviation>Jos</USFMAbbreviation>
+    <USFMNumber>06</USFMNumber>
+    <USXNumber>006</USXNumber>
+    <UnboundCode>06O</UnboundCode>
+    <BibleditNumber>6</BibleditNumber>
+    <NETBibleAbbreviation>Jos</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jos</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JOS</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JS,JSH</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>JSA</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Judges</nameEnglish>
+    <referenceAbbreviation>JDG</referenceAbbreviation>
+    <referenceNumber>7</referenceNumber>
+    <sequenceNumber>32</sequenceNumber>
+    <expectedChapters>21</expectedChapters>
+    <SBLAbbreviation>Judg</SBLAbbreviation>
+    <OSISAbbreviation>Judg</OSISAbbreviation>
+    <SwordAbbreviation>Judg</SwordAbbreviation>
+    <CCELNumber>7</CCELNumber>
+    <USFMAbbreviation>Jdg</USFMAbbreviation>
+    <USFMNumber>07</USFMNumber>
+    <USXNumber>007</USXNumber>
+    <UnboundCode>07O</UnboundCode>
+    <BibleditNumber>7</BibleditNumber>
+    <NETBibleAbbreviation>Jdg</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jug</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JDG</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JG</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>JGB</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ruth</nameEnglish>
+    <referenceAbbreviation>RUT</referenceAbbreviation>
+    <referenceNumber>8</referenceNumber>
+    <sequenceNumber>34</sequenceNumber>
+    <expectedChapters>4</expectedChapters>
+    <SBLAbbreviation>Ruth</SBLAbbreviation>
+    <OSISAbbreviation>Ruth</OSISAbbreviation>
+    <SwordAbbreviation>Ruth</SwordAbbreviation>
+    <CCELNumber>8</CCELNumber>
+    <USFMAbbreviation>Rut</USFMAbbreviation>
+    <USFMNumber>08</USFMNumber>
+    <USXNumber>008</USXNumber>
+    <UnboundCode>08O</UnboundCode>
+    <BibleditNumber>8</BibleditNumber>
+    <NETBibleAbbreviation>Rut</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Rut</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>RUT</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>RT</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Samuel / 1 Kingdoms / 1 Kings</nameEnglish>
+    <referenceAbbreviation>SA1</referenceAbbreviation>
+    <referenceNumber>9</referenceNumber>
+    <sequenceNumber>38</sequenceNumber>
+    <expectedChapters>31</expectedChapters>
+    <SBLAbbreviation>1 Sam</SBLAbbreviation>
+    <OSISAbbreviation>1Sam</OSISAbbreviation>
+    <SwordAbbreviation>1Sam</SwordAbbreviation>
+    <CCELNumber>9</CCELNumber>
+    <USFMAbbreviation>1Sa</USFMAbbreviation>
+    <USFMNumber>09</USFMNumber>
+    <USXNumber>009</USXNumber>
+    <UnboundCode>09O</UnboundCode>
+    <BibleditNumber>9</BibleditNumber>
+    <NETBibleAbbreviation>1Sa</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Sm</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1SA</BibleWorksAbbreviation>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Samuel / 2 Kingdoms / 2 Kings</nameEnglish>
+    <referenceAbbreviation>SA2</referenceAbbreviation>
+    <referenceNumber>10</referenceNumber>
+    <sequenceNumber>40</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
+    <SBLAbbreviation>2 Sam</SBLAbbreviation>
+    <OSISAbbreviation>2Sam</OSISAbbreviation>
+    <SwordAbbreviation>2Sam</SwordAbbreviation>
+    <CCELNumber>10</CCELNumber>
+    <USFMAbbreviation>2Sa</USFMAbbreviation>
+    <USFMNumber>10</USFMNumber>
+    <USXNumber>010</USXNumber>
+    <UnboundCode>10O</UnboundCode>
+    <BibleditNumber>10</BibleditNumber>
+    <NETBibleAbbreviation>2Sa</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Sm</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2SA</BibleWorksAbbreviation>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Kings / 3 Kingdoms / 3 Kings</nameEnglish>
+    <referenceAbbreviation>KI1</referenceAbbreviation>
+    <referenceNumber>11</referenceNumber>
+    <sequenceNumber>44</sequenceNumber>
+    <expectedChapters>22</expectedChapters>
+    <SBLAbbreviation>1 Kgs</SBLAbbreviation>
+    <OSISAbbreviation>1Kgs</OSISAbbreviation>
+    <SwordAbbreviation>1Kgs</SwordAbbreviation>
+    <CCELNumber>11</CCELNumber>
+    <USFMAbbreviation>1Ki</USFMAbbreviation>
+    <USFMNumber>11</USFMNumber>
+    <USXNumber>011</USXNumber>
+    <UnboundCode>11O</UnboundCode>
+    <BibleditNumber>11</BibleditNumber>
+    <NETBibleAbbreviation>1Ki</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Kg</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1KI</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>1K</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Kings / 4 Kingdoms / 4 Kings</nameEnglish>
+    <referenceAbbreviation>KI2</referenceAbbreviation>
+    <referenceNumber>12</referenceNumber>
+    <sequenceNumber>46</sequenceNumber>
+    <expectedChapters>25</expectedChapters>
+    <SBLAbbreviation>2 Kgs</SBLAbbreviation>
+    <OSISAbbreviation>2Kgs</OSISAbbreviation>
+    <SwordAbbreviation>2Kgs</SwordAbbreviation>
+    <CCELNumber>12</CCELNumber>
+    <USFMAbbreviation>2Ki</USFMAbbreviation>
+    <USFMNumber>12</USFMNumber>
+    <USXNumber>012</USXNumber>
+    <UnboundCode>12O</UnboundCode>
+    <BibleditNumber>12</BibleditNumber>
+    <NETBibleAbbreviation>2Ki</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Kg</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2KI</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>2K</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Chronicles / 1 Paralipomenon</nameEnglish>
+    <referenceAbbreviation>CH1</referenceAbbreviation>
+    <referenceNumber>13</referenceNumber>
+    <sequenceNumber>50</sequenceNumber>
+    <expectedChapters>29</expectedChapters>
+    <SBLAbbreviation>1 Chr</SBLAbbreviation>
+    <OSISAbbreviation>1Chr</OSISAbbreviation>
+    <SwordAbbreviation>1Chr</SwordAbbreviation>
+    <CCELNumber>13</CCELNumber>
+    <USFMAbbreviation>1Ch</USFMAbbreviation>
+    <USFMNumber>13</USFMNumber>
+    <USXNumber>013</USXNumber>
+    <UnboundCode>13O</UnboundCode>
+    <BibleditNumber>13</BibleditNumber>
+    <NETBibleAbbreviation>1Ch</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Ch</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1CH</BibleWorksAbbreviation>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Chronicles / 2 Paralipomenon</nameEnglish>
+    <referenceAbbreviation>CH2</referenceAbbreviation>
+    <referenceNumber>14</referenceNumber>
+    <sequenceNumber>52</sequenceNumber>
+    <expectedChapters>36,37</expectedChapters>
+    <SBLAbbreviation>2 Chr</SBLAbbreviation>
+    <OSISAbbreviation>2Chr</OSISAbbreviation>
+    <SwordAbbreviation>2Chr</SwordAbbreviation>
+    <CCELNumber>14</CCELNumber>
+    <USFMAbbreviation>2Ch</USFMAbbreviation>
+    <USFMNumber>14</USFMNumber>
+    <USXNumber>014</USXNumber>
+    <UnboundCode>14O</UnboundCode>
+    <BibleditNumber>14</BibleditNumber>
+    <NETBibleAbbreviation>2Ch</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Ch</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2CH</BibleWorksAbbreviation>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Don't use this for combined Ezra-Nehemiah (use EZN) -->
+    <nameEnglish>Ezra / 1 Ezra / 1 Esdras</nameEnglish>
+    <referenceAbbreviation>EZR</referenceAbbreviation>
+    <referenceNumber>15</referenceNumber>
+    <sequenceNumber>60</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SBLAbbreviation>Ezra</SBLAbbreviation>
+    <OSISAbbreviation>Ezra</OSISAbbreviation>
+    <SwordAbbreviation>Ezra</SwordAbbreviation>
+    <CCELNumber>15</CCELNumber>
+    <USFMAbbreviation>Ezr</USFMAbbreviation>
+    <USFMNumber>15</USFMNumber>
+    <USXNumber>015</USXNumber>
+    <UnboundCode>15O</UnboundCode>
+    <BibleditNumber>15</BibleditNumber>
+    <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Ezr</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>EZR</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Nehemiah / 2 Ezra / 2 Esdras</nameEnglish>
+    <referenceAbbreviation>NEH</referenceAbbreviation>
+    <referenceNumber>16</referenceNumber>
+    <sequenceNumber>70</sequenceNumber>
+    <expectedChapters>13</expectedChapters>
+    <SBLAbbreviation>Neh</SBLAbbreviation>
+    <OSISAbbreviation>Neh</OSISAbbreviation>
+    <SwordAbbreviation>Neh</SwordAbbreviation>
+    <CCELNumber>16</CCELNumber>
+    <USFMAbbreviation>Neh</USFMAbbreviation>
+    <USFMNumber>16</USFMNumber>
+    <USXNumber>016</USXNumber>
+    <UnboundCode>16O</UnboundCode>
+    <BibleditNumber>16</BibleditNumber>
+    <NETBibleAbbreviation>Neh</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Neh</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>NEH</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>NH,NHM</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Esther</nameEnglish>
+    <referenceAbbreviation>EST</referenceAbbreviation>
+    <referenceNumber>17</referenceNumber>
+    <sequenceNumber>80</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SBLAbbreviation>Esth</SBLAbbreviation>
+    <OSISAbbreviation>Esth</OSISAbbreviation>
+    <SwordAbbreviation>Esth</SwordAbbreviation>
+    <CCELNumber>17</CCELNumber>
+    <USFMAbbreviation>Est</USFMAbbreviation>
+    <USFMNumber>17</USFMNumber>
+    <USXNumber>017</USXNumber>
+    <UnboundCode>17O</UnboundCode>
+    <BibleditNumber>17</BibleditNumber>
+    <NETBibleAbbreviation>Est</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Est</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>EST</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ES</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>ESG,ESA,ESC</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Job</nameEnglish>
+    <referenceAbbreviation>JOB</referenceAbbreviation>
+    <referenceNumber>18</referenceNumber>
+    <sequenceNumber>90</sequenceNumber>
+    <expectedChapters>42</expectedChapters>
+    <SBLAbbreviation>Job</SBLAbbreviation>
+    <OSISAbbreviation>Job</OSISAbbreviation>
+    <SwordAbbreviation>Job</SwordAbbreviation>
+    <CCELNumber>18</CCELNumber>
+    <USFMAbbreviation>Job</USFMAbbreviation>
+    <USFMNumber>18</USFMNumber>
+    <USXNumber>018</USXNumber>
+    <UnboundCode>18O</UnboundCode>
+    <BibleditNumber>18</BibleditNumber>
+    <NETBibleAbbreviation>Job</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Job</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JOB</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JB</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms / Gallicanum / Psalms A</nameEnglish>
+    <referenceAbbreviation>PSA</referenceAbbreviation>
+    <referenceNumber>19</referenceNumber>
+    <sequenceNumber>100</sequenceNumber>
+    <expectedChapters>150,151</expectedChapters>
+    <SBLAbbreviation>Ps</SBLAbbreviation>
+    <OSISAbbreviation>Ps</OSISAbbreviation>
+    <SwordAbbreviation>Ps</SwordAbbreviation>
+    <CCELNumber>19</CCELNumber>
+    <USFMAbbreviation>Psa</USFMAbbreviation>
+    <USFMNumber>19</USFMNumber>
+    <USXNumber>019</USXNumber>
+    <UnboundCode>19O</UnboundCode>
+    <BibleditNumber>19</BibleditNumber>
+    <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Ps</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>PSA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>PSLM</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>PB1,PB2,PB3,PB4,PB5</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Proverbs in the Ethiopian canon is shorter than in the European canon -->
+    <nameEnglish>Proverbs</nameEnglish>
+    <referenceAbbreviation>PRO</referenceAbbreviation>
+    <referenceNumber>20</referenceNumber>
+    <sequenceNumber>110</sequenceNumber>
+    <expectedChapters>31</expectedChapters>
+    <SBLAbbreviation>Prov</SBLAbbreviation>
+    <OSISAbbreviation>Prov</OSISAbbreviation>
+    <SwordAbbreviation>Prov</SwordAbbreviation>
+    <CCELNumber>20</CCELNumber>
+    <USFMAbbreviation>Pro</USFMAbbreviation>
+    <USFMNumber>20</USFMNumber>
+    <USXNumber>020</USXNumber>
+    <UnboundCode>20O</UnboundCode>
+    <BibleditNumber>20</BibleditNumber>
+    <NETBibleAbbreviation>Pro</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Pro</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>PRO</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>PR,PRV</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ecclesiastes / Qoholeth</nameEnglish>
+    <!-- For Ecclesiasticus use code SIR -->
+    <referenceAbbreviation>ECC</referenceAbbreviation>
+    <referenceNumber>21</referenceNumber>
+    <sequenceNumber>120</sequenceNumber>
+    <expectedChapters>12</expectedChapters>
+    <SBLAbbreviation>Eccl</SBLAbbreviation>
+    <OSISAbbreviation>Eccl</OSISAbbreviation>
+    <SwordAbbreviation>Eccl</SwordAbbreviation>
+    <CCELNumber>21</CCELNumber>
+    <USFMAbbreviation>Ecc</USFMAbbreviation>
+    <USFMNumber>21</USFMNumber>
+    <USXNumber>021</USXNumber>
+    <UnboundCode>21O</UnboundCode>
+    <BibleditNumber>21</BibleditNumber>
+    <NETBibleAbbreviation>Ecc</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Ecc</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ECC</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>EC</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Song of Solomon / Song of Songs / Canticles / Canticle of Canticles</nameEnglish>
+    <referenceAbbreviation>SNG</referenceAbbreviation>
+    <referenceNumber>22</referenceNumber>
+    <sequenceNumber>130</sequenceNumber>
+    <expectedChapters>8</expectedChapters>
+    <SBLAbbreviation>Song</SBLAbbreviation>
+    <OSISAbbreviation>Song</OSISAbbreviation>
+    <SwordAbbreviation>Song</SwordAbbreviation>
+    <CCELNumber>22</CCELNumber>
+    <USFMAbbreviation>Sng</USFMAbbreviation>
+    <USFMNumber>22</USFMNumber>
+    <USXNumber>022</USXNumber>
+    <UnboundCode>22O</UnboundCode>
+    <BibleditNumber>22</BibleditNumber>
+    <NETBibleAbbreviation>Sos</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Son</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>SOL</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>SL,SS,CANT,CAN,</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Isaiah</nameEnglish>
+    <referenceAbbreviation>ISA</referenceAbbreviation>
+    <referenceNumber>23</referenceNumber>
+    <sequenceNumber>132</sequenceNumber>
+    <expectedChapters>66</expectedChapters>
+    <SBLAbbreviation>Isa</SBLAbbreviation>
+    <OSISAbbreviation>Isa</OSISAbbreviation>
+    <SwordAbbreviation>Isa</SwordAbbreviation>
+    <CCELNumber>23</CCELNumber>
+    <USFMAbbreviation>Isa</USFMAbbreviation>
+    <USFMNumber>23</USFMNumber>
+    <USXNumber>023</USXNumber>
+    <UnboundCode>23O</UnboundCode>
+    <BibleditNumber>23</BibleditNumber>
+    <NETBibleAbbreviation>Isa</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Isa</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ISA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>IS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Jeremiah</nameEnglish>
+    <referenceAbbreviation>JER</referenceAbbreviation>
+    <referenceNumber>24</referenceNumber>
+    <sequenceNumber>134</sequenceNumber>
+    <expectedChapters>52</expectedChapters>
+    <SBLAbbreviation>Jer</SBLAbbreviation>
+    <OSISAbbreviation>Jer</OSISAbbreviation>
+    <SwordAbbreviation>Jer</SwordAbbreviation>
+    <CCELNumber>24</CCELNumber>
+    <USFMAbbreviation>Jer</USFMAbbreviation>
+    <USFMNumber>24</USFMNumber>
+    <USXNumber>024</USXNumber>
+    <UnboundCode>24O</UnboundCode>
+    <BibleditNumber>24</BibleditNumber>
+    <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jer</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JER</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JR,JRM</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Lamentations / Lamentations of Jeremiah</nameEnglish>
+    <referenceAbbreviation>LAM</referenceAbbreviation>
+    <referenceNumber>25</referenceNumber>
+    <sequenceNumber>136</sequenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>Lam</SBLAbbreviation>
+    <OSISAbbreviation>Lam</OSISAbbreviation>
+    <SwordAbbreviation>Lam</SwordAbbreviation>
+    <CCELNumber>25</CCELNumber>
+    <USFMAbbreviation>Lam</USFMAbbreviation>
+    <USFMNumber>25</USFMNumber>
+    <USXNumber>025</USXNumber>
+    <UnboundCode>25O</UnboundCode>
+    <BibleditNumber>25</BibleditNumber>
+    <NETBibleAbbreviation>Lam</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Lam</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>LAM</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>LM,LA</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ezekiel</nameEnglish>
+    <referenceAbbreviation>EZE</referenceAbbreviation>
+    <referenceNumber>26</referenceNumber>
+    <sequenceNumber>138</sequenceNumber>
+    <expectedChapters>48</expectedChapters>
+    <SBLAbbreviation>Ezek</SBLAbbreviation>
+    <OSISAbbreviation>Ezek</OSISAbbreviation>
+    <SwordAbbreviation>Ezek</SwordAbbreviation>
+    <CCELNumber>26</CCELNumber>
+    <USFMAbbreviation>Ezk</USFMAbbreviation>
+    <USFMNumber>26</USFMNumber>
+    <USXNumber>026</USXNumber>
+    <UnboundCode>26O</UnboundCode>
+    <BibleditNumber>26</BibleditNumber>
+    <NETBibleAbbreviation>Eze</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Eze</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>EZE</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>EZ</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Daniel</nameEnglish>
+    <referenceAbbreviation>DAN</referenceAbbreviation>
+    <referenceNumber>27</referenceNumber>
+    <sequenceNumber>140</sequenceNumber>
+    <expectedChapters>12,14</expectedChapters>
+    <SBLAbbreviation>Dan</SBLAbbreviation>
+    <OSISAbbreviation>Dan</OSISAbbreviation>
+    <SwordAbbreviation>Dan</SwordAbbreviation>
+    <CCELNumber>27</CCELNumber>
+    <USFMAbbreviation>Dan</USFMAbbreviation>
+    <USFMNumber>27</USFMNumber>
+    <USXNumber>027</USXNumber>
+    <UnboundCode>27O</UnboundCode>
+    <BibleditNumber>27</BibleditNumber>
+    <NETBibleAbbreviation>Dan</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Dan</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>DAN</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>DN,DNL</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>DNG,DNA,DNC,DNT</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Hosea</nameEnglish>
+    <referenceAbbreviation>HOS</referenceAbbreviation>
+    <referenceNumber>28</referenceNumber>
+    <sequenceNumber>152</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Hos</SBLAbbreviation>
+    <OSISAbbreviation>Hos</OSISAbbreviation>
+    <SwordAbbreviation>Hos</SwordAbbreviation>
+    <CCELNumber>28</CCELNumber>
+    <USFMAbbreviation>Hos</USFMAbbreviation>
+    <USFMNumber>28</USFMNumber>
+    <USXNumber>028</USXNumber>
+    <UnboundCode>28O</UnboundCode>
+    <BibleditNumber>28</BibleditNumber>
+    <NETBibleAbbreviation>Hos</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Hos</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>HOS</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>HS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Joel</nameEnglish>
+    <referenceAbbreviation>JOL</referenceAbbreviation>
+    <referenceNumber>29</referenceNumber>
+    <sequenceNumber>154</sequenceNumber>
+    <expectedChapters>3,4</expectedChapters>
+    <SBLAbbreviation>Joel</SBLAbbreviation>
+    <OSISAbbreviation>Joel</OSISAbbreviation>
+    <SwordAbbreviation>Joel</SwordAbbreviation>
+    <CCELNumber>29</CCELNumber>
+    <USFMAbbreviation>Jol</USFMAbbreviation>
+    <USFMNumber>29</USFMNumber>
+    <USXNumber>029</USXNumber>
+    <UnboundCode>29O</UnboundCode>
+    <BibleditNumber>29</BibleditNumber>
+    <NETBibleAbbreviation>Joe</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Joe</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JOE</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JL</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Amos</nameEnglish>
+    <referenceAbbreviation>AMO</referenceAbbreviation>
+    <referenceNumber>30</referenceNumber>
+    <sequenceNumber>156</sequenceNumber>
+    <expectedChapters>9</expectedChapters>
+    <SBLAbbreviation>Amos</SBLAbbreviation>
+    <OSISAbbreviation>Amos</OSISAbbreviation>
+    <SwordAbbreviation>Amos</SwordAbbreviation>
+    <CCELNumber>30</CCELNumber>
+    <USFMAbbreviation>Amo</USFMAbbreviation>
+    <USFMNumber>30</USFMNumber>
+    <USXNumber>030</USXNumber>
+    <UnboundCode>30O</UnboundCode>
+    <BibleditNumber>30</BibleditNumber>
+    <NETBibleAbbreviation>Amo</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Amo</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>AMO</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>AM,AMS</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Obadiah</nameEnglish>
+    <referenceAbbreviation>OBA</referenceAbbreviation>
+    <referenceNumber>31</referenceNumber>
+    <sequenceNumber>158</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Obad</SBLAbbreviation>
+    <OSISAbbreviation>Obad</OSISAbbreviation>
+    <SwordAbbreviation>Obad</SwordAbbreviation>
+    <CCELNumber>31</CCELNumber>
+    <USFMAbbreviation>Oba</USFMAbbreviation>
+    <USFMNumber>31</USFMNumber>
+    <USXNumber>031</USXNumber>
+    <UnboundCode>31O</UnboundCode>
+    <BibleditNumber>31</BibleditNumber>
+    <NETBibleAbbreviation>Oba</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Oba</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>OBA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>OB,OBD</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Jonah</nameEnglish>
+    <referenceAbbreviation>JNA</referenceAbbreviation>
+    <referenceNumber>32</referenceNumber>
+    <sequenceNumber>160</sequenceNumber>
+    <expectedChapters>4</expectedChapters>
+    <SBLAbbreviation>Jonah</SBLAbbreviation>
+    <OSISAbbreviation>Jonah</OSISAbbreviation>
+    <SwordAbbreviation>Jonah</SwordAbbreviation>
+    <CCELNumber>32</CCELNumber>
+    <USFMAbbreviation>Jon</USFMAbbreviation>
+    <USFMNumber>32</USFMNumber>
+    <USXNumber>032</USXNumber>
+    <UnboundCode>32O</UnboundCode>
+    <BibleditNumber>32</BibleditNumber>
+    <NETBibleAbbreviation>Jon</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jon</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JON</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>JNH</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Micah</nameEnglish>
+    <referenceAbbreviation>MIC</referenceAbbreviation>
+    <referenceNumber>33</referenceNumber>
+    <sequenceNumber>162</sequenceNumber>
+    <expectedChapters>7</expectedChapters>
+    <SBLAbbreviation>Nic</SBLAbbreviation>
+    <OSISAbbreviation>Mic</OSISAbbreviation>
+    <SwordAbbreviation>Mic</SwordAbbreviation>
+    <CCELNumber>33</CCELNumber>
+    <USFMAbbreviation>Mic</USFMAbbreviation>
+    <USFMNumber>33</USFMNumber>
+    <USXNumber>033</USXNumber>
+    <UnboundCode>33O</UnboundCode>
+    <BibleditNumber>33</BibleditNumber>
+    <NETBibleAbbreviation>Mic</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Mic</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>MIC</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>MC,MCH</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Nahum</nameEnglish>
+    <referenceAbbreviation>NAH</referenceAbbreviation>
+    <referenceNumber>34</referenceNumber>
+    <sequenceNumber>164</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>Nah</SBLAbbreviation>
+    <OSISAbbreviation>Nah</OSISAbbreviation>
+    <SwordAbbreviation>Nah</SwordAbbreviation>
+    <CCELNumber>34</CCELNumber>
+    <USFMAbbreviation>Nam</USFMAbbreviation>
+    <USFMNumber>34</USFMNumber>
+    <USXNumber>034</USXNumber>
+    <UnboundCode>34O</UnboundCode>
+    <BibleditNumber>34</BibleditNumber>
+    <NETBibleAbbreviation>Nah</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Nah</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>NAH</BibleWorksAbbreviation>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Habakkuk</nameEnglish>
+    <referenceAbbreviation>HAB</referenceAbbreviation>
+    <referenceNumber>35</referenceNumber>
+    <sequenceNumber>166</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>Hab</SBLAbbreviation>
+    <OSISAbbreviation>Hab</OSISAbbreviation>
+    <SwordAbbreviation>Hab</SwordAbbreviation>
+    <CCELNumber>35</CCELNumber>
+    <USFMAbbreviation>Hab</USFMAbbreviation>
+    <USFMNumber>35</USFMNumber>
+    <USXNumber>035</USXNumber>
+    <UnboundCode>35O</UnboundCode>
+    <BibleditNumber>35</BibleditNumber>
+    <NETBibleAbbreviation>Hab</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Hab</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>HAB</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>HBK</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Zephaniah</nameEnglish>
+    <referenceAbbreviation>ZEP</referenceAbbreviation>
+    <referenceNumber>36</referenceNumber>
+    <sequenceNumber>168</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>Zeph</SBLAbbreviation>
+    <OSISAbbreviation>Zeph</OSISAbbreviation>
+    <SwordAbbreviation>Zeph</SwordAbbreviation>
+    <CCELNumber>36</CCELNumber>
+    <USFMAbbreviation>Zep</USFMAbbreviation>
+    <USFMNumber>36</USFMNumber>
+    <USXNumber>036</USXNumber>
+    <UnboundCode>36O</UnboundCode>
+    <BibleditNumber>36</BibleditNumber>
+    <NETBibleAbbreviation>Zep</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Zep</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ZEP</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ZP,ZPH</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Haggai</nameEnglish>
+    <referenceAbbreviation>HAG</referenceAbbreviation>
+    <referenceNumber>37</referenceNumber>
+    <sequenceNumber>170</sequenceNumber>
+    <expectedChapters>2</expectedChapters>
+    <SBLAbbreviation>Hag</SBLAbbreviation>
+    <OSISAbbreviation>Hag</OSISAbbreviation>
+    <SwordAbbreviation>Hag</SwordAbbreviation>
+    <CCELNumber>37</CCELNumber>
+    <USFMAbbreviation>Hag</USFMAbbreviation>
+    <USFMNumber>37</USFMNumber>
+    <USXNumber>037</USXNumber>
+    <UnboundCode>37O</UnboundCode>
+    <BibleditNumber>37</BibleditNumber>
+    <NETBibleAbbreviation>Hag</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Hag</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>HAG</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>HG,HGG</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Zechariah</nameEnglish>
+    <referenceAbbreviation>ZEC</referenceAbbreviation>
+    <referenceNumber>38</referenceNumber>
+    <sequenceNumber>172</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Zech</SBLAbbreviation>
+    <OSISAbbreviation>Zech</OSISAbbreviation>
+    <SwordAbbreviation>Zech</SwordAbbreviation>
+    <CCELNumber>38</CCELNumber>
+    <USFMAbbreviation>Zec</USFMAbbreviation>
+    <USFMNumber>38</USFMNumber>
+    <USXNumber>038</USXNumber>
+    <UnboundCode>38O</UnboundCode>
+    <BibleditNumber>38</BibleditNumber>
+    <NETBibleAbbreviation>Zec</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Zec</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ZEC</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ZC</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Malachi</nameEnglish>
+    <referenceAbbreviation>MAL</referenceAbbreviation>
+    <referenceNumber>39</referenceNumber>
+    <sequenceNumber>174</sequenceNumber>
+    <expectedChapters>4,3</expectedChapters>
+    <SBLAbbreviation>Mal</SBLAbbreviation>
+    <OSISAbbreviation>Mal</OSISAbbreviation>
+    <SwordAbbreviation>Mal</SwordAbbreviation>
+    <CCELNumber>39</CCELNumber>
+    <USFMAbbreviation>Mal</USFMAbbreviation>
+    <USFMNumber>39</USFMNumber>
+    <USXNumber>039</USXNumber>
+    <UnboundCode>39O</UnboundCode>
+    <BibleditNumber>39</BibleditNumber>
+    <NETBibleAbbreviation>Mal</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Mal</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>MAL</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ML</possibleAlternativeAbbreviations>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+
+<!-- New Testament -->
+  <BibleBookCodes>
+    <nameEnglish>Matthew</nameEnglish>
+    <referenceAbbreviation>MAT</referenceAbbreviation>
+    <referenceNumber>40</referenceNumber>
+    <sequenceNumber>600</sequenceNumber>
+    <expectedChapters>28</expectedChapters>
+    <SBLAbbreviation>Matt</SBLAbbreviation>
+    <OSISAbbreviation>Matt</OSISAbbreviation>
+    <SwordAbbreviation>Matt</SwordAbbreviation>
+    <CCELNumber>40</CCELNumber>
+    <USFMAbbreviation>Mat</USFMAbbreviation>
+    <USFMNumber>41</USFMNumber>
+    <USXNumber>040</USXNumber>
+    <UnboundCode>40N</UnboundCode>
+    <BibleditNumber>40</BibleditNumber>
+    <NETBibleAbbreviation>Mat</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Mat</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>MAT</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>MT</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>MTT</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Mark</nameEnglish>
+    <referenceAbbreviation>MRK</referenceAbbreviation>
+    <referenceNumber>41</referenceNumber>
+    <sequenceNumber>602</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>Mark</SBLAbbreviation>
+    <OSISAbbreviation>Mark</OSISAbbreviation>
+    <SwordAbbreviation>Mark</SwordAbbreviation>
+    <CCELNumber>41</CCELNumber>
+    <USFMAbbreviation>Mrk</USFMAbbreviation>
+    <USFMNumber>42</USFMNumber>
+    <USXNumber>041</USXNumber>
+    <UnboundCode>41N</UnboundCode>
+    <BibleditNumber>41</BibleditNumber>
+    <NETBibleAbbreviation>Mar</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Mak</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>MAR</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>MR</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Luke</nameEnglish>
+    <referenceAbbreviation>LUK</referenceAbbreviation>
+    <referenceNumber>42</referenceNumber>
+    <sequenceNumber>604</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
+    <SBLAbbreviation>Luke</SBLAbbreviation>
+    <OSISAbbreviation>Luke</OSISAbbreviation>
+    <SwordAbbreviation>Luke</SwordAbbreviation>
+    <CCELNumber>42</CCELNumber>
+    <USFMAbbreviation>Luk</USFMAbbreviation>
+    <USFMNumber>43</USFMNumber>
+    <USXNumber>042</USXNumber>
+    <UnboundCode>42N</UnboundCode>
+    <BibleditNumber>42</BibleditNumber>
+    <NETBibleAbbreviation>Luk</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Luk</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>LUK</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>LU</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>LK</possibleAlternativeAbbreviations>
+    <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>John</nameEnglish>
+    <referenceAbbreviation>JHN</referenceAbbreviation>
+    <referenceNumber>43</referenceNumber>
+    <sequenceNumber>606</sequenceNumber>
+    <expectedChapters>21</expectedChapters>
+    <SBLAbbreviation>John</SBLAbbreviation>
+    <OSISAbbreviation>John</OSISAbbreviation>
+    <SwordAbbreviation>John</SwordAbbreviation>
+    <CCELNumber>43</CCELNumber>
+    <USFMAbbreviation>Jhn</USFMAbbreviation>
+    <USFMNumber>44</USFMNumber>
+    <USXNumber>043</USXNumber>
+    <UnboundCode>43N</UnboundCode>
+    <BibleditNumber>43</BibleditNumber>
+    <NETBibleAbbreviation>Joh</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jhn</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JOH</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>JOH</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>JN</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Acts / Acts of the Apostles</nameEnglish>
+    <referenceAbbreviation>ACT</referenceAbbreviation>
+    <referenceNumber>44</referenceNumber>
+    <sequenceNumber>610</sequenceNumber>
+    <expectedChapters>28</expectedChapters>
+    <SBLAbbreviation>Acts</SBLAbbreviation>
+    <OSISAbbreviation>Acts</OSISAbbreviation>
+    <SwordAbbreviation>Acts</SwordAbbreviation>
+    <CCELNumber>44</CCELNumber>
+    <USFMAbbreviation>Act</USFMAbbreviation>
+    <USFMNumber>45</USFMNumber>
+    <USXNumber>044</USXNumber>
+    <UnboundCode>44N</UnboundCode>
+    <BibleditNumber>44</BibleditNumber>
+    <NETBibleAbbreviation>Act</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Act</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ACT</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>AC</ByzantineAbbreviation>
+    <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Romans</nameEnglish>
+    <referenceAbbreviation>ROM</referenceAbbreviation>
+    <referenceNumber>45</referenceNumber>
+    <sequenceNumber>612</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>Rom</SBLAbbreviation>
+    <OSISAbbreviation>Rom</OSISAbbreviation>
+    <SwordAbbreviation>Rom</SwordAbbreviation>
+    <CCELNumber>45</CCELNumber>
+    <USFMAbbreviation>Rom</USFMAbbreviation>
+    <USFMNumber>46</USFMNumber>
+    <USXNumber>045</USXNumber>
+    <UnboundCode>45N</UnboundCode>
+    <BibleditNumber>45</BibleditNumber>
+    <NETBibleAbbreviation>Rom</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Rom</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>ROM</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>RO</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>RM,RMN</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Corinthians</nameEnglish>
+    <referenceAbbreviation>CO1</referenceAbbreviation>
+    <referenceNumber>46</referenceNumber>
+    <sequenceNumber>614</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>1 Cor</SBLAbbreviation>
+    <OSISAbbreviation>1Cor</OSISAbbreviation>
+    <SwordAbbreviation>1Cor</SwordAbbreviation>
+    <CCELNumber>46</CCELNumber>
+    <USFMAbbreviation>1Co</USFMAbbreviation>
+    <USFMNumber>47</USFMNumber>
+    <USXNumber>046</USXNumber>
+    <UnboundCode>46N</UnboundCode>
+    <BibleditNumber>46</BibleditNumber>
+    <NETBibleAbbreviation>1Co</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Co</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1CO</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>1CO</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Corinthians</nameEnglish>
+    <referenceAbbreviation>CO2</referenceAbbreviation>
+    <referenceNumber>47</referenceNumber>
+    <sequenceNumber>616</sequenceNumber>
+    <expectedChapters>13</expectedChapters>
+    <SBLAbbreviation>2 Cor</SBLAbbreviation>
+    <OSISAbbreviation>2Cor</OSISAbbreviation>
+    <SwordAbbreviation>2Cor</SwordAbbreviation>
+    <CCELNumber>47</CCELNumber>
+    <USFMAbbreviation>2Co</USFMAbbreviation>
+    <USFMNumber>48</USFMNumber>
+    <USXNumber>047</USXNumber>
+    <UnboundCode>47N</UnboundCode>
+    <BibleditNumber>47</BibleditNumber>
+    <NETBibleAbbreviation>2Co</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Co</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2CO</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>2CO</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Galatians</nameEnglish>
+    <referenceAbbreviation>GAL</referenceAbbreviation>
+    <referenceNumber>48</referenceNumber>
+    <sequenceNumber>618</sequenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SBLAbbreviation>Gal</SBLAbbreviation>
+    <OSISAbbreviation>Gal</OSISAbbreviation>
+    <SwordAbbreviation>Gal</SwordAbbreviation>
+    <CCELNumber>48</CCELNumber>
+    <USFMAbbreviation>Gal</USFMAbbreviation>
+    <USFMNumber>49</USFMNumber>
+    <USXNumber>048</USXNumber>
+    <UnboundCode>48N</UnboundCode>
+    <BibleditNumber>48</BibleditNumber>
+    <NETBibleAbbreviation>Gal</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Gal</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>GAL</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>GA</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>GL</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ephesians</nameEnglish>
+    <referenceAbbreviation>EPH</referenceAbbreviation>
+    <referenceNumber>49</referenceNumber>
+    <sequenceNumber>620</sequenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SBLAbbreviation>Eph</SBLAbbreviation>
+    <OSISAbbreviation>Eph</OSISAbbreviation>
+    <SwordAbbreviation>Eph</SwordAbbreviation>
+    <CCELNumber>49</CCELNumber>
+    <USFMAbbreviation>Eph</USFMAbbreviation>
+    <USFMNumber>50</USFMNumber>
+    <USXNumber>049</USXNumber>
+    <UnboundCode>49N</UnboundCode>
+    <BibleditNumber>49</BibleditNumber>
+    <NETBibleAbbreviation>Eph</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Eph</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>EPH</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>EPH</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>EP</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Philippians</nameEnglish>
+    <referenceAbbreviation>PHP</referenceAbbreviation>
+    <referenceNumber>50</referenceNumber>
+    <sequenceNumber>622</sequenceNumber>
+    <expectedChapters>4</expectedChapters>
+    <SBLAbbreviation>Phil</SBLAbbreviation>
+    <OSISAbbreviation>Phil</OSISAbbreviation>
+    <SwordAbbreviation>Phil</SwordAbbreviation>
+    <CCELNumber>50</CCELNumber>
+    <USFMAbbreviation>Php</USFMAbbreviation>
+    <USFMNumber>51</USFMNumber>
+    <USXNumber>050</USXNumber>
+    <UnboundCode>50N</UnboundCode>
+    <BibleditNumber>50</BibleditNumber>
+    <NETBibleAbbreviation>Phi</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Phl</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>PHI</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>PHP</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>PH,PP</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Colossians</nameEnglish>
+    <referenceAbbreviation>COL</referenceAbbreviation>
+    <referenceNumber>51</referenceNumber>
+    <sequenceNumber>624</sequenceNumber>
+    <expectedChapters>4</expectedChapters>
+    <SBLAbbreviation>Col</SBLAbbreviation>
+    <OSISAbbreviation>Col</OSISAbbreviation>
+    <SwordAbbreviation>Col</SwordAbbreviation>
+    <CCELNumber>51</CCELNumber>
+    <USFMAbbreviation>Col</USFMAbbreviation>
+    <USFMNumber>52</USFMNumber>
+    <USXNumber>051</USXNumber>
+    <UnboundCode>51N</UnboundCode>
+    <BibleditNumber>51</BibleditNumber>
+    <NETBibleAbbreviation>Col</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Col</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>COL</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>COL</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>CL,CLS</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Thessalonians</nameEnglish>
+    <referenceAbbreviation>TH1</referenceAbbreviation>
+    <referenceNumber>52</referenceNumber>
+    <sequenceNumber>626</sequenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>1 Thess</SBLAbbreviation>
+    <OSISAbbreviation>1Thess</OSISAbbreviation>
+    <SwordAbbreviation>1Thess</SwordAbbreviation>
+    <CCELNumber>52</CCELNumber>
+    <USFMAbbreviation>1Th</USFMAbbreviation>
+    <USFMNumber>53</USFMNumber>
+    <USXNumber>052</USXNumber>
+    <UnboundCode>52N</UnboundCode>
+    <BibleditNumber>52</BibleditNumber>
+    <NETBibleAbbreviation>1Th</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Ts</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1TH</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>1TH</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Thessalonians</nameEnglish>
+    <referenceAbbreviation>TH2</referenceAbbreviation>
+    <referenceNumber>53</referenceNumber>
+    <sequenceNumber>628</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>2 Thess</SBLAbbreviation>
+    <OSISAbbreviation>2Thess</OSISAbbreviation>
+    <SwordAbbreviation>2Thess</SwordAbbreviation>
+    <CCELNumber>53</CCELNumber>
+    <USFMAbbreviation>2Th</USFMAbbreviation>
+    <USFMNumber>54</USFMNumber>
+    <USXNumber>053</USXNumber>
+    <UnboundCode>53N</UnboundCode>
+    <BibleditNumber>53</BibleditNumber>
+    <NETBibleAbbreviation>2Th</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Ts</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2TH</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>2TH</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Timothy</nameEnglish>
+    <referenceAbbreviation>TI1</referenceAbbreviation>
+    <referenceNumber>54</referenceNumber>
+    <sequenceNumber>630</sequenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SBLAbbreviation>1 Tim</SBLAbbreviation>
+    <OSISAbbreviation>1Tim</OSISAbbreviation>
+    <SwordAbbreviation>1Tim</SwordAbbreviation>
+    <CCELNumber>54</CCELNumber>
+    <USFMAbbreviation>1Ti</USFMAbbreviation>
+    <USFMNumber>55</USFMNumber>
+    <USXNumber>054</USXNumber>
+    <UnboundCode>54N</UnboundCode>
+    <BibleditNumber>54</BibleditNumber>
+    <NETBibleAbbreviation>1Ti</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Tm</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1TI</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>1TI</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Timothy</nameEnglish>
+    <referenceAbbreviation>TI2</referenceAbbreviation>
+    <referenceNumber>55</referenceNumber>
+    <sequenceNumber>632</sequenceNumber>
+    <expectedChapters>4</expectedChapters>
+    <SBLAbbreviation>2 Tim</SBLAbbreviation>
+    <OSISAbbreviation>2Tim</OSISAbbreviation>
+    <SwordAbbreviation>2Tim</SwordAbbreviation>
+    <CCELNumber>55</CCELNumber>
+    <USFMAbbreviation>2Ti</USFMAbbreviation>
+    <USFMNumber>56</USFMNumber>
+    <USXNumber>055</USXNumber>
+    <UnboundCode>55N</UnboundCode>
+    <BibleditNumber>55</BibleditNumber>
+    <NETBibleAbbreviation>2Ti</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Tm</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2TI</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>2TI</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Titus</nameEnglish>
+    <referenceAbbreviation>TIT</referenceAbbreviation>
+    <referenceNumber>56</referenceNumber>
+    <sequenceNumber>634</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>Titus</SBLAbbreviation>
+    <OSISAbbreviation>Titus</OSISAbbreviation>
+    <SwordAbbreviation>Titus</SwordAbbreviation>
+    <CCELNumber>56</CCELNumber>
+    <USFMAbbreviation>Tit</USFMAbbreviation>
+    <USFMNumber>57</USFMNumber>
+    <USXNumber>056</USXNumber>
+    <UnboundCode>56N</UnboundCode>
+    <BibleditNumber>56</BibleditNumber>
+    <NETBibleAbbreviation>Tit</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Tit</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>TIT</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>TIT</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>TI</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Philemon</nameEnglish>
+    <referenceAbbreviation>PHM</referenceAbbreviation>
+    <referenceNumber>57</referenceNumber>
+    <sequenceNumber>636</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Phlm</SBLAbbreviation>
+    <OSISAbbreviation>Phlm</OSISAbbreviation>
+    <SwordAbbreviation>Phlm</SwordAbbreviation>
+    <CCELNumber>57</CCELNumber>
+    <USFMAbbreviation>Phm</USFMAbbreviation>
+    <USFMNumber>58</USFMNumber>
+    <USXNumber>057</USXNumber>
+    <UnboundCode>57N</UnboundCode>
+    <BibleditNumber>57</BibleditNumber>
+    <NETBibleAbbreviation>Phm</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Phm</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>PHM</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>PHM</ByzantineAbbreviation>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Hebrews</nameEnglish>
+    <referenceAbbreviation>HEB</referenceAbbreviation>
+    <referenceNumber>58</referenceNumber>
+    <sequenceNumber>638</sequenceNumber>
+    <expectedChapters>13</expectedChapters>
+    <SBLAbbreviation>Heb</SBLAbbreviation>
+    <OSISAbbreviation>Heb</OSISAbbreviation>
+    <SwordAbbreviation>Heb</SwordAbbreviation>
+    <CCELNumber>58</CCELNumber>
+    <USFMAbbreviation>Heb</USFMAbbreviation>
+    <USFMNumber>59</USFMNumber>
+    <USXNumber>058</USXNumber>
+    <UnboundCode>58N</UnboundCode>
+    <BibleditNumber>58</BibleditNumber>
+    <NETBibleAbbreviation>Heb</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Heb</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>HEB</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>HEB</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>HB</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>James / Jacob</nameEnglish>
+    <referenceAbbreviation>JAM</referenceAbbreviation>
+    <referenceNumber>59</referenceNumber>
+    <sequenceNumber>640</sequenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>Jas</SBLAbbreviation>
+    <OSISAbbreviation>Jas</OSISAbbreviation>
+    <SwordAbbreviation>Jas</SwordAbbreviation>
+    <CCELNumber>59</CCELNumber>
+    <USFMAbbreviation>Jas</USFMAbbreviation>
+    <USFMNumber>60</USFMNumber>
+    <USXNumber>059</USXNumber>
+    <UnboundCode>59N</UnboundCode>
+    <BibleditNumber>59</BibleditNumber>
+    <NETBibleAbbreviation>Jam</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jam</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JAM</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>JAS</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>JM,JMS</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Peter</nameEnglish>
+    <referenceAbbreviation>PE1</referenceAbbreviation>
+    <referenceNumber>60</referenceNumber>
+    <sequenceNumber>642</sequenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>1 Pet</SBLAbbreviation>
+    <OSISAbbreviation>1Pet</OSISAbbreviation>
+    <SwordAbbreviation>1Pet</SwordAbbreviation>
+    <CCELNumber>60</CCELNumber>
+    <USFMAbbreviation>1Pe</USFMAbbreviation>
+    <USFMNumber>61</USFMNumber>
+    <USXNumber>060</USXNumber>
+    <UnboundCode>60N</UnboundCode>
+    <BibleditNumber>60</BibleditNumber>
+    <NETBibleAbbreviation>1Pe</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Pe</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1PE</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>1PE</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>1P</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Peter</nameEnglish>
+    <referenceAbbreviation>PE2</referenceAbbreviation>
+    <referenceNumber>61</referenceNumber>
+    <sequenceNumber>644</sequenceNumber>
+    <expectedChapters>3</expectedChapters>
+    <SBLAbbreviation>2 Pet</SBLAbbreviation>
+    <OSISAbbreviation>2Pet</OSISAbbreviation>
+    <SwordAbbreviation>2Pet</SwordAbbreviation>
+    <CCELNumber>61</CCELNumber>
+    <USFMAbbreviation>2Pe</USFMAbbreviation>
+    <USFMNumber>62</USFMNumber>
+    <USXNumber>061</USXNumber>
+    <UnboundCode>61N</UnboundCode>
+    <BibleditNumber>61</BibleditNumber>
+    <NETBibleAbbreviation>2Pe</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Pe</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2PE</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>2PE</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>2P</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 John</nameEnglish>
+    <referenceAbbreviation>JN1</referenceAbbreviation>
+    <referenceNumber>62</referenceNumber>
+    <sequenceNumber>646</sequenceNumber>
+    <expectedChapters>5</expectedChapters>
+    <SBLAbbreviation>1 John</SBLAbbreviation>
+    <OSISAbbreviation>1John</OSISAbbreviation>
+    <SwordAbbreviation>1John</SwordAbbreviation>
+    <CCELNumber>62</CCELNumber>
+    <USFMAbbreviation>1Jn</USFMAbbreviation>
+    <USFMNumber>63</USFMNumber>
+    <USXNumber>062</USXNumber>
+    <UnboundCode>62N</UnboundCode>
+    <BibleditNumber>62</BibleditNumber>
+    <NETBibleAbbreviation>1Jo</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>1Jn</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>1JO</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>1JO</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>1J</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 John</nameEnglish>
+    <referenceAbbreviation>JN2</referenceAbbreviation>
+    <referenceNumber>63</referenceNumber>
+    <sequenceNumber>648</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>2 John</SBLAbbreviation>
+    <OSISAbbreviation>2John</OSISAbbreviation>
+    <SwordAbbreviation>2John</SwordAbbreviation>
+    <CCELNumber>63</CCELNumber>
+    <USFMAbbreviation>2Jn</USFMAbbreviation>
+    <USFMNumber>64</USFMNumber>
+    <USXNumber>063</USXNumber>
+    <UnboundCode>63N</UnboundCode>
+    <BibleditNumber>63</BibleditNumber>
+    <NETBibleAbbreviation>2Jo</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>2Jn</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>2JO</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>2JO</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>2J</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 John</nameEnglish>
+    <referenceAbbreviation>JN3</referenceAbbreviation>
+    <referenceNumber>64</referenceNumber>
+    <sequenceNumber>650</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>3 John</SBLAbbreviation>
+    <OSISAbbreviation>3John</OSISAbbreviation>
+    <SwordAbbreviation>3John</SwordAbbreviation>
+    <CCELNumber>64</CCELNumber>
+    <USFMAbbreviation>3Jn</USFMAbbreviation>
+    <USFMNumber>65</USFMNumber>
+    <USXNumber>064</USXNumber>
+    <UnboundCode>64N</UnboundCode>
+    <BibleditNumber>64</BibleditNumber>
+    <NETBibleAbbreviation>3Jo</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>3Jn</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>3JO</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>3JO</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>3J</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Jude</nameEnglish>
+    <referenceAbbreviation>JDE</referenceAbbreviation>
+    <referenceNumber>65</referenceNumber>
+    <sequenceNumber>652</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Jude</SBLAbbreviation>
+    <OSISAbbreviation>Jude</OSISAbbreviation>
+    <SwordAbbreviation>Jude</SwordAbbreviation>
+    <CCELNumber>65</CCELNumber>
+    <USFMAbbreviation>Jud</USFMAbbreviation>
+    <USFMNumber>66</USFMNumber>
+    <USXNumber>065</USXNumber>
+    <UnboundCode>65N</UnboundCode>
+    <BibleditNumber>65</BibleditNumber>
+    <NETBibleAbbreviation>Jud</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Jud</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>JUD</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>JUDE</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>JD</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Revelation / Revelation of John / Apocalypse of St. John</nameEnglish>
+    <referenceAbbreviation>REV</referenceAbbreviation>
+    <referenceNumber>66</referenceNumber>
+    <sequenceNumber>654</sequenceNumber>
+    <expectedChapters>22</expectedChapters>
+    <SBLAbbreviation>Rev</SBLAbbreviation>
+    <OSISAbbreviation>Rev</OSISAbbreviation>
+    <SwordAbbreviation>Rev</SwordAbbreviation>
+    <CCELNumber>66</CCELNumber>
+    <USFMAbbreviation>Rev</USFMAbbreviation>
+    <USFMNumber>67</USFMNumber>
+    <USXNumber>066</USXNumber>
+    <UnboundCode>66N</UnboundCode>
+    <BibleditNumber>66</BibleditNumber>
+    <NETBibleAbbreviation>Rev</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Rev</DrupalBibleAbbreviation>
+    <BibleWorksAbbreviation>REV</BibleWorksAbbreviation>
+    <ByzantineAbbreviation>RE</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>RV</possibleAlternativeAbbreviations>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+
+<!-- Books from above which have quite different Hebrew and Greek versions. Sometimes printed separately, sometimes combined. -->
+  <BibleBookCodes>
+    <nameEnglish>Greek Esther / Esther (Greek)</nameEnglish>
+    <referenceAbbreviation>ESG</referenceAbbreviation>
+    <referenceNumber>70</referenceNumber>
+    <sequenceNumber>204</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SBLAbbreviation>Add Esth</SBLAbbreviation>
+    <OSISAbbreviation>EsthGr</OSISAbbreviation>
+    <SwordAbbreviation>EsthGr</SwordAbbreviation>
+    <CCELNumber>95</CCELNumber>
+    <USFMAbbreviation>EsG</USFMAbbreviation>
+    <USFMNumber>70</USFMNumber>
+    <USXNumber>069</USXNumber>
+    <UnboundCode>69A</UnboundCode>
+    <BibleditNumber>72</BibleditNumber>
+    <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Greek additions to Esther / Esther (additions)</nameEnglish>
+    <referenceAbbreviation>ESA</referenceAbbreviation>
+    <referenceNumber>71</referenceNumber>
+    <sequenceNumber>84</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SBLAbbreviation>Add Esth</SBLAbbreviation>
+    <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <SwordAbbreviation>AddEsth</SwordAbbreviation>
+    <CCELNumber>95</CCELNumber>
+    <USFMAbbreviation>ADE</USFMAbbreviation>
+    <USFMNumber>70</USFMNumber><!-- Might be wrong - see ESG -->
+    <BibleWorksAbbreviation>ESG</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>EST,ESG,ESC</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Combined Hebrew/Greek Esther / Esther (combined)</nameEnglish>
+    <referenceAbbreviation>ESC</referenceAbbreviation>
+    <referenceNumber>72</referenceNumber>
+    <sequenceNumber>86</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SBLAbbreviation>Add Esth</SBLAbbreviation>
+    <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <SwordAbbreviation>AddEsth</SwordAbbreviation>
+    <CCELNumber>95</CCELNumber>
+    <USFMAbbreviation>EsG</USFMAbbreviation>
+    <USFMNumber>70</USFMNumber>
+    <possibleAlternativeBooks>EST,ESG,ESA</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Greek Daniel / Daniel (Greek)</nameEnglish>
+    <referenceAbbreviation>DNG</referenceAbbreviation>
+    <referenceNumber>73</referenceNumber>
+    <sequenceNumber>142</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>DanGr</SwordAbbreviation>
+    <!-- Bibledit suggests DNT for the USFM abbreviation here??? -->
+    <USFMAbbreviation>DaG</USFMAbbreviation>
+    <USFMNumber>B2</USFMNumber>
+    <USXNumber>112</USXNumber>
+    <BibleditNumber>88</BibleditNumber>
+    <BibleWorksAbbreviation>DNG</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>DAN,DNA,DNC,DNT</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Greek additions to Daniel / Daniel (additions)</nameEnglish>
+    <referenceAbbreviation>DNA</referenceAbbreviation>
+    <referenceNumber>74</referenceNumber>
+    <sequenceNumber>144</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>AddDan</SwordAbbreviation>
+    <USFMAbbreviation>DaG</USFMAbbreviation>
+    <USFMNumber>B2</USFMNumber>
+    <possibleAlternativeBooks>DAN,DNG,DNC,DNT</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Combined Hebrew/Greek Daniel / Daniel (combined)</nameEnglish>
+    <referenceAbbreviation>DNC</referenceAbbreviation>
+    <referenceNumber>75</referenceNumber>
+    <sequenceNumber>146</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Add Dan</SBLAbbreviation>
+    <OSISAbbreviation>AddDan</OSISAbbreviation>
+    <SwordAbbreviation>AddDan</SwordAbbreviation>
+    <USFMAbbreviation>DaG</USFMAbbreviation>
+    <USFMNumber>B2</USFMNumber>
+    <possibleAlternativeBooks>DAN,DNG,DNA,DNT</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+
+<!-- Catholic Deuterocanonical (Protestant Apocryphal) books -->
+  <BibleBookCodes>
+    <nameEnglish>Bel and the dragon</nameEnglish>
+    <referenceAbbreviation>BEL</referenceAbbreviation>
+    <referenceNumber>80</referenceNumber>
+    <sequenceNumber>262</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Bel</SBLAbbreviation>
+    <OSISAbbreviation>Bel</OSISAbbreviation>
+    <SwordAbbreviation>Bel</SwordAbbreviation>
+    <CCELNumber>78</CCELNumber>
+    <USFMAbbreviation>Bel</USFMAbbreviation>
+    <USFMNumber>77</USFMNumber>
+    <USXNumber>076</USXNumber>
+    <UnboundCode>76A</UnboundCode>
+    <BibleditNumber>79</BibleditNumber>
+    <BibleWorksAbbreviation>BEL</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>BLT</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Susanna</nameEnglish>
+    <referenceAbbreviation>SUS</referenceAbbreviation>
+    <referenceNumber>81</referenceNumber>
+    <sequenceNumber>260</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Sus</SBLAbbreviation>
+    <OSISAbbreviation>Sus</OSISAbbreviation>
+    <SwordAbbreviation>Sus</SwordAbbreviation>
+    <CCELNumber>77</CCELNumber>
+    <USFMAbbreviation>Sus</USFMAbbreviation>
+    <USFMNumber>76</USFMNumber>
+    <USXNumber>075</USXNumber>
+    <UnboundCode>75A</UnboundCode>
+    <BibleditNumber>78</BibleditNumber>
+    <BibleWorksAbbreviation>SUS</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>SST</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Judith</nameEnglish>
+    <referenceAbbreviation>JDT</referenceAbbreviation>
+    <referenceNumber>82</referenceNumber>
+    <sequenceNumber>202</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>Jdt</SBLAbbreviation>
+    <OSISAbbreviation>Jdt</OSISAbbreviation>
+    <SwordAbbreviation>Jdt</SwordAbbreviation>
+    <CCELNumber>70</CCELNumber>
+    <USFMAbbreviation>Jdt</USFMAbbreviation>
+    <USFMNumber>69</USFMNumber>
+    <USXNumber>068</USXNumber>
+    <UnboundCode>68A</UnboundCode>
+    <BibleditNumber>71</BibleditNumber>
+    <BibleWorksAbbreviation>JDT</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Manasses / Prayer of Manasseh</nameEnglish>
+    <!-- Part of Odes, part of 2 Chronicles in the Ethiopian Orthodox Bible -->
+    <referenceAbbreviation>MAN</referenceAbbreviation>
+    <referenceNumber>83</referenceNumber>
+    <sequenceNumber>294</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Pr Man</SBLAbbreviation>
+    <OSISAbbreviation>PrMan</OSISAbbreviation>
+    <SwordAbbreviation>PrMan</SwordAbbreviation>
+    <CCELNumber>82</CCELNumber>
+    <USFMAbbreviation>Man</USFMAbbreviation>
+    <USFMNumber>84</USFMNumber>
+    <USXNumber>083</USXNumber>
+    <UnboundCode>83A</UnboundCode>
+    <BibleditNumber>83</BibleditNumber>
+    <BibleWorksAbbreviation>PRM</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach</nameEnglish>
+    <referenceAbbreviation>SIR</referenceAbbreviation>
+    <referenceNumber>84</referenceNumber>
+    <sequenceNumber>208</sequenceNumber>
+    <expectedChapters>51,52</expectedChapters>
+    <SBLAbbreviation>Sir</SBLAbbreviation>
+    <OSISAbbreviation>Sir</OSISAbbreviation>
+    <SwordAbbreviation>Sir</SwordAbbreviation>
+    <CCELNumber>94</CCELNumber>
+    <USFMAbbreviation>Sir</USFMAbbreviation>
+    <USFMNumber>72</USFMNumber>
+    <USXNumber>071</USXNumber>
+    <UnboundCode>71A</UnboundCode>
+    <BibleditNumber>74</BibleditNumber>
+    <BibleWorksAbbreviation>SIR</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Sirach Prologue</nameEnglish>
+    <referenceAbbreviation>SIP</referenceAbbreviation>
+    <referenceNumber>85</referenceNumber>
+    <sequenceNumber>207</sequenceNumber>
+    <OSISAbbreviation>SirP</OSISAbbreviation>
+    <SwordAbbreviation>SirP</SwordAbbreviation>
+    <BibleWorksAbbreviation>SIP</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Tobit / Tobias</nameEnglish>
+    <referenceAbbreviation>TOB</referenceAbbreviation>
+    <referenceNumber>86</referenceNumber>
+    <sequenceNumber>200</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SBLAbbreviation>Tob</SBLAbbreviation>
+    <OSISAbbreviation>Tob</OSISAbbreviation>
+    <SwordAbbreviation>Tob</SwordAbbreviation>
+    <CCELNumber>69</CCELNumber>
+    <USFMAbbreviation>Tob</USFMAbbreviation>
+    <USFMNumber>68</USFMNumber>
+    <USXNumber>067</USXNumber>
+    <UnboundCode>67A</UnboundCode>
+    <BibleditNumber>70</BibleditNumber>
+    <BibleWorksAbbreviation>TOB</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>TBS</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Wisdom / Wisdom of Solomon</nameEnglish>
+    <referenceAbbreviation>WIS</referenceAbbreviation>
+    <referenceNumber>87</referenceNumber>
+    <sequenceNumber>206</sequenceNumber>
+    <expectedChapters>19</expectedChapters>
+    <SBLAbbreviation>Wis</SBLAbbreviation>
+    <OSISAbbreviation>Wis</OSISAbbreviation>
+    <SwordAbbreviation>Wis</SwordAbbreviation>
+    <CCELNumber>72</CCELNumber>
+    <USFMAbbreviation>Wis</USFMAbbreviation>
+    <USFMNumber>71</USFMNumber>
+    <USXNumber>070</USXNumber>
+    <UnboundCode>70A</UnboundCode>
+    <BibleditNumber>73</BibleditNumber>
+    <BibleWorksAbbreviation>WIS</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children</nameEnglish>
+    <referenceAbbreviation>PAZ</referenceAbbreviation>
+    <referenceNumber>88</referenceNumber>
+    <sequenceNumber>250</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Pr Azar</SBLAbbreviation>
+    <OSISAbbreviation>PrAzar</OSISAbbreviation>
+    <SwordAbbreviation>PrAzar</SwordAbbreviation>
+    <!--
+    <SBLAbbreviation>Sg Three</SBLAbbreviation>
+    <OSISAbbreviation>SgThree</OSISAbbreviation> -->
+    <CCELNumber>76</CCELNumber>
+    <USFMAbbreviation>S3Y</USFMAbbreviation>
+    <USFMNumber>75</USFMNumber>
+    <USXNumber>074</USXNumber>
+    <UnboundCode>74A</UnboundCode>
+    <BibleditNumber>77</BibleditNumber>
+    <BibleWorksAbbreviation>PRA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>PRAZ</possibleAlternativeAbbreviations>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+
+<!-- Ezra / Esdras -->
+  <BibleBookCodes>
+    <!-- 1 Esdras is a Greek paraphrase of Hebrew Ezra. Also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon.
+        In the Catholic tradition it is called 3 Esdras/Ezra. -->
+    <nameEnglish>Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras</nameEnglish>
+    <referenceAbbreviation>GES</referenceAbbreviation>
+    <referenceNumber>90</referenceNumber>
+    <sequenceNumber>282</sequenceNumber>
+    <expectedChapters>9</expectedChapters>
+    <SBLAbbreviation>1 Esd</SBLAbbreviation>
+    <OSISAbbreviation>1Esd</OSISAbbreviation>
+    <SwordAbbreviation>1Esd</SwordAbbreviation>
+    <CCELNumber>81</CCELNumber>
+    <USFMAbbreviation>1Es</USFMAbbreviation>
+    <USFMNumber>82</USFMNumber>
+    <USXNumber>081</USXNumber>
+    <UnboundCode>81A</UnboundCode>
+    <BibleditNumber>82</BibleditNumber>
+    <BibleWorksAbbreviation>1ES</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>LES</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- 2 Esdras is Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition.
+        It is called 3 Esdras in the Russian and Georgian traditions. -->
+    <nameEnglish>Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra</nameEnglish>
+    <referenceAbbreviation>LES</referenceAbbreviation>
+    <referenceNumber>91</referenceNumber>
+    <sequenceNumber>284</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>2 Esd</SBLAbbreviation>
+    <OSISAbbreviation>2Esd</OSISAbbreviation>
+    <SwordAbbreviation>2Esd</SwordAbbreviation>
+    <CCELNumber>83</CCELNumber>
+    <USFMAbbreviation>2Es</USFMAbbreviation>
+    <USFMNumber>83</USFMNumber>
+    <USXNumber>082</USXNumber>
+    <UnboundCode>82A</UnboundCode>
+    <BibleditNumber>86</BibleditNumber>
+    <BibleWorksAbbreviation>4ES</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>GES</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel</nameEnglish>
+    <!-- Historic 12 chapter Ezra Apocalypse used in the Armenian, Syriac and Ethiopian traditions -->
+    <referenceAbbreviation>EZA</referenceAbbreviation>
+    <referenceNumber>92</referenceNumber>
+    <sequenceNumber>286</sequenceNumber>
+    <expectedChapters>12,13</expectedChapters>
+    <SBLAbbreviation>4 Ezra</SBLAbbreviation>
+    <SwordAbbreviation>4Ezra</SwordAbbreviation>
+    <USFMAbbreviation>EzA</USFMAbbreviation>
+    <USFMNumber>A4</USFMNumber>
+    <USXNumber>104</USXNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>5 Ezra / 3 Esdras / 5 Esdras</nameEnglish>
+    <!-- 2 chapter Latin preface to the Apocalypse of Ezra known to scholars as 5 Ezra -->
+    <referenceAbbreviation>EZ5</referenceAbbreviation>
+    <referenceNumber>93</referenceNumber>
+    <sequenceNumber>288</sequenceNumber>
+    <expectedChapters>2</expectedChapters>
+    <SBLAbbreviation>5 Ezra</SBLAbbreviation>
+    <SwordAbbreviation>5Ezra</SwordAbbreviation>
+    <USFMAbbreviation>5Ez</USFMAbbreviation>
+    <USFMNumber>A5</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>6 Ezra / 5 Esdras / 6 Esdras</nameEnglish>
+    <!-- 2 chapter Latin addition to the Apocalypse of Ezra known to scholars as 6 Ezra -->
+    <referenceAbbreviation>EZ6</referenceAbbreviation>
+    <referenceNumber>94</referenceNumber>
+    <sequenceNumber>290</sequenceNumber>
+    <expectedChapters>2</expectedChapters>
+    <SBLAbbreviation>6 Ezra</SBLAbbreviation>
+    <SwordAbbreviation>6Ezra</SwordAbbreviation>
+    <USFMAbbreviation>6Ez</USFMAbbreviation>
+    <USFMNumber>A6</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Pseudepigrapha -->
+    <nameEnglish>Revelation of Ezra</nameEnglish>
+    <referenceAbbreviation>RVE</referenceAbbreviation>
+    <referenceNumber>95</referenceNumber>
+    <sequenceNumber>292</sequenceNumber>
+    <OSISAbbreviation>RevEzra</OSISAbbreviation>
+    <SwordAbbreviation>RevEzra</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Pseudepigrapha -->
+    <nameEnglish>Vison of Ezra</nameEnglish>
+    <referenceAbbreviation>VSE</referenceAbbreviation>
+    <referenceNumber>96</referenceNumber>
+    <sequenceNumber>293</sequenceNumber>
+    <OSISAbbreviation>VisEzra</OSISAbbreviation>
+    <SwordAbbreviation>VisEzra</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+<!-- Baruch and the Letter of Jeremiah -->
+  <BibleBookCodes>
+    <nameEnglish>Letter of Jeremiah / Epistle of Jeremiah</nameEnglish>
+    <referenceAbbreviation>LJE</referenceAbbreviation>
+    <referenceNumber>100</referenceNumber>
+    <sequenceNumber>240</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
+    <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <SwordAbbreviation>EpJer</SwordAbbreviation>
+    <CCELNumber>75</CCELNumber>
+    <USFMAbbreviation>LJe</USFMAbbreviation>
+    <USFMNumber>74</USFMNumber>
+    <USXNumber>073</USXNumber>
+    <UnboundCode>73A</UnboundCode>
+    <BibleditNumber>76</BibleditNumber>
+    <BibleWorksAbbreviation>EPJ</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Baruch / 1 Baruch</nameEnglish>
+    <!-- Use LJB for the six-chapter book which includes the Letter of Jeremiah -->
+    <referenceAbbreviation>BAR</referenceAbbreviation>
+    <referenceNumber>101</referenceNumber>
+    <sequenceNumber>220</sequenceNumber>
+    <expectedChapters>5,6</expectedChapters>
+    <SBLAbbreviation>Bar</SBLAbbreviation>
+    <OSISAbbreviation>Bar</OSISAbbreviation>
+    <SwordAbbreviation>Bar</SwordAbbreviation>
+    <CCELNumber>74</CCELNumber>
+    <USFMAbbreviation>Bar</USFMAbbreviation>
+    <USFMNumber>73</USFMNumber>
+    <USXNumber>072</USXNumber>
+    <UnboundCode>72A</UnboundCode>
+    <BibleditNumber>75</BibleditNumber>
+    <BibleWorksAbbreviation>BAR</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch</nameEnglish>
+    <referenceAbbreviation>LJB</referenceAbbreviation>
+    <referenceNumber>102</referenceNumber>
+    <sequenceNumber>222</sequenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SBLAbbreviation>Ep Jer</SBLAbbreviation>
+    <OSISAbbreviation>EpJer</OSISAbbreviation>
+    <SwordAbbreviation>EpJer</SwordAbbreviation>
+    <USFMAbbreviation>LJe</USFMAbbreviation>
+    <USFMNumber>74</USFMNumber>
+    <possibleAlternativeBooks>BAR</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Baruch / Apocalypse of Baruch</nameEnglish> <!-- Syriac -->
+    <referenceAbbreviation>BA2</referenceAbbreviation>
+    <referenceNumber>103</referenceNumber>
+    <sequenceNumber>228</sequenceNumber>
+    <expectedChapters>77</expectedChapters>
+    <SwordAbbreviation>2Bar</SwordAbbreviation>
+    <USFMAbbreviation>2Ba</USFMAbbreviation>
+    <USFMNumber>B4</USFMNumber>
+    <USXNumber>114</USXNumber>
+    <possibleAlternativeBooks>LB2</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of Baruch / Epistle of Baruch</nameEnglish> <!-- Syriac -->
+    <referenceAbbreviation>LBA</referenceAbbreviation>
+    <referenceNumber>104</referenceNumber>
+    <sequenceNumber>224</sequenceNumber>
+    <expectedChapters>9</expectedChapters>
+    <SwordAbbreviation>EpBar</SwordAbbreviation>
+    <USFMAbbreviation>LBa</USFMAbbreviation>
+    <USFMNumber>B5</USFMNumber>
+    <USXNumber>115</USXNumber>
+    <possibleAlternativeBooks>LB2</possibleAlternativeBooks>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Baruch with the Letter of Baruch</nameEnglish>
+    <!-- Syriac -->
+    <referenceAbbreviation>LB2</referenceAbbreviation>
+    <referenceNumber>105</referenceNumber>
+    <sequenceNumber>226</sequenceNumber>
+    <expectedChapters>86</expectedChapters>
+    <USFMAbbreviation>2Ba</USFMAbbreviation>
+    <USFMNumber>B4</USFMNumber>
+    <possibleAlternativeBooks>BA2,LBA</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Baruch</nameEnglish>
+    <!-- Greek -->
+    <referenceAbbreviation>BA3</referenceAbbreviation>
+    <referenceNumber>106</referenceNumber>
+    <OSISAbbreviation>3Bar</OSISAbbreviation>
+    <SwordAbbreviation>3Bar</SwordAbbreviation>
+    <sequenceNumber>230</sequenceNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch</nameEnglish>
+    <!-- Greek -->
+    <referenceAbbreviation>BA4</referenceAbbreviation>
+    <referenceNumber>107</referenceNumber>
+    <sequenceNumber>232</sequenceNumber>
+    <expectedChapters>6,5</expectedChapters>
+    <SwordAbbreviation>4Bar</SwordAbbreviation>
+    <USFMAbbreviation>4Ba</USFMAbbreviation>
+    <USFMNumber>C2</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Additions to Jeremiah / Rest of Jeremiah</nameEnglish> <!-- Ethiopian Orthodox Canon / Ge'ez Translation addition -->
+    <referenceAbbreviation>JRA</referenceAbbreviation>
+    <referenceNumber>108</referenceNumber>
+    <sequenceNumber>233</sequenceNumber>
+    <SwordAbbreviation>AddJer</SwordAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Pseudo-Josephus</nameEnglish>
+    <!-- Jossipon; Joseph ben Gorion's Medieval History of the Jews in Ethiopian Orthodox Canon / Ge'ez Translation addition -->
+    <referenceAbbreviation>PSJ</referenceAbbreviation>
+    <referenceNumber>109</referenceNumber>
+    <sequenceNumber>234</sequenceNumber>
+    <SwordAbbreviation>PsJos</SwordAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+<!-- Maccabees -->
+  <BibleBookCodes>
+    <!-- The combined book of Maccabees as used by Jerome in the Latin Vulgate -->
+    <nameEnglish>Maccabees</nameEnglish>
+    <referenceAbbreviation>MAC</referenceAbbreviation>
+    <referenceNumber>110</referenceNumber>
+    <sequenceNumber>270</sequenceNumber>
+    <expectedChapters>31</expectedChapters>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>1 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA1</referenceAbbreviation>
+    <referenceNumber>111</referenceNumber>
+    <sequenceNumber>272</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SBLAbbreviation>1 Macc</SBLAbbreviation>
+    <OSISAbbreviation>1Macc</OSISAbbreviation>
+    <SwordAbbreviation>1Macc</SwordAbbreviation>
+    <CCELNumber>79</CCELNumber>
+    <USFMAbbreviation>1Ma</USFMAbbreviation>
+    <USFMNumber>78</USFMNumber>
+    <USXNumber>077</USXNumber>
+    <UnboundCode>77A</UnboundCode>
+    <BibleditNumber>80</BibleditNumber>
+    <BibleWorksAbbreviation>1MA</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Maccabees</nameEnglish>
+    <referenceAbbreviation>MA2</referenceAbbreviation>
+    <referenceNumber>112</referenceNumber>
+    <sequenceNumber>274</sequenceNumber>
+    <expectedChapters>15</expectedChapters>
+    <SBLAbbreviation>2 Macc</SBLAbbreviation>
+    <OSISAbbreviation>2Macc</OSISAbbreviation>
+    <SwordAbbreviation>2Macc</SwordAbbreviation>
+    <CCELNumber>80</CCELNumber>
+    <USFMAbbreviation>2Ma</USFMAbbreviation>
+    <USFMNumber>79</USFMNumber>
+    <USXNumber>078</USXNumber>
+    <UnboundCode>78A</UnboundCode>
+    <BibleditNumber>81</BibleditNumber>
+    <BibleWorksAbbreviation>2MA</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Maccabees</nameEnglish>
+    <!-- Part of Eastern Orthodox and Armenian Bibles -->
+    <referenceAbbreviation>MA3</referenceAbbreviation>
+    <referenceNumber>113</referenceNumber>
+    <sequenceNumber>276</sequenceNumber>
+    <expectedChapters>7</expectedChapters>
+    <SBLAbbreviation>3 Macc</SBLAbbreviation>
+    <OSISAbbreviation>3Macc</OSISAbbreviation>
+    <SwordAbbreviation>3Macc</SwordAbbreviation>
+    <CCELNumber>84</CCELNumber>
+    <USFMAbbreviation>3Ma</USFMAbbreviation>
+    <USFMNumber>80</USFMNumber>
+    <USXNumber>079</USXNumber>
+    <UnboundCode>79A</UnboundCode>
+    <BibleditNumber>85</BibleditNumber>
+    <BibleWorksAbbreviation>3MA</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>4 Maccabees</nameEnglish>
+    <!-- Part of the Georgian Bible and the Greek Appendix -->
+    <referenceAbbreviation>MA4</referenceAbbreviation>
+    <referenceNumber>114</referenceNumber>
+    <sequenceNumber>278</sequenceNumber>
+    <expectedChapters>18</expectedChapters>
+    <SBLAbbreviation>4 Macc</SBLAbbreviation>
+    <OSISAbbreviation>4Macc</OSISAbbreviation>
+    <SwordAbbreviation>4Macc</SwordAbbreviation>
+    <CCELNumber>85</CCELNumber>
+    <USFMAbbreviation>4Ma</USFMAbbreviation>
+    <USFMNumber>81</USFMNumber>
+    <USXNumber>080</USXNumber>
+    <UnboundCode>80A</UnboundCode>
+    <BibleditNumber>87</BibleditNumber>
+    <BibleWorksAbbreviation>4MA</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>5 Maccabees</nameEnglish> <!-- Syriac. Apparently there's also an Arabic one. -->
+    <referenceAbbreviation>MA5</referenceAbbreviation>
+    <referenceNumber>115</referenceNumber>
+    <sequenceNumber>280</sequenceNumber>
+    <OSISAbbreviation>5Macc</OSISAbbreviation>
+    <SwordAbbreviation>5Macc</SwordAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+<!-- Meqabyans / Makabians -->
+  <BibleBookCodes>
+    <nameEnglish>1 Meqabyan / 1 Makabian / Mekabis of Benjamin</nameEnglish>
+    <!-- Ge'ez -->
+    <referenceAbbreviation>MQ1</referenceAbbreviation>
+    <referenceNumber>116</referenceNumber>
+    <sequenceNumber>500</sequenceNumber>
+    <expectedChapters>36</expectedChapters>
+    <SwordAbbreviation>1Meq</SwordAbbreviation>
+    <USFMAbbreviation>1Mq</USFMAbbreviation>
+    <USFMNumber>B8</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Meqabyan / 2 Makabian / Mekabis of Moab</nameEnglish>
+    <!-- Ge'ez -->
+    <referenceAbbreviation>MQ2</referenceAbbreviation>
+    <referenceNumber>117</referenceNumber>
+    <sequenceNumber>502</sequenceNumber>
+    <expectedChapters>20,21</expectedChapters>
+    <SwordAbbreviation>2Meq</SwordAbbreviation>
+    <USFMAbbreviation>2Mq</USFMAbbreviation>
+    <USFMNumber>B9</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Meqabyan / 3 Makabian</nameEnglish>
+    <!-- Ge'ez -->
+    <referenceAbbreviation>MQ3</referenceAbbreviation>
+    <referenceNumber>118</referenceNumber>
+    <sequenceNumber>506</sequenceNumber>
+    <expectedChapters>10</expectedChapters>
+    <SwordAbbreviation>3Meq</SwordAbbreviation>
+    <USFMAbbreviation>3Mq</USFMAbbreviation>
+    <USFMNumber>C0</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+<!-- Psalms -->
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 1 / Psalms Book I</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB1</referenceAbbreviation>
+    <referenceNumber>120</referenceNumber>
+    <sequenceNumber>101</sequenceNumber>
+    <expectedChapters>41</expectedChapters>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 2 / Psalms Book II</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB2</referenceAbbreviation>
+    <referenceNumber>121</referenceNumber>
+    <sequenceNumber>102</sequenceNumber>
+    <expectedChapters>31</expectedChapters>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 3 / Psalms Book III</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB3</referenceAbbreviation>
+    <referenceNumber>122</referenceNumber>
+    <sequenceNumber>103</sequenceNumber>
+    <expectedChapters>17</expectedChapters>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 4 / Psalms Book IV</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB4</referenceAbbreviation>
+    <referenceNumber>123</referenceNumber>
+    <sequenceNumber>104</sequenceNumber>
+    <expectedChapters>17</expectedChapters>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms Book 5 / Psalms Book V</nameEnglish>
+    <!-- One of five books which altogether contain 150 psalms -->
+    <referenceAbbreviation>PB5</referenceAbbreviation>
+    <referenceNumber>124</referenceNumber>
+    <sequenceNumber>105</sequenceNumber>
+    <expectedChapters>44</expectedChapters>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms</nameEnglish>
+    <referenceAbbreviation>PSB</referenceAbbreviation>
+    <referenceNumber>125</referenceNumber>
+    <sequenceNumber>106</sequenceNumber>
+    <expectedChapters>150</expectedChapters>
+    <SwordAbbreviation>PsMet</SwordAbbreviation>
+    <USFMAbbreviation>PsB</USFMAbbreviation>
+    <USFMNumber>88</USFMNumber>
+    <typicalSection>OT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Psalm 151</nameEnglish>
+    <!-- The 151st Psalm of David (7 verses) that is in the LXX, included in Orthodox Bibles translated from the Septuagint -->
+    <referenceAbbreviation>PS2</referenceAbbreviation>
+    <referenceNumber>126</referenceNumber>
+    <sequenceNumber>107</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <OSISAbbreviation>AddPs</OSISAbbreviation>
+    <!--<SwordAbbreviation>Ps151</SwordAbbreviation>-->
+    <SwordAbbreviation>AddPs</SwordAbbreviation>
+    <CCELNumber>86</CCELNumber>
+    <USFMAbbreviation>Ps2</USFMAbbreviation>
+    <USFMNumber>85</USFMNumber>
+    <USXNumber>084</USXNumber>
+    <UnboundCode>84A</UnboundCode>
+    <BibleditNumber>84</BibleditNumber>
+    <BibleWorksAbbreviation>PSX</BibleWorksAbbreviation>
+    <typicalSection>OT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Syriac Psalms 152-155 / Five apocryphal Syriac Psalms / Additional Syriac Psalms</nameEnglish>
+    <!-- Hebrew / Syriac (17,20,6,6 verses) -->
+    <referenceAbbreviation>PS3</referenceAbbreviation>
+    <referenceNumber>127</referenceNumber>
+    <sequenceNumber>108</sequenceNumber>
+    <expectedChapters>5,4</expectedChapters>
+    <SwordAbbreviation>5ApocSyrPss</SwordAbbreviation>
+    <USFMAbbreviation>Ps3</USFMAbbreviation>
+    <USFMNumber>B3</USFMNumber>
+    <USXNumber>113</USXNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Additional Psalms of Solomon</nameEnglish>
+    <!-- Not printed in any canonical tradition, but in some Syriac and LXX manuscripts -->
+    <referenceAbbreviation>PSS</referenceAbbreviation>
+    <referenceNumber>128</referenceNumber>
+    <sequenceNumber>109</sequenceNumber>
+    <expectedChapters>18</expectedChapters>
+    <SwordAbbreviation>PssSol</SwordAbbreviation>
+    <USFMAbbreviation>PsS</USFMAbbreviation>
+    <USFMNumber>87</USFMNumber>
+    <USXNumber>086</USXNumber>
+    <UnboundCode>85A</UnboundCode> <!-- Not totally sure about this UB says PSALM (singular) of Solomon -->
+    <BibleWorksAbbreviation>PSS</BibleWorksAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Letter to the Laodiceans</nameEnglish>
+    <!-- Latin Vulgate NT -->
+    <referenceAbbreviation>LAO</referenceAbbreviation>
+    <referenceNumber>130</referenceNumber>
+    <sequenceNumber>660</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>EpLao</SwordAbbreviation>
+    <USFMAbbreviation>Lao</USFMAbbreviation>
+    <USFMNumber>C3</USFMNumber>
+    <USXNumber>123</USXNumber>
+    <BibleWorksAbbreviation>LAO</BibleWorksAbbreviation>
+    <typicalSection>NT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->
+    <nameEnglish>Odes / Odae</nameEnglish>
+    <referenceAbbreviation>ODE</referenceAbbreviation>
+    <referenceNumber>131</referenceNumber>
+    <sequenceNumber>300</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SwordAbbreviation>Odes</SwordAbbreviation>
+    <USFMAbbreviation>Oda</USFMAbbreviation> <!-- I've sometimes seen Ode -->
+    <USFMNumber>86</USFMNumber>
+    <USXNumber>085</USXNumber>
+    <UnboundCode>86A</UnboundCode>
+    <BibleWorksAbbreviation>ODE</BibleWorksAbbreviation>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Solomon</nameEnglish>
+    <!-- Latin Vulgate OT -->
+    <referenceAbbreviation>PSO</referenceAbbreviation>
+    <referenceNumber>132</referenceNumber>
+    <sequenceNumber>310</sequenceNumber>
+    <SwordAbbreviation>PrSol</SwordAbbreviation>
+    <USFMAbbreviation>PSo</USFMAbbreviation>
+    <possibleAlternativeAbbreviations>PRS</possibleAlternativeAbbreviations>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Jeremiah</nameEnglish>
+    <!-- Latin Vulgate OT -->
+    <referenceAbbreviation>PJE</referenceAbbreviation>
+    <referenceNumber>133</referenceNumber>
+    <sequenceNumber>312</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>PrJer</SwordAbbreviation>
+    <USFMAbbreviation>PJe</USFMAbbreviation>
+    <possibleAlternativeAbbreviations>PRJ</possibleAlternativeAbbreviations>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Words of Sirach</nameEnglish> <!-- Armenian Zohrab Bible (not divided into chapters and verses) -->
+    <referenceAbbreviation>WSI</referenceAbbreviation>
+    <referenceNumber>134</referenceNumber>
+    <sequenceNumber>320</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>WSir</SwordAbbreviation>
+    <USFMAbbreviation>WSi</USFMAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of the Corinthians to Paul / Epistle of the Corinthians to Paul</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>COP</referenceAbbreviation>
+    <referenceNumber>135</referenceNumber>
+    <sequenceNumber>662</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>EpCorPaul</SwordAbbreviation>
+    <USFMAbbreviation>CoP</USFMAbbreviation>
+    <typicalSection>NT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>3 Corinthians</nameEnglish> <!-- Armenian (19 verses) -->
+    <referenceAbbreviation>CO3</referenceAbbreviation>
+    <referenceNumber>136</referenceNumber>
+    <sequenceNumber>664</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>3Cor</SwordAbbreviation>
+    <USFMAbbreviation>3Co</USFMAbbreviation>
+    <typicalSection>NT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Prayer of Euthalius</nameEnglish> <!-- Armenian (60 verses) -->
+    <referenceAbbreviation>EUT</referenceAbbreviation>
+    <referenceNumber>137</referenceNumber>
+    <sequenceNumber>670</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>PrEuth</SwordAbbreviation>
+    <USFMAbbreviation>Eut</USFMAbbreviation>
+    <possibleAlternativeAbbreviations>PRE</possibleAlternativeAbbreviations>
+    <typicalSection>NT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Dormition of John</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>DOJ</referenceAbbreviation>
+    <referenceNumber>138</referenceNumber>
+    <sequenceNumber>680</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>DormJohn</SwordAbbreviation>
+    <USFMAbbreviation>DoJ</USFMAbbreviation>
+    <typicalSection>NT+</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Jubilees</nameEnglish> <!-- Hebrew -->
+    <referenceAbbreviation>JUB</referenceAbbreviation>
+    <referenceNumber>140</referenceNumber>
+    <sequenceNumber>340</sequenceNumber>
+    <expectedChapters>34</expectedChapters>
+    <SwordAbbreviation>Jub</SwordAbbreviation>
+    <USFMAbbreviation>Jub</USFMAbbreviation>
+    <USFMNumber>B6</USFMNumber>
+    <typicalSection>DC</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch</nameEnglish>
+    <!-- Hebrew -->
+    <referenceAbbreviation>ENO</referenceAbbreviation>
+    <referenceNumber>141</referenceNumber>
+    <sequenceNumber>342</sequenceNumber>
+    <expectedChapters>42</expectedChapters>
+    <SwordAbbreviation>1En</SwordAbbreviation>
+    <USFMAbbreviation>Eno</USFMAbbreviation>
+    <USFMNumber>B7</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Enoch</nameEnglish>
+    <!-- Old Church Slavonic -->
+    <referenceAbbreviation>EN2</referenceAbbreviation>
+    <referenceNumber>142</referenceNumber>
+    <sequenceNumber>344</sequenceNumber>
+    <OSISAbbreviation>2En</OSISAbbreviation>
+    <SwordAbbreviation>2En</SwordAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Reproof / Tegsas / Tegsats / Taagsas</nameEnglish>
+    <!-- Hebrew Proverbs 25-31 -->
+    <referenceAbbreviation>REP</referenceAbbreviation>
+    <referenceNumber>143</referenceNumber>
+    <sequenceNumber>350</sequenceNumber>
+    <expectedChapters>6</expectedChapters>
+    <SwordAbbreviation>Rep</SwordAbbreviation>
+    <USFMAbbreviation>Rep</USFMAbbreviation>
+    <USFMNumber>C1</USFMNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of Barnabas / Epistle of Barnabas / Barnabas</nameEnglish>
+    <referenceAbbreviation>LBB</referenceAbbreviation>
+    <referenceNumber>144</referenceNumber>
+    <sequenceNumber>690</sequenceNumber>
+    <SwordAbbreviation>Barn</SwordAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>1 Clement</nameEnglish> <!-- Greek from Alexandrinus, Hierosolymitanus -->
+    <referenceAbbreviation>CL1</referenceAbbreviation>
+    <referenceNumber>150</referenceNumber>
+    <sequenceNumber>360</sequenceNumber>
+    <expectedChapters>65</expectedChapters>
+    <SwordAbbreviation>1Clem</SwordAbbreviation>
+    <USFMAbbreviation>1Cl</USFMAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>2 Clement</nameEnglish> <!-- Greek from Alexandrinus, Hierosolymitanus -->
+    <referenceAbbreviation>CL2</referenceAbbreviation>
+    <referenceNumber>151</referenceNumber>
+    <sequenceNumber>362</sequenceNumber>
+    <expectedChapters>20</expectedChapters>
+    <SwordAbbreviation>2Clem</SwordAbbreviation>
+    <USFMAbbreviation>2Cl</USFMAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Didache</nameEnglish> <!-- Greek from Codex Hierosolymitanus -->
+    <referenceAbbreviation>DID</referenceAbbreviation>
+    <referenceNumber>153</referenceNumber>
+    <sequenceNumber>366</sequenceNumber>
+    <expectedChapters>16</expectedChapters>
+    <SwordAbbreviation>Did</SwordAbbreviation>
+    <USFMAbbreviation>Did</USFMAbbreviation>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Joshua A</nameEnglish> <!-- Variant in Rahlfs from Codex Alexandrinus (vs. Vaticanus) -->
+    <referenceAbbreviation>JSA</referenceAbbreviation>
+    <referenceNumber>154</referenceNumber>
+    <sequenceNumber>370</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
+    <SwordAbbreviation>JoshA</SwordAbbreviation>
+    <USFMAbbreviation>JsA</USFMAbbreviation>
+    <BibleWorksAbbreviation>JSA</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>JOS</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Judges B</nameEnglish> <!-- Variant in Rahlfs from Codex Vaticanus (vs. Alexandrinus) -->
+    <referenceAbbreviation>JGB</referenceAbbreviation>
+    <referenceNumber>155</referenceNumber>
+    <sequenceNumber>371</sequenceNumber>
+    <expectedChapters>21</expectedChapters>
+    <SwordAbbreviation>JudgB</SwordAbbreviation>
+    <USFMAbbreviation>JdB</USFMAbbreviation>
+    <BibleWorksAbbreviation>JDA</BibleWorksAbbreviation> <!-- Judges A ??? Versions in LXT, BLM, BGT, BGM -->
+    <possibleAlternativeBooks>JDG</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Tobit S</nameEnglish> <!-- Variant in Rahlfs from Codex Sinaiticus (vs. Vaticanus & Alexandrinus) -->
+    <referenceAbbreviation>TBS</referenceAbbreviation>
+    <referenceNumber>156</referenceNumber>
+    <sequenceNumber>372</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
+    <SwordAbbreviation>TobS</SwordAbbreviation>
+    <USFMAbbreviation>TbS</USFMAbbreviation>
+    <BibleWorksAbbreviation>TBS</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>TOB</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Susanna θ / Susanna Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <referenceAbbreviation>SST</referenceAbbreviation>
+    <referenceNumber>157</referenceNumber>
+    <sequenceNumber>373</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>SusTh</SwordAbbreviation>
+    <USFMAbbreviation>SsT</USFMAbbreviation>
+    <BibleWorksAbbreviation>SUT</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>SUS</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Daniel θ / Daniel Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <referenceAbbreviation>DNT</referenceAbbreviation>
+    <referenceNumber>158</referenceNumber>
+    <sequenceNumber>374</sequenceNumber>
+    <expectedChapters>12</expectedChapters>
+    <SwordAbbreviation>DanTh</SwordAbbreviation>
+    <USFMAbbreviation>DnT</USFMAbbreviation>
+    <BibleWorksAbbreviation>DAT</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>DAN,DNG,DNA,DNC</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Bel and the dragon θ / Bel and the dragon Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <referenceAbbreviation>BLT</referenceAbbreviation>
+    <referenceNumber>159</referenceNumber>
+    <sequenceNumber>375</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
+    <SwordAbbreviation>BelTh</SwordAbbreviation>
+    <USFMAbbreviation>BlT</USFMAbbreviation>
+    <BibleWorksAbbreviation>BET</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>BEL</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+<!-- Apocryphal gosels / Gnostic gospels -->
+  <BibleBookCodes>
+    <nameEnglish>Gospel of the Hebrews</nameEnglish>
+    <referenceAbbreviation>GHE</referenceAbbreviation>
+    <referenceNumber>160</referenceNumber>
+    <sequenceNumber>700</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Truth</nameEnglish>
+    <referenceAbbreviation>GTR</referenceAbbreviation>
+    <referenceNumber>161</referenceNumber>
+    <sequenceNumber>702</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Mary</nameEnglish>
+    <referenceAbbreviation>GMA</referenceAbbreviation>
+    <referenceNumber>162</referenceNumber>
+    <sequenceNumber>704</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Marcion</nameEnglish>
+    <referenceAbbreviation>GMC</referenceAbbreviation>
+    <referenceNumber>163</referenceNumber>
+    <sequenceNumber>706</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of the Twelve</nameEnglish>
+    <referenceAbbreviation>GTW</referenceAbbreviation>
+    <referenceNumber>164</referenceNumber>
+    <sequenceNumber>708</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Philip</nameEnglish>
+    <referenceAbbreviation>GPH</referenceAbbreviation>
+    <referenceNumber>165</referenceNumber>
+    <sequenceNumber>710</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Thomas</nameEnglish>
+    <referenceAbbreviation>GTH</referenceAbbreviation>
+    <referenceNumber>166</referenceNumber>
+    <sequenceNumber>712</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Judas</nameEnglish>
+    <referenceAbbreviation>GJU</referenceAbbreviation>
+    <referenceNumber>167</referenceNumber>
+    <sequenceNumber>714</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Gospel of Bartholomew</nameEnglish>
+    <referenceAbbreviation>GBA</referenceAbbreviation>
+    <referenceNumber>168</referenceNumber>
+    <sequenceNumber>716</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apocrypha of James / Apocryphal James</nameEnglish>
+    <referenceAbbreviation>AJA</referenceAbbreviation>
+    <referenceNumber>169</referenceNumber>
+    <sequenceNumber>718</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Wisdom of Jesus Christ</nameEnglish>
+    <referenceAbbreviation>WJC</referenceAbbreviation>
+    <referenceNumber>170</referenceNumber>
+    <sequenceNumber>720</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+<!-- More Pseudepigrapha -->
+  <BibleBookCodes>
+    <nameEnglish>Testament of Adam</nameEnglish>
+    <referenceAbbreviation>TAD</referenceAbbreviation>
+    <referenceNumber>180</referenceNumber>
+    <sequenceNumber>400</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Life of Adam and Eve</nameEnglish>
+    <referenceAbbreviation>LAE</referenceAbbreviation>
+    <referenceNumber>181</referenceNumber>
+    <sequenceNumber>402</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Assumption of Moses / Testament of Moses</nameEnglish>
+    <referenceAbbreviation>ASS</referenceAbbreviation>
+    <referenceNumber>182</referenceNumber>
+    <sequenceNumber>404</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Solomon</nameEnglish>
+    <referenceAbbreviation>TSO</referenceAbbreviation>
+    <referenceNumber>183</referenceNumber>
+    <sequenceNumber>406</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Job</nameEnglish>
+    <referenceAbbreviation>TJB</referenceAbbreviation>
+    <referenceNumber>184</referenceNumber>
+    <sequenceNumber>408</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Martyrdom and Ascension of Isaiah</nameEnglish>
+    <referenceAbbreviation>MAI</referenceAbbreviation>
+    <referenceNumber>185</referenceNumber>
+    <sequenceNumber>410</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apocrypha of Ezekiel / Apocryphon of Ezekiel</nameEnglish>
+    <referenceAbbreviation>AEZ</referenceAbbreviation>
+    <referenceNumber>186</referenceNumber>
+    <sequenceNumber>412</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ezekiel the Tragedian</nameEnglish>
+    <referenceAbbreviation>EZT</referenceAbbreviation>
+    <referenceNumber>187</referenceNumber>
+    <sequenceNumber>414</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Eupolemus</nameEnglish>
+    <referenceAbbreviation>EUP</referenceAbbreviation>
+    <referenceNumber>188</referenceNumber>
+    <sequenceNumber>416</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Pseudo of Eupolemus / Pseudo-Eupolemus</nameEnglish>
+    <referenceAbbreviation>PEU</referenceAbbreviation>
+    <referenceNumber>189</referenceNumber>
+    <sequenceNumber>418</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Visions of Amram</nameEnglish>
+    <referenceAbbreviation>VAM</referenceAbbreviation>
+    <referenceNumber>190</referenceNumber>
+    <sequenceNumber>420</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Letter of Aristeas / Epistle of Aristeas</nameEnglish>
+    <referenceAbbreviation>LAR</referenceAbbreviation>
+    <referenceNumber>191</referenceNumber>
+    <sequenceNumber>422</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Aristeas the Exegete</nameEnglish>
+    <referenceAbbreviation>ARI</referenceAbbreviation>
+    <referenceNumber>192</referenceNumber>
+    <sequenceNumber>424</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Aristobulus</nameEnglish>
+    <referenceAbbreviation>ABL</referenceAbbreviation>
+    <referenceNumber>193</referenceNumber>
+    <sequenceNumber>426</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Artapanus</nameEnglish>
+    <referenceAbbreviation>ART</referenceAbbreviation>
+    <referenceNumber>194</referenceNumber>
+    <sequenceNumber>428</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Cleodemus Malchus</nameEnglish>
+    <referenceAbbreviation>CLM</referenceAbbreviation>
+    <referenceNumber>195</referenceNumber>
+    <sequenceNumber>430</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Eldad and Modad</nameEnglish>
+    <referenceAbbreviation>ELM</referenceAbbreviation>
+    <referenceNumber>196</referenceNumber>
+    <sequenceNumber>432</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>History of the Rechabites</nameEnglish>
+    <referenceAbbreviation>HRE</referenceAbbreviation>
+    <referenceNumber>197</referenceNumber>
+    <sequenceNumber>434</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Lives of the Prophets</nameEnglish>
+    <referenceAbbreviation>LPR</referenceAbbreviation>
+    <referenceNumber>198</referenceNumber>
+    <sequenceNumber>436</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Philo the Epic Poet</nameEnglish>
+    <referenceAbbreviation>EPL</referenceAbbreviation>
+    <referenceNumber>199</referenceNumber>
+    <sequenceNumber>438</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Theodotus</nameEnglish>
+    <referenceAbbreviation>TEO</referenceAbbreviation>
+    <referenceNumber>200</referenceNumber>
+    <sequenceNumber>440</sequenceNumber>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Testaments of the Twelve Patriarchs</nameEnglish> <!-- Armenian Orthodox -->
+    <referenceAbbreviation>TTP</referenceAbbreviation>
+    <referenceNumber>250</referenceNumber>
+    <sequenceNumber>380</sequenceNumber>
+    <SwordAbbreviation>T12Patr</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Asher</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSA</referenceAbbreviation>
+    <referenceNumber>251</referenceNumber>
+    <sequenceNumber>381</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TAsh</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Benjamin</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSB</referenceAbbreviation>
+    <referenceNumber>252</referenceNumber>
+    <sequenceNumber>382</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TBenj</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Dan</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSD</referenceAbbreviation>
+    <referenceNumber>253</referenceNumber>
+    <sequenceNumber>383</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TDan</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Gad</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSG</referenceAbbreviation>
+    <referenceNumber>254</referenceNumber>
+    <sequenceNumber>384</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TGad</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Issachar</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSI</referenceAbbreviation>
+    <referenceNumber>255</referenceNumber>
+    <sequenceNumber>385</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TIss</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Joseph</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSJ</referenceAbbreviation>
+    <referenceNumber>256</referenceNumber>
+    <sequenceNumber>386</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TJos</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Judah</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSY</referenceAbbreviation>
+    <referenceNumber>257</referenceNumber>
+    <sequenceNumber>387</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TJud</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Levi</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSL</referenceAbbreviation>
+    <referenceNumber>258</referenceNumber>
+    <sequenceNumber>388</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TLevi</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Naphtali</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSN</referenceAbbreviation>
+    <referenceNumber>259</referenceNumber>
+    <sequenceNumber>389</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TNaph</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Reuben</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSR</referenceAbbreviation>
+    <referenceNumber>260</referenceNumber>
+    <sequenceNumber>390</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TReu</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Simeon</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSS</referenceAbbreviation>
+    <referenceNumber>261</referenceNumber>
+    <sequenceNumber>391</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TSim</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Testament of Zebulun</nameEnglish> <!-- Armenian -->
+    <referenceAbbreviation>TSZ</referenceAbbreviation>
+    <referenceNumber>262</referenceNumber>
+    <sequenceNumber>392</sequenceNumber>
+    <SwordAbbreviation>T12Patr.TZeb</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Josephus Jewish War VI</nameEnglish> <!-- Syriac -->
+    <referenceAbbreviation>JJW</referenceAbbreviation>
+    <referenceNumber>270</referenceNumber>
+    <sequenceNumber>378</sequenceNumber>
+    <SwordAbbreviation>JosephusJWvi</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Shepherd of Hermas</nameEnglish> <!-- Greek from Codex Siniaticus -->
+    <referenceAbbreviation>SHE</referenceAbbreviation>
+    <referenceNumber>280</referenceNumber>
+    <sequenceNumber>394</sequenceNumber>
+    <SwordAbbreviation>Herm</SwordAbbreviation>
+    <USFMAbbreviation>She</USFMAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Shepherd of Hermas Mandates</nameEnglish> <!-- Greek from Codex Siniaticus -->
+    <referenceAbbreviation>SHM</referenceAbbreviation>
+    <referenceNumber>281</referenceNumber>
+    <sequenceNumber>395</sequenceNumber>
+    <SwordAbbreviation>Herm</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Shepherd of Hermas Similitudes</nameEnglish> <!-- Greek from Codex Siniaticus -->
+    <referenceAbbreviation>SHS</referenceAbbreviation>
+    <referenceNumber>282</referenceNumber>
+    <sequenceNumber>396</sequenceNumber>
+    <SwordAbbreviation>Herm</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Shepherd of Hermas Visions</nameEnglish> <!-- Greek from Codex Siniaticus -->
+    <referenceAbbreviation>SHV</referenceAbbreviation>
+    <referenceNumber>283</referenceNumber>
+    <sequenceNumber>397</sequenceNumber>
+    <SwordAbbreviation>Herm</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Ephesians</nameEnglish>
+    <referenceAbbreviation>IGE</referenceAbbreviation>
+    <referenceNumber>290</referenceNumber>
+    <sequenceNumber>730</sequenceNumber>
+    <SwordAbbreviation>IgnEph</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Magnesians</nameEnglish>
+    <referenceAbbreviation>IGM</referenceAbbreviation>
+    <referenceNumber>291</referenceNumber>
+    <sequenceNumber>731</sequenceNumber>
+    <SwordAbbreviation>IgnMagn</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Trallians</nameEnglish>
+    <referenceAbbreviation>IGT</referenceAbbreviation>
+    <referenceNumber>292</referenceNumber>
+    <sequenceNumber>732</sequenceNumber>
+    <SwordAbbreviation>IgnTrall</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Romans</nameEnglish>
+    <referenceAbbreviation>IGR</referenceAbbreviation>
+    <referenceNumber>293</referenceNumber>
+    <sequenceNumber>733</sequenceNumber>
+    <SwordAbbreviation>IgnRom</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Philadelphians</nameEnglish>
+    <referenceAbbreviation>IGP</referenceAbbreviation>
+    <referenceNumber>294</referenceNumber>
+    <sequenceNumber>734</sequenceNumber>
+    <SwordAbbreviation>IgnPhld</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to the Smyrnaeans</nameEnglish>
+    <referenceAbbreviation>IGS</referenceAbbreviation>
+    <referenceNumber>295</referenceNumber>
+    <sequenceNumber>735</sequenceNumber>
+    <SwordAbbreviation>IgnSmyrn</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ignatius to Polycarp</nameEnglish>
+    <referenceAbbreviation>IGC</referenceAbbreviation>
+    <referenceNumber>296</referenceNumber>
+    <sequenceNumber>736</sequenceNumber>
+    <SwordAbbreviation>IgnPol</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Polycarp to the Philippians</nameEnglish>
+    <referenceAbbreviation>PCP</referenceAbbreviation>
+    <referenceNumber>297</referenceNumber>
+    <sequenceNumber>740</sequenceNumber>
+    <SwordAbbreviation>PolPhil</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Martydom of Polycarp</nameEnglish>
+    <referenceAbbreviation>MPC</referenceAbbreviation>
+    <referenceNumber>298</referenceNumber>
+    <sequenceNumber>741</sequenceNumber>
+    <SwordAbbreviation>MartPol</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Diognetus</nameEnglish>
+    <referenceAbbreviation>DIO</referenceAbbreviation>
+    <referenceNumber>300</referenceNumber>
+    <sequenceNumber>750</sequenceNumber>
+    <SwordAbbreviation>Diogn</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Apostles' Creed</nameEnglish>
+    <referenceAbbreviation>APC</referenceAbbreviation>
+    <referenceNumber>301</referenceNumber>
+    <sequenceNumber>751</sequenceNumber>
+    <SwordAbbreviation>AposCreed</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Fragments of Papias</nameEnglish>
+    <referenceAbbreviation>FOP</referenceAbbreviation>
+    <referenceNumber>302</referenceNumber>
+    <sequenceNumber>752</sequenceNumber>
+    <SwordAbbreviation>PapFrag</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Reliques of the Elders</nameEnglish>
+    <referenceAbbreviation>ROE</referenceAbbreviation>
+    <referenceNumber>303</referenceNumber>
+    <sequenceNumber>753</sequenceNumber>
+    <SwordAbbreviation>RelElders</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Fragment of Quadratus</nameEnglish>
+    <referenceAbbreviation>FOQ</referenceAbbreviation>
+    <referenceNumber>304</referenceNumber>
+    <sequenceNumber>754</sequenceNumber>
+    <SwordAbbreviation>QuadFrag</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+  <BibleBookCodes>
+    <nameEnglish>Tatian / Tatian's Diatessaron / Diatessaron</nameEnglish> <!-- Appears in Codex Fuldensis; Latin language gospel harmony -->
+    <referenceAbbreviation>TAT</referenceAbbreviation>
+    <referenceNumber>310</referenceNumber>
+    <sequenceNumber>760</sequenceNumber>
+    <SwordAbbreviation>TatDiat</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+
+<!-- Combinations of books -->
+  <BibleBookCodes>
+    <nameEnglish>Books of Moses</nameEnglish>
+    <referenceAbbreviation>MOS</referenceAbbreviation>
+    <referenceNumber>600</referenceNumber>
+    <sequenceNumber>18</sequenceNumber>
+    <expectedChapters>187</expectedChapters>
+    <possibleAlternativeBooks>GEN,EXO,LEV,NUM,DEU</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Samuel is just one book in the Hebrew -->
+    <nameEnglish>Samuel</nameEnglish>
+    <referenceAbbreviation>SAM</referenceAbbreviation>
+    <referenceNumber>610</referenceNumber>
+    <sequenceNumber>36</sequenceNumber>
+    <expectedChapters>55</expectedChapters>
+    <possibleAlternativeBooks>SA1,SA2</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Kings is just one book in the Hebrew -->
+    <nameEnglish>Kings</nameEnglish>
+    <referenceAbbreviation>KGS</referenceAbbreviation>
+    <referenceNumber>620</referenceNumber>
+    <sequenceNumber>42</sequenceNumber>
+    <expectedChapters>47</expectedChapters>
+    <possibleAlternativeBooks>KI1,KI2</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Samuel/Kings could be regarded as one contiguous work -->
+    <nameEnglish>Samuel-Kings</nameEnglish>
+    <referenceAbbreviation>SMK</referenceAbbreviation>
+    <referenceNumber>625</referenceNumber>
+    <sequenceNumber>43</sequenceNumber>
+    <expectedChapters>102</expectedChapters>
+    <possibleAlternativeBooks>SAM,KGS,SA1,SA2,KI1,KI2</possibleAlternativeBooks>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Chronicles is just one book in the Hebrew -->
+    <nameEnglish>Chronicles</nameEnglish>
+    <referenceAbbreviation>CHR</referenceAbbreviation>
+    <referenceNumber>630</referenceNumber>
+    <sequenceNumber>48</sequenceNumber>
+    <expectedChapters>65</expectedChapters>
+    <possibleAlternativeBooks>CH1,CH2</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Ezra-Nehemiah / 1 Esdras</nameEnglish>
+    <referenceAbbreviation>EZN</referenceAbbreviation>
+    <referenceNumber>640</referenceNumber>
+    <sequenceNumber>65</sequenceNumber>
+    <expectedChapters>26</expectedChapters>
+    <SBLAbbreviation>Ezra</SBLAbbreviation>
+    <OSISAbbreviation>Ezra</OSISAbbreviation>
+    <SwordAbbreviation>Ezra</SwordAbbreviation>
+    <!-- Note that Paratext uses Ezr ambiguously for either Ezra or Ezra-Nehemiah -->
+    <USFMAbbreviation>Ezr</USFMAbbreviation>
+    <USFMNumber>15</USFMNumber>
+    <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
+    <DrupalBibleAbbreviation>Ezr</DrupalBibleAbbreviation>
+    <possibleAlternativeBooks>EZR,NEH</possibleAlternativeBooks>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Used for the Minor Prophets in the Hebrew -->
+    <nameEnglish>Twelve Prophets</nameEnglish>
+    <referenceAbbreviation>P12</referenceAbbreviation>
+    <referenceNumber>650</referenceNumber>
+    <sequenceNumber>150</sequenceNumber>
+    <typicalSection>OT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Luke-Acts</nameEnglish>
+    <referenceAbbreviation>LKA</referenceAbbreviation>
+    <referenceNumber>690</referenceNumber>
+    <sequenceNumber>608</sequenceNumber>
+    <expectedChapters>52</expectedChapters>
+    <possibleAlternativeBooks>LUK,ACT</possibleAlternativeBooks>
+    <typicalSection>NT</typicalSection>
+  </BibleBookCodes>
+
+<!-- Extra front and/or back matter (although this file doesn't define or imply the order of "books") -->
+  <BibleBookCodes>
+    <nameEnglish>Generic front matter</nameEnglish>
+    <referenceAbbreviation>FRT</referenceAbbreviation>
+    <referenceNumber>700</referenceNumber>
+    <sequenceNumber>5</sequenceNumber>
+    <USFMAbbreviation>Frt</USFMAbbreviation>
+    <USFMNumber>A0</USFMNumber> <!-- Not actually a decimal number! -->
+    <USXNumber>100</USXNumber>
+    <BibleditNumber>67</BibleditNumber>
+    <typicalSection>FRT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Preface</nameEnglish>
+    <referenceAbbreviation>PRF</referenceAbbreviation>
+    <referenceNumber>705</referenceNumber>
+    <sequenceNumber>1</sequenceNumber>
+    <typicalSection>FRT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Acknowledgements</nameEnglish>
+    <referenceAbbreviation>ACK</referenceAbbreviation>
+    <referenceNumber>710</referenceNumber>
+    <sequenceNumber>2</sequenceNumber>
+    <typicalSection>FRT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Introduction</nameEnglish>
+    <referenceAbbreviation>INT</referenceAbbreviation>
+    <referenceNumber>715</referenceNumber>
+    <sequenceNumber>3</sequenceNumber>
+    <USFMAbbreviation>Int</USFMAbbreviation>
+    <!-- <USFMNumber>108</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>107</USXNumber>
+    <typicalSection>FRT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Table of Contents</nameEnglish>
+    <referenceAbbreviation>TOC</referenceAbbreviation>
+    <referenceNumber>720</referenceNumber>
+    <sequenceNumber>8</sequenceNumber>
+    <typicalSection>FRT</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Glossary</nameEnglish>
+    <referenceAbbreviation>GLS</referenceAbbreviation>
+    <referenceNumber>725</referenceNumber>
+    <sequenceNumber>800</sequenceNumber>
+    <USFMAbbreviation>Glo</USFMAbbreviation>
+    <USFMNumber>A9</USFMNumber> <!-- Not actually a decimal number! -->
+    <USXNumber>109</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Concordance</nameEnglish>
+    <referenceAbbreviation>CNC</referenceAbbreviation>
+    <referenceNumber>730</referenceNumber>
+    <sequenceNumber>810</sequenceNumber>
+    <USFMAbbreviation>Cnc</USFMAbbreviation>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Topical Concordance</nameEnglish>
+    <referenceAbbreviation>TPC</referenceAbbreviation>
+    <referenceNumber>735</referenceNumber>
+    <sequenceNumber>820</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Names Index</nameEnglish>
+    <referenceAbbreviation>IXN</referenceAbbreviation>
+    <referenceNumber>740</referenceNumber>
+    <sequenceNumber>830</sequenceNumber>
+    <USFMAbbreviation>NDX</USFMAbbreviation>
+    <USXNumber>111</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Places Index</nameEnglish>
+    <referenceAbbreviation>IXP</referenceAbbreviation>
+    <referenceNumber>745</referenceNumber>
+    <sequenceNumber>840</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Maps</nameEnglish>
+    <referenceAbbreviation>MAP</referenceAbbreviation>
+    <referenceNumber>750</referenceNumber>
+    <sequenceNumber>890</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Is this the same as a topical concordance? -->
+    <nameEnglish>Thematic Index</nameEnglish>
+    <referenceAbbreviation>IXT</referenceAbbreviation>
+    <referenceNumber>755</referenceNumber>
+    <sequenceNumber>850</sequenceNumber>
+    <USFMAbbreviation>TDX</USFMAbbreviation>
+    <!-- <USFMNumber>111</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>110</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Generic back matter</nameEnglish>
+    <referenceAbbreviation>BAK</referenceAbbreviation>
+    <referenceNumber>760</referenceNumber>
+    <sequenceNumber>860</sequenceNumber>
+    <USFMAbbreviation>Bak</USFMAbbreviation>
+    <USXNumber>101</USXNumber>
+    <BibleditNumber>68</BibleditNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified other OTH</nameEnglish>
+    <referenceAbbreviation>OTH</referenceAbbreviation>
+    <referenceNumber>870</referenceNumber>
+    <sequenceNumber>970</sequenceNumber>
+    <USFMAbbreviation>Oth</USFMAbbreviation>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+
+  <!-- Reference dictionaries and databases (not usually published) -->
+  <BibleBookCodes>
+    <nameEnglish>Spelling dictionary / word list</nameEnglish>
+    <referenceAbbreviation>WRD</referenceAbbreviation>
+    <referenceNumber>880</referenceNumber>
+    <sequenceNumber>980</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish> Word definitions dictionary</nameEnglish>
+    <referenceAbbreviation>WDF</referenceAbbreviation>
+    <referenceNumber>882</referenceNumber>
+    <sequenceNumber>982</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Hyphenation dictionary</nameEnglish>
+    <referenceAbbreviation>HYP</referenceAbbreviation>
+    <referenceNumber>884</referenceNumber>
+    <sequenceNumber>984</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Strong's Database</nameEnglish>
+    <referenceAbbreviation>STR</referenceAbbreviation>
+    <referenceNumber>888</referenceNumber>
+    <sequenceNumber>988</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Semantic Database</nameEnglish>
+    <referenceAbbreviation>SEM</referenceAbbreviation>
+    <referenceNumber>890</referenceNumber>
+    <sequenceNumber>990</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+
+  <!-- Paratext USFM XXA-XXG codes.
+     It would be preferable to use the labelled codes above,
+        rather than these generic, undefined codes
+        which give no indication of what they contain. -->
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXA</nameEnglish>
+    <referenceAbbreviation>XXA</referenceAbbreviation>
+    <referenceNumber>800</referenceNumber>
+    <sequenceNumber>900</sequenceNumber>
+    <USFMAbbreviation>XXA</USFMAbbreviation>
+    <USFMNumber>94</USFMNumber>
+    <USXNumber>093</USXNumber>
+    <BibleditNumber>69</BibleditNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXB</nameEnglish>
+    <referenceAbbreviation>XXB</referenceAbbreviation>
+    <referenceNumber>810</referenceNumber>
+    <sequenceNumber>910</sequenceNumber>
+    <USFMAbbreviation>XXB</USFMAbbreviation>
+    <USFMNumber>95</USFMNumber>
+    <USXNumber>094</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXC</nameEnglish>
+    <referenceAbbreviation>XXC</referenceAbbreviation>
+    <referenceNumber>820</referenceNumber>
+    <sequenceNumber>920</sequenceNumber>
+    <USFMAbbreviation>XXC</USFMAbbreviation>
+    <USFMNumber>96</USFMNumber>
+    <USXNumber>095</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXD</nameEnglish>
+    <referenceAbbreviation>XXD</referenceAbbreviation>
+    <referenceNumber>830</referenceNumber>
+    <sequenceNumber>930</sequenceNumber>
+    <USFMAbbreviation>XXD</USFMAbbreviation>
+    <USFMNumber>97</USFMNumber>
+    <USXNumber>096</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXE</nameEnglish>
+    <referenceAbbreviation>XXE</referenceAbbreviation>
+    <referenceNumber>840</referenceNumber>
+    <sequenceNumber>940</sequenceNumber>
+    <USFMAbbreviation>XXE</USFMAbbreviation>
+    <USFMNumber>98</USFMNumber>
+    <USXNumber>097</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXF</nameEnglish>
+    <referenceAbbreviation>XXF</referenceAbbreviation>
+    <referenceNumber>850</referenceNumber>
+    <sequenceNumber>950</sequenceNumber>
+    <USFMAbbreviation>XXF</USFMAbbreviation>
+    <USFMNumber>99</USFMNumber>
+    <USXNumber>098</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXG</nameEnglish>
+    <referenceAbbreviation>XXG</referenceAbbreviation>
+    <referenceNumber>860</referenceNumber>
+    <sequenceNumber>960</sequenceNumber>
+    <USFMAbbreviation>XXG</USFMAbbreviation>
+    <!-- <USFMNumber>100</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>099</USXNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+
+  <!-- Code to use for Open Bible Stories saved as a book -->
+  <BibleBookCodes>
+    <nameEnglish>Open Bible Stories</nameEnglish>
+    <referenceAbbreviation>OBS</referenceAbbreviation>
+    <referenceNumber>997</referenceNumber>
+    <sequenceNumber>997</sequenceNumber>
+    <expectedChapters>50</expectedChapters>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <!-- Code to use for a TEST book -->
+  <BibleBookCodes>
+    <nameEnglish>TEST</nameEnglish>
+    <referenceAbbreviation>TST</referenceAbbreviation>
+    <referenceNumber>998</referenceNumber>
+    <sequenceNumber>998</sequenceNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <!-- Code to use for an UNKNOWN book -->
+  <BibleBookCodes>
+    <nameEnglish>UNKNOWN</nameEnglish>
+    <referenceAbbreviation>UNK</referenceAbbreviation>
+    <referenceNumber>999</referenceNumber>
+    <sequenceNumber>999</sequenceNumber>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+
+  <!-- referenceNumbers 900..997 are reserved for user defined books -->
+
+</BibleBooksCodes>

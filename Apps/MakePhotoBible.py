@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # MakePhotoBible.py
@@ -6,7 +6,7 @@
 # Command-line app to export a PhotoBible.
 #
 # Copyright (C) 2015-2017 Robert Hunt
-# Author: Robert Hunt <Freely.Given.org@gmail.com>
+# Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 """
 A short command-line app as part of BOS (Bible Organisational System) demos.
 This app inputs any known type of Bible file(s) [set inputFolder below]
-    and then exports a PhotoBible in the (default) OutputFiles folder
+    and then exports a PhotoBible in the (default) BOSOutputFiles folder
         (inside the folder where you installed the BOS).
 
 Of course, you must already have Python3 installed on your system.
@@ -65,33 +65,36 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own here
+inputFolder = Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _
 
-LastModifiedDate = '2019-01-29' # by RJH
-ShortProgName = "MakePhotoBible"
-ProgName = "Make PhotoBible"
-ProgVersion = '0.23'
-ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
-ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
+LAST_MODIFIED_DATE = '2019-01-29' # by RJH
+SHORT_PROGRAM_NAME = "MakePhotoBible"
+PROGRAM_NAME = "Make PhotoBible"
+PROGRAM_VERSION = '0.23'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 import os
 
 # Allow the system to find the BOS even when the app is down in its own folder
-import sys; sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
-import BibleOrgSysGlobals
-from UnknownBible import UnknownBible
+if __name__ == '__main__':
+    import sys
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.UnknownBible import UnknownBible
 
 
 
-def main():
+def main() -> None:
     """
     This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
-        and then export a PhotoBible (in the default OutputFiles folder).
+        and then export a PhotoBible (in the default BOSOutputFiles folder).
 
     Note that the standard verbosityLevel is 2:
         -s (silent) is 0
@@ -99,21 +102,19 @@ def main():
         -i (information) is 3
         -v (verbose) is 4.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( ProgNameVersion )
-        print( "\n{}: processing input folder {!r} …".format( ShortProgName, inputFolder ) )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', debuggingThisModule, "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\n{}: starting export (may take up to 60 minutes)…".format( ShortProgName ) )
+        vPrint( 'Quiet', debuggingThisModule, "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -121,16 +122,26 @@ def main():
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
-        print(f"Output should be in {os.path.join(os.getcwd(), 'OutputFiles/')} folder.")
+        vPrint( 'Info', debuggingThisModule, "  Result was: {}".format( result ) )
+        vPrint( 'Quiet', debuggingThisModule, f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 
+def fullDemo() -> None:
+    """
+    Full demo to check class is working
+    """
+    briefDemo()
+# end of fullDemo
+
 if __name__ == '__main__':
+    from multiprocessing import freeze_support
+    freeze_support() # Multiprocessing support for frozen Windows executables
+
     # Configure basic Bible Organisational System (BOS) set-up
-    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
 
-    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of MakePhotoBible.py

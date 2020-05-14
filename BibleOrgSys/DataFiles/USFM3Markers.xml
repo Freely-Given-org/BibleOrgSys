@@ -1,0 +1,2127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of USFM3 markers:
+    nameEnglish: a brief English name
+    marker: the actual (lowercase) SFM code (without the backslash)
+        and without suffixed digits for generic numbered fields like q1, q2, q3 (only listed as q)
+    compulsory: Yes or No
+    level: Newline or Internal (within a line) or Note (footnote/xref/fig) type field
+        Newline is called 'paragraph' type in USFM3
+        Internal is callled 'character' type in USFM3
+    highestNumberSuffix: None or 3/4/5/6
+    nests: Yes or No
+    hasContent (on the same line after a space): Sometimes, Always or Never
+    closed (for character fields only): Always or Optional
+    occursIn: a brief description of the context where this SFM can be used
+    description (optional): more information about how the field is recommended to be used.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Note that the data is supplied as XML elements (not attributes).
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+
+See the supplied USFM3Markers.ReadMe.txt for more details.
+-->
+
+<!DOCTYPE USFM3Markers [
+    <!ELEMENT USFM3Markers (header,USFMMarker+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier+,originalRights,derivedRights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT originalRights (#PCDATA)>
+                <!ELEMENT derivedRights (#PCDATA)>
+        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,highestNumberSuffix,nests,hasContent,printed,closed,occursIn,deprecated,description?)>
+            <!ELEMENT nameEnglish (#PCDATA)>
+            <!ELEMENT marker (#PCDATA)>
+            <!ELEMENT compulsory (#PCDATA)>
+            <!ELEMENT level (#PCDATA)>
+            <!ELEMENT highestNumberSuffix (#PCDATA)>
+            <!ELEMENT nests (#PCDATA)>
+            <!ELEMENT hasContent (#PCDATA)>
+            <!ELEMENT printed (#PCDATA)>
+            <!ELEMENT closed (#PCDATA)>
+            <!ELEMENT occursIn (#PCDATA)>
+            <!ELEMENT deprecated (#PCDATA)>
+            <!ELEMENT description (#PCDATA)>
+]>
+
+<USFM3Markers>
+
+  <header>
+    <work>
+      <version>0.03</version>
+      <date>2020-02-24</date>
+      <title>USFM 3.0 markers list</title>
+      <contributor role="com">Robert Hunt</contributor>
+      <identifier type="URL">https://ubsicap.github.io/usfm/index.html</identifier>
+      <originalRights>© Copyright 2018, United Bible Societies.</originalRights>
+      <derivedRights>Public Domain</derivedRights>
+    </work>
+  </header>
+
+
+<!-- 2/ Identification -->
+  <USFMMarker>
+    <nameEnglish>File identification</nameEnglish>
+    <marker>id</marker>
+    <compulsory>Yes</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>This is the initial USFM marker in any scripture text file</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>USFM version specification</nameEnglish>
+    <marker>usfm</marker>
+    <compulsory>Yes</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used to identify the USFM version which a USFM editor / processor will be required to support in order to manage all markup found within the file.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>An optional character encoding specification</nameEnglish>
+    <marker>ide</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>This marker should be used to specify the character encoding of the text within the file. For example: CP-1252, CP-1251, UTF-8, UTF-16, OR Custom &lt;specify font name&gt;. If the character encoding does not conform to a known standard, but is rather a customized solution for the project, a minimum of the name of the font used for the project should be included. For archive purposes, texts which rely upon a custom encoding solution should be converted to Unicode, if at all possible.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Project status tracking</nameEnglish>
+    <marker>sts</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>The contents of the status marker can be defined by the downstream system being used to track project status</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Remark/Comment</nameEnglish>
+    <marker>rem</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used for adding brief comments by a translator, consultant, or support person</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Running header text</nameEnglish>
+    <marker>h</marker>
+    <compulsory>Yes</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix> <!-- USFM 2.4 spec seems unclear about what can follow h fields -->
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <!-- Numbering of toc markers is treated differently for some reason -->
+  <USFMMarker>
+    <nameEnglish>Long table of contents text</nameEnglish>
+    <marker>toc1</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Not for use directly within the front matter (FRT) peripheral file</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Short table of contents text</nameEnglish>
+    <marker>toc2</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Not for use directly within the front matter (FRT) peripheral file</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Book abbreviation</nameEnglish>
+    <marker>toc3</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Not for use directly within the front matter (FRT) peripheral file</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Psalm singular name</nameEnglish>
+    <marker>toc4</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>Not in USFM 2.4 but rather an addition used by Michael Kahunapule Johnson (Haiola/USFX)</description>
+  </USFMMarker>
+
+
+<!-- 3/ Introductions -->
+  <USFMMarker>
+    <nameEnglish>Introduction main title</nameEnglish>
+    <marker>imt</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>May be used for the introduction title or other major introduction division (rather than \is) when the introduction text contains numerous additional sub-divisions.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction section heading</nameEnglish>
+    <marker>is</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction paragraph</nameEnglish>
+    <marker>ip</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Indented introduction paragraph</nameEnglish>
+    <marker>ipi</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction flush left (margin) paragraph</nameEnglish>
+    <marker>im</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction flush left (margin) indented paragraph</nameEnglish>
+    <marker>imi</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction quote from text paragraph</nameEnglish>
+    <marker>ipq</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction flush left (margin) quote from text paragraph</nameEnglish>
+    <marker>imq</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction right-aligned paragraph</nameEnglish>
+    <marker>ipr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>Typically used for a quote from text reference</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction poetic line</nameEnglish>
+    <marker>iq</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction blank line</nameEnglish>
+    <marker>ib</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>May be used to explicitly indicate additional white space between paragraphs</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction list item</nameEnglish>
+    <marker>ili</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction outline title</nameEnglish>
+    <marker>iot</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction outline entry</nameEnglish>
+    <marker>io</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>The outline entry typically ends with a range of references in parentheses</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction outline reference range</nameEnglish>
+    <marker>ior</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>An outline entry typically ends with a range of references in parentheses. This is an optional character style for marking (and potentially formatting) these references separately</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction explanatory or bridge text</nameEnglish>
+    <marker>iex</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>e.g. explanation of missing book in a short Old Testament</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction quoted text</nameEnglish>
+    <marker>iqt</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>Scripture quotations, or other quoted text, appearing in the introduction</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction major title ending</nameEnglish>
+    <marker>imte</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used to mark a major title indicating the end of the introduction</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Introduction end</nameEnglish>
+    <marker>ie</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Introduction</occursIn>
+    <deprecated>No</deprecated>
+    <description>Optionally included to explicitly indicate the end of the introduction material</description>
+  </USFMMarker>
+
+
+<!-- 4/ Titles, headings, and labels -->
+  <USFMMarker>
+    <nameEnglish>Major title</nameEnglish>
+    <marker>mt</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
+    <deprecated>No</deprecated>
+    <description>The key components in the title of a biblical book</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Major title at ending</nameEnglish>
+    <marker>mte</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>May be used in texts which repeat the main title at the end of the introduction, or to mark a major title indicating the end of the introduction. The content is not typically identical to \mt#.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Major section heading</nameEnglish>
+    <marker>ms</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>These are headings before larger text divisions than what is typically considered a "section" division (see \s#)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Major section reference range</nameEnglish>
+    <marker>mr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The text reference range listed under a major section heading. Perhaps it could be described as the verse range which the \ms major section heading above it applies to.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Section heading</nameEnglish>
+    <marker>s</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The typical (common) section division heading</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Section reference range</nameEnglish>
+    <marker>sr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The text reference range listed under a section heading. \sr is not equivalent to \r which is used for marking parallel references. Perhaps it could be described as the verse range which the \s section heading above it applies to.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Parallel passage reference(s)</nameEnglish>
+    <marker>r</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>A reference to a parallel passage usually located under a section heading \s#</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Inline quotation reference(s)</nameEnglish>
+    <marker>rq</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\x…\x*). They are also typically separated from the main text of Scripture using a different type style and alignment.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Descriptive title (or "Hebrew subtitle")</nameEnglish>
+    <marker>d</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Sometimes used in Psalms under the section title (e.g. "For the director of Music")</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Speaker Identification</nameEnglish>
+    <marker>sp</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>(e.g. Job and Song of Songs)</description>
+  </USFMMarker>
+
+
+<!-- 5/ Chapters and verses -->
+  <USFMMarker>
+    <nameEnglish>Chapter number</nameEnglish>
+    <marker>c</marker>
+    <compulsory>Yes</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>No text should follow this marker (i.e., after the chapter number? But some versions have footnotes here!</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Alternate (second) chapter number</nameEnglish>
+    <marker>ca</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Chapter label</nameEnglish>
+    <marker>cl</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \cl is entered once before chapter 1 (\c 1) it represents the text for "chapter" to be used throughout the current book. If \cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals).</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Published chapter character</nameEnglish>
+    <marker>cp</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>This is a chapter marker (number, letter) which would be displayed in the published text (where the published marker is different than the \c # used within the translation editing environment)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Chapter description</nameEnglish>
+    <marker>cd</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>A brief description of chapter content (similar to \d - descriptive heading, or \iex - )</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Verse number</nameEnglish>
+    <marker>v</marker>
+    <compulsory>Yes</compulsory>
+    <!-- USFM3 considers this to be a 'character' marker but BOS needs it to be a Newline marker -->
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>Marker is followed by the verse number #, and the text of the verse</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Alternate (second) verse number</nameEnglish>
+    <marker>va</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used for marking verse numbers used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Published verse character</nameEnglish>
+    <marker>vp</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Numbering</occursIn>
+    <deprecated>No</deprecated>
+    <description>This is a verse marker (number, letter) which would be displayed in the published text (where the published marker is different than the \v # used within the translation editing environment)</description>
+  </USFMMarker>
+
+
+<!-- 6/ Paragraphs -->
+  <USFMMarker>
+    <nameEnglish>Normal paragraph</nameEnglish>
+    <marker>p</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Followed immediately by a space and paragraph text, or by a new line and a verse marker</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Flush left (margin) paragraph</nameEnglish>
+    <marker>m</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>No first line indent. Followed immediately by a space and paragraph text, or by a new line and a verse marker. Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Embedded text opening</nameEnglish>
+    <marker>pmo</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Embedded text paragraph</nameEnglish>
+    <marker>pm</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Embedded text closing</nameEnglish>
+    <marker>pmc</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Embedded text refrain</nameEnglish>
+    <marker>pmr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Indented paragraph</nameEnglish>
+    <marker>pi</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used in some texts for discourse sections. The variable # represents the level of indent.
+        See also \pm.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Indented flush left paragraph</nameEnglish>
+    <marker>mi</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>No first line indent</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>No-break paragraph continuation</nameEnglish>
+    <marker>nb</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type).
+        Commonly used in cases where the previous paragraph spans the chapter boundary.
+        No-break markup within poetry: Some translations have a publishing tradition of inserting a small
+            amount of additional white-space at chapter boundaries.
+        It is important in these texts to use the b marker within any specific poetic contexts where
+            no visible break in the flow of the the text is intended at a particular chapter boundary.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Closure of an epistle/letter</nameEnglish>
+    <marker>cls</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Similar to "With love," or "Sincerely yours,"</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>List item</nameEnglish>
+    <marker>li</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>An out-dented paragraph meant to highlight the items of a list.
+        Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account,
+            or the Decalogue (10 commandments). The variable # represents the level of indent.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Centered paragraph</nameEnglish>
+    <marker>pc</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Recommended for inscriptions</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Right-aligned paragraph</nameEnglish>
+    <marker>pr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged). Recommended alternate: \pmr</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Indented paragraph with hanging indent</nameEnglish>
+    <marker>ph</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged).
+        The variable # represents the level of overall paragraph indent.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Blank line</nameEnglish>
+    <marker>b</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text, Poetry</occursIn>
+    <deprecated>No</deprecated>
+    <description>May be used to explicitly indicate additional white space between paragraphs.
+        No text should follow this marker, and it should not be used before or after titles to indicate white-space.
+        Also use for stanza breaks in poetry, or between poetry and prose.</description>
+  </USFMMarker>
+
+
+<!-- 7/ Poetry -->
+  <USFMMarker>
+    <nameEnglish>Poetic line</nameEnglish>
+    <marker>q</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the level of indent (i.e. \q1, \q2, \q3 etc.)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Right-aligned poetic line</nameEnglish>
+    <marker>qr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Common use: Poetic refrain</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Centered poetic line</nameEnglish>
+    <marker>qc</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Selah field</nameEnglish>
+    <marker>qs</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used for the expression "Selah" commonly found in Psalms and Habakkuk. This text is frequently right aligned, and rendered on the same line as the previous poetic text, if space allows.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Acrostic heading</nameEnglish>
+    <marker>qa</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>For example, the Aleph, Beth, etc. headings in Lamentations or Psalm 119</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Acrostic letter</nameEnglish>
+    <marker>qac</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Acrostic verse</occursIn>
+    <deprecated>No</deprecated>
+    <description>Marker to indicate the acrostic letter within a poetic line</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Embedded text poetic line</nameEnglish>
+    <marker>qm</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Canonical Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the level of indent (i.e. \qm1, \qm2 etc.)</description>
+  </USFMMarker>
+
+
+<!-- 8/ Tables -->
+  <USFMMarker>
+    <nameEnglish>Table row start</nameEnglish>
+    <marker>tr</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>The first \tr initiates a new table. Rows contain column headings or cells</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Table column heading</nameEnglish>
+    <marker>th</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Table row</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the table column number</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Right-aligned table column heading</nameEnglish>
+    <marker>thr</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Table row</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the table column number</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Table cell</nameEnglish>
+    <marker>tc</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Table row</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Right-aligned table cell</nameEnglish>
+    <marker>tcr</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Table row</occursIn>
+    <deprecated>No</deprecated>
+    <description>The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.</description>
+  </USFMMarker>
+
+
+<!-- 9/ Footnotes -->
+  <USFMMarker>
+    <nameEnglish>Footnote</nameEnglish>
+    <marker>f</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Footnotes are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Endnote</nameEnglish>
+    <marker>e</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Endnotes are entered inline within the main scripture body text. The boundaries of the endnote text are defined by an opening and closing marker.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote "origin" reference</nameEnglish>
+    <marker>fr</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote keyword</nameEnglish>
+    <marker>fk</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>The specific keyword/term from the text for which the footnote is being provided.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote translation quotation</nameEnglish>
+    <marker>fq</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots "…"). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \fq. An additional marker – \fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote alternate translation</nameEnglish>
+    <marker>fqa</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used to distinguish between a quotation of the current scripture text translation, and an alternate translation</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote "label" text</nameEnglish>
+    <marker>fl</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>Can be used for marking or "labeling" a word or words which are used consistently across certain types of translation notes (such as the words "Or" in an alternative translation note, "Others", "Heb.", "LXX" etc.)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote additional paragraph</nameEnglish>
+    <marker>fp</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>Use this marker to if you need to indicate the start of a new paragraph within a footnote (uncommon in standard Bible notes)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote verse number</nameEnglish>
+    <marker>fv</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>To mark the location of a verse number in the the text quotation or alternative translation</description>
+  </USFMMarker>
+
+  <!-- fn is not in USFM 2.4 document, but is found in NET08 in Paratext 7.5 -->
+  <USFMMarker>
+    <nameEnglish>Footnote number</nameEnglish>
+    <marker>fn</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>To mark the location of a sequential footnote number in the the text quotation or alternative translation</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote text</nameEnglish>
+    <marker>ft</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>The essential (explanatory) text of the footnote</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Deuterocanon footnote text</nameEnglish>
+    <marker>fdc</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>Text between these markers is material to be included only in published editions that contain the Deuterocanonical books.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote reference mark</nameEnglish>
+    <marker>fm</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used where two or more locations in the scripture text should ideally refer the reader to the same footnote text (as seen in identical footnote text which is referred to at Gen 2.9 and Gen 2.17 in some English translations). Because the nature of this marker is related directly to the published form of the text, it is not intended for use in scripture authoring. It may be used during the publishing process to connect two callers to the same footnote text.</description>
+  </USFMMarker>
+
+
+<!-- 10/ Cross-references -->
+  <USFMMarker>
+    <nameEnglish>Cross-reference</nameEnglish>
+    <marker>x</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Cross-references are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Cross-reference "origin" reference</nameEnglish>
+    <marker>xo</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Cross-reference keyword</nameEnglish>
+    <marker>xk</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>A keyword from the scripture translation text which the target reference(s) also refer to</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Cross-reference quotation</nameEnglish>
+    <marker>xq</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>A quotation from the scripture text. Use of a quotation would be intended to help the reader to understand the portion of text (or concept) for which the target reference(s) are being supplied.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Target reference(s)</nameEnglish>
+    <marker>xt</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>The list of target scripture locations being provided as alternate references to the text (or concept) of the origin reference. This is a list of book name abbreviations and chapter + verse references, separated by semicolons (though there may be an alternate references format for this list in different areas and countries).</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Old Testament reference(s)</nameEnglish>
+    <marker>xot</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>References (or other text) between these markers is material to be included only in published editions that contain the Old Testament books. (optional)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>New Testament reference(s)</nameEnglish>
+    <marker>xnt</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>References (or other text) between these markers is material to be included only in published editions that contain the New Testament books. (optional)</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Deuterocanon reference(s)</nameEnglish>
+    <marker>xdc</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Cross-reference</occursIn>
+    <deprecated>No</deprecated>
+    <description>References (or other text) between these markers is material to be included only in published editions that contain the Deuterocanonical books. (optional)</description>
+  </USFMMarker>
+
+
+<!-- 11/ Special text and character styles -->
+  <USFMMarker>
+    <nameEnglish>Translator's addition</nameEnglish>
+    <marker>add</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>A translator's explanation; words added by the translator for clarity – text which is not literally a part of the original language, but which was supplied to make the meaning of the original clear</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Quoted book title</nameEnglish>
+    <marker>bk</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Deuterocanonical addition</nameEnglish>
+    <marker>dc</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Deuterocanonical/LXX additions or insertions in the Protocanonical text</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Keyword/keyterm</nameEnglish>
+    <marker>k</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Liturgical note/comment</nameEnglish>
+    <marker>lit</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>e.g. a guide which tells the reader/worshipper that he should recite a prayer or recitation etc.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Name of God/Deity</nameEnglish>
+    <marker>nd</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Ordinal number ending</nameEnglish>
+    <marker>ord</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>i.e. in "1st"</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Proper name</nameEnglish>
+    <marker>pn</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Quoted text</nameEnglish>
+    <marker>qt</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Old Testament quotations in the New Testament, or other quotations</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Signature</nameEnglish>
+    <marker>sig</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>of the author of an epistle/letter</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Secondary language source</nameEnglish>
+    <marker>sls</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Passage of text based on a secondary language or alternate text source. E.g. The NBS02 has large sections of text in EZR and DAN in italics, to represent where the original text is in Aramaic, not Hebrew.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Transliterated word(s)</nameEnglish>
+    <marker>tl</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Or foreign words</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Words of Jesus</nameEnglish>
+    <marker>wj</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <!-- character styling -->
+  <USFMMarker>
+    <nameEnglish>Emphasis text</nameEnglish>
+    <marker>em</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Bold text</nameEnglish>
+    <marker>bd</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Italic text</nameEnglish>
+    <marker>it</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Bold-italic text</nameEnglish>
+    <marker>bdit</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Normal text</nameEnglish>
+    <marker>no</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Small-caps text</nameEnglish>
+    <marker>sc</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <!-- spacing and breaks -->
+  <USFMMarker>
+    <nameEnglish>Page break</nameEnglish>
+    <marker>pb</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <!-- special features -->
+  <USFMMarker>
+    <nameEnglish>Figure</nameEnglish>
+    <marker>fig</marker>
+    <compulsory>No</compulsory>
+    <level>Note</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Subject index entry</nameEnglish>
+    <marker>ndx</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Surround word(s) with this markup to indicate that it should appear in the subject index</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Pronunciation information</nameEnglish>
+    <marker>pro</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Used for Chinese/Japanese/Korean texts</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Wordlist/glossary/dictionary entry</nameEnglish>
+    <marker>w</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Surround word(s) with this markup to indicate that it should appear in the word list</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Greek wordlist entry</nameEnglish>
+    <marker>wg</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Surround word(s) with this markup to indicate that it should appear in the Greek word list</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Hebrew wordlist entry</nameEnglish>
+    <marker>wh</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Surround word(s) with this markup to indicate that it should appear in the Hebrew word list</description>
+  </USFMMarker>
+
+
+<!-- Milestones -->
+ <USFMMarker>
+    <nameEnglish>Quotation start</nameEnglish>
+    <marker>qt-s</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Self</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Quotation start milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote).</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Quotation end</nameEnglish>
+    <marker>qt-e</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>4</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Self</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Quotation end milestone. Typically used for indicating the speaker of the text. The (optional) number represents the level of nesting of the quotation being marked (i.e. a quote within a quote).</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Translator's section</nameEnglish>
+    <marker>ts</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Translator’s section milestone. For identifying a section (chunk) of text suitable for translating at one time.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Translator's section start</nameEnglish>
+    <marker>ts-s</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>No</printed>
+    <closed>Self</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Translator’s section start milestone. For identifying a section (chunk) of text suitable for translating at one time.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Translator's section end</nameEnglish>
+    <marker>ts-e</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>No</printed>
+    <closed>Self</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Translator’s section end milestone. For identifying a section (chunk) of text suitable for translating at one time.</description>
+  </USFMMarker>
+
+
+<!-- Study Bible content -->
+  <USFMMarker>
+    <nameEnglish>Extended footnote</nameEnglish>
+    <marker>ef</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Extended footnotes (for study Bibles) are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Footnote summary</nameEnglish>
+    <marker>fs</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Optional</closed>
+    <occursIn>Footnote</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged). A summary text for the concept/idea/quotation from the current Scripture text translation for which the note is being provided.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Extended cross-reference</nameEnglish>
+    <marker>ex</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Extended cross-references (for study Bibles) are entered inline within the main scripture body text. The boundaries of the cross-reference text are defined by an opening and closing marker.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Sidebar content</nameEnglish>
+    <marker>esb</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>In study Bibles. Finishes at next \esb marker or at end of chapter.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Category tag</nameEnglish>
+    <marker>cat</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>No</deprecated>
+    <description>Categories can optionally be assigned to extended study notes or sidebars by supplying a category tag (name) inside of opening and closing \cat … \cat* markers. Category tags should be restricted to alpha-numeric characters. A list of category tags are defined individually and uniquely for each study Bible project.</description>
+  </USFMMarker>
+
+
+<!-- Peripherals -->
+  <USFMMarker>
+    <nameEnglish>Peripheral content</nameEnglish>
+    <marker>periph</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Front and back matter</occursIn>
+    <deprecated>No</deprecated>
+  </USFMMarker>
+
+
+<!-- Long deprecated markers -->
+  <USFMMarker>
+    <nameEnglish>PDI</nameEnglish>
+    <marker>pdi</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>PDE</nameEnglish>
+    <marker>pde</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Substituted with embedded text markup.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>WR</nameEnglish>
+    <marker>wr</marker>
+    <compulsory>No</compulsory>
+    <level>Internal</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>Yes</nests>
+    <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>Always</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. Was really a duplicate of \w … \w* used for marking words in the Scripture text which are included in the wordlist.</description>
+  </USFMMarker>
+
+  <USFMMarker>
+    <nameEnglish>Span paragraph</nameEnglish>
+    <marker>ps</marker>
+    <compulsory>No</compulsory>
+    <level>Newline</level>
+    <highestNumberSuffix>None</highestNumberSuffix>
+    <nests>No</nests>
+    <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Text</occursIn>
+    <deprecated>Yes</deprecated>
+    <description>"Deprecated" (i.e. use is strongly discouraged) in 2004 for USFM 2.0. This was used in conjunction with \nb to indicate that the paragraph spans the chapter boundary. It should be sufficient to just start the new chapter with \nb and use the appropriate paragraph marker for the previous chapter (\p, \m, etc.).</description>
+  </USFMMarker>
+
+</USFM3Markers>
