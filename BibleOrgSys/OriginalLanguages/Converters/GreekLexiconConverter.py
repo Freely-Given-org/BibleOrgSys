@@ -40,7 +40,7 @@ if __name__ == '__main__':
     if aboveAboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-04' # by RJH

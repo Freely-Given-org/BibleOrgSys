@@ -64,7 +64,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystem
@@ -424,7 +424,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getBookList
 
 
-    def containsBook( self, BBB ):
+    def containsBook( self, BBB:str ):
         """
         Returns True or False if this book is in this system.
         """
@@ -446,7 +446,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getFirstBookCode
 
 
-    def getPreviousBookCode( self, BBB ):
+    def getPreviousBookCode( self, BBB:str ):
         """
         Returns the book (if any) before the given one.
         """
@@ -458,7 +458,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getNextBookCode
 
 
-    def getNextBookCode( self, BBB ):
+    def getNextBookCode( self, BBB:str ):
         """ Returns the book (if any) after the given one. """
         while True:
             nextCode = BibleBookOrderSystem.getNextBookCode( self, BBB )
@@ -468,7 +468,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.getNextBookCode
 
 
-    def getAlternativeBBBIfNecessary( self, BBB ):
+    def getAlternativeBBBIfNecessary( self, BBB:str ):
         """
         If BBB is not in this BOS, try to return an alternative that is.
 

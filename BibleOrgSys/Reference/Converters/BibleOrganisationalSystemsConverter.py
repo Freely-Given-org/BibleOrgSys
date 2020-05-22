@@ -49,7 +49,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystems
 from BibleOrgSys.Reference.BiblePunctuationSystems import BiblePunctuationSystems

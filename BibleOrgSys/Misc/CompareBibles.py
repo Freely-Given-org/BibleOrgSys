@@ -89,7 +89,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -411,11 +411,14 @@ def compareBooksPedantic( book1, book2,
     The returned list is sorted by C:V
     Each list entry is a 2-tuple, being 3-tuple C/V/marker and error message.
     """
-    vPrint( 'Verbose', debuggingThisModule, "compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}" \
+    fnPrint( debuggingThisModule, "compareBooksPedantic( {}, {}, {!r}, {!r}, {}, {}, {}, {}, {} ) for {}" \
                     .format( book1, book2, compareQuotes, comparePunctuation, compareDigits,
                                         illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
     assert book1.BBB == book2.BBB
+    # print( book1.workName, book2.workName )
+    assert book1.workName != 'utf-8'
+    assert book2.workName != 'utf-8'
     assert book1.workName != book2.workName
 
     bcResults:List[Tuple[Tuple[str,str,str],str]] = []
@@ -990,12 +993,15 @@ def compareBibles( Bible1, Bible2,
     Runs a series of checks and count on each book of the Bible
         in order to try to determine what are the normal standards.
     """
-    vPrint( 'Verbose', debuggingThisModule, "compareBibles( {}, {} )".format( Bible1, Bible2 ) )
+    fnPrint( debuggingThisModule, f"compareBibles( {Bible1}, {Bible2} )" )
     assert isinstance( Bible1, Bible )
     assert isinstance( Bible2, Bible )
+    assert Bible1.getAName() != 'utf-8'
+    assert Bible2.getAName() != 'utf-8'
+    assert Bible1.getAName() != Bible2.getAName()
     assert Bible1.abbreviation != Bible2.abbreviation or Bible1.name != Bible2.name
-    vPrint( 'Quiet', debuggingThisModule, _("Running compareBibles…") )
 
+    vPrint( 'Quiet', debuggingThisModule, _("Running compareBibles…") )
     len1, len2 = len(Bible1), len(Bible2)
     commonBooks = []
     for bBook in Bible1:
@@ -1051,7 +1057,7 @@ def briefDemo() -> None:
     MS_LEGAL_PAIRS = ( ('/',' 1/ '), ('/',' 2/ '), ('/',' 3/ '), ('/',' 4/ '), ) + DEFAULT_LEGAL_PAIRS_COMMON
 
     if os.access( testFolder1, os.R_OK ):
-        UB1 = USFMBible( testFolder1, name1, encoding1 )
+        UB1 = USFMBible( testFolder1, name1, encoding=encoding1 )
         UB1.load()
         vPrint( 'Quiet', debuggingThisModule, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1060,7 +1066,7 @@ def briefDemo() -> None:
     else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder1 ) )
 
     if os.access( testFolder2, os.R_OK ):
-        UB2 = USFMBible( testFolder2, name2, encoding2 )
+        UB2 = USFMBible( testFolder2, name2, encoding=encoding2 )
         UB2.load()
         vPrint( 'Quiet', debuggingThisModule, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1158,7 +1164,7 @@ def fullDemo() -> None:
     MS_LEGAL_PAIRS = ( ('/',' 1/ '), ('/',' 2/ '), ('/',' 3/ '), ('/',' 4/ '), ) + DEFAULT_LEGAL_PAIRS_COMMON
 
     if os.access( testFolder1, os.R_OK ):
-        UB1 = USFMBible( testFolder1, name1, encoding1 )
+        UB1 = USFMBible( testFolder1, name1, name1, encoding=encoding1 )
         UB1.load()
         vPrint( 'Quiet', debuggingThisModule, UB1 )
         if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1167,7 +1173,7 @@ def fullDemo() -> None:
     else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder {!r} is not readable on this computer.".format( testFolder1 ) )
 
     if os.access( testFolder2, os.R_OK ):
-        UB2 = USFMBible( testFolder2, name2, encoding2 )
+        UB2 = USFMBible( testFolder2, name2, name2, encoding=encoding2 )
         UB2.load()
         vPrint( 'Quiet', debuggingThisModule, UB2 )
         if BibleOrgSysGlobals.strictCheckingFlag:
@@ -1290,6 +1296,7 @@ def main() -> None:
             #vPrint( 'Quiet', debuggingThisModule, results )
 # end of CompareBibles.main
 
+
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
@@ -1299,7 +1306,7 @@ if __name__ == '__main__':
     #parser.add_argument('Bible2', help="Bible folder or file path 2" )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
-    main()
+    fullDemo()
 
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
 # end of CompareBibles.py

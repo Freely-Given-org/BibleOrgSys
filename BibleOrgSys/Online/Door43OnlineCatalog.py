@@ -52,7 +52,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
@@ -115,14 +115,11 @@ class Door43CatalogResources:
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
             responseJSON = HTTPResponseObject.read()
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
+            vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
             responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
+            vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
             responseSTR = responseJSON.decode( responseJSONencoding )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
+            vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
             return json.loads( responseSTR )
         else:
             if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
@@ -152,8 +149,7 @@ class Door43CatalogResources:
             for entry in pivotedSubjectJsonList['catalogs']: # 4 entries: langnames, temp-langnames, approved-temp-langnames, new-language-questions
                 assert isinstance( entry, dict )
                 self.catalogDict[entry['identifier']] = entry
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "\n    catalogDict", len(self.catalogDict), self.catalogDict )
+            vPrint( 'Quiet', debuggingThisModule, "\n    catalogDict", len(self.catalogDict), self.catalogDict )
             vPrint( 'Normal', debuggingThisModule, f"    Downloaded {len(self.catalogDict)} Door43 catalogs" )
             vPrint( 'Info', debuggingThisModule, f"      {list(self.catalogDict.keys())}" )
 
@@ -428,8 +424,7 @@ class Door43CatalogBible( USFMBible ):
                 return None
             # vPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
             contentType = HTTPResponseObject.info().get( 'content-type' )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
+            vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
             if contentType == 'application/zip':
                 try: os.makedirs( unzippedFolderpath )
                 except FileExistsError: pass

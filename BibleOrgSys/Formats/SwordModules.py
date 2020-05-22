@@ -65,7 +65,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
@@ -1957,7 +1957,7 @@ class SwordBibleModule( SwordModule, Bible ):
     # end of SwordBibleModule.loadBooks
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Loads a versified Sword module indexes into memory
             and then reads the data and saves it all in our internal format.
@@ -2157,8 +2157,7 @@ class SwordModules:
         # Go find them and load them all!
         totalFolders = totalCount = 0
         for folder in self.searchFolders:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, '  ' + "__loadAllConfs: checking {}".format( folder ) )
+            vPrint( 'Quiet', debuggingThisModule, '  ' + "__loadAllConfs: checking {}".format( folder ) )
             if os.path.isdir( folder ):
                 loadCount = self.__loadConfs( folder ) # Also updates self.confs, self.confKeys, self.index, etc.
                 if loadCount:
@@ -2325,8 +2324,7 @@ class SwordModules:
             return result
             #return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodeDuples--confs" )
+            vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodeDuples--confs" )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
                 #vPrint( 'Quiet', debuggingThisModule, "  ", j, moduleRoughName )
             result = []
@@ -2360,8 +2358,7 @@ class SwordModules:
         """
         Loads the requested module indexes or data into memory.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
+        vPrint( 'Info', debuggingThisModule, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
 
         #vPrint( 'Quiet', debuggingThisModule, [key for key in self.confs.keys()] )
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
@@ -2381,8 +2378,7 @@ class SwordModules:
         """
         MAX_MODULES = 0 # Set to around 300 with 32GB RAM, or set to zero to load all modules without storing them
 
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "SwordModules.loadModule( {} )".format( inMemoryFlag ) )
+        vPrint( 'Info', debuggingThisModule, "SwordModules.loadModule( {} )".format( inMemoryFlag ) )
 
         vPrint( 'Normal', debuggingThisModule, "\nSwordModules.loadAllModules()…" )
         self.inMemoryFlag = inMemoryFlag

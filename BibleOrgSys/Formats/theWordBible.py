@@ -61,7 +61,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
@@ -129,8 +129,8 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one theWord Bible is found,
         returns the loaded theWordBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -505,8 +505,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
     """
     if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "theWordBible.handleRTFLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
+        vPrint( 'Quiet', debuggingThisModule, "theWordBible.handleRTFLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
         if originalLine: assert '\n' not in originalLine and '\r' not in originalLine
     line = originalLine
 
@@ -1127,8 +1126,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             pass
         else:
             logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
+            vPrint( 'Verbose', debuggingThisModule, f"theWordComposeVerseLine: doesn't handle '{marker}' yet" )
             ourGlobals['unhandledMarkers'].add( marker )
         lastMarker = marker
 

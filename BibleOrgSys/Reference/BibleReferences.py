@@ -89,11 +89,11 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-17' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
 PROGRAM_VERSION = '0.35'
@@ -753,8 +753,7 @@ class BibleReferenceList( BibleReferenceBase ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "BibleReferences.saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
+            vPrint( 'Quiet', debuggingThisModule, "BibleReferences.saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
             if V=='3O': V = '30' # Fix a bug in byr-w.usfm
@@ -1221,7 +1220,7 @@ class BibleReferenceList( BibleReferenceBase ):
         if len(singleVerseSet) < len(totalVerseList):
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 vPrint( 'Quiet', debuggingThisModule, "BibleReferences.parseReferenceString Final status: {} -- got {!r}from {!r}\n".format(statusList[status],self.referenceList,referenceString) )
-                vPrint( 'Quiet', debuggingThisModule, "BibleReferences.parseReferenceString totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
+            vPrint( 'Never', debuggingThisModule, "BibleReferences.parseReferenceString totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
             for entry in singleVerseSet:
                 if totalVerseList.count(entry) > 1:
                     #vPrint( 'Quiet', debuggingThisModule, entry )
@@ -1865,7 +1864,7 @@ class BibleAnchorReference:
 
         Returns True or False.
         """
-        vPrint( 'Never', debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        fnPrint( debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             assert anchorString
         elif not anchorString: return False
@@ -1891,11 +1890,10 @@ class BibleAnchorReference:
                 if ',' in self.verseString:
                     bits = self.verseString.split( ',' )
                     if rV in bits: return True
-        if 0: # for debugging
-            vPrint( 'Quiet', debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
-            vPrint( 'Quiet', debuggingThisModule, "  Parsing {!r}".format( adjAnchorString ) )
-            vPrint( 'Quiet', debuggingThisModule, "  From {!r} got {} {} {}".format( anchorString, haveErrors, haveWarnings, resultList ) )
-            vPrint( 'Quiet', debuggingThisModule, "  From {!r} got {}".format( adjAnchorString, result ) )
+        vPrint( 'Never', debuggingThisModule, "matchesAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        vPrint( 'Never', debuggingThisModule, "  Parsing {!r}".format( adjAnchorString ) )
+        vPrint( 'Never', debuggingThisModule, "  From {!r} got {} {} {}".format( anchorString, haveErrors, haveWarnings, resultList ) )
+        vPrint( 'Never', debuggingThisModule, "  From {!r} got {}".format( adjAnchorString, result ) )
         return False
     # end of BibleAnchorReference:matchesAnchorString
 # end of class BibleAnchorReference

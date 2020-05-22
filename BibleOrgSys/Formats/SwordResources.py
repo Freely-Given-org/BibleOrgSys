@@ -43,14 +43,14 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-05-18' # by RJH
 SHORT_PROGRAM_NAME = "SwordResources"
 PROGRAM_NAME = "Sword resource handler"
 PROGRAM_VERSION = '0.30'
@@ -820,8 +820,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
 
     Adds the line(s) to thisBook. No return value.
     """
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "\nimportOSISVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
+    fnPrint( debuggingThisModule, "\nimportOSISVerseLine( {} {} {}:{} … {!r} )".format( moduleName, BBB, C, V, osisVerseString ) )
 
     verseLine = filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V )
 
@@ -872,8 +871,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
             verseLine = verseLine[:match1.start()] + replacement1 + verseLine[match1.end():]
         elif match2: # normal case -- let's separate out all of the numbered callees
             callee, contents = match2.group(1), match2.group(2).rstrip()
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, 'FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
+            vPrint( 'Verbose', debuggingThisModule, 'FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
             replacement2 = '{}) {}'.format( callee, contents )
             j = 0
             while replacement2:
@@ -907,8 +905,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
             assert caller == '1' # Would only work for a single footnote I think
             callee, contents = caller, match3.group(1).rstrip()
             contentsDict[caller] = contents
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, 'FN caller={!r} unnumbered contents={!r}'.format( caller, contents ) )
+            vPrint( 'Verbose', debuggingThisModule, 'FN caller={!r} unnumbered contents={!r}'.format( caller, contents ) )
             nextOne = ' {}) '.format( int(caller)+1 )
             if nextOne in contents: # It contains the next footnote(s) as well
                 halt # Not expected
@@ -921,7 +918,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
             verseLine = verseLine[:match1.start()] + replacement1 + \
                         verseLine[match1.end():match3.start()] + replacement3 + verseLine[match3.end():]
         else:
-            vPrint( 'Quiet', debuggingThisModule, 'WHY FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
+            vPrint( 'Normal', debuggingThisModule, 'WHY FN caller={!r} callee={!r} contents={!r} {}'.format( caller, callee, contents, contentsDict ) )
             halt
         #vPrint( 'Quiet', debuggingThisModule, repr(verseLine ) )
         lastCalled = callee, contents
@@ -1145,8 +1142,7 @@ class SwordInterface():
             #self.verseCache = OrderedDict()
         elif SwordType == 'OurCode':
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, 'Sword library', self.library )
+            vPrint( 'Quiet', debuggingThisModule, 'Sword library', self.library )
         else: halt # programming error
     # end of SwordInterface.__init__
 

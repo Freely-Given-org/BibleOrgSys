@@ -45,7 +45,7 @@ To use the InternalBibleBook class,
     Then call processLines() which works through _rawLines
         removes footnotes and other additional info
         and places the processed Bible info into _processedLines.
-    Finally, call makeCVIndex() to index _processedLines by CV.
+    Finally, call makeBookCVIndex() to index _processedLines by CV.
 """
 from gettext import gettext as _
 from typing import List, Tuple, Optional, Union
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
@@ -69,7 +69,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKE
     InternalBibleEntryList, InternalBibleEntry, \
     InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
-from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
+from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
@@ -250,20 +250,23 @@ class InternalBibleBook:
 
     def __init__( self, parameter1, BBB:str ) -> None:
         """
-        Create the USFM Bible book object.
+        Create the internal Bible book object.
 
         Parameters are:
             parameter1: owner of the work (e.g., My English Bible)
                 but can be a string (usually only for testing)
             BBB: book reference code
         """
-        #vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.__init__( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"InternalBibleBook.__init__( {BBB} )" )
         if isinstance( parameter1, str ):
-            logging.warning( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
+            logging.critical( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
             self.containerBibleObject = None
             self.workName = parameter1
         else:
+            from BibleOrgSys.Bible import Bible
+            assert isinstance( parameter1, Bible )
             self.containerBibleObject = parameter1
+            # print( f"set {BBB} cBO to {id(parameter1)} for {id(self)}" )
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -2432,16 +2435,16 @@ class InternalBibleBook:
 
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
-        self.makeCVIndex()
-        #self.makeSectionIndex() # Not created by default
+        self.makeBookCVIndex()
+        #self.makeBookSectionIndex() # Not created by default
     # end of InternalBibleBook.processLines
 
 
-    def makeCVIndex( self ) -> None:
+    def makeBookCVIndex( self ) -> None:
         """
         Index the InternalBibleBook processed lines InternalBibleEntryList for faster reference.
 
-        Works by calling makeCVIndex in InternalBibleIndexes.py
+        Works by calling makeBookCVIndex in InternalBibleIndexes.py
             to update self._CVIndex
         """
         if BibleOrgSysGlobals.debugFlag:
@@ -2450,8 +2453,8 @@ class InternalBibleBook:
         if self._indexedCVFlag: return # Can only do it once
 
         vPrint( 'Info', debuggingThisModule, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
-        self._CVIndex = InternalBibleCVIndex( self.workName, self.BBB )
-        self._CVIndex.makeCVIndex( self._processedLines )
+        self._CVIndex = InternalBibleBookCVIndex( self.workName, self.BBB )
+        self._CVIndex.makeBookCVIndex( self._processedLines )
 
         #if self.BBB=='GEN':
             #for j, entry in enumerate( self._processedLines):
@@ -2473,27 +2476,35 @@ class InternalBibleBook:
             #halt
 
         self._indexedCVFlag = True
-    # end of InternalBibleBook.makeCVIndex
+    # end of InternalBibleBook.makeBookCVIndex
 
 
-    def _makeSectionIndex( self ) -> None:
+    def _makeBookSectionIndex( self ) -> None:
         """
         Index the InternalBibleBook processed lines InternalBibleEntryList for faster reference.
 
-        Works by calling makeSectionIndex in InternalBibleIndexes.py
+        Works by calling makeBookSectionIndex in InternalBibleIndexes.py
             to update self._SectionIndex
         """
+        from BibleOrgSys.Bible import Bible
+        fnPrint( debuggingThisModule, f"InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
+        # print( "_makeBookSectionIndex", id(self.containerBibleObject) )
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedFlag
             assert not self._indexedSectionsFlag
-        if self._indexedSectionsFlag: return # Can only do it once
+        if self._indexedSectionsFlag:
+            # print( "Already done InternalBibleBook._makeBookSectionIndex!" )
+            return # Can only do it once
 
         vPrint( 'Info', debuggingThisModule, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
-        self._SectionIndex = InternalBibleSectionIndex( self, self.containerBibleObject )
-        self._SectionIndex.makeSectionIndex()
+        assert isinstance( self.containerBibleObject, Bible )
+        assert len(self.containerBibleObject.books)
+        self._SectionIndex = InternalBibleBookSectionIndex( self, self.containerBibleObject )
+        self._SectionIndex.makeBookSectionIndex()
 
         self._indexedSectionsFlag = True
-    # end of InternalBibleBook._makeSectionIndex
+        # print( f"  Finished InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
+    # end of InternalBibleBook._makeBookSectionIndex
 
 
     def debugPrint( self ):
@@ -2862,6 +2873,7 @@ class InternalBibleBook:
             Note: Because this function can run in multiprocessing,
                     saving class variables won't persist.
         """
+        fnPrint( debuggingThisModule, f"_discover() for {self.BBB}" )
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
                 vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
@@ -3061,6 +3073,7 @@ class InternalBibleBook:
             bkDict['crossReferencesPeriodFlag'] = bkDict['crossReferencesPeriodRatio'] > 0.7
         #vPrint( 'Quiet', debuggingThisModule, self.BBB, bkDict['sectionReferencesParenthesisRatio'] )
 
+        # print( f"  _discover() for {self.BBB} finished." )
         return bkDict
     # end of InternalBibleBook._discover
 
@@ -4704,13 +4717,14 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckNotes
 
 
-    def check( self, discoveryDict=None, typicalAddedUnitData=None ):
+    def checkBook( self, discoveryDict=None, typicalAddedUnitData=None ):
         """
         Runs a number of checks on the book and returns the error dictionary.
         """
+        fnPrint( debuggingThisModule, "checkBook()" )
         if not self._processedFlag:
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'check'".format( self.BBB, self.workName ) )
+                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'checkBook'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4735,7 +4749,7 @@ class InternalBibleBook:
                 with open( filepath, 'rb' ) as pickleFile:
                     typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             self.doCheckAddedUnits( typicalAddedUnitData )
-    # end of InternalBibleBook.check
+    # end of InternalBibleBook.checkBook
 
 
     def getCheckResults( self ) -> dict:
@@ -4752,7 +4766,7 @@ class InternalBibleBook:
         """
         Returns the number of chapters (int) in this book.
         """
-        vPrint( 'Never', debuggingThisModule, "getNumChapters()" )
+        fnPrint( debuggingThisModule, "getNumChapters()" )
 
         self.getVersificationIfNecessary()
         #vPrint( 'Quiet', debuggingThisModule, self.getVersification() )
@@ -4770,7 +4784,7 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        vPrint( 'Never', debuggingThisModule, "getNumVerses( {!r} )".format( C ) )
+        fnPrint( debuggingThisModule, f"getNumVerses( {C!r} )" )
 
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( "getNumVerses was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
@@ -4789,11 +4803,7 @@ class InternalBibleBook:
 
         Raises a KeyError if the C:V reference is not found
         """
-        if BibleOrgSysGlobals.debugFlag:
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
-            # assert self._processedFlag
-            # assert self._indexedCVFlag
+        fnPrint( debuggingThisModule, "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
 
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB
@@ -4815,7 +4825,7 @@ class InternalBibleBook:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
-        vPrint( 'Info', debuggingThisModule, '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
+        fnPrint( debuggingThisModule, '  writeBOSBCVFiles: ' + _("Writing {!r} as BCV…").format( self.BBB ) )
 
         # Write the data out with the introduction in one file, and then each verse in a separate file
         introLines = verseLines = ''
@@ -4920,7 +4930,7 @@ def fullDemo() -> None:
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
-        UBB.check()
+        UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
         vPrint( 'Normal', debuggingThisModule, UBErrors['Priority Errors'] )

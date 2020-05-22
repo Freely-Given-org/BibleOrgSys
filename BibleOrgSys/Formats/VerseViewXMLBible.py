@@ -57,6 +57,7 @@ Module reading and loading VerseView XML Bibles:
     …
 """
 from gettext import gettext as _
+from pathlib import Path
 import logging
 import os
 from xml.etree.ElementTree import ElementTree
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
@@ -100,8 +101,8 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if autoLoad is true and exactly one VerseView Bible is found,
         returns the loaded VerseViewXMLBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "VerseViewXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "VerseViewXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable

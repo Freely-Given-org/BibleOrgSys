@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if aboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
@@ -136,7 +136,7 @@ class BibleBook ( InternalBibleBook ):
                 logger.critical( "containerBibleObject is a string '{}' (not a Bible object): presumably this is a test???".format( containerBibleObject ) )
             else: assert isinstance( containerBibleObject, Bible )
 
-        InternalBibleBook.__init__( self, containerBibleObject, BBB )
+        super().__init__( containerBibleObject, BBB )
 
         # Define our added data stores
         #self.shortName, self.longName = '', ''

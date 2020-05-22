@@ -29,9 +29,9 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
     Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
 from gettext import gettext as _
+from pathlib import Path
 import os
 import logging
-from pathlib import Path
 import re
 import multiprocessing
 
@@ -41,14 +41,14 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2020-04-26' # by RJH
+LAST_MODIFIED_DATE = '2020-05-19' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.78'
@@ -78,10 +78,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     if discountSSF is set, finding a SSF file prevents a True result.
     """
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "USFMBibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
+    fnPrint( debuggingThisModule, "USFMBibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        assert givenFolderName and isinstance( givenFolderName, str )
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
@@ -258,9 +257,9 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     NOTE: We currently handle undo, by caching all files which need to be saved to disk.
         We might need to make this more efficient, e.g., save under a temp filename.
     """
+    fnPrint( debuggingThisModule, _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
             assert 'findText' in optionsDict
             assert 'replaceText' in optionsDict
 
@@ -494,11 +493,12 @@ class USFMBible( Bible ):
 
         Note that sourceFolder can be None if we don't know that yet.
         """
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"USFMBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        fnPrint( debuggingThisModule, f"USFMBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        assert givenName != 'utf-8'
+        assert givenAbbreviation != 'utf-8'
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        super().__init__()
         self.objectNameString = 'USFM Bible object'
         self.objectTypeString = 'USFM'
 
@@ -513,7 +513,7 @@ class USFMBible( Bible ):
         """
         Tries to determine USFM filename pattern.
         """
-        vPrint( 'Info', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, f"preload() from {self.sourceFolder}" )
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             assert not self.preloadDone
             assert self.sourceFolder is not None
@@ -577,8 +577,9 @@ class USFMBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
+        fnPrint( debuggingThisModule, f"USFMBible.loadBook( {BBB}, {filename} )" )
+        # print( debuggingThisModule, f"USFMBible.loadBook( {BBB}, {filename} )", id(self) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
@@ -615,10 +616,12 @@ class USFMBible( Bible ):
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
 
         Parameter is a 2-tuple containing BBB and the filename.
+        Note that self here might not be the original USFMBibleBook class instance!
 
         Returns the book info.
         """
-        vPrint( 'Verbose', debuggingThisModule, f"loadBookMP( {BBB_Filename_duple} )…" )
+        fnPrint( debuggingThisModule, f"USFMBible._loadBookMP( {BBB_Filename_duple} )" )
+        # print( f"USFMBible._loadBookMP( {BBB_Filename_duple} )", id(self) )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
@@ -631,19 +634,19 @@ class USFMBible( Bible ):
         self.bookNeedsReloading[BBB] = False
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             vPrint( 'Quiet', debuggingThisModule, '  ' + _("Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-        UBB = USFMBibleBook( self, BBB )
+        UBB = USFMBibleBook( self, BBB ) # Ensure that we point back to the original instance
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("    Finishing loading USFM book {}.").format( BBB ) )
         return UBB
-    # end of USFMBible.loadBookMP
+    # end of USFMBible._loadBookMP
 
 
     def loadBooks( self ):
         """
         Load all the Bible books.
         """
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.getAName(), self.sourceFolder ) )
+        fnPrint( debuggingThisModule, f"Loading {self.getAName()} from {self.sourceFolder}" )
 
         if not self.preloadDone: self.preload()
 
@@ -659,7 +662,10 @@ class USFMBible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
-                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                    for bBook in results:
+                        # print( f"Stashing {bBook.BBB} {id(bBook)} with {id(bBook.containerBibleObject)}" )
+                        bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
+                        self.stashBook( bBook ) # Saves them in the correct order
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
@@ -672,6 +678,9 @@ class USFMBible( Bible ):
             logging.critical( "USFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
         self.doPostLoadProcessing()
+
+        # for BBB,bookObject in self.books.items():
+        #     print( "USFMBible.loadBooks", id(self), BBB, id(bookObject), id(bookObject.containerBibleObject) )
     # end of USFMBible.loadBooks
 
     def load( self ):

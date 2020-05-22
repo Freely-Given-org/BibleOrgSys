@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 
@@ -55,7 +55,7 @@ class TextFile:
     """
     def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ):
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, Folderpath, filename, encoding, autoLoad ) )
+            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding, autoLoad ) )
 
         self.encoding = encoding if encoding else 'utf-8'
         if folderpath and filename:

@@ -37,7 +37,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-02' # by RJH
@@ -508,7 +508,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBooksNamesSystemName
 
 
-    def getBookName( self, BBB ):
+    def getBookName( self, BBB:str ):
         """
         Get the default book name from the given referenceAbbreviation.
         """

@@ -38,13 +38,13 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 #from BibleReferences import BibleSingleReference, BibleReferenceList
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey, FlexibleVersesKey
 
 
-LAST_MODIFIED_DATE = '2020-04-15' # by RJH
+LAST_MODIFIED_DATE = '2020-05-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
 PROGRAM_NAME = "Bible References Links converter"
 PROGRAM_VERSION = '0.41'
@@ -352,8 +352,7 @@ class BibleReferencesLinksConverter:
                     raise TypeError
             # Now do the actual parsing
             parsedSourceReference = FlexibleVersesKey( sourceReference )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, j, sourceComponent, sourceReference, parsedSourceReference )
+            vPrint( 'Info', debuggingThisModule, f"{j:,} sC={sourceComponent} sR={sourceReference} pSR={parsedSourceReference}" )
                 #assert parsedSourceReference.getShortText().replace(' ','_') == sourceReference
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
@@ -374,9 +373,9 @@ class BibleReferencesLinksConverter:
                 except TypeError:
                     logging.error( "  Temporarily ignored {!r} (TypeError from FlexibleVersesKey)".format( targetReference ) )
                     parsedTargetReference = None
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, ' ', targetComponent, targetReference, parsedTargetReference )
-                    #assert parsedTargetReference.getShortText().replace(' ','_',1) == targetReference
+                vPrint( 'Verbose', debuggingThisModule, ' ', targetComponent, targetReference, parsedTargetReference )
+                # if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                #     assert parsedTargetReference.getShortText().replace(' ','_',1) == targetReference
 
                 actualLinksList.append( (targetReference,targetComponent,parsedTargetReference,linkType,) )
                 actualLinkCount += 1

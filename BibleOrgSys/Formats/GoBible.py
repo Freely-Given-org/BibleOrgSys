@@ -30,10 +30,10 @@ and https://github.com/DavidHaslam/GoBibleCore.
 """
 from gettext import gettext as _
 from typing import Optional
+from pathlib import Path
 import logging
 import os
 import struct
-from pathlib import Path
 import multiprocessing
 import tempfile
 import zipfile
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -75,8 +75,8 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
     if autoLoad is true and exactly one GoBible is found,
         returns the loaded GoBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "GoBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, str )
+    fnPrint( debuggingThisModule, "GoBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given path is readable
@@ -167,8 +167,7 @@ class GoBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )…" )
+        fnPrint( debuggingThisModule, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -200,12 +199,10 @@ class GoBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "preload() from {}".format( self.sourceFilepath ) )
+        fnPrint( debuggingThisModule, "preload() from {}".format( self.sourceFilepath ) )
 
         self.unzippedFolderpath = tempfile.mkdtemp( suffix='_GoBible', prefix='BOS_' )
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "Extracting files into {}…".format( self.unzippedFolderpath ) )
+        vPrint( 'Info', debuggingThisModule, "Extracting files into {}…".format( self.unzippedFolderpath ) )
         with zipfile.ZipFile( self.sourceFilepath ) as myzip:
             # NOTE: Could be a security risk here
             myzip.extractall( self.unzippedFolderpath )
@@ -389,13 +386,13 @@ class GoBible( Bible ):
     # end of GoBible.preload
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Load the requested book into self.books if it's not already loaded.
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "GoBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, "GoBible.loadBook( {} )".format( BBB ) )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading GoBible {} for {}".format( BBB, self.name ) )
@@ -419,7 +416,7 @@ class GoBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, "loadBookMP( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"loadBookMP( {BBB} )" )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.bookList:
@@ -506,7 +503,7 @@ class GoBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        vPrint( 'Info', debuggingThisModule, f"GoBibleBook.load( {indexToBook} )…" )
+        fnPrint( debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
         folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
         loadErrors = []
@@ -602,8 +599,7 @@ class GoBibleBook( BibleBook ):
         assert chapterOffset == len(chapterText) # Check we used all of the last one
 
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-        if debuggingThisModule:
-            vPrint( 'Normal', debuggingThisModule, self._rawLines ); halt
+        vPrint( 'Never', debuggingThisModule, self._rawLines )
     # end of GoBibleBook.load
 # end of class GoBibleBook
 

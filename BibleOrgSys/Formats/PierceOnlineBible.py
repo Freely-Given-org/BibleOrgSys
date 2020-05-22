@@ -33,6 +33,7 @@ Files are usually:
     Xref.Dat, xRefNdx.Dat
 """
 from gettext import gettext as _
+from pathlib import Path
 import logging
 import os
 import struct
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -75,8 +76,8 @@ def PierceOnlineBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
     if autoLoad is true and exactly one Online Bible is found,
         returns the loaded PierceOnlineBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "PierceOnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "PierceOnlineBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -433,8 +434,8 @@ class PierceOnlineBible( Bible ):
             if numStrings2 > 0: self.characterBitSize = 16
             if BibleOrgSysGlobals.debugFlag:
                 vPrint( 'Quiet', debuggingThisModule, "    {}={:04x} 16-bit capitalized common words loaded".format( numStrings2, numStrings2 ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, '     ', strings2 )
+            vPrint( 'Quiet', debuggingThisModule, '     ', strings2 )
+            if debuggingThisModule:
                 ix = -1
                 for j, word in enumerate( trings2 ):
                     if word in ( 'Genesis', 'In', 'The', 'God', ):
@@ -979,8 +980,7 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
                 #assert 0 <= absoluteVerseNumber < len(self.textIndex)
             startAt = 0 if absoluteVerseNumber==0 else self.textIndex[absoluteVerseNumber-1]
             endAt = self.textIndex[absoluteVerseNumber]
@@ -1034,8 +1034,7 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
+            vPrint( 'Quiet', debuggingThisModule, "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
             resultString = ''
             capsFlag = footnoteFlag = headingFlag = False
             saved = None

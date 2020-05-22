@@ -96,7 +96,7 @@ if __name__ == '__main__':
     if aboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput import ControlFiles
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
@@ -166,8 +166,7 @@ def killLibreOfficeServiceManager() -> None:
     """
     Doesn't work in Windows.
     """
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "Killing LibreOffice ServiceManager…" )
+    vPrint( 'Info', debuggingThisModule, "Killing LibreOffice ServiceManager…" )
 
     p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
     out, err = p.communicate()

@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.OriginalLanguages import Hebrew
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBible
@@ -230,8 +230,7 @@ class HebrewWLCBibleAddon():
         """
         Return a longer string with the morphology abbreviation(s) converted to something more readable.
         """
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
+        vPrint( 'Quiet', debuggingThisModule, "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
         if not morphAbbrev: return ''
 
         if morphAbbrev.startswith( 'OSHM:' ): morphAbbrev = morphAbbrev[5:] # Open Scriptures Hebrew Morphology

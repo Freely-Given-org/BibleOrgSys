@@ -46,8 +46,8 @@ NOTE: Unfortunately it seems that loading a very large pickled object
 """
 from gettext import gettext as _
 from typing import Optional
-import os
 from pathlib import Path
+import os
 import logging
 import pickle
 import zipfile
@@ -59,14 +59,14 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
-from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleCVIndex, InternalBibleSectionIndex
+from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
-LAST_MODIFIED_DATE = '2020-05-07' # by RJH
+LAST_MODIFIED_DATE = '2020-05-18' # by RJH
 SHORT_PROGRAM_NAME = "PickledBible"
 PROGRAM_NAME = "Pickle Bible handler"
 PROGRAM_VERSION = '0.17'
@@ -98,8 +98,8 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
     if autoLoad is true and exactly one Pickle Bible is found,
         returns the loaded PickledBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "PickledBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, str )
+    fnPrint( debuggingThisModule, "PickledBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given path is readable
@@ -353,7 +353,7 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
         attributeValue = pickle.load( pickleFileObject )
         #vPrint( 'Quiet', debuggingThisModule, f"Attribute {attributeName}='{attributeValue}' {type(attributeValue)}" )
         assert attributeValue is None \
-            or isinstance( attributeValue, (str,bool,Path,InternalBibleCVIndex,InternalBibleSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+            or isinstance( attributeValue, (str,bool,Path,InternalBibleBookCVIndex,InternalBibleBookSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
         #vPrint( 'Quiet', debuggingThisModule, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
@@ -380,7 +380,7 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
         attributeValue = pickle.load( pickleFileObject )
         #vPrint( 'Quiet', debuggingThisModule, "Attribute {}={}".format( attributeName, attributeValue ) )
         assert attributeValue is None \
-            or isinstance( attributeValue, (str,bool,Path,InternalBibleCVIndex,InternalBibleSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
+            or isinstance( attributeValue, (str,bool,Path,InternalBibleBookCVIndex,InternalBibleBookSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
         #vPrint( 'Quiet', debuggingThisModule, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
@@ -601,8 +601,8 @@ class PickledBible( Bible ):
         """
         Loads the BibleInfo file if it can be found.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("preload() from {}").format( self.pickleSourceFolder ) )
+        fnPrint( debuggingThisModule, f"preload() from {self.pickleSourceFolder}" )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert not self.preloadDone
             assert self.pickleIsZipped or self.pickleSourceFolder is not None
             #vPrint( 'Quiet', debuggingThisModule, "preload1", len(dir(self)), dir(self) )
@@ -636,14 +636,13 @@ class PickledBible( Bible ):
     # end of PickledBible.preload
 
 
-    def _loadBookEssentials( self, BBB ):
+    def _loadBookEssentials( self, BBB:str ):
         """
         Load the requested book and return the new bookObject.
 
         This function is multiprocessing safe.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "PickledBible._loadBookEssentials( {} )".format( BBB ) )
+        vPrint( 'Info', debuggingThisModule, "PickledBible._loadBookEssentials( {} )".format( BBB ) )
 
         self.triedLoadingBook[BBB] = True
 
@@ -667,22 +666,21 @@ class PickledBible( Bible ):
         else: # not zipped
             with open( os.path.join( self.pickleSourceFolder, BOOK_FILENAME.format( BBB ) ), 'rb' ) as pickleInputFile:
                 loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("  Loaded {} {} PickledBible book attributes").format( loadedCount, BBB ) )
+        vPrint( 'Info', debuggingThisModule, _("  Loaded {} {} PickledBible book attributes").format( loadedCount, BBB ) )
 
         self.bookNeedsReloading[BBB] = False
         return bookObject
     # end of PickledBible._loadBookEssentials
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Load the requested book into self.books if it's not already loaded.
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "PickledBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"PickledBible.loadBook( {BBB} )" )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:

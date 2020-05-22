@@ -74,7 +74,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-02' # by RJH
@@ -659,7 +659,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__len__
 
 
-    def __contains__( self, BBB ):
+    def __contains__( self, BBB:str ):
         """
         Returns True/False if the book is in this system.
         """
@@ -685,7 +685,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getVersificationSystemName
 
 
-    def getNumChapters( self, BBB ):
+    def getNumChapters( self, BBB:str ):
         """
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have any chapter information for this book.
@@ -698,7 +698,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumChapters
 
 
-    def isSingleChapterBook( self, BBB ):
+    def isSingleChapterBook( self, BBB:str ):
         """
         Returns True/False to indicate if this book only contains a single chapter.
         Returns None if we don't have any chapter information for this book.

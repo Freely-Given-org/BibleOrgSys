@@ -29,6 +29,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
     Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
 from gettext import gettext as _
+from pathlib import Path
 import os
 import logging
 import re
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
@@ -90,10 +91,9 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
     if discountSSF is set, finding a SSF file prevents a True result.
     """
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "USFM2BibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
+    fnPrint( debuggingThisModule, "USFM2BibleFileCheck( {}, {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks, discountSSF ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        assert givenFolderName and isinstance( givenFolderName, str )
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
@@ -287,11 +287,10 @@ def findReplaceText( self, optionsDict, confirmCallback ):
     NOTE: We currently handle undo, by caching all files which need to be saved to disk.
         We might need to make this more efficient, e.g., save under a temp filename.
     """
+    fnPrint( debuggingThisModule, _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
     if BibleOrgSysGlobals.debugFlag:
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("findReplaceText( {}, {}, … )").format( self, optionsDict ) )
-            assert 'findText' in optionsDict
-            assert 'replaceText' in optionsDict
+        assert 'findText' in optionsDict
+        assert 'replaceText' in optionsDict
 
     optionsList = ( 'parentWindow', 'parentBox', 'givenBible', 'workName',
             'findText', 'replaceText', 'findHistoryList', 'replaceHistoryList', 'wordMode',
@@ -523,8 +522,7 @@ class USFM2Bible( Bible ):
 
         Note that sourceFolder can be None if we don't know that yet.
         """
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "USFM2Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
+        vPrint( 'Quiet', debuggingThisModule, "USFM2Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -540,8 +538,8 @@ class USFM2Bible( Bible ):
         """
         Tries to determine USFM2 filename pattern.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        if debuggingThisModule:
             assert not self.preloadDone
             assert self.sourceFolder is not None
 
@@ -604,8 +602,8 @@ class USFM2Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "USFM2Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        vPrint( 'Info', debuggingThisModule, "USFM2Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:

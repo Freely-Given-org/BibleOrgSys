@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -77,8 +77,8 @@ def EasyWorshipBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     if autoLoad is true and exactly one EasyWorship Bible is found,
         returns the loaded EasyWorshipBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "EasyWorshipBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "EasyWorshipBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -530,8 +530,7 @@ class EasyWorshipBible( Bible ):
                                  #len(byteResult1), byteResult1,
                                  #len(byteResult2), byteResult2 ) )
             textResult = byteResult.decode( 'utf8' )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
+            vPrint( 'Quiet', debuggingThisModule, "Block4: Got {} chars {!r} from {} bytes".format( len(textResult), textResult, length3 ) )
             assert textResult.startswith('ezFree') or textResult.startswith('ezPaid')
             keep['workName'] = (index+4,textResult)
             vPrint( 'Normal', debuggingThisModule, "EasyWorshipBible.load: " + _("Setting module work name to {!r}").format( textResult ) )

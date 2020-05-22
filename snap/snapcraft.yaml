@@ -1,9 +1,10 @@
 name: bible-org-sys
-version: v0.0.2
-summary: Bible Organisational System (BOS)
+version: '0.0.2'
+summary: Bible Organisational System (BibleOrgSys / BOS)
 description: |
-  The Bible Organisational System (BOS) imports and processes information
+  The Bible Organisational System (BibleOrgSys / BOS) imports and processes information
   that is keyed by books, chapters and verses.
+  It has a large variety of import and export formats.
 base: core18
 grade: devel
 confinement: devmode
@@ -12,8 +13,11 @@ parts:
   bible-org-sys:
     plugin: python
     python-version: python3
-    source: .
+    source: https://github.com/openscriptures/BibleOrgSys/
+    source-type: git
+    stage-packages:
+      - python3.8
 
 apps:
   usfm2usx:
-    command: python3 Apps/USFM2USX.py
+    command: Apps/USFM2USX.py

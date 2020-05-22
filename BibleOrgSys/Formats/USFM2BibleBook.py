@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
@@ -287,7 +287,7 @@ def briefDemo() -> None:
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
-        UBB.check()
+        UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
     # end of fullDemoFile
@@ -339,7 +339,7 @@ def fullDemo() -> None:
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
-        UBB.check()
+        UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
     # end of fullDemoFile

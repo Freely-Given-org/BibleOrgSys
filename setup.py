@@ -268,7 +268,7 @@ This app also demonstrates how little code is required to use the BOS
     and then to export it in your desired format (see options in BibleWriter.py).
 '''
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.UnknownBible import UnknownBible
 
 PROGRAM_NAME = "Bible to USX (minimal)"

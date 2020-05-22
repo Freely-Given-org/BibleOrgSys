@@ -96,7 +96,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -238,9 +238,9 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one MyBible Bible is found,
         returns the loaded MyBibleBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "MyBibleBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, "MyBibleBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag:
-        assert givenFolderName and isinstance( givenFolderName, str )
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -490,7 +490,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.loadBooks
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Load the requested book out of the SQLite3 database.
         """
@@ -512,7 +512,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.loadBook
 
 
-    def __loadBibleBook( self, BBB ):
+    def __loadBibleBook( self, BBB:str ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
@@ -623,7 +623,7 @@ class MyBibleBible( Bible ):
     # end of MyBibleBible.__loadBibleBook
 
 
-    def __loadBibleCommentaryBook( self, BBB ):
+    def __loadBibleCommentaryBook( self, BBB:str ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
@@ -863,9 +863,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         # Check what's left at the end
         if '\\' in line:
             logging.warning( "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toMyBible.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            if debuggingThisModule: halt
         return line
     # end of toMyBible.adjustLine
 
@@ -1064,9 +1063,8 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         # Check what's left at the end (but hide MyBible \line markers first)
         if '\\' in composedLine:
             logging.warning( "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toMyBible.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            if debuggingThisModule: halt
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toMyBible.composeVerseLine
 

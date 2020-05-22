@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -547,7 +547,7 @@ class USXXMLBibleBook( BibleBook ):
             if version not in ( None, '2.0','2.5','2.6','3.0' ):
                 logging.critical( _("Not sure if we can handle v{} USX files").format( version ) )
                 if debuggingThisModule: halt
-            vPrint( 'Quiet', debuggingThisModule, f"  Parsing USX v{version} file for {self.workName} {self.BBB}…" )
+            vPrint( 'Info', debuggingThisModule, f"  Parsing USX v{version} file for {self.workName} {self.BBB}…" )
 
             # Now process the data
             for element in self.XMLTree:
@@ -765,7 +765,7 @@ def briefDemo() -> None:
                 vPrint( 'Info', debuggingThisModule, UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
                 vPrint( 'Info', debuggingThisModule, UxBBAddedUnits )
-                UxBB.check()
+                UxBB.checkBook()
                 UxBBErrors = UxBB.getCheckResults()
                 vPrint( 'Info', debuggingThisModule, UxBBErrors )
                 break
@@ -888,7 +888,7 @@ def fullDemo() -> None:
                 vPrint( 'Info', debuggingThisModule, UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits()
                 vPrint( 'Info', debuggingThisModule, UxBBAddedUnits )
-                UxBB.check()
+                UxBB.checkBook()
                 UxBBErrors = UxBB.getCheckResults()
                 vPrint( 'Info', debuggingThisModule, UxBBErrors )
 

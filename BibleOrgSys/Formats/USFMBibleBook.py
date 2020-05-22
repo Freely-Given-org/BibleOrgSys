@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
@@ -65,7 +65,7 @@ class USFMBibleBook( BibleBook ):
         """
         Create the USFM Bible book object.
         """
-        BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
+        super().__init__( containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = 'USFM Bible Book object'
         self.objectTypeString = 'USFM'
 
@@ -611,7 +611,7 @@ def briefDemo() -> None:
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
-        UBB.check()
+        UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
     # end of demoFile
@@ -673,7 +673,7 @@ def fullDemo() -> None:
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
         #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
-        UBB.check()
+        UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
     # end of demoFile

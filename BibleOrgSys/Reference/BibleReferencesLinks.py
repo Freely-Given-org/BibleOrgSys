@@ -36,7 +36,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
@@ -104,7 +104,7 @@ class BibleReferencesLinks:
         #return len(self.__DataList["referenceAbbreviationDict"])
 
 
-    #def __contains__( self, BBB ):
+    #def __contains__( self, BBB:str ):
         #""" Returns True or False. """
         #return BBB in self.__DataList["referenceAbbreviationDict"]
 
@@ -241,7 +241,7 @@ class BibleReferencesLinks:
         ##return len(self.__DataList["referenceAbbreviationDict"])
 
 
-    ##def __contains__( self, BBB ):
+    ##def __contains__( self, BBB:str ):
         ##""" Returns True or False. """
         ##return BBB in self.__DataList["referenceAbbreviationDict"]
 

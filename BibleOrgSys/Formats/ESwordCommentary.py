@@ -46,6 +46,7 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 from gettext import gettext as _
+from pathlib import Path
 import logging
 import os
 import re
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Formats.ESwordBible import handleESwordLine
@@ -91,8 +92,8 @@ def ESwordCommentaryFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     if autoLoad is true and exactly one e-Sword Bible is found,
         returns the loaded ESwordCommentary object.
     """
-    vPrint( 'Info', debuggingThisModule, "ESwordCommentaryFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "ESwordCommentaryFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -479,7 +480,7 @@ class ESwordCommentary( Bible ):
     # end of ESwordCommentary.load
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Load the requested book out of the SQLite3 database.
         """
@@ -700,9 +701,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in line:
             logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            if debuggingThisModule: halt
         return line
     # end of toESword.adjustLine
 
@@ -746,9 +746,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in composedLine:
             logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+            if debuggingThisModule: halt
         return composedLine.replace( '~^~', '\\' )
     # end of toESword.handleIntroduction
 
@@ -905,9 +904,8 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         # Check what's left at the end (but hide e-Sword \line markers first)
         if '\\' in composedLine.replace( '\\line ', '' ):
             logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            if debuggingThisModule: halt
         return composedLine.replace( '~^~', '\\' ).rstrip()
     # end of toESword.composeVerseLine
 

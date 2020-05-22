@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
@@ -82,8 +82,8 @@ def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one DBL Bible bundle is found,
         returns the loaded DBLBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "DBLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "DBLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -223,13 +223,13 @@ class DBLBible( Bible ):
     """
     Class to load and manipulate DBL Bible bundles.
     """
-    def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ):
+    def __init__( self, givenFolderName, givenName=None, encoding='utf-8' ) -> None:
         """
         Create the internal DBL Bible object.
         """
+        fnPrint( debuggingThisModule, "DBLBible.__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, "__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
-            assert isinstance( givenFolderName, str )
+            assert isinstance( givenFolderName, (str,Path) )
             assert isinstance( givenName, str )
             assert isinstance( encoding, str )
 
@@ -262,8 +262,7 @@ class DBLBible( Bible ):
         """
         Load the XML metadata files.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
+        vPrint( 'Info', debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
         vPrint( 'Normal', debuggingThisModule, _("DBLBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
@@ -302,8 +301,7 @@ class DBLBible( Bible ):
         """
         Load the metadata.xml file and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "loadDBLLicense()" )
+        vPrint( 'Info', debuggingThisModule, "loadDBLLicense()" )
 
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading license data from {}…".format( licenseFilepath ) )
@@ -367,8 +365,7 @@ class DBLBible( Bible ):
         """
         Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "loadDBLMetadata()" )
+        vPrint( 'Info', debuggingThisModule, "loadDBLMetadata()" )
 
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
@@ -1289,8 +1286,7 @@ class DBLBible( Bible ):
         """
         Load the styles.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "loadDBLStyles()" )
+        vPrint( 'Info', debuggingThisModule, "loadDBLStyles()" )
 
         if self.DBLMetadataVersion == '2.1': styleFilepath = os.path.join( self.sourceFilepath, 'release/', 'styles.xml' )
         else: styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
@@ -1520,8 +1516,7 @@ class DBLBible( Bible ):
         """
         Load the USX XML Bible text files.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "loadBooks()" )
+        vPrint( 'Info', debuggingThisModule, "loadBooks()" )
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 

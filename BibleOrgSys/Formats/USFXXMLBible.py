@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -91,8 +91,8 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck:bool=True, autoLoad:bool=Fa
     if autoLoad is true and exactly one USFX Bible is found,
         returns the loaded USFXXMLBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "USFXXMLBibleFileCheck( {}, {}, {}, {} )".format( sourceFolder, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert sourceFolder and isinstance( sourceFolder, str )
+    fnPrint( debuggingThisModule, "USFXXMLBibleFileCheck( {}, {}, {}, {} )".format( sourceFolder, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert sourceFolder and isinstance( sourceFolder, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable

@@ -51,7 +51,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
@@ -88,10 +88,9 @@ def PTX7BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     if autoLoad is true and exactly one Paratext Bible bundle is found,
         returns the loaded PTX7Bible object.
     """
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "PTX7BibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, "PTX7BibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        assert givenFolderName and isinstance( givenFolderName, str )
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert strictCheck in (True,False,)
         assert autoLoad in (True,False,)
         assert autoLoadBooks in (True,False,)
@@ -230,8 +229,7 @@ def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
 
     Returns a dictionary.
     """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, _("Loading Paratext 7 SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
+    fnPrint( debuggingThisModule, _("Loading Paratext 7 SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
     #if encoding is None: encoding = 'utf-8'
     BibleObject.ssfFilepath = ssfFilepath
 
@@ -347,8 +345,7 @@ def loadPTX7Languages( BibleObject ):
     """
     Load the something.lds file (which is an INI file) and parse it into the dictionary PTXLanguages.
     """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, _("loadPTX7Languages()…") )
+    fnPrint( debuggingThisModule, _("loadPTX7Languages()") )
 
     languageFilenames = []
     for something in os.listdir( BibleObject.sourceFilepath ):
@@ -409,8 +406,7 @@ def loadPTXVersifications( BibleObject ):
     Load the versification files (which is a text file)
         and parse it into the dictionary PTXVersifications.
     """
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, _("loadPTXVersifications()…") )
+    fnPrint( debuggingThisModule, _("loadPTXVersifications()") )
 
     #versificationFilename = 'versification.vrs'
     #versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
@@ -525,8 +521,7 @@ class PTX7Bible( Bible ):
         """
         Create the internal Paratext Bible object.
         """
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "PTX7Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( givenFolderName, givenName, givenAbbreviation, encoding ) )
+        fnPrint( debuggingThisModule, "PTX7Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( givenFolderName, givenName, givenAbbreviation, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -684,8 +679,7 @@ class PTX7Bible( Bible ):
         """
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBooksNames()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXBooksNames()…") )
 
         thisFilename = 'BookNames.xml'
         bookNamesFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -743,8 +737,7 @@ class PTX7Bible( Bible ):
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUsers()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTX7ProjectUsers()…") )
 
         thisFilename = 'ProjectUsers.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -816,8 +809,7 @@ class PTX7Bible( Bible ):
         """
         Load the ProjectUserFields.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTX7ProjectUserFields()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTX7ProjectUserFields()…") )
 
         thisFilename = 'ProjectUserFields.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -889,8 +881,7 @@ class PTX7Bible( Bible ):
         """
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXLexicon()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXLexicon()…") )
 
         thisFilename = 'Lexicon.xml'
         lexiconFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -1026,8 +1017,7 @@ class PTX7Bible( Bible ):
         """
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXSpellingStatus()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXSpellingStatus()…") )
 
         thisFilename = 'SpellingStatus.xml'
         spellingStatusFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -1100,8 +1090,7 @@ class PTX7Bible( Bible ):
         """
         Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX7'].
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXComments()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXComments()…") )
 
         commentFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1202,8 +1191,7 @@ class PTX7Bible( Bible ):
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXBiblicalTermRenderings()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXBiblicalTermRenderings()…") )
 
         BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1315,8 +1303,7 @@ class PTX7Bible( Bible ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXProgress()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXProgress()…") )
 
         progressFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1503,8 +1490,7 @@ class PTX7Bible( Bible ):
         """
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXPrintConfig()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXPrintConfig()…") )
 
         printConfigFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1592,8 +1578,7 @@ class PTX7Bible( Bible ):
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXAutocorrects.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXAutocorrects()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXAutocorrects()…") )
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -1638,8 +1623,7 @@ class PTX7Bible( Bible ):
         """
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("loadPTXStyles()…") )
+        vPrint( 'Info', debuggingThisModule, _("loadPTXStyles()…") )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):

@@ -44,7 +44,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
@@ -106,10 +106,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     if autoLoad is true and exactly one ESFM Bible is found,
         returns the loaded ESFMBible object.
     """
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, "ESFMBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        assert givenFolderName and isinstance( givenFolderName, str )
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False)
 
     # Check that the given folder is readable
@@ -253,8 +252,7 @@ class ESFMBible( Bible ):
         """
         Create the internal ESFM Bible object.
         """
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
+        vPrint( 'Quiet', debuggingThisModule, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -556,10 +554,9 @@ class ESFMBible( Bible ):
             if 'Missing' in self.semanticDict:
                 vPrint( 'Quiet', debuggingThisModule, "\nESFMBible.load missing:", self.semanticDict['Missing'] )
         #vPrint( 'Quiet', debuggingThisModule, "\nSemantic dict: {}".format( self.semanticDict ) )
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "\n\nSemantic dict:" )
-            for someKey,someEntry in self.semanticDict.items():
-                vPrint( 'Quiet', debuggingThisModule, "\n{}: {}".format( someKey, someEntry ) )
+        vPrint( 'Quiet', debuggingThisModule, "\n\nSemantic dict:" )
+        for someKey,someEntry in self.semanticDict.items():
+            vPrint( 'Quiet', debuggingThisModule, "\n{}: {}".format( someKey, someEntry ) )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
 

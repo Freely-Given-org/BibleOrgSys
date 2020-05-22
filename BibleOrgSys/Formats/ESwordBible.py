@@ -69,7 +69,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -92,8 +92,8 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     if autoLoad is true and exactly one e-Sword Bible is found,
         returns the loaded ESwordBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "ESwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "ESwordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -523,9 +523,8 @@ def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGloba
 
     NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
     """
+    fnPrint( debuggingThisModule, "ESwordModule.handleESwordLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine( {} {} {}:{} {!r} … {}".format( myName, BBB, C, V, originalLine, myGlobals ) )
         assert originalLine is None or '\r' not in originalLine
 
     #vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine: {} {}:{} {!r}".format( BBB, C, V, originalLine ) )
@@ -540,9 +539,8 @@ def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGloba
         handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals )
         return
     else:
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine: What's this: {} {} {}:{} {!r}".format( myName, BBB, C, V, originalLine ) )
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # What's this???
+        vPrint( 'Quiet', debuggingThisModule, "ESwordModule.handleESwordLine: What's this: {} {} {}:{} {!r}".format( myName, BBB, C, V, originalLine ) )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # What's this???
         bookObject.addLine( 'v', '{} {}'.format( V, originalLine ) )
 # end of ESwordModule.handleESwordLine
 
@@ -1076,7 +1074,7 @@ class ESwordBible( Bible ):
     # end of ESwordBible.load
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB:str ):
         """
         Load the requested book out of the SQLite3 database.
         """
@@ -1250,9 +1248,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in line:
             logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+            if debuggingThisModule: halt
         return line
     # end of toESword.adjustLine
 
@@ -1296,9 +1293,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         # Check what's left at the end
         if '\\' in composedLine:
             logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+            if debuggingThisModule: halt
         return composedLine.replace( '~^~', '\\' )
     # end of toESword.handleIntroduction
 
@@ -1442,8 +1438,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
                 composedLine += adjustLine(BBB,C,V, text )
             else:
                 logging.warning( "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
+                vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker )
             lastMarker = marker
@@ -1455,9 +1451,8 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         # Check what's left at the end (but hide e-Sword \line markers first)
         if '\\' in composedLine.replace( '\\line ', '' ):
             logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-                halt
+            vPrint( 'Quiet', debuggingThisModule, "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+            if debuggingThisModule: halt
         #haveAdd = False
         #for verseDataEntry in verseData:
             #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()

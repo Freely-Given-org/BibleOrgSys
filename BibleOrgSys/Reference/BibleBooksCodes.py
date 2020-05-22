@@ -37,7 +37,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-20' # by RJH
@@ -142,7 +142,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.__len__
 
 
-    def __contains__( self, BBB ):
+    def __contains__( self, BBB:str ):
         """ Returns True or False. """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
 
@@ -153,7 +153,7 @@ class BibleBooksCodes:
             yield BBB
 
 
-    def isValidBBB( self, BBB ):
+    def isValidBBB( self, BBB:str ):
         """ Returns True or False. """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
 
@@ -177,7 +177,7 @@ class BibleBooksCodes:
         #return self.__DataDicts['referenceAbbreviationDict'].keys() # Why didn't this work?
 
 
-    def getReferenceNumber( self, BBB ):
+    def getReferenceNumber( self, BBB:str ):
         """ Return the referenceNumber 1..999 for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
@@ -209,34 +209,34 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getSequenceList
 
 
-    def _getFullEntry( self, BBB ):
+    def _getFullEntry( self, BBB:str ):
         """
         Return the full dictionary for the given book (code).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]
 
 
-    def getCCELNumber( self, BBB ):
+    def getCCELNumber( self, BBB:str ):
         """ Return the CCEL number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['CCELNumberString']
 
 
-    def getSBLAbbreviation( self, BBB ):
+    def getSBLAbbreviation( self, BBB:str ):
         """ Return the SBL abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SBLAbbreviation']
 
 
-    def getOSISAbbreviation( self, BBB ):
+    def getOSISAbbreviation( self, BBB:str ):
         """ Return the OSIS abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['OSISAbbreviation']
 
 
-    def getSwordAbbreviation( self, BBB ):
+    def getSwordAbbreviation( self, BBB:str ):
         """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SwordAbbreviation']
 
 
-    def getUSFMAbbreviation( self, BBB ):
+    def getUSFMAbbreviation( self, BBB:str ):
         """ Return the USFM abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
@@ -364,7 +364,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromText
 
 
-    def getExpectedChaptersList( self, BBB ):
+    def getExpectedChaptersList( self, BBB:str ):
         """
         Gets a list with the number of expected chapters for the given book code (referenceAbbreviation).
         The number(s) of expected chapters is left in string form (not int).
@@ -384,7 +384,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getExpectedChaptersList
 
 
-    def getMaxChapters( self, BBB ):
+    def getMaxChapters( self, BBB:str ):
         """
         Returns an integer with the maximum number of chapters to be expected for this book.
         """
@@ -410,7 +410,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getSingleChapterBooksList
 
 
-    def isSingleChapterBook( self, BBB ):
+    def isSingleChapterBook( self, BBB:str ):
         """ Returns True or False if the number of chapters for the book is only one. """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] == '1'
 
@@ -517,7 +517,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getAllBibleditBooksCodeNumberTriples
 
 
-    def getPossibleAlternativeBooksCodes( self, BBB ):
+    def getPossibleAlternativeBooksCodes( self, BBB:str ):
         """
         Return a list of any book reference codes for possible similar alternative books.
 
@@ -527,7 +527,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
 
 
-    def getTypicalSection( self, BBB ):
+    def getTypicalSection( self, BBB:str ):
         """
         Return typical section abbreviation.
             OT, OT+, NT, NT+, DC, PS, FRT, BAK
@@ -538,7 +538,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
 
 
-    def continuesThroughChapters( self, BBB ):
+    def continuesThroughChapters( self, BBB:str ):
         """
         Returns True if the storyline of the book continues through chapters,
             i.e., the chapter divisions are artificial.
@@ -606,7 +606,7 @@ class BibleBooksCodes:
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
     #           (where the precisely correct information is unknown)
-    def getEnglishName_NR( self, BBB ): # NR = not recommended (because not completely general/international)
+    def getEnglishName_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
         Returns the first English name for a book.
 
@@ -617,7 +617,7 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['nameEnglish'].split('/',1)[0].strip()
     # end of BibleBooksCodes.getEnglishName_NR
 
-    def getEnglishNameList_NR( self, BBB ): # NR = not recommended (because not completely general/international)
+    def getEnglishNameList_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
         Returns a list of possible English names for a book.
 
@@ -629,7 +629,7 @@ class BibleBooksCodes:
         return [name.strip() for name in names.split('/')]
     # end of BibleBooksCodes.getEnglishNameList_NR
 
-    def isOldTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
+    def isOldTestament_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
         Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book (39).
             NOTE: This is not truly international so it's not a recommended function.
@@ -637,7 +637,7 @@ class BibleBooksCodes:
         return 1 <= self.getReferenceNumber(BBB) <= 39
     # end of BibleBooksCodes.isOldTestament_NR
 
-    def isNewTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
+    def isNewTestament_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
         Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book (27).
             NOTE: This is not truly international so it's not a recommended function.
@@ -645,7 +645,7 @@ class BibleBooksCodes:
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 
-    def isDeuterocanon_NR( self, BBB ): # NR = not recommended (because not completely general/international)
+    def isDeuterocanon_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
         Returns True if the given referenceAbbreviation indicates a European Deuterocanon/Apocrypha book (15).
             NOTE: This is not truly international so it's not a recommended function.

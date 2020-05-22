@@ -69,7 +69,9 @@ Contains functions:
     setup( PROGRAM_NAME, PROGRAM_VERSION, loggingFolder=None )
 
     setVerbosity( verbosityLevelParameter )
-    vPrint( level:str, printString:str )
+    vPrint( level:str, debuggingThatModule:bool/int, printString:str )
+    dPrint( level:str, debuggingThatModule:bool/int, printString:str )
+    fnPrint( debuggingThatModule:bool/int, printString:str )
     introduceProgram( name:str, programNameVersion:str, LAST_MODIFIED_DATE:str ) -> None:
 
     setDebugFlag( newValue=True )
@@ -106,10 +108,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-05-21' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -180,13 +182,13 @@ ALLOWED_ORGANISATIONAL_TYPES = ( 'edition', 'revision', 'translation', 'original
 #
 # Readable folder paths (Writeable ones are further down)
 BOS_SOURCE_BASE_FOLDERPATH = Path( __file__ ).parent.resolve() # Folder containing this file
-#vPrint( 'Quiet', debuggingThisModule, f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
+#dPrint( 'Quiet', debuggingThisModule, f"BOS_SOURCE_BASE_FOLDERPATH = {BOS_SOURCE_BASE_FOLDERPATH}" )
 BOS_DATAFILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DataFiles/' )
 BOS_DERIVED_DATAFILES_FOLDERPATH = BOS_DATAFILES_FOLDERPATH.joinpath( 'DerivedFiles/' )
 BOS_DISTRIBUTED_FILES_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'DistributedFiles/' )
 
 BOS_LIBRARY_BASE_FOLDERPATH = BOS_SOURCE_BASE_FOLDERPATH.parent # Folder above the one containing this file
-#vPrint( 'Quiet', debuggingThisModule, f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
+#dPrint( 'Quiet', debuggingThisModule, f"BOS_LIBRARY_BASE_FOLDERPATH = {BOS_LIBRARY_BASE_FOLDERPATH}" )
 BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' )
 BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' )
 
@@ -205,20 +207,57 @@ LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
                     }
 def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
     """
+    verbose print -- intended for user notifications.
+
     Only print the given string, if the verbosity level is correct.
     """
     if isinstance( requestedLevel, str ):
         try: requestedLevel = LEVEL_NAME_DICT[requestedLevel]
         except KeyError: requestedLevel = 4 # default to verbose
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( requestedLevel, int )
-    if increaseLevel is True:
-        increaseLevel = 1
+    if increaseLevel is True: # (could also be an int)
+        increaseLevel = 1 # Should always be an int now
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
-    # Make one or more levels more verbose if this is set
+    # Make one or more levels more verbose if increaseLevel is set
     if increaseLevel: requestedLevel -= increaseLevel # Doesn't matter if it goes negative
     if verbosityLevel >= requestedLevel:
         print( *args, **kwargs )
 # end of BibleOrgSysGlobals.vPrint function
+
+def dPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
+    """
+    debug print -- intended for debug display of internal variables.
+
+    Only print the given string, if the verbosity level is correct.
+
+    Automatically prints more if the global debug flag is set.
+    """
+    if increaseLevel is True: # (could also be an int)
+        increaseLevel = 1 # Should always be an int now
+    if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
+    if debugFlag: increaseLevel += 1
+    vPrint( requestedLevel, increaseLevel, *args, **kwargs )
+# end of BibleOrgSysGlobals.dPrint function
+
+def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
+    """
+    function print -- intended only for function introduction notifications
+                        for debugging of programme flow.
+
+    Only print the given string, if the verbosity level is correct.
+    """
+    if increaseLevel is True: # (could also be an int)
+        increaseLevel = 1 # Should always be an int now
+    if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
+    if debugFlag: increaseLevel += 1
+    # print( "args1", len(args), repr(args) )
+    if not kwargs and args \
+    and isinstance( args[-1], str ) and not args[-1].endswith( '…' ):
+        args = ( f'{args[0]}…', ) if len(args)==1 else ( args[:-1], f'{args[-1]}…', ) # Append an ellipsis
+    # print( "args2", len(args), repr(args) )
+    # vPrint( 'Quiet', increaseLevel, *args, **kwargs ) # For debugging programme flow
+    vPrint( 'Verbose', increaseLevel, *args, **kwargs )
+# end of BibleOrgSysGlobals.fnPrint function
 
 
 ##########################################################################################################
@@ -228,9 +267,9 @@ def findHomeFolderpath() -> Optional[Path]:
     """
     Attempt to find the path to the user's home folder and return it.
     """
+    fnPrint( debuggingThisModule, "BibleOrgSysGlobals.findHomeFolderpath()" )
     possibleHomeFolders = ( os.path.expanduser('~'), os.getcwd(), os.curdir, os.pardir )
-    if debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"Possible home folders = {possibleHomeFolders}" )
+    dPrint( 'Info', debuggingThisModule, f"Possible home folders = {possibleHomeFolders}" )
     for folder in possibleHomeFolders:
         thisPath = Path( folder )
         if thisPath.is_dir and os.access( folder, os.W_OK ):
@@ -255,7 +294,7 @@ BOS_SETTINGS_FILEPATH = BOS_SETTINGS_FOLDERPATH.joinpath( 'BibleOrgSys.ini' )
 settingsData = configparser.ConfigParser()
 settingsData.optionxform = lambda option: option # Force true case matches for options (default is all lower case)
 settingsData['Default'] = { 'OutputBaseFolder':f'{BOS_HOME_FOLDERPATH}/' }
-# vPrint( 'Quiet', debuggingThisModule, "settingsData Default OutputFolder", settingsData['Default']['OutputFolder'] )
+# dPrint( 'Quiet', debuggingThisModule, "settingsData Default OutputFolder", settingsData['Default']['OutputFolder'] )
 if BOS_SETTINGS_FILEPATH.is_file():
     settingsData.read( BOS_SETTINGS_FILEPATH )
 else: # we don't seem to have a pre-existing settings file -- save our default one
@@ -269,11 +308,11 @@ else: # we don't seem to have a pre-existing settings file -- save our default o
         settingsData.write( settingsFile )
 if debugFlag and debuggingThisModule:
     for section in settingsData:
-        vPrint( 'Quiet', debuggingThisModule, f"  Settings.load: s.d main section = {section}" )
+        dPrint( 'Quiet', debuggingThisModule, f"  Settings.load: s.d main section = {section}" )
 
 # BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH
 BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = Path( settingsData['Default']['OutputBaseFolder'] )
-# vPrint( 'Quiet', debuggingThisModule, f"BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = {BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH}")
+# dPrint( 'Quiet', debuggingThisModule, f"BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH = {BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH}")
 
 DEFAULT_WRITEABLE_LOG_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'BOSLogs/' )
 DEFAULT_WRITEABLE_CACHE_FOLDERPATH = BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'BOSObjectCache/' )
@@ -290,6 +329,7 @@ def findUsername() -> str:
     """
     Attempt to find the current user name and return it.
     """
+    fnPrint( debuggingThisModule, "BibleOrgSysGlobals.findUsername()" )
     if pwd:
         return pwd.getpwuid(os.geteuid()).pw_name
     else:
@@ -327,8 +367,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
 
     Gets called from our demo() function when program starts up.
     """
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderpath!r} )…" )
+    fnPrint( debuggingThisModule, f"BibleOrgSysGlobals.setupLoggingToFile( {SHORT_PROGRAM_NAMEParameter!r}, {programVersionParameter!r}, {folderpath!r} )" )
 
     filename = SHORT_PROGRAM_NAMEParameter.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folderpath is None: folderpath = DEFAULT_WRITEABLE_LOG_FOLDERPATH
@@ -342,7 +381,7 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
     backupAnyExistingFile( filepath, numBackups=4 )
     #if os.access( filepath, os.F_OK ):
         #if debuggingThisModule or __name__ == '__main__':
-            #vPrint( 'Quiet', debuggingThisModule, "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
+            #dPrint( 'Quiet', debuggingThisModule, "setupLoggingToFile: {!r} already exists -- renaming it first!".format( filepath ) )
         #if os.access( filepath+'.bak', os.F_OK ):
             #os.remove( filepath+'.bak' )
         #os.rename( filepath, filepath+'.bak' )
@@ -350,8 +389,8 @@ def setupLoggingToFile( SHORT_PROGRAM_NAMEParameter:str, programVersionParameter
     # Now setup our new log file -- DOESN'T SEEM TO WORK IN WINDOWS!!!
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "BibleOrgSysGlobals.setBasicConfig to( {!r}, {}={}, {!r}, {!r} )".format( filepath, setLevel, LOGGING_NAME_DICT[setLevel], loggingLongFormat, loggingDateFormat ) )
+    if debuggingThisModule: # otherwise the list of strings isn't declared above
+        dPrint( 'Verbose', debuggingThisModule, "BibleOrgSysGlobals.setBasicConfig to( {!r}, {}={}, {!r}, {!r} )".format( filepath, setLevel, LOGGING_NAME_DICT[setLevel], loggingLongFormat, loggingDateFormat ) )
     # NOTE: This call to basicConfig MUST occur BEFORE any modules make any logging calls
     #   i.e., be careful of putting executable calls at module level that might log at module load time
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
@@ -364,8 +403,7 @@ def addConsoleLogging( consoleLoggingLevel:Optional[int]=None ) -> None:
     """
     Adds a handler to also send ERROR and higher to console (depending on verbosity)
     """
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.addConsoleLogging( {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]} )…" )
+    # fnPrint( debuggingThisModule, f"BibleOrgSysGlobals.addConsoleLogging( {consoleLoggingLevel}={LOGGING_NAME_DICT[consoleLoggingLevel]} )" )
 
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
@@ -376,8 +414,8 @@ def addConsoleLogging( consoleLoggingLevel:Optional[int]=None ) -> None:
             consoleLoggingLevel = logging.WARNING
         else: # Quiet or normal
             consoleLoggingLevel = logging.ERROR
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "  addConsoleLogging setting it to {}={}".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
+    if debuggingThisModule: # otherwise the list of strings isn't declared above
+        vPrint( 'Verbose', debuggingThisModule, "  addConsoleLogging setting it to {}={}".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
     stderrHandler.setLevel( consoleLoggingLevel )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderrHandler)
@@ -388,8 +426,7 @@ def addLogfile( projectName:str, folderName:Optional[Path]=None ) -> Tuple[Path,
     """
     Adds an extra project specific log file to the logger.
     """
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
+    fnPrint( debuggingThisModule, "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
 
     filename = projectName + '_log.txt'
     if folderName is None: folderName = DEFAULT_WRITEABLE_LOG_FOLDERPATH
@@ -403,7 +440,7 @@ def addLogfile( projectName:str, folderName:Optional[Path]=None ) -> Tuple[Path,
     backupAnyExistingFile( filepath, numBackups=4 )
     #if os.access( filepath, os.F_OK ):
         #if __name__ == '__main__':
-            #vPrint( 'Quiet', debuggingThisModule, filepath, 'already exists -- renaming it first!' )
+            #dPrint( 'Quiet', debuggingThisModule, filepath, 'already exists -- renaming it first!' )
         #if os.access( filepath+'.bak', os.F_OK ):
             #os.remove( filepath+'.bak' )
         #os.rename( filepath, filepath+'.bak' )
@@ -421,8 +458,7 @@ def removeLogfile( projectHandler ) -> None:
     """
     Removes the project specific logger.
     """
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
+    fnPrint( debuggingThisModule, "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
 
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
@@ -437,7 +473,7 @@ def getLatestPythonModificationDate() -> str:
     Goes through the .py files in the current folder
         and tries to find the latest modification date.
     """
-    #if 1 or debugFlag and debuggingThisModule: vPrint( 'Quiet', debuggingThisModule, "getLatestPythonModificationDate()…" )
+    fnPrint( debuggingThisModule, "getLatestPythonModificationDate()" )
 
     #collectedFilepaths = []
     latestYYYY, latestMM, latestDD = 1999, 0, 0
@@ -451,28 +487,28 @@ def getLatestPythonModificationDate() -> str:
                        startFolderpath.joinpath( 'Online/'),
                        startFolderpath.joinpath( 'Misc/'),
                        ):
-        #vPrint( 'Quiet', debuggingThisModule, f"folderpath = '{folderpath}'" )
+        #dPrint( 'Quiet', debuggingThisModule, f"folderpath = '{folderpath}'" )
         searchString = 'LAST_MODIFIED_DATE = '
         for filename in os.listdir( folderpath ):
-            # vPrint( 'Quiet', debuggingThisModule, f"filename = '{filename}'" )
+            # dPrint( 'Quiet', debuggingThisModule, f"filename = '{filename}'" )
             filepath = folderpath.joinpath( filename )
-            #vPrint( 'Quiet', debuggingThisModule, f"filepath = '{filepath}'" )
+            #dPrint( 'Quiet', debuggingThisModule, f"filepath = '{filepath}'" )
             if filepath.is_file() and filepath.name.endswith( '.py' ):
-                #vPrint( 'Quiet', debuggingThisModule, f"  Checking '{filepath}' …" )
+                #dPrint( 'Quiet', debuggingThisModule, f"  Checking '{filepath}' …" )
                 with open( filepath, 'rt', encoding='utf-8' ) as pythonFile:
                     for line in pythonFile:
                         if line.startswith( searchString ):
-                            # vPrint( 'Quiet', debuggingThisModule, filepath, line )
-                            #vPrint( 'Quiet', debuggingThisModule, filepath )
+                            # dPrint( 'Quiet', debuggingThisModule, filepath, line )
+                            #dPrint( 'Quiet', debuggingThisModule, filepath )
                             lineBit = line[len(searchString):]
                             if '#' in lineBit: lineBit = lineBit.split('#',1)[0]
                             if lineBit[-1]=='\n': lineBit = lineBit[:-1] # Removing trailing newline character
                             lineBit = lineBit.replace("'",'').replace('"','').strip()
-                            #vPrint( 'Quiet', debuggingThisModule, '  {!r}'.format( lineBit ) )
+                            #dPrint( 'Quiet', debuggingThisModule, '  {!r}'.format( lineBit ) )
                             lineBits = lineBit.split( '-' )
                             assert len(lineBits) == 3 # YYYY MM DD
                             YYYY, MM, DD = int(lineBits[0]), int(lineBits[1]), int(lineBits[2])
-                            #vPrint( 'Quiet', debuggingThisModule, '  ', YYYY, MM, DD )
+                            #dPrint( 'Quiet', debuggingThisModule, '  ', YYYY, MM, DD )
                             if YYYY > latestYYYY:
                                 latestYYYY, latestMM, latestDD = YYYY, MM, DD
                                 #collectedFilepaths.append( (filepath,lineBit) )
@@ -483,7 +519,7 @@ def getLatestPythonModificationDate() -> str:
                                 latestDD = DD
                                 #collectedFilepaths.append( (filepath,lineBit) )
                             break
-    #vPrint( 'Quiet', debuggingThisModule, latestYYYY, latestMM, latestDD ); halt
+    #dPrint( 'Quiet', debuggingThisModule, latestYYYY, latestMM, latestDD ); halt
     return f'{latestYYYY}-{latestMM:02}-{latestDD:02}'
 # end of BibleOrgSysGlobals.getLatestPythonModificationDate
 
@@ -494,9 +530,9 @@ def getLatestPythonModificationDate() -> str:
 def printUnicodeInfo( text:str, description:str ) -> None:
     """
     """
-    vPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
+    fnPrint( debuggingThisModule, "{}:".format( description ) )
     for j,char in enumerate(text):
-        vPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+        dPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
             .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
 
 ##########################################################################################################
@@ -614,8 +650,8 @@ def backupAnyExistingFile( filenameOrFilepath:Union[Path,str], numBackups:int=1,
     """
     Make a backup copy/copies of a file if it exists.
     """
+    fnPrint( debuggingThisModule, "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
     if debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "backupAnyExistingFile( {!r}, {}, {!r} )".format( filenameOrFilepath, numBackups, extension ) )
         assert not str(filenameOrFilepath).lower().endswith( '.bak' )
 
     if extension[0] != '.': extension = '.' + extension
@@ -655,7 +691,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:
                 for line in possibleBibleFile:
                     lineNumber += 1
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #vPrint( 'Never', debuggingThisModule, filenameOrFilepath, lineNumber, line )
+                    #dPrint( 'Never', debuggingThisModule, filenameOrFilepath, lineNumber, line )
                     if numLines==1: return line # Always returns the first line (string)
                     lines.append( line )
                     if lineNumber >= numLines: return lines # Return a list of lines
@@ -701,7 +737,7 @@ def totalSize( obj, handlers={} ):
         seen.add(id(obj))
         s = sys.getsizeof(obj, default_size)
 
-        if verbosityLevel > 3: vPrint( 'Quiet', debuggingThisModule, s, type(obj), repr(obj) )
+        dPrint( 'Verbose', debuggingThisModule, s, type(obj), repr(obj) )
 
         for typ, handler in all_handlers.items():
             if isinstance(obj, typ):
@@ -876,7 +912,8 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     filepath1 = Path( folder1, filename1 ) if folder1 else filename1
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
-        if filename1==filename2: vPrint( 'Quiet', debuggingThisModule, "Comparing XML {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
+        if filename1==filename2:
+            vPrint( 'Quiet', debuggingThisModule, "Comparing XML {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
         else: vPrint( 'Quiet', debuggingThisModule, "Comparing XML files {!r} and {!r}…".format( filename1, filename2 ) )
 
     # Do a preliminary check on the readability of our files
@@ -899,7 +936,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         if element1.tag != element2.tag:
             if printFlag:
                 vPrint( 'Quiet', debuggingThisModule, "Element tags differ ({!r} and {!r})".format( element1.tag, element2.tag ) )
-                if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                vPrint( 'Info', debuggingThisModule, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
             location.append( "{}/{}".format( element1.tag, element2.tag ) )
@@ -908,21 +945,21 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         if len(attribs1) != len(attribs2):
             if printFlag:
                 vPrint( 'Quiet', debuggingThisModule, "Number of attributes differ ({} and {})".format( len(attribs1), len(attribs2) ) )
-                if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                vPrint( 'Info', debuggingThisModule, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
         for avPair in attribs1:
             if avPair not in attribs2:
                 if printFlag:
                     vPrint( 'Quiet', debuggingThisModule, "File1 has {} but not in file2 {}".format( avPair, attribs2 ) )
-                    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                    vPrint( 'Info', debuggingThisModule, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         for avPair in attribs2:
             if avPair not in attribs1:
                 if printFlag:
                     vPrint( 'Quiet', debuggingThisModule, "File2 has {} but not in file1 {}".format( avPair, attribs1 ) )
-                    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                    vPrint( 'Info', debuggingThisModule, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if element1.text != element2.text:
@@ -933,13 +970,13 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 else:
                     if printFlag:
                         vPrint( 'Quiet', debuggingThisModule, "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
-                        if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                        vPrint( 'Info', debuggingThisModule, "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
                     vPrint( 'Quiet', debuggingThisModule, "Element text differs:\n {!r}\n {!r}".format( element1.text, element2.text ) )
-                    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                    vPrint( 'Info', debuggingThisModule, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if element1.tail != element2.tail:
@@ -950,19 +987,19 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 else:
                     if printFlag:
                         vPrint( 'Quiet', debuggingThisModule, "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
-                        if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                        vPrint( 'Info', debuggingThisModule, "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
                 if printFlag:
                     vPrint( 'Quiet', debuggingThisModule, "Element tail differs:\n {!r}\n {!r}".format( element1.tail, element2.tail ) )
-                    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                    vPrint( 'Info', debuggingThisModule, "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if len(element1) != len(element2):
             if printFlag:
                 vPrint( 'Quiet', debuggingThisModule, "Number of subelements differ ({} and {})".format( len(element1), len(element2) ) )
-                if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  at", location )
+                vPrint( 'Info', debuggingThisModule, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
         # Compare the subelements
@@ -974,8 +1011,8 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     diffCount = 0
     location:List[str] = []
     compareElements( tree1, tree2 )
-    if diffCount and verbosityLevel > 1:
-        vPrint( 'Quiet', debuggingThisModule, "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
+    if diffCount:
+        vPrint( 'Normal', debuggingThisModule, "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
     return diffCount==0
 # end of BibleOrgSysGlobals.fileCompareXML
 
@@ -1106,7 +1143,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
         if attributes: result += ' ' + attributes
         result += '>'
     elif attributes:
-        #vPrint( 'Quiet', debuggingThisModule, "We are losing attributes here:", attributes ); halt
+        #dPrint( 'Quiet', debuggingThisModule, "We are losing attributes here:", attributes ); halt
         result += '<' + attributes + '>'
     if element.text: result += element.text
     for subelement in element:
@@ -1114,7 +1151,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     if level:
         result += '</' + element.tag + '>'
     if element.tail and element.tail.strip(): result += ' ' + element.tail.strip()
-    #else: vPrint( 'Quiet', debuggingThisModule, "getFlattenedXML: Result is {!r}".format( result ) )
+    #else: dPrint( 'Quiet', debuggingThisModule, "getFlattenedXML: Result is {!r}".format( result ) )
     return result
 # end of BibleOrgSysGlobals.getFlattenedXML
 
@@ -1126,9 +1163,9 @@ def isBlank( elementText ):
 
     If the text is None, returns None
     """
-    #vPrint( 'Quiet', debuggingThisModule, "isBlank( {!r} )".format( elementText ) )
+    # fnPrint( debuggingThisModule, "isBlank( {!r} )".format( elementText ) )
     if elementText is None: return True
-    #vPrint( 'Quiet', debuggingThisModule, "isspace()", elementText.isspace() )
+    #dPrint( 'Quiet', debuggingThisModule, "isspace()", elementText.isspace() )
     return elementText.isspace()
 # end of BibleOrgSysGlobals.isBlank
 
@@ -1162,9 +1199,9 @@ def applyStringAdjustments( originalText, adjustmentList ):
         if debugFlag: assert text[ix+offset:ix+offset+lenFS] == findStr # Our find string must be there
         elif text[ix+offset:ix+offset+lenFS] != findStr:
             logging.error( "applyStringAdjustments programming error -- given bad data for {!r}: {}".format( originalText, adjustmentList ) )
-        #vPrint( 'Quiet', debuggingThisModule, "before", repr(text) )
+        #dPrint( 'Quiet', debuggingThisModule, "before", repr(text) )
         text = text[:ix+offset] + replaceStr + text[ix+offset+lenFS:]
-        #vPrint( 'Quiet', debuggingThisModule, " after", repr(text) )
+        #dPrint( 'Quiet', debuggingThisModule, " after", repr(text) )
         offset += lenRS - lenFS
     return text
 # end of BibleOrgSysGlobals.applyStringAdjustments
@@ -1225,28 +1262,28 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         if not os.access( folderName, os.R_OK ): # Make the folderName hierarchy if necessary
             os.makedirs( folderName )
         filepath = Path( folderName, filename )
-    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, _("Saving object to {}…").format( filepath ) )
+    vPrint( 'Info', debuggingThisModule, _("Saving object to {}…").format( filepath ) )
 
     if disassembleObjectFlag: # Pickles an object attribute by attribute (to help narrow down segfault)
-        vPrint( 'Quiet', debuggingThisModule, '\nobject', disassembleObjectFlag, dir(theObject) )
+        dPrint( 'Quiet', debuggingThisModule, '\nobject', disassembleObjectFlag, dir(theObject) )
         for name in dir( theObject ):
             a = theObject.__getattribute__( name )
             t = type( a )
             ts = str( t )
             f = 'pickle' + name
-            vPrint( 'Quiet', debuggingThisModule, 'attrib', name, ts )
+            dPrint( 'Quiet', debuggingThisModule, 'attrib', name, ts )
             if '__' not in name and 'method' not in ts:
-                vPrint( 'Quiet', debuggingThisModule, '  go' )
+                dPrint( 'Quiet', debuggingThisModule, '  go' )
                 if name=='books':
-                    vPrint( 'Quiet', debuggingThisModule, '  books' )
+                    dPrint( 'Quiet', debuggingThisModule, '  books' )
                     for bn in a:
-                        vPrint( 'Quiet', debuggingThisModule, '     ', bn )
+                        dPrint( 'Quiet', debuggingThisModule, '     ', bn )
                         b = a[bn]
-                        vPrint( 'Quiet', debuggingThisModule, b.BBB )
+                        dPrint( 'Quiet', debuggingThisModule, b.BBB )
                         pickleObject( b, f, folderName )
                 else:
                     pickleObject( a, f, folderName, disassembleObjectFlag=True )
-            else: vPrint( 'Quiet', debuggingThisModule, '  skip' )
+            else: dPrint( 'Quiet', debuggingThisModule, '  skip' )
 
     with open( filepath, 'wb' ) as pickleOutputFile:
         try:
@@ -1268,7 +1305,7 @@ def unpickleObject( filename, folderName=None ):
     assert filename
     if folderName is None: folderName = DEFAULT_WRITEABLE_CACHE_FOLDERPATH
     filepath = Path( folderName, filename )
-    if verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, _("Loading object from pickle file {}…").format( filepath ) )
+    vPrint( 'Info', debuggingThisModule, _("Loading object from pickle file {}…").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
 # end of BibleOrgSysGlobals.unpickleObject
@@ -1288,15 +1325,9 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
         so that custom command line parameters can be added
         then addStandardOptionsAndProcess must be called on it.
     """
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderpath!r} )…" )
+    fnPrint( debuggingThisModule, f"BibleOrgSysGlobals.setup( {shortProgName!r}, {progVersion!r}, {lastModDate} {loggingFolderpath!r} )" )
     setupLoggingToFile( shortProgName, progVersion, folderpath=loggingFolderpath )
     logging.info( f"{shortProgName} v{progVersion} started at {programStartTime.strftime('%H:%M')}" )
-
-    if verbosityLevel > 2:
-        vPrint( 'Quiet', debuggingThisModule, "  This program comes with ABSOLUTELY NO WARRANTY." )
-        vPrint( 'Quiet', debuggingThisModule, "  It is free software, and you are welcome to redistribute it under certain conditions." )
-        vPrint( 'Quiet', debuggingThisModule, "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
     parser = ArgumentParser( description='{} v{} {} {}'.format( shortProgName, progVersion, _("last modified"), lastModDate ) )
@@ -1333,7 +1364,7 @@ def setVerbosity( verbosityLevelParameter ):
             verbosityString = verbosityLevelParameter
             verbosityLevel = 4
         else: logging.error( f"Invalid '{verbosityLevelParameter}' verbosity parameter" )
-        
+
     else: # assume it's an integer
         if verbosityLevelParameter == 0:
             verbosityLevel = verbosityLevelParameter
@@ -1352,9 +1383,8 @@ def setVerbosity( verbosityLevelParameter ):
             verbosityString = 'Verbose'
         else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
 
-    if debugFlag:
-        vPrint( 'Quiet', debuggingThisModule, '  Verbosity =', verbosityString )
-        vPrint( 'Quiet', debuggingThisModule, '  VerbosityLevel =', verbosityLevel )
+    dPrint( 'Verbose', debuggingThisModule, '  Verbosity =', verbosityString )
+    dPrint( 'Verbose', debuggingThisModule, '  VerbosityLevel =', verbosityLevel )
 # end of BibleOrgSysGlobals.setVerbosity function
 
 
@@ -1370,8 +1400,13 @@ def introduceProgram( theirName:str, theirProgramNameVersion:str, theirLastModif
             if verbosityLevel > 3 \
             or latestPythonModificationDate != theirLastModifiedDate:
                 vPrint( 'Quiet', debuggingThisModule, f"  ({_('Last BibleOrgSys code update was')} {latestPythonModificationDate})" )
-    elif verbosityLevel > 0:
+    else:
         vPrint( 'Quiet', debuggingThisModule, theirProgramNameVersion )
+
+    vPrint( 'Normal', debuggingThisModule, """  This program comes with ABSOLUTELY NO WARRANTY.
+  It is free software, and you are welcome to redistribute it under certain conditions.
+  See the license in file 'gpl-3.0.txt' for more details.
+  """ )
 # end of BibleOrgSysGlobals.introduceProgram function
 
 
@@ -1381,8 +1416,7 @@ def setDebugFlag( newValue=True ) -> None:
     """
     global debugFlag
     debugFlag = newValue
-    if (debugFlag and verbosityLevel> 2) or verbosityLevel>3:
-        vPrint( 'Quiet', debuggingThisModule, '  debugFlag =', debugFlag )
+    dPrint( 'Verbose', debuggingThisModule, '  debugFlag =', debugFlag )
 # end of BibleOrgSysGlobals.setDebugFlag
 
 
@@ -1392,8 +1426,7 @@ def setStrictCheckingFlag( newValue=True ):
     """
     global strictCheckingFlag
     strictCheckingFlag = newValue
-    if (strictCheckingFlag and verbosityLevel> 2) or verbosityLevel>3:
-        vPrint( 'Quiet', debuggingThisModule, '  strictCheckingFlag =', strictCheckingFlag )
+    dPrint( 'Verbose', debuggingThisModule, '  strictCheckingFlag =', strictCheckingFlag )
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
@@ -1417,9 +1450,9 @@ def preloadCommonData() -> None:
     #USFM2Markers = USFM2Markers().loadData()
     #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
     #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    #vPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
+    #dPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
     #for marker in ( ):
-        #vPrint( 'Quiet', debuggingThisModule, marker )
+        #dPrint( 'Quiet', debuggingThisModule, marker )
         #USFM2ParagraphMarkers.remove( marker )
     # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
@@ -1427,7 +1460,7 @@ def preloadCommonData() -> None:
     # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
     #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
     #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
-    #vPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
+    #dPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
     from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
     loadedUSFMMarkers = USFM3Markers().loadData()
     assert loadedUSFMMarkers # Why didn't this load ???
@@ -1447,8 +1480,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     Then preloads common data structures.
     """
     global commandLineArguments
-    if debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
+    fnPrint( debuggingThisModule, "BibleOrgSysGlobals.addStandardOptionsAndProcess( …, {} )".format( exportAvailable ) )
 
     verbosityGroup = parserObject.add_argument_group( 'Verbosity Group', 'Console verbosity controls' )
     mainVerbosityGroup = verbosityGroup.add_mutually_exclusive_group()
@@ -1483,15 +1515,15 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     if maxProcesses > 1:
         # Don't use 1-3 processes
         reservedProcesses = max( 1, maxProcesses*15//100 )
-        # vPrint( 'Quiet', debuggingThisModule, "reservedProcesses", reservedProcesses )
+        # dPrint( 'Quiet', debuggingThisModule, "reservedProcesses", reservedProcesses )
         maxProcesses = maxProcesses - reservedProcesses
-        # vPrint( 'Quiet', debuggingThisModule, "maxProcesses", maxProcesses )
+        # dPrint( 'Quiet', debuggingThisModule, "maxProcesses", maxProcesses )
     if commandLineArguments.single: maxProcesses = 1
     if debugFlag or debuggingThisModule:
         if maxProcesses > 1:
-            vPrint( 'Quiet', debuggingThisModule, f"DEBUG/SINGLE MODE: Reducing maxProcesses from {maxProcesses} down to 1" )
+            dPrint( 'Quiet', debuggingThisModule, f"DEBUG/SINGLE MODE: Reducing maxProcesses from {maxProcesses} down to 1" )
         maxProcesses = 1 # Limit to one process
-        vPrint( 'Quiet', debuggingThisModule, "commandLineArguments: {}".format( commandLineArguments ) )
+        dPrint( 'Quiet', debuggingThisModule, "commandLineArguments: {}".format( commandLineArguments ) )
 
     preloadCommonData()
 # end of BibleOrgSysGlobals.addStandardOptionsAndProcess
@@ -1502,12 +1534,12 @@ def printAllGlobals( indent=None ):
     Print all global variables (for debugging usually).
     """
     if indent is None: indent = 2
-    vPrint( 'Quiet', debuggingThisModule, "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
-    vPrint( 'Quiet', debuggingThisModule, "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
-    vPrint( 'Quiet', debuggingThisModule, "{}maxProcesses: {}".format( ' '*indent, maxProcesses ) )
-    vPrint( 'Quiet', debuggingThisModule, "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
-    vPrint( 'Quiet', debuggingThisModule, "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
-    vPrint( 'Quiet', debuggingThisModule, "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}maxProcesses: {}".format( ' '*indent, maxProcesses ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
+    dPrint( 'Quiet', debuggingThisModule, "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
 # end of BibleOrgSysGlobals.printAllGlobals
 
 
@@ -1536,8 +1568,29 @@ def closedown( cProgName, cProgVersion ):
     """
     msg = f"{cProgName} v{cProgVersion} finished at {datetime.now().strftime('%H:%M')} after {elapsedTime(programStartTime)}."
     logging.info( msg )
-    if debugFlag or verbosityLevel >= 2: vPrint( 'Quiet', debuggingThisModule, msg )
+    vPrint( 'Normal', debuggingThisModule, msg )
 # end of BibleOrgSysGlobals.closedown
+
+
+setVerbosity( verbosityString )
+#if 0 and __name__ != '__main__':
+    ## Load Bible data sets that are globally useful
+    #from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
+    #BibleBooksCodes = BibleBooksCodes().loadData()
+    #from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
+    #USFMMarkers = USFM3Markers().loadData()
+    #USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    ##dPrint( 'Quiet', debuggingThisModule, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
+    ##for marker in ( ):
+        ##dPrint( 'Quiet', debuggingThisModule, marker )
+        ##USFMParagraphMarkers.remove( marker )
+    ## was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    ##    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
+    ##    'qm1', 'qm2', 'qm3', 'qm4']
+    ## now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    ##    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
+    ##    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
+    ##dPrint( 'Quiet', debuggingThisModule, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
 
 
 
@@ -1551,73 +1604,39 @@ def briefDemo() -> None:
 
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'Bible.py' ), numLines=2 ) # Simple filename
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "\nBible.py starts with {!r}".format( line1a ) )
+    vPrint( 'Quiet', debuggingThisModule, "\nBible.py starts with {!r}".format( line1a ) )
     line1b = peekIntoFile( 'README.rst', BOS_LIBRARY_BASE_FOLDERPATH, 3 ) # Filename and folderName
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "README.rst starts with {!r}".format( line1b ) )
+    vPrint( 'Quiet', debuggingThisModule, "README.rst starts with {!r}".format( line1b ) )
     line1c = peekIntoFile( BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' ) ) # Filepath
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
+    vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
 
-    if verbosityLevel > 0:
-        vPrint( 'Quiet', debuggingThisModule, "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
 
     accentedString1 = 'naïve café'
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "\nRemoving accents…" )
+    vPrint( 'Quiet', debuggingThisModule, "\nRemoving accents…" )
     for accentedString in ( accentedString1, dan11, ):
         for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
-            if verbosityLevel > 0:
-                vPrint( 'Quiet', debuggingThisModule, "  Given: {}".format( thisAccentedString ) )
-                vPrint( 'Quiet', debuggingThisModule, "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "  Given: {}".format( thisAccentedString ) )
+            vPrint( 'Quiet', debuggingThisModule, "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
     for accentedChar in ACCENT_DICT:
         got = removeAccents(accentedChar)
         wanted = ACCENT_DICT[accentedChar]
-        if verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+        vPrint( 'Quiet', debuggingThisModule, "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
 
     longText = "The quick brown fox jumped over the lazy brown dog."
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "\nGiven: {}".format( longText ) )
+    vPrint( 'Quiet', debuggingThisModule, "\nGiven: {}".format( longText ) )
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    if verbosityLevel > 0:
-        vPrint( 'Quiet', debuggingThisModule, "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
 
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, '\nstripWordPunctuation() tests…' )
+    vPrint( 'Quiet', debuggingThisModule, '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        if verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
+        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
 
-    if verbosityLevel > 0: vPrint( 'Quiet', debuggingThisModule, "\ncpu_count", os.cpu_count() )
-# end of BibleOrgSysGlobals.demo
-
-
-setVerbosity( verbosityString )
-#if 0 and __name__ != '__main__':
-    ## Load Bible data sets that are globally useful
-    #from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
-    #BibleBooksCodes = BibleBooksCodes().loadData()
-    #from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
-    #USFMMarkers = USFM3Markers().loadData()
-    #USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
-    ##vPrint( 'Quiet', debuggingThisModule, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
-    ##for marker in ( ):
-        ##vPrint( 'Quiet', debuggingThisModule, marker )
-        ##USFMParagraphMarkers.remove( marker )
-    ## was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    ##    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
-    ##    'qm1', 'qm2', 'qm3', 'qm4']
-    ## now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    ##    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
-    ##    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
-    ##vPrint( 'Quiet', debuggingThisModule, len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
-
-
-def briefDemo() -> None:
-    """
-    Brief demo to check class is working
-    """
-    introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', debuggingThisModule, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.briefDemo
 
 def fullDemo() -> None:
@@ -1625,6 +1644,43 @@ def fullDemo() -> None:
     Full demo to check class is working
     """
     introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    if verbosityLevel>2: printAllGlobals()
+
+    # Demonstrate peekAtFirstLine function
+    line1a = peekIntoFile( BOS_SOURCE_BASE_FOLDERPATH.joinpath( 'Bible.py' ), numLines=2 ) # Simple filename
+    vPrint( 'Quiet', debuggingThisModule, "\nBible.py starts with {!r}".format( line1a ) )
+    line1b = peekIntoFile( 'README.rst', BOS_LIBRARY_BASE_FOLDERPATH, 3 ) # Filename and folderName
+    vPrint( 'Quiet', debuggingThisModule, "README.rst starts with {!r}".format( line1b ) )
+    line1c = peekIntoFile( BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleBooksCodes.xml' ) ) # Filepath
+    vPrint( 'Quiet', debuggingThisModule, "BibleBooksCodes.xml starts with {!r}".format( line1c ) )
+
+    vPrint( 'Quiet', debuggingThisModule, "\nFirst one made string safe: {!r}".format( makeSafeString( line1a[0] ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "First one made filename safe: {!r}".format( makeSafeFilename( line1a[0] ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "Last one made string safe: {!r}".format( makeSafeString( line1c ) ) )
+    vPrint( 'Quiet', debuggingThisModule, "Last one made filename safe: {!r}".format( makeSafeFilename( line1c ) ) )
+
+    accentedString1 = 'naïve café'
+    dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
+    vPrint( 'Quiet', debuggingThisModule, "\nRemoving accents…" )
+    for accentedString in ( accentedString1, dan11, ):
+        for thisAccentedString in ( accentedString, accentedString.lower(), accentedString.upper(), ):
+            vPrint( 'Quiet', debuggingThisModule, "  Given: {}".format( thisAccentedString ) )
+            vPrint( 'Quiet', debuggingThisModule, "    removeAccents gave: {}".format( removeAccents( thisAccentedString ) ) )
+    for accentedChar in ACCENT_DICT:
+        got = removeAccents(accentedChar)
+        wanted = ACCENT_DICT[accentedChar]
+        vPrint( 'Quiet', debuggingThisModule, "  Given: {!r} got {!r}{}".format( accentedChar, got, '' if got==wanted else ' (hoped for {!r})'.format( wanted ) ) )
+
+    longText = "The quick brown fox jumped over the lazy brown dog."
+    vPrint( 'Quiet', debuggingThisModule, "\nGiven: {}".format( longText ) )
+    adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
+    vPrint( 'Quiet', debuggingThisModule, "  {!r}->adj->{!r}".format( longText, applyStringAdjustments( longText, adjustments ) ) )
+
+    vPrint( 'Quiet', debuggingThisModule, '\nstripWordPunctuation() tests…' )
+    for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
+        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
+
+    vPrint( 'Quiet', debuggingThisModule, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.fullDemo
 
 if __name__ == '__main__':

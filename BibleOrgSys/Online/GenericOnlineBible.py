@@ -35,7 +35,7 @@ if __name__ == '__main__':
     import re
 import logging # Append the containing folder to the path to search for the BOS
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Misc.singleton import singleton
 
 
@@ -94,7 +94,7 @@ class GenericOnlineBible:
     # end of GenericOnlineBible.__len__
 
 
-    def __contains__( self, BBB ):
+    def __contains__( self, BBB:str ):
         """
         This method checks whether the Bible contains the BBB book.
         Returns True or False.

@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-16' # by RJH
@@ -310,14 +310,14 @@ class BibleBookOrderSystem:
     # end of BibleBookOrderSystem.numBooks
 
 
-    def __contains__( self, BBB ):
+    def __contains__( self, BBB:str ):
         """ Returns True/False if the book is in this system. """
         assert len(BBB) == 3
         return BBB in self.__BookOrderList
     # end of BibleBookOrderSystem.__contains__
 
 
-    def containsBook( self, BBB ):
+    def containsBook( self, BBB:str ):
         """ Return True/False if the book is in this system. """
         assert len(BBB) == 3
         return BBB in self.__BookOrderList
@@ -329,7 +329,7 @@ class BibleBookOrderSystem:
         return self.__systemName
     # end of BibleBookOrderSystem.getBookOrderSystemName
 
-    def getBookOrderPosition( self, BBB ):
+    def getBookOrderPosition( self, BBB:str ):
         """ Returns the book position number (1..n). """
         assert len(BBB) == 3
         return self.__BookOrderBookDict[BBB]
@@ -348,7 +348,7 @@ class BibleBookOrderSystem:
     # end of BibleBookOrderSystem.getBookOrderList
 
 
-    def getPreviousBookCode( self, BBB ):
+    def getPreviousBookCode( self, BBB:str ):
         """
         Returns the book (if any) before the given one.
         Otherwise returns None.
@@ -359,7 +359,7 @@ class BibleBookOrderSystem:
     # end of BibleBookOrderSystem.getNextBookCode
 
 
-    def getNextBookCode( self, BBB ):
+    def getNextBookCode( self, BBB:str ):
         """ Returns the book (if any) after the given one. """
         assert len(BBB)==3
         nextPosition = self.__BookOrderBookDict[BBB] + 1

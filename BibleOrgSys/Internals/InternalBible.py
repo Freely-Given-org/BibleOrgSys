@@ -68,13 +68,13 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-10' # by RJH
+LAST_MODIFIED_DATE = '2020-05-17' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -111,6 +111,8 @@ class InternalBible:
         """
         Create the InternalBible object with empty variables.
         """
+        fnPrint( debuggingThisModule, "InternalBible.__init__()" )
+
         # Set up empty variables for the object
         #       some of which will be filled in later depending on what is known from the Bible type
         self.name = self.givenName = self.shortName = self.projectName = self.abbreviation = None
@@ -140,7 +142,7 @@ class InternalBible:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        vPrint( 'Never', debuggingThisModule, "InternalBible.__str__()…" )
+        # fnPrint( debuggingThisModule, "InternalBible.__str__()" )
 
         set1 = ( 'Title', 'Description', 'Version', 'Revision', ) # Ones to print at verbosityLevel > 1
         set2 = ( 'Status', 'Font', 'Copyright', 'Licence', ) # Ones to print at verbosityLevel > 2
@@ -191,7 +193,7 @@ class InternalBible:
     # end of InternalBible.__len__
 
 
-    def __contains__( self, BBB ):
+    def __contains__( self, BBB:str ):
         """
         This method checks whether the Bible (as loaded so far) contains the BBB book.
 
@@ -215,7 +217,7 @@ class InternalBible:
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
-        #vPrint( 'Quiet', debuggingThisModule, _("__getitem__( {} )").format( keyIndex ) )
+        # fnPrint( debuggingThisModule, f"InternalBible.__getitem__( {keyIndex} )" )
         #vPrint( 'Quiet', debuggingThisModule, list(self.books.items()) )
         if isinstance( keyIndex, int ):
             return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
@@ -244,7 +246,7 @@ class InternalBible:
 
         We need this to standardise all the different Bible types.
         """
-        vPrint( 'Quiet', debuggingThisModule, "discoverProperties for {}".format( self.objectTypeString ) )
+        fnPrint( debuggingThisModule, f"InternalBible.discoverProperties() for {self.objectTypeString}" )
         InternalBibleProperties[self.objectTypeString] = {}
 
         for myPropertyName in self.__dict__:
@@ -316,7 +318,7 @@ class InternalBible:
         This method should be called once all books are loaded.
         May be called again if external metadata is also loaded.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "InternalBible.__getNames()" )
+        fnPrint( debuggingThisModule, "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
         if not self.name and self.givenName: self.name = self.givenName
         if not self.name and 'FullName' in self.settingsDict: self.name = self.settingsDict['FullName']
@@ -339,6 +341,8 @@ class InternalBible:
 
         Returns a string or None.
         """
+        fnPrint( debuggingThisModule, f"InternalBible.getAName( abbrevFirst={abbrevFirst} )" )
+
         if abbrevFirst and self.abbreviation: return self.abbreviation
 
         if self.name: return self.name
@@ -360,9 +364,9 @@ class InternalBible:
             or already failed at loading.
         If not, tries to load the book.
         """
-        vPrint( 'Never', debuggingThisModule, f"InternalBible.loadBookIfNecessary( {BBB} )…" )
-            #vPrint( 'Quiet', debuggingThisModule, "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
-            #vPrint( 'Quiet', debuggingThisModule, "bnr {}".format( self.bookNeedsReloading ) )
+        fnPrint( debuggingThisModule, f"InternalBible.loadBookIfNecessary( {BBB} )" )
+        #vPrint( 'Quiet', debuggingThisModule, "b {} tlb {}".format( self.books, self.triedLoadingBook ) )
+        #vPrint( 'Quiet', debuggingThisModule, "bnr {}".format( self.bookNeedsReloading ) )
 
         if (BBB not in self.books and BBB not in self.triedLoadingBook) \
         or (BBB in self.bookNeedsReloading and self.bookNeedsReloading[BBB]):
@@ -389,16 +393,16 @@ class InternalBible:
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, 'NOLOAD', BBB in self.books, BBB in self.triedLoadingBook, BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] )
+            vPrint( 'Quiet', debuggingThisModule, 'NOLOAD1', BBB in self.books, BBB in self.triedLoadingBook )
+            vPrint( 'Quiet', debuggingThisModule, 'NOLOAD2', BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE' )
     # end of InternalBible.loadBookIfNecessary
 
 
-    def reloadBook( self, BBB ):
+    def reloadBook( self, BBB:str ):
         """
         Tries to load or reload a book (perhaps because we changed it on disk).
         """
-        vPrint( 'Never', debuggingThisModule, f"InternalBible.reloadBook( {BBB} )…" )
+        fnPrint( debuggingThisModule, f"InternalBible.reloadBook( {BBB} )" )
 
         #if BBB not in self.books and BBB not in self.triedLoadingBook:
         try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
@@ -411,12 +415,12 @@ class InternalBible:
     # end of InternalBible.reloadBook
 
 
-    def reProcessBook( self, BBB ):
+    def reProcessBook( self, BBB:str ):
         """
         Tries to re-index a loaded book.
         """
+        fnPrint( debuggingThisModule, f"InternalBible.reProcessBook( {BBB} )" )
         if BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, f"InternalBible.reProcessBook( {BBB} )…" )
             assert BBB in self.books
 
         #try: del self.discoveryResults # These are now out-of-date
@@ -437,7 +441,7 @@ class InternalBible:
         Doesn't do a "discover" yet, in case it's not really required yet,
             coz discover() is quite time-consuming.
         """
-        vPrint( 'Never', debuggingThisModule, "InternalBible.doPostLoadProcessing()…" )
+        fnPrint( debuggingThisModule, "InternalBible.doPostLoadProcessing()" )
 
         self.loadedAllBooks = True
 
@@ -569,8 +573,8 @@ class InternalBible:
             Copyright, Rights
             Creator, Publisher
         """
+        fnPrint( debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )" )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, f"applySuppliedMetadata( {applyMetadataType} )…" )
             assert applyMetadataType in ( 'Project','File', 'SSF', 'PTX7','PTX8', 'OSIS', 'uW',
                                          'e-Sword-Bible','e-Sword-Commentary', 'MySword','MyBible',
                                          'BCV','Online','theWord','Unbound','VerseView','Forge4SS','VPL' )
@@ -857,7 +861,7 @@ class InternalBible:
     # end of InternalBible.applySuppliedMetadata
 
 
-    def getSetting( self, settingName ):
+    def getSetting( self, settingName:str ):
         """
         Given a setting name, tries to find a value for that setting.
 
@@ -867,7 +871,7 @@ class InternalBible:
 
         Returns None if nothing found.
         """
-        vPrint( 'Never', debuggingThisModule, _("getSetting( {} )").format( settingName ) )
+        fnPrint( debuggingThisModule, f"getSetting( {settingName} )" )
         #vPrint( 'Quiet', debuggingThisModule, "\nSettingsDict:", self.settingsDict )
         #vPrint( 'Quiet', debuggingThisModule, "\nSupplied Metadata:", self.suppliedMetadata )
 
@@ -883,7 +887,7 @@ class InternalBible:
     # end of InternalBible.getSetting
 
 
-    def getAssumedBookName( self, BBB ):
+    def getAssumedBookName( self, BBB:str ):
         """
         Gets the assumed book name for the given book reference code.
 
@@ -896,7 +900,7 @@ class InternalBible:
     # end of InternalBible.getAssumedBookName
 
 
-    def getLongTOCName( self, BBB ):
+    def getLongTOCName( self, BBB:str ):
         """
         Gets the long table of contents book name for the given book reference code.
         """
@@ -906,7 +910,7 @@ class InternalBible:
     # end of InternalBible.getLongTOCName
 
 
-    def getShortTOCName( self, BBB ):
+    def getShortTOCName( self, BBB:str ):
         """Gets the short table of contents book name for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         try: return self.books[BBB].shortTOCName
@@ -914,7 +918,7 @@ class InternalBible:
     # end of InternalBible.getShortTOCName
 
 
-    def getBooknameAbbreviation( self, BBB ):
+    def getBooknameAbbreviation( self, BBB:str ):
         """Gets the book abbreviation for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
         try: return self.books[BBB].booknameAbbreviation
@@ -931,16 +935,16 @@ class InternalBible:
         return [BBB for BBB in self.books]
 
 
-    def stashBook( self, bookData ):
+    def stashBook( self, bookData ) -> None:
         """
         Save the Bible book into our Bible object
             and update our indexes.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "stashBook( {} )".format( bookData ) )
+        fnPrint( debuggingThisModule, f"stashBook( {len(bookData)} )" )
+
         BBB = bookData.BBB
         if BBB in self.books: # already
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, _("stashBook: Already have"), self.getBookList() )
+            vPrint( 'Info', debuggingThisModule, _("stashBook: Already have"), self.getBookList() )
             import __main__
             #vPrint( 'Quiet', debuggingThisModule, "main file", __main__.__file__ )
             suppressErrorFlag = False
@@ -964,7 +968,7 @@ class InternalBible:
     # end of InternalBible.stashBook
 
 
-    def pickle( self, filename=None, folder=None ):
+    def pickle( self, filename=None, folderpath=None ):
         """
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
             If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
@@ -972,7 +976,7 @@ class InternalBible:
 
         Returns a True/False flag for success.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
+        #vPrint( 'Quiet', debuggingThisModule, "pickle( *, {}, {} )".format( repr(filename), repr(folderpath ) ) )
         #vPrint( 'Quiet', debuggingThisModule, repr(self.objectNameString), repr(self.objectTypeString) )
         #vPrint( 'Quiet', debuggingThisModule, (self.abbreviation), repr(self.name) )
         if filename is None:
@@ -982,8 +986,8 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag: assert filename
         filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
         vPrint( 'Info', debuggingThisModule, _("pickle: Saving {} to {}…") \
-                .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folder )
+                .format( self.objectNameString, filename if folderpath is None else os.path.join( folderpath, filename ) ) )
+        try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folderpath )
         except TypeError: # Could be a yet undebugged SWIG error
             pResult = False
             errorClass, exceptionInstance, traceback = sys.exc_info()
@@ -1185,23 +1189,22 @@ class InternalBible:
     # end of InternalBible.getAddedUnits
 
 
-    def _discoverBookMP( self, BBB ):
-        """
-        """
-        # TODO: Make this a lambda function
-        return self.books[BBB]._discover()
-    # end of _discoverBookMP
+    # def _discoverBookMP( self, BBB:str ):
+    #     """
+    #     """
+    #     # TODO: Make this a lambda function
+    #     return self.books[BBB]._discover()
+    # # end of _discoverBookMP
 
     def discover( self ) -> None:
         """
         Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards.
         """
-        if BibleOrgSysGlobals.verbosityLevel > 1 or debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "InternalBible:discover()…" )
-        if BibleOrgSysGlobals.debugFlag and 'discoveryResults' in self.__dict__:
-            logging.warning( _("discover: We had done this already!") ) # We've already called this once
-            halt
+        fnPrint( debuggingThisModule, "InternalBible:discover()" )
+        if 'discoveryResults' in self.__dict__:
+            logging.warning( _("discover: We had done this already!") )
+            if debuggingThisModule: halt
 
         self.discoveryResults = {}
 
@@ -1215,12 +1218,14 @@ class InternalBible:
 
         vPrint( 'Info', debuggingThisModule, _("Running discover on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
-        if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
+        # NOTE: Multiprocessing discover is considerably slower, hence disabled
+        #           68 books 12 sec, but multithreaded 16s using 67s of processing!!!
+        if 0 and self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
         and BibleOrgSysGlobals.maxProcesses > 1 \
         and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             vPrint( 'Normal', debuggingThisModule, _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
             vPrint( 'Normal', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
-            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
                 assert len(results) == len(self.books)
@@ -1246,7 +1251,7 @@ class InternalBible:
         Assuming that the individual discoveryResults have been collected for each book,
             puts them all together.
         """
-        vPrint( 'Info', debuggingThisModule, "InternalBible:__aggregateDiscoveryResults()" )
+        fnPrint( debuggingThisModule, "InternalBible:__aggregateDiscoveryResults()" )
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert 'ALL' not in self.discoveryResults
         for BBB in self.discoveryResults:
@@ -1429,15 +1434,16 @@ class InternalBible:
                 else:
                     #vPrint( 'Quiet', debuggingThisModule, "key", repr(key), "value", repr(value) )
                     vPrint( 'Quiet', debuggingThisModule, " ", key, "in", value if value<len(self) else "all", "books" )
+        # print( f"  __aggregateDiscoveryResults() finished." )
     # end of InternalBible.__aggregateDiscoveryResults
 
 
-    def _makeSectionIndexMP( self, BBB ):
-        """
-        """
-        # TODO: Make this a lambda function
-        return self.books[BBB]._makeSectionIndex()
-    # end of _discoverBookMP
+    # def _makeBookSectionIndexMP( self, BBB:str ):
+    #     """
+    #     """
+    #     # TODO: Make this a lambda function
+    #     return self.books[BBB]._makeBookSectionIndex()
+    # # end of _makeBookSectionIndexMP
 
     def makeSectionIndex( self ):
         """
@@ -1446,28 +1452,42 @@ class InternalBible:
         Creates an index for each book of the Bible.
         """
         # Get our recommendations for added units -- only load this once per Bible
-        vPrint( 'Normal', debuggingThisModule, _("makeSectionIndex for {} Bible…").format( self.name ) )
-        if 'discoveryResults' not in self.__dict__: self.discover()
+        fnPrint( debuggingThisModule, f"makeSectionIndex() for {self.name} Bible" )
+        # print( "makeSectionIndex1", id(self) )
+        assert self.books
+        # assert len(self.books) == 68
+        assert 'discoveryResults' in self.__dict__
 
         self.sectionIndex = {}
 
         vPrint( 'Info', debuggingThisModule, _("Running makeSectionIndex on {}…").format( self.name ) )
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
-        if BibleOrgSysGlobals.maxProcesses > 1 \
-        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
+        # NOTE: Multiprocessing index build is considerably slower, hence disabled
+        if 0 and BibleOrgSysGlobals.maxProcesses > 1 \
+        and not BibleOrgSysGlobals.alreadyMultiprocessing:
+            BibleOrgSysGlobals.alreadyMultiprocessing = True
             vPrint( 'Normal', debuggingThisModule, _("Making section index for {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
             vPrint( 'Normal', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
-            BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self._makeSectionIndexMP, [BBB for BBB in self.books] ) # have the pool do our loads
+                results = pool.map( self._makeBookSectionIndexMP, [BBB for BBB in self.books] ) # have the pool do our loads
                 assert len(results) == len(self.books)
                 for j,BBB in enumerate( self.books ):
                     self.sectionIndex[BBB] = results[j] # Saves them in the correct order
+                assert len(self.sectionIndex) == len(self.books)
+            # assert len(self.books) == 68
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
-            for BBB in self.books: # Do individual book prechecks
-                vPrint( 'Verbose', debuggingThisModule, "  " + _("Making section index for {}…").format( BBB ) )
-                self.sectionIndex[BBB] = self.books[BBB]._makeSectionIndex()
+            from BibleOrgSys.Bible import Bible
+            # print( "makeSectionIndex2", id(self) )
+            for BBB,bookObject in self.books.items(): # Make individual book section indexes
+                vPrint( 'Verbose', debuggingThisModule, "  " + f"Making section index for {BBB}…" )
+                assert isinstance( bookObject.containerBibleObject, Bible )
+                # print( "makeSectionIndex", BBB, id(bookObject.containerBibleObject) )
+                assert bookObject.containerBibleObject.books
+                # assert len(bookObject.containerBibleObject.books) == 68
+                self.sectionIndex[BBB] = bookObject._makeBookSectionIndex()
+            assert len(self.sectionIndex) == len(self.books)
+        # assert len(self.books) == 68
     # end of InternalBible.makeSectionIndex()
 
 
@@ -1521,7 +1541,7 @@ class InternalBible:
 
         Returns a dictionary of result flags.
         """
-        vPrint( 'Normal', debuggingThisModule, "InternalBible-V{}.doExtensiveChecks: ".format(PROGRAM_VERSION) + _("Doing extensive checks on {} ({})…").format( self.name, self.objectTypeString ) )
+        fnPrint( debuggingThisModule, f"InternalBible-V{PROGRAM_VERSION}.doExtensiveChecks: " + _("Doing extensive checks on {} ({})").format( self.name, self.objectTypeString ) )
 
         if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
@@ -1750,8 +1770,7 @@ class InternalBible:
             or None if there was a problem.
         """
         from datetime import datetime
-        if BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, "makeErrorHTML( {!r}, {!r}, {!r} )".format( givenOutputFolder, titlePrefix, webPageTemplate ) )
+        fnPrint( debuggingThisModule, f"makeErrorHTML( {givenOutputFolder!r}, {titlePrefix!r}, {webPageTemplate!r} )" )
         #logging.info( "Doing Bible checks…" )
         #vPrint( 'Info', debuggingThisModule, "Doing Bible checks…" )
 
@@ -2172,7 +2191,7 @@ class InternalBible:
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
         """
-        vPrint( 'Never', debuggingThisModule, _("getNumChapters( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, f"getNumChapters( {BBB} )" )
         assert len(BBB) == 3
 
         #if 'KJV' not in self.sourceFolder and BBB in self.triedLoadingBook: halt
@@ -2190,7 +2209,7 @@ class InternalBible:
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        vPrint( 'Never', debuggingThisModule, _("getNumVerses( {}, {!r} )").format( BBB, C ) )
+        fnPrint( debuggingThisModule, f"getNumVerses( {BBB}, {C!r} )" )
         assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
@@ -2216,7 +2235,7 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.
         """
-        vPrint( 'Never', debuggingThisModule, "InternalBible.getContextVerseData( {} ) for {}".format( BCVReference, self.name ) )
+        fnPrint( debuggingThisModule, f"InternalBible.getContextVerseData( {BCVReference} ) for {self.name}" )
 
         if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
         else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
@@ -2234,7 +2253,7 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no CV reference.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "InternalBible.getVerseDataList( {} )".format( BCVReference ) )
+        fnPrint( debuggingThisModule, f"InternalBible.getVerseDataList( {BCVReference} )" )
         result = self.getContextVerseData( BCVReference )
         #vPrint( 'Quiet', debuggingThisModule, "  gVD", self.name, BCVReference, verseData )
         if result is None:
@@ -2264,7 +2283,7 @@ class InternalBible:
 
         Raises a KeyError if the BCVReference isn't found/valid.
         """
-        vPrint( 'Never', debuggingThisModule, _("InternalBible.getVerseText( {}, {} )").format( BCVReference, fullTextFlag ) )
+        fnPrint( debuggingThisModule, f"InternalBible.getVerseText( {BCVReference}, fullTextFlag={fullTextFlag} )" )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
@@ -2324,10 +2343,9 @@ class InternalBible:
 
         NOTE: ignoreDiacriticsFlag uses BibleOrgSysGlobals.removeAccents() which might not be general enough for all languages.
         """
-        if BibleOrgSysGlobals.debugFlag:
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, _("findText( {} )").format( optionsDict ) )
-                assert 'findText' in optionsDict
+        fnPrint( debuggingThisModule, f"findText( {optionsDict} )" )
+        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+            assert 'findText' in optionsDict
 
         optionsList = ( 'parentWindow', 'parentBox', 'givenBible', 'workName',
                 'findText', 'findHistoryList', 'wordMode', 'caselessFlag', 'ignoreDiacriticsFlag',
@@ -2507,7 +2525,7 @@ class InternalBible:
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
-        vPrint( 'Never', debuggingThisModule, f"writeBOSBCVFiles( {outputFolderpath} )…" )
+        fnPrint( debuggingThisModule, f"writeBOSBCVFiles( {outputFolderpath} )" )
 
         BBBList = []
         for BBB,bookObject in self.books.items():
@@ -2542,9 +2560,9 @@ class InternalBible:
         """
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
+        fnPrint( debuggingThisModule, f"analyseUWalignments() for {self.abbreviation}" )
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, f"analyseUWalignments() for {self.abbreviation}" )
-        assert self.uWaligned
+            assert self.uWaligned
 
         # Firstly, aggregate the alignment data from all of the separate books
         alignedBookCount = 0

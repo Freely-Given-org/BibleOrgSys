@@ -49,7 +49,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
@@ -120,14 +120,11 @@ class DCSBibles:
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if 'application/json' in contentType:
             responseJSON = HTTPResponseObject.read()
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
+            vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
             responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
+            vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
             responseSTR = responseJSON.decode( responseJSONencoding )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
+            vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
             return json.loads( responseSTR )
         else:
             vPrint( 'Verbose', debuggingThisModule, "    contentType", contentType )
@@ -397,7 +394,7 @@ class DCSBible( USFMBible ):
     # end of DCSBible.__init__
 
 
-    def loadBookIfNecessary( self, BBB ):
+    def loadBookIfNecessary( self, BBB:str ):
         """
         Download the book if necessary.
 

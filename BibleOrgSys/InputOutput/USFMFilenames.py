@@ -26,9 +26,9 @@
 Module for creating and manipulating USFM filenames.
 """
 from gettext import gettext as _
+from pathlib import Path
 import os
 import logging
-from pathlib import Path
 
 if __name__ == '__main__':
     import sys
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-01-13' # by RJH
@@ -584,8 +584,7 @@ class USFMFilenames:
                         index = j; count += 1 # Take a guess that this might be the right one
                 #vPrint( 'Quiet', debuggingThisModule, count, index )
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
+        vPrint( 'Info', debuggingThisModule, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist
     # end of getSSFFilenames
 # end of class USFMFiles

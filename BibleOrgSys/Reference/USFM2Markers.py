@@ -44,7 +44,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-19' # by RJH
@@ -98,7 +98,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
     If closedFlag=False, goes to the next marker or end of line.
     If closedFlag=None (unknown), stops at the first of closing marker, next marker, or end of line.
     """
-    #vPrint( 'Quiet', debuggingThisModule, "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
+    fnPrint( debuggingThisModule, "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
     assert '\\' not in marker and ' ' not in marker and '*' not in marker
     text = originalText
     mLen = len( marker )
@@ -635,8 +635,7 @@ class USFM2Markers:
                 firstResult.append( ('\\',ixBS,'','\\') )
                 logging.error( _("USFM2Markers.getMarkerListFromText found invalid '\\' at end of {!r}").format( text ) )
             ixBS = text.find( '\\', ixBS+1 )
-        if debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "Got first result:", firstResult )
+        vPrint( 'Verbose', debuggingThisModule, "Got first result:", firstResult )
 
         # Now that we have found all the markers and where they are, get the text fields between them
         rLen = len( firstResult )

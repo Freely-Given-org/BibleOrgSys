@@ -35,6 +35,7 @@ Limitations:
     …
 """
 from gettext import gettext as _
+from pathlib import Path
 import logging
 import os
 import struct
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -76,8 +77,8 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     if autoLoad is true and exactly one PDB Bible is found,
         returns the loaded PalmDBBible object.
     """
-    vPrint( 'Info', debuggingThisModule, "PalmDBBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, str )
+    fnPrint( debuggingThisModule, "PalmDBBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
@@ -302,8 +303,7 @@ class PalmDBBible( Bible ):
             """
             """
             nonlocal words
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, _("loadWordlists()…") )
+            vPrint( 'Quiet', debuggingThisModule, _("loadWordlists()…") )
 
             # Now read the word index info
             vPrint( 'Normal', debuggingThisModule, "Loading word index info…" )

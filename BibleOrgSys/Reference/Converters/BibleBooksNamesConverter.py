@@ -37,7 +37,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-18' # by RJH
@@ -237,8 +237,8 @@ class BibleBooksNamesConverter:
         if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             for x in self.__XMLSystems:
                 result += ('\n' if result else '') + "  {}".format( x )
-                if self.__ISOLanguages and self.__XMLSystems[x]["languageCode"] and self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[x]["languageCode"] ):
-                    result += ('\n' if result else '') + "    " + _("Language code {} = {}").format( self.__XMLSystems[x]["languageCode"], self.__ISOLanguages.getLanguageName( self.__XMLSystems[x]["languageCode"]) )
+                # if self.__ISOLanguages and self.__XMLSystems[x]["languageCode"] and self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[x]["languageCode"] ):
+                #     result += ('\n' if result else '') + "    " + _("Language code {} = {}").format( self.__XMLSystems[x]["languageCode"], self.__ISOLanguages.getLanguageName( self.__XMLSystems[x]["languageCode"]) )
                 title = self.__XMLSystems[x]['title']
                 if title: result += ('\n' if result else '') + "    {}".format( title )
                 version = self.__XMLSystems[x]['version']
