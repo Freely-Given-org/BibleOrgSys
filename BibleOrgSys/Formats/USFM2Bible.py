@@ -47,7 +47,7 @@ from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2020-04-26' # by RJH
+LAST_MODIFIED_DATE = '2020-05-23' # by RJH
 SHORT_PROGRAM_NAME = "USFM2Bible"
 PROGRAM_NAME = "USFM2 Bible handler"
 PROGRAM_VERSION = '0.78'
@@ -679,7 +679,9 @@ class USFM2Bible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
-                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                    for bBook in results:
+                        bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
+                        self.stashBook( bBook ) # Saves them in the correct order
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames

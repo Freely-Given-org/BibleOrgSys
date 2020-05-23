@@ -1449,7 +1449,8 @@ def main():
 
     Note that the debug flag, etc. can also be set externally, but that's their problem.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
     with open( resultFilepath, 'wt' ) as myFile: myFile.write( programNameVersion + '\n' )
 
     if 1 or 'win' in sys.platform or BibleOrgSysGlobals.debugFlag:

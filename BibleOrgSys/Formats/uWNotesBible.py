@@ -508,7 +508,9 @@ class uWNotesBible( Bible ):
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
                     assert len(results) == len(self.givenBookList)
-                    for bBook in results: self.stashBook( bBook ) # Saves them in the correct order
+                    for bBook in results:
+                        bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
+                        self.stashBook( bBook ) # Saves them in the correct order
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames

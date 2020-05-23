@@ -536,7 +536,9 @@ class ESFMBible( Bible ):
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
-                        if bBook is not None: self.stashBook( bBook ) # Saves them in the correct order
+                        if bBook is not None:
+                            bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
+                            self.stashBook( bBook ) # Saves them in the correct order
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames

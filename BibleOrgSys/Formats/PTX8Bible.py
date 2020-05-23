@@ -2866,6 +2866,7 @@ class PTX8Bible( Bible ):
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
+                        bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
                         self.stashBook( bBook ) # Saves them in the correct order
                         try: self.filepathsNotYetLoaded.remove( bBook.sourceFilepath ) # Can't do this in _loadBookMP() because it's not atomic
                         except ValueError: logging.critical( "PTX8 {} book file seemed unexpected: {}".format( bBook.BBB, bBook.sourceFilepath ) )

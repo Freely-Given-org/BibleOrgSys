@@ -255,7 +255,7 @@ def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
     and isinstance( args[-1], str ) and not args[-1].endswith( '…' ):
         args = ( f'{args[0]}…', ) if len(args)==1 else ( args[:-1], f'{args[-1]}…', ) # Append an ellipsis
     # print( "args2", len(args), repr(args) )
-    # vPrint( 'Quiet', increaseLevel, *args, **kwargs ) # For debugging programme flow
+    # vPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
     vPrint( 'Verbose', increaseLevel, *args, **kwargs )
 # end of BibleOrgSysGlobals.fnPrint function
 

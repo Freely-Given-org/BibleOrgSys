@@ -43,6 +43,7 @@ if __name__ == '__main__':
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
 from BibleOrgSys.OriginalLanguages.HebrewWLCBible import OSISHebrewWLCBible
 from BibleOrgSys.Formats.USFMBible import USFMBible
 from BibleOrgSys.Formats.PTX8Bible import PTX8Bible
@@ -51,10 +52,10 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2020-03-02' # by RJH
+LAST_MODIFIED_DATE = '2020-05-23' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
-PROGRAM_VERSION = '0.18'
+PROGRAM_VERSION = '0.19'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -62,9 +63,10 @@ debuggingThisModule = False
 
 
 BIBLES_FOLDERPATH = Path( '/mnt/SSDs/Bibles/' )
-RESOURCES_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/' )
+INPUT_RESOURCES_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/' )
 
-DISTRIBUTABLE_RESOURCES_FOLDERPATH = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'DistributableResources/' )
+WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH = BibleOrgSysGlobals.BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'BOSDistributableResources/' )
+print(WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH )
 TEST_OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_DistributableResources/' )
 DEFAULT_DATA_LEVEL = 1 # We use level 1 of PickledBible which saves minimal data used for displaying the resource
 HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM test versions/' )
@@ -73,10 +75,10 @@ HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
 PROCESS_ALL_FLAG = __name__ != '__main__'
-PROCESS_WLC = False
-PROCESS_EBIBLE = False
-PROCESS_DOOR43 = True
-PROCESS_OTHER = False
+PROCESS_WLC_FLAG = False
+PROCESS_EBIBLE_FLAG = False
+PROCESS_DOOR43_FLAG = True
+PROCESS_OTHERS_FLAG = False
 
 PROCESS_CHANGES_ONLY = False
 
@@ -88,7 +90,7 @@ def runGitPull( gitFolderpath ) -> bool:
 
     Return True if changes were made.
     """
-    if debuggingThisModule: print( "\nrunGitPull( {} )".format( gitFolderpath ) )
+    fnPrint( debuggingThisModule, f"\nrunGitPull( {gitFolderpath} )" )
     gitPullTimeout = '30s'
 
     cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
@@ -134,17 +136,14 @@ def makePickle( abbreviation:str, BibleObject, metadataDict:dict, outputFolderpa
 
     BibleObject.toPickledBible( outputFolderpath=outputFolderpath, metadataDict=metadataDict,
                         dataLevel=DEFAULT_DATA_LEVEL, zipOnly=True )
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "Created {} zipped PickledBible in {}".format( abbreviation, outputFolderpath ) )
+    vPrint( 'Quiet', debuggingThisModule, "Created {} zipped PickledBible in {}".format( abbreviation, outputFolderpath ) )
 
     if BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
         pickledBible = PickledBible( outputFolderpath.joinpath( abbreviation+ZIPPED_PICKLE_FILENAME_END ) )
         assert pickledBible.abbreviation
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( pickledBible ) # Just print a summary
+        vPrint( 'Quiet', debuggingThisModule, pickledBible ) # Just print a summary
         pickledBible.loadBooks() # Test all the books
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( pickledBible ) # Now print a new summary
+        vPrint( 'Quiet', debuggingThisModule, pickledBible ) # Now print a new summary
 # end of CreateDistributableResources.makePickle
 
 
@@ -153,8 +152,7 @@ def submitBDBEntry( abbreviation:str, BibleObject, metadataDict:dict ) -> None:
     """
     Given a BibleObject with the books already loaded, make and submit a Bible Drop Box entry.
     """
-    if debuggingThisModule:
-        print( "submitBDBEntry( {}, {}, {} )".format( abbreviation, BibleObject.getAName(), metadataDict ) )
+    fnPrint( debuggingThisModule, f"submitBDBEntry( {abbreviation}, {BibleObject.getAName()}, {metadataDict} )" )
 
     submitBDBFolder( BibleObject.sourceFolder, BibleObject.getAName(), abbreviation, BibleObject.objectTypeString, 'Demo', metadataDict )
 # end of CreateDistributableResources.submitBDBEntry
@@ -167,8 +165,7 @@ def makeIt( abbreviation:str, BibleObject, metadataDict, outputFolderpath:Path, 
 
     Test if necessary.
     """
-    if debuggingThisModule:
-        print( "makeIt( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
+    fnPrint( debuggingThisModule, f"makeIt( {abbreviation}, {BibleObject.getAName()}, {len(metadataDict)}, {outputFolderpath} )" )
 
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nLoading {}…".format( abbreviation ) )
     BibleObject.loadBooks() # Load and process the XML books
@@ -192,15 +189,15 @@ def runCreateAll( outputFolderpath:Path, noWeb:bool=False ) -> None:
     Note: See http://freely-given.org/Software/BibleDropBox/Metadata.html
             for info about metadata fields.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "runCreateAll( {} )".format( outputFolderpath ) )
+    fnPrint( debuggingThisModule, f"runCreateAll( {outputFolderpath} )" )
     assert os.path.isdir( outputFolderpath )
 
 
 ### OPEN SCRIPTURES HEBREW WLC
-    if PROCESS_WLC or PROCESS_ALL_FLAG: # Open Scriptures Hebrew WLC
+    if PROCESS_WLC_FLAG or PROCESS_ALL_FLAG: # Open Scriptures Hebrew WLC
         abbreviation, name = 'WLC', 'Westminster Leningrad Codex'
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nUpdating Hebrew {} from internet…".format( abbreviation ) )
-        repo_changed = runGitPull( RESOURCES_FOLDERPATH.joinpath( 'morphhb/' ) ) # Make sure we have the latest version
+        repo_changed = runGitPull( INPUT_RESOURCES_FOLDERPATH.joinpath( 'morphhb/' ) ) # Make sure we have the latest version
         if repo_changed or not PROCESS_CHANGES_ONLY:
             thisBible = OSISHebrewWLCBible()
             metadataDict = {
@@ -216,7 +213,7 @@ def runCreateAll( outputFolderpath:Path, noWeb:bool=False ) -> None:
 
 
 ### eBIBLE.org
-    if PROCESS_EBIBLE or PROCESS_ALL_FLAG: # eBible.org versions
+    if PROCESS_EBIBLE_FLAG or PROCESS_ALL_FLAG: # eBible.org versions
         # The downloads for these eBible files are updated every month by a boss script
         if 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'ASV', 'American Standard Version (1901)'
@@ -662,7 +659,7 @@ def runCreateAll( outputFolderpath:Path, noWeb:bool=False ) -> None:
 
 
 ### UNFOLDING WORD / DOOR43
-    if PROCESS_DOOR43 or PROCESS_ALL_FLAG: # UnfoldingWord/Door43 versions
+    if PROCESS_DOOR43_FLAG or PROCESS_ALL_FLAG: # UnfoldingWord/Door43 versions
         if 0 and 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'UHB', 'unfoldingWord Hebrew Bible'
             uwFolder = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
@@ -788,7 +785,7 @@ def runCreateAll( outputFolderpath:Path, noWeb:bool=False ) -> None:
 
 
 ### OTHER / VARIOUS
-    if PROCESS_OTHER or PROCESS_ALL_FLAG: # Other various versions
+    if PROCESS_OTHERS_FLAG or PROCESS_ALL_FLAG: # Other various versions
         if 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'FBV', 'Free Bible Version (NT) 2.1.1'
             thisBible = USFMBible( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/USFM/' ),
@@ -841,11 +838,17 @@ def briefDemo() -> None:
     Create freely-licenced resources which can be distributed with the BOS
         but don't save them in the normal output folder.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if not os.path.exists( TEST_OUTPUT_FOLDERPATH ):
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "Creating folder {}…".format( TEST_OUTPUT_FOLDERPATH ) )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
+
+    global PROCESS_ALL_FLAG, PROCESS_WLC_FLAG, PROCESS_DOOR43_FLAG, PROCESS_EBIBLE_FLAG, PROCESS_OTHERS_FLAG
+    vPrint( 'Normal', debuggingThisModule, "Setting only PROCESS_DOOR43_FLAG to True")
+    PROCESS_ALL_FLAG = PROCESS_WLC_FLAG = PROCESS_OTHERS_FLAG = PROCESS_EBIBLE_FLAG = False
+    PROCESS_DOOR43_FLAG = True
+
     runCreateAll( TEST_OUTPUT_FOLDERPATH, noWeb=True )
 # end of CreateDistributableResources.briefDemo
 
@@ -854,11 +857,16 @@ def fullDemo() -> None:
     Create freely-licenced resources which can be distributed with the BOS
         but don't save them in the normal output folder.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if not os.path.exists( TEST_OUTPUT_FOLDERPATH ):
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "Creating folder {}…".format( TEST_OUTPUT_FOLDERPATH ) )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
+
+    global PROCESS_ALL_FLAG
+    vPrint( 'Normal', debuggingThisModule, "Setting PROCESS_ALL_FLAG to True")
+    PROCESS_ALL_FLAG = True
+
     runCreateAll( TEST_OUTPUT_FOLDERPATH, noWeb=True )
 # end of CreateDistributableResources.fullDemo
 
@@ -867,15 +875,15 @@ def main() -> None:
     """
     Create freely-licenced resources which can be distributed with the BOS.
     """
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( programNameVersion )
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    if not os.path.exists( DISTRIBUTABLE_RESOURCES_FOLDERPATH ):
-        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "Creating folder {}…".format( DISTRIBUTABLE_RESOURCES_FOLDERPATH ) )
-        #os.makedirs( DISTRIBUTABLE_RESOURCES_FOLDERPATH )
-        halt # This folder should already exist
-    runCreateAll( DISTRIBUTABLE_RESOURCES_FOLDERPATH )
+    if not os.path.exists( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH ):
+        #if BibleOrgSysGlobals.verbosityLevel > 0: print( "Creating folder {}…".format( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH ) )
+        os.makedirs( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH )
+        # halt # This folder should already exist
+
+    runCreateAll( WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH )
 # end of CreateDistributableResources.main
-
 
 if __name__ == '__main__':
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables

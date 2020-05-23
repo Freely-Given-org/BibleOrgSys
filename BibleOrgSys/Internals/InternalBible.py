@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-17' # by RJH
+LAST_MODIFIED_DATE = '2020-05-23' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -1525,7 +1525,7 @@ class InternalBible:
             givenBookList = self.books.keys()
         for BBB in givenBookList: # Do individual book checks
             vPrint( 'Info', debuggingThisModule, "  " + _("Checking {}…").format( BBB ) )
-            self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
+            self.books[BBB].checkBook( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
         # xxxxxxxxxxxxxxxxx …

@@ -307,6 +307,7 @@ class USXXMLBible( Bible ):
                 for j, UBB in enumerate( results ):
                     BBB = parameters[j]
                     #self.books[BBB] = UBB
+                    UBB.containerBibleObject = self # Because the pickling and unpickling messes this up
                     self.stashBook( UBB )
                     # Make up our book name dictionaries while we're at it
                     assumedBookNames = UBB.getAssumedBookNames()
