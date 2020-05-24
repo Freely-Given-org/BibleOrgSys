@@ -273,7 +273,7 @@ class USFM3MarkersConverter:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
-            #vPrint( 'Quiet', debuggingThisModule, "Processing", nameEnglish )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing", nameEnglish )
             marker = element.find('marker').text
             if marker.lower() != marker:
                 logging.error( _("Marker {!r} should be lower case").format( marker ) )
@@ -333,7 +333,7 @@ class USFM3MarkersConverter:
                     if marker.endswith('-s') or marker.endswith('-e'):
                         # Numberical suffix can't just be appended to the end of these
                         numberedMarker = f'{marker[:-2]}{suffix}{marker[-2:]}'
-                        # vPrint( 'Quiet', debuggingThisModule, f"Marker '{marker}' led to '{numberedMarker}'" )
+                        # dPrint( 'Quiet', debuggingThisModule, f"Marker '{marker}' led to '{numberedMarker}'" )
                     else: # not a milestone start/end marker
                         numberedMarker = marker + str(suffix)
                     backConversionDict[numberedMarker] = marker
@@ -353,12 +353,12 @@ class USFM3MarkersConverter:
                 else: numberedInternalMarkersList.append( marker )
                 if deprecatedFlag: deprecatedMarkersList.append( marker )
 
-        #vPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
-        #vPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
+        #dPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,

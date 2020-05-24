@@ -286,10 +286,10 @@ class BibleStylesheet():
 
         recordsDB = SFMFile.SFMRecords()
         recordsDB.read( self.filepath, 'Marker' ) #, encoding=self.encoding )
-        #vPrint( 'Quiet', debuggingThisModule, "\nRecords", recordsDB.records )
+        #dPrint( 'Quiet', debuggingThisModule, "\nRecords", recordsDB.records )
         self.smallestSize, self.largestSize, self.markerList, self.markerSets = recordsDB.analyze()
         self.dataDict = recordsDB.copyToDict( "dict" )
-        #vPrint( 'Quiet', debuggingThisModule, "\nData", self.dataDict )
+        #dPrint( 'Quiet', debuggingThisModule, "\nData", self.dataDict )
         self.validate()
         return self  # So this command can be chained after the object creation
     # end of BibleStylesheet.load
@@ -305,7 +305,7 @@ class BibleStylesheet():
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
-            #vPrint( 'Quiet', debuggingThisModule, USFMMarker )
+            #dPrint( 'Quiet', debuggingThisModule, USFMMarker )
             assert USFMMarker in BibleOrgSysGlobals.loadedUSFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
     # end of BibleStylesheet.load
 
@@ -319,13 +319,13 @@ class BibleStylesheet():
         self.filepath = PTSS.filepath
         self.dataDict = {}
         for marker in BibleOrgSysGlobals.loadedUSFMMarkers:
-            #vPrint( 'Quiet', debuggingThisModule, marker )
+            #dPrint( 'Quiet', debuggingThisModule, marker )
             try: PTFormatting = PTSS.getDict( marker )
             except KeyError: PTFormatting = None # Just ignore the error
             if PTFormatting:
                 formatSpecification = {}
                 for field, value in PTFormatting.items():
-                    #vPrint( 'Quiet', debuggingThisModule, marker, field, repr(value) )
+                    #dPrint( 'Quiet', debuggingThisModule, marker, field, repr(value) )
                     formatSpecification[field] = value
                 self.dataDict[marker] = formatSpecification
             elif BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "USFM {} marker not included in {} Paratext stylesheet".format( marker, filename ) )
@@ -421,10 +421,10 @@ class ParatextStylesheet():
         self.name = os.path.splitext( self.filename )[0]
         recordsDB = SFMFile.SFMRecords()
         recordsDB.read( self.filepath, 'Marker', encoding=self.encoding )
-        #vPrint( 'Quiet', debuggingThisModule, "\nRecords", recordsDB.records )
+        #dPrint( 'Quiet', debuggingThisModule, "\nRecords", recordsDB.records )
         self.smallestSize, self.largestSize, self.markerList, self.markerSets = recordsDB.analyze()
         self.dataDict = recordsDB.copyToDict( "dict" )
-        #vPrint( 'Quiet', debuggingThisModule, "\nData", self.dataDict )
+        #dPrint( 'Quiet', debuggingThisModule, "\nData", self.dataDict )
         self.validate()
         return self # So this command can be chained after the object creation
     # end of ParatextStylesheet.load
@@ -432,7 +432,7 @@ class ParatextStylesheet():
 
     def validate( self ):
         for USFMMarker in self.dataDict:
-            #vPrint( 'Quiet', debuggingThisModule, USFMMarker )
+            #dPrint( 'Quiet', debuggingThisModule, USFMMarker )
             if USFMMarker not in BibleOrgSysGlobals.loadedUSFMMarkers:
                 logging.warning( "ParatextStylesheet validate: found unexpected {!r} marker".format( USFMMarker ) )
     # end of ParatextStylesheet.load
@@ -504,7 +504,7 @@ def briefDemo() -> None:
         #folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
-        #vPrint( 'Quiet', debuggingThisModule, ss )
+        #dPrint( 'Quiet', debuggingThisModule, ss )
         #ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         ss.loadDefault()
         vPrint( 'Quiet', debuggingThisModule, ss )
@@ -563,7 +563,7 @@ def fullDemo() -> None:
         #folder = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PTStylesheets/' )
         #filename = "LD.sty"
         ss = BibleStylesheet()
-        #vPrint( 'Quiet', debuggingThisModule, ss )
+        #dPrint( 'Quiet', debuggingThisModule, ss )
         #ss.importParatextStylesheet( folder, filename, encoding='latin-1' )
         ss.loadDefault()
         vPrint( 'Quiet', debuggingThisModule, ss )

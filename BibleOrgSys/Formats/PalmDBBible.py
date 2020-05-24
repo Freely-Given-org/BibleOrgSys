@@ -112,7 +112,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
             #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 #if not firstLine.startswith( "info\t"):
-                    #vPrint( 'Info', debuggingThisModule, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    #dPrint( 'Info', debuggingThisModule, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     #continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -151,7 +151,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                 #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #if not firstLine.startswith( "info\t"):
-                        #vPrint( 'Info', debuggingThisModule, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
+                        #dPrint( 'Info', debuggingThisModule, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
                         #continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -217,10 +217,10 @@ class PalmDBBible( Bible ):
                 assert recordNumber < len(mainDBIndex)
             dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
             #recordLength = 99999 if recordNumber==len(mainDBIndex)-1 else (mainDBIndex[recordNumber+1][0] - dataOffset)
-            #vPrint( 'Quiet', debuggingThisModule, " dataOffset={} recordLength={}".format( dataOffset, recordLength ) )
-            #vPrint( 'Quiet', debuggingThisModule, " recordAttributes={} id0={} id1={} id2={}".format( recordAttributes, id0, id1, id2 ) )
+            #dPrint( 'Quiet', debuggingThisModule, " dataOffset={} recordLength={}".format( dataOffset, recordLength ) )
+            #dPrint( 'Quiet', debuggingThisModule, " recordAttributes={} id0={} id1={} id2={}".format( recordAttributes, id0, id1, id2 ) )
             thisFile.seek( dataOffset )
-            #vPrint( 'Quiet', debuggingThisModule, "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
             binaryInfo = thisFile.read( recordLength )
             if recordNumber < len(mainDBIndex)-1: assert len(binaryInfo) == recordLength
             return binaryInfo
@@ -238,12 +238,12 @@ class PalmDBBible( Bible ):
             Returns the string.
             """
             #if BibleOrgSysGlobals.debugFlag:
-                #vPrint( 'Quiet', debuggingThisModule, _("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
+                #dPrint( 'Quiet', debuggingThisModule, _("getBinaryString( {}={}, {} )").format( hexlify(binary), binary, numBytes ) )
             if len(binary) < numBytes: halt # Too few bytes provided
             binary = binary[:numBytes]
             if debuggingThisModule:
                 for someInt in binary:
-                    #vPrint( 'Quiet', debuggingThisModule, repr(someInt) )
+                    #dPrint( 'Quiet', debuggingThisModule, repr(someInt) )
                     if someInt == 0xe2:
                         vPrint( 'Quiet', debuggingThisModule, _("getBinaryString( {}={}, {} ) found e2").format( hexlify(binary), binary, numBytes ) )
             result = ''
@@ -258,7 +258,7 @@ class PalmDBBible( Bible ):
                 result += chr( value )
             if errorFlag:
                 if debuggingThisModule:
-                    #vPrint( 'Quiet', debuggingThisModule, "{:04x}".format( ord('“') ) ) # ”
+                    #dPrint( 'Quiet', debuggingThisModule, "{:04x}".format( ord('“') ) ) # ”
                     vPrint( 'Quiet', debuggingThisModule, "Got1 invalid string {!r}".format( result ) )
                 result = result.replace( '\x97', '—' )
                 if numBytes == 1:
@@ -293,7 +293,7 @@ class PalmDBBible( Bible ):
             Used for reading the PalmDB header information from the file.
             """
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #vPrint( 'Quiet', debuggingThisModule, _("getFileString( {}, {} )").format( thisFile, numBytes ) )
+                #dPrint( 'Quiet', debuggingThisModule, _("getFileString( {}, {} )").format( thisFile, numBytes ) )
             return getBinaryString( thisFile.read( numBytes ), numBytes )
         # end of getFileString
 
@@ -310,7 +310,7 @@ class PalmDBBible( Bible ):
             binary = readRecord( wordIndexIndex, myFile )
             byteOffset = 0
             totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-            #vPrint( 'Quiet', debuggingThisModule, " totalIndicesCount =",totalIndicesCount )
+            #dPrint( 'Quiet', debuggingThisModule, " totalIndicesCount =",totalIndicesCount )
             wordIndexMetadata = []
             expectedWords = 0
             for n in range( totalIndicesCount ):
@@ -320,7 +320,7 @@ class PalmDBBible( Bible ):
                 wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
                 expectedWords += numFixedLengthWords
             assert byteOffset == len(binary)
-            #vPrint( 'Quiet', debuggingThisModule, " expectedWords =", expectedWords )
+            #dPrint( 'Quiet', debuggingThisModule, " expectedWords =", expectedWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
 
@@ -332,13 +332,13 @@ class PalmDBBible( Bible ):
             numRegularWords = numCompressedWords = 0
             wordCountIndexes = {}
             for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
-                #vPrint( 'Quiet', debuggingThisModule, "   Got {} {:04x}".format( len(words), len(words) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "   Got {} {:04x}".format( len(words), len(words) ) )
                 vPrint( 'Info', debuggingThisModule, "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}…".format( wordLength, numFixedLengthWords, compressedFlag ) )
                 wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
                 #else: vPrint( 'Quiet', debuggingThisModule, wordCountIndexes )
                 for n in range( numFixedLengthWords ):
                     numRemainingBufferBytes = len(binary) - byteOffset
-                    #vPrint( 'Quiet', debuggingThisModule, "Got {} bytes available in buffer".format(  numRemainingBufferBytes ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Got {} bytes available in buffer".format(  numRemainingBufferBytes ) )
                     if numRemainingBufferBytes < wordLength: # Need to continue to the next record
                         #binary += myFile.read( 256 ) # These records are assumed here to be contiguous
                         binary += readRecord( wordIndexIndex+recordOffset+1, myFile )
@@ -396,7 +396,7 @@ class PalmDBBible( Bible ):
                     numLoaded = len(words) - wordStart
                     wordDisplay = words[wordStart:] if numLoaded < 10 else repr(words[wordStart])+'..'+repr(words[-1])
                     vPrint( 'Quiet', debuggingThisModule, "      Loaded {} {}-char words (now have {}={:04x} total): {}".format( numLoaded, wordLength, len(words), len(words), wordDisplay ) )
-            #vPrint( 'Quiet', debuggingThisModule, 'xyz', byteOffset, len(binary) )
+            #dPrint( 'Quiet', debuggingThisModule, 'xyz', byteOffset, len(binary) )
             assert byteOffset == len(binary)
         # end of loadWordlists
 
@@ -409,12 +409,12 @@ class PalmDBBible( Bible ):
             """
             nonlocal remainder14count, remainder14bits
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #vPrint( 'Quiet', debuggingThisModule, _("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
+                #dPrint( 'Quiet', debuggingThisModule, _("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
             if binary16: next16, = struct.unpack( ">H", binary16 )
             else:
                 vPrint( 'Never', debuggingThisModule, "Added error zero bits (should only be at the end of a book)" )
                 next16 = 0
-            #vPrint( 'Quiet', debuggingThisModule, "next16 {:04x} {}".format( next16, next16 ) )
+            #dPrint( 'Quiet', debuggingThisModule, "next16 {:04x} {}".format( next16, next16 ) )
             if remainder14count == 0:
                 result = next16 >> 2
                 remainder14count = 2
@@ -454,7 +454,7 @@ class PalmDBBible( Bible ):
                 result = remainder14bits
                 remainder14count = 0
                 bytesUsed = 0
-            #vPrint( 'Quiet', debuggingThisModule, " returning {:04x}={}, {} ({})".format( result, result, bytesUsed, remainder14count ) )
+            #dPrint( 'Quiet', debuggingThisModule, " returning {:04x}={}, {} ({})".format( result, result, bytesUsed, remainder14count ) )
             return result, bytesUsed
         # end of get14
 
@@ -485,10 +485,10 @@ class PalmDBBible( Bible ):
                 if '\x0en\x0e' not in verseText: # WHY ???
                     assert not inside # Would be uneven number of matches
                 adjText = adjText.replace( ' \\'+fSFM+'*', '\\'+fSFM+'*' ) # Remove unwanted spaces before closing field
-                #vPrint( 'Quiet', debuggingThisModule, "  adjText1={!r}".format( adjText ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  adjText1={!r}".format( adjText ) )
             if '\x0en\x0e' not in adjText: # WHY ???
                 assert '\x0e' not in adjText
-            #vPrint( 'Quiet', debuggingThisModule, "  adjText2={!r}".format( adjText1 ) )
+            #dPrint( 'Quiet', debuggingThisModule, "  adjText2={!r}".format( adjText1 ) )
             if '\\x' in repr(adjText):
                 vPrint( 'Quiet', debuggingThisModule, "What's this slash here for:", repr(adjText) )
                 if debuggingThisModule: halt
@@ -499,9 +499,9 @@ class PalmDBBible( Bible ):
                 ixStart = adjText.index( '{' )
                 ixEnd = adjText.index( '}' )
                 assert ixEnd > ixStart
-                #vPrint( 'Quiet', debuggingThisModule, "Replacing footnote from {}-{} in {!r}".format( ixStart, ixEnd, adjText ) )
+                #dPrint( 'Quiet', debuggingThisModule, "Replacing footnote from {}-{} in {!r}".format( ixStart, ixEnd, adjText ) )
                 adjText = adjText[:ixStart].rstrip() + '\\f + \\ft {}\\f*'.format( adjText[ixStart+1:ixEnd].strip() ) + adjText[ixEnd+1:]
-                #vPrint( 'Quiet', debuggingThisModule, "  Now have: {!r}".format( adjText ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  Now have: {!r}".format( adjText ) )
 
             # Split verse data into separate logical fields where necessary
             adjText = adjText.replace( '<NEWLINE>', '\\m ' )
@@ -560,7 +560,7 @@ class PalmDBBible( Bible ):
             for n in range( numDBRecords ):
                 binary8 = myFile.read( 8 )
                 dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
-                #vPrint( 'Quiet', debuggingThisModule, '', dataOffset, recordAttributes, id0, id1, id2 )
+                #dPrint( 'Quiet', debuggingThisModule, '', dataOffset, recordAttributes, id0, id1, id2 )
                 assert recordAttributes + id0 + id1 + id2 == 0
                 tmpIndex.append( (dataOffset, recordAttributes, id0, id1, id2) )
             for recordNumber in range( len(tmpIndex) ):
@@ -592,7 +592,7 @@ class PalmDBBible( Bible ):
             vPrint( 'Info', debuggingThisModule, repr(versionName), repr(versionInfo), repr(separatorCharacter) )
             assert separatorCharacter == ' '
             versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
-            #vPrint( 'Quiet', debuggingThisModule, "  versionAttribute =",versionAttribute )
+            #dPrint( 'Quiet', debuggingThisModule, "  versionAttribute =",versionAttribute )
             copyProtectedFlag = versionAttribute & 1
             byteShiftedFlag = not versionAttribute & 2
             RTLFlag = versionAttribute & 4
@@ -615,7 +615,7 @@ class PalmDBBible( Bible ):
                 bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
             assert byteOffset == len(binary)
             #if BibleOrgSysGlobals.debugFlag:
-                #vPrint( 'Quiet', debuggingThisModule, "bookIndexMetadata", len(bookIndexMetadata), bookIndexMetadata )
+                #dPrint( 'Quiet', debuggingThisModule, "bookIndexMetadata", len(bookIndexMetadata), bookIndexMetadata )
                 #halt
 
             # Now load the word lists
@@ -623,7 +623,7 @@ class PalmDBBible( Bible ):
             numWords = len(words)
             vPrint( 'Never', debuggingThisModule, "numWords =", numWords )
             #if BibleOrgSysGlobals.debugFlag:
-                #vPrint( 'Quiet', debuggingThisModule, "words", numWords, words[:200], words[-80:] )
+                #dPrint( 'Quiet', debuggingThisModule, "words", numWords, words[:200], words[-80:] )
                 #halt
 
             # Now read in the Bible book chapter/verse data
@@ -649,25 +649,25 @@ class PalmDBBible( Bible ):
                 #binary = myFile.read( 102400 )
                 # Read the header record
                 binary = readRecord( bookRecordLocation, myFile )
-                #vPrint( 'Quiet', debuggingThisModule, binary )
+                #dPrint( 'Quiet', debuggingThisModule, binary )
                 byteOffset = 0
                 numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                #vPrint( 'Quiet', debuggingThisModule, longName, "numChapters", numChapters )
+                #dPrint( 'Quiet', debuggingThisModule, longName, "numChapters", numChapters )
                 accumulatedVersesList = []
                 for c in range( numChapters ):
                     accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
                     accumulatedVersesList.append( accumulatedVerses )
-                    #vPrint( 'Quiet', debuggingThisModule, c+1, accumulatedVerses, "accumulatedVerses" )
+                    #dPrint( 'Quiet', debuggingThisModule, c+1, accumulatedVerses, "accumulatedVerses" )
                 accumulatedTokensPerChapterList = []
                 for c in range( numChapters ):
                     accumulatedTokensPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
-                    #vPrint( 'Quiet', debuggingThisModule, c+1, accumulatedTokensPerChapter, "accumulatedTokensPerChapter" )
+                    #dPrint( 'Quiet', debuggingThisModule, c+1, accumulatedTokensPerChapter, "accumulatedTokensPerChapter" )
                     accumulatedTokensPerChapterList.append( accumulatedTokensPerChapter )
                 accumulatedTokensPerVerseList = []
                 totalAccumulatedVerses = 0
                 for n in range( accumulatedVerses ):
                     accumulatedTokensPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #vPrint( 'Quiet', debuggingThisModule, n+1, accumulatedTokensPerVerse, "accumulatedTokensPerVerse" )
+                    #dPrint( 'Quiet', debuggingThisModule, n+1, accumulatedTokensPerVerse, "accumulatedTokensPerVerse" )
                     accumulatedTokensPerVerseList.append( accumulatedTokensPerVerse )
                     totalAccumulatedVerses += accumulatedTokensPerVerse
                 if debuggingThisModule:
@@ -675,7 +675,7 @@ class PalmDBBible( Bible ):
                     vPrint( 'Quiet', debuggingThisModule, "accumulatedTokensPerChapter", len(accumulatedTokensPerChapterList), accumulatedTokensPerChapterList )
                     vPrint( 'Quiet', debuggingThisModule, "accumulatedTokensPerVerse", len(accumulatedTokensPerVerseList), accumulatedTokensPerVerseList )
                 assert len(accumulatedTokensPerVerseList) == accumulatedVerses
-                #vPrint( 'Quiet', debuggingThisModule, "Acc V & T", totalAccumulatedVerses, accumulatedTokensPerChapter )
+                #dPrint( 'Quiet', debuggingThisModule, "Acc V & T", totalAccumulatedVerses, accumulatedTokensPerChapter )
                 assert byteOffset == len(binary)
 
                 # Find total characters
@@ -683,7 +683,7 @@ class PalmDBBible( Bible ):
                 #for accumulatedVerses in accumulatedVersesList:
                     #totalCharacters += accumulatedTokensPerVerseList[accumulatedVerses]
                 totalCharacters = accumulatedTokensPerChapterList[-1] + accumulatedTokensPerVerseList[-1]
-                #vPrint( 'Quiet', debuggingThisModule, "totalCharacters", totalCharacters )
+                #dPrint( 'Quiet', debuggingThisModule, "totalCharacters", totalCharacters )
 
                 # Read the Bible word data records
                 vPrint( 'Info', debuggingThisModule, "\nReading {}{} Bible words for {} {}/{}…".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
@@ -726,7 +726,7 @@ class PalmDBBible( Bible ):
                 verse = ''
                 for j in range( totalCharacters ):
                     #if BBB=='EXO' and V==3: halt
-                    #vPrint( 'Quiet', debuggingThisModule, self.name )
+                    #dPrint( 'Quiet', debuggingThisModule, self.name )
                     #if (name == 'kjv' and BBB=='GAL' and V>5) \
                     #or (name == 'kjv' and BBB=='TI2' and V>24) \
                     #or (name in ('hcsba','i_tb','AYT','i_bis',) and BBB=='GAL' and V>24):
@@ -747,14 +747,14 @@ class PalmDBBible( Bible ):
                             #assert binary[byteOffset:byteOffset+2] == b'\xFF\xFF'
                             #byteOffset = 2
                     if byteShiftedFlag:
-                        #vPrint( 'Quiet', debuggingThisModule, "offset", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
+                        #dPrint( 'Quiet', debuggingThisModule, "offset", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
                         ix, bytesUsed = get14( binary[byteOffset:byteOffset+2] )
                         byteOffset += bytesUsed
                         if ix >= 0x3FF0: ix = ix | 0xC000 # To get it into the original range
                     else: ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
                     vPrint( 'Never', debuggingThisModule, "  here bO was {} ix={:04x}={}".format( byteOffset-2, ix, ix ) )
                     if ix > len(words):
-                        #vPrint( 'Quiet', debuggingThisModule, "Got HUGE ix {:04x} {}/{}".format( ix, ix, len(words) ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Got HUGE ix {:04x} {}/{}".format( ix, ix, len(words) ) )
                         #ix = ix | 0xC000 # To get it into the original range
                         #assert 0xFFFC <= ix <= 0xFFFF
                         if   ix == 0xFFFF: word = '<BOOK>'
@@ -768,19 +768,19 @@ class PalmDBBible( Bible ):
                             word = '<UNKNOWN>'
                             if debuggingThisModule: halt
                             #if C==0: C = 1
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], verse ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], verse ) )
                     else:
                         if ix == 0: word = ''
                         else: word = words[ix-1]
                     vPrint( 'Never', debuggingThisModule, "  {} {}:{} {}word={!r}".format( BBB, C, V, 'compressed ' if ix>numWords else '', word ) )
                     for wordBit in word.split(): # Handle each part of combined words separately to ensure correct handling of each part
                         if wordBit.startswith( '<BOOK>' ):
-                            #vPrint( 'Quiet', debuggingThisModule, "\n<BOOK>" )
+                            #dPrint( 'Quiet', debuggingThisModule, "\n<BOOK>" )
                             #if not word.startswith( '<BOOK>' ): vPrint( 'Quiet', debuggingThisModule, repr(verse), '+', repr(word) ); halt
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             C = V = 0
                         elif wordBit.startswith( '<CHAPTER>' ):
-                            #vPrint( 'Quiet', debuggingThisModule, "\n<CHAPTER>" )
+                            #dPrint( 'Quiet', debuggingThisModule, "\n<CHAPTER>" )
                             #if not word.startswith( '<CHAPTER>' ): vPrint( 'Quiet', debuggingThisModule, repr(verse), '+', repr(word) ); halt
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                             accumulatedVerseCount += verseCount
@@ -791,7 +791,7 @@ class PalmDBBible( Bible ):
                             #if not word.startswith( '<DESC>' ): vPrint( 'Quiet', debuggingThisModule, repr(verse), '+', repr(word) ); halt
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         elif wordBit.startswith( '<VERSE>' ):
-                            #vPrint( 'Quiet', debuggingThisModule, "\n<VERSE>" )
+                            #dPrint( 'Quiet', debuggingThisModule, "\n<VERSE>" )
                             #if not word.startswith( '<VERSE>' ): vPrint( 'Quiet', debuggingThisModule, repr(verse), '+', repr(word) ); halt
                             if C==0: C = 1; vPrint( 'Quiet', debuggingThisModule, "Correct C to one!" )
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
@@ -800,11 +800,11 @@ class PalmDBBible( Bible ):
                             vPrint( 'Never', debuggingThisModule, "\n<UNKNOWN>" )
                             if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         verse += wordBit + separatorCharacter
-                    #vPrint( 'Quiet', debuggingThisModule, repr(word), repr(verse) )
-                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], word ) )
+                    #dPrint( 'Quiet', debuggingThisModule, repr(word), repr(verse) )
+                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], word ) )
                     maxCount = accumulatedTokensPerVerseList[verseCount+accumulatedVerseCount]
                     if C > 1: maxCount += accumulatedTokensPerChapterList[C-1]
-                    #vPrint( 'Quiet', debuggingThisModule, "cC={} vC={} mC={}".format( accumulatedVerseCount, verseCount, maxCount ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "cC={} vC={} mC={}".format( accumulatedVerseCount, verseCount, maxCount ) )
                     if j+1 >= maxCount:
                         if verse: saveSegment( BBB, C, V, verse ); verse = ''
                         verseCount += 1
@@ -822,8 +822,8 @@ class PalmDBBible( Bible ):
                         V += 1
                     #tokenCount += 1
                     #if len(verse)>200: vPrint( 'Quiet', debuggingThisModule, repr(verse) ); halt
-                #vPrint( 'Quiet', debuggingThisModule, "verse", repr(verse[:100]) )
-                #vPrint( 'Quiet', debuggingThisModule, "Done", byteOffset, len(binary) )
+                #dPrint( 'Quiet', debuggingThisModule, "verse", repr(verse[:100]) )
+                #dPrint( 'Quiet', debuggingThisModule, "Done", byteOffset, len(binary) )
                 #assert byteOffset == len(binary)
                 self.stashBook( thisBook )
             #if BibleOrgSysGlobals.debugFlag:
@@ -858,7 +858,7 @@ def testPB( TUBfilename ):
         if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = ub.getVerseText( svk )

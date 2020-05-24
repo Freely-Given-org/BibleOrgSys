@@ -82,11 +82,11 @@ class USXFilenames:
 
         # Find how many files are in our folder
         for possibleFilename in os.listdir( self.givenFolderName ):
-            #vPrint( 'Quiet', debuggingThisModule, "possibleFilename", possibleFilename )
+            #dPrint( 'Quiet', debuggingThisModule, "possibleFilename", possibleFilename )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            #vPrint( 'Quiet', debuggingThisModule, pFUpperProper, pFUpperExt )
+            #dPrint( 'Quiet', debuggingThisModule, pFUpperProper, pFUpperExt )
             ignore = False
             for ending in filenameEndingsToIgnore:
                 if pFUpper.endswith( ending): ignore=True; break
@@ -95,12 +95,12 @@ class USXFilenames:
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
-        #vPrint( 'Quiet', debuggingThisModule, "fL", self.fileList )
+        #dPrint( 'Quiet', debuggingThisModule, "fL", self.fileList )
         #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 
         matched = False
         for foundFilename in self.fileList:
-            #vPrint( 'Quiet', debuggingThisModule, foundFilename )
+            #dPrint( 'Quiet', debuggingThisModule, foundFilename )
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
             containsDigits = False
@@ -109,15 +109,15 @@ class USXFilenames:
                     containsDigits = True
                     break
             #matched = False
-            #vPrint( 'Quiet', debuggingThisModule, repr(foundFileBit), foundLength, containsDigits, repr(foundExtBit) )
+            #dPrint( 'Quiet', debuggingThisModule, repr(foundFileBit), foundLength, containsDigits, repr(foundExtBit) )
             if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
                 for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
-                    #vPrint( 'Quiet', debuggingThisModule, USXBookCode,USXDigits,BBB )
+                    #dPrint( 'Quiet', debuggingThisModule, USXBookCode,USXDigits,BBB )
                     if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                         digitsIndex = foundFileBit.index( USXDigits )
                         USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
                         USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                        #vPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, USXBookCodeIndex )
+                        #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, USXBookCodeIndex )
                         if foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
                             self.digitsIndex = digitsIndex
                             self.hyphenIndex = None
@@ -133,7 +133,7 @@ class USXFilenames:
                         hyphenIndex = foundFileBit.index( '-' )
                         USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
                         USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                        #vPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, hyphenIndex, USXBookCodeIndex )
+                        #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, hyphenIndex, USXBookCodeIndex )
                         if foundLength==6 and digitsIndex==0 and hyphenIndex==2 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
                             self.digitsIndex = digitsIndex
                             self.hyphenIndex = hyphenIndex
@@ -145,10 +145,10 @@ class USXFilenames:
                         matched = True
                         break
             if matched: break
-        #vPrint( 'Quiet', debuggingThisModule, matched )
+        #dPrint( 'Quiet', debuggingThisModule, matched )
         if BibleOrgSysGlobals.verbosityLevel>2 and not matched:
             logging.info( _("Unable to recognize valid USX files in ") + str(self.givenFolderName) )
-        #vPrint( 'Quiet', debuggingThisModule, "USXFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+        #dPrint( 'Quiet', debuggingThisModule, "USXFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
     # end of USXFilenames.__init__
 
 
@@ -185,7 +185,7 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
-        # vPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
+        # dPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -217,11 +217,11 @@ class USXFilenames:
                         if USXInt > 39:
                             USXDigits = str( USXInt + 1 )
                             USXDigits = '0'*(3-len(USXDigits)) + USXDigits
-                            #vPrint( 'Quiet', debuggingThisModule, repr(USXDigits) ); halt
+                            #dPrint( 'Quiet', debuggingThisModule, repr(USXDigits) ); halt
                     filename = filename[:self.digitsIndex] + USXDigits[1:] + filename[self.digitsIndex+len(USXDigits)-1:]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
-                #vPrint( 'Quiet', debuggingThisModule, "getDerivedFilenames: Filename is {!r}".format( filename ) )
+                #dPrint( 'Quiet', debuggingThisModule, "getDerivedFilenames: Filename is {!r}".format( filename ) )
                 resultList.append( (BBB,filename,) )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getDerivedFilenameTuples
@@ -238,13 +238,13 @@ class USXFilenames:
         resultList = []
         for BBB,possibleFilename in self.getDerivedFilenameTuples():
             possibleFilepath = os.path.join( self.givenFolderName, possibleFilename )
-            #vPrint( 'Quiet', debuggingThisModule, '  Looking for: ' + possibleFilename )
+            #dPrint( 'Quiet', debuggingThisModule, '  Looking for: ' + possibleFilename )
             if os.access( possibleFilepath, os.R_OK ):
-                #vPrint( 'Quiet', debuggingThisModule, "possibleFilepath", possibleFilepath )
+                #dPrint( 'Quiet', debuggingThisModule, "possibleFilepath", possibleFilepath )
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
-                    #vPrint( 'Quiet', debuggingThisModule, "firstLinesGCFT", firstLines )
+                    #dPrint( 'Quiet', debuggingThisModule, "firstLinesGCFT", firstLines )
                     if not firstLines or len(firstLines)<3: continue
                     if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                     and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
@@ -262,12 +262,12 @@ class USXFilenames:
                 i.e., look only externally at the filenames.
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuples()" )
-        # vPrint( 'Quiet', debuggingThisModule, "self.fileList", len(self.fileList), self.fileList )
+        #dPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuples()" )
+        # dPrint( 'Quiet', debuggingThisModule, "self.fileList", len(self.fileList), self.fileList )
 
         resultList = []
         for possibleFilename in self.fileList:
-            # vPrint( 'Quiet', debuggingThisModule, len(resultList), possibleFilename )
+            # dPrint( 'Quiet', debuggingThisModule, len(resultList), possibleFilename )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
@@ -291,7 +291,7 @@ class USXFilenames:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        # vPrint( 'Quiet', debuggingThisModule, "final resultList", len(resultList), resultList )
+        # dPrint( 'Quiet', debuggingThisModule, "final resultList", len(resultList), resultList )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getPossibleFilenameTuples
 
@@ -337,9 +337,9 @@ class USXFilenames:
     #            for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
     #                foundPathBit, foundExtBit = os.path.splitext( filepath )
     #                foundPathBit, foundFileBit = os.path.split( foundPathBit )
-    #                #vPrint( 'Quiet', debuggingThisModule, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
+    #                #dPrint( 'Quiet', debuggingThisModule, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
     #                if foundFileBit in self.givenFolderName: index = j; count += 1 # Take a guess that this might be the right one
-    #            #vPrint( 'Quiet', debuggingThisModule, count, index )
+    #            #dPrint( 'Quiet', debuggingThisModule, count, index )
     #            if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
     #    return filelist
     ## end of getSSFFilenames

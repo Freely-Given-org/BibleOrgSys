@@ -337,12 +337,12 @@ class USFM2MarkersConverter:
                 else: numberedInternalMarkersList.append( marker )
                 if deprecatedFlag: deprecatedMarkersList.append( marker )
 
-        #vPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
-        #vPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
-        #vPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
+        #dPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        #dPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,

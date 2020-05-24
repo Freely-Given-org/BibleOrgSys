@@ -295,7 +295,7 @@ class BibleReferencesLinksConverter:
         rawRefLinkList = []
         actualLinkCount = 0
         for element in self._XMLTree:
-            #vPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( element ) )
+            #dPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( element ) )
 
             # Get these first for helpful error messages
             sourceReference = element.find('sourceReference').text
@@ -308,7 +308,7 @@ class BibleReferencesLinksConverter:
 
             actualRawLinksList = []
             for subelement in element:
-                #vPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( subelement ) )
+                #dPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.elementStr( subelement ) )
                 if subelement.tag in ( 'sourceReference','sourceComponent',): # already processed these
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sourceReference, 'ls12' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sourceReference, 'ks02' )
@@ -383,7 +383,7 @@ class BibleReferencesLinksConverter:
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
         vPrint( 'Normal', debuggingThisModule, "  {:,} links processed (with {:,} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
-        #vPrint( 'Quiet', debuggingThisModule, myRefLinkList ); halt
+        #dPrint( 'Quiet', debuggingThisModule, myRefLinkList ); halt
         self.__DataList = myRefLinkList
 
         # Now put it into my dictionaries for easy access
@@ -392,26 +392,26 @@ class BibleReferencesLinksConverter:
         # Create a link dictionary (by verse key)
         myRefLinkDict = {}
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
-            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
-            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            #dPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
+            #dPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for verseRef in parsedSourceReference.getIncludedVerses():
-                #vPrint( 'Quiet', debuggingThisModule, verseRef )
+                #dPrint( 'Quiet', debuggingThisModule, verseRef )
                 assert isinstance( verseRef, SimpleVerseKey )
                 if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
-            #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
+            #dPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
         originalLinks = len( myRefLinkDict )
         vPrint( 'Quiet', debuggingThisModule, "  {:,} verse links added to dictionary (includes filling out spans)".format( originalLinks ) )
-        #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
+        #dPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
 
         # Create a reversed link dictionary (by verse key)
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
-            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
-            #vPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            #dPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference )
+            #dPrint( 'Quiet', debuggingThisModule, sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for targetReference,targetComponent,parsedTargetReference,linkType in actualLinksList:
                 if parsedTargetReference is not None:
                     for verseRef in parsedTargetReference.getIncludedVerses():
-                        #vPrint( 'Quiet', debuggingThisModule, verseRef )
+                        #dPrint( 'Quiet', debuggingThisModule, verseRef )
                         assert isinstance( verseRef, SimpleVerseKey )
                         if linkType == 'TSK': reverseLinkType = 'TSKQuoted'
                         elif linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
@@ -420,11 +420,11 @@ class BibleReferencesLinksConverter:
                         else: halt # Have a new linkType!
                         if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                         myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
-            #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
+            #dPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
         totalLinks = len( myRefLinkDict )
         reverseLinks = totalLinks - originalLinks
         vPrint( 'Quiet', debuggingThisModule, "  {:,} reverse links added to dictionary to give {:,} total".format( reverseLinks, totalLinks ) )
-        #vPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
+        #dPrint( 'Quiet', debuggingThisModule, myRefLinkDict ); halt
 
         self.__DataDict = myRefLinkDict
 
@@ -486,10 +486,10 @@ class BibleReferencesLinksConverter:
         filePosition = 0
         with open( dataFilepath, 'wb' ) as myFile:
             for vKey,refList in self.__DataDict.items():
-                #vPrint( 'Quiet', debuggingThisModule, "vKey", vKey, vKey.getVerseKeyText() )
-                #vPrint( 'Quiet', debuggingThisModule, " ", refList )
+                #dPrint( 'Quiet', debuggingThisModule, "vKey", vKey, vKey.getVerseKeyText() )
+                #dPrint( 'Quiet', debuggingThisModule, " ", refList )
                 length = myFile.write( pickle.dumps( refList ) )
-                #vPrint( 'Quiet', debuggingThisModule, " ", filePosition, length )
+                #dPrint( 'Quiet', debuggingThisModule, " ", filePosition, length )
                 assert vKey not in index
                 index[vKey] = (filePosition, length )
                 filePosition += length

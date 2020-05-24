@@ -522,7 +522,7 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                # vPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
+                # dPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
@@ -560,21 +560,21 @@ class HebrewStrongsFileConverter:
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'source':
                 source = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #vPrint( 'Quiet', debuggingThisModule, entryID, 'source', repr(source) )
+                #dPrint( 'Quiet', debuggingThisModule, entryID, 'source', repr(source) )
                 if BibleOrgSysGlobals.debugFlag and entryID!='H5223':
                     assert source and '\t' not in source and '\n' not in source
                 entryResults['source'] = source
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'meaning':
                 meaning = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #vPrint( 'Quiet', debuggingThisModule, entryID, 'meaning', repr(meaning) )
+                #dPrint( 'Quiet', debuggingThisModule, entryID, 'meaning', repr(meaning) )
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert meaning and '\t' not in meaning and '\n' not in meaning
                 entryResults['meaning'] = meaning
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'usage':
                 usage = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #vPrint( 'Quiet', debuggingThisModule, 'usage', repr(usage) )
+                #dPrint( 'Quiet', debuggingThisModule, 'usage', repr(usage) )
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert usage and '\t' not in usage and '\n' not in usage
                 entryResults['usage'] = usage
@@ -591,7 +591,7 @@ class HebrewStrongsFileConverter:
                 if BibleOrgSysGlobals.debugFlag: halt
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
 
-        #vPrint( 'Quiet', debuggingThisModule, entryID, entryResults )
+        #dPrint( 'Quiet', debuggingThisModule, entryID, entryResults )
         assert entryID and entryID[0]=='H' and entryID[1:].isdigit()
         self.entries[entryID[1:]] = entryResults # leave off the H
     # end of HebrewStrongsFileConverter.validateEntry
@@ -732,7 +732,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                # vPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
+                # dPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
@@ -761,7 +761,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                # vPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
+                # dPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -787,7 +787,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                # vPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
+                # dPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
@@ -798,22 +798,22 @@ class BrownDriverBriggsFileConverter:
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
                             .replace( '\t', '' ).replace( '\n', '' )
         if entryID == "m.ba.ab": flattenedXML = flattenedXML.rstrip() # Seems to have a space at the start of the XML line
-        #vPrint( 'Quiet', debuggingThisModule, entryID, repr(flattenedXML) )
+        #dPrint( 'Quiet', debuggingThisModule, entryID, repr(flattenedXML) )
         match = re.search( '<status p="(\d{1,4})">(.+?)</status>', flattenedXML )
         if match:
             #logging.warning( "Removed {} status field {} from {}" \
                 #.format( entryID, repr(flattenedXML[match.start():match.end()]), repr(flattenedXML) ) )
             resultXML = flattenedXML[:match.start()] + flattenedXML[match.end():]
             statusP, status = match.group(1), match.group(2)
-            #vPrint( 'Quiet', debuggingThisModule, "statusP", repr(statusP), "st", repr(status) )
+            #dPrint( 'Quiet', debuggingThisModule, "statusP", repr(statusP), "st", repr(status) )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                 assert status in ('new','made','base','ref','added','done',)
         else:
             logging.warning( "Missing status in {} BrDrBr entry: {!r}".format( entryID, flattenedXML ) )
             resultXML = flattenedXML
 
-        #vPrint( 'Quiet', debuggingThisModule, repr(partID), repr(sectionID), repr(title), repr(lang) )
-        #vPrint( 'Quiet', debuggingThisModule, entryID, status, repr(resultXML) )
+        #dPrint( 'Quiet', debuggingThisModule, repr(partID), repr(sectionID), repr(title), repr(lang) )
+        #dPrint( 'Quiet', debuggingThisModule, entryID, status, repr(resultXML) )
         self.entries[lang][entryID] = (resultXML,statusP,status,)
     # end of BrownDriverBriggsFileConverter.validateEntry
 

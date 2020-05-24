@@ -308,7 +308,7 @@ class BibleBooksNamesConverter:
         vPrint( 'Verbose', debuggingThisModule, _("Importing data into Python dictionary…") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
-            #vPrint( 'Quiet', debuggingThisModule, booksNamesSystemCode )
+            #dPrint( 'Quiet', debuggingThisModule, booksNamesSystemCode )
             # Make the data dictionary for this booksNames system
             myDivisionsNamesDict, myBooknameLeadersDict, myBookNamesDict = {}, {}, {}
             for element in self.__XMLSystems[booksNamesSystemCode]['tree']:

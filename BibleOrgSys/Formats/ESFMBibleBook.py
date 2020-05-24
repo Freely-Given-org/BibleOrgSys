@@ -158,7 +158,7 @@ class ESFMBibleBook( BibleBook ):
                 if tagMarker in thisDict \
                 and tagContent in thisDict[tagMarker]:
                     thisDict[tagMarker][tagContent].append( (BBB,C,V,word) )
-                    #vPrint( 'Quiet', debuggingThisModule, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
                 else: # couldn't find it
                     loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
                     logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
@@ -202,8 +202,8 @@ class ESFMBibleBook( BibleBook ):
                     if isinstance( thisEntry, str ):
                         thisDict[tagMarker][tagContent] = [thisEntry] # Convert from a string to a list with the string as the first list item
                     thisDict[tagMarker][tagContent].append( (BBB,C,V,word) )
-                    #vPrint( 'Quiet', debuggingThisModule, " ", tagMarker, tagContent, thisEntry )
-                    #vPrint( 'Quiet', debuggingThisModule, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
+                    #dPrint( 'Quiet', debuggingThisModule, " ", tagMarker, tagContent, thisEntry )
+                    #dPrint( 'Quiet', debuggingThisModule, "Now have {}:{}={}".format( tagMarker, tagContent, thisDict[tagMarker][tagContent] ) )
                 else: # couldn't find it
                     loadErrors.append( _("{} {}:{} unknown ESFM {!r} tag content {!r}").format( self.BBB, C, V, tagMarker, tagContent ) )
                     logging.error( "ESFM tagging error in {} {}:{}: unknown {!r} tag content {!r}".format( BBB, C, V, tagMarker, tagContent ) )
@@ -228,14 +228,14 @@ class ESFMBibleBook( BibleBook ):
             #textLen = len( originalText )
             resultText = ''
             firstWordFlag = True
-            #vPrint( 'Quiet', debuggingThisModule, 'ESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
+            #dPrint( 'Quiet', debuggingThisModule, 'ESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
             for j, originalChar in enumerate( originalText ):
                 char = originalChar
                 #nextChar = originalText[j+1] if j<textLen-1 else ''
 
                 #if '{'  in originalText or '_' in originalText or '=' in originalText:
                 #if C=='4' and V=='11':
-                #vPrint( 'Quiet', debuggingThisModule, "  ESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
+                #dPrint( 'Quiet', debuggingThisModule, "  ESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
                     #.format( j, originalChar, lastChar, underlineGroupFlag, hangingUnderlineCount, underlineGroup, bracedGroupFlag, bracedGroup, tag, originalText, resultText ) )
 
                 # Handle hanging underlines, e.g., 'and_ ' or ' _then' or 'and_ they_ _were_ _not _ashamed'
@@ -381,7 +381,7 @@ class ESFMBibleBook( BibleBook ):
             """
             #if (debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1) \
                 #and (originalMarker not in ('c','v') or len(originalText)>5): # Don't display for "blank" lines (like '\v 10 ')
-                #vPrint( 'Quiet', debuggingThisModule, "ESFM doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+                #dPrint( 'Quiet', debuggingThisModule, "ESFM doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
 
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
@@ -406,7 +406,7 @@ class ESFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                         if marker != insideMarker:
                             loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker within line \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
@@ -445,7 +445,7 @@ class ESFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            # vPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+            # dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
             if not marker:
                 logging.critical( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
                 if debuggingThisModule: halt
@@ -550,14 +550,14 @@ def briefDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( EBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, EBB )
+        #dPrint( 'Quiet', debuggingThisModule, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
         vPrint( 'Info', debuggingThisModule, EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = EBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         EBB.checkBook()
         EBErrors = EBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, EBErrors )
@@ -601,14 +601,14 @@ def fullDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( EBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, EBB )
+        #dPrint( 'Quiet', debuggingThisModule, EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification()
         vPrint( 'Info', debuggingThisModule, EBBVersification )
         UBBAddedUnits = EBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = EBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         EBB.checkBook()
         EBErrors = EBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, EBErrors )

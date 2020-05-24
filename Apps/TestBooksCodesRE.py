@@ -70,7 +70,7 @@ def doBBB():
     vPrint( 'Quiet', debuggingThisModule, "\ndoBBB" )
     L0, L1, L2 = {}, {}, {}
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        #dPrint( 'Quiet', debuggingThisModule, BBB )
         if BBB[0] in L0: L0[BBB[0]] += 1
         else: L0[BBB[0]] = 1
         if BBB[1] in L1: L1[BBB[1]] += 1
@@ -83,7 +83,7 @@ def doBBB():
 
     # Now test the RE on the books codes
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        #dPrint( 'Quiet', debuggingThisModule, BBB )
         match = re.search( BBB_RE, BBB )
         if not match:
             vPrint( 'Quiet', debuggingThisModule, BBB )
@@ -96,10 +96,10 @@ def doOSIS():
     minL, maxL = 999, 0
     L = {}
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        #dPrint( 'Quiet', debuggingThisModule, BBB )
         OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
-        #vPrint( 'Quiet', debuggingThisModule, OB )
+        #dPrint( 'Quiet', debuggingThisModule, OB )
         lOB = len( OB )
         if lOB < minL: minL = lOB
         if lOB > maxL: maxL = lOB
@@ -113,7 +113,7 @@ def doOSIS():
 
     # Now test the RE on the books codes
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
-        #vPrint( 'Quiet', debuggingThisModule, BBB )
+        #dPrint( 'Quiet', debuggingThisModule, BBB )
         OB = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OB: continue
         match = re.search( OSIS_BOOK_RE, OB )

@@ -460,14 +460,14 @@ class BiblePunctuationSystemsConverter:
         assert systemName
         assert punctuationSchemeToCheck
         assert self.Lists
-        #vPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
+        #dPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #vPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:

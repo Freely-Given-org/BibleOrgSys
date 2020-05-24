@@ -107,10 +107,10 @@ class Door43CatalogResources:
         try: HTTPResponseObject = urllib.request.urlopen( requestString )
         except urllib.error.URLError as err:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             logging.error( "Door43 URLError '{}' from {}".format( err, requestString ) )
             return None
-        # vPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+        # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
@@ -155,12 +155,12 @@ class Door43CatalogResources:
 
             assert isinstance( pivotedSubjectJsonList['subjects'], list )
             self.totalEntryCount = len( pivotedSubjectJsonList['subjects'] )
-            #vPrint( 'Quiet', debuggingThisModule, self.totalEntryCount ) # 163
+            #dPrint( 'Quiet', debuggingThisModule, self.totalEntryCount ) # 163
             assert self.totalEntryCount >= 163 # Otherwise we are losing stuff
-            #vPrint( 'Quiet', debuggingThisModule, pivotedSubjectJsonList['subjects'][0] )
+            #dPrint( 'Quiet', debuggingThisModule, pivotedSubjectJsonList['subjects'][0] )
             self.subjectNameList, self.subjectDict = set(), {}
             for subjectEntry in pivotedSubjectJsonList['subjects']:
-                #vPrint( 'Quiet', debuggingThisModule, subjectEntry )
+                #dPrint( 'Quiet', debuggingThisModule, subjectEntry )
                 assert isinstance( subjectEntry, dict )
                 subject = subjectEntry['subject']
                 self.subjectNameList.add( subject )
@@ -172,7 +172,7 @@ class Door43CatalogResources:
             ## Download the subject lists from Door43 (around 700 bytes in 2019-02)
             #subjectJsonList = self.getOnlineData( 'subjects' ) # Get a normalised, alphabetically ordered list of subject strings
             #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                #vPrint( 'Quiet', debuggingThisModule, "    subjectJsonList", len(subjectJsonList), subjectJsonList )
+                #dPrint( 'Quiet', debuggingThisModule, "    subjectJsonList", len(subjectJsonList), subjectJsonList )
                 #assert len(subjectJsonList) >= 12 # Otherwise we are losing stuff
                 #assert isinstance( subjectJsonList, list )
             #if subjectJsonList:
@@ -181,18 +181,18 @@ class Door43CatalogResources:
                 #for subjectJsonURL in subjectJsonList:
                     #assert isinstance( subjectJsonURL, str ) # e.g., 'https://api.door43.org/v3/subjects/Translation_Words.json'
                     #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        #vPrint( 'Quiet', debuggingThisModule, "      subjectJsonURL", subjectJsonURL )
+                        #dPrint( 'Quiet', debuggingThisModule, "      subjectJsonURL", subjectJsonURL )
                     #bits1 = subjectJsonURL.split('/')
                     #assert len(bits1) == 6 # e.g., ['https:', '', 'api.door43.org', 'v3', 'subjects', 'Hebrew_Old_Testament.json']
-                    ## vPrint( 'Quiet', debuggingThisModule, "      bits1", bits1 )
+                    ## dPrint( 'Quiet', debuggingThisModule, "      bits1", bits1 )
                     #jsonFilenameList.append( bits1[-1] )
                     #subjectName = bits1[-1].split('.')[0] # e.g., 'Translation_Academy'
                     #self.subjectNameList.append( subjectName.replace( '_', ' ' ) )
                 #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    #vPrint( 'Quiet', debuggingThisModule, "    subjectNameList", len(self.subjectNameList), self.subjectNameList )
+                    #dPrint( 'Quiet', debuggingThisModule, "    subjectNameList", len(self.subjectNameList), self.subjectNameList )
                     #assert len(self.subjectNameList) == len(subjectJsonList) # Otherwise we are losing stuff
                 #if BibleOrgSysGlobals.verbosityLevel > 1:
-                    #vPrint( 'Quiet', debuggingThisModule, f"    Downloaded {len(self.subjectNameList)} Door43 subject fields" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"    Downloaded {len(self.subjectNameList)} Door43 subject fields" )
 
                 ## Now load the individual subject files
                 #self.totalEntryCount = 0
@@ -200,17 +200,17 @@ class Door43CatalogResources:
                 #for subjectName, subjectJsonFilename in zip(self.subjectNameList, jsonFilenameList):
                     #self.subjectDict[subjectName] = self.getOnlineData( f'subjects/{subjectJsonFilename}' )
                     #if BibleOrgSysGlobals.verbosityLevel > 1:
-                        #vPrint( 'Quiet', debuggingThisModule, f"      Downloaded {len(self.subjectDict[subjectName])} Door43 '{subjectName}' subject entries" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"      Downloaded {len(self.subjectDict[subjectName])} Door43 '{subjectName}' subject entries" )
                     #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        #vPrint( 'Quiet', debuggingThisModule, f"{subjectName}: {self.subjectDict[subjectName]}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"{subjectName}: {self.subjectDict[subjectName]}" )
                     #self.totalEntryCount += len( self.subjectDict[subjectName] )
-                    ##vPrint( 'Quiet', debuggingThisModule, f"\n\n\n{subjectName}" )
+                    ##dPrint( 'Quiet', debuggingThisModule, f"\n\n\n{subjectName}" )
                     ##for something in self.subjectDict[subjectName]:
                         ##assert isinstance( something, dict )
                         ##if something['language'] == 'ru':
-                            ##vPrint( 'Quiet', debuggingThisModule, f'\n{something}' )
+                            ##dPrint( 'Quiet', debuggingThisModule, f'\n{something}' )
                 #if BibleOrgSysGlobals.verbosityLevel > 0:
-                    #vPrint( 'Quiet', debuggingThisModule, f"    Downloaded {len(self.subjectDict)} sets of Door43 subject entries ({self.totalEntryCount} total entries)" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"    Downloaded {len(self.subjectDict)} sets of Door43 subject entries ({self.totalEntryCount} total entries)" )
     # end of Door43CatalogResources.fetchSubjects
 
 
@@ -254,13 +254,13 @@ class Door43CatalogResources:
         for languageEntry in catalog['languages']:
             assert isinstance( languageEntry, dict )
             self.languageDict[languageEntry['identifier']] = languageEntry
-            #vPrint( 'Quiet', debuggingThisModule, 'lE', languageEntry.keys() )
+            #dPrint( 'Quiet', debuggingThisModule, 'lE', languageEntry.keys() )
             #for resource in languageEntry['resources']:
                 #self.totalEntryCount += 1
         vPrint( 'Never', debuggingThisModule, "\n    languageDict", len(self.languageDict), self.languageDict['en'] )
         #for something in self.languageDict['ru']['resources']:
             #assert isinstance( something, dict )
-            #vPrint( 'Quiet', debuggingThisModule, f'\n{something}' )
+            #dPrint( 'Quiet', debuggingThisModule, f'\n{something}' )
 
         vPrint( 'Normal', debuggingThisModule, f"    Downloaded {len(self.languageDict)} Door43 languages" )
         vPrint( 'Info', debuggingThisModule, f"      {list(self.languageDict.keys())}" )
@@ -336,7 +336,7 @@ class Door43CatalogResources:
 
         resultsList = []
         for entry in self.BibleList:
-            #vPrint( 'Quiet', debuggingThisModule, 'entry', type(entry), len(entry), repr(entry), '\n' )
+            #dPrint( 'Quiet', debuggingThisModule, 'entry', type(entry), len(entry), repr(entry), '\n' )
             assert entry and isinstance( entry, tuple) and len(entry)==3
             lg, title, entryDict = entry
             if (languageCode is None or languageCode in lg) \
@@ -378,8 +378,8 @@ class Door43CatalogBible( USFMBible ):
             assert resourcesObject # why ??? and isinstance( resourcesObject, Door43CatalogResources )
             resourceDict = resourcesObject.getBibleResourceDict( parameterOne )
         assert resourceDict and isinstance( resourceDict, dict )
-        #vPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict )
-        #vPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict.keys() )
+        #dPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict )
+        #dPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict.keys() )
 
         vPrint( 'Never', debuggingThisModule, 'formats', resourceDict['formats'] )
         if 'formats' in resourceDict:
@@ -389,7 +389,7 @@ class Door43CatalogBible( USFMBible ):
             formats = resourceDict['projects'][0]['formats']
         assert formats
         for formatDict in formats:
-            #vPrint( 'Quiet', debuggingThisModule, 'formatDict', formatDict )
+            #dPrint( 'Quiet', debuggingThisModule, 'formatDict', formatDict )
             formatString = formatDict['format']
             if 'application/zip;' in formatString and 'usfm' in formatString:
                 size, zipURL = formatDict['size'], formatDict['url']
@@ -403,14 +403,14 @@ class Door43CatalogBible( USFMBible ):
         unzippedFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath(
                                 'Door43Catalog/', f"{resourceDict['language']}_{resourceDict['title']}/" )
         if os.path.isdir( unzippedFolderpath ):
-            #vPrint( 'Quiet', debuggingThisModule, f"Issued: {resourceDict['issued']}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"Issued: {resourceDict['issued']}" )
             issuedDatetime = datetime.strptime( resourceDict['issued'], '%Y-%m-%dT%H:%M:%S+00:00' )
-            #vPrint( 'Quiet', debuggingThisModule, f"issuedDatetime: {issuedDatetime}" )
-            #vPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"issuedDatetime: {issuedDatetime}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
             folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderpath).st_mtime)
-            #vPrint( 'Quiet', debuggingThisModule, f"folderModifiedDatetime: {folderModifiedDatetime}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"folderModifiedDatetime: {folderModifiedDatetime}" )
             alreadyDownloadedFlag = folderModifiedDatetime > issuedDatetime
-            #vPrint( 'Quiet', debuggingThisModule, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
 
         if alreadyDownloadedFlag:
             vPrint( 'Normal', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
@@ -419,10 +419,10 @@ class Door43CatalogBible( USFMBible ):
             try: HTTPResponseObject = urllib.request.urlopen( zipURL )
             except urllib.error.URLError as err:
                 #errorClass, exceptionInstance, traceback = sys.exc_info()
-                #vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 logging.critical( "Door43 URLError '{}' from {}".format( err, zipURL ) )
                 return None
-            # vPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+            # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
             contentType = HTTPResponseObject.info().get( 'content-type' )
             vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
             if contentType == 'application/zip':
@@ -439,10 +439,10 @@ class Door43CatalogBible( USFMBible ):
 
         # There's probably a folder inside this folder
         folders = os.listdir( unzippedFolderpath )
-        #vPrint( 'Quiet', debuggingThisModule, 'folders', folders )
+        #dPrint( 'Quiet', debuggingThisModule, 'folders', folders )
         assert len(folders) == 1
         desiredFolderName = folders[0] + '/'
-        #vPrint( 'Quiet', debuggingThisModule, 'desiredFolderName', desiredFolderName )
+        #dPrint( 'Quiet', debuggingThisModule, 'desiredFolderName', desiredFolderName )
 
         USFMBible.__init__( self, os.path.join( unzippedFolderpath, desiredFolderName ),
                                     givenName=resourceDict['title'], givenAbbreviation=resourceDict['identifier'] )
@@ -465,7 +465,7 @@ def briefDemo() -> None:
     door43CatalogResources = Door43CatalogResources()
     vPrint( 'Quiet', debuggingThisModule, door43CatalogResources )
     #Door43CatalogResources.load() # takes a minute
-    #vPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
+    #dPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
 
     door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -585,7 +585,7 @@ def fullDemo() -> None:
     door43CatalogResources = Door43CatalogResources()
     vPrint( 'Quiet', debuggingThisModule, door43CatalogResources )
     #Door43CatalogResources.load() # takes a minute
-    #vPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
+    #dPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
 
     door43CatalogResources.fetchCatalog()
     if BibleOrgSysGlobals.verbosityLevel > 0:

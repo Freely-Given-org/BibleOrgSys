@@ -329,11 +329,11 @@ class uWOBSBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #vPrint( 'Quiet', debuggingThisModule, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', debuggingThisModule, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "uWOBSBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
         self.doPostLoadProcessing()
     # end of uWOBSBible.load
 # end of class uWOBSBible
@@ -401,7 +401,7 @@ class uWOBSBibleBook( BibleBook ):
             #             thisText = text[ix:iMIndex].rstrip()
             #             self.addLine( marker, thisText )
             #             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-            #             #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+            #             #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
             #             marker = insideMarker # setup for the next line
             #     if ix != 0: # We must have separated multiple lines
             #         text = text[ix:] # Get the final bit of the line
@@ -421,7 +421,7 @@ class uWOBSBibleBook( BibleBook ):
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
                         logging.info( "loaduWOBSBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
-                    # vPrint( 'Quiet', debuggingThisModule, state, lineCount, "line", line )
+                    # dPrint( 'Quiet', debuggingThisModule, state, lineCount, "line", line )
                     if lineCount == 1: # Title line
                         assert state == 0
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -480,9 +480,9 @@ def briefDemo() -> None:
         #result2.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -493,9 +493,9 @@ def briefDemo() -> None:
         #result3.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -543,9 +543,9 @@ def briefDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, uWnB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     uWnB.check()
-                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # vPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -574,9 +574,9 @@ def fullDemo() -> None:
         #result2.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -591,9 +591,9 @@ def fullDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, f"OBS 1:1 gVT", result3.getVerseText( ('OBS','1','1','') ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -641,9 +641,9 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, uWnB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     uWnB.check()
-                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # vPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

@@ -270,12 +270,12 @@ class BibleVersificationSystemsConverter:
         # We'll create a number of dictionaries
         self.__DataDict = {}
         for versificationSystemCode in self.__XMLSystems.keys():
-            #vPrint( 'Quiet', debuggingThisModule, versificationSystemCode )
+            #dPrint( 'Quiet', debuggingThisModule, versificationSystemCode )
             # Make the data dictionary for this versification system
             chapterDataDict, omittedVersesDict, combinedVersesDict, reorderedVersesDict = {}, {}, {}, {}
             for bookElement in self.__XMLSystems[versificationSystemCode]['tree']:
                 BBB = bookElement.find("referenceAbbreviation").text
-                #vPrint( 'Quiet', debuggingThisModule, BBB )
+                #dPrint( 'Quiet', debuggingThisModule, BBB )
                 if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
                     logging.error( _("Unrecognized {!r} book abbreviation in {!r} versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
@@ -365,7 +365,7 @@ class BibleVersificationSystemsConverter:
             thisSystem = self.__DataDict[versificationSystemCode]
             for versificationSystemCode2 in self.__DataDict:
                 if versificationSystemCode2 != versificationSystemCode:
-                    #vPrint( 'Quiet', debuggingThisModule, "  Comparing with", versificationSystemCode2 )
+                    #dPrint( 'Quiet', debuggingThisModule, "  Comparing with", versificationSystemCode2 )
                     secondSystem = self.__DataDict[versificationSystemCode2]
                     if thisSystem == secondSystem: logging.warning( _("The {} and {} systems are identical.").format( versificationSystemCode, versificationSystemCode2 ) )
 
@@ -375,15 +375,15 @@ class BibleVersificationSystemsConverter:
                 assert not thisSystem['reordered']
             else:
                 for BBB in thisSystem['CV']:
-                    #vPrint( 'Quiet', debuggingThisModule, BBB )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB )
                     if BBB not in referenceVersificationSystem['CV']:
                         logging.warning( _("The {} system contains book {} which is not in {}").format( versificationSystemCode, BBB, referenceCode ) )
                     elif int(thisSystem['CV'][BBB]['numChapters']) > int(referenceVersificationSystem['CV'][BBB]['numChapters']):
-                        #vPrint( 'Quiet', debuggingThisModule, '2', thisSystem['CV'][BBB]['numChapters'], referenceVersificationSystem['CV'][BBB]['numChapters'] )
+                        #dPrint( 'Quiet', debuggingThisModule, '2', thisSystem['CV'][BBB]['numChapters'], referenceVersificationSystem['CV'][BBB]['numChapters'] )
                         logging.warning( _("The {} system contains {} chapters for {} while only {} in {}").format( versificationSystemCode, thisSystem['CV'][BBB]['numChapters'], BBB, referenceVersificationSystem['CV'][BBB]['numChapters'], referenceCode ) )
                     else:
                         for ch in range( 1, int(thisSystem['CV'][BBB]['numChapters']) + 1 ):
-                            #vPrint( 'Quiet', debuggingThisModule, ch )
+                            #dPrint( 'Quiet', debuggingThisModule, ch )
                             ok = True
                             try: v = int( thisSystem['CV'][BBB][str(ch)] )
                             except KeyError:
@@ -549,7 +549,7 @@ class BibleVersificationSystemsConverter:
                 """Convert special characters in an entry…"""
                 result = ""
                 for field in entry if isinstance( entry, list) else entry.items():
-                    #vPrint( 'Quiet', debuggingThisModule, field )
+                    #dPrint( 'Quiet', debuggingThisModule, field )
                     if result: result += ", " # Separate the fields
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
@@ -557,7 +557,7 @@ class BibleVersificationSystemsConverter:
                     elif isinstance( field, tuple):
                         tupleResult = ""
                         for tupleField in field:
-                            #vPrint( 'Quiet', debuggingThisModule, field, tupleField )
+                            #dPrint( 'Quiet', debuggingThisModule, field, tupleField )
                             if tupleResult: tupleResult += "," # Separate the fields (without a space)
                             if tupleField is None: tupleResult += '""'
                             elif isinstance( tupleField, str): tupleResult += '"' + str(tupleField).replace('"','\\"') + '"'
@@ -570,7 +570,7 @@ class BibleVersificationSystemsConverter:
             theFile.write( "static struct{}{}[{}] = {\n  // Fields are{}\n".format( structName, dictName, len(theDict), fieldsComment ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    #vPrint( 'Quiet', debuggingThisModule, dictKey, theDict[dictKey] )
+                    #dPrint( 'Quiet', debuggingThisModule, dictKey, theDict[dictKey] )
                     theFile.write( "  {\"{}\",{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 elif isinstance( dictKey, int ):
                     theFile.write( "  {{},{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )

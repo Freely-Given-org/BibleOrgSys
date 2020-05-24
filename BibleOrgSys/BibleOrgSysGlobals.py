@@ -108,7 +108,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-05-21' # by RJH
+LAST_MODIFIED_DATE = '2020-05-24' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.88'
@@ -207,7 +207,8 @@ LEVEL_NAME_DICT = { 'Quiet':1, 'Q':1,
                     }
 def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
     """
-    verbose print -- intended for user notifications.
+    verbose print -- intended for user notifications
+                    (unlike the following two functions intended for programmers).
 
     Only print the given string, if the verbosity level is correct.
     """
@@ -250,12 +251,12 @@ def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
         increaseLevel = 1 # Should always be an int now
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
     if debugFlag: increaseLevel += 1
-    # print( "args1", len(args), repr(args) )
+    # dPrint( 'Info', debuggingThisModule, "args1", len(args), repr(args) )
     if not kwargs and args \
     and isinstance( args[-1], str ) and not args[-1].endswith( '…' ):
         args = ( f'{args[0]}…', ) if len(args)==1 else ( args[:-1], f'{args[-1]}…', ) # Append an ellipsis
-    # print( "args2", len(args), repr(args) )
-    # vPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
+    # dPrint( 'Info', debuggingThisModule, "args2", len(args), repr(args) )
+    # dPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
     vPrint( 'Verbose', increaseLevel, *args, **kwargs )
 # end of BibleOrgSysGlobals.fnPrint function
 

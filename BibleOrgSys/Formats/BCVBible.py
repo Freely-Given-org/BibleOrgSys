@@ -265,7 +265,7 @@ class BCVBible( Bible ):
                         processed = True
                         break
                 if not processed: vPrint( 'Quiet', debuggingThisModule, _("ERROR: Unexpected {!r} line in metadata file").format( line ) )
-        #vPrint( 'Quiet', debuggingThisModule, 'SD', self.suppliedMetadata['BCV'] ); halt
+        #dPrint( 'Quiet', debuggingThisModule, 'SD', self.suppliedMetadata['BCV'] ); halt
         vPrint( 'Info', debuggingThisModule, "  " + _("Got {} metadata entries:").format( len(self.suppliedMetadata['BCV']) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(self.suppliedMetadata['BCV']):
@@ -283,7 +283,7 @@ class BCVBible( Bible ):
         if 'BookList' in self.suppliedMetadata['BCV']:
             BL = self.suppliedMetadata['BCV']['BookList']
             if BL and BL[0]=='[' and BL[-1]==']': self.givenBookList = eval( BL )
-            #vPrint( 'Quiet', debuggingThisModule, 'x1', repr(self.givenBookList), repr(self.givenBookList[2]) )
+            #dPrint( 'Quiet', debuggingThisModule, 'x1', repr(self.givenBookList), repr(self.givenBookList[2]) )
             if isinstance( self.givenBookList, list ):
                 # del self.suppliedMetadata['BCV']['BookList']
                 pass
@@ -377,11 +377,11 @@ class BCVBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #vPrint( 'Quiet', debuggingThisModule, _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', debuggingThisModule, _("  BCVBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "BCVBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
         self.doPostLoadProcessing()
     # end of BCVBible.load
 # end of class BCVBible
@@ -435,7 +435,7 @@ class BCVBibleBook( BibleBook ):
                         processed = True
                         break
                 if not processed: vPrint( 'Quiet', debuggingThisModule, "ERROR: Unexpected {!r} line in metadata file".format( line ) )
-        #vPrint( 'Quiet', debuggingThisModule, 'SD', settingsDict )
+        #dPrint( 'Quiet', debuggingThisModule, 'SD', settingsDict )
         vPrint( 'Info', debuggingThisModule, "  " + "Got {} metadata entries:".format( len(settingsDict) ) )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for key in sorted(settingsDict):
@@ -449,7 +449,7 @@ class BCVBibleBook( BibleBook ):
             #self.givenCVList = None
             CVL = settingsDict['CVList']
             if CVL and CVL[0]=='[' and CVL[-1]==']': self.givenCVList = eval( CVL )
-            #vPrint( 'Quiet', debuggingThisModule, 'x1', repr(self.givenCVList) )
+            #dPrint( 'Quiet', debuggingThisModule, 'x1', repr(self.givenCVList) )
             if isinstance( self.givenCVList, list ): del settingsDict['CVList']
             else: vPrint( 'Quiet', debuggingThisModule, "ERROR: Unexpected {!r} format in metadata file".format( CVL ) )
 
@@ -478,7 +478,7 @@ class BCVBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #vPrint( 'Quiet', debuggingThisModule, "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.BCVMarkers.getMarkerListFromText( text )
@@ -496,7 +496,7 @@ class BCVBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -530,7 +530,7 @@ class BCVBibleBook( BibleBook ):
                         logging.info( "loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-                    #vPrint( 'Quiet', debuggingThisModule, CV, "line", line )
+                    #dPrint( 'Quiet', debuggingThisModule, CV, "line", line )
                     assert line and line[0]=='\\'
                     ixEQ = line.find( '=' )
                     ixLL = line.find( '<<' )
@@ -538,16 +538,16 @@ class BCVBibleBook( BibleBook ):
                     if ixLL == -1: ixLL = DUMMY_VALUE
                     ix = min( ixEQ, ixLL )
                     marker = line[1:ix]
-                    #vPrint( 'Quiet', debuggingThisModule, 'marker', repr(marker) )
+                    #dPrint( 'Quiet', debuggingThisModule, 'marker', repr(marker) )
                     if ixLL == DUMMY_VALUE:
                         originalMarker = None
                         if marker == 'v~': originalMarker = 'v'
                         elif marker == 'c#': originalMarker = 'c'
                     else: originalMarker = line[ixLL+2:ixEQ]
-                    #vPrint( 'Quiet', debuggingThisModule, 'originalMarker', repr(originalMarker) )
+                    #dPrint( 'Quiet', debuggingThisModule, 'originalMarker', repr(originalMarker) )
                     if ixEQ == DUMMY_VALUE: text = None
                     else: text = line[ixEQ+1:]
-                    #vPrint( 'Quiet', debuggingThisModule, 'text', repr(text) )
+                    #dPrint( 'Quiet', debuggingThisModule, 'text', repr(text) )
 
                     if marker[0] == '¬':
                         assert originalMarker is None and text is None
@@ -589,9 +589,9 @@ def briefDemo() -> None:
         #result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -602,9 +602,9 @@ def briefDemo() -> None:
         #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -652,9 +652,9 @@ def briefDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, bcvB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     bcvB.check()
-                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = bcvB.getCheckResults()
-                    # vPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -684,9 +684,9 @@ def fullDemo() -> None:
         #result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -697,9 +697,9 @@ def fullDemo() -> None:
         #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -747,9 +747,9 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, bcvB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     bcvB.check()
-                    #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = bcvB.getCheckResults()
-                    # vPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

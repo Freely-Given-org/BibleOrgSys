@@ -407,14 +407,14 @@ class BibleVersificationSystems:
         matchedVersificationSystemCodes, badOVList, badCVList, badRVList = [], [], [], []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for versificationSystemCode in self.__DataDict: # Step through the various reference schemes
-            #vPrint( 'Quiet', debuggingThisModule, system )
+            #dPrint( 'Quiet', debuggingThisModule, system )
             bookMismatchCount = chapterMismatchCount = verseMismatchCount = omittedVerseMismatchCount = combinedVerseMismatchCount = reorderedVerseMismatchCount = 0
             theseErrors = ''
             CVData, OVData, CombVData, ReordVData = self.__DataDict[versificationSystemCode]['CV'], self.__DataDict[versificationSystemCode]['omitted'], self.__DataDict[versificationSystemCode]['combined'], self.__DataDict[versificationSystemCode]['reordered']
 
             # Check verses per chapter
             for BBB in versificationSchemeToCheck.keys():
-                #vPrint( 'Quiet', debuggingThisModule, BBB )
+                #dPrint( 'Quiet', debuggingThisModule, BBB )
                 if BBB in CVData:
                     myContainer = versificationSchemeToCheck[BBB] if isinstance(versificationSchemeToCheck[BBB],list) else versificationSchemeToCheck[BBB].items() # Handles both lists and dictionaries
                     for chapterToCheck,numVersesToCheck in myContainer:
@@ -531,7 +531,7 @@ class BibleVersificationSystems:
                     errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
             else:
-                #vPrint( 'Quiet', debuggingThisModule, "  Matches {!r} system".format( versificationSystemCode ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  Matches {!r} system".format( versificationSystemCode ) )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
             if BibleOrgSysGlobals.debugFlag and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: vPrint( 'Quiet', debuggingThisModule, theseErrors )
@@ -891,13 +891,13 @@ class BibleVersificationSystem:
                     resultList.append( (BBB1, str(Cint), str(Vint), S,) )
         else: # it's a range that spans multiple books
             BBB, Cfirst, Vfirst = BBB1, C1int, V1int
-            #vPrint( 'Quiet', debuggingThisModule, "  here1 in expandCVRange:", BBB, Cfirst, Vfirst )
+            #dPrint( 'Quiet', debuggingThisModule, "  here1 in expandCVRange:", BBB, Cfirst, Vfirst )
             while BBB != BBB2: # Go to the end of this book
                 Clast = self.getNumChapters( BBB )
                 if Clast is None: # This book didn't have any chapter info in the versification scheme  :(
                     logging.critical( "Book {} didn't have chapter information for expanding range {} to {}".format( BBB, startRef, endRef ) )
                     break
-                #vPrint( 'Quiet', debuggingThisModule, "    here2 in expandCVRange:", BBB, Cfirst, Clast )
+                #dPrint( 'Quiet', debuggingThisModule, "    here2 in expandCVRange:", BBB, Cfirst, Clast )
                 for Cint in range( Cfirst, Clast+1 ):
                     Vlast = self.getNumVerses( BBB, str(Cint) )
                     if Cint==Cfirst: # We're on the first chapter

@@ -319,7 +319,7 @@ class BibleOrganisationalSystemsConverter:
 
         if BibleOrgSysGlobals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():
-                #vPrint( 'Quiet', debuggingThisModule, extendedReferenceAbbreviation, data )
+                #dPrint( 'Quiet', debuggingThisModule, extendedReferenceAbbreviation, data )
                 systemType = data['type']
                 if systemType=='edition':
                     if 'derivedFrom' in data: logging.error( _("{} shouldn't use 'derivedFrom' {!r}").format( extendedReferenceAbbreviation, data['derivedFrom'] ) )

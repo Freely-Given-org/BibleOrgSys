@@ -706,22 +706,22 @@ class UnknownBible:
                     vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
 
         #if 1 or debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+            #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
         #if 0 and debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+            #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
-            #vPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
 
         if autoLoadAlways or totalBibleCount == 1:
@@ -901,12 +901,12 @@ def briefDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
-        #vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #vPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
-        #vPrint( 'Quiet', debuggingThisModule, uB )
+            #dPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
+        #dPrint( 'Quiet', debuggingThisModule, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
             #thisBible.check()
@@ -1010,7 +1010,7 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible G/ Processing {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        #vPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
+        #dPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
         vPrint( 'Quiet', debuggingThisModule, uB )
         if result:
             result.check()
@@ -1063,12 +1063,12 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
-        #vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #vPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
-        #vPrint( 'Quiet', debuggingThisModule, uB )
+            #dPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
+        #dPrint( 'Quiet', debuggingThisModule, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
             #thisBible.check()
@@ -1172,7 +1172,7 @@ def fullDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible G{}/ Processing {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            #vPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
+            #dPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
             vPrint( 'Quiet', debuggingThisModule, uB )
             if result:
                 result.check()

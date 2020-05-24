@@ -190,7 +190,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                         vPrint( 'Verbose', debuggingThisModule, "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
-                #vPrint( 'Quiet', debuggingThisModule, "BFC_here", repr(tryFolderName), repr(thisFilename) )
+                #dPrint( 'Quiet', debuggingThisModule, "BFC_here", repr(tryFolderName), repr(thisFilename) )
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
@@ -260,7 +260,7 @@ class DrupalBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
 
-                #vPrint( 'Quiet', debuggingThisModule, 'DB file line is "' + line + '"' )
+                #dPrint( 'Quiet', debuggingThisModule, 'DB file line is "' + line + '"' )
                 if line[0] == '#': continue # Just discard comment lines
                 lastLine = line
                 if lineCount == 1:
@@ -336,7 +336,7 @@ def testDB( TUBfilename ):
         if t=='NT' and len(db)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(db)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = db.getVerseText( svk )
@@ -364,9 +364,9 @@ def briefDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "DrupalBible TestA3", result3 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = DrupalBibleFileCheck( testSubfolder )
-        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB1", result3 )
+        #dPrint( 'Normal', debuggingThisModule, "DrupalBible TestB1", result3 )
         #result4 = DrupalBibleFileCheck( testSubfolder, autoLoad=True )
-        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB2", result4 )
+        #dPrint( 'Normal', debuggingThisModule, "DrupalBible TestB2", result4 )
 
 
     if 1: # specified modules
@@ -422,9 +422,9 @@ def fullDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "DrupalBible TestA3", result3 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = DrupalBibleFileCheck( testSubfolder )
-        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB1", result3 )
+        #dPrint( 'Normal', debuggingThisModule, "DrupalBible TestB1", result3 )
         #result4 = DrupalBibleFileCheck( testSubfolder, autoLoad=True )
-        #vPrint( 'Normal', debuggingThisModule, "DrupalBible TestB2", result4 )
+        #dPrint( 'Normal', debuggingThisModule, "DrupalBible TestB2", result4 )
 
 
     if 1: # specified modules

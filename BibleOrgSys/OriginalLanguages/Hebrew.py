@@ -261,25 +261,25 @@ transliterationSchemes = { 'Default':BOS_HEBREW_TRANSLITERATION, 'Standard':STAN
 
 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
     for j,letter in enumerate( consonants ):
-        #vPrint( 'Quiet', debuggingThisModule, j, letter )
+        #dPrint( 'Quiet', debuggingThisModule, j, letter )
         assert consonants.count(letter)==1
         assert letter not in vowelPoints
         assert letter not in otherMarks
         assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert vowelPoints.count(mark)==1
         assert mark not in consonants
         assert mark not in otherMarks
         assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert otherMarks.count(mark)==1
         assert mark not in consonants
         assert mark not in vowelPoints
         assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert cantillationMarks.count(mark)==1
         assert mark not in consonants
         assert mark not in vowelPoints
@@ -319,12 +319,12 @@ class Hebrew():
     def printUnicodeData( self, text:Optional[str]=None ) -> None:
         """
         """
-        #vPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
+        #dPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
 
         if text is None: text = self.currentText
 
         #def printUnicodeInfo( text, description ):
-            #vPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
+            #dPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
         for j,char in enumerate(text):
             vPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                 .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
@@ -355,7 +355,7 @@ class Hebrew():
     def removeAllMetegOrSiluq( self, text:Optional[str]=None ) -> str:
         """
         """
-        #vPrint( 'Quiet', debuggingThisModule, "removeAllMetegOrSiluq( {!r} )".format( text ) )
+        #dPrint( 'Quiet', debuggingThisModule, "removeAllMetegOrSiluq( {!r} )".format( text ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeAllMetegOrSiluq( self.currentText ) # recursive call
@@ -370,7 +370,7 @@ class Hebrew():
         """
         It's actually often impossible to tell automatically which purpose this Unicode mark has.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "_removeMetegOrSiluq( {!r}, {} )".format( text, asVowel ) )
+        #dPrint( 'Quiet', debuggingThisModule, "_removeMetegOrSiluq( {!r}, {} )".format( text, asVowel ) )
 
         while text:
             textLength = len( text )
@@ -404,7 +404,7 @@ class Hebrew():
         """
         Return the text with cantillation marks removed.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+        #dPrint( 'Quiet', debuggingThisModule, "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeCantillationMarks( self.currentText, removeMetegOrSiluq ) # recursive call
@@ -421,7 +421,7 @@ class Hebrew():
         """
         Return the text with cantillation marks removed.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+        #dPrint( 'Quiet', debuggingThisModule, "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeVowelPointing( self.currentText ) # recursive call
@@ -437,7 +437,7 @@ class Hebrew():
         """
         Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "removeOtherMarks( {!r} )".format( text ) )
+        #dPrint( 'Quiet', debuggingThisModule, "removeOtherMarks( {!r} )".format( text ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeOtherMarks( self.currentText ) # recursive call

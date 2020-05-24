@@ -199,7 +199,7 @@ class USXXMLBibleBook( BibleBook ):
                     vText = verseNumberElement.tail
                     if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
                     if vText:
-                        #vPrint( 'Quiet', debuggingThisModule, repr(vText) )
+                        #dPrint( 'Quiet', debuggingThisModule, repr(vText) )
                         self.appendToLastLine( vText )
         # end of load.loadVerseNumberField
 
@@ -220,7 +220,7 @@ class USXXMLBibleBook( BibleBook ):
             for attrib,value in charElement.items():
                 if attrib=='style':
                     charStyle = value # This is basically the USFM character marker name
-                    #vPrint( 'Quiet', debuggingThisModule, "  charStyle", charStyle )
+                    #dPrint( 'Quiet', debuggingThisModule, "  charStyle", charStyle )
                     assert not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( charStyle )
                 elif attrib == 'closed':
                     assert value == 'false'
@@ -235,11 +235,11 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the subelements -- chars are one of the few multiply embedded fields in USX
             for subelement in charElement:
                 sublocation = subelement.tag + ' ' + location
-                #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}'.format( self.BBB, C, V, charElement.tag ) )
+                #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}'.format( self.BBB, C, V, charElement.tag ) )
                 if subelement.tag == 'char': # milestone (not a container)
                     charLine += loadCharField( subelement, sublocation ) # recursive call
                 elif subelement.tag == 'ref':
-                    #vPrint( 'Quiet', debuggingThisModule, "ref", BibleOrgSysGlobals.elementStr( subelement ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "ref", BibleOrgSysGlobals.elementStr( subelement ) )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                     # Process the attribute first
                     refLoc = None
@@ -248,12 +248,12 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             logging.error( _("KF24 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #vPrint( 'Quiet', debuggingThisModule, "ref", refLoc, repr(charElement.text), repr(charElement.tail), repr(charElement.text + (charElement.tail if element.tail else '')) )
+                    #dPrint( 'Quiet', debuggingThisModule, "ref", refLoc, repr(charElement.text), repr(charElement.tail), repr(charElement.text + (charElement.tail if element.tail else '')) )
                     charLine += (subelement.text if not BibleOrgSysGlobals.isBlank(subelement.text) else '') \
                                 + (subelement.tail if not BibleOrgSysGlobals.isBlank(subelement.tail) else '')
                     # TODO: How do we save reference in USFM???
                 elif subelement.tag == 'note':
-                    #vPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( subelement ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( subelement ) )
                     processedNoteField = loadNoteField( subelement, sublocation )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         assert '\n' not in processedNoteField
@@ -276,7 +276,7 @@ class USXXMLBibleBook( BibleBook ):
                 charTail = charElement.tail
                 if charTail[0]=='\n': charTail = charTail.lstrip() # Paratext puts footnote parts on new lines
                 if charTail and charTail[-1] in ('\n','\t'): charTail = charTail.rstrip()
-            #vPrint( 'Quiet', debuggingThisModule, "charLine", repr(charLine), "charStyle", repr(charStyle), "charTail", repr(charTail) )
+            #dPrint( 'Quiet', debuggingThisModule, "charLine", repr(charLine), "charStyle", repr(charStyle), "charTail", repr(charTail) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert '\n' not in charLine
                 assert '\n' not in charStyle
@@ -326,10 +326,10 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the subelements -- notes are one of the few multiply embedded fields in USX
             for subelement in noteElement:
                 sublocation = subelement.tag + ' ' + noteLocation
-                #vPrint( 'Quiet', debuggingThisModule, C, V, subelement.tag, repr(noteField) )
+                #dPrint( 'Quiet', debuggingThisModule, C, V, subelement.tag, repr(noteField) )
                 if subelement.tag == 'char': # milestone (not a container)
                     noteCharField = loadCharField( subelement, sublocation )
-                    #vPrint( 'Quiet', debuggingThisModule, "noteCharField: {!r}".format( noteCharField ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "noteCharField: {!r}".format( noteCharField ) )
                     noteField += noteCharField
                 elif subelement.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
@@ -347,7 +347,7 @@ class USXXMLBibleBook( BibleBook ):
                     logging.error( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                #vPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteField) )
+                #dPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteField) )
                 if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteField
             noteField += '\\{}*'.format( noteStyle )
@@ -381,7 +381,7 @@ class USXXMLBibleBook( BibleBook ):
             Uses (and updates) C,V information from the containing function.
             """
             nonlocal C, V
-            #vPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.loadParagraph( {} {} )".format( paragraphXML, paragraphlocation ) )
+            #dPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.loadParagraph( {} {} )".format( paragraphXML, paragraphlocation ) )
 
             # Process the attributes first
             paragraphStyle = paragraphVerseId = None
@@ -401,13 +401,13 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the paragraph text (or write a paragraph marker anyway)
             paragraphText = paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else ''
             if version is None: paragraphText = paragraphText.rstrip() # Don't need to strip extra spaces in v2
-            #vPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
+            #dPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
             self.addLine( paragraphStyle, paragraphText )
 
             # Now process the paragraph subelements
             for element in paragraphXML:
                 location = element.tag + ' ' + paragraphlocation
-                #vPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load {}:{} {!r} in {}".format( C, V, element.tag, location ) )
+                #dPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load {}:{} {!r} in {}".format( C, V, element.tag, location ) )
                 if element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location )
                     #BibleOrgSysGlobals.checkXMLNoText( element, location )
@@ -433,13 +433,13 @@ class USXXMLBibleBook( BibleBook ):
                         #vText = element.tail
                         #if vText[0]=='\n': vText = vText.lstrip() # Paratext puts cross references on a new line
                         #if vText:
-                            ##vPrint( 'Quiet', debuggingThisModule, repr(vText) )
+                            ##dPrint( 'Quiet', debuggingThisModule, repr(vText) )
                             #self.appendToLastLine( vText )
                 elif element.tag == 'char':
                     charLine = loadCharField( element, location )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
-                    #vPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( element ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( element ) )
                     processedNoteField = loadNoteField( element, location )
                     if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
                     self.appendToLastLine( processedNoteField )
@@ -481,7 +481,7 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             logging.error( _("KW74 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                    #vPrint( 'Quiet', debuggingThisModule, "ref", refLoc, repr(element.text), repr(element.tail), repr(element.text + (element.tail if element.tail else '')) )
+                    #dPrint( 'Quiet', debuggingThisModule, "ref", refLoc, repr(element.text), repr(element.tail), repr(element.text + (element.tail if element.tail else '')) )
                     self.appendToLastLine( element.text + (element.tail if element.tail else '') )
                     # TODO: How do we save reference in USFM???
                 elif element.tag == 'figure':
@@ -501,7 +501,7 @@ class USXXMLBibleBook( BibleBook ):
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     figCaption = element.text
                     figLine = '\\fig {}|{}|{}|{}|{}|{}|{}\\fig*'.format( figDesc, figFile, figSize, figLoc, figCopy, figCaption, figRef )
-                    #vPrint( 'Quiet', debuggingThisModule, "figLine", figLine )
+                    #dPrint( 'Quiet', debuggingThisModule, "figLine", figLine )
                     self.appendToLastLine( figLine )
                     if not BibleOrgSysGlobals.isBlank( element.tail ): self.appendToLastLine( element.tail )
                 else:
@@ -598,7 +598,7 @@ class USXXMLBibleBook( BibleBook ):
                         self.addPriorityError( 97, C, V, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                         #lastText =  '\\' + USFMMarker + ' ' + text
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {} {} Now have {}:{!r}".format( self.BBB, C, V, lastMarker, lastText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "{} {} {} Now have {}:{!r}".format( self.BBB, C, V, lastMarker, lastText ) )
                     else: # the line begins with an unknown USFM Marker
                         try: status = element.attrib['status']
                         except KeyError: status = None
@@ -618,12 +618,12 @@ class USXXMLBibleBook( BibleBook ):
                                 vPrint( 'Quiet', debuggingThisModule, "USX unknown marker={!r} text={!r} status={} @ {} {} {}:{}".format( USFMMarker, text, status, self.workName, self.BBB, C, V ) )
                             for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                                 if USFMMarker.startswith( tryMarker ): # Let's try changing it
-                                    #vPrint( 'Quiet', debuggingThisModule, "  tryMarker={!r}".format( tryMarker ) )
+                                    #dPrint( 'Quiet', debuggingThisModule, "  tryMarker={!r}".format( tryMarker ) )
                                     loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, C, V, USFMMarker, tryMarker, text ) )
                                     logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, C, V, text ) )
                                     paragraphText = element.text if element.text and element.text.strip() else ''
                                     if version is None: paragraphText = element.text.rstrip() # Don't need to strip extra spaces in v2
-                                    #vPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
+                                    #dPrint( 'Quiet', debuggingThisModule, "USXXMLBibleBook.load newLine: {!r} {!r}".format( paragraphStyle, paragraphText ) )
                                     self.addLine( tryMarker, paragraphText )
                                     fixed = True
                                     break
@@ -637,7 +637,7 @@ class USXXMLBibleBook( BibleBook ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, 'TT88' )
                     for subelement in element:
                         sublocation = subelement.tag + " in " + location
-                        #vPrint( 'Quiet', debuggingThisModule, "here1", sublocation )
+                        #dPrint( 'Quiet', debuggingThisModule, "here1", sublocation )
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'GR12' )
                         BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'JG78' )
                         assert subelement.tag == 'row'
@@ -652,9 +652,9 @@ class USXXMLBibleBook( BibleBook ):
                         tableCode = ''
                         for sub2element in subelement:
                             sub2location = sub2element.tag + " in " + sublocation
-                            #vPrint( 'Quiet', debuggingThisModule, "  hereT {} {} {}:{} {}".format( self.workName, self.BBB, C, V, sub2location ) )
-                            #vPrint( 'Quiet', debuggingThisModule, "  {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
-                            #vPrint( 'Quiet', debuggingThisModule, "  tC = {}".format( tableCode ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  hereT {} {} {}:{} {}".format( self.workName, self.BBB, C, V, sub2location ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  {}".format( BibleOrgSysGlobals.elementStr( sub2element ) ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  tC = {}".format( tableCode ) )
                             BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'TY45' )
                             if sub2element.tag == 'cell':
                                 # Process the cell attributes
@@ -665,7 +665,7 @@ class USXXMLBibleBook( BibleBook ):
                                     else:
                                         logging.error( _("LP16 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                                #vPrint( 'Quiet', debuggingThisModule, "cS", cellStyle, "aM", alignMode )
+                                #dPrint( 'Quiet', debuggingThisModule, "cS", cellStyle, "aM", alignMode )
                                 if BibleOrgSysGlobals.strictCheckingFlag:
                                     assert cellStyle in ('th1','th2','th3','th4', 'thr1','thr2','thr3','thr4', 'tc1','tc2','tc3','tc4', 'tcr1','tcr2','tcr3','tcr4')
                                     assert alignMode in (None, 'start', 'end')
@@ -674,16 +674,16 @@ class USXXMLBibleBook( BibleBook ):
                                 assert '\n' not in tableCode
                                 for sub3element in sub2element:
                                     sub3location = sub3element.tag + " in " + sub2location
-                                    #vPrint( 'Quiet', debuggingThisModule, "    here3", sub3location )
+                                    #dPrint( 'Quiet', debuggingThisModule, "    here3", sub3location )
                                     if sub3element.tag == 'note':
                                         BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location, 'TY47' )
-                                        #vPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
+                                        #dPrint( 'Quiet', debuggingThisModule, "NOTE", BibleOrgSysGlobals.elementStr( sub3element ) )
                                         processedNoteField = loadNoteField( sub3element, sub3location )
                                         if BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in processedNoteField
                                         tableCode += processedNoteField
                                         #for sub4element in sub3element:
                                             #sub4location = sub4element.tag + " in " + sub3location
-                                            ##vPrint( 'Quiet', debuggingThisModule, "    here4", sub4location )
+                                            ##dPrint( 'Quiet', debuggingThisModule, "    here4", sub4location )
                                             #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location, 'TZ49' )
                                             #if sub4element.tag == 'char':
                                                 #tableCode += loadCharField( sub4element, sub4location )
@@ -711,7 +711,7 @@ class USXXMLBibleBook( BibleBook ):
                                 self.addPriorityError( 1, C, V, _("Unprocessed {} sub2element").format( sub3element.tag ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         assert '\n' not in tableCode
-                        #vPrint( 'Quiet', debuggingThisModule, "tableCode: {}".format( tableCode ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "tableCode: {}".format( tableCode ) )
                         self.addLine( 'tr', tableCode )
                 else:
                     logging.error( _("DV60 Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, C, V, location ) )
@@ -781,9 +781,9 @@ def briefDemo() -> None:
                 #         vPrint( 'Info', debuggingThisModule, _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
                 #         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                 #         UBB.load( filename2, testFolder2 )
-                #         #vPrint( 'Quiet', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-                #         #vPrint( 'Quiet', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-                #         #vPrint( 'Quiet', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+                #         #dPrint( 'Quiet', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+                #         #dPrint( 'Quiet', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+                #         #dPrint( 'Quiet', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
                 #         vPrint( 'Info', debuggingThisModule, UBB )
                 #         UBB.validateMarkers()
 
@@ -903,9 +903,9 @@ def fullDemo() -> None:
                         vPrint( 'Info', debuggingThisModule, _("Loading USFM {} from {}…").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
-                        #vPrint( 'Quiet', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-                        #vPrint( 'Quiet', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-                        #vPrint( 'Quiet', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
                         vPrint( 'Info', debuggingThisModule, UBB )
                         UBB.validateMarkers()
 

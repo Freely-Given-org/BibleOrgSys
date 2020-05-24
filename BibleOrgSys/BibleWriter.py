@@ -110,7 +110,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2020-04-29' # by RJH
+LAST_MODIFIED_DATE = '2020-05-23' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -172,10 +172,10 @@ def killLibreOfficeServiceManager() -> None:
     out, err = p.communicate()
     for lineBytes in out.splitlines():
         line = bytes.decode( lineBytes )
-        #vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
+        #dPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
         if 'libreoffice' in line and "ServiceManager" in line:
             pid = int( line.split(None, 1)[0] )
-            #vPrint( 'Quiet', debuggingThisModule, "pid", pid )
+            #dPrint( 'Quiet', debuggingThisModule, "pid", pid )
             if BibleOrgSysGlobals.verbosityLevel > 1: logger.info( "  Killing {!r}".format( line ) )
             try: os.kill( pid, signal.SIGKILL )
             except PermissionError: # it must belong to another user
@@ -317,7 +317,7 @@ class BibleWriter( InternalBible ):
                 .replace( '__PROJECT_NAME__', self.projectName ) \
                 .replace( '__PROJECT_ABBREVIATION__', self.getAName( abbrevFirst=True ) )
                 #.replace( '__PROJECT_NAME__', BibleOrgSysGlobals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
-            #vPrint( 'Quiet', debuggingThisModule, entry, repr(existingControlDict[entry]) )
+            #dPrint( 'Quiet', debuggingThisModule, entry, repr(existingControlDict[entry]) )
     # end of BibleWriter.__adjustControlDict
 
 
@@ -368,7 +368,7 @@ class BibleWriter( InternalBible ):
                 #for internalMarker in InternalBibleBook.INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
                 #word = stripWordPunctuation( word )
                 #if word and not word[0].isalnum():
-                    ##vPrint( 'Quiet', debuggingThisModule, word, stripWordPunctuation( word ) )
+                    ##dPrint( 'Quiet', debuggingThisModule, word, stripWordPunctuation( word ) )
                     #if len(word) > 1:
                         #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word {!r}").format( word ) )
                         #word = word[1:]
@@ -468,7 +468,7 @@ class BibleWriter( InternalBible ):
                             #assert extraText # Shouldn't be blank
                             ##assert extraText[0] != '\\' # Shouldn't start with backslash code
                             #assert extraText[-1] != '\\' # Shouldn't end with backslash code
-                            ##vPrint( 'Quiet', debuggingThisModule, extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                            ##dPrint( 'Quiet', debuggingThisModule, extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                             #assert extraIndex >= 0
                             ##assert 0 <= extraIndex <= len(text)+3
                             ##assert extraType in ('fn','xr',)
@@ -543,7 +543,7 @@ class BibleWriter( InternalBible ):
             try: rawUSFMData = bookObject._rawLines
             except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
-                #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+                #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
                 #USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
                 #USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
 
@@ -555,7 +555,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
 
             internalBibleBookData = bookObject._processedLines
-            #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
 
@@ -567,7 +567,7 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 for entry in internalBibleBookData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
-                    #vPrint( 'Quiet', debuggingThisModule, repr(marker), repr(cleanText), repr(adjText) )
+                    #dPrint( 'Quiet', debuggingThisModule, repr(marker), repr(cleanText), repr(adjText) )
                     if marker in USFM_PRECHAPTER_MARKERS:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                             assert C=='-1' or marker=='rem' or marker.startswith('mte')
@@ -630,7 +630,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
 
@@ -639,7 +639,7 @@ class BibleWriter( InternalBible ):
                     verseList = self.genericBOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
                 except KeyError:
-                    #vPrint( 'Quiet', debuggingThisModule, "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganisationalSystemName(), BBB ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "toUSFM2: {} {} has no verse data for {}".format( self.getAName(), self.genericBOS.getOrganisationalSystemName(), BBB ) )
                     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert BBB in ('FRT','BAK','GLS','XXA','XXB','XXC','XXD','XXE','XXF')
                     numC = numV = 0
@@ -663,7 +663,7 @@ class BibleWriter( InternalBible ):
             vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting USFM2 output…" ) )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                #vPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(fullText) )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} — BibleOrgSys USFM2 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
@@ -672,7 +672,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #fullText = cleanText # (temp)
-                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #dPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -688,12 +688,12 @@ class BibleWriter( InternalBible ):
                             if ix != -1:
                                 fullText = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
-                                #vPrint( 'Quiet', debuggingThisModule, BBB, repr(fullText), repr(vEnd) )
+                                #dPrint( 'Quiet', debuggingThisModule, BBB, repr(fullText), repr(vEnd) )
                                 try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
                                     vPrint( 'Quiet', debuggingThisModule, "toUSFM2: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                                #vPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                                #dPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
                     if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
                 elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
@@ -702,7 +702,7 @@ class BibleWriter( InternalBible ):
                         inField = None
 
                 if pseudoMarker[-1] == '~':
-                    #vPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
                     bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
@@ -719,7 +719,7 @@ class BibleWriter( InternalBible ):
                     elif bookUSFM: bookUSFM += '\n' # paragraph markers go on a new line
                     if not fullText: bookUSFM += '\\{}'.format( pseudoMarker )
                     else: bookUSFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #vPrint( 'Quiet', debuggingThisModule, pseudoMarker, bookUSFM[-200:] )
+                #dPrint( 'Quiet', debuggingThisModule, pseudoMarker, bookUSFM[-200:] )
 
             # Adjust the bookUSFM output
             bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
@@ -730,7 +730,7 @@ class BibleWriter( InternalBible ):
                 assert '&lt;' not in bookUSFM and '&gt;' not in bookUSFM
 
             # Write the bookUSFM output
-            #vPrint( 'Quiet', debuggingThisModule, "\nUSFM", bookUSFM[:3000] )
+            #dPrint( 'Quiet', debuggingThisModule, "\nUSFM", bookUSFM[:3000] )
             filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -796,7 +796,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
 
@@ -830,7 +830,7 @@ class BibleWriter( InternalBible ):
             vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting USFM3 output…" ) )
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                #vPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(fullText) )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(fullText) )
                 #if (not bookUSFM) and pseudoMarker!='id': # We need to create an initial id line
                     #bookUSFM += '\\id {} — BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
@@ -843,7 +843,7 @@ class BibleWriter( InternalBible ):
                     addedUSFMfield = True
 
                 #fullText = cleanText # (temp)
-                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #dPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if vBridgeStartInt and vBridgeEndInt:
                         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -859,12 +859,12 @@ class BibleWriter( InternalBible ):
                             if ix != -1:
                                 fullText = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
-                                #vPrint( 'Quiet', debuggingThisModule, BBB, repr(fullText), repr(vEnd) )
+                                #dPrint( 'Quiet', debuggingThisModule, BBB, repr(fullText), repr(vEnd) )
                                 try: vBridgeStartInt, vBridgeEndInt = int( fullText ), int( vEnd )
                                 except ValueError:
                                     vPrint( 'Quiet', debuggingThisModule, "toUSFM3: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                     vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                                #vPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                                #dPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                 break
                     if fullText and fullText[-1]!=' ': fullText += ' ' # Append a space since it didn't have one
                 elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
@@ -873,7 +873,7 @@ class BibleWriter( InternalBible ):
                         inField = None
 
                 if pseudoMarker[-1] == '~':
-                    #vPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, fullText ) )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
                     bookUSFM += (' ' if bookUSFM and bookUSFM[-1]!=' ' else '') + fullText
                 else: # not a continuation marker
@@ -890,7 +890,7 @@ class BibleWriter( InternalBible ):
                     elif bookUSFM: bookUSFM += '\n' # paragraph markers go on a new line
                     if not fullText: bookUSFM += '\\{}'.format( pseudoMarker )
                     else: bookUSFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #vPrint( 'Quiet', debuggingThisModule, pseudoMarker, bookUSFM[-200:] )
+                #dPrint( 'Quiet', debuggingThisModule, pseudoMarker, bookUSFM[-200:] )
 
             # Adjust the bookUSFM output
             bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
@@ -901,7 +901,7 @@ class BibleWriter( InternalBible ):
                 assert '&lt;' not in bookUSFM and '&gt;' not in bookUSFM
 
             # Write the bookUSFM output
-            #vPrint( 'Quiet', debuggingThisModule, "\nUSFM", bookUSFM[:3000] )
+            #dPrint( 'Quiet', debuggingThisModule, "\nUSFM", bookUSFM[:3000] )
             filename = "{}{}BibleWriter.usfm".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA…
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -963,7 +963,7 @@ class BibleWriter( InternalBible ):
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             internalBibleBookData = bookObject._processedLines
-            #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
 
@@ -975,30 +975,30 @@ class BibleWriter( InternalBible ):
             inField = None
             vBridgeStartInt = vBridgeEndInt = None # For printing missing (bridged) verse numbers
             initialMarkers = [processedBibleEntry.getMarker() for processedBibleEntry in internalBibleBookData[:4]]
-            #vPrint( 'Quiet', debuggingThisModule, BBB, initialMarkers )
+            #dPrint( 'Quiet', debuggingThisModule, BBB, initialMarkers )
             vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting ESFM output…" ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if 'id' not in initialMarkers:
-                    #vPrint( 'Quiet', debuggingThisModule, "Write ID" )
+                    #dPrint( 'Quiet', debuggingThisModule, "Write ID" )
                     myFile.write( '\\id {} — BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), PROGRAM_VERSION ) )
                 if 'ide' not in initialMarkers:
-                    #vPrint( 'Quiet', debuggingThisModule, "Write IDE" )
+                    #dPrint( 'Quiet', debuggingThisModule, "Write IDE" )
                     myFile.write( '\\ide UTF-8\n' )
                     if 'rem' not in initialMarkers:
-                        #vPrint( 'Quiet', debuggingThisModule, "Write REM" )
+                        #dPrint( 'Quiet', debuggingThisModule, "Write REM" )
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, processedBibleEntry in enumerate( internalBibleBookData ):
                     pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
                     vPrint( 'Never', debuggingThisModule, "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
-                        #vPrint( 'Quiet', debuggingThisModule, "Write IDE 1" )
+                        #dPrint( 'Quiet', debuggingThisModule, "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
                         if 'rem' not in initialMarkers:
-                            #vPrint( 'Quiet', debuggingThisModule, "Write REM 2" )
+                            #dPrint( 'Quiet', debuggingThisModule, "Write REM 2" )
                             myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                         ESFMLine = ''
                     elif j==2 and pseudoMarker=='rem':
-                        #vPrint( 'Quiet', debuggingThisModule, "Write REM 3" )
+                        #dPrint( 'Quiet', debuggingThisModule, "Write REM 3" )
                         if value != 'ESFM v0.5 {}'.format( BBB ):
                             logger.info( "Updating {} ESFM rem line from {!r} to v0.5".format( BBB, value ) )
                         ESFMLine = '\\rem ESFM v0.5 {}'.format( BBB )
@@ -1018,7 +1018,7 @@ class BibleWriter( InternalBible ):
                             continue
 
                         #value = cleanText # (temp)
-                        #vPrint( 'Never', debuggingThisModule, "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
+                        #dPrint( 'Never', debuggingThisModule, "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                         if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
                             if vBridgeStartInt and vBridgeEndInt:
                                 for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
@@ -1035,12 +1035,12 @@ class BibleWriter( InternalBible ):
                                     if ix != -1:
                                         value = vString[:ix] # Remove verse bridges
                                         vEnd = vString[ix+1:]
-                                        #vPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
+                                        #dPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
                                         try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
                                         except ValueError:
                                             logger.warning( "toESFM: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
                                             vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                                        #vPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                                        #dPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
                                         break
                             if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                         elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
@@ -1049,7 +1049,7 @@ class BibleWriter( InternalBible ):
                                 inField = None
 
                         if pseudoMarker[-1] == '~':
-                            #vPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert pseudoMarker[:-1] in ('v','p','c')
                             ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
                         else: # not a continuation marker
@@ -1067,12 +1067,12 @@ class BibleWriter( InternalBible ):
                             if not value: ESFMLine += '\\{}'.format( pseudoMarker )
                             else: ESFMLine += '\\{} {}'.format( pseudoMarker,adjValue )
 
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(ESFMLine) )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(ESFMLine) )
                     #if BBB=='GEN' and j > 20: halt
                     if ESFMLine: myFile.write( '{}\n'.format( ESFMLine ) )
                     if pseudoMarker in BOS_NESTING_MARKERS:
                         indentLevel += 1
-                        #vPrint( 'Quiet', debuggingThisModule, pseudoMarker, indentLevel )
+                        #dPrint( 'Quiet', debuggingThisModule, pseudoMarker, indentLevel )
             if indentLevel !=  0:
                 logger.error( "toESFM: Ended with wrong indent level of {} for {}".format( indentLevel, BBB ) );  halt
 
@@ -1166,7 +1166,7 @@ class BibleWriter( InternalBible ):
                         ignoredMarkers.add( marker )
                     elif text:
                         #if marker not in ('p~','v~'): # The most common ones
-                            #vPrint( 'Quiet', debuggingThisModule, "toText.writeTextFile: Using marker {!r}:{!r}".format( marker, text ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "toText.writeTextFile: Using marker {!r}:{!r}".format( marker, text ) )
                         textBuffer += (' ' if textBuffer else '') + text
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
@@ -1219,7 +1219,7 @@ class BibleWriter( InternalBible ):
             thisOutputFolder = os.path.join( outputFolderpath, VPLFormat+'/' )
             if not os.access( thisOutputFolder, os.F_OK ): os.makedirs( thisOutputFolder ) # Make the empty folder if there wasn't already one there
 
-            #vPrint( 'Quiet', debuggingThisModule, 'VPL', repr(self.name), repr(self.shortName), repr(self.projectName), repr(self.abbreviation) )
+            #dPrint( 'Quiet', debuggingThisModule, 'VPL', repr(self.name), repr(self.shortName), repr(self.projectName), repr(self.abbreviation) )
             abbreviation = self.abbreviation if self.abbreviation else 'Unknown'
             title = self.getAName()
 
@@ -1290,7 +1290,7 @@ class BibleWriter( InternalBible ):
                         elif marker in ('pi1','pi2','pi3','pi4', 's1','s2','s3','s4', 'ms1','ms2','ms3','ms4',): # Drop out these fields
                             ignoredMarkers.add( marker )
                         elif text:
-                            #vPrint( 'Quiet', debuggingThisModule, "do Marker", repr(marker), repr(text) )
+                            #dPrint( 'Quiet', debuggingThisModule, "do Marker", repr(marker), repr(text) )
                             textBuffer += (' ' if textBuffer else '') + text
                     if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
@@ -1299,7 +1299,7 @@ class BibleWriter( InternalBible ):
                                 #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
             if ignoredMarkers:
-                #vPrint( 'Quiet', debuggingThisModule, "Ignored", ignoredMarkers )
+                #dPrint( 'Quiet', debuggingThisModule, "Ignored", ignoredMarkers )
                 logger.info( "toVPL: Ignored markers were {}".format( ignoredMarkers ) )
                 vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toVPL markers were {}").format( ignoredMarkers ) )
 
@@ -1337,7 +1337,7 @@ class BibleWriter( InternalBible ):
             """
             Format character codes within the text into Markdown
             """
-            #vPrint( 'Quiet', debuggingThisModule, "__formatMarkdownVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+            #dPrint( 'Quiet', debuggingThisModule, "__formatMarkdownVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
             def handleExtras( text, extras ):
@@ -1352,7 +1352,7 @@ class BibleWriter( InternalBible ):
                             given 17:4-9 return #C17V4
                             given 1:1-3:19 return #C1V1
                     """
-                    #vPrint( 'Quiet', debuggingThisModule, "formatMarkdownVerseText.liveCV( {} )".format( repr(CV) ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "formatMarkdownVerseText.liveCV( {} )".format( repr(CV) ) )
                     if len(CV) < 3: return ''
                     if CV and CV[-1]==':': CV = CV[:-1]
 
@@ -1360,7 +1360,7 @@ class BibleWriter( InternalBible ):
                     for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                         ix = result.find( bridgeChar )
                         if ix != -1: result = result[:ix] # Remove verse bridges
-                    #vPrint( 'Quiet', debuggingThisModule, " returns", result )
+                    #dPrint( 'Quiet', debuggingThisModule, " returns", result )
                     if result.count('C')>1 or result.count('V')>1:
                         logger.critical( "toMarkdown.liveCV created a bad link: {!r} at {} {}:{}".format( result, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -1386,7 +1386,7 @@ class BibleWriter( InternalBible ):
                     """
                     assert noteType in ('footnote','endnote',)
                     markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
-                    #vPrint( 'Quiet', debuggingThisModule, "formatMarkdownVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "formatMarkdownVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                     if noteType == 'footnote':
                         fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
                     elif noteType == 'endnote':
@@ -1448,8 +1448,8 @@ class BibleWriter( InternalBible ):
                     endMD += '<span class="{}Entry">{}</span>'.format( noteType, fnText )
                     endMD += '</p>'
 
-                    #vPrint( 'Quiet', debuggingThisModule, "noteMD", BBB, noteMD )
-                    #vPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
+                    #dPrint( 'Quiet', debuggingThisModule, "noteMD", BBB, noteMD )
+                    #dPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
                     ourGlobals['footnoteMD' if noteType=='footnote' else 'endnoteMD'].append( endMD )
                     #if fnIndex > 2: halt
 
@@ -1473,7 +1473,7 @@ class BibleWriter( InternalBible ):
                     <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
                     markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
-                    #vPrint( 'Quiet', debuggingThisModule, "\nformatMarkdownVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "…", markerList ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "\nformatMarkdownVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "…", markerList ) )
                     xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                     caller = origin = originCV = xrefText = ''
                     if markerList:
@@ -1510,8 +1510,8 @@ class BibleWriter( InternalBible ):
                     endMD += '<span class="xrefEntry">{}</span>'.format( xrefText )
                     endMD += '</p>'
 
-                    #vPrint( 'Quiet', debuggingThisModule, "xrefMD", BBB, xrefMD )
-                    #vPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
+                    #dPrint( 'Quiet', debuggingThisModule, "xrefMD", BBB, xrefMD )
+                    #dPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
                     ourGlobals['xrefMD'].append( endMD )
                     #if xrefIndex > 2: halt
 
@@ -1537,8 +1537,8 @@ class BibleWriter( InternalBible ):
                     #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
                     #endMD += '</p>'
 
-                    ##vPrint( 'Quiet', debuggingThisModule, "footnoteMD", BBB, footnoteMD )
-                    ##vPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
+                    ##dPrint( 'Quiet', debuggingThisModule, "footnoteMD", BBB, footnoteMD )
+                    ##dPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
                     #ourGlobals['footnoteMD'].append( endMD )
                     ##if fnIndex > 2: halt
 
@@ -1551,7 +1551,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -1566,28 +1566,28 @@ class BibleWriter( InternalBible ):
                         #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processNote( extraText, 'footnote' )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                         elif extraType == 'en':
                             extra = processNote( extraText, 'endnote' )
-                            #vPrint( 'Quiet', debuggingThisModule, "en got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "en got", extra )
                         elif extraType == 'xr':
                             extra = processXRef( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                         elif extraType == 'fig':
                             extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                         elif extraType == 'str':
                             extra = ''
                         elif extraType == 'sem':
                             extra = ''
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elvPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                        else: dPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
+                        #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         if extra:
                             adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                             offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                        #dPrint( 'Quiet', debuggingThisModule, "now", verse )
                 return adjText
             # end of __formatMarkdownVerseText.handleExtras
 
@@ -1718,7 +1718,7 @@ class BibleWriter( InternalBible ):
 
         NOTE: This is actually a function not a method (i.e., no self argument).
         """
-        #vPrint( 'Quiet', debuggingThisModule, "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+        #dPrint( 'Quiet', debuggingThisModule, "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
         def handleExtras( text:str, extras, ourGlobals:dict ):
@@ -1733,7 +1733,7 @@ class BibleWriter( InternalBible ):
                         given 17:4-9 return #C17V4
                         given 1:1-3:19 return #C1V1
                 """
-                #vPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText.liveCV( {} )".format( repr(CV) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText.liveCV( {} )".format( repr(CV) ) )
                 if len(CV) < 3: return ''
                 if CV and CV[-1]==':': CV = CV[:-1]
 
@@ -1741,7 +1741,7 @@ class BibleWriter( InternalBible ):
                 for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                     ix = result.find( bridgeChar )
                     if ix != -1: result = result[:ix] # Remove verse bridges
-                #vPrint( 'Quiet', debuggingThisModule, " returns", result )
+                #dPrint( 'Quiet', debuggingThisModule, " returns", result )
                 if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1):
                     vPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText.liveCV: programming error: Didn't handle reference correctly: {!r} -> {!r}".format( CV, result ) )
                 return '#' + result
@@ -1766,7 +1766,7 @@ class BibleWriter( InternalBible ):
                 """
                 assert noteType in ('footnote','endnote',)
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
-                #vPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                #dPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                 if noteType == 'footnote':
                     fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
                 elif noteType == 'endnote':
@@ -1829,8 +1829,8 @@ class BibleWriter( InternalBible ):
                 endHTML5 += '<span class="{}Entry">{}</span>'.format( noteType, fnText )
                 endHTML5 += '</p>'
 
-                #vPrint( 'Quiet', debuggingThisModule, "noteHTML5", BBB, noteHTML5 )
-                #vPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
+                #dPrint( 'Quiet', debuggingThisModule, "noteHTML5", BBB, noteHTML5 )
+                #dPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
                 ourGlobals['footnoteHTML5' if noteType=='footnote' else 'endnoteHTML5'].append( endHTML5 )
                 #if fnIndex > 2: halt
 
@@ -1854,7 +1854,7 @@ class BibleWriter( InternalBible ):
                 <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                 """
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
-                #vPrint( 'Quiet', debuggingThisModule, "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "…", markerList ) )
+                #dPrint( 'Quiet', debuggingThisModule, "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "…", markerList ) )
                 xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                 caller = origin = originCV = xrefText = ''
                 if markerList:
@@ -1892,8 +1892,8 @@ class BibleWriter( InternalBible ):
                 endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
                 endHTML5 += '</p>'
 
-                #vPrint( 'Quiet', debuggingThisModule, "xrefHTML5", BBB, xrefHTML5 )
-                #vPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
+                #dPrint( 'Quiet', debuggingThisModule, "xrefHTML5", BBB, xrefHTML5 )
+                #dPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
                 ourGlobals['xrefHTML5'].append( endHTML5 )
                 #if xrefIndex > 2: halt
 
@@ -1919,8 +1919,8 @@ class BibleWriter( InternalBible ):
                 #endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
                 #endHTML5 += '</p>'
 
-                ##vPrint( 'Quiet', debuggingThisModule, "footnoteHTML5", BBB, footnoteHTML5 )
-                ##vPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
+                ##dPrint( 'Quiet', debuggingThisModule, "footnoteHTML5", BBB, footnoteHTML5 )
+                ##dPrint( 'Quiet', debuggingThisModule, "endHTML5", endHTML5 )
                 #ourGlobals['footnoteHTML5'].append( endHTML5 )
                 ##if fnIndex > 2: halt
 
@@ -1932,7 +1932,7 @@ class BibleWriter( InternalBible ):
             offset = 0
             for extra in extras: # do any footnotes and cross-references
                 extraType, extraIndex, extraText, cleanExtraText = extra
-                #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                 adjIndex = extraIndex - offset
                 lenT = len( adjText )
                 if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -1947,27 +1947,27 @@ class BibleWriter( InternalBible ):
                 #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                 if extraType == 'fn':
                     extra = processNote( extraText, ourGlobals, 'footnote' )
-                    #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                    #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                 elif extraType == 'en':
                     extra = processNote( extraText, ourGlobals, 'endnote' )
-                    #vPrint( 'Quiet', debuggingThisModule, "en got", extra )
+                    #dPrint( 'Quiet', debuggingThisModule, "en got", extra )
                 elif extraType == 'xr':
                     extra = processXRef( extraText, ourGlobals )
-                    #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                    #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                 elif extraType == 'fig':
                     extra = processFigure( extraText, ourGlobals )
-                    #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                    #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                 elif extraType == 'str':
                     extra = ''
                 elif extraType == 'sem':
                     extra = ''
                 elif extraType == 'vp':
                     extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                elvPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
-                #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                else: dPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
+                #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                 adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                 offset -= len( extra )
-                #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                #dPrint( 'Quiet', debuggingThisModule, "now", verse )
             return adjText
         # end of __formatHTMLVerseText.handleExtras
 
@@ -2017,7 +2017,7 @@ class BibleWriter( InternalBible ):
         """
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toHTML5…" )
         if BibleOrgSysGlobals.debugFlag:
-            #vPrint( 'Quiet', debuggingThisModule, self )
+            #dPrint( 'Quiet', debuggingThisModule, self )
             assert self.books
             #assert self.name
 
@@ -2165,7 +2165,7 @@ class BibleWriter( InternalBible ):
             Given a reference 4-tuple like ('LUK','15','18','')
                 convert it to an HTML link.
             """
-            #vPrint( 'Quiet', debuggingThisModule, "toHTML5.convertToPageReference( {} )".format( refTuple ) )
+            #dPrint( 'Quiet', debuggingThisModule, "toHTML5.convertToPageReference( {} )".format( refTuple ) )
             assert refTuple and len(refTuple)==4
             assert refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) #BBB
             if refTuple[0] in filenameDict:
@@ -2184,7 +2184,7 @@ class BibleWriter( InternalBible ):
                 (Luk. 16:13; 12:22-31)
                 (1 Kru. 11:1-9; 14:1-7)
             """
-            #vPrint( 'Quiet', debuggingThisModule, "toHTML5.createSectionCrossReference: {!r}".format( givenRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "toHTML5.createSectionCrossReference: {!r}".format( givenRef ) )
             adjRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):
@@ -2193,7 +2193,7 @@ class BibleWriter( InternalBible ):
                     bracket = bracketRight
                     adjRef = adjRef[1:-1] # Remove the brackets
             for j,originalRef in enumerate( adjRef.split( ';' ) ):
-                #vPrint( 'Quiet', debuggingThisModule, " ", j, originalRef )
+                #dPrint( 'Quiet', debuggingThisModule, " ", j, originalRef )
                 if j: result += ';' # Restore the semicolons
                 ref = originalRef.strip()
                 if ref:
@@ -2204,10 +2204,10 @@ class BibleWriter( InternalBible ):
                         if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
                             ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
                     analysis = BRL.getFirstReference( ref, "section cross-reference {!r} from {!r}".format( ref, givenRef ) )
-                    #vPrint( 'Quiet', debuggingThisModule, "a", analysis )
+                    #dPrint( 'Quiet', debuggingThisModule, "a", analysis )
                     link = convertToPageReference(analysis) if analysis else None
                     result += '<a class="sectionCrossReferenceLink" href="{}">{}</a>'.format( link, originalRef ) if link else originalRef
-            #vPrint( 'Quiet', debuggingThisModule, "  Returning {!r}".format( result + bracket ) )
+            #dPrint( 'Quiet', debuggingThisModule, "  Returning {!r}".format( result + bracket ) )
             return result + bracket
         # end of toHTML5.createSectionCrossReference
 
@@ -2255,11 +2255,11 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\ior ', '<span class="outlineReferenceRange">' ).replace( '\\ior*', '</span>' )
                 match = re.search( '([1-9][0-9]{0,2}):([1-9][0-9]{0,2})', text )
                 if match:
-                    #vPrint( 'Quiet', debuggingThisModule, '0', repr(match.group(0)) )
-                    #vPrint( 'Quiet', debuggingThisModule, '1', repr(match.group(1)) )
-                    #vPrint( 'Quiet', debuggingThisModule, '2', repr(match.group(2)) )
+                    #dPrint( 'Quiet', debuggingThisModule, '0', repr(match.group(0)) )
+                    #dPrint( 'Quiet', debuggingThisModule, '1', repr(match.group(1)) )
+                    #dPrint( 'Quiet', debuggingThisModule, '2', repr(match.group(2)) )
                     text = text.replace( match.group(0), '<a class="CVReference" href="#C{}V{}">{}</a>'.format( match.group(1), match.group(2), match.group(0) ) )
-                    #vPrint( 'Quiet', debuggingThisModule, repr(text) )
+                    #dPrint( 'Quiet', debuggingThisModule, repr(text) )
                 return text
             # end of liveLocal
 
@@ -2276,7 +2276,7 @@ class BibleWriter( InternalBible ):
                 haveExtraFormatting = True if extras else False
                 if text != processedBibleEntry.getCleanText(): haveExtraFormatting = True
                 #if BBB=='MRK': vPrint( 'Quiet', debuggingThisModule, "writeHTML5Book", marker, text )
-                #vPrint( 'Quiet', debuggingThisModule, "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "toHTML5.writeHTML5Book: {} {}:{} {}={}".format( BBB, C, V, marker, repr(text) ) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
@@ -2593,10 +2593,10 @@ class BibleWriter( InternalBible ):
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                 vPrint( 'Quiet', debuggingThisModule, f"After {self.abbreviation} {BBB} {C}:{V} '{pseudoMarker}': saving index entry {savedC}:{savedV}—{lastC}:{lastV} @ {len(bookText):,} with sectionCV={sectionCV}" )
                 for j,line in enumerate( currentText.splitlines() ):
-                    #vPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
                     assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                 if savedText: assert len(savedText) > 30 # Can be a short ms1=xxx entry
-                #vPrint( 'Quiet', debuggingThisModule, f"currentText ({len(currentText)}) = '{currentText}'" )
+                #dPrint( 'Quiet', debuggingThisModule, f"currentText ({len(currentText)}) = '{currentText}'" )
                 assert len(currentText) > 50 or 'ms1=' in currentText # Can be as short as one verse at Neh 1:1
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert sectionCV not in bookIndexDict
@@ -2621,13 +2621,13 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             try: haveSectionHeadingsForBook = self.discoveryResults[BBB]['haveSectionHeadings']
             except AttributeError: haveSectionHeadingsForBook = False
-            #vPrint( 'Quiet', debuggingThisModule, "\nhaveSectionHeadingsForBook", BBB, haveSectionHeadingsForBook ) #, self.discoveryResults[BBB] )
+            #dPrint( 'Quiet', debuggingThisModule, "\nhaveSectionHeadingsForBook", BBB, haveSectionHeadingsForBook ) #, self.discoveryResults[BBB] )
             needToSaveByChapter = not haveSectionHeadingsForBook \
                                   or not BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(BBB)
-            #vPrint( 'Quiet', debuggingThisModule, f"{BBB} needToSaveByChapter={needToSaveByChapter} haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(BBB)}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"{BBB} needToSaveByChapter={needToSaveByChapter} haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(BBB)}" )
 
             internalBibleBookData = bookObject._processedLines
-            #vPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
 
             # TODO: This code is HORRIFIC — rewrite!!!
             bookText, bookIndexDict, bookIndexList = '', {}, []
@@ -2640,7 +2640,7 @@ class BibleWriter( InternalBible ):
             for processedBibleEntry in internalBibleBookData:
                 pseudoMarker, fullText, cleanText = processedBibleEntry.getMarker(), processedBibleEntry.getFullText(), processedBibleEntry.getCleanText()
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore most added markers — not needed here
-                #vPrint( 'Quiet', debuggingThisModule, f"{C}:{V} {pseudoMarker}={cleanText}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"{C}:{V} {pseudoMarker}={cleanText}" )
                 if pseudoMarker in USFM_PRECHAPTER_MARKERS \
                 or C == 'I': # This second part also copes with misuse of
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -2648,13 +2648,13 @@ class BibleWriter( InternalBible ):
                     V = str( int(V) + 1 )
                     lastV = V
                 if pseudoMarker in ('id','ide','h','toc1','toc2','toc3','rem','ie'): continue # don't need these
-                #vPrint( 'Quiet', debuggingThisModule, "_toBibleDoorText processing {!r} {!r} {}".format( self.abbreviation, pseudoMarker, fullText[:60]+('…' if len(fullText)>60 else '') ) )
+                #dPrint( 'Quiet', debuggingThisModule, "_toBibleDoorText processing {!r} {!r} {}".format( self.abbreviation, pseudoMarker, fullText[:60]+('…' if len(fullText)>60 else '') ) )
                 if pseudoMarker in ('vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #fullText = cleanText # (temp)
-                #vPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
-                #vPrint( 'Quiet', debuggingThisModule, 'BDText2', BBB, pseudoMarker, repr(fullText) )
+                #dPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
+                #dPrint( 'Quiet', debuggingThisModule, 'BDText2', BBB, pseudoMarker, repr(fullText) )
 
                 if (BBB=='FRT' and pseudoMarker=='is1') \
                 or pseudoMarker == 's1' \
@@ -2685,7 +2685,7 @@ class BibleWriter( InternalBible ):
                     assert cleanText.isdigit() # Chapter number only
                     C, V = cleanText, '1' # doesn't handle footnotes on chapter numbers
                     if C in ('0', '1'):
-                        #vPrint( 'Quiet', debuggingThisModule, f"currentText={currentText}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"currentText={currentText}" )
                         assert not currentText
                         savedC, savedV = C, V
                         sectionCV = f'{C}v{V}'
@@ -2712,7 +2712,7 @@ class BibleWriter( InternalBible ):
                     currentText += '{}{}{}'.format( pseudoMarker, paragraphDelimiter, fullText )
                     currentParagraphMarker = pseudoMarker
                 elif pseudoMarker == 'v~':
-                    #vPrint( 'Quiet', debuggingThisModule, "Ooops {!r} {!r} {!r}".format( pseudoMarker, currentText[-4:], currentParagraphMarker ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Ooops {!r} {!r} {!r}".format( pseudoMarker, currentText[-4:], currentParagraphMarker ) )
                     assert currentText[-1] == '}' # Verse marker
                     if currentParagraphMarker in ('','s1','r'):
                         logger.warning( "_toBibleDoorText {} {} encountered a paragraph error with a verse following {!r} around {}:{}" \
@@ -2720,21 +2720,21 @@ class BibleWriter( InternalBible ):
                         currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
                     currentText += fullText
                 elif pseudoMarker == 'p~':
-                    #vPrint( 'Quiet', debuggingThisModule, "Ooops", repr(currentText[-4:]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Ooops", repr(currentText[-4:]) )
                     assert currentText[-1] == paragraphDelimiter
                     assert currentParagraphMarker not in ('','s1','r')
                     currentText += fullText
                 else:
-                    #vPrint( 'Quiet', debuggingThisModule, 'BDText3 remainder!', BBB, pseudoMarker, repr(fullText) )
+                    #dPrint( 'Quiet', debuggingThisModule, 'BDText3 remainder!', BBB, pseudoMarker, repr(fullText) )
                     unhandledMarkers.add( pseudoMarker )
 
             if len(currentText) > 0: # save the final index entry
                 if not haveSectionHeadingsForBook: savedC, V = C, '1' # Catch up on the chapter number
                 savePreviousSection()
                 #if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    #vPrint( 'Quiet', debuggingThisModule, f"At {BBB} {C}:{V} '{pseudoMarker}': saving final index entry {savedC}:{savedV} @ {len(bookText):,} with sectionCV={sectionCV}" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"At {BBB} {C}:{V} '{pseudoMarker}': saving final index entry {savedC}:{savedV} @ {len(bookText):,} with sectionCV={sectionCV}" )
                     #for j,line in enumerate( currentText.splitlines() ):
-                        ##vPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
+                        ##dPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
                         #assert line.index(paragraphDelimiter) <= 5 # Should start with a paragraph marker, e.g., imte1
                 #assert sectionCV not in bookIndexDict
                 #bookIndexDict[sectionCV] = len(bookText)
@@ -2750,7 +2750,7 @@ class BibleWriter( InternalBible ):
                 #assert '&lt;' not in bookText and '&gt;' not in bookText
 
             # Write the bookText output
-            #vPrint( 'Quiet', debuggingThisModule, "BDText", bookText[:4000] )
+            #dPrint( 'Quiet', debuggingThisModule, "BDText", bookText[:4000] )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.txt'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
@@ -2758,10 +2758,10 @@ class BibleWriter( InternalBible ):
                 myFile.write( bookText )
 
             ## Write the index dict
-            ##vPrint( 'Quiet', debuggingThisModule, "index", bookIndex )
+            ##dPrint( 'Quiet', debuggingThisModule, "index", bookIndex )
             #filename = "{}.{}.bd.d.idx".format( BBB, BDDataFormatVersion )
             #filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            #vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
+            #dPrint( 'Info', debuggingThisModule, '  toBDText: ' + _("Writing {!r}…").format( filepath ) )
             #outputBytes = json.dumps( bookIndexDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             #with open( filepath, 'wb' ) as jsonFile:
                 #jsonFile.write( outputBytes )
@@ -2782,7 +2782,7 @@ class BibleWriter( InternalBible ):
                 if len(newBookIndexList) < numChapters: # something went wrong
                     logger.critical( f"_toBibleDoorText: Why did {BBB} ({'with' if haveSectionHeadingsForBook else 'without'} section headings) with {numChapters} chapters only have {len(newBookIndexList)} sections???" )
             # Write the index list
-            #vPrint( 'Quiet', debuggingThisModule, "index", bookIndex )
+            #dPrint( 'Quiet', debuggingThisModule, "index", bookIndex )
             filename = f'{BBB}.{BDDataFormatVersion}.bd.idx'
             filepath = os.path.join( bookOutputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
             vPrint( 'Info', debuggingThisModule, '  toBDText: ' + _(f"Writing {filepath!r}…") )
@@ -2938,7 +2938,7 @@ class BibleWriter( InternalBible ):
             if longString != '@':
                 reversedCompressions.append( (longString,shortString,) )
         reversedCompressions = sorted( reversedCompressions, key=lambda s: -len(s[0]) ) # Longest string length first
-        #vPrint( 'Quiet', debuggingThisModule, len(reversedCompressions), reversedCompressions )
+        #dPrint( 'Quiet', debuggingThisModule, len(reversedCompressions), reversedCompressions )
 
 
         def writeCompressions():
@@ -2964,12 +2964,12 @@ class BibleWriter( InternalBible ):
                 but has side-effects as updates the two above byte variables
             """
             nonlocal bytesRaw, bytesCompressed
-            #vPrint( 'Quiet', debuggingThisModule, '\nBDCompress', repr(entry) )
+            #dPrint( 'Quiet', debuggingThisModule, '\nBDCompress', repr(entry) )
             #if C=='4': halt
             bytesRaw += len( entry.encode('UTF8') )
             result = entry
             if '@' in result:
-                #vPrint( 'Quiet', debuggingThisModule, 'have@', entry )
+                #dPrint( 'Quiet', debuggingThisModule, 'have@', entry )
                 result = result.replace( '@', '~~' )
                 usageCount['~~'] += 1
             if '^' in result:
@@ -2990,7 +2990,7 @@ class BibleWriter( InternalBible ):
 
             Returns a decompressed string
             """
-            #vPrint( 'Quiet', debuggingThisModule, '\nBDDecompress', repr(entry) )
+            #dPrint( 'Quiet', debuggingThisModule, '\nBDDecompress', repr(entry) )
             result = entry
             for shortString, longString in BDCompressions:
                 result = result.replace( shortString, longString )
@@ -3010,7 +3010,7 @@ class BibleWriter( InternalBible ):
             workAbbreviation = self.getSetting( 'WorkAbbreviation' )
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
             headerDict['Has section headings'] = haveAnySectionHeadings
-            #vPrint( 'Quiet', debuggingThisModule, headerDict )
+            #dPrint( 'Quiet', debuggingThisModule, headerDict )
 
             vPrint( 'Info', debuggingThisModule, "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
             outputBytes = json.dumps( headerDict, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
@@ -3068,7 +3068,7 @@ class BibleWriter( InternalBible ):
                     divisionData.append( divisionName )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
-            #vPrint( 'Quiet', debuggingThisModule, divisionData )
+            #dPrint( 'Quiet', debuggingThisModule, divisionData )
             vPrint( 'Info', debuggingThisModule, "  " + _("Exporting division names to {}…").format( divisionNamesFilepath ) )
             outputBytes = json.dumps( divisionData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( divisionNamesFilepath, 'wb' ) as jsonFile:
@@ -3098,7 +3098,7 @@ class BibleWriter( InternalBible ):
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
-            #vPrint( 'Quiet', debuggingThisModule, bkData )
+            #dPrint( 'Quiet', debuggingThisModule, bkData )
             vPrint( 'Info', debuggingThisModule, "  " + _("Exporting book names to {}…").format( bookNamesFilepath ) )
             outputBytes = json.dumps( bkData, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( bookNamesFilepath, 'wb' ) as jsonFile:
@@ -3135,7 +3135,7 @@ class BibleWriter( InternalBible ):
                 if extras:
                     for extra in extras:
                         extrasList.append( (extra.getType(),extra.getIndex(),extra.getText()) )
-                        #vPrint( 'Quiet', debuggingThisModule, extra )
+                        #dPrint( 'Quiet', debuggingThisModule, extra )
                 if extrasList:
                     chapterOutputData.append( (marker,text,extrasList) )
                     outputData.append( (marker,text,extrasList) )
@@ -3145,7 +3145,7 @@ class BibleWriter( InternalBible ):
                 else:
                     chapterOutputData.append( (marker,text) )
                     outputData.append( (marker,text) )
-                #vPrint( 'Quiet', debuggingThisModule, outputData )
+                #dPrint( 'Quiet', debuggingThisModule, outputData )
             writeBDChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
             filename = '{}.{}.json'.format( BBB, BDDataFormatVersion )
@@ -3178,7 +3178,7 @@ class BibleWriter( InternalBible ):
                 XXXReturns the number of bytes written.
                 """
                 nonlocal numBDSections, BDHash, uncompressedFileOffset, compressedFileOffset
-                #vPrint( 'Quiet', debuggingThisModule, "  toBibleDoor.handleBDSection() {} haveAnySectionHeadings={}".format( BBB, haveAnySectionHeadings ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  toBibleDoor.handleBDSection() {} haveAnySectionHeadings={}".format( BBB, haveAnySectionHeadings ) )
                 assert BCV
                 assert sectionHTML
 
@@ -3244,8 +3244,8 @@ class BibleWriter( InternalBible ):
             for dataLine in bookData:
                 thisHTML = ''
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
-                #vPrint( 'Quiet', debuggingThisModule, " toBD: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
-                #vPrint( 'Quiet', debuggingThisModule, "   sectionBCV", sectionBCV )
+                #dPrint( 'Quiet', debuggingThisModule, " toBD: {} {}:{} {}:{!r}".format( BBB, C, V, marker, text ) )
+                #dPrint( 'Quiet', debuggingThisModule, "   sectionBCV", sectionBCV )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('usfm','v='):
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
@@ -3576,10 +3576,10 @@ class BibleWriter( InternalBible ):
                     #elif count < 100: logger.warning( "Compression code {} is under-used".format( key ) )
 
                 #if bytesRaw and BibleOrgSysGlobals.verbosityLevel > 2:
-                    #vPrint( 'Quiet', debuggingThisModule, "  {} compression ratio: {}".format( BBB, round( bytesCompressed / bytesRaw, 3 ) ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  {} compression ratio: {}".format( BBB, round( bytesCompressed / bytesRaw, 3 ) ) )
                     #if BibleOrgSysGlobals.verbosityLevel > 2:
-                        #vPrint( 'Quiet', debuggingThisModule, "    {} raw bytes: {}".format( BBB, bytesRaw ) )
-                        #vPrint( 'Quiet', debuggingThisModule, "    {} compressed bytes: {}".format( BBB, bytesCompressed ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "    {} raw bytes: {}".format( BBB, bytesRaw ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "    {} compressed bytes: {}".format( BBB, bytesCompressed ) )
             #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Finished", BBB ); halt
         # end of _toBibleDoorJSONCHTML.writeBDBookAsHTML
 
@@ -3587,7 +3587,7 @@ class BibleWriter( InternalBible ):
         # Start of main code for _toBibleDoorJSONCHTML
         try: haveAnySectionHeadings = True if self.discoveryResults['ALL']['haveSectionHeadings']>0 else False
         except AttributeError: haveAnySectionHeadings = False
-        #vPrint( 'Quiet', debuggingThisModule, haveAnySectionHeadings, BBB ) #, self.discoveryResults[BBB] )
+        #dPrint( 'Quiet', debuggingThisModule, haveAnySectionHeadings, BBB ) #, self.discoveryResults[BBB] )
         writeBDHeader()
 
         # Write the books
@@ -3621,7 +3621,7 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
-            #vPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
             vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
@@ -3649,7 +3649,7 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
-            #vPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
             vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
@@ -3679,7 +3679,7 @@ class BibleWriter( InternalBible ):
                 vPrint( 'Info', debuggingThisModule, f"    Compressed bytes: {bytesCompressed:,}" )
 
         ## Now create a zipped collection
-        #vPrint( 'Info', debuggingThisModule, "  Zipping BibleDoor files…" )
+        #dPrint( 'Info', debuggingThisModule, "  Zipping BibleDoor files…" )
         #zf = zipfile.ZipFile( os.path.join( outputFolderpath, 'AllBDUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         #for filename in os.listdir( outputFolderpath ):
             #if not filename.endswith( '.zip' ):
@@ -3785,7 +3785,7 @@ class BibleWriter( InternalBible ):
                 adjText = originalText
                 haveOpenChar = False
                 for charMarker in ALL_CHAR_MARKERS:
-                    #vPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSX2", charMarker )
+                    #dPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSX2", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
@@ -3808,18 +3808,18 @@ class BibleWriter( InternalBible ):
                     while True:
                         matchOpen = re.search( r'\\z([\w\d]+?) ', adjText )
                         if not matchOpen: break
-                        #vPrint( 'Quiet', debuggingThisModule, f"Matched custom marker open '{matchOpen.group(0)}'" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"Matched custom marker open '{matchOpen.group(0)}'" )
                         adjText = adjText[:matchOpen.start(0)] + f'<char style="z{matchOpen.group(1)}"CLOSED_BIT>' + adjText[matchOpen.end(0):]
                         haveOpenChar = True
-                        #vPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
+                        #dPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
                         matchClose = re.search( r'\\z{}\*'.format( matchOpen.group(1) ), adjText )
                         if matchClose:
-                            #vPrint( 'Quiet', debuggingThisModule, f"Matched custom marker close '{matchClose.group(0)}'" )
+                            #dPrint( 'Quiet', debuggingThisModule, f"Matched custom marker close '{matchClose.group(0)}'" )
                             adjText = adjText[:matchClose.start(0)] + '</char>' + adjText[matchClose.end(0):]
                             if haveOpenChar:
                                 adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
                                 haveOpenChar = False
-                            #vPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
+                            #dPrint( 'Quiet', debuggingThisModule, "adjText", adjText )
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
@@ -3850,7 +3850,7 @@ class BibleWriter( InternalBible ):
                     USXxrefXML = '<note ' if version>=2 else '<note style="x" '
                     xoOpen = xtOpen = False
                     for j,token in enumerate(USXxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "toUSX2XML:processXRef", j, "'"+token+"'", "from", '"'+USXxref+'"', xoOpen, xtOpen )
+                        #dPrint( 'Quiet', debuggingThisModule, "toUSX2XML:processXRef", j, "'"+token+"'", "from", '"'+USXxref+'"', xoOpen, xtOpen )
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             USXxrefXML += ('caller="{}" style="x">' if version>=2 else 'caller="{}">') \
@@ -3911,7 +3911,7 @@ class BibleWriter( InternalBible ):
                     USXfootnoteXML = '<note style="f" '
                     frOpen = fTextOpen = fCharOpen = False
                     for j,token in enumerate(USXfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j}: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j}: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
                         lcToken = token.lower()
                         if j==0:
                             USXfootnoteXML += f'caller="{token.rstrip()}">'
@@ -3948,18 +3948,18 @@ class BibleWriter( InternalBible ):
                             fMarker = lcToken.split()[0] # Get the bit before the space
                             USXfootnoteXML += f'<char style="{fMarker}"'
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #vPrint( 'Quiet', debuggingThisModule, "{!r} {!r}".format( fMarker, adjToken ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                             #if BibleOrgSysGlobals.debugFlag:
-                                #vPrint( 'Quiet', debuggingThisModule, "toUSX2XML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
+                                #dPrint( 'Quiet', debuggingThisModule, "toUSX2XML.processFootnote: Problem with {} {} {} in {} {}:{} footnote {!r} part {!r}".format( fTextOpen, frOpen, fCharOpen, BBB, C, V, USXfootnote, lcToken ) )
                                 #assert fTextOpen and not frOpen and not fCharOpen
                             if frOpen or fCharOpen or not fTextOpen:
                                 logger.error( "toUSX2XML.processFootnote: Closing problem at {} {}:{} in footnote {!r}".format( BBB, C, V, USXfootnote ) )
                             USXfootnoteXML += f'>{adjToken}</char>'
                             fTextOpen = False
                         elif lcToken.startswith('z'):
-                            #vPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
+                            #dPrint( 'Quiet', debuggingThisModule, f"USX processFootnote {j} custom: '{token}'  {frOpen} {fTextOpen} {fCharOpen}  '{USXfootnote}'" )
                             ixSpace = lcToken.find( ' ' )
                             if ixSpace == -1: ixSpace = 9999
                             ixAsterisk = lcToken.find( '*' )
@@ -3990,7 +3990,7 @@ class BibleWriter( InternalBible ):
                         else: # Could be character formatting (or closing of character formatting)
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
-                            #vPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
+                            #dPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
@@ -4014,7 +4014,7 @@ class BibleWriter( InternalBible ):
                                     logger.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                 else:
                                     ixAS = firstToken.find( '*' )
-                                    #vPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
+                                    #dPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
                                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
@@ -4030,7 +4030,7 @@ class BibleWriter( InternalBible ):
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag \
                                         or BibleOrgSysGlobals.strictCheckingFlag:
                                             halt
-                    #vPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
+                    #dPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logger.warning( _("toUSX2XML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
@@ -4040,7 +4040,7 @@ class BibleWriter( InternalBible ):
                     if fTextOpen or fCharOpen:
                         USXfootnoteXML += f' closed="false">{adjToken}</char>'
                     USXfootnoteXML += '</note>'
-                    #vPrint( 'Quiet', debuggingThisModule, '', USXfootnote, USXfootnoteXML )
+                    #dPrint( 'Quiet', debuggingThisModule, '', USXfootnote, USXfootnoteXML )
                     return USXfootnoteXML
                 # end of toUSX2XML.processFootnote
 
@@ -4050,7 +4050,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -4065,26 +4065,26 @@ class BibleWriter( InternalBible ):
                         #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                         elif extraType == 'xr':
                             extra = processXRef( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                         elif extraType == 'fig':
                             logger.critical( "USXXML figure not handled yet" )
                             extra = '' # temp
                             #extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                         elif extraType == 'str':
                             extra = '' # temp
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                        #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                        #dPrint( 'Quiet', debuggingThisModule, "now", verse )
                 return adjText
             # end of toUSX2XML.handleNotes
 
@@ -4118,7 +4118,7 @@ class BibleWriter( InternalBible ):
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
-                #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
@@ -4144,7 +4144,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( suppressFollowingIndent=True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
                     C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
                     if adjText != text:
@@ -4356,7 +4356,7 @@ class BibleWriter( InternalBible ):
                 adjText = originalText
                 haveOpenChar = False
                 for charMarker in ALL_CHAR_MARKERS:
-                    #vPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSFX", charMarker )
+                    #dPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSFX", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
@@ -4398,7 +4398,7 @@ class BibleWriter( InternalBible ):
                     USFXxrefXML = '<x '
                     xoOpen = xtOpen = False
                     for j,token in enumerate(USFXxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "toUSFXXML:processXRef", j, "'"+token+"'", "from", '"'+USFXxref+'"', xoOpen, xtOpen )
+                        #dPrint( 'Quiet', debuggingThisModule, "toUSFXXML:processXRef", j, "'"+token+"'", "from", '"'+USFXxref+'"', xoOpen, xtOpen )
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             USFXxrefXML += ('caller="{}" style="x">' if version>=2 else 'caller="{}">') \
@@ -4459,7 +4459,7 @@ class BibleWriter( InternalBible ):
                     USFXfootnoteXML = '<f '
                     frOpen = fTextOpen = fCharOpen = False
                     for j,token in enumerate(USFXfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "USFX processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, USFXfootnote )
+                        #dPrint( 'Quiet', debuggingThisModule, "USFX processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, USFXfootnote )
                         lcToken = token.lower()
                         if j==0:
                             USFXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
@@ -4494,7 +4494,7 @@ class BibleWriter( InternalBible ):
                             fMarker = lcToken.split()[0] # Get the bit before the space
                             USFXfootnoteXML += '<char style="{}"'.format( fMarker )
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #vPrint( 'Quiet', debuggingThisModule, "{!r} {!r}".format( fMarker, adjToken ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                             #if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert fTextOpen and not frOpen and not fCharOpen
@@ -4505,7 +4505,7 @@ class BibleWriter( InternalBible ):
                         else: # Could be character formatting (or closing of character formatting)
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
-                            #vPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
+                            #dPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
                             if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
@@ -4529,7 +4529,7 @@ class BibleWriter( InternalBible ):
                                     logger.warning( _("toUSFXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                 else:
                                     ixAS = firstToken.find( '*' )
-                                    #vPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
+                                    #dPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
                                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
@@ -4540,9 +4540,9 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSFXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                     else:
                                         logger.critical( _("toUSFXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
-                                        #vPrint( 'Quiet', debuggingThisModule, ALL_CHAR_MARKERS )
+                                        #dPrint( 'Quiet', debuggingThisModule, ALL_CHAR_MARKERS )
                                         #halt
-                    #vPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
+                    #dPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         logger.warning( _("toUSFXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USFXfootnote) )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not fCharOpen and not fTextOpen
@@ -4550,7 +4550,7 @@ class BibleWriter( InternalBible ):
                     if fCharOpen: logger.warning( _("toUSFXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USFXfootnote) )
                     if fTextOpen: USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USFXfootnoteXML += '</f>'
-                    #vPrint( 'Quiet', debuggingThisModule, '', USFXfootnote, USFXfootnoteXML )
+                    #dPrint( 'Quiet', debuggingThisModule, '', USFXfootnote, USFXfootnoteXML )
                     return USFXfootnoteXML
                 # end of toUSFXXML.processFootnote
 
@@ -4560,7 +4560,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -4575,26 +4575,26 @@ class BibleWriter( InternalBible ):
                         #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                         elif extraType == 'xr':
                             extra = processXRef( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                         elif extraType == 'fig':
                             logger.critical( "USXFXML figure not handled yet" )
                             extra = '' # temp
                             #extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                         elif extraType == 'str':
                             extra = '' # temp
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                        #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                        #dPrint( 'Quiet', debuggingThisModule, "now", verse )
                 return adjText
             # end of toUSFXXML.handleNotes
 
@@ -4619,7 +4619,7 @@ class BibleWriter( InternalBible ):
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
-                #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, getMarkerContentType, haveOpenPara, paraJustOpened )
 
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
@@ -4642,7 +4642,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( suppressFollowingIndent=True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
                     C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'c', ('id',C) )
                     if adjText != text:
@@ -4894,7 +4894,7 @@ class BibleWriter( InternalBible ):
         try: ln = controlDict['LanguageName']
         except KeyError: ln = 'eng'
         self._writeSwordLocale( xlg, ln, BOS, getBookNameFunction, os.path.join( outputFolderpath, 'SwLocale-utf8.conf' ) )
-        #vPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
+        #dPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
@@ -4981,13 +4981,13 @@ class BibleWriter( InternalBible ):
                     if ix2 == -1: logger.error( _("toOSIS: Missing fig end marker for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     else:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert ix2 > ix1
-                        #vPrint( 'Quiet', debuggingThisModule, "was {!r}".format( adjText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
-                        #vPrint( 'Quiet', debuggingThisModule, "now {!r}".format( adjText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "now {!r}".format( adjText ) )
                         logger.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: {!r} field").format( toOSISGlobals['verseRef'], marker ) )
                 if checkLeftovers and '\\' in adjText:
                     logger.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
-                    #vPrint( 'Quiet', debuggingThisModule, _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
+                    #dPrint( 'Quiet', debuggingThisModule, _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals['verseRef'], marker, textToCheck ) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toOSISXML.checkOSISText
@@ -5013,7 +5013,7 @@ class BibleWriter( InternalBible ):
                     toOSISGlobals["XRefNum"] += 1
                     OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format( toOSISGlobals['verseRef'], toOSISGlobals['verseRef'], toOSISGlobals["XRefNum"] )
                     for j,token in enumerate(USFMxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "toOSIS:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        #dPrint( 'Quiet', debuggingThisModule, "toOSIS:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
@@ -5021,7 +5021,7 @@ class BibleWriter( InternalBible ):
                                 logger.warning( _("toOSIS1: We got something else here other than plus (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
                         elif lcToken.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
-                            #vPrint( 'Quiet', debuggingThisModule, "toOSIS:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
+                            #dPrint( 'Quiet', debuggingThisModule, "toOSIS:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
                             if j==1:
                                 if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
                                     suffixLetter = adjToken[-1]
@@ -5033,8 +5033,8 @@ class BibleWriter( InternalBible ):
                                 if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
                                     adjToken = selfReference
                                 else: # Could be another complete reference
-                                    #vPrint( 'Quiet', debuggingThisModule, "<<< Programming error here in toOSIS:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
-                                    #vPrint( 'Quiet', debuggingThisModule, "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
+                                    #dPrint( 'Quiet', debuggingThisModule, "<<< Programming error here in toOSIS:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
+                                    #dPrint( 'Quiet', debuggingThisModule, "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
                                     if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
                                         suffixLetter = adjToken[-1]
                                         adjToken = adjToken[:-2] # Remove any suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -5043,7 +5043,7 @@ class BibleWriter( InternalBible ):
                                     selfReference = adjToken
                             osisRef = BRL.parseToOSIS( adjToken, toOSISGlobals['verseRef'] )
                             if osisRef is not None:
-                                #vPrint( 'Quiet', debuggingThisModule, "  osisRef = {}".format( osisRef ) )
+                                #dPrint( 'Quiet', debuggingThisModule, "  osisRef = {}".format( osisRef ) )
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
                                     logger.error( _("toOSIS: Cross-reference at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
@@ -5081,7 +5081,7 @@ class BibleWriter( InternalBible ):
                     toOSISGlobals["FootnoteNum"] += 1
                     OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format( toOSISGlobals['verseRef'], toOSISGlobals['verseRef'], toOSISGlobals["FootnoteNum"] )
                     for j,token in enumerate(USFMfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
+                        #dPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
                         lcToken = token.lower()
                         if j==0: continue # ignore the + for now
                         elif lcToken.startswith('fr '): # footnote reference follows
@@ -5102,13 +5102,13 @@ class BibleWriter( InternalBible ):
                         else:
                             logger.critical( _("toOSIS: Unprocessed {!r} token in {} footnote {!r}").format(token, toOSISGlobals['verseRef'], USFMfootnote) )
                     OSISfootnote += '</note>'
-                    #vPrint( 'Quiet', debuggingThisModule, '', OSISfootnote )
+                    #dPrint( 'Quiet', debuggingThisModule, '', OSISfootnote )
                     #if currentChapterNumberString=='5' and verseNumberString=='29': halt
                     return OSISfootnote
                 # end of toOSISXML.processFootnote
 
                 if extras:
-                    #vPrint( 'Quiet', debuggingThisModule, '\n', chapterRef )
+                    #dPrint( 'Quiet', debuggingThisModule, '\n', chapterRef )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert offset >= 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
@@ -5126,26 +5126,26 @@ class BibleWriter( InternalBible ):
                         #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( adjText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                         elif extraType == 'xr':
                             extra = processXRef( adjText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                         elif extraType == 'fig':
                             logger.critical( "OSISXML figure not handled yet" )
                             extra = '' # temp
                             #extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                         elif extraType == 'str':
                             extra = '' # temp
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                        #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                        #dPrint( 'Quiet', debuggingThisModule, "now", verse )
                 return verse
             # end of toOSISXML.processXRefsAndFootnotes
 
@@ -5184,14 +5184,14 @@ class BibleWriter( InternalBible ):
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
-                    #vPrint( 'Quiet', debuggingThisModule, "Hey comma verses {!r} {!r}".format( sID, osisID ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
                     sID = osisID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
                     logger.critical( _("toOSIS: {} doesn't handle verse number of form {!r} yet for {}").format(self.abbreviation, verseNumberString,chapterRef) )
                     tempID = toOSISGlobals['verseRef'] = chapterRef + '.' + verseNumberString # Try it anyway
                     sID = osisID = tempID.replace('<','').replace('>','').replace('"','') # But remove anything that'll cause a big XML problem later
-                #vPrint( 'Quiet', debuggingThisModule, "here SID={!r} osisID={!r}".format( sID, osisID ) )
+                #dPrint( 'Quiet', debuggingThisModule, "here SID={!r} osisID={!r}".format( sID, osisID ) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
                 #adjText = processXRefsAndFootnotes( verseText, extras, offset )
                 #writerObject.writeLineText( checkOSISText(adjText), noTextCheck=True )
@@ -5251,7 +5251,7 @@ class BibleWriter( InternalBible ):
                 """ Close a <lg> if it's open. """
                 nonlocal haveOpenLG
                 if haveOpenLG:
-                    #vPrint( 'Quiet', debuggingThisModule, "closeAnyOpenLG", toOSISGlobals['verseRef'] )
+                    #dPrint( 'Quiet', debuggingThisModule, "closeAnyOpenLG", toOSISGlobals['verseRef'] )
                     writerObject.writeLineClose( 'lg' )
                     haveOpenLG = False
             # end of toOSISXML.closeAnyOpenLG
@@ -5287,7 +5287,7 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
+                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
 
                 if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
                     writerObject.writeLineClose( 'list' )
@@ -5299,7 +5299,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkOSISText(text), [('type','main'),('level',marker[-1]),('canonical',"false")] )
                 elif marker in ('is1','is2','is3','is4', 'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', ):
-                    #vPrint( 'Quiet', debuggingThisModule, marker, "'"+text+"'" )
+                    #dPrint( 'Quiet', debuggingThisModule, marker, "'"+text+"'" )
                     if not haveOpenIntro:
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
                         haveOpenIntro = True
@@ -5399,7 +5399,7 @@ class BibleWriter( InternalBible ):
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
-                        #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(adjustedText) )
+                        #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(adjustedText) )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert BBB in ('PSA','PS2',)
                         writerObject.writeLineOpenClose( 'title', checkOSISText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
                 elif marker in ('s1','s2','s3','s4',):
@@ -5410,8 +5410,8 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenSection()
                     writerObject.writeLineOpen( 'div', ('type', "section") )
                     haveOpenSection = True
-                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
-                    #vPrint( 'Quiet', debuggingThisModule, "{} = {!r}".format( marker, text ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "{} = {!r}".format( marker, text ) )
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
@@ -5464,12 +5464,12 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if text: writerObject.writeLineText( checkOSISText(text), noTextCheck=True )
                 elif marker in ('b','ib'): # Blank line
-                    #vPrint( 'Quiet', debuggingThisModule, 'b', BBB, C, V )
+                    #dPrint( 'Quiet', debuggingThisModule, 'b', BBB, C, V )
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
-                    #vPrint( 'Quiet', debuggingThisModule, 'nb', BBB, C, V ); halt
+                    #dPrint( 'Quiet', debuggingThisModule, 'nb', BBB, C, V ); halt
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
@@ -5655,7 +5655,7 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the Zefania XML writerObject.
             """
-            #vPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
+            #dPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
             if not OSISAbbrev:
                 logger.error( "toZefania: Can't write {} Zefania book because no OSIS code available".format( BBB ) )
@@ -5676,7 +5676,7 @@ class BibleWriter( InternalBible ):
                         if ix != -1:
                             value = verseNumberString[:ix] # Remove verse bridges
                             vEnd = verseNumberString[ix+1:]
-                            #vPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
+                            #dPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
                             try: vBridgeStartInt = int( value )
                             except ValueError: # Not an integer
                                 vPrint( 'Quiet', debuggingThisModule, "toZefaniaXML1: bridge doesn't seem to be integers in {} {!r}".format( BBB, verseNumberString ) )
@@ -5685,7 +5685,7 @@ class BibleWriter( InternalBible ):
                             except ValueError: # Not an integer
                                 vPrint( 'Quiet', debuggingThisModule, "toZefaniaXML1: bridge doesn't seem to be integers in {} {!r}".format( BBB, verseNumberString ) )
                                 vBridgeEndInt = vEnd
-                            #vPrint( 'Quiet', debuggingThisModule, ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, vBridgeStartInt, vBridgeEndInt ) )
+                            #dPrint( 'Quiet', debuggingThisModule, ' Z-VB {} {}:{} {!r} {!r}'.format( BBB, C, V, vBridgeStartInt, vBridgeEndInt ) )
                             return vBridgeStartInt, vBridgeEndInt
                 return verseNumberString, endVerseNumberString
             # end of toZefaniaXML.handleVerseNumber
@@ -5732,13 +5732,13 @@ class BibleWriter( InternalBible ):
                     if ix2 == -1: logger.error( _("toZefania: Missing fig end marker for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
                     else:
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert ix2 > ix1
-                        #vPrint( 'Quiet', debuggingThisModule, "was {!r}".format( adjText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
-                        #vPrint( 'Quiet', debuggingThisModule, "now {!r}".format( adjText ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "now {!r}".format( adjText ) )
                         logger.warning( _("toZefania: Figure reference removed for Zefania generation in {}: {!r} field").format( toZefGlobals['verseRef'], marker ) )
                 if checkLeftovers and '\\' in adjText:
                     logger.error( _("toZefania: We still have some unprocessed backslashes for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
-                    #vPrint( 'Quiet', debuggingThisModule, _("toZefania: We still have some unprocessed backslashes for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
+                    #dPrint( 'Quiet', debuggingThisModule, _("toZefania: We still have some unprocessed backslashes for Zefania in {}: {!r} field is {!r}").format( toZefGlobals['verseRef'], marker, textToCheck ) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toZefaniaXML.checkZefaniaText
@@ -5777,7 +5777,7 @@ class BibleWriter( InternalBible ):
                     toZefGlobals["XRefNum"] += 1
                     ZefXref = '' #'<XREF>'
                     for j,token in enumerate(USFMxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "\ntoZefania:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        #dPrint( 'Quiet', debuggingThisModule, "\ntoZefania:processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
@@ -5785,7 +5785,7 @@ class BibleWriter( InternalBible ):
                                 logger.warning( _("toZefania1: We got something else here other than plus (probably need to do something with it): {} {}:{} {!r} from {!r} from {!r}").format( BBB,C,V, rest, token, text) )
                         elif lcToken.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
-                            #vPrint( 'Quiet', debuggingThisModule, "toZefania:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
+                            #dPrint( 'Quiet', debuggingThisModule, "toZefania:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
                             if j==1:
                                 if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
                                     suffixLetter = adjToken[-1]
@@ -5797,8 +5797,8 @@ class BibleWriter( InternalBible ):
                                 if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
                                     adjToken = selfReference
                                 else: # Could be another complete reference
-                                    #vPrint( 'Quiet', debuggingThisModule, "<<< Programming error here in toZefaniaXML:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
-                                    #vPrint( 'Quiet', debuggingThisModule, "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
+                                    #dPrint( 'Quiet', debuggingThisModule, "<<< Programming error here in toZefaniaXML:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
+                                    #dPrint( 'Quiet', debuggingThisModule, "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
                                     if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
                                         suffixLetter = adjToken[-1]
                                         adjToken = adjToken[:-2] # Remove any suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -5807,7 +5807,7 @@ class BibleWriter( InternalBible ):
                                     selfReference = adjToken
                             osisRef = BRL.parseToOSIS( adjToken, toZefGlobals['verseRef'] )
                             if osisRef is not None:
-                                #vPrint( 'Quiet', debuggingThisModule, "  osisRef = {}".format( osisRef ) )
+                                #dPrint( 'Quiet', debuggingThisModule, "  osisRef = {}".format( osisRef ) )
                                 if not ZefXref: ZefXref = '<XREF '
                                 ZefXref += 'vref="{}">'.format( V )
 # Temp disabled
@@ -5830,7 +5830,7 @@ class BibleWriter( InternalBible ):
                         else:
                             logger.critical( _("toZefania: Unprocessed {!r} token in {} xref {!r}").format( token, toZefGlobals['verseRef'], USFMxref ) )
                     ZefXref += '</XREF>'
-                    #vPrint( 'Quiet', debuggingThisModule, ' ZefXref gave {!r} from {!r}'.format( ZefXref, USFMxref ) )
+                    #dPrint( 'Quiet', debuggingThisModule, ' ZefXref gave {!r} from {!r}'.format( ZefXref, USFMxref ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                         assert '<XREF' in ZefXref
                     return ZefXref
@@ -5850,22 +5850,22 @@ class BibleWriter( InternalBible ):
                     toZefGlobals["FootnoteNum"] += 1
                     ZefFootnote = '' #<NOTE osisRef="{}" osisID="{}!footnote.{}">'.format( toZefGlobals['verseRef'], toZefGlobals['verseRef'], toZefGlobals["FootnoteNum"] )
                     for j,token in enumerate(USFMfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
+                        #dPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
                         lcToken = token.lower()
                         if j==0: continue # ignore the + for now
                         elif lcToken.startswith('fr '): # footnote reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(':'): adjToken = adjToken[:-1] # Remove any final colon (this is a language dependent hack)
                             adjToken = getBookAbbreviationFunction(BBB) + ' ' + adjToken # Prepend a book abbreviation for the anchor (will be processed to an OSIS reference later)
-                            #vPrint( 'Quiet', debuggingThisModule, "  adjToken", repr(adjToken) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  adjToken", repr(adjToken) )
                             osisRef = BRL.parseToOSIS( adjToken, toZefGlobals['verseRef'] ) # Note that this may return None
-                            #vPrint( 'Quiet', debuggingThisModule, "  osisRef", repr(osisRef) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  osisRef", repr(osisRef) )
                             if osisRef is None: # something's wrong, but do our best
                                 if not ZefFootnote: ZefFootnote = '<NOTE>'
                                 ZefFootnote += adjToken
                             else:
                                 if not ZefFootnote: ZefFootnote = '<NOTE '
-                                #vPrint( 'Quiet', debuggingThisModule, repr(osisRef), repr(token[3:]) )
+                                #dPrint( 'Quiet', debuggingThisModule, repr(osisRef), repr(token[3:]) )
                                 ZefFootnote += 'ref="{}">'.format( osisRef.replace('.',',') )
 # Temp disabled
 #                                if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
@@ -5885,7 +5885,7 @@ class BibleWriter( InternalBible ):
                             logger.error( _("toZefania: Unprocessed {!r} token in {} footnote {!r}").format(token, toZefGlobals['verseRef'], USFMfootnote) )
                             ZefFootnote += token # put it in (including the markers)
                     ZefFootnote += '</NOTE>'
-                    #vPrint( 'Quiet', debuggingThisModule, ' ZefFootnote', repr(ZefFootnote) )
+                    #dPrint( 'Quiet', debuggingThisModule, ' ZefFootnote', repr(ZefFootnote) )
                     #if currentChapterNumberString=='5' and verseNumberString=='29': halt
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                         assert '<NOTE' in ZefFootnote
@@ -5911,26 +5911,26 @@ class BibleWriter( InternalBible ):
                         #if adjText!=extraText: vPrint( 'Quiet', debuggingThisModule, "processZefXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( adjText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fn got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fn got", extra )
                         elif extraType == 'xr':
                             extra = processXRef( adjText )
-                            #vPrint( 'Quiet', debuggingThisModule, "xr got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "xr got", extra )
                         elif extraType == 'fig':
                             logger.critical( "OSISXML figure not handled yet" )
                             extra = '' # temp
                             #extra = processFigure( extraText )
-                            #vPrint( 'Quiet', debuggingThisModule, "fig got", extra )
+                            #dPrint( 'Quiet', debuggingThisModule, "fig got", extra )
                         elif extraType == 'str':
                             extra = '' # temp
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        elvPrint( 'Never', debuggingThisModule, extraType ); halt
-                        #vPrint( 'Quiet', debuggingThisModule, "was", verse )
+                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                        #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
-                        #vPrint( 'Quiet', debuggingThisModule, "now", verse )
+                        #dPrint( 'Quiet', debuggingThisModule, "now", verse )
                 return verse
             # end of toZefaniaXML.processZefXRefsAndFootnotes
 
@@ -5969,7 +5969,7 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is the verse number to be published
                         text = gotVP
                         gotVP = None
-                    #vPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
                     if not text: logger.warning( "toZefania: Missing text for v" ); continue
                     verseNumberString, endVerseNumberString = handleVerseNumber( BBB, C, V, text )
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
@@ -5986,7 +5986,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert text or extras
-                    #vPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
                     if not text: # this is an empty (untranslated) verse
                          #logger.warning( "toZefania: Missing text for v~" )
                         text = '- - -' # but we'll put in a filler
@@ -6128,7 +6128,7 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the Haggai XML writerObject.
             """
-            #vPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
+            #dPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
             if not OSISAbbrev:
                 logger.error( "toHaggai: Can't write {} Haggai book because no OSIS code available".format( BBB ) )
@@ -6167,7 +6167,7 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is the verse number to be published
                         text = gotVP
                         gotVP = None
-                    #vPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
                     if not text: logger.warning( "toHaggaiXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
@@ -6189,7 +6189,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert text or extras
-                    #vPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
                     if not text: logger.warning( "toHaggaiXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse — not sure how Haggai handles them yet
                     if not text: # this is an empty (untranslated) verse
@@ -6355,7 +6355,7 @@ class BibleWriter( InternalBible ):
         except KeyError: lN = 'eng'
         self._writeSwordLocale( xL, lN, BOS, getBookNameFunction, os.path.join( outputFolderpath, 'SwLocale-utf8.conf' ) )
         #SwLocFilepath = os.path.join( outputFolderpath, 'SwLocale-utf8.conf" )
-        #vPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
+        #dPrint( 'Normal', debuggingThisModule, _("Writing Sword locale file {}…").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt', encoding='utf-8' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict['xmlLanguage']) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict['LanguageName']) )
@@ -6412,25 +6412,25 @@ class BibleWriter( InternalBible ):
                 confText = confText.replace( '__LANGUAGE__', 'id' )
 
             # Do replacements from metadata
-            #vPrint( 'Quiet', debuggingThisModule, "  Given Project name is", projectName )
-            #vPrint( 'Quiet', debuggingThisModule, "  Given Email is", emailAddress )
-            #vPrint( 'Quiet', debuggingThisModule, "  Given Name is", projectName )
+            #dPrint( 'Quiet', debuggingThisModule, "  Given Project name is", projectName )
+            #dPrint( 'Quiet', debuggingThisModule, "  Given Email is", emailAddress )
+            #dPrint( 'Quiet', debuggingThisModule, "  Given Name is", projectName )
             #if 'FullName' in self.settingsDict:
-                #vPrint( 'Quiet', debuggingThisModule, "  SSF Full name (unused) is", self.settingsDict['FullName'] )
+                #dPrint( 'Quiet', debuggingThisModule, "  SSF Full name (unused) is", self.settingsDict['FullName'] )
             name = self.getSetting( 'Name' )
             if name:
             #if 'Name' in self.settingsDict:
-                #vPrint( 'Quiet', debuggingThisModule, "  SSF Name is", self.settingsDict['Name'] )
+                #dPrint( 'Quiet', debuggingThisModule, "  SSF Name is", self.settingsDict['Name'] )
                 confText = confText.replace( '__ABBREVIATION__', name )
             language = self.getSetting( 'Language' )
             if language:
             #if 'Language' in self.settingsDict:
-                #vPrint( 'Quiet', debuggingThisModule, "  SSF Language is", self.settingsDict['Language'] )
+                #dPrint( 'Quiet', debuggingThisModule, "  SSF Language is", self.settingsDict['Language'] )
                 confText = confText.replace( '__LANGUAGE__', language )
             #if 'productName' in self.settingsDict:
-                #vPrint( 'Quiet', debuggingThisModule, "  SSF Product name (unused) is", self.settingsDict['productName'] )
+                #dPrint( 'Quiet', debuggingThisModule, "  SSF Product name (unused) is", self.settingsDict['productName'] )
             #if 'LanguageIsoCode' in self.settingsDict:
-                #vPrint( 'Quiet', debuggingThisModule, "  SSF Language Iso Code (unused) is", self.settingsDict['LanguageIsoCode'] )
+                #dPrint( 'Quiet', debuggingThisModule, "  SSF Language Iso Code (unused) is", self.settingsDict['LanguageIsoCode'] )
 
             # Do exasperated replacements if there's any unknown fields left (coz we have no better info)
             confText = confText.replace( '__ABBREVIATION__', 'NONE' )
@@ -6513,7 +6513,7 @@ class BibleWriter( InternalBible ):
                     toSwordGlobals["XRefNum"] += 1
                     OSISxref = '<note type="crossReference" osisRef="{}" osisID="{}!crossreference.{}">'.format(toSwordGlobals['verseRef'],toSwordGlobals['verseRef'],toSwordGlobals["XRefNum"])
                     for j,token in enumerate(USFMxref.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
+                        #dPrint( 'Quiet', debuggingThisModule, "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
                             if rest != '+':
@@ -6562,7 +6562,7 @@ class BibleWriter( InternalBible ):
                     toSwordGlobals["FootnoteNum"] += 1
                     OSISfootnote = '<note osisRef="{}" osisID="{}!footnote.{}">'.format(toSwordGlobals['verseRef'],toSwordGlobals['verseRef'],toSwordGlobals["FootnoteNum"])
                     for j,token in enumerate(USFMfootnote.split('\\')):
-                        #vPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
+                        #dPrint( 'Quiet', debuggingThisModule, "processFootnote", j, token, USFMfootnote )
                         if j==0: continue # ignore the + for now
                         elif token.startswith('fr '): # footnote reference follows
                             adjToken = token[3:].strip()
@@ -6582,7 +6582,7 @@ class BibleWriter( InternalBible ):
                         else:
                             logger.critical( _("toSwordModule: Unprocessed {!r} token in {} footnote {!r}").format(token, toSwordGlobals['verseRef'], USFMfootnote) )
                     OSISfootnote += '</note>'
-                    #vPrint( 'Quiet', debuggingThisModule, '', OSISfootnote )
+                    #dPrint( 'Quiet', debuggingThisModule, '', OSISfootnote )
                     return OSISfootnote
                 # end of toSwordModule.processFootnote
 
@@ -6596,7 +6596,7 @@ class BibleWriter( InternalBible ):
                     else: ix2b = ix2 + 4
                     xref = verse[ix1+3:ix2]
                     osisXRef = processXRef( xref )
-                    #vPrint( 'Quiet', debuggingThisModule, osisXRef )
+                    #dPrint( 'Quiet', debuggingThisModule, osisXRef )
                     verse = verse[:ix1] + osisXRef + verse[ix2b:]
                 while '\\f ' in verse and '\\f*' in verse: # process footnotes
                     ix1 = verse.index('\\f ')
@@ -6609,7 +6609,7 @@ class BibleWriter( InternalBible ):
 #                    else: ix2b = ix2 + 4
                     footnote = verse[ix1+3:ix2]
                     osisFootnote = processFootnote( footnote )
-                    #vPrint( 'Quiet', debuggingThisModule, osisFootnote )
+                    #dPrint( 'Quiet', debuggingThisModule, osisFootnote )
                     verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
 #                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
                 return verse
@@ -6650,7 +6650,7 @@ class BibleWriter( InternalBible ):
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
-                    #vPrint( 'Quiet', debuggingThisModule, "Hey comma verses {!r} {!r}".format( sID, osisID ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
                     sID = osisID = toSwordGlobals['verseRef'] = chapterRef + '.' + verseNumberString
                 else:
@@ -6741,9 +6741,9 @@ class BibleWriter( InternalBible ):
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
-                #vPrint( 'Quiet', debuggingThisModule, BBB, marker, text )
-                #vPrint( 'Quiet', debuggingThisModule, " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
-                #vPrint( 'Quiet', debuggingThisModule, toSwordGlobals['idStack'] )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, marker, text )
+                #dPrint( 'Quiet', debuggingThisModule, " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
+                #dPrint( 'Quiet', debuggingThisModule, toSwordGlobals['idStack'] )
 
                 if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
                     writerObject.writeLineClose( 'list' )
@@ -6943,7 +6943,7 @@ class BibleWriter( InternalBible ):
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
                 elif marker=='nb': # No-break
-                    #vPrint( 'Quiet', debuggingThisModule, 'nb', BBB, C, V ); halt
+                    #dPrint( 'Quiet', debuggingThisModule, 'nb', BBB, C, V ); halt
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not text and not extras
                     ignoredMarkers.add( marker )
                 else:
@@ -7284,10 +7284,10 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        #vPrint( 'Quiet', debuggingThisModule, 'status' in self ) # False
-        #vPrint( 'Quiet', debuggingThisModule, 'status' in self.__dict__ ) # True
-        #vPrint( 'Quiet', debuggingThisModule, '\nself', dir(self) )
-        #vPrint( 'Quiet', debuggingThisModule, '\nsettings', dir(self.settingsDict) )
+        #dPrint( 'Quiet', debuggingThisModule, 'status' in self ) # False
+        #dPrint( 'Quiet', debuggingThisModule, 'status' in self.__dict__ ) # True
+        #dPrint( 'Quiet', debuggingThisModule, '\nself', dir(self) )
+        #dPrint( 'Quiet', debuggingThisModule, '\nsettings', dir(self.settingsDict) )
 
 
         def writeDrupalBibleHeader( writer ):
@@ -7333,7 +7333,7 @@ class BibleWriter( InternalBible ):
             while '  ' in textField: textField = textField.replace( '  ', ' ' ) # Remove multiple spaces
             textField = textField.replace( '\\it ', '<' ).replace( '\\it*', '>' ) \
                                         .replace( '\\add ', '<' ).replace( '\\add*', '>' )
-            #vPrint( 'Quiet', debuggingThisModule, repr(textField) )
+            #dPrint( 'Quiet', debuggingThisModule, repr(textField) )
             #textField = re.sub( r'(\\[a-z][a-z0-9]{0,3} )', '', textField ) # Remove any remaining character fields, e.g., '\tcr1 '
             #textField = re.sub( r'(\\[a-z][a-z0-9]{0,3}\*)', '', textField ) # Remove any remaining character end fields, e.g., '\tcr1*'
             #textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3} )', '', textField ) # Remove any remaining character fields, e.g., '\+add '
@@ -7388,12 +7388,12 @@ class BibleWriter( InternalBible ):
                         V = gotVP
                         gotVP = None
                     if not V.isdigit(): # Remove verse bridges
-                        #vPrint( 'Quiet', debuggingThisModule, "toDrupalBible V was", repr(V) )
+                        #dPrint( 'Quiet', debuggingThisModule, "toDrupalBible V was", repr(V) )
                         Vcopy, V = V, ''
                         for char in Vcopy:
                             if not char.isdigit(): break
                             V += char
-                        #vPrint( 'Quiet', debuggingThisModule, "toDrupalBible V is now", repr(V) )
+                        #dPrint( 'Quiet', debuggingThisModule, "toDrupalBible V is now", repr(V) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
                 or marker in USFM_ALL_INTRODUCTION_MARKERS \
@@ -7535,7 +7535,7 @@ class BibleWriter( InternalBible ):
 
             Returns an errorcode.
             """
-            #vPrint( 'Quiet', debuggingThisModule, "renderCommands: {} on {}".format( commandList, jpegFilepath ) )
+            #dPrint( 'Quiet', debuggingThisModule, "renderCommands: {} on {}".format( commandList, jpegFilepath ) )
 
             # Run the script on our data
             if sys.platform.startswith( 'win' ): parameters = [ 'imconvert.exe' ]
@@ -7543,7 +7543,7 @@ class BibleWriter( InternalBible ):
             parameters.extend( commandList )
             parameters.append( jpegFilepath ) # input file
             parameters.append( jpegFilepath ) # output file
-            #vPrint( 'Quiet', debuggingThisModule, "Parameters", repr(parameters) )
+            #dPrint( 'Quiet', debuggingThisModule, "Parameters", repr(parameters) )
             myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             programOutputBytes, programErrorOutputBytes = myProcess.communicate()
             returnCode = myProcess.returncode
@@ -7571,7 +7571,7 @@ class BibleWriter( InternalBible ):
                 convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
             """
             nonlocal lastFontcolor, lastFontsize, lastFontname
-            #vPrint( 'Quiet', debuggingThisModule, "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+            #dPrint( 'Quiet', debuggingThisModule, "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
             #fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
 
             # Prepare the commands to render this line of text on the page
@@ -7601,9 +7601,9 @@ class BibleWriter( InternalBible ):
             #vnLineBuffer = ''
             #vnCommands = []
             #for posn,vn in vnInfo:
-                ##vPrint( 'Quiet', debuggingThisModule, posn, repr(vn) )
+                ##dPrint( 'Quiet', debuggingThisModule, posn, repr(vn) )
                 #vnLineBuffer += ' ' * (posn - len(vnLineBuffer) ) + vn # Space is too narrow
-                #vPrint( 'Quiet', debuggingThisModule, repr(vnLineBuffer), vnInfo )
+                #dPrint( 'Quiet', debuggingThisModule, repr(vnLineBuffer), vnInfo )
 
                 #across = givenAcross + posn * fontsize * 3 / 10
                 #vnCommands.extend( renderLine( across, down, vn, fontsize, fontname, fontcolor ) )
@@ -7623,14 +7623,14 @@ class BibleWriter( InternalBible ):
             nonlocal lastFontcolor, lastFontsize, lastFontname
             lastFontcolor = lastFontsize = lastFontname = None # So we're sure to get the initial commands in the stream
 
-            #vPrint( 'Quiet', debuggingThisModule, "\nrenderPage( {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(bookName), repr(text), jpegFilepath, fontsize ) )
+            #dPrint( 'Quiet', debuggingThisModule, "\nrenderPage( {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(bookName), repr(text), jpegFilepath, fontsize ) )
 
             # Create the blank file
             shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
 
             if fontsize is None: fontsize = defaultFontSize
             leading = int( defaultLeadingRatio * fontsize )
-            #vPrint( 'Quiet', debuggingThisModule, "Leading is {} for {}".format( leading, fontsize ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Leading is {} for {}".format( leading, fontsize ) )
             across, down = leftPadding, leading - 2
 
             # Write the heading
@@ -7647,9 +7647,9 @@ class BibleWriter( InternalBible ):
             textLineCount = textWordCount = 0
             lastLine = False
             lines = text.split('\n')
-            #vPrint( 'Quiet', debuggingThisModule, "Have lines:", len(lines) )
+            #dPrint( 'Quiet', debuggingThisModule, "Have lines:", len(lines) )
             for originalLine in lines:
-                #vPrint( 'Quiet', debuggingThisModule, textLineCount, "line", repr(originalLine) )
+                #dPrint( 'Quiet', debuggingThisModule, textLineCount, "line", repr(originalLine) )
                 line = originalLine
                 fontcolor = 'opaque' # gives black as default
 
@@ -7668,28 +7668,28 @@ class BibleWriter( InternalBible ):
                 or outputLineCount == maxLines - 1:
                     lastLine = True
                 if down >= maxDown: break # We're finished
-                #vPrint( 'Quiet', debuggingThisModule, BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
 
                 isMainHeading = isSectionHeading = isSectionCrossReference = False
                 if line.startswith('HhH'):
                     if lastLine:
-                        #vPrint( 'Quiet', debuggingThisModule, BBB, C, "Don't start main heading on last line", repr(line) )
+                        #dPrint( 'Quiet', debuggingThisModule, BBB, C, "Don't start main heading on last line", repr(line) )
                         break # Don't print headings on the last line
                     line = line[3:] # Remove the heading marker
-                    #vPrint( 'Quiet', debuggingThisModule, "Got main heading:", BBB, C, repr(line) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Got main heading:", BBB, C, repr(line) )
                     isMainHeading = True
                     fontcolor = defaultMainHeadingFontcolor
                 elif line.startswith('SsS'):
                     if lastLine:
-                        #vPrint( 'Quiet', debuggingThisModule, BBB, C, "Don't start section heading on last line", repr(line) )
+                        #dPrint( 'Quiet', debuggingThisModule, BBB, C, "Don't start section heading on last line", repr(line) )
                         break # Don't print headings on the last line
                     line = line[3:] # Remove the SsS heading marker
-                    #vPrint( 'Quiet', debuggingThisModule, "Got section heading:", BBB, C, repr(line) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Got section heading:", BBB, C, repr(line) )
                     isSectionHeading = True
                     fontcolor = defaultSectionHeadingFontcolor
                 elif line.startswith('RrR'):
                     line = line[3:] # Remove the RrR heading marker
-                    #vPrint( 'Quiet', debuggingThisModule, "Got section cross-reference:", BBB, C, repr(line) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Got section cross-reference:", BBB, C, repr(line) )
                     isSectionCrossReference = True
                     fontcolor = defaultSectionCrossReferenceFontcolor
 
@@ -7701,7 +7701,7 @@ class BibleWriter( InternalBible ):
                 if line:
                     verseNumberLast = False
                     words = line.split(' ')
-                    #vPrint( 'Quiet', debuggingThisModule, textWordCount, "words", words )
+                    #dPrint( 'Quiet', debuggingThisModule, textWordCount, "words", words )
                     for w,originalWord in enumerate( words ):
                         word = originalWord.replace( ' ', ' ' ) # Put back normal spaces (now that the split has been done)
 
@@ -7717,7 +7717,7 @@ class BibleWriter( InternalBible ):
                         if down >= maxDown - leading \
                         or outputLineCount == maxLines - 1: lastLine = True
                         if down >= maxDown: break # We're finished
-                        #vPrint( 'Quiet', debuggingThisModule, '     ', textLineCount, outputLineCount, down, maxDown, lastLine, textWordCount, repr(word) )
+                        #dPrint( 'Quiet', debuggingThisModule, '     ', textLineCount, outputLineCount, down, maxDown, lastLine, textWordCount, repr(word) )
 
                         # Allow for some letter-width variations
                         #   a bigger offset value will allow less to be added to the line
@@ -7736,7 +7736,7 @@ class BibleWriter( InternalBible ):
                         offset -= (potentialStringLower.count(' ') + potentialStringLower.count('i') \
                                     + potentialString.count('l') + potentialString.count('t') ) / 4 + combiningCount
                         #if offset != 1:
-                            #vPrint( 'Quiet', debuggingThisModule, "Adjusted offset to", offset, "from", repr(potentialString) )
+                            #dPrint( 'Quiet', debuggingThisModule, "Adjusted offset to", offset, "from", repr(potentialString) )
 
                         potentialLength = len(lineBuffer) + len(word) + offset
                         if lastLine and isVerseNumber: # We would have to include the next word also
@@ -7744,18 +7744,18 @@ class BibleWriter( InternalBible ):
                             potentialLength += len(words[w+1]) + 1
                             for letter in words[w+1]:
                                 if unicodedata.combining(letter): potentialLength -= 1
-                            #vPrint( 'Quiet', debuggingThisModule, "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
+                            #dPrint( 'Quiet', debuggingThisModule, "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
                         if potentialLength  >= maxLineCharacters:
                             # Print this line as we've already got it coz it would be too long if we added the word
                             totalCommands.extend( renderLine( across, down, lineBuffer, fontsize, defaultTextFontname, fontcolor ) )
                             #if verseNumberList:
-                                #vPrint( 'Quiet', debuggingThisModule, repr(lineBuffer) )
+                                #dPrint( 'Quiet', debuggingThisModule, repr(lineBuffer) )
                                 #totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
                                 #verseNumberList = []
                             down += leading
                             outputLineCount += 1
                             lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
-                            #vPrint( 'Quiet', debuggingThisModule, outputLineCount, maxLines, outputLineCount>=maxLines )
+                            #dPrint( 'Quiet', debuggingThisModule, outputLineCount, maxLines, outputLineCount>=maxLines )
                             if outputLineCount >= maxLines: break
                             if down >= maxDown: break # We're finished
 
@@ -7774,7 +7774,7 @@ class BibleWriter( InternalBible ):
                     if lineBuffer.lstrip(): # do the last line
                         totalCommands.extend( renderLine( across, down, lineBuffer, fontsize, defaultTextFontname, fontcolor ) )
                         #if verseNumberList:
-                            #vPrint( 'Quiet', debuggingThisModule, repr(lineBuffer) )
+                            #dPrint( 'Quiet', debuggingThisModule, repr(lineBuffer) )
                             #totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
                             #verseNumberList = []
                         down += leading
@@ -7782,7 +7782,7 @@ class BibleWriter( InternalBible ):
                 elif textLineCount!=1: # it's a blank line (but not the first line on the page)
                     down += defaultFontSize / 3 # Leave a blank 1/3 line
                     outputLineCount += 0.4
-                #vPrint( 'Quiet', debuggingThisModule, outputLineCount, maxLines, outputLineCount>=maxLines )
+                #dPrint( 'Quiet', debuggingThisModule, outputLineCount, maxLines, outputLineCount>=maxLines )
                 if outputLineCount >= maxLines: break
 
             # Now render all those commands at once
@@ -7790,14 +7790,14 @@ class BibleWriter( InternalBible ):
 
             # Find the left-over text
             leftoverText = ''
-            #vPrint( 'Quiet', debuggingThisModule, "textWordCount was", textWordCount, len(words) )
-            #vPrint( 'Quiet', debuggingThisModule, "textLineCount was", textLineCount, len(lines) )
+            #dPrint( 'Quiet', debuggingThisModule, "textWordCount was", textWordCount, len(words) )
+            #dPrint( 'Quiet', debuggingThisModule, "textLineCount was", textLineCount, len(lines) )
             leftoverText += ' '.join( words[textWordCount:] )
             if textLineCount < len(lines):
                 leftoverText += '\n' + '\n'.join( lines[textLineCount:] )
 
 
-            #vPrint( 'Quiet', debuggingThisModule, "leftoverText was", repr(leftoverText) )
+            #dPrint( 'Quiet', debuggingThisModule, "leftoverText was", repr(leftoverText) )
             return indenter+leftoverText if leftoverText else ''
         # end of toPhotoBible.renderPage
 
@@ -7807,7 +7807,7 @@ class BibleWriter( InternalBible ):
             Creates as many JPEG image files as needed to display the chapter
                 and puts them in an appropriate (created) folder.
             """
-            #vPrint( 'Quiet', debuggingThisModule, "\nrenderChapterText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
+            #dPrint( 'Quiet', debuggingThisModule, "\nrenderChapterText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
             #intC = int( C )
             if namingFormat == 'Short':
@@ -7849,7 +7849,7 @@ class BibleWriter( InternalBible ):
                 pagesWritten += 1
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
 
-            #vPrint( 'Quiet', debuggingThisModule, "pagesWritten were", pagesWritten )
+            #dPrint( 'Quiet', debuggingThisModule, "pagesWritten were", pagesWritten )
             return pagesWritten
         # end of toPhotoBible.renderChapterText
 
@@ -7865,7 +7865,7 @@ class BibleWriter( InternalBible ):
             # Find a suitable bookname
             #bookName = self.getAssumedBookName( BBB )
             for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
-                #vPrint( 'Quiet', debuggingThisModule, "Tried bookName:", repr(bookName) )
+                #dPrint( 'Quiet', debuggingThisModule, "Tried bookName:", repr(bookName) )
                 if bookName is not None and len(bookName)<=maxBooknameLetters: break
             bookAbbrev = self.getBooknameAbbreviation( BBB )
             bookAbbrev = BBB if not bookAbbrev else BibleOrgSysGlobals.makeSafeFilename( bookAbbrev.replace( ' ', '' ) )
@@ -7892,7 +7892,7 @@ class BibleWriter( InternalBible ):
             textBuffer = ''
             for entry in internalBibleBookData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText() # Clean text completely ignores formatting and footnotes, cross-references, etc.
-                #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, repr(cleanText) )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, repr(cleanText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
@@ -7938,7 +7938,7 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n' + cleanText
                 elif marker in ('r','sr','mr',):
                     #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
                     #textBuffer += '\n' + ' '*numSpaces + cleanText # Roughly centred
                     if lastMarker not in ('s1','s2','s3','s4',): textBuffer += '\n' # Section headings already have one at the end
                     textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(cleanText))//2) + cleanText + '\n' # Roughly centred
@@ -7992,15 +7992,15 @@ class BibleWriter( InternalBible ):
         vPrint( 'Info', debuggingThisModule, "  Zipping PhotoBible files…" )
         for subset in ('OT','NT','Other','All'):
             loadFolder = outputFolderpath if subset=='All' else os.path.join( outputFolderpath, subset+'/' )
-            #vPrint( 'Quiet', debuggingThisModule, repr(subset), "Load folder =", repr(loadFolder) )
+            #dPrint( 'Quiet', debuggingThisModule, repr(subset), "Load folder =", repr(loadFolder) )
             if os.path.exists( loadFolder ):
                 zf = zipfile.ZipFile( os.path.join( outputFolderpath, subset+'PhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
                 for root, dirs, files in os.walk( loadFolder ):
                     for filename in files:
                         if not filename.endswith( '.zip' ):
-                            #vPrint( 'Quiet', debuggingThisModule, repr(loadFolder), repr(root), repr(dirs), repr(files) )
-                            #vPrint( 'Quiet', debuggingThisModule, repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
-                            #vPrint( 'Quiet', debuggingThisModule, os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+                            #dPrint( 'Quiet', debuggingThisModule, repr(loadFolder), repr(root), repr(dirs), repr(files) )
+                            #dPrint( 'Quiet', debuggingThisModule, repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
+                            #dPrint( 'Quiet', debuggingThisModule, os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
                             #  Save in the archive without the path —
                             #   parameters are filename to compress, archive name (relative path) to save as
                             zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
@@ -8087,7 +8087,7 @@ class BibleWriter( InternalBible ):
                 sleep( 5 ) # Wait
                 #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
                 #returnCode = myProcess.returncode
-                #vPrint( 'Quiet', debuggingThisModule, "returnCode", returnCode )
+                #dPrint( 'Quiet', debuggingThisModule, "returnCode", returnCode )
                 # Why does this give:
                 #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
                 #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
@@ -8814,7 +8814,7 @@ class BibleWriter( InternalBible ):
             """
             Format character codes within the text into ODF
             """
-            #vPrint( 'Quiet', debuggingThisModule, "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+            #dPrint( 'Quiet', debuggingThisModule, "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
             def handleExtras( text, extras ):
@@ -8829,7 +8829,7 @@ class BibleWriter( InternalBible ):
                             given 17:4-9 return #C17V4
                             given 1:1-3:19 return #C1V1
                     """
-                    #vPrint( 'Quiet', debuggingThisModule, "formatODFVerseText.liveCV( {} )".format( repr(CV) ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "formatODFVerseText.liveCV( {} )".format( repr(CV) ) )
                     if len(CV) < 3: return ''
                     if CV and CV[-1]==':': CV = CV[:-1]
 
@@ -8837,7 +8837,7 @@ class BibleWriter( InternalBible ):
                     for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                         ix = result.find( bridgeChar )
                         if ix != -1: result = result[:ix] # Remove verse bridges
-                    #vPrint( 'Quiet', debuggingThisModule, " returns", result )
+                    #dPrint( 'Quiet', debuggingThisModule, " returns", result )
                     if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
                     return '#' + result
                 # end of insertFormattedODFText.liveCV
@@ -8853,7 +8853,7 @@ class BibleWriter( InternalBible ):
                 """
                 assert noteType in ('fn','en',)
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
-                #vPrint( 'Quiet', debuggingThisModule, "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                #dPrint( 'Quiet', debuggingThisModule, "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
                 note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
                 document.Text.insertTextContent( textCursor, note, False )
                 noteCursor = note.Text.createTextCursor()
@@ -8897,7 +8897,7 @@ class BibleWriter( InternalBible ):
                 \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
                 """
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
-                #vPrint( 'Quiet', debuggingThisModule, "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "…", markerList ) )
+                #dPrint( 'Quiet', debuggingThisModule, "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "…", markerList ) )
 
                 xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
                 document.Text.insertTextContent( textCursor, xrefNote, False )
@@ -8949,8 +8949,8 @@ class BibleWriter( InternalBible ):
                 #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
                 #endMD += '</p>'
 
-                ##vPrint( 'Quiet', debuggingThisModule, "footnoteMD", BBB, footnoteMD )
-                ##vPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
+                ##dPrint( 'Quiet', debuggingThisModule, "footnoteMD", BBB, footnoteMD )
+                ##dPrint( 'Quiet', debuggingThisModule, "endMD", endMD )
                 #ourGlobals['footnoteMD'].append( endMD )
                 ##if fnIndex > 2: halt
             # end of insertFormattedODFText.processFigure
@@ -8960,28 +8960,28 @@ class BibleWriter( InternalBible ):
                 """
                 Insert a text segment, complete with the correct character styles if any.
                 """
-                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF.handleTextSubsegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
+                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF.handleTextSubsegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
                 if markerList: # we found character formatting within the text
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(textSegment), markerList ) )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(textSegment), markerList ) )
                     for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        #vPrint( 'Quiet', debuggingThisModule, "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                        #dPrint( 'Quiet', debuggingThisModule, "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
                         if marker in charODFStyleDict and nextSignificantChar in (' ','+'): # it's an opening marker
-                            #vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc1", BBB, C, V, charODFStyleDict[marker], repr(txt) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc1", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
                             document.Text.insertString( textCursor, txt, 0 )
                         elif marker == 'k' and nextSignificantChar in (' ','+'):
-                            #vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc2", BBB, C, V, repr(txt) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc2", BBB, C, V, repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
                             document.Text.insertString( textCursor, txt, 0 )
                         elif marker in charODFStyleDict and nextSignificantChar=='-': # it's a closing nesting marker
                             assertcontext
-                            #vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc3", BBB, C, V, charODFStyleDict[marker], repr(txt) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc3", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[context[0]] )
                             document.Text.insertString( textCursor, txt, 0 )
                         elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
                             # Normal text
-                            #vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc4", BBB, C, V, defaultCharacterStyleName, repr(txt) )
+                            #dPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc4", BBB, C, V, defaultCharacterStyleName, repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
                             document.Text.insertString( textCursor, txt, 0 )
                         elif marker in ('ca','va',) and nextSignificantChar in (' ','+'): # it's an opening marker
@@ -8998,7 +8998,7 @@ class BibleWriter( InternalBible ):
                             unhandledMarkers.add( "{} (char)".format( marker ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 elif textSegment: # No character formatting here
-                    #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
+                    #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
                     document.Text.insertString( textCursor, textSegment, 0 )
             # end of insertFormattedODFText.handleTextSubsegment
 
@@ -9006,7 +9006,7 @@ class BibleWriter( InternalBible ):
                 """
                 Insert a text segment, complete with the correct character styles if any.
                 """
-                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF.handleTextSegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
+                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF.handleTextSegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
                 if '//' in textSegment: # indicates a manual new line marker
                     sx = 0
                     ix = textSegment.find( '//' )
@@ -9089,7 +9089,7 @@ class BibleWriter( InternalBible ):
                     start a new paragraph and insert the text.
                 """
                 nonlocal firstEverParagraphFlag
-                #vPrint( 'Quiet', debuggingThisModule, "toODF.insertODFParagraph( {} {}:{}, {}, {} …)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "toODF.insertODFParagraph( {} {}:{}, {}, {} …)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
                     document.Text.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False )
                 try: textCursor.setPropertyValue( 'ParaStyleName', paragraphStyleName )
@@ -9110,7 +9110,7 @@ class BibleWriter( InternalBible ):
             C, V = '-1', '-1' # So first/id line starts at -1:0
             for entry in internalBibleBookData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
-                #vPrint( 'Quiet', debuggingThisModule, "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
+                #dPrint( 'Quiet', debuggingThisModule, "toODF:", bookNum, BBB, C, V, marker, repr(adjText) )
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
@@ -9454,7 +9454,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\fig ', '~^~BibleFigure{' ).replace( '\\fig*', '}' ) # temp
 
             if '\\f ' in text: # handle footnotes
-                #vPrint( 'Quiet', debuggingThisModule, 'footnote', repr(givenText) )
+                #dPrint( 'Quiet', debuggingThisModule, 'footnote', repr(givenText) )
                 #ix = text.find( '\\f ' )
                 #ixEnd = text.find( '\\f*' )
                 text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
@@ -9462,7 +9462,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' ).replace( '\\fk ', '' ) # Just remove these ones
 
             if '\\x ' in text: # handle cross-references
-                #vPrint( 'Quiet', debuggingThisModule, 'xref', repr(givenText) )
+                #dPrint( 'Quiet', debuggingThisModule, 'xref', repr(givenText) )
                 #ix = text.find( '\\x ' )
                 #ixEnd = text.find( '\\x*' )
                 text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
@@ -9506,7 +9506,7 @@ class BibleWriter( InternalBible ):
 
                 # Now run xelatex (TeX -> PDF)
                 parameters = ['/usr/bin/timeout', timeout, '/usr/bin/xelatex', '-interaction=batchmode', os.path.abspath(texFilepath) ]
-                #vPrint( 'Quiet', debuggingThisModule, "makeIndividualPDF (xelatex) parameters", parameters )
+                #dPrint( 'Quiet', debuggingThisModule, "makeIndividualPDF (xelatex) parameters", parameters )
                 os.chdir( outputFolderpath ) # So the paths for the Bible.cls file are correct
                 myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 programOutputBytes, programErrorOutputBytes = myProcess.communicate()
@@ -9518,7 +9518,7 @@ class BibleWriter( InternalBible ):
                     programOutputString = programOutputBytes.decode( encoding='utf-8', errors='replace' )
                     #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
                     #with open( os.path.join( outputFolderpath, 'ScriptOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programOutputString )
-                    #vPrint( 'Quiet', debuggingThisModule, "pOS", programOutputString )
+                    #dPrint( 'Quiet', debuggingThisModule, "pOS", programOutputString )
                 if programErrorOutputBytes:
                     programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                     #with open( os.path.join( outputFolderpath, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
@@ -9849,7 +9849,7 @@ class BibleWriter( InternalBible ):
             # With no timeout safeguard
             #with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 #results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
-                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 #assert len(results) == len(self.__outputFolders)
                 #PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     #listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
@@ -9868,7 +9868,7 @@ class BibleWriter( InternalBible ):
             timeoutSeconds = max( 60, int(timeoutFactor*len(self.books)*processorFactor) ) # (was 1200s=20m but failed for projects with > 66 books)
             pool = multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses )
             asyncResultObject = pool.map_async( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
-            #vPrint( 'Quiet', debuggingThisModule, "async results1 are", asyncResultObject )
+            #dPrint( 'Quiet', debuggingThisModule, "async results1 are", asyncResultObject )
             pool.close() # Can't add more workers to the pool now
             asyncResultObject.wait( timeoutSeconds ) # Wait for every worker to finish
             # Once the timeout has finished we can try to get the results
@@ -9885,7 +9885,7 @@ class BibleWriter( InternalBible ):
                                     result if wantPDFs else None,
                                     result, result, result, result, result, result, result, result, result, result, result, result,
                                     result, result, result, result, result, result, result, result, result, result, result, ]
-            #vPrint( 'Quiet', debuggingThisModule, "async results2 are", results )
+            #dPrint( 'Quiet', debuggingThisModule, "async results2 are", results )
             BibleOrgSysGlobals.alreadyMultiprocessing = False
             vPrint( 'Info', debuggingThisModule, "BibleWriter.doAllExports: Multiprocessing got {} results".format( len(results) ) )
             assert len(results) == len(self.__outputFolders)
@@ -9918,7 +9918,7 @@ class BibleWriter( InternalBible ):
                     #try: ODFExportResult = self.toODF( ODFOutputFolder )
                     #except Exception as err:
                         #ODFExportResult = False
-                        #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                        #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
                         #killLibreOfficeServiceManager()
                         #logger.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
 
@@ -9976,7 +9976,7 @@ class BibleWriter( InternalBible ):
             #try: D43ExportResult = self.toDoor43( D43OutputFolder )
             #except Exception as err:
                 #D43ExportResult = False
-                #vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toDoor43 Unexpected error:", sys.exc_info()[0], err)
+                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toDoor43 Unexpected error:", sys.exc_info()[0], err)
                 #logger.error( "BibleWriter.doAllExports.toDoor43: Oops, failed!" )
             try: htmlExportResult = self.toHTML5( htmlOutputFolder )
             except Exception as err:
@@ -10176,9 +10176,9 @@ def briefDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10187,7 +10187,7 @@ def briefDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10223,9 +10223,9 @@ def briefDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10234,7 +10234,7 @@ def briefDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, f"\nAbout to compare {jj+1}: {BBB} {filename1} with {filename2}…" )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10272,9 +10272,9 @@ def briefDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10283,7 +10283,7 @@ def briefDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10319,7 +10319,7 @@ def briefDemo() -> None:
                     vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USX files…" )
                     for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
-                            #vPrint( 'Quiet', debuggingThisModule, "\n{}: {} {}".format( jj+1, BBB, filename ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "\n{}: {} {}".format( jj+1, BBB, filename ) )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolderpath )
                             if BibleOrgSysGlobals.debugFlag:
                                 if not result: halt
@@ -10404,9 +10404,9 @@ def fullDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10415,7 +10415,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10469,9 +10469,9 @@ def fullDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10480,7 +10480,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, f"\nAbout to compare {jj+1}: {BBB} {filename1} with {filename2}…" )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10533,9 +10533,9 @@ def fullDemo() -> None:
                         folderContents2 = os.listdir( outputFolderpath ) # Derived
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
                             UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
-                            #vPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
+                            #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
                                 if nn in fn and UUU in fn: filename2 = fn; break
@@ -10544,7 +10544,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, "\nAbout to compare {}: {} {} with {}…".format( jj+1, BBB, filename1, filename2 ) )
                                 result = BibleOrgSysGlobals.fileCompareUSFM( filename1, filename2, testFolder, outputFolderpath )
                                 if result and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "  Matched." )
-                                #vPrint( 'Quiet', debuggingThisModule, "  result", result )
+                                #dPrint( 'Quiet', debuggingThisModule, "  result", result )
                                 #if BibleOrgSysGlobals.debugFlag:
                                     #if not result: halt
                             else:
@@ -10579,7 +10579,7 @@ def fullDemo() -> None:
                     vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USX files…" )
                     for jj, (BBB,filename) in enumerate( fN.getPossibleFilenameTuples() ):
                         if filename in folderContents1 and filename in folderContents2:
-                            #vPrint( 'Quiet', debuggingThisModule, "\n{}: {} {}".format( jj+1, BBB, filename ) )
+                            #dPrint( 'Quiet', debuggingThisModule, "\n{}: {} {}".format( jj+1, BBB, filename ) )
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolderpath )
                             if BibleOrgSysGlobals.debugFlag:
                                 if not result: halt

@@ -357,7 +357,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     intC, intV = -1, 0
     composedLine = ''
     while True:
-        #vPrint( 'Quiet', debuggingThisModule, "theWordHandleIntroduction", BBB, intC, intV )
+        #dPrint( 'Quiet', debuggingThisModule, "theWordHandleIntroduction", BBB, intC, intV )
         try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
@@ -410,8 +410,8 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
             line = removeUSFMCharacterField( marker, line, closedFlag=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
             while '\\'+marker+' ' in line:
-                #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, line.count('\\'+marker+' '), line )
-                #vPrint( 'Quiet', debuggingThisModule, "was", "'"+line+"'" )
+                #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                #dPrint( 'Quiet', debuggingThisModule, "was", "'"+line+"'" )
                 ix = line.find( '\\'+marker+' ' )
                 assert ix != -1
                 ixEnd = line.find( '\\', ix+len(marker)+2 )
@@ -427,8 +427,8 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
         line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
         line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
         #if '\\f' in originalLine:
-            #vPrint( 'Quiet', debuggingThisModule, "o", originalLine )
-            #vPrint( 'Quiet', debuggingThisModule, "n", line )
+            #dPrint( 'Quiet', debuggingThisModule, "o", originalLine )
+            #dPrint( 'Quiet', debuggingThisModule, "n", line )
             #halt
 
     if '\\' in line: # Handle character formatting fields
@@ -486,7 +486,7 @@ def resettheWordMargins( ourGlobals, setKey=None ) -> None:
     ourGlobals['title'] = False # not sure yet if we need this one
     if setKey: ourGlobals[setKey] = True
     #if was and not ourGlobals['pi1']:
-        #vPrint( 'Quiet', debuggingThisModule, "Went off at", BBB, C, V, marker, text )
+        #dPrint( 'Quiet', debuggingThisModule, "Went off at", BBB, C, V, marker, text )
         #if BBB=='MAT' and C==4 and V==17: halt
 # end of resettheWordMargins
 
@@ -560,7 +560,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
     line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
     #if '<A' in line:
-        #vPrint( 'Quiet', debuggingThisModule, "line3", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', debuggingThisModule, "line3", repr(originalLine), '\n', repr(line) )
         #if BibleOrgSysGlobals.debugFlag: halt
     line = re.sub( '<22-Song of Songs\.(\d{1,2})\.(\d{1,2})>', '', line ) # Tanakh1917
     line = line.replace( '<z1>', '' ).replace( '<z2>', '' ) # footnote referent text in leb
@@ -630,9 +630,9 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     #Now the more complex ones that need regexs
     #line = line.replace('<RF q=*>','\\f * \\ft ').replace('<Rf>','\\f*')
     #if '<RF' in line:
-        #vPrint( 'Quiet', debuggingThisModule, "line1", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', debuggingThisModule, "line1", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
-        #vPrint( 'Quiet', debuggingThisModule, "line2", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', debuggingThisModule, "line2", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<WH(\d{1,4})>', '', line )
     line = line.replace( '<wh>','' )
     if '<WH' in line or '<wh' in line:
@@ -732,15 +732,15 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     if line.endswith( '\\q4 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
     if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl at end of line
     if '\\NL*' in line: # We need to break the original line into different USFM markers
-        #vPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        #dPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '\\NL*' )
         assert len(segments) >= 2
-        #vPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
+        #dPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
             if segment and segment[0] == '\\':
                 bits = segment.split( None, 1 )
-                #vPrint( 'Quiet', debuggingThisModule, " bits", bits )
+                #dPrint( 'Quiet', debuggingThisModule, " bits", bits )
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
@@ -880,7 +880,7 @@ class theWordBible( Bible ):
                         #lastLine = line
 
                         if lineCount <= textLineCountExpected: # assume it's verse text
-                            #vPrint( 'Quiet', debuggingThisModule, lineCount, BBB, C, V, 'tW file line is "' + line + '"' )
+                            #dPrint( 'Quiet', debuggingThisModule, lineCount, BBB, C, V, 'tW file line is "' + line + '"' )
                             if line:
                                 hadText = True
                                 consecutiveBlankLineCount = 0
@@ -925,7 +925,7 @@ class theWordBible( Bible ):
                                 #ourGlobals['haveParagraph'] = False
 
                         else: # Should be module info at end of file (after all of the verse lines)
-                            #vPrint( 'Quiet', debuggingThisModule, lineCount, 'tW file line is "' + line + '"' )
+                            #dPrint( 'Quiet', debuggingThisModule, lineCount, 'tW file line is "' + line + '"' )
                             if not line: continue # Just discard additional blank lines
                             if line[0] == '#': continue # Just discard comment lines
                             if not continued:
@@ -954,7 +954,7 @@ class theWordBible( Bible ):
             except UnicodeDecodeError:
                 logging.critical( _("theWord Bible module file fails with encoding: {} {}").format( self.sourceFilename, self.encoding ) )
 
-        #vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['theWord'] ); halt
+        #dPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['theWord'] ); halt
         #if 'description' in self.suppliedMetadata['theWord'] and len(self.suppliedMetadata['theWord']['description'])<40: self.name = self.suppliedMetadata['theWord']['description']
         #if 'short.title' in self.suppliedMetadata['theWord']: self.shortName = self.suppliedMetadata['theWord']['short.title']
 
@@ -978,7 +978,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
     Returns the composed line.
     """
-    #vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+    #dPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
     composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
     ourGlobals['line'] = '' # We've used them so we don't need them any more
     #marker = text = None
@@ -988,7 +988,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     #if BBB=='MAT' and C==4 and 14<V<18: vPrint( 'Quiet', debuggingThisModule, BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
+        #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
@@ -1003,7 +1003,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             lastMarker = marker
             continue
 
-        #vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, text )
+        #dPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, text )
         if marker in theWordIgnoredIntroMarkers:
             logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
             vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
@@ -1031,7 +1031,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
             #if text:
-                #vPrint( 'Quiet', debuggingThisModule, 'm', repr(text), verseData )
+                #dPrint( 'Quiet', debuggingThisModule, 'm', repr(text), verseData )
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
                 #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
                     #composedLine += '<CL>'
@@ -1039,7 +1039,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             #else: # there is text
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ):
-            #vPrint( 'Quiet', debuggingThisModule, marker, text )
+            #dPrint( 'Quiet', debuggingThisModule, marker, text )
             assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
@@ -1105,7 +1105,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
         elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
         elif marker in ( 'v~', 'p~', ):
-            #vPrint( 'Quiet', debuggingThisModule, lastMarker )
+            #dPrint( 'Quiet', debuggingThisModule, lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
@@ -1162,7 +1162,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
         """
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
-        #vPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
+        #dPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
 
@@ -1197,7 +1197,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
                     except KeyError: pass #  just ignore it
             if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
             assert '\n' not in composedLine # This would mess everything up
-            #vPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(composedLine) )
+            #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(composedLine) )
             if C!=1 or V!=1: # Stay one line behind (because paragraph indicators get appended to the previous line)
                 assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
                 writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
@@ -1340,7 +1340,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
             if t=='NT' and len(tWb)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(tWb)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
                 vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
@@ -1366,7 +1366,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the functions
-        #vPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
+        #dPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
         assert theWordGetBBBCV( 0 ) == ('GEN', 1, 1)
         assert theWordGetBBBCV( 1532 ) == ('GEN', 50, 26)
         assert theWordGetBBBCV( 1533 ) == ('EXO', 1, 1)
@@ -1447,7 +1447,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if 1: # demo the functions
-        #vPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
+        #dPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
         assert theWordGetBBBCV( 0 ) == ('GEN', 1, 1)
         assert theWordGetBBBCV( 1532 ) == ('GEN', 50, 26)
         assert theWordGetBBBCV( 1533 ) == ('EXO', 1, 1)

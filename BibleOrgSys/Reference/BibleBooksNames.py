@@ -115,13 +115,13 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
-    #vPrint( 'Quiet', debuggingThisModule, "bnLD", len(booknameLeadersDict), booknameLeadersDict )
+    #dPrint( 'Quiet', debuggingThisModule, "bnLD", len(booknameLeadersDict), booknameLeadersDict )
     for leader in booknameLeadersDict:
         UCLeader = leader.upper()
         assert UCLeader not in UCBNLeadersDict
         UCBNLeadersDict[UCLeader] = [x.upper() for x in booknameLeadersDict[leader]]
         #UCBNLeadersDict[UCLeader].append( UCLeader ) # We have to add ourselves to this list
-    #vPrint( 'Quiet', debuggingThisModule, "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
+    #dPrint( 'Quiet', debuggingThisModule, "UCbnl", len(UCBNLeadersDict), UCBNLeadersDict )
 
     # Secondly make a set of the given allowed names
     divNameInputDict, bkNameInputDict, ambigSet = {}, {}, set()
@@ -140,7 +140,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                     logging.warning( _("Have duplicate entries of {!r} in divisions and book names for {}").format( UCField, systemName ) )
                     ambigSet.add( UCField )
                 bkNameInputDict[UCField] = refAbbrev # Store the index to the book
-    #vPrint( 'Quiet', debuggingThisModule, 'amb', len(ambigSet), ambigSet )
+    #dPrint( 'Quiet', debuggingThisModule, 'amb', len(ambigSet), ambigSet )
 
     # Now expand the divisions names
     #
@@ -156,7 +156,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     #           If they are only ever entered into separate fields, the ambiguous list could be split into two
     #               i.e., they wouldn't be ambiguous in context
     #
-    #vPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
+    #dPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict", len(divNameInputDict), divNameInputDict )
     tempDNDict = {}
     for UCField in divNameInputDict.keys():
         expandAbbrevs( UCField, divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet  )
@@ -164,33 +164,33 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             if UCField.startswith( leader ):
                 for replacementLeader in UCBNLeadersDict[leader]:
                     expandAbbrevs( UCField.replace(leader,replacementLeader), divNameInputDict[UCField], divNameInputDict, tempDNDict, ambigSet )
-    #vPrint( 'Quiet', debuggingThisModule, '\ntempDN', len(tempDNDict), tempDNDict )
-    #vPrint( 'Quiet', debuggingThisModule, '\namb2', len(ambigSet), ambigSet )
+    #dPrint( 'Quiet', debuggingThisModule, '\ntempDN', len(tempDNDict), tempDNDict )
+    #dPrint( 'Quiet', debuggingThisModule, '\namb2', len(ambigSet), ambigSet )
 
-    #vPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
+    #dPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict", len(bkNameInputDict), bkNameInputDict )
     tempBNDict = {}
-    #vPrint( 'Quiet', debuggingThisModule, bkNameInputDict.keys(), UCBNLeadersDict )
+    #dPrint( 'Quiet', debuggingThisModule, bkNameInputDict.keys(), UCBNLeadersDict )
     for UCField in bkNameInputDict.keys():
         expandAbbrevs( UCField, bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet  )
         for leader in UCBNLeadersDict: # Note that the leader here includes a trailing space
             if UCField.startswith( leader ):
                 for replacementLeader in UCBNLeadersDict[leader]:
                     expandAbbrevs( UCField.replace(leader,replacementLeader), bkNameInputDict[UCField], bkNameInputDict, tempBNDict, ambigSet )
-    #vPrint( 'Quiet', debuggingThisModule, '\ntempBN', len(tempBNDict) )
-    #vPrint( 'Quiet', debuggingThisModule, '\namb3', len(ambigSet), ambigSet )
+    #dPrint( 'Quiet', debuggingThisModule, '\ntempBN', len(tempBNDict) )
+    #dPrint( 'Quiet', debuggingThisModule, '\namb3', len(ambigSet), ambigSet )
 
     # Add the unambiguous shortcuts and abbreviations to get all of our allowed options
     for field in tempDNDict:
         if field not in ambigSet:
             assert field not in divNameInputDict
             divNameInputDict[field] = tempDNDict[field]
-    #vPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
+    #dPrint( 'Quiet', debuggingThisModule, "\ndivNameInputDict--final", len(divNameInputDict), divNameInputDict )
     for field in tempBNDict:
         if field not in ambigSet:
             assert field not in bkNameInputDict
             bkNameInputDict[field] = tempBNDict[field]
         #else: vPrint( 'Quiet', debuggingThisModule, "Didn't add {!r}", field )
-    #vPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict--final", len(bkNameInputDict) )
+    #dPrint( 'Quiet', debuggingThisModule, "\nbkNameInputDict--final", len(bkNameInputDict) )
 
     # Now sort both dictionaries to be longest string first
     sortedDNDict = dict( sorted(divNameInputDict.items(), key=lambda s: -len(s[0])) )
@@ -372,21 +372,21 @@ class BibleBooksNamesSystems:
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
 
         for systemName in self.__DataDicts:
-            #vPrint( 'Quiet', debuggingThisModule, '\n'+repr(systemName) )
-            #vPrint( 'Quiet', debuggingThisModule, self.__DataDicts[systemName] )
+            #dPrint( 'Quiet', debuggingThisModule, '\n'+repr(systemName) )
+            #dPrint( 'Quiet', debuggingThisModule, self.__DataDicts[systemName] )
             #for j in range( len(self.__DataDicts[systemName]) ):
-                #vPrint( 'Quiet', debuggingThisModule, '\nHere1', j, self.__DataDicts[systemName][j] )
+                #dPrint( 'Quiet', debuggingThisModule, '\nHere1', j, self.__DataDicts[systemName][j] )
             #for BBB in self.__DataDicts[systemName][2]:
-                #vPrint( 'Quiet', debuggingThisModule, 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )
+                #dPrint( 'Quiet', debuggingThisModule, 'Here2', BBB, self.__DataDicts[systemName][2][BBB] )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict, sortedDivisionNamesDict, sortedBookNamesDict = self.getBooksNamesSystem( systemName )
-            #vPrint( 'Quiet', debuggingThisModule, '\nHere3 '+systemName, sortedBookNamesDict )
+            #dPrint( 'Quiet', debuggingThisModule, '\nHere3 '+systemName, sortedBookNamesDict )
             if sortedBookNamesDict:
                 if upperCaseBookNameOrAbbreviation in sortedBookNamesDict:
                     return sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
             else:
                 for BBB in self.__DataDicts[systemName][2]:
                     for possibility in self.__DataDicts[systemName][2][BBB]['inputFields']:
-                        #vPrint( 'Quiet', debuggingThisModule, possibility )
+                        #dPrint( 'Quiet', debuggingThisModule, possibility )
                         if possibility.upper().startswith( upperCaseBookNameOrAbbreviation ):
                             return BBB
 
@@ -441,9 +441,9 @@ class BibleBooksNamesSystems:
 
             # Now expand to get unambiguous input abbreviations for a publication only containing the books we specified
             sortedDNDict, sortedBNDict = expandBibleNamesInputs( systemName, divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, bookList )
-            #vPrint( 'Quiet', debuggingThisModule, sortedBNDict )
-            #vPrint( 'Quiet', debuggingThisModule, sortedDNDict )
-            #vPrint( 'Quiet', debuggingThisModule, len(divisionsNamesDict), len(divisionsNamesDictCopy), len(booknameLeadersDict), len(bookNamesDict), len(bookNamesDictCopy), len(sortedDNDict), len(sortedBNDict) )
+            #dPrint( 'Quiet', debuggingThisModule, sortedBNDict )
+            #dPrint( 'Quiet', debuggingThisModule, sortedDNDict )
+            #dPrint( 'Quiet', debuggingThisModule, len(divisionsNamesDict), len(divisionsNamesDictCopy), len(booknameLeadersDict), len(bookNamesDict), len(bookNamesDictCopy), len(sortedDNDict), len(sortedBNDict) )
             return divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, sortedDNDict, sortedBNDict
 
         # else we couldn't find the requested system name
@@ -513,7 +513,7 @@ class BibleBooksNamesSystem:
         Get the default book name from the given referenceAbbreviation.
         """
         if BibleOrgSysGlobals.debugFlag: assert len(BBB) == 3
-        #vPrint( 'Quiet', debuggingThisModule, self.__systemName )
+        #dPrint( 'Quiet', debuggingThisModule, self.__systemName )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
@@ -548,7 +548,7 @@ class BibleBooksNamesSystem:
         if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were
             vPrint( 'Quiet', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
-            #vPrint( 'Quiet', debuggingThisModule, self.__sortedBookNamesDict )
+            #dPrint( 'Quiet', debuggingThisModule, self.__sortedBookNamesDict )
             myList, thisLen = [], len(upperCaseBookNameOrAbbreviation)
             #for key in self.__sortedBookNamesDict.keys():
                 #if key.startswith('L'): vPrint( 'Quiet', debuggingThisModule, key )
@@ -568,7 +568,7 @@ class BibleBooksNamesSystem:
         if BibleOrgSysGlobals.debugFlag: assert divisionNameOrAbbreviation
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
-            #vPrint( 'Quiet', debuggingThisModule, self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
+            #dPrint( 'Quiet', debuggingThisModule, self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
             return self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]
         if BibleOrgSysGlobals.debugFlag:
             # It failed so print what the closest alternatives were

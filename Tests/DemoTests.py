@@ -54,9 +54,9 @@ from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in Tes
 
 # Some Misc and Apps modules imported below are up a level
 sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
-# print( sys.path )
+# dPrint( 'Info', debuggingThisModule, sys.path )
 
-LAST_MODIFIED_DATE = '2020-05-23' # by RJH
+LAST_MODIFIED_DATE = '2020-05-24' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
 PROGRAM_VERSION = '0.67'
@@ -72,14 +72,16 @@ debuggingThisModule = False
 testDemos = True # Setting to False only checks importing (very fast)
 testFullDemos = False # Setting to False only runs briefDemos
 
-testDefault = False
+testDefault = True
 #testStrict = False
-testVerbose = True
+testVerbose = False
 testStrictVerbose = False
 testStrictVerboseDebug = False
 #testStrictExport = False
 #testStrictExportVerbose = False
 testStrictVerboseDebugExport = False
+assert testDefault or testVerbose or testStrictVerbose \
+        or testStrictVerboseDebug or testStrictVerboseDebugExport
 
 
 includeKnownBadExports = False
@@ -134,7 +136,7 @@ def formatAndPublish( timeList ):
     """
     result = "TimeList: "
     for name,seconds in sorted( timeList, key=lambda s: -s[1] ):
-        #print( name, seconds )
+        #dPrint( 'Info', debuggingThisModule, name, seconds )
         if seconds > 0: result += f" {name}={seconds}"
     publishResultLine( result, printFlag=BibleOrgSysGlobals.commandLineArguments.times or BibleOrgSysGlobals.verbosityLevel > 2 )
 # end of formatAndPublish
@@ -151,14 +153,14 @@ def formatFailureDetails( exceptionObject:Exception ):
     #linecache.checkcache( filename )
     #line = linecache.getline( filename, lineNum, frame.f_globals )
 
-    #print( exc_type, exc_obj, traceback_obj )
+    #dPrint( 'Info', debuggingThisModule, exc_type, exc_obj, traceback_obj )
     #tbs = traceback.extract_tb( traceback_obj )
     #for j,tbj in enumerate( tbs ):
-        #print( "tb{} {}".format( j, tbj ) )
-    #print( "tbs", tbs[1:] )
-    #print( "tb1", tbs[1] )
-    #print( "format", traceback.format_exc() )
-    #print( "stack", traceback.extract_stack( tbs[1] ) )
+        #dPrint( 'Info', debuggingThisModule, "tb{} {}".format( j, tbj ) )
+    #dPrint( 'Info', debuggingThisModule, "tbs", tbs[1:] )
+    #dPrint( 'Info', debuggingThisModule, "tb1", tbs[1] )
+    #dPrint( 'Info', debuggingThisModule, "format", traceback.format_exc() )
+    #dPrint( 'Info', debuggingThisModule, "stack", traceback.extract_stack( tbs[1] ) )
 
     return exc_type, exceptionObject, traceback.format_exc()
 # end of formatFailureDetails

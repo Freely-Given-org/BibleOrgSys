@@ -98,9 +98,9 @@ def main() -> None:
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
-        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
+        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.preload()
-        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
+        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
         vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible, end='\n\n' )
 
@@ -108,7 +108,7 @@ def main() -> None:
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
-        #vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
+        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
         vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible, end='\n\n' )
 

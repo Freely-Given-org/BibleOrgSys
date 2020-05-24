@@ -106,7 +106,7 @@ class SFMLines:
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
+                    #dPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
 
@@ -114,15 +114,15 @@ class SFMLines:
                         if len(result)==0: # We don't have any SFM data lines yet
                             if BibleOrgSysGlobals.verbosityLevel > 2:
                                 logging.error( "Non-SFM line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
-                            #vPrint( 'Quiet', debuggingThisModule, "SFMFile.py: XXZXResult is", result, len(line) )
+                            #dPrint( 'Quiet', debuggingThisModule, "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
-                                #vPrint( 'Quiet', debuggingThisModule, x, "'" + str(ord(line[x])) + "'" )
+                                #dPrint( 'Quiet', debuggingThisModule, x, "'" + str(ord(line[x])) + "'" )
                             #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
                         else: # Append this continuation line
                             if marker not in ignoreSFMs:
                                 oldmarker, oldtext = result.pop()
-                                #vPrint( 'Quiet', debuggingThisModule, "Popped",oldmarker,oldtext)
-                                #vPrint( 'Quiet', debuggingThisModule, "Adding", line, "to", oldmarker, oldtext)
+                                #dPrint( 'Quiet', debuggingThisModule, "Popped",oldmarker,oldtext)
+                                #dPrint( 'Quiet', debuggingThisModule, "Adding", line, "to", oldmarker, oldtext)
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
 
@@ -146,7 +146,7 @@ class SFMLines:
                 vPrint( 'Quiet', debuggingThisModule, "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + SFMFilepath + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: vPrint( 'Quiet', debuggingThisModule, 'Previous line was: ', lastLine )
-                #vPrint( 'Quiet', debuggingThisModule, line )
+                #dPrint( 'Quiet', debuggingThisModule, line )
                 #raise
 
             self.lines = result
@@ -206,9 +206,9 @@ class SFMRecords:
         # Main code for SFMRecords.read()
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
-        #vPrint( 'Quiet', debuggingThisModule, "ignoreSFMs =", ignoreSFMs )
+        #dPrint( 'Quiet', debuggingThisModule, "ignoreSFMs =", ignoreSFMs )
         if ignoreEntries is None: ignoreEntries = ()
-        #vPrint( 'Quiet', debuggingThisModule, "ignoreEntries =", ignoreEntries )
+        #dPrint( 'Quiet', debuggingThisModule, "ignoreEntries =", ignoreEntries )
         if key:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
@@ -230,7 +230,7 @@ class SFMRecords:
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
+                    #dPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
                     if line[0]!='\\':
@@ -344,7 +344,7 @@ class SFMRecords:
                     if isinstance( self.dataDict[key], list ):
                         self.dataDict[key].append( (marker,value) )
                     elif isinstance( self.dataDict[key], dict ):
-                        #vPrint( 'Quiet', debuggingThisModule, j, key, marker, value )
+                        #dPrint( 'Quiet', debuggingThisModule, j, key, marker, value )
                         if marker in self.dataDict[key]:
                             logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
                         self.dataDict[key][marker] = value

@@ -75,25 +75,25 @@ assert len(normalConsonants) == 3
 
 if 0 and BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
-        #vPrint( 'Quiet', debuggingThisModule, j, letter )
+        #dPrint( 'Quiet', debuggingThisModule, j, letter )
         assert normalConsonants.count(letter)==1
         assert letter not in vowelPoints
         assert letter not in otherMarks
         assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert vowelPoints.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in otherMarks
         assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert otherMarks.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in vowelPoints
         assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
-        #vPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', debuggingThisModule, j, mark )
         assert cantillationMarks.count(mark)==1
         assert mark not in normalConsonants
         assert mark not in vowelPoints
@@ -188,9 +188,9 @@ class Greek():
         if text is None: text = self.currentText
         vPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
-            #vPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
+            #dPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
             #for j,char in enumerate(text):
-                #vPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+                #dPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of printUnicodeData
 

@@ -209,7 +209,7 @@ def loadWordCompares( folder, filename ):
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
-            #vPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
+            #dPrint( 'Quiet', debuggingThisModule, 'SFM file line is "' + line + '"' )
             if line[0]=='#': continue # Just discard comment lines
 
             if debuggingThisModule: assert '=' in line
@@ -222,11 +222,11 @@ def loadWordCompares( folder, filename ):
 
             bitl, bitr = line.split( mid, 1 )
             lBits, rBits = bitl.strip().split( '\\' ), bitr.strip().split( '\\' )
-            #vPrint( 'Quiet', debuggingThisModule, '{!r}={} <> {!r}={}'.format( bitl, lBits, bitr, rBits ) )
+            #dPrint( 'Quiet', debuggingThisModule, '{!r}={} <> {!r}={}'.format( bitl, lBits, bitr, rBits ) )
             if use in (12,1221):
                 for lBit in lBits:
                     if lBit in dict12:
-                        #vPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict12 ({})".format( lBit, dict12[lBit], rBits, use ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict12 ({})".format( lBit, dict12[lBit], rBits, use ) )
                         dict12[lBit].extend( rBits )
                     else: dict12[lBit] = rBits
                     #if lBit.title() != lBit:
@@ -234,14 +234,14 @@ def loadWordCompares( folder, filename ):
             if use in (21,1221):
                 for rBit in rBits:
                     if rBit in dict21:
-                        #vPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict21 ({})".format( rBit, dict21[rBit], lBits, use ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "  We already had {!r} = {} (now got {}) in dict21 ({})".format( rBit, dict21[rBit], lBits, use ) )
                         dict21[rBit].extend( lBits )
                     else: dict21[rBit] = lBits
                     #if rBit.title() != rBit:
                         #dict21[rBit.title()] = lBits
 
-    #vPrint( 'Quiet', debuggingThisModule, '\ndict12', len(dict12), sorted(dict12.items()) )
-    #vPrint( 'Quiet', debuggingThisModule, '\ndict21', len(dict21), sorted(dict21.items()) )
+    #dPrint( 'Quiet', debuggingThisModule, '\ndict12', len(dict12), sorted(dict12.items()) )
+    #dPrint( 'Quiet', debuggingThisModule, '\ndict21', len(dict21), sorted(dict21.items()) )
 
     # Now sort the dictionaries with the longest entries first
     dict12s, dict21s = {}, {}
@@ -284,7 +284,7 @@ def loadWordCompares( folder, filename ):
 #     C, V = '-1', '-1' # So first/id line starts at -1:0
 #     while ix1<len1:
 #         entry1 = bookObject._processedLines[ix1] # InternalBibleEntry objects
-#         #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1 )
+#         #dPrint( 'Quiet', debuggingThisModule, 'entry', entry1 )
 #         marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
 
 #         if marker1 == 'c': C, V = line1.split()[0], '0'
@@ -292,10 +292,10 @@ def loadWordCompares( folder, filename ):
 #             if C == '-1': C = '1' # Some one chapter books might not have a C marker
 #             V = line1.split()[0]
 #         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-#         #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
-#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
-#         #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
+#         #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+#         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+#         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+#         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
 #         originalMarker = entry1.getOriginalMarker()
 #         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
@@ -356,11 +356,11 @@ def loadWordCompares( folder, filename ):
 #                             else:
 #                                 bcResults.append( (reference,"Illegal string in Bible main text: {!r}".format( iString )) )
 #                     for extra in extras1:
-#                         #vPrint( 'Quiet', debuggingThisModule, extra )
-#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
-#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
-#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
-#                         #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
+#                         #dPrint( 'Quiet', debuggingThisModule, extra )
+#                         #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
+#                         #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
+#                         #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
+#                         #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
 #                         if iString in extra.getCleanText(): # So markers don't confuse things
 #                             bcResults.append( (reference,"Illegal string in Bible note main text: {!r}".format( iString )) )
 #                 for iString in illegalCompleteLineStrings:
@@ -416,7 +416,7 @@ def compareBooksPedantic( book1, book2,
                                         illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
     assert book1.BBB == book2.BBB
-    # print( book1.workName, book2.workName )
+    # dPrint( 'Info', debuggingThisModule, book1.workName, book2.workName )
     assert book1.workName != 'utf-8'
     assert book2.workName != 'utf-8'
     assert book1.workName != book2.workName
@@ -424,7 +424,7 @@ def compareBooksPedantic( book1, book2,
     bcResults:List[Tuple[Tuple[str,str,str],str]] = []
 
     len1, len2 = len(book1), len(book2)
-    #vPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
+    #dPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
     if len1 != len2:
         bcResults.append( (('0','0',' '),
                     f"Book lengths don't match: {len1} vs {len2} newline markers") )
@@ -436,7 +436,7 @@ def compareBooksPedantic( book1, book2,
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1 = book1._processedLines[ix1+offset1] # InternalBibleEntry object
         entry2 = book2._processedLines[ix2+offset2] # InternalBibleEntry object
-        #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
+        #dPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
 
         # lastMarker1, lastLine1 = marker1, line1
         # lastMarker2, lastLine2 = marker1, line2
@@ -448,10 +448,10 @@ def compareBooksPedantic( book1, book2,
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
+        #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
@@ -562,11 +562,11 @@ def compareBooksPedantic( book1, book2,
                             if iCount > 0:
                                 bcResults.append( (reference,"Illegal string in Bible1 main text: {!r}".format( iString )) )
                         for extra in extras1:
-                            #vPrint( 'Quiet', debuggingThisModule, extra )
-                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
-                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
-                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
-                            #vPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
+                            #dPrint( 'Quiet', debuggingThisModule, extra )
+                            #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getType() )
+                            #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getIndex() )
+                            #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getText() )
+                            #dPrint( 'Quiet', debuggingThisModule, ' ', extra.getCleanText() )
                             if iString in extra.getCleanText(): # So markers don't confuse things
                                 bcResults.append( (reference,"Illegal string in Bible1 note main text: {!r}".format( iString )) )
                     for iString in illegalCompleteLineStrings1:
@@ -667,14 +667,14 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[s
             for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
             word = BibleOrgSysGlobals.stripWordPunctuation( word )
             if word and not word[0].isalnum():
-                #vPrint( 'Quiet', debuggingThisModule, "not alnum", repr(rawWord), repr(word) )
+                #dPrint( 'Quiet', debuggingThisModule, "not alnum", repr(rawWord), repr(word) )
                 if len(word) > 1:
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                         vPrint( 'Quiet', debuggingThisModule, "segmentizeLine: {} {}:{} ".format( self.BBB, C, V ) \
                                             + _("Have unexpected character starting word {!r}").format( word ) )
                     word = word[1:]
             if word: # There's still some characters remaining after all that stripping
-                #vPrint( 'Quiet', debuggingThisModule, "here", repr(rawWord), repr(word) )
+                #dPrint( 'Quiet', debuggingThisModule, "here", repr(rawWord), repr(word) )
                 if 1 or BibleOrgSysGlobals.verbosityLevel > 3: # why???
                     for k,char in enumerate(word):
                         if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
@@ -690,7 +690,7 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[s
                     #lDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in lDict['allCaseInsensitiveWordCounts'] else lDict['allCaseInsensitiveWordCounts'][lcWord] + 1
         lineList.append( segmentList )
 
-    #vPrint( 'Quiet', debuggingThisModule, '  lineList', lineList )
+    #dPrint( 'Quiet', debuggingThisModule, '  lineList', lineList )
     return lineList
 # end of segmentizeLine
 
@@ -723,7 +723,7 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
     #if 'allCaseInsensitiveWordCounts' not in dict2: dict2['allCaseInsensitiveWordCounts'] = {}
 
     len1, len2 = len(book1), len(book2)
-    #vPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
+    #dPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
     if len1 != len2:
         abResults.append( (('0','0',' '),"Book lengths don't match: {} vs {} newline markers".format( len1, len2 )) )
 
@@ -732,7 +732,7 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
     C, V = '-1', '-1' # So first/id line starts at -1:0
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1, entry2 = book1._processedLines[ix1+offset1], book2._processedLines[ix2+offset2] # InternalBibleEntry objects
-        #vPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
+        #dPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
         marker1, line1 = entry1.getMarker(), entry1.getOriginalText()
         marker2, line2 = entry2.getMarker(), entry2.getOriginalText()
 
@@ -741,10 +741,10 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
-        #vPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
-        #vPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
+        #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
+        #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
 
@@ -789,8 +789,8 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
                                 .format( '' if remaining==1 else 's ({})'.format( remaining ),
                                     book1._processedLines[ix2+offset2].getMarker(), '…' if remaining>1 else '' )) )
 
-    #vPrint( 'Quiet', debuggingThisModule, '\nsegmentList', len(segmentList), segmentList )
-    #vPrint( 'Quiet', debuggingThisModule, '\nabResults', len(abResults), abResults )
+    #dPrint( 'Quiet', debuggingThisModule, '\nsegmentList', len(segmentList), segmentList )
+    #dPrint( 'Quiet', debuggingThisModule, '\nabResults', len(abResults), abResults )
     return segmentList, abResults
 # end of segmentizeBooks
 
@@ -799,9 +799,9 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
 def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, resultsList ):
     """
     """
-    #vPrint( 'Quiet', debuggingThisModule, "\nanalyzeWordsInSegment( {}, {}, {}, {}, … )".format( reference, segmentAList, segmentBList, len(dictAB) ) )
-    #vPrint( 'Quiet', debuggingThisModule, 'segmentBList {}'.format( segmentBList ) )
-    #vPrint( 'Quiet', debuggingThisModule, 'segmentAList {}'.format( segmentAList ) )
+    #dPrint( 'Quiet', debuggingThisModule, "\nanalyzeWordsInSegment( {}, {}, {}, {}, … )".format( reference, segmentAList, segmentBList, len(dictAB) ) )
+    #dPrint( 'Quiet', debuggingThisModule, 'segmentBList {}'.format( segmentBList ) )
+    #dPrint( 'Quiet', debuggingThisModule, 'segmentAList {}'.format( segmentAList ) )
     assert isinstance( reference, tuple )
     assert isinstance( segmentAList, list )
     assert isinstance( segmentBList, list )
@@ -815,15 +815,15 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
 
         # First count how many times the lEntry occurs in segmentAList
         if ' ' in lEntry: # lEntry is multiple words -- requires extra handling
-            #vPrint( 'Quiet', debuggingThisModule, 'multiple lEntry {!r}'.format( lEntry ) ) # lEntry is language2
+            #dPrint( 'Quiet', debuggingThisModule, 'multiple lEntry {!r}'.format( lEntry ) ) # lEntry is language2
             lWords = lEntry.split()
-            #vPrint( 'Quiet', debuggingThisModule, 'lWords (split) =', lWords )
+            #dPrint( 'Quiet', debuggingThisModule, 'lWords (split) =', lWords )
             numLSearchWords = len( lWords )
             seglenA = len( segmentAList )
             ix = -1
             lCount = 0
             while True:
-                #vPrint( 'Quiet', debuggingThisModule, lWords, ix, lCount, segmentAList )
+                #dPrint( 'Quiet', debuggingThisModule, lWords, ix, lCount, segmentAList )
                 try: ix = segmentAList.index( lWords[0], ix+1 )
                 except ValueError: break # none / no more found
                 matched = True
@@ -831,7 +831,7 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                     if ix+iy >= seglenA: matched = False; break # Too near the end
                     if segmentAList[ix+iy] != lWords[iy]: matched = False; break
                 if matched:
-                    #vPrint( 'Quiet', debuggingThisModule, "lMatched" ); halt
+                    #dPrint( 'Quiet', debuggingThisModule, "lMatched" ); halt
                     lCount += 1
                     #if lCount > 1: vPrint( 'Quiet', debuggingThisModule, "multiple lMatches" ); halt
                 #else: vPrint( 'Quiet', debuggingThisModule, "not lMatched" )
@@ -840,22 +840,22 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
             lCount = segmentAList.count( lEntry )
 
         if lCount:
-            #vPrint( 'Quiet', debuggingThisModule, 'lEntry {!r}'.format( lEntry ) ) # lEntry is a string
-            #vPrint( 'Quiet', debuggingThisModule, 'lCount', lCount )
-            #vPrint( 'Quiet', debuggingThisModule, 'rEntryList {}'.format( rEntryList ) ) # rEntryList is a list
+            #dPrint( 'Quiet', debuggingThisModule, 'lEntry {!r}'.format( lEntry ) ) # lEntry is a string
+            #dPrint( 'Quiet', debuggingThisModule, 'lCount', lCount )
+            #dPrint( 'Quiet', debuggingThisModule, 'rEntryList {}'.format( rEntryList ) ) # rEntryList is a list
             # Now count how many times the rEntries occur in segmentBList
             rCount = 0
             for rEntry in rEntryList:
-                #vPrint( 'Quiet', debuggingThisModule, 'rEntry {!r}'.format( rEntry ) ) # rEntry is language1 string
+                #dPrint( 'Quiet', debuggingThisModule, 'rEntry {!r}'.format( rEntry ) ) # rEntry is language1 string
                 assert isinstance( rEntry, str )
                 if ' ' in rEntry: # lEntry is multiple words -- requires extra handling
                     rWords = rEntry.split()
-                    #vPrint( 'Quiet', debuggingThisModule, 'rWords (split) =', rWords )
+                    #dPrint( 'Quiet', debuggingThisModule, 'rWords (split) =', rWords )
                     numRSearchWords = len( rWords )
                     seglenB = len( segmentBList )
                     ix = -1
                     while True:
-                        #vPrint( 'Quiet', debuggingThisModule, rWords, ix, rCount, segmentBList )
+                        #dPrint( 'Quiet', debuggingThisModule, rWords, ix, rCount, segmentBList )
                         try: ix = segmentBList.index( rWords[0], ix+1 )
                         except ValueError: break # none / no more found
                         matched = True
@@ -863,24 +863,24 @@ def analyzeWordsInSegment( reference, segmentAList, segmentBList, dictAB, result
                             if ix+iy >= seglenB: matched = False; break # Too near the end
                             if segmentBList[ix+iy] != rWords[iy]: matched = False; break
                         if matched:
-                            #vPrint( 'Quiet', debuggingThisModule, "rMatched" ); halt
+                            #dPrint( 'Quiet', debuggingThisModule, "rMatched" ); halt
                             rCount += 1
                             #if rCount > 1: vPrint( 'Quiet', debuggingThisModule, "multiple rMatches", lEntry ); halt
                         #else: vPrint( 'Quiet', debuggingThisModule, "not rMatched" )
                 else: # rEntry is a single word -- easy
                     rCount += segmentBList.count( rEntry )
-            #vPrint( 'Quiet', debuggingThisModule, 'rCount', rCount )
+            #dPrint( 'Quiet', debuggingThisModule, 'rCount', rCount )
 
             # Now check the results
             if lCount > rCount:
                 if ' ' not in lEntry and lEntry in foundLPhrases:
-                    #vPrint( 'Quiet', debuggingThisModule, lEntry, foundLPhrases ); halt
+                    #dPrint( 'Quiet', debuggingThisModule, lEntry, foundLPhrases ); halt
                       vPrint( 'Info', debuggingThisModule, "  analyzeWordsInSegment: Skipping {!r} because already found in {}".format( lEntry, foundLPhrases ) )
                 else:
                     resultsList.append( (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
                     #resultsList.append( ((' ',' ',' '), rEntry) )
-                    #vPrint( 'Quiet', debuggingThisModule, (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
-                    #vPrint( 'Quiet', debuggingThisModule, "   {!r}:{}".format( lEntry, rEntry ) )
+                    #dPrint( 'Quiet', debuggingThisModule, (reference,"{!r} from {}\n   not enough ({}/{}) in {}".format( lEntry, segmentAList, lCount, rCount, segmentBList )) )
+                    #dPrint( 'Quiet', debuggingThisModule, "   {!r}:{}".format( lEntry, rEntry ) )
             #elif lCount < rCount:
                 #resultsList.append( (reference,"Word matches for {!r} exceeded ({}/{}) in {!r}".format( word, wordCount, rCount, segmentAList )) )
 # end of analyzeWordsInSegment
@@ -895,15 +895,15 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
     """
     vPrint( 'Verbose', debuggingThisModule, "analyzeWords( … )" )
     assert isinstance( segmentList, list )
-    #vPrint( 'Quiet', debuggingThisModule, "\ndict12", dict12 )
-    #vPrint( 'Quiet', debuggingThisModule, "\ndict21", dict21 )
+    #dPrint( 'Quiet', debuggingThisModule, "\ndict12", dict12 )
+    #dPrint( 'Quiet', debuggingThisModule, "\ndict21", dict21 )
 
     awResults = []
     for j,(reference,segment1,segment2) in enumerate( segmentList ):
         if dict12: analyzeWordsInSegment( reference, segment1, segment2, dict12, awResults )
         if dict21: analyzeWordsInSegment( reference, segment2, segment1, dict21, awResults )
 
-    #vPrint( 'Quiet', debuggingThisModule, '\nawResults', len(awResults), awResults )
+    #dPrint( 'Quiet', debuggingThisModule, '\nawResults', len(awResults), awResults )
     return awResults
 
     wordDict1, wordDict2 = {}, {}
@@ -1108,7 +1108,7 @@ def briefDemo() -> None:
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
         vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-        #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+        #dPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
         vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
@@ -1128,7 +1128,7 @@ def briefDemo() -> None:
             totalSegments += len( segmentResult )
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-                #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+                #dPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
                 vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
             dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
             awResult = analyzeWords( segmentResult, dict12, dict21 )
@@ -1215,7 +1215,7 @@ def fullDemo() -> None:
         BBB = 'JDE'
         segmentResult, otherResult = segmentizeBooks( UB1[BBB], UB2[BBB] )
         vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-        #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+        #dPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
         vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
         dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
         awResult = analyzeWords( segmentResult, dict12, dict21 )
@@ -1235,7 +1235,7 @@ def fullDemo() -> None:
             totalSegments += len( segmentResult )
             if BibleOrgSysGlobals.verbosityLevel > 0:
                 vPrint( 'Quiet', debuggingThisModule, "Comparing {} gave:".format( BBB ) )
-                #vPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
+                #dPrint( 'Quiet', debuggingThisModule, ' 1s', len(segmentResult), segmentResult )
                 vPrint( 'Quiet', debuggingThisModule, ' 2o', len(otherResult), otherResult )
             dict12, dict21 = loadWordCompares( 'Tests/DataFilesForTests', 'MSBTCheckWords.txt' )
             awResult = analyzeWords( segmentResult, dict12, dict21 )
@@ -1293,7 +1293,7 @@ def main() -> None:
                         C, V, resultString = result[0][0], result[0][1], result[1]
                         resultString = resultString.replace( 'Bible1', name1 ).replace( 'Bible2', name2 )
                         vPrint( 'Quiet', debuggingThisModule, f'{C}:{V} {resultString}' )
-            #vPrint( 'Quiet', debuggingThisModule, results )
+            #dPrint( 'Quiet', debuggingThisModule, results )
 # end of CompareBibles.main
 
 

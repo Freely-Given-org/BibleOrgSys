@@ -87,7 +87,7 @@ class USFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        #vPrint( 'Quiet', debuggingThisModule, f"load( filename={filename}, folder={folder}, encoding={encoding} )…" )
+        #dPrint( 'Quiet', debuggingThisModule, f"load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
         def doaddLine( originalMarker:str, originalText:str ) -> None:
@@ -120,7 +120,7 @@ class USFMBibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -150,9 +150,9 @@ class USFMBibleBook( BibleBook ):
                 if not BibleOrgSysGlobals.strictCheckingFlag:
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
-                # vPrint( 'Quiet', debuggingThisModule, f"words={variables['words']}=")
-                # vPrint( 'Quiet', debuggingThisModule, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
-                # vPrint( 'Quiet', debuggingThisModule, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
+                # dPrint( 'Quiet', debuggingThisModule, f"words={variables['words']}=")
+                # dPrint( 'Quiet', debuggingThisModule, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                # dPrint( 'Quiet', debuggingThisModule, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
                 if variables['words'].endswith( '"\\w**' ):
                     vPrint( 'Quiet', debuggingThisModule, "Drop final double asterisk!!!! (for Hindi IRV ???)")
                     variables['words'] = variables['words'][:-1]
@@ -175,16 +175,16 @@ class USFMBibleBook( BibleBook ):
 
                 for j,entry in enumerate( reversed( variables['saved'] ) ):
                     oldC, oldV, oldTextStr, oldWordsStr = entry
-                    # vPrint( 'Quiet', debuggingThisModule, f"Got {self.BBB} {oldC}:{oldV}, {oldTextStr}, {oldWordsStr}")
+                    # dPrint( 'Quiet', debuggingThisModule, f"Got {self.BBB} {oldC}:{oldV}, {oldTextStr}, {oldWordsStr}")
                     if oldV != V or oldC != C: break
-                    # vPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} verse {C}:{V} @ -{j}!" )
+                    # dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} verse {C}:{V} @ -{j}!" )
                     if oldTextStr == textStr:
                         ix = len(variables['saved']) - j - 1
-                        # vPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} {C}:{V} original word @ {ix}!" )
-                        # vPrint( 'Quiet', debuggingThisModule, "Check:", variables['saved'][ix] )
+                        # dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} {C}:{V} original word @ {ix}!" )
+                        # dPrint( 'Quiet', debuggingThisModule, "Check:", variables['saved'][ix] )
                         discard = variables['saved'].pop( ix ) # Remove old entry from list
                         assert discard == entry
-                        # vPrint( 'Quiet', debuggingThisModule, f"Combined {self.BBB} {C}:{V} will be: '{oldWordsStr} … {wordsStr}'" )
+                        # dPrint( 'Quiet', debuggingThisModule, f"Combined {self.BBB} {C}:{V} will be: '{oldWordsStr} … {wordsStr}'" )
                         # Append non-contiguous join to oldWordsStr and insert where we deleted
                         #   We use a joiner ' … ' that can easily be detected
                         variables['saved'].insert( ix, (C,V, textStr, f'{oldWordsStr} … {wordsStr}') )
@@ -229,7 +229,7 @@ class USFMBibleBook( BibleBook ):
                         variables['words'] += text[:ixAlignmentEnd] if marker=='SWAPPED' \
                                                 else f' \\{marker} {text[:ixAlignmentEnd]}'
                         assert variables['words']
-                        #vPrint( 'Quiet', debuggingThisModule, "words1", variables['words'] )
+                        #dPrint( 'Quiet', debuggingThisModule, "words1", variables['words'] )
                         assert '\\w*\\w' not in variables['words']
                         saveAlignment( C, V, variables['text'], variables['words'] )
                         # variables['saved'].append( (C,V, variables['text'], variables['words']) )
@@ -303,7 +303,7 @@ class USFMBibleBook( BibleBook ):
                     variables['words'] += text[:ixEndMarkers] if marker=='SWAPPED' \
                                             else f' \\{marker} {text[:ixEndMarkers]}'
                     assert variables['words']
-                    #vPrint( 'Quiet', debuggingThisModule, "words2", variables['words'] )
+                    #dPrint( 'Quiet', debuggingThisModule, "words2", variables['words'] )
                     #assert '\\w*\\w' not in variables['words']
                     saveAlignment( C, V, variables['text'], variables['words'] )
                     # variables['saved'].append( (C,V, variables['text'], variables['words']) )
@@ -311,22 +311,22 @@ class USFMBibleBook( BibleBook ):
                     variables['text'] = variables['words'] = ''
                     variables['level'] = 0
                     vPrint( 'Never', debuggingThisModule, "      Reset level to zero" )
-                    #vPrint( 'Never', debuggingThisModule, f"      Decreased level to {variables['level']}" )
+                    #dPrint( 'Never', debuggingThisModule, f"      Decreased level to {variables['level']}" )
                     #assert variables['level'] >= 0
                 elif '\\zaln-e' in text:
                     logging.critical( f"Not enough zaln-e markers (expected {variables['level']}) in {marker}={text}" )
                     halt # Not enough zaln-e markers
                 else:
                     #assert '\\w*\\w' not in variables['words']
-                    #vPrint( 'Quiet', debuggingThisModule, self.wordName, self.BBB, C, V, "words3a", variables['words'] )
-                    #vPrint( 'Quiet', debuggingThisModule, f"{marker}={text}" )
+                    #dPrint( 'Quiet', debuggingThisModule, self.wordName, self.BBB, C, V, "words3a", variables['words'] )
+                    #dPrint( 'Quiet', debuggingThisModule, f"{marker}={text}" )
                     if marker == 'SWAPPED': assert not variables['words']
                     variables['words'] += text if marker=='SWAPPED' else f' \\{marker} {text}'
-                    #vPrint( 'Quiet', debuggingThisModule, "words3b", variables['words'] )
+                    #dPrint( 'Quiet', debuggingThisModule, "words3b", variables['words'] )
                     #assert '\\w*\\w' not in variables['words']
 
             vPrint( 'Never', debuggingThisModule, f"Got near end1 with {marker}='{text}'" )
-            # vPrint( 'Quiet', debuggingThisModule, "rawLines", self._rawLines[-4:] )
+            # dPrint( 'Quiet', debuggingThisModule, "rawLines", self._rawLines[-4:] )
             if 'zaln' in text: # error because we have no open levels
                 logging.critical( f"Why is zaln in {self.BBB} text???" )
             if marker == 'SWAPPED': # then we need to supply a remaining marker
@@ -345,8 +345,8 @@ class USFMBibleBook( BibleBook ):
 
         # Main code for USFMBibleBook.load()
         issueLinePositioningErrors = True # internal markers at beginning of line, etc.
-        #vPrint( 'Quiet', debuggingThisModule, "OBNS", self.containerBibleObject.objectNameString )
-        #vPrint( 'Quiet', debuggingThisModule, dir(self.containerBibleObject) )
+        #dPrint( 'Quiet', debuggingThisModule, "OBNS", self.containerBibleObject.objectNameString )
+        #dPrint( 'Quiet', debuggingThisModule, dir(self.containerBibleObject) )
 
         gotUWAligning = False
         alignmentVariables = { 'level':0, 'maxLevel':0, 'text':'', 'words':'', 'saved':[] }
@@ -370,7 +370,7 @@ class USFMBibleBook( BibleBook ):
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = None
         loadErrors:List[str] = []
-        #vPrint( 'Quiet', debuggingThisModule, "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
+        #dPrint( 'Quiet', debuggingThisModule, "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             # if self.BBB == 'EZR':
             #     if C == '5': debuggingThisModule = False
@@ -379,7 +379,7 @@ class USFMBibleBook( BibleBook ):
                 vPrint( 'Quiet', debuggingThisModule, f"\n\n{self.workName} Alignment level = {alignmentVariables['level']} (Max so far = {alignmentVariables['maxLevel']})" )
                 vPrint( 'Quiet', debuggingThisModule, f"Alignment text = {alignmentVariables['text']!r}" )
                 vPrint( 'Quiet', debuggingThisModule, f"Alignment words = {alignmentVariables['words']!r}" )
-                #vPrint( 'Quiet', debuggingThisModule, f"Alignments ({len(alignmentVariables['saved'])}) = {alignmentVariables['saved']}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"Alignments ({len(alignmentVariables['saved'])}) = {alignmentVariables['saved']}" )
                 vPrint( 'Quiet', debuggingThisModule, f"Num saved alignments = {len(alignmentVariables['saved']):,}" )
 
                 vPrint( 'Quiet', debuggingThisModule, f"\nAfter {self.BBB} {C}:{V} with \\{lastMarker} '{lastText}' HAVE \\{marker} '{text}'" )
@@ -439,7 +439,7 @@ class USFMBibleBook( BibleBook ):
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
-                #vPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
+                #dPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
                 try: C = text.split()[0]
                 except IndexError: # Seems we had a \c field that's just whitespace
                     loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
@@ -484,7 +484,7 @@ class USFMBibleBook( BibleBook ):
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
                     #  vPrint( 'Quiet', debuggingThisModule, "HERE2", lastMarker, lastText, "now", marker, text)
                     if marker=='w' and lastMarker in ('v', 'p~'):
-                        # vPrint( 'Quiet', debuggingThisModule, f"HereXX with {lastMarker} now {marker}" )
+                        # dPrint( 'Quiet', debuggingThisModule, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
                         vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
@@ -510,7 +510,7 @@ class USFMBibleBook( BibleBook ):
                     gotUWAligning = True
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
                     if marker=='p~' and lastMarker in ('v', 'p~'):
-                        # vPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}" )
+                        # dPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
                         vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
@@ -546,7 +546,7 @@ class USFMBibleBook( BibleBook ):
                                 #  vPrint( 'Quiet', debuggingThisModule, "Add3")
                                 doaddLine( lastMarker, lastText )
                                 lastMarker = lastText = None
-                            # vPrint( 'Quiet', debuggingThisModule, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
+                            # dPrint( 'Quiet', debuggingThisModule, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
                             # Move the extra appendage to the marker into the actual text
                             marker, text = tryMarker, marker[len(tryMarker):] + ' ' + text
                             if text:
@@ -580,7 +580,7 @@ class USFMBibleBook( BibleBook ):
                     vPrint( 'Quiet', debuggingThisModule, f"\n\nGot ({len(self.uWalignments):,}) alignments for {self.BBB}" )
                     vPrint( 'Quiet', debuggingThisModule, f"  Alignments max level was {alignmentVariables['maxLevel']}" )
                     #for j, (C,V,text,words) in enumerate( self.uWalignments, start=1 ):
-                        #vPrint( 'Quiet', debuggingThisModule, f"{j} {self.BBB} {C}:{V} '{text}'\n    = {words}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"{j} {self.BBB} {C}:{V} '{text}'\n    = {words}" )
                         #if j > 8: break
             #if self.BBB == 'GEN': halt
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
@@ -603,14 +603,14 @@ def briefDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, UBB )
+        #dPrint( 'Quiet', debuggingThisModule, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
         vPrint( 'Info', debuggingThisModule, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
@@ -665,14 +665,14 @@ def fullDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, UBB )
+        #dPrint( 'Quiet', debuggingThisModule, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
         vPrint( 'Info', debuggingThisModule, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )

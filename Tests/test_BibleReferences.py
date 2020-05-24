@@ -63,12 +63,12 @@ class BibleReferencesTests( unittest.TestCase ):
         result = str( BSR )
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
-        #vPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (good)" )
+        #dPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
             result = BSR.parseReferenceString( goodRef )
-            #vPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 6 )
             self.assertEqual( result[0], True ) # Success (have errors) flag
@@ -83,9 +83,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[5]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
             result = BSR.parseReferenceString( badRef )
-            #vPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 6 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -98,9 +98,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[5], str ) ) # Verse suffix
             #self.assertTrue( 0 <= len(result[5]) <= 1 )
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
             result = BSR.parseReferenceString( goodRefs )
-            #vPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 6 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -120,12 +120,12 @@ class BibleReferencesTests( unittest.TestCase ):
         result = str( BSRs )
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
-        #vPrint( 'Quiet', debuggingThisModule, "\nSingle References (good)" )
+        #dPrint( 'Quiet', debuggingThisModule, "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
             result = BSRs.parseReferenceString( goodRef )
-            #vPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], True ) # Success (have errors) flag
@@ -143,9 +143,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
             result = BSRs.parseReferenceString( badRef )
-            #vPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -153,9 +153,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
             result = BSRs.parseReferenceString( goodRefs )
-            #vPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], True ) # Success (have errors) flag
@@ -172,9 +172,9 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3-14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2-9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a-7b,8"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRefs ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRefs ) )
             result = BSRs.parseReferenceString( badRefs )
-            #vPrint( 'Quiet', debuggingThisModule, badRefs, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -198,12 +198,12 @@ class BibleReferencesTests( unittest.TestCase ):
         result = str( BRL )
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
-        #vPrint( 'Quiet', debuggingThisModule, "\nSingle References (good)" )
+        #dPrint( 'Quiet', debuggingThisModule, "\nSingle References (good)" )
         for goodRef in ("Mat 7:3","Mat.7:3","Mat. 7:3","Mt. 7:3","Mt.7:3","Jde 7","Jde. 7","Jde 1:7","Jde. 1:7","Job 8:4","Job. 8:4","Job8:4","Job  8:4","Lev. 8:4b", \
                         "Mat.7:0","Mt. 7:3","1Cor 1:1","1 Cor 1:2", "II Cor 1:3", "IICor 1:4","ISA 1:5",):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRef ) )
             result = BRL.parseReferenceString( goodRef )
-            #vPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], True ) # Success (have errors) flag
@@ -221,9 +221,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( 0 <= len(result[2][0][3]) <= 1 )
         for badRef in ("Mut 7:3","Mat.7777:3","Mat. 7:3333","Mta 7:3","Mt-7:3","Jde 77","Jde. 77","Jde 11:7","Jde. 2:7","Jab 8:4","Jobs. 8:4","Job88:4","Job  8:444","Lev. 8:4bc", \
                         "Mat 0:3","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRef ) )
             result = BRL.parseReferenceString( badRef )
-            #vPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, badRef, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -231,9 +231,9 @@ class BibleReferencesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result[2], list ) ) # List of tuples
             self.assertTrue( 0 <= len(result[2]) <= 1 ) # Some of them do parse
         for goodRefs in ("Mat. 7:3,7","Mat. 7:3; 4:7","Mat. 7:3,7; 4:7","Mat. 7:3,7; 4:7,9,11","Mat. 7:3; Heb. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2,9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4:4,7; Rev. 1:1; 1:1","Mrk. 7:3a,7b,8"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( goodRefs ) )
             result = BRL.parseReferenceString( goodRefs )
-            #vPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, goodRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], True ) # Success (have errors) flag
@@ -250,9 +250,9 @@ class BibleReferencesTests( unittest.TestCase ):
                 self.assertTrue( isinstance( r4, str ) ) # Verse suffix
                 self.assertTrue( 0 <= len(r4) <= 1 )
         for badRefs in ("Meat. 7:3,7","Mat. 7:3 to 14:7","Mat. 7:3,7; 4+7","Mat. 7:3,7; 4:7*9,11","Mat. 7:3; Hub. 2:2; Rev. 1:1","Mat. 7:3,7; Heb 2:2=9; Rev. 1:1","Mat. 7:3,7; 8:17; Heb 2:2,9; 4=4,7; Rev. 1:1; 1:1","Mrk. 7:3a:7b,8"):
-            #vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRefs ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( badRefs ) )
             result = BRL.parseReferenceString( badRefs )
-            #vPrint( 'Quiet', debuggingThisModule, badRefs, " ", result )
+            #dPrint( 'Quiet', debuggingThisModule, badRefs, " ", result )
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 3 )
             self.assertEqual( result[0], False ) # Success (have errors) flag
@@ -290,7 +290,7 @@ class BibleReferencesTests( unittest.TestCase ):
                                             ('JOS','12','17,18', '12:16'), ('JDG','12','17,18', '12:19'), ('SA1','12','16', '12:17,18'), ('SA2','12','19', '12:17,18'), \
                                             ('CH1','12','17-19', '2:18'), ('CH2','2','18', '12:17-19'), ):
             BAR = BibleReferences.BibleAnchorReference( ourBBB, ourC, ourV )
-            #vPrint( 'Quiet', debuggingThisModule, BAR ) # Just print a summary
+            #dPrint( 'Quiet', debuggingThisModule, BAR ) # Just print a summary
             self.assertFalse( BAR.matchesAnchorString( ourAnchor ) )
     # end of test_410_BibleAnchorReference
 # end of BibleReferencesTests class

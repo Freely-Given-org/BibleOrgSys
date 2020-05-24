@@ -180,7 +180,7 @@ class HebrewLexiconIndex:
 
         Returns a lexicon internal code like 'acd'.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {} )".format( key ) )
+        #dPrint( 'Quiet', debuggingThisModule, "HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {} )".format( key ) )
 
         if key and key[0]=='H': key = key[1:] # Remove any leading 'H'
         #keyDigits = key[1:]
@@ -325,8 +325,8 @@ class HebrewLexiconSimple:
         if self.StrongsEntries is None: self.load()
 
         #if key == 'H1':
-            #vPrint( 'Quiet', debuggingThisModule, "Should be:" )
-            #vPrint( 'Quiet', debuggingThisModule, 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
+            #dPrint( 'Quiet', debuggingThisModule, "Should be:" )
+            #dPrint( 'Quiet', debuggingThisModule, 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
         keyDigits = key[1:].lstrip( '0' ) # Remove leading zeroes
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
@@ -398,7 +398,7 @@ class HebrewLexiconSimple:
         if self.BrownDriverBriggsEntries is None: self.load()
 
         entry =  self.getBrDrBrEntryData( key )
-        #vPrint( 'Quiet', debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryField entry: {}".format( entry ) )
+        #dPrint( 'Quiet', debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryField entry: {}".format( entry ) )
         if entry:
             if fieldName == 'status': return entry[2]
             return entry[0] # What are these fields?
@@ -553,7 +553,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
-            #vPrint( 'Quiet', debuggingThisModule, "HebrewLexicon.getBrDrBrEntryField got key: {}".format( key ) )
+            #dPrint( 'Quiet', debuggingThisModule, "HebrewLexicon.getBrDrBrEntryField got key: {}".format( key ) )
         if key:
             return HebrewLexiconSimple.getBrDrBrEntryField( self, key, fieldName ) # Recursive call
     # end of HebrewLexicon.getBrDrBrEntryField

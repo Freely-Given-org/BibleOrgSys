@@ -94,7 +94,7 @@ class USFM2BibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #vPrint( 'Quiet', debuggingThisModule, "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+            #dPrint( 'Quiet', debuggingThisModule, "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = USFM2Markers.getMarkerListFromText( text )
@@ -112,7 +112,7 @@ class USFM2BibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #vPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -150,11 +150,11 @@ class USFM2BibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #vPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
+            #dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
-                #vPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
+                #dPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
                 try: C = text.split()[0]
                 except IndexError: # Seems we had a \c field that's just whitespace
                     loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
@@ -279,14 +279,14 @@ def briefDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, UBB )
+        #dPrint( 'Quiet', debuggingThisModule, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
         vPrint( 'Info', debuggingThisModule, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )
@@ -331,14 +331,14 @@ def fullDemo() -> None:
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
         vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, UBB )
+        #dPrint( 'Quiet', debuggingThisModule, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
         vPrint( 'Info', debuggingThisModule, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
         vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #vPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
         vPrint( 'Info', debuggingThisModule, UBErrors )

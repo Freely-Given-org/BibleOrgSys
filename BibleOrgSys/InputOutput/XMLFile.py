@@ -190,14 +190,14 @@ def briefDemo() -> None:
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #vPrint( 'Quiet', debuggingThisModule, "\n  Test filepath is {!r}".format( testFilepath ) )
+            #dPrint( 'Quiet', debuggingThisModule, "\n  Test filepath is {!r}".format( testFilepath ) )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )
             xf = XMLFile( testFilename, folder, schema=schema )
             xf.validateByLoading()
             xf.validateWithLint()
-            #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+            #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
             vPrint( 'Quiet', debuggingThisModule, xf )
             break
     # end of doTest
@@ -240,14 +240,14 @@ def fullDemo() -> None:
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #vPrint( 'Quiet', debuggingThisModule, "\n  Test filepath is {!r}".format( testFilepath ) )
+            #dPrint( 'Quiet', debuggingThisModule, "\n  Test filepath is {!r}".format( testFilepath ) )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )
             xf = XMLFile( testFilename, folder, schema=schema )
             xf.validateByLoading()
             xf.validateWithLint()
-            #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+            #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
             vPrint( 'Quiet', debuggingThisModule, xf )
     # end of doTest
 

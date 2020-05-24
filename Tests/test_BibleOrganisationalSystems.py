@@ -184,7 +184,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bos )
-        #vPrint( 'Quiet', debuggingThisModule, 'str result', result )
+        #dPrint( 'Quiet', debuggingThisModule, 'str result', result )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
     # end of test_3010_str
@@ -198,7 +198,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         """ Test the getOrganizationalSystemType function. """
         result = self.bos.getOrganizationalSystemType()
         self.assertTrue( isinstance( result, str ) )
-        #vPrint( 'Quiet', debuggingThisModule, 3030, result )
+        #dPrint( 'Quiet', debuggingThisModule, 3030, result )
         self.assertTrue( result in ('edition','revision',) )
     # end of test_3030_getOrganizationalSystemType
 
@@ -214,7 +214,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3050_getOrganizationalSystemValue( self ):
         """ Test the getOrganizationalSystemValue function. """
         results = self.bos.getOrganizationalSystemValue( 'derivedFrom' )
-        #vPrint( 'Quiet', debuggingThisModule, '\n\n3050 results', results )
+        #dPrint( 'Quiet', debuggingThisModule, '\n\n3050 results', results )
         self.assertTrue( isinstance( results, tuple ) or isinstance( results, list ) )
         for result in results:
             self.assertTrue( isinstance( result, str ) )
@@ -224,12 +224,12 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         """ Test the containsBook function. """
         for goodBBB in ('GEN','MAL','MAT','REV'):
             result = self.bos.containsBook( goodBBB )
-            #vPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', goodBBB, result )
+            #dPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', goodBBB, result )
             self.assertTrue( result in (True,False,) )
             self.assertTrue( result )
         for badBBB in ('SIR','WIS','MA1','PS2'):
             result = self.bos.containsBook( badBBB )
-            #vPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', result )
+            #dPrint( 'Quiet', debuggingThisModule, '\n\n3060 result', result )
             self.assertTrue( result in (True,False,) )
             self.assertFalse( result )
     # end of test_3060_containsBook
@@ -237,7 +237,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3070_getBookList( self ):
         """ Test the getBookList function. """
         results = self.bos.getBookList()
-        #vPrint( 'Quiet', debuggingThisModule, '\n\n3070 results', results )
+        #dPrint( 'Quiet', debuggingThisModule, '\n\n3070 results', results )
         self.assertTrue( isinstance( results, tuple ) or isinstance( results, list ) )
         for result in results:
             self.assertTrue( isinstance( result, str ) )
@@ -246,7 +246,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
     def test_3080_isValidBCVRef( self ):
         """ Test the isValidBCVRef function. """
         result = self.bos.isValidBCVRef( ('GEN','1','1',''), "Test-3080" )
-        #vPrint( 'Quiet', debuggingThisModule, '\n\n3080 result', result )
+        #dPrint( 'Quiet', debuggingThisModule, '\n\n3080 result', result )
         self.assertTrue( result in (True,False,) )
         self.assertTrue( result )
     # end of test_3080_isValidBCVRef
@@ -286,7 +286,7 @@ class BibleOrganisationalSystemTests(unittest.TestCase):
         for BBB in ('GEN','MAT','JDE',):
             result = self.bos.getNumVersesList( BBB )
             self.assertTrue( isinstance( result, list ) )
-            #vPrint( 'Quiet', debuggingThisModule, len(result), result )
+            #dPrint( 'Quiet', debuggingThisModule, len(result), result )
             self.assertTrue( 1 <= len(result) <= 151 )
             self.assertEqual( len(result), self.bos.getNumChapters(BBB) )
             for value in result:

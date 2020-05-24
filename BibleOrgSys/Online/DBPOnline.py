@@ -159,23 +159,23 @@ class DBPBibles:
         vPrint( 'Never', debuggingThisModule, _("DBPBibles.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
         requestString = '{}{}{}{}'.format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        #vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
+        #dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
         try: HTTPResponseObject = urllib.request.urlopen( requestString )
         except urllib.error.URLError as err:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #vPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             logging.error( "DBP URLError '{}' from {}".format( err, requestString ) )
             return None
-        #vPrint( 'Quiet', debuggingThisModule, "HTTPResponseObject", HTTPResponseObject )
+        #dPrint( 'Quiet', debuggingThisModule, "HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
-        #vPrint( 'Quiet', debuggingThisModule, f"    contentType='{contentType}'" )
+        #dPrint( 'Quiet', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
             responseJSON = HTTPResponseObject.read()
-            #vPrint( 'Quiet', debuggingThisModule, "responseJSON", len(responseJSON), responseJSON )
+            #dPrint( 'Quiet', debuggingThisModule, "responseJSON", len(responseJSON), responseJSON )
             responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            #vPrint( 'Quiet', debuggingThisModule, "responseJSONencoding", responseJSONencoding )
+            #dPrint( 'Quiet', debuggingThisModule, "responseJSONencoding", responseJSONencoding )
             responseSTR = responseJSON.decode( responseJSONencoding )
-            #vPrint( 'Quiet', debuggingThisModule, "responseSTR", len(responseSTR), repr(responseSTR) )
+            #dPrint( 'Quiet', debuggingThisModule, "responseSTR", len(responseSTR), repr(responseSTR) )
             return json.loads( responseSTR )
         else:
             vPrint( 'Quiet', debuggingThisModule, 'contentType', contentType )
@@ -367,16 +367,16 @@ class DBPBibles:
                     if 'web' in volume['delivery']:
                         #ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
                         if ourName in self.volumeNameDict:
-                            #vPrint( 'Quiet', debuggingThisModule, "\nAlready have", ourName )
-                            ##vPrint( 'Quiet', debuggingThisModule, "New", j, volume )
+                            #dPrint( 'Quiet', debuggingThisModule, "\nAlready have", ourName )
+                            ##dPrint( 'Quiet', debuggingThisModule, "New", j, volume )
                             #ix = self.volumeNameDict[ourName]
                             #oldVolume = self.volumeList[ix]
-                            ##vPrint( 'Quiet', debuggingThisModule, "Old", ix, oldVolume )
+                            ##dPrint( 'Quiet', debuggingThisModule, "Old", ix, oldVolume )
                             #assert len(volume) == len(oldVolume)
                             #for someKey in volume:
                                 #if volume[someKey] != oldVolume[someKey]:
                                     #if someKey not in ('dam_id','fcbh_id','sku','updated_on','collection_name',):
-                                        #vPrint( 'Quiet', debuggingThisModule, "  ", someKey, volume[someKey], oldVolume[someKey] )
+                                        #dPrint( 'Quiet', debuggingThisModule, "  ", someKey, volume[someKey], oldVolume[someKey] )
                             self.volumeNameDict[ourName].append( j )
                         else: self.volumeNameDict[ourName] = [j]
                     #else: vPrint( 'Quiet', debuggingThisModule, j, repr(volume['language_name']), repr(volume['volume_name']) )
@@ -520,17 +520,17 @@ class DBPBible( GenericOnlineBible ):
                 #assert isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1
                 #bookCodeDict = bookCodeDictList[0]
                 #assert isinstance( bookCodeDict, dict )
-                #vPrint( 'Quiet', debuggingThisModule, "bookCodeDict", len(bookCodeDict), bookCodeDict )
+                #dPrint( 'Quiet', debuggingThisModule, "bookCodeDict", len(bookCodeDict), bookCodeDict )
 
         #self.books = {}
         if bookList: # Convert to a form that's easier for us to use later
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
-                #vPrint( 'Quiet', debuggingThisModule, "OSIS", OSISCode )
+                #dPrint( 'Quiet', debuggingThisModule, "OSIS", OSISCode )
                 BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
-                #vPrint( 'Quiet', debuggingThisModule, "BBB", BBB )
-                #vPrint( 'Quiet', debuggingThisModule, bookDict )
+                #dPrint( 'Quiet', debuggingThisModule, "BBB", BBB )
+                #dPrint( 'Quiet', debuggingThisModule, bookDict )
                 self.books[BBB] = bookDict
             del bookList
     # end of DBPBible.__init__
@@ -563,7 +563,7 @@ class DBPBible( GenericOnlineBible ):
 
         vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        #vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
+        #dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
         except urllib.error.URLError:
             if BibleOrgSysGlobals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
@@ -589,7 +589,7 @@ class DBPBible( GenericOnlineBible ):
             resultList = []
             if isinstance( rawData, list ) and len(rawData)==1:
                 rawDataDict = rawData[0]
-                #vPrint( 'Quiet', debuggingThisModule, len(rawDataDict), rawDataDict )
+                #dPrint( 'Quiet', debuggingThisModule, len(rawDataDict), rawDataDict )
                 assert len(rawDataDict)==8 and isinstance( rawDataDict, dict )
                 resultList.append( ('p#','p#',rawDataDict['paragraph_number'],rawDataDict['paragraph_number'],[]) ) # Must be first for Biblelator
                 if key.getVerseNumber()=='1': resultList.append( ('c#','c#',rawDataDict['chapter_id'],rawDataDict['chapter_id'],[]) )
@@ -610,7 +610,7 @@ class DBPBible( GenericOnlineBible ):
         #(The Digital Bible Platform doesn't provide the context so an empty list is always returned.)
         #"""
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, _("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
+            #dPrint( 'Quiet', debuggingThisModule, _("DBPBible.getContextVerseData( {!r} ) for {!r}").format( key, self.damRoot ) )
 
         #return self.getVerseDataList( key ), [] # No context
     ## end of DBPBible.getContextVerseData
@@ -631,7 +631,7 @@ def briefDemo() -> None:
         dbpBibles = DBPBibles()
         vPrint( 'Quiet', debuggingThisModule, dbpBibles )
         #dbpBibles.load() # takes a minute
-        #vPrint( 'Quiet', debuggingThisModule, dbpBibles )
+        #dPrint( 'Quiet', debuggingThisModule, dbpBibles )
 
         if 0:
             dbpBibles.fetchAllLanguages()
@@ -659,10 +659,10 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\nVolume name dict ({}):".format( len(dbpBibles.volumeNameDict) ) )
             for j, someName in enumerate( dbpBibles.volumeNameDict ):
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
                 vPrint( 'Quiet', debuggingThisModule, j, repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
             vPrint( 'Quiet', debuggingThisModule, "English search", dbpBibles.searchNames( "English" ) )
             vPrint( 'Quiet', debuggingThisModule, "MS search", dbpBibles.searchNames( "Salug" ) )
 
@@ -671,10 +671,10 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\nEnglish volume name dict ({}):".format( len(dbpBibles.EnglishVolumeNameDict) ) )
             for j, someName in enumerate( dbpBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
                 vPrint( 'Quiet', debuggingThisModule, "  {}/ {!r} {!r}".format( j, someName, dbpBibles.EnglishVolumeNameDict[someName] ) )
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
 
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
@@ -717,7 +717,7 @@ def fullDemo() -> None:
         dbpBibles = DBPBibles()
         vPrint( 'Quiet', debuggingThisModule, dbpBibles )
         #dbpBibles.load() # takes a minute
-        #vPrint( 'Quiet', debuggingThisModule, dbpBibles )
+        #dPrint( 'Quiet', debuggingThisModule, dbpBibles )
 
         if 0:
             dbpBibles.fetchAllLanguages()
@@ -745,10 +745,10 @@ def fullDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\nVolume name dict ({}):".format( len(dbpBibles.volumeNameDict) ) )
             for j, someName in enumerate( dbpBibles.volumeNameDict ):
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
                 vPrint( 'Quiet', debuggingThisModule, j, repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.volumeNameDict[someName]) )
             vPrint( 'Quiet', debuggingThisModule, "English search", dbpBibles.searchNames( "English" ) )
             vPrint( 'Quiet', debuggingThisModule, "MS search", dbpBibles.searchNames( "Salug" ) )
 
@@ -757,10 +757,10 @@ def fullDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\nEnglish volume name dict ({}):".format( len(dbpBibles.EnglishVolumeNameDict) ) )
             for j, someName in enumerate( dbpBibles.EnglishVolumeNameDict ):
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
                 vPrint( 'Quiet', debuggingThisModule, "  {}/ {!r} {!r}".format( j, someName, dbpBibles.EnglishVolumeNameDict[someName] ) )
                 #if 'English' in someName:
-                    #vPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  English:", repr(someName), repr(dbpBibles.EnglishVolumeNameDict[someName]) )
 
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )

@@ -120,8 +120,8 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     uf1, uf2 = USFMFile(), USFMFile()
     uf1.read( filepath1 )
     uf2.read( filepath2 )
-    #vPrint( 'Quiet', debuggingThisModule, 'f1', uf1.lines )
-    #vPrint( 'Quiet', debuggingThisModule, 'f2', uf2.lines )
+    #dPrint( 'Quiet', debuggingThisModule, 'f1', uf1.lines )
+    #dPrint( 'Quiet', debuggingThisModule, 'f2', uf2.lines )
 
 
     # Note line counts
@@ -141,7 +141,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf1.lines:
-        #vPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
+        #dPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File1']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -176,7 +176,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf2.lines:
-        #vPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
+        #dPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File2']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -263,7 +263,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
             vPrint( 'Never', debuggingThisModule, "File2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
-        #vPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )
+        #dPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )
         if m1==m2: resultDict['Same']['SameMarkerCount'] += 1
         else:
             if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )

@@ -78,11 +78,11 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
     writtenCount = 0
     splitOnString = '\\id '
     for splitText in entireBibleText.split( splitOnString ):
-        # vPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
+        # dPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
         if not splitText: continue # coz it gets a blank one right at the beginning
         assert splitText[3] == ' '
         bookID = splitText[:3]
-        # vPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
+        # dPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
         assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
 

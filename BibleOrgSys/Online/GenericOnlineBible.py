@@ -127,11 +127,11 @@ class GenericOnlineBible:
         #Returns None if the data cannot be fetched.
         #"""
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #vPrint( 'Quiet', debuggingThisModule, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+            #dPrint( 'Quiet', debuggingThisModule, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        #vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
+        #dPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        ##vPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
+        ##dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
         #try: responseJSON = urllib.request.urlopen( requestString )
         #except urllib.error.URLError:
             #if BibleOrgSysGlobals.debugFlag: logging.critical( "GenericOnlineBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )

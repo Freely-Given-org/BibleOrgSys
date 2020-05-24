@@ -122,9 +122,9 @@ class BibleReferencesLinks:
         with open( self.dataPickleFilepath, 'rb') as pickleFile:
             pickleFile.seek( filePosition )
             pickleEntry = pickleFile.read( segmentLength )
-            #vPrint( 'Quiet', debuggingThisModule, "pe", pickleEntry )
+            #dPrint( 'Quiet', debuggingThisModule, "pe", pickleEntry )
             entry = pickle.loads( pickleEntry )
-            #vPrint( 'Quiet', debuggingThisModule, "e", entry )
+            #dPrint( 'Quiet', debuggingThisModule, "e", entry )
             return entry
     # end of BibleReferencesLinks.__getEntry
 
@@ -155,13 +155,13 @@ class BibleReferencesLinks:
             if relatedPassageList:
                 resultList = []
                 for relatedPassage in relatedPassageList:
-                    #vPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                    #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
                     sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                    #vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                    #dPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
                     for actualLink in actualLinksList:
-                        #vPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                        #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
                         targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                        #vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                        #dPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
                         resultList.append( (linkType,parsedTargetReference) )
                 return resultList
     # end of BibleReferencesLinks.getRelatedPassagesList
@@ -193,17 +193,17 @@ class BibleReferencesLinks:
             ## See if we can load from the pickle file (faster than loading from the XML)
             #standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "BibleReferencesLinks.xml" )
             #standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( "BibleReferencesLinks_Tables.pickle" )
-            ##vPrint( 'Quiet', debuggingThisModule, os.access( standardPickleFilepath, os.R_OK ) )
-            ##vPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
-            ##vPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime )
-            ##vPrint( 'Quiet', debuggingThisModule, os.stat(standardXMLFileOrFilepath).st_ctime )
-            ##vPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime )
+            ##dPrint( 'Quiet', debuggingThisModule, os.access( standardPickleFilepath, os.R_OK ) )
+            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
+            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime )
+            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardXMLFileOrFilepath).st_ctime )
+            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime )
             #if XMLFileOrFilepath is None \
             #and os.access( standardPickleFilepath, os.R_OK ) \
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+                #dPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -278,13 +278,13 @@ class BibleReferencesLinks:
             #if relatedPassageList:
                 #resultList = []
                 #for relatedPassage in relatedPassageList:
-                    ##vPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                    ##dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
                     #sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                    ##vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                    ##dPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
                     #for actualLink in actualLinksList:
-                        ##vPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                        ##dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
                         #targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                        ##vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                        ##dPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
                         #resultList.append( (linkType,parsedTargetReference) )
                 #return resultList
     ## end of BibleReferencesLinks.getRelatedPassagesList
@@ -308,15 +308,15 @@ def briefDemo() -> None:
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
         vPrint( 'Quiet', debuggingThisModule, svk.getShortText() )
-        #vPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
-                #vPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
                 vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
                 for actualLink in actualLinksList:
-                    #vPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                    #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
                     vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
         break
@@ -344,15 +344,15 @@ def fullDemo() -> None:
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
         vPrint( 'Quiet', debuggingThisModule, svk.getShortText() )
-        #vPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
-                #vPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
                 vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
                 for actualLink in actualLinksList:
-                    #vPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                    #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
                     vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
 

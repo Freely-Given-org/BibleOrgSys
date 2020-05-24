@@ -135,7 +135,7 @@ class GreekStrongsFileConverter:
 
         if self.XMLTree.tag == GreekStrongsFileConverter.treeTag:
             for segment in self.XMLTree:
-                #vPrint( 'Quiet', debuggingThisModule, segment.tag )
+                #dPrint( 'Quiet', debuggingThisModule, segment.tag )
                 if segment.tag == "prologue":
                     pass
                 elif segment.tag == "entries":
@@ -177,7 +177,7 @@ class GreekStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib ==  'strongs':
                 strongs5 = value
-                # vPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
+                # dPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
@@ -185,7 +185,7 @@ class GreekStrongsFileConverter:
         entryString = ""
         gettingEssentials = True
         for j, element in enumerate( entry ):
-            #vPrint( 'Quiet', debuggingThisModule, strongs5, j, element.tag, repr(entryString) )
+            #dPrint( 'Quiet', debuggingThisModule, strongs5, j, element.tag, repr(entryString) )
             if element.tag == "strongs":
                 if BibleOrgSysGlobals.debugFlag: assert gettingEssentials and j==0 and element.text
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
@@ -213,7 +213,7 @@ class GreekStrongsFileConverter:
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                     entryResults['word'] = (greek, translit, beta)
                 else:
-                    #vPrint( 'Quiet', debuggingThisModule, "Have multiple greek entries in " + strongs5 )
+                    #dPrint( 'Quiet', debuggingThisModule, "Have multiple greek entries in " + strongs5 )
                     if BibleOrgSysGlobals.debugFlag: assert j > 2
                     gettingEssentials = False
                     entryString += ' ' + BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ) #.replace( '\n', '' )
@@ -241,7 +241,7 @@ class GreekStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                 derivation = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #vPrint( 'Quiet', debuggingThisModule, strongs5, "derivation", repr(derivation) )
+                #dPrint( 'Quiet', debuggingThisModule, strongs5, "derivation", repr(derivation) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert derivation and '\t' not in derivation and '\n' not in derivation
                 entryString +=  derivation
@@ -250,7 +250,7 @@ class GreekStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, "jd28" )
                 definition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #vPrint( 'Quiet', debuggingThisModule, strongs5, "definition", repr(definition) )
+                #dPrint( 'Quiet', debuggingThisModule, strongs5, "definition", repr(definition) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert definition and '\t' not in definition and '\n' not in definition
                 entryString += definition
@@ -260,7 +260,7 @@ class GreekStrongsFileConverter:
                 #BibleOrgSysGlobals.checkXMLNoTail( element, location, "8s2s" )
                 #BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "dvb2" )
                 KJVdefinition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #vPrint( 'Quiet', debuggingThisModule, strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
+                #dPrint( 'Quiet', debuggingThisModule, strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
                 if BibleOrgSysGlobals.debugFlag: assert KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition
                 entryString += KJVdefinition
             elif element.tag == "strongsref":
@@ -274,7 +274,7 @@ class GreekStrongsFileConverter:
                 strongsRef = re.sub( '<strongs="(\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
                 #strongsRef = re.sub( '<language="HEBREW" strongs="(\d{1,5})">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
                 #strongsRef = re.sub( '<strongs="(\d{1,5})" language="HEBREW">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
-                #vPrint( 'Quiet', debuggingThisModule, strongs5, "strongsRef", repr(strongsRef) )
+                #dPrint( 'Quiet', debuggingThisModule, strongs5, "strongsRef", repr(strongsRef) )
                 entryString += ' ' + strongsRef
             elif element.tag == "see":
                 location = "see in Strongs " + strongs5
@@ -295,7 +295,7 @@ class GreekStrongsFileConverter:
             else: logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
 
         if entryString:
-            #vPrint( 'Quiet', debuggingThisModule, strongs5, "entryString", repr(entryString) )
+            #dPrint( 'Quiet', debuggingThisModule, strongs5, "entryString", repr(entryString) )
             if BibleOrgSysGlobals.debugFlag:
                 assert '\t' not in entryString and '\n' not in entryString
             entryString = re.sub( '<strongsref language="GREEK" strongs="(\d{1,5})"></strongsref>',
@@ -309,7 +309,7 @@ class GreekStrongsFileConverter:
             if BibleOrgSysGlobals.debugFlag:
                 assert 'strongsref' not in entryString
             entryResults['Entry'] = entryString
-        #vPrint( 'Quiet', debuggingThisModule, "entryResults", entryResults )
+        #dPrint( 'Quiet', debuggingThisModule, "entryResults", entryResults )
         self.StrongsEntries[strongs] = entryResults
     # end of GreekStrongsFileConverter.validateEntry
 

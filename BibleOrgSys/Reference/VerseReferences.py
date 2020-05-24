@@ -340,32 +340,32 @@ class SimpleVerseKey():
 
         match = re.search( BCVS1_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             self.BBB, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
             if self.BBB not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
             self.keyType = 'ParsedBCVS'
-            #vPrint( 'Quiet', debuggingThisModule, self.getShortText() )
+            #dPrint( 'Quiet', debuggingThisModule, self.getShortText() )
             return True
 
         match = re.search( BCVI1_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             self.BBB, self.C, self.V, self.I, self.S = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
             if self.BBB not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                 logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
             self.keyType = 'ParsedBCVI'
-            #vPrint( 'Quiet', debuggingThisModule, self.getShortText() )
+            #dPrint( 'Quiet', debuggingThisModule, self.getShortText() )
             return True
 
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
         return False
@@ -382,8 +382,8 @@ class SimpleVerseKey():
 
         match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)) )
             bk, self.C, self.V, self.S, self.I = match.group(1), match.group(2), match.group(3), (match.group(4) if match.group(4) else ''), None
             self.BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( bk )
             if self.BBB not in BibleOrgSysGlobals.loadedBibleBooksCodes:
@@ -391,10 +391,10 @@ class SimpleVerseKey():
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
             self.keyType = 'ParsedBCVS'
-            #vPrint( 'Quiet', debuggingThisModule, self.getShortText() )
+            #dPrint( 'Quiet', debuggingThisModule, self.getShortText() )
             return True
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "SimpleVerseKey was unable to parse OSIS {!r}".format( referenceString ) )
         return False
@@ -447,7 +447,7 @@ class SimpleVersesKey():
         # return resultStr
         #if self.keyType=='2V': return "{} {}:{}(?:!{})?,{}(?:!{})?".format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2 )
         #if self.keyType=='2CV': return "{} {}:{}(?:!{})?;{}:{}(?:!{})?".format( self.BBB, self.C1, self.V1, self.S1, self.C2, self.V2, self.S2 )
-        #vPrint( 'Quiet', debuggingThisModule, self.keyType ); halt
+        #dPrint( 'Quiet', debuggingThisModule, self.keyType ); halt
 
     def getVerseKeyText( self ):
         resultStr = ''
@@ -490,8 +490,8 @@ class SimpleVersesKey():
 
         match = re.search( BCVS2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -506,8 +506,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS2C_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -520,8 +520,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS3_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -538,8 +538,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS3C_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -553,8 +553,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS4_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -574,8 +574,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS5_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -596,8 +596,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS6_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -620,8 +620,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS7_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -647,8 +647,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS8_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -676,8 +676,8 @@ class SimpleVersesKey():
             return True
         match = re.search( BCVS9_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -706,7 +706,7 @@ class SimpleVersesKey():
             self.keyType = '9V'
             return True
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
         return False
@@ -723,8 +723,8 @@ class SimpleVersesKey():
 
         match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -738,8 +738,8 @@ class SimpleVersesKey():
             return True
         match = re.search( OSIS_BCVS2C_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             bk = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -752,8 +752,8 @@ class SimpleVersesKey():
             return True
         match = re.search( OSIS_BCVS3_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -768,8 +768,8 @@ class SimpleVersesKey():
             return True
         match = re.search( OSIS_BCVS3C_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             bk = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -781,7 +781,7 @@ class SimpleVersesKey():
             self.keyType = '3CV'
             return True
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
         return False
@@ -832,7 +832,7 @@ class VerseRangeKey():
         #if self.keyType=='V-V': return "{} {}:{}(?:!{})?-{}(?:!{})?".format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2 )
         #if self.keyType=='CV-CV': return "{} {}:{}(?:!{})?-{}:{}(?:!{})?".format( self.BBB, self.C, self.V1, self.S1, self.C2, self.V2, self.S2 )
         #if self.keyType=='C': return "{} {}".format( self.BBB, self.C )
-        #vPrint( 'Quiet', debuggingThisModule, self.keyType ); halt
+        #dPrint( 'Quiet', debuggingThisModule, self.keyType ); halt
 
 
     def getVerseKeyText( self ):
@@ -871,8 +871,8 @@ class VerseRangeKey():
 
         match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -899,8 +899,8 @@ class VerseRangeKey():
             return True
         match = re.search( CHAPTER_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -924,8 +924,8 @@ class VerseRangeKey():
             return True
         match = re.search( CHAPTER_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             if BBB not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( self.BBB ) )
@@ -936,7 +936,7 @@ class VerseRangeKey():
             self.keyType = 'C'
             return True
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "VerseRangeKey was unable to parse {!r}".format( referenceString ) )
         return False
@@ -953,8 +953,8 @@ class VerseRangeKey():
 
         match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -976,8 +976,8 @@ class VerseRangeKey():
             return True
         match = re.search( OSIS_CHAPTER_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk = match.group(1)
             C1, V1, S1 = match.group(2), match.group(3), match.group(4) if match.group(4) else ''
             C2, V2, S2 = match.group(5), match.group(6), match.group(7) if match.group(7) else ''
@@ -1001,8 +1001,8 @@ class VerseRangeKey():
             return True
         match = re.search( OSIS_CHAPTER_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
             if BBB not in BibleOrgSysGlobals.loadedBibleBooksCodes:
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( self.BBB ) )
@@ -1013,7 +1013,7 @@ class VerseRangeKey():
             self.keyType = 'C'
             return True
         # else:
-        #vPrint( 'Quiet', debuggingThisModule, "Didn't match" )
+        #dPrint( 'Quiet', debuggingThisModule, "Didn't match" )
         if not self.ignoreParseErrors:
             logging.error( "VerseRangeKey was unable to parse {!r}".format( referenceString ) )
         return False
@@ -1073,7 +1073,7 @@ class FlexibleVersesKey():
     def getVerseKeyText( self ):
         if self.keyType=='V-V,V':
             vRange, vSingle = self.verseKeyObjectList[0], self.verseKeyObjectList[1]
-            #vPrint( 'Quiet', debuggingThisModule, "here", vRange, vSingle, "'{},{}'".format( vRange.getVerseKeyText(), vSingle.getVerseNumber() ) )
+            #dPrint( 'Quiet', debuggingThisModule, "here", vRange, vSingle, "'{},{}'".format( vRange.getVerseKeyText(), vSingle.getVerseNumber() ) )
             S = vSingle.getVerseSuffix()
             return '{},{}{}{}'.format( vRange.getVerseKeyText(), vSingle.getVerseNumber(), '!' if S else '', S )
         resultText = ''
@@ -1130,8 +1130,8 @@ class FlexibleVersesKey():
 
         match = re.search( BCVS_RANGE_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1149,8 +1149,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGE_PLUS2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1171,8 +1171,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGE_PLUS3_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1196,8 +1196,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGE_PLUS4_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1224,8 +1224,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1243,8 +1243,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_PLUS_RANGES2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1268,8 +1268,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS2_PLUS_RANGES2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1296,8 +1296,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGE_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1321,8 +1321,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGE_PLUS2_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1349,8 +1349,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS2_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1371,8 +1371,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS3_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1396,8 +1396,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS4_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1424,8 +1424,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1446,8 +1446,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS2_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1471,8 +1471,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGES2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1493,8 +1493,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGES2_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1518,8 +1518,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGES2_PLUS2_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1547,8 +1547,8 @@ class FlexibleVersesKey():
 
         match = re.search( BCVS_RANGES3_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1575,8 +1575,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( BCVS_RANGES4_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             BBB, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1641,8 +1641,8 @@ class FlexibleVersesKey():
 
         match = re.search( OSIS_BCVS_RANGE_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1660,8 +1660,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( OSIS_BCVS_PLUS_RANGE_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1679,8 +1679,8 @@ class FlexibleVersesKey():
             return True
         match = re.search( OSIS_BCVS_PLUS_RANGE_PLUS_RE, referenceString )
         if match:
-            #vPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
-            #vPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            #dPrint( 'Quiet', debuggingThisModule, "Matched", match.start(), match.end() )
+            #dPrint( 'Quiet', debuggingThisModule, repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
             bk, C = match.group(1), match.group(2)
             V1, S1 = match.group(3), match.group(4) if match.group(4) else ''
             V2, S2 = match.group(5), match.group(6) if match.group(6) else ''
@@ -1740,7 +1740,7 @@ def briefDemo() -> None:
         for someBadString in badVerseStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVerseKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '    ', repr(someBadString), SimpleVerseKey( someBadString ) )
-            except TypeError: pass #vPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass #dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
@@ -1755,7 +1755,7 @@ def briefDemo() -> None:
         for someBadString in badVersesStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
-            except TypeError: pass # vPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass # dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
@@ -1822,7 +1822,7 @@ def fullDemo() -> None:
         for someBadString in badVerseStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVerseKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '    ', repr(someBadString), SimpleVerseKey( someBadString ) )
-            except TypeError: pass #vPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass #dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodVersesStrings = ( 'SA2_19:12,19', 'REV_11:2!b,6!a', )
     badVersesStrings = badStrings + ( 'GEN.1.1,3', 'EXO 2:2,4', 'LEV_3,9', 'NUM_1:1', '2SA_19:12,321', 'JNA_2:3b,6a', 'REV_11:12!a,!c', )
@@ -1837,7 +1837,7 @@ def fullDemo() -> None:
         for someBadString in badVersesStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
-            except TypeError: pass # vPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass # dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )

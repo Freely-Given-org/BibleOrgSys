@@ -147,7 +147,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #vPrint( 'Quiet', debuggingThisModule, 'osx1', foundFiles )
+    #dPrint( 'Quiet', debuggingThisModule, 'osx1', foundFiles )
 
     # See if there's an OpenSong project here in this folder
     numFound = 0
@@ -156,7 +156,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     for thisFilename in sorted( foundFiles ):
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
-            #vPrint( 'Quiet', debuggingThisModule, 'osx1b', firstLines )
+            #dPrint( 'Quiet', debuggingThisModule, 'osx1b', firstLines )
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
@@ -196,7 +196,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
                     if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
-        #vPrint( 'Quiet', debuggingThisModule, 'osx2', foundSubfiles )
+        #dPrint( 'Quiet', debuggingThisModule, 'osx2', foundSubfiles )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -239,7 +239,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     def writeOpenSongBook( writerObject, BBB, bkData ):
         """Writes a book to the OpenSong XML writerObject."""
-        #vPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
+        #dPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
         OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OSISAbbrev:
             logging.warning( "toOpenSong: Can't write {} OpenSong book because no OSIS code available".format( BBB ) )
@@ -250,7 +250,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
             marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
-            #vPrint( 'Quiet', debuggingThisModule, marker, repr(text) )
+            #dPrint( 'Quiet', debuggingThisModule, marker, repr(text) )
             #if text: assert text[0] != ' '
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             if marker in USFM_PRECHAPTER_MARKERS:
@@ -282,7 +282,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
                 if accumulator:
                     writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
                     accumulator = ''
-                #vPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
                 if not text: logging.warning( "createOpenSongXML: Missing text for v" ); continue
                 verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
@@ -464,7 +464,7 @@ class OpenSongXMLBible( Bible ):
                 if BibleBooksNames is None:
                     BibleBooksNames = BibleBooksNamesSystems().loadData()
                 BBB = BibleBooksNames.getBBBFromText( bookName ) # Try non-English booknames
-                #vPrint( 'Quiet', debuggingThisModule, "bookName", bookName, BBB )
+                #dPrint( 'Quiet', debuggingThisModule, "bookName", bookName, BBB )
             if BBB:
                 vPrint( 'Info', debuggingThisModule, _("Validating {} {}…").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
@@ -511,7 +511,7 @@ class OpenSongXMLBible( Bible ):
                 numVerses = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
-            #vPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
+            #dPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
             chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
             thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
@@ -540,11 +540,11 @@ class OpenSongXMLBible( Bible ):
                 vText += element.tail if element.tail else ''
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
-                #vPrint( 'Quiet', debuggingThisModule, 'vText1', vText )
+                #dPrint( 'Quiet', debuggingThisModule, 'vText1', vText )
                 if vText: # This is the main text of the verse (follows the verse milestone)
-                    #vPrint( 'Quiet', debuggingThisModule, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     if '\n' in vText: # This is how they represent poety
-                        #vPrint( 'Quiet', debuggingThisModule, "vText", repr(vText), repr(element.text) )
+                        #dPrint( 'Quiet', debuggingThisModule, "vText", repr(vText), repr(element.text) )
                         for j, textBit in enumerate( vText.split( '\n' ) ):
                             if j==0:
                                 thisBook.addLine( 'q1', '' )
@@ -552,7 +552,7 @@ class OpenSongXMLBible( Bible ):
                             else: thisBook.addLine( 'q1', textBit )
                     else: # Just one verse line
                         thisBook.addLine( 'v', verseNumber + ' ' + vText )
-                #vPrint( 'Quiet', debuggingThisModule, 'vText2', vText )
+                #dPrint( 'Quiet', debuggingThisModule, 'vText2', vText )
             else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class
@@ -605,7 +605,7 @@ def briefDemo() -> None:
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
             vPrint( 'Quiet', debuggingThisModule, xb ) # Just print a summary
-            #vPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
+            #dPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -617,7 +617,7 @@ def briefDemo() -> None:
                     if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+                    #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
                     vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not xb: halt # if no books
 # end of OpenSongXMLBible.briefDemo
@@ -669,7 +669,7 @@ def fullDemo() -> None:
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
             vPrint( 'Quiet', debuggingThisModule, xb ) # Just print a summary
-            #vPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
+            #dPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -681,7 +681,7 @@ def fullDemo() -> None:
                     if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+                    #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
                     try:
                         vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
                     except KeyError:

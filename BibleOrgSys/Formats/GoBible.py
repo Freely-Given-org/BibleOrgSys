@@ -268,7 +268,7 @@ class GoBible( Bible ):
         if not numBookFolders:
             vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any book folders in {!r}".format( self.dataFolderpath ) )
             raise FileNotFoundError # No use continuing
-        #vPrint( 'Never', debuggingThisModule, "GoBible.preload: Discovered", self.discoveredBookList )
+        #dPrint( 'Never', debuggingThisModule, "GoBible.preload: Discovered", self.discoveredBookList )
 
         def readInString( fileBytes, fileIndex ):
             """
@@ -292,7 +292,7 @@ class GoBible( Bible ):
 
         self.bookNames, self.filenameBases, self.startChapters, self.numChaptersList, self.numVersesList = [], [], [], [], []
         for bookIndex in range( numBooks ):
-            #vPrint( 'Quiet', debuggingThisModule, "\nbookIndex", bookIndex )
+            #dPrint( 'Quiet', debuggingThisModule, "\nbookIndex", bookIndex )
 
             # Read in the name of the book
             bookName, consumedBytes = readInString( mainIndexContents, index )
@@ -365,10 +365,10 @@ class GoBible( Bible ):
             logging.warning( f"GoBible.preload found {numBooks} books -- trying to figure out book codes" )
             self.bookList = []
             for n in range( numBooks ):
-                #vPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
+                #dPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
                 BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.bookNames[n] )
                 BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.filenameBases[n] )
-                #vPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
                 if BBB1 and (BBB2==BBB1 or BBB2 is None): BBB = BBB1
                 elif BBB2 and BBB1 is None: BBB = BBB2
                 elif BBB1 and BBB2:
@@ -458,11 +458,11 @@ class GoBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.bookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #vPrint( 'Quiet', debuggingThisModule, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', debuggingThisModule, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "GoBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #vPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
 
         # Delete the temporary folder (where .jar was unzipped)
         rmtree( self.unzippedFolderpath )
@@ -521,7 +521,7 @@ class GoBibleBook( BibleBook ):
         for chapterNumberIndex in range( numChapters ):
             numVerses = self.containerBibleObject.numVersesList[indexToBook][chapterNumberIndex][0]
             #if debuggingThisModule:
-                #vPrint( 'Quiet', debuggingThisModule, f"Book #{indexToBook+1} Chapter #{chapterNumberIndex+1} has {numVerses} verses" )
+                #dPrint( 'Quiet', debuggingThisModule, f"Book #{indexToBook+1} Chapter #{chapterNumberIndex+1} has {numVerses} verses" )
             offset = 0
             verseLengths = []
             for verseNumberIndex in range( numVerses ):
@@ -546,8 +546,8 @@ class GoBibleBook( BibleBook ):
                 if fileIndexNumber == 0:
                     chapterText = ""
                 else:
-                    #vPrint( 'Quiet', debuggingThisModule, "co", chapterOffset, "dl", dataLength )
-                    #vPrint( 'Quiet', debuggingThisModule, chapterText[chapterOffset:] )
+                    #dPrint( 'Quiet', debuggingThisModule, "co", chapterOffset, "dl", dataLength )
+                    #dPrint( 'Quiet', debuggingThisModule, chapterText[chapterOffset:] )
                     #assert chapterOffset == dataLength # Check we used all of the last one
                     chapterText = chapterText[chapterOffset:]
                 textFilepath = os.path.join( folderpath, f'{filenameBase} {fileIndexNumber}' )
@@ -555,19 +555,19 @@ class GoBibleBook( BibleBook ):
                 with open( textFilepath, 'rb' ) as chapterFile:
                     chapterDataFull = chapterFile.read()
                 lastFileIndexNumber = fileIndexNumber
-                #vPrint( 'Quiet', debuggingThisModule, chapterDataFull[:200], '…' )
+                #dPrint( 'Quiet', debuggingThisModule, chapterDataFull[:200], '…' )
                 dataLength, = struct.unpack( ">I", chapterDataFull[:4] )
-                #vPrint( 'Quiet', debuggingThisModule, f"dataLength={dataLength:,}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"dataLength={dataLength:,}" )
                 assert dataLength + 4 == len(chapterDataFull)
 
                 chapterData = chapterDataFull[4:]
                 assert dataLength == len(chapterData)
-                #vPrint( 'Quiet', debuggingThisModule, chapterData[:500] )
+                #dPrint( 'Quiet', debuggingThisModule, chapterData[:500] )
                 chapterText += chapterData.decode()
                 chapterOffset = 0
             for verseNumberIndex in range( numVerses ):
                 offset, verseLength = chapterLengths[chapterNumberIndex][verseNumberIndex]
-                #vPrint( 'Quiet', debuggingThisModule, f"At {chapterNumberIndex+1}:{verseNumberIndex+1} Offset={offset:,} verseLength={verseLength:,}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"At {chapterNumberIndex+1}:{verseNumberIndex+1} Offset={offset:,} verseLength={verseLength:,}" )
                 verseText = chapterText[chapterOffset+offset:chapterOffset+offset+verseLength].strip()
                 vPrint( 'Never', debuggingThisModule, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
                 if verseText.count( '\x01' ) == 2:
@@ -575,7 +575,7 @@ class GoBibleBook( BibleBook ):
                     ix2 = verseText.find( '\x01', ix1+1 )
                     haveBrackets = verseText[ix1+1]=='[' and verseText[ix2-1]==']'
                     extract = verseText[ix1+2:ix2-1] if haveBrackets else verseText[ix1+1:ix2]
-                    #vPrint( 'Quiet', debuggingThisModule, "extract", repr(extract) )
+                    #dPrint( 'Quiet', debuggingThisModule, "extract", repr(extract) )
                     verseTextPrevious = verseText[:ix1].strip()
                     if verseTextPrevious:
                         if needAPee:
@@ -590,8 +590,8 @@ class GoBibleBook( BibleBook ):
                         self.addLine( 'p', '' )
                         self.addLine( 'v', f'{verseNumberIndex+1} {verseText}' )
                     needAPee = False
-                    #vPrint( 'Quiet', debuggingThisModule, "new verseText", repr(verseText) )
-                    #vPrint( 'Never', debuggingThisModule, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
+                    #dPrint( 'Quiet', debuggingThisModule, "new verseText", repr(verseText) )
+                    #dPrint( 'Never', debuggingThisModule, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
                 else:
                     if needAPee:
                         self.addLine( 'p', '' )
@@ -618,9 +618,9 @@ def testGoBible( GoBibleFile ):
     vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #vPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+        # dPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -633,7 +633,7 @@ def testGoBible( GoBibleFile ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
@@ -673,9 +673,9 @@ def briefDemo() -> None:
 
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
             vBErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+            # dPrint( 'Quiet', debuggingThisModule, vBErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             if isinstance( result2, GoBible ):
@@ -732,9 +732,9 @@ def fullDemo() -> None:
 
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
-                #vPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 if isinstance( result2, GoBible ):

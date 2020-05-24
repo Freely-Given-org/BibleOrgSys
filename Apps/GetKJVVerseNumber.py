@@ -115,7 +115,7 @@ def main() -> None:
                         adjustedUserInput = adjustedUserInput.replace( alternative, ':', 1 )
                         break
             results = ourBibleSingleReference.parseReferenceString( adjustedUserInput )
-            #vPrint( 'Quiet', debuggingThisModule, results )
+            #dPrint( 'Quiet', debuggingThisModule, results )
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
                 vPrint( 'Quiet', debuggingThisModule, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )

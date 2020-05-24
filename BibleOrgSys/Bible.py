@@ -179,7 +179,7 @@ class BibleBook ( InternalBibleBook ):
             #elif code == 'Vrs':
                 #V = text
                 #self.index[ (C,V) ] = j, 0
-        ##vPrint( 'Quiet', debuggingThisModule, self.index )
+        ##dPrint( 'Quiet', debuggingThisModule, self.index )
     ## end of createIndex
 # end of class BibleBook
 
@@ -237,13 +237,13 @@ def fullDemo() -> None:
 
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
-        #vPrint( 'Quiet', debuggingThisModule, "\nTest USFM Bible…" )
+        #dPrint( 'Quiet', debuggingThisModule, "\nTest USFM Bible…" )
         #from BibleOrgSys.Formats.USFMBible import USFMBible
         #name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()
-            #vPrint( 'Quiet', debuggingThisModule, UB )
+            #dPrint( 'Quiet', debuggingThisModule, UB )
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
             #UB.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )

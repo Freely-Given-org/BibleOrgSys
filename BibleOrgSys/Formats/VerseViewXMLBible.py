@@ -131,7 +131,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #vPrint( 'Quiet', debuggingThisModule, 'ff', foundFiles )
+    #dPrint( 'Quiet', debuggingThisModule, 'ff', foundFiles )
 
     # See if there's an VerseView project here in this folder
     numFound = 0
@@ -179,7 +179,7 @@ def VerseViewXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad
                     if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
-        #vPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles )
+        #dPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -321,12 +321,12 @@ class VerseViewXMLBible( Bible ):
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             # These are all compulsory so they should all exist
-            #vPrint( 'Quiet', debuggingThisModule, "Filename is {!r}".format( self.filename ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Filename is {!r}".format( self.filename ) )
             vPrint( 'Quiet', debuggingThisModule, "Revision is {!r}".format( self.suppliedMetadata['VerseView']['Revision'] ) )
             vPrint( 'Quiet', debuggingThisModule, "Title is {!r}".format( self.suppliedMetadata['VerseView']['Title'] ) )
             vPrint( 'Quiet', debuggingThisModule, "Font is {!r}".format( self.suppliedMetadata['VerseView']['Font'] ) )
             vPrint( 'Quiet', debuggingThisModule, "Copyright is {!r}".format( self.suppliedMetadata['VerseView']['Copyright'] ) )
-            #vPrint( 'Quiet', debuggingThisModule, "SizeFactor is {!r}".format( self.sizeFactor ) )
+            #dPrint( 'Quiet', debuggingThisModule, "SizeFactor is {!r}".format( self.sizeFactor ) )
 
         self.applySuppliedMetadata( 'VerseView' ) # Copy some to self.settingsDict
         self.doPostLoadProcessing()
@@ -360,7 +360,7 @@ class VerseViewXMLBible( Bible ):
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                 vPrint( 'Quiet', debuggingThisModule, "Assuming that book {} {!r} is {} (not {})".format( bookNumber, bookName, BBB2, BBB ) )
             BBB = BBB2
-            #vPrint( 'Quiet', debuggingThisModule, BBB ); halt
+            #dPrint( 'Quiet', debuggingThisModule, BBB ); halt
 
         if BBB:
             vPrint( 'Info', debuggingThisModule, _("Validating {} {}…").format( BBB, bookName ) )
@@ -397,7 +397,7 @@ class VerseViewXMLBible( Bible ):
                 chapterNumber = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
-            #vPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
+            #dPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
 
@@ -447,11 +447,11 @@ class VerseViewXMLBible( Bible ):
                 #if noteType and noteType not in ('variant',):
                     #logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
                 #nText, nTail = subelement.text, subelement.tail
-                ##vPrint( 'Quiet', debuggingThisModule, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
+                ##dPrint( 'Quiet', debuggingThisModule, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
                 #vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
                 #if nTail:
                     #if '\n' in nTail:
-                        #vPrint( 'Quiet', debuggingThisModule, "VerseViewXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "VerseViewXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         #nTail = nTail.replace( '\n', ' ' )
                     #vText += nTail
                 #for sub2element in subelement:
@@ -505,7 +505,7 @@ class VerseViewXMLBible( Bible ):
                 ##else: vPrint( 'Quiet', debuggingThisModule, "css is", css, "idStyle is", idStyle ); halt
                 #sText, sTail = subelement.text.strip(), subelement.tail
                 #if BibleOrgSysGlobals.debugFlag: assert sText
-                ##vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, sublocation )
+                ##dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, sublocation )
                 #if SFM: vText += SFM+' ' + sText + SFM+'*'
                 #else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                 #if sTail: vText += sTail.strip()
@@ -520,7 +520,7 @@ class VerseViewXMLBible( Bible ):
                         #art = value
                     #else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 #if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
-                ##vPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber )
+                ##dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber )
                 ##assert vText
                 #if vText:
                     #thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
@@ -568,12 +568,12 @@ def briefDemo() -> None:
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()
-                        # vPrint( 'Quiet', debuggingThisModule, UBErrors )
-                    #vPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
-                    #vPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
+                        # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
+                    #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
-                        #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        ##dPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                        #dPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -585,7 +585,7 @@ def briefDemo() -> None:
                             if t=='NT' and len(vvB)==39: continue # Don't bother with NT references if it's only a OT
                             if t=='DC' and len(vvB)<=66: continue # Don't bother with DC references if it's too small
                             svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+                            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
                             try: vPrint( 'Quiet', debuggingThisModule, reference, svk.getShortText(), vvB.getVerseText( svk ) )
                             except KeyError: vPrint( 'Quiet', debuggingThisModule, something, reference, "doesn't exist" )
                     if BibleOrgSysGlobals.commandLineArguments.export:
@@ -627,12 +627,12 @@ def fullDemo() -> None:
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()
-                        # vPrint( 'Quiet', debuggingThisModule, UBErrors )
-                    #vPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
-                    #vPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
+                        # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
+                    #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ##vPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
-                        #vPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        ##dPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
+                        #dPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -644,7 +644,7 @@ def fullDemo() -> None:
                             if t=='NT' and len(vvB)==39: continue # Don't bother with NT references if it's only a OT
                             if t=='DC' and len(vvB)<=66: continue # Don't bother with DC references if it's too small
                             svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+                            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
                             try: vPrint( 'Quiet', debuggingThisModule, reference, svk.getShortText(), vvB.getVerseText( svk ) )
                             except KeyError: vPrint( 'Quiet', debuggingThisModule, something, reference, "doesn't exist" )
                     if BibleOrgSysGlobals.commandLineArguments.export:

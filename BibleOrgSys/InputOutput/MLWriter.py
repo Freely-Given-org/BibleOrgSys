@@ -170,12 +170,12 @@ class MLWriter:
         """ Writes the buffer to the file. """
         assert self.__outputFile is not None
         if self._buffer:
-            #vPrint( 'Quiet', debuggingThisModule, "Writing buffer of {} characters".format( len(self._buffer) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Writing buffer of {} characters".format( len(self._buffer) ) )
             if writeAll: # Write it all
                 self._writeToFile( self._buffer )
                 self._buffer = ''
             elif len(self._buffer) > self._bufferSaveSize: # Write most of it (in case we need to retrack)
-                #vPrint( 'Quiet', debuggingThisModule, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
+                #dPrint( 'Quiet', debuggingThisModule, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
                 self._writeToFile( self._buffer[:-self._bufferSaveSize] )
                 self._buffer = self._buffer[-self._bufferSaveSize:]
             #else: pass # Write none
@@ -306,7 +306,7 @@ class MLWriter:
         """
         Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
         """
-        #vPrint( 'Quiet', debuggingThisModule, "tagString: {!r}", tagString )
+        #dPrint( 'Quiet', debuggingThisModule, "tagString: {!r}", tagString )
         assert tagString # It can't be blank
         assert '<' not in tagString and '>' not in tagString and '"' not in tagString
         return tagString
@@ -411,7 +411,7 @@ class MLWriter:
         """
         Writes raw text onto a line.
         """
-        #vPrint( 'Quiet', debuggingThisModule, 'writeLineText', text, self._openStack )
+        #dPrint( 'Quiet', debuggingThisModule, 'writeLineText', text, self._openStack )
         if noNL is None:
             noNL = self._outputType=='HTML' and self._openStack and self._openStack[-1] in HTMLCombinedTags
         return self._autoWrite( text if noTextCheck else self.checkText(text), noNL=noNL )
@@ -438,7 +438,7 @@ class MLWriter:
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
         """
-        #vPrint( 'Quiet', debuggingThisModule, "text: {!r}".format(text )
+        #dPrint( 'Quiet', debuggingThisModule, "text: {!r}".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
             self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
@@ -452,7 +452,7 @@ class MLWriter:
         """
         Writes a closing tag on a line.
         """
-        #vPrint( 'Quiet', debuggingThisModule, 'writeLineClose', self._openStack )
+        #dPrint( 'Quiet', debuggingThisModule, 'writeLineClose', self._openStack )
         if not self._openStack:
             logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
             if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
@@ -601,7 +601,7 @@ def briefDemo() -> None:
             xf.validateWithLint()
         except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
-        #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+        #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
         vPrint( 'Quiet', debuggingThisModule, xf )
 
     if 1: # Demo the writer object with HTML5
@@ -682,7 +682,7 @@ def fullDemo() -> None:
             xf.validateWithLint()
         except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
-        #vPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
+        #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
         vPrint( 'Quiet', debuggingThisModule, xf )
 
     if 1: # Demo the writer object with HTML5

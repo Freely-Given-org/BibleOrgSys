@@ -190,7 +190,7 @@ class BibleBookOrderSystems:
         assert thisSystemName
         assert bookOrderSchemeToCheck
         assert self.__DataLists
-        #vPrint( 'Quiet', debuggingThisModule, thisSystemName, bookOrderSchemeToCheck )
+        #dPrint( 'Quiet', debuggingThisModule, thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
             if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
                 logging.error( f"Invalid '{BBB}' book code" )
@@ -199,7 +199,7 @@ class BibleBookOrderSystems:
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
         for bookOrderSystemCode in self.__DataLists: # Step through the various reference schemes
             if self.__DataLists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #vPrint( 'Quiet', debuggingThisModule, "  {} exactly matches {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  {} exactly matches {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                 exactMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             else: # it's not an exact match
@@ -221,7 +221,7 @@ class BibleBookOrderSystems:
                         isSubset=False
                         break
                     index = self.__DataLists[bookOrderSystemCode].index( BBB )
-                    #vPrint( 'Quiet', debuggingThisModule, BBB, index, lastIndex )
+                    #dPrint( 'Quiet', debuggingThisModule, BBB, index, lastIndex )
                     if index < lastIndex: # they must be in a different order
                         thisError = "    " + _("Can't match '{0}' system ({0} has {1} in a different place)").format( bookOrderSystemCode, BBB )
                         allErrors += ("\n" if allErrors else "") + thisError
@@ -229,7 +229,7 @@ class BibleBookOrderSystems:
                         break
                     lastIndex = index
                 if isSubset:
-                    #vPrint( 'Quiet', debuggingThisModule, "  {} is a subset of {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "  {} is a subset of {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                     subsetMatchCount += 1
                     matchedBookOrderSystemCodes.append( bookOrderSystemCode )
 

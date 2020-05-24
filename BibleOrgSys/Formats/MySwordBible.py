@@ -244,7 +244,7 @@ class MySwordBible( Bible ):
         row = self.cursor.fetchone()
         for key in row.keys():
             self.suppliedMetadata['MySword'][key] = row[key]
-        #vPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['MySword'] ); halt
+        #dPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['MySword'] ); halt
         #if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         #if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
         if 'encryption' in self.suppliedMetadata['MySword']:
@@ -296,11 +296,11 @@ class MySwordBible( Bible ):
                 row = self.cursor.fetchone()
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
-                #vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
+                #dPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
-                #vPrint( 'Quiet', debuggingThisModule, row )
+                #dPrint( 'Quiet', debuggingThisModule, row )
                 line = None
-            #vPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
+            #dPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
             if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
@@ -320,7 +320,7 @@ class MySwordBible( Bible ):
                         logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
-            #vPrint( 'Quiet', debuggingThisModule, "MySword.load", BBB, C, V, repr(line) )
+            #dPrint( 'Quiet', debuggingThisModule, "MySword.load", BBB, C, V, repr(line) )
             handleRTFLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
@@ -408,11 +408,11 @@ class MySwordBible( Bible ):
                 row = self.cursor.fetchone()
                 line = row[0]
             except TypeError: # This reference is missing (row is None)
-                #vPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
+                #dPrint( 'Quiet', debuggingThisModule, "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
-                #vPrint( 'Quiet', debuggingThisModule, row )
+                #dPrint( 'Quiet', debuggingThisModule, row )
                 line = None
-            #vPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
+            #dPrint( 'Quiet', debuggingThisModule, nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
             if line is None: logging.warning( "MySwordBible.load: Have missing verse line at {} {}:{}".format( BBB, C, V ) )
             else: # line is not None
                 if not isinstance( line, str ):
@@ -432,7 +432,7 @@ class MySwordBible( Bible ):
                         logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
-            #vPrint( 'Quiet', debuggingThisModule, "MySword.load", BBB, C, V, repr(line) )
+            #dPrint( 'Quiet', debuggingThisModule, "MySword.load", BBB, C, V, repr(line) )
             handleRTFLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
@@ -472,7 +472,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
         """
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
-        #vPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
+        #dPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
         nBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -612,7 +612,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     if customCSS: values.append( customCSS )
 
     exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
-    #vPrint( 'Quiet', debuggingThisModule, exeStr, values )
+    #dPrint( 'Quiet', debuggingThisModule, exeStr, values )
     cursor.execute( exeStr, values )
     #if BibleOrgSysGlobals.debugFlag: cursor.execute( exeStr, values )
     #else: # Not debugging
@@ -660,7 +660,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     """
     Crudely demonstrate the MySword Bible class.
     """
-    #vPrint( 'Quiet', debuggingThisModule, "tMSB", MySwBfolder )
+    #dPrint( 'Quiet', debuggingThisModule, "tMSB", MySwBfolder )
     from BibleOrgSys.Reference import VerseReferences
     #testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' ) # Must be the same as below
 
@@ -671,7 +671,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     MySwB.preload()
     #MySwB.load() # Load and process the file
     vPrint( 'Normal', debuggingThisModule, MySwB ) # Just print a summary
-    #vPrint( 'Quiet', debuggingThisModule, MySwB.suppliedMetadata['MySword'] )
+    #dPrint( 'Quiet', debuggingThisModule, MySwB.suppliedMetadata['MySword'] )
     if MySwB is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: MySwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -683,7 +683,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
             if t=='NT' and len(MySwB)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(MySwB)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), MySwB.getVerseText( svk )
                 vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )

@@ -113,7 +113,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
                 text = text[:ix] + text[ixEnd+mLen+2:]
             else: # leave the next marker in place
                 text = text[:ix] + text[ixEnd:]
-            #vPrint( 'Quiet', debuggingThisModule, "                         ", text ); halt
+            #dPrint( 'Quiet', debuggingThisModule, "                         ", text ); halt
         elif closedFlag == True:
             ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
             if ixEnd == -1:
@@ -522,7 +522,7 @@ class USFM2Markers:
         vPrint( 'Never', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
-            #vPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
+            #dPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
             if self.markerOccursIn(marker) in ("Text","Canonical Text","Poetry","Table row","Introduction",):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
@@ -591,7 +591,7 @@ class USFM2Markers:
         textLength = len( text )
         ixBS = text.find( '\\' )
         while ixBS != -1: # Find backslashes
-            #vPrint( 'Quiet', debuggingThisModule, ixBS, firstResult )
+            #dPrint( 'Quiet', debuggingThisModule, ixBS, firstResult )
             marker = ''
             iy = ixBS + 1
             if iy<textLength:
@@ -654,7 +654,7 @@ class USFM2Markers:
                 if BibleOrgSysGlobals.debugFlag: halt
             if j>= rLen-1: tx = text[ix+len(mx):]
             else: tx=text[ix+len(mx):firstResult[j+1][1]]
-            #vPrint( 'Quiet', debuggingThisModule, 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
+            #dPrint( 'Quiet', debuggingThisModule, 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
             secondResult.append( (m, ix, x, mx, cx[:], tx,) )
 
         # And now find where they are closed (the index to the result array, not to the text string)
@@ -668,7 +668,7 @@ class USFM2Markers:
                 for k in range( j+1, rLen ):
                     m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
                     if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
-            #vPrint( 'Quiet', debuggingThisModule, 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
+            #dPrint( 'Quiet', debuggingThisModule, 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
             thirdResult.append( (m, ix, x, mx, cx[:], ixEnd, tx,) )
 
         finalResult = thirdResult # The final list of 7-tuples
@@ -683,7 +683,7 @@ class USFM2Markers:
         #if finalResult: vPrint( 'Quiet', debuggingThisModule, finalResult )
         if verifyMarkers:
             for j, (m, ix, x, mx, cx, ixEnd, tx,) in enumerate(finalResult):
-                #vPrint( 'Quiet', debuggingThisModule, 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
+                #dPrint( 'Quiet', debuggingThisModule, 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
                 assert ix < textLength
                 assert x in (' ','+','-','*','',) or ( includeInitialText and j==0 and x is None )
                 if m is None:
@@ -785,9 +785,9 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
         vPrint( 'Quiet', debuggingThisModule, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
         vPrint( 'Quiet', debuggingThisModule, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
@@ -857,9 +857,9 @@ def fullDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
         vPrint( 'Quiet', debuggingThisModule, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
         vPrint( 'Quiet', debuggingThisModule, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #dPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"

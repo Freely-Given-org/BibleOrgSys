@@ -283,7 +283,7 @@ class UnboundBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #vPrint( 'Quiet', debuggingThisModule, 'UB file line is "' + line + '"' )
+                #dPrint( 'Quiet', debuggingThisModule, 'UB file line is "' + line + '"' )
                 if line[0]=='#':
                     hashBits = line[1:].split( '\t' )
                     if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
@@ -299,7 +299,7 @@ class UnboundBible( Bible ):
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
-                #vPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
+                #dPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bookCode, chapterNumberString, verseNumberString, vText = bits
                 elif len(bits) == 6:
@@ -396,9 +396,9 @@ def testUB( TUBfilename ):
     vPrint( 'Normal', debuggingThisModule, ub ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ub.check()
-        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         uBErrors = ub.getCheckResults()
-        # vPrint( 'Quiet', debuggingThisModule, uBErrors )
+        # dPrint( 'Quiet', debuggingThisModule, uBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ub.toDrupalBible()
         ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -411,7 +411,7 @@ def testUB( TUBfilename ):
         if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = ub.getVerseText( svk )

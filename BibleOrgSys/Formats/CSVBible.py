@@ -233,7 +233,7 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                #vPrint( 'Quiet', debuggingThisModule, "CSV file line {} is {}".format( lineCount, repr(line) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "CSV file line {} is {}".format( lineCount, repr(line) ) )
                 if line[0]=='#': continue # Just discard comment lines
                 if lineCount==1:
                     if line.startswith( '"Book",' ):
@@ -244,10 +244,10 @@ class CSVBible( Bible ):
                         continue # Just discard header line
 
                 bits = line.split( ',', 3 )
-                #vPrint( 'Quiet', debuggingThisModule, lineCount, self.givenName, BBB, bits )
+                #dPrint( 'Quiet', debuggingThisModule, lineCount, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bString, chapterNumberString, verseNumberString, vText = bits
-                    #vPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                    #dPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
                 else:
                     logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
 
@@ -257,10 +257,10 @@ class CSVBible( Bible ):
                     if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
                     if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
                     if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
-                    #vPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                    #dPrint( 'Quiet', debuggingThisModule, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
 
                 #if not bookCode and not chapterNumberString and not verseNumberString:
-                    #vPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     #continue
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -315,7 +315,7 @@ class CSVBible( Bible ):
                 #if vText and vText[0]=='«':
                     #assert BBB=='PSA' and verseNumberString=='1'
                     #vBits = vText[1:].split( '»' )
-                    ##vPrint( 'Quiet', debuggingThisModule, "vBits", vBits )
+                    ##dPrint( 'Quiet', debuggingThisModule, "vBits", vBits )
                     #thisBook.addLine( 'd', vBits[0] ) # Psalm title
                     #vText = vBits[1].lstrip()
 
@@ -356,9 +356,9 @@ def testCSV( CSVfolder ):
     vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+        # dPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -371,7 +371,7 @@ def testCSV( CSVfolder ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #vPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
@@ -407,9 +407,9 @@ def briefDemo() -> None:
 
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             vBErrors = result3.getCheckResults()
-            # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+            # dPrint( 'Quiet', debuggingThisModule, vBErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -461,9 +461,9 @@ def fullDemo() -> None:
 
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
-                #vPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                # vPrint( 'Quiet', debuggingThisModule, vBErrors )
+                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

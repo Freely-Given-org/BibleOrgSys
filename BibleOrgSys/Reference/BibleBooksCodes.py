@@ -304,7 +304,7 @@ class BibleBooksCodes:
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
         assert len(USFMAbbreviation) == 3
-        #vPrint( 'Quiet', debuggingThisModule, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
+        #dPrint( 'Quiet', debuggingThisModule, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
         result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
         if strict: logging.warning( "getBBBFromUSFMAbbreviation is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
@@ -341,13 +341,13 @@ class BibleBooksCodes:
             assert someText and isinstance( someText, str )
 
         SomeUppercaseText = someText.upper()
-        #vPrint( 'Quiet', debuggingThisModule, '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
+        #dPrint( 'Quiet', debuggingThisModule, '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
         if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
             return SomeUppercaseText # it's already a BBB code
         #if someText.isdigit() and 1 <= int(someText) <= 999:
             #return self.__DataDicts['referenceNumberDict'][int(someText)]['referenceAbbreviation']
-        #vPrint( 'Quiet', debuggingThisModule, '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
-        #vPrint( 'Quiet', debuggingThisModule, '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
+        #dPrint( 'Quiet', debuggingThisModule, '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
+        #dPrint( 'Quiet', debuggingThisModule, '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
         if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
             return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
@@ -355,12 +355,12 @@ class BibleBooksCodes:
         matchCount, foundBBB = 0, None
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             if BBB in SomeUppercaseText:
-                #vPrint( 'Quiet', debuggingThisModule, 'getBBB1', BBB, SomeUppercaseText )
+                #dPrint( 'Quiet', debuggingThisModule, 'getBBB1', BBB, SomeUppercaseText )
                 matchCount += 1
                 foundBBB = BBB
-        #vPrint( 'Quiet', debuggingThisModule, 'getBBB2', repr(someText), matchCount, foundBBB )
+        #dPrint( 'Quiet', debuggingThisModule, 'getBBB2', repr(someText), matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        #vPrint( 'Quiet', debuggingThisModule, sorted(self.__DataDicts['allAbbreviationsDict']) )
+        #dPrint( 'Quiet', debuggingThisModule, sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBBFromText
 
 
@@ -594,9 +594,9 @@ class BibleBooksCodes:
         Sort an iterable containing 3-tuples of BBB,C,V
             or 4-tuples of BBB,C,V,S
         """
-        # vPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
+        # dPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
-        # vPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
+        # dPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
         # assert len(sortedList) == len(referencesList)
         return sortedList
     # end of BibleBooksCodes.sortBCVReferences

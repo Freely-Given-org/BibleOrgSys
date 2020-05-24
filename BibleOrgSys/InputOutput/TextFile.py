@@ -147,7 +147,7 @@ def briefDemo() -> None:
 
     #tf = TextFile( 'TextFile.py' ) # Read myself!
     #tf.replace( "TextFile", "ABRACADABRA" )
-    #vPrint( 'Quiet', debuggingThisModule, tf.fileText )
+    #dPrint( 'Quiet', debuggingThisModule, tf.fileText )
     ##tf.saveAs( "/tmp/fred.py" )
 
     tf = TextFile( folderpath=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!

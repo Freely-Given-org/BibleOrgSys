@@ -130,7 +130,7 @@ class USFMFilenames:
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
-        #vPrint( 'Quiet', debuggingThisModule, "fL", self.fileList )
+        #dPrint( 'Quiet', debuggingThisModule, "fL", self.fileList )
         #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 
         # See if we can find a pattern for these filenames
@@ -138,7 +138,7 @@ class USFMFilenames:
         for foundFilename in self.fileList:
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
-            #vPrint( 'Quiet', debuggingThisModule, foundFileBit, foundExtBit )
+            #dPrint( 'Quiet', debuggingThisModule, foundFileBit, foundExtBit )
             matched = False
             if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
                 for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
@@ -231,11 +231,11 @@ class USFMFilenames:
                 if matched: break
             if matched: break
         #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
-        #vPrint( 'Quiet', debuggingThisModule, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+        #dPrint( 'Quiet', debuggingThisModule, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
         self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
-        #vPrint( 'Quiet', debuggingThisModule, "fD", self._fileDictionary )
+        #dPrint( 'Quiet', debuggingThisModule, "fD", self._fileDictionary )
     # end of __init__
 
 
@@ -272,7 +272,7 @@ class USFMFilenames:
         """
         Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
         """
-        #vPrint( 'Quiet', debuggingThisModule, "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        #dPrint( 'Quiet', debuggingThisModule, "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
@@ -281,12 +281,12 @@ class USFMFilenames:
                 for line in possibleUSFMFile:
                     lineNumber += 1
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #vPrint( 'Quiet', debuggingThisModule, thisFilename, lineNumber, line )
+                    #dPrint( 'Quiet', debuggingThisModule, thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
                         if len(line)<5: logging.warning( "id line {!r} in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
                         tokens = idContent.split()
-                        #vPrint( 'Quiet', debuggingThisModule, "Have id tokens: {}".format( tokens ) )
+                        #dPrint( 'Quiet', debuggingThisModule, "Have id tokens: {}".format( tokens ) )
                         UCToken0 = tokens[0].upper()
                         if UCToken0=='I': UCToken0 = '1'
                         if UCToken0=='II': UCToken0 = '2'
@@ -346,7 +346,7 @@ class USFMFilenames:
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
-        #vPrint( 'Quiet', debuggingThisModule, "fD2", self._fileDictionary )
+        #dPrint( 'Quiet', debuggingThisModule, "fD2", self._fileDictionary )
         return len(self._fileDictionary)
     # end of getUSFMIDsFromFiles
 
@@ -491,7 +491,7 @@ class USFMFilenames:
         else:
             for folder,filename in self._fileDictionary.keys():
                 assert folder == self.givenFolderName
-                #vPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
+                #dPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
@@ -519,7 +519,7 @@ class USFMFilenames:
             #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  getMaximumPossibleFilenameTuples doing strictCheck…" )
             for BBB,filename in resultList.copy():
                 firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
-                #vPrint( 'Quiet', debuggingThisModule, 'UFN', repr(firstLine) )
+                #dPrint( 'Quiet', debuggingThisModule, 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
                     logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
@@ -528,7 +528,7 @@ class USFMFilenames:
                     resultList.remove( (BBB,filename) )
 
         self.lastTupleList = resultList
-        #vPrint( 'Quiet', debuggingThisModule, "getMaximumPossibleFilenameTuples is returning", resultList )
+        #dPrint( 'Quiet', debuggingThisModule, "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
@@ -540,11 +540,11 @@ class USFMFilenames:
             The order of the filenames in the list has no meaning.
         """
         folderFilenames = os.listdir( self.givenFolderName )
-        #vPrint( 'Quiet', debuggingThisModule, len(folderFilenames), folderFilenames )
+        #dPrint( 'Quiet', debuggingThisModule, len(folderFilenames), folderFilenames )
         if self.lastTupleList is None: return None # Not sure what list they're after here
-        #vPrint( 'Quiet', debuggingThisModule, len(self.lastTupleList), self.lastTupleList )
+        #dPrint( 'Quiet', debuggingThisModule, len(self.lastTupleList), self.lastTupleList )
         for BBB,actualFilename in self.lastTupleList:
-            #vPrint( 'Quiet', debuggingThisModule, BBB, actualFilename )
+            #dPrint( 'Quiet', debuggingThisModule, BBB, actualFilename )
             if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
         return folderFilenames
     # end of getUnusedFilenames
@@ -579,10 +579,10 @@ class USFMFilenames:
                 for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
                     foundPathBit, foundExtBit = os.path.splitext( filepath )
                     foundPathBit, foundFileBit = os.path.split( foundPathBit )
-                    #vPrint( 'Quiet', debuggingThisModule, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
+                    #dPrint( 'Quiet', debuggingThisModule, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
                     if foundFileBit in str(self.givenFolderName):
                         index = j; count += 1 # Take a guess that this might be the right one
-                #vPrint( 'Quiet', debuggingThisModule, count, index )
+                #dPrint( 'Quiet', debuggingThisModule, count, index )
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
         vPrint( 'Info', debuggingThisModule, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist

@@ -544,7 +544,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
     #def test_2365_getAllUnboundBibleBooksCodePairs( self ):
         #""" Test the getAllUnboundBibleBooksCodePairs function. """
         #results = self.bbc.getAllUnboundBibleBooksCodePairs()
-        #vPrint( 'Quiet', debuggingThisModule, results)
+        #dPrint( 'Quiet', debuggingThisModule, results)
         #self.assertTrue( isinstance( results, list ) )
         #self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
         #self.assertLess( len(results), 120 )

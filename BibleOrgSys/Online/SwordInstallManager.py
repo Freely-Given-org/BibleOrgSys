@@ -148,7 +148,7 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                 line = line[3:] # Remove the UTF-8 Unicode Byte Order Marker (BOM)
         if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
         if not line: continue # Just discard blank lines
-        #vPrint( 'Quiet', debuggingThisModule, "processConfLines: Conf file line {} is {!r}".format( lineCount, line ) )
+        #dPrint( 'Quiet', debuggingThisModule, "processConfLines: Conf file line {} is {!r}".format( lineCount, line ) )
         if line[0] in '#;': continue # Just discard comment lines
         if continuationFlag: thisLine += line; continuationFlag = False
         else: thisLine = line
@@ -160,8 +160,8 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                 assert '=' not in thisLine and thisLine[0]=='[' and thisLine[-1]==']'
                 confDict['Name'] = thisLine[1:-1]
             else: # not the first line in the conf file
-                #vPrint( 'Quiet', debuggingThisModule, "lastLine = '"+lastLine+"'" )
-                #vPrint( 'Quiet', debuggingThisModule, "thisLine = '"+thisLine+"'" )
+                #dPrint( 'Quiet', debuggingThisModule, "lastLine = '"+lastLine+"'" )
+                #dPrint( 'Quiet', debuggingThisModule, "thisLine = '"+thisLine+"'" )
                 if '=' not in thisLine:
                     logging.error( "Missing = in {} conf file line (line will be ignored): {!r}".format( abbreviation, thisLine ) )
                     continue
@@ -169,7 +169,7 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                     thisLine = thisLine.replace( '=', '_', 1 ) # Fix module error in strongsrealgreek.conf
                 thisLine = thisLine.replace( 'Hisotry', 'History' ) # Fix module error in 'twenty'
                 bits = thisLine.split( '=', 1 )
-                #vPrint( 'Quiet', debuggingThisModule, "processConfLines", abbreviation, bits )
+                #dPrint( 'Quiet', debuggingThisModule, "processConfLines", abbreviation, bits )
                 assert len(bits) == 2
                 fieldName, fieldContents = bits
                 for specialFieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING:
@@ -181,7 +181,7 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                         logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
                                         .format( abbreviation, fieldName, fieldContents ) )
                         fieldName, fieldContents = specialFieldName, (fieldName[len(specialFieldName):],fieldContents)
-                        #vPrint( 'Quiet', debuggingThisModule, repr(fieldName), repr(fieldContents) )
+                        #dPrint( 'Quiet', debuggingThisModule, repr(fieldName), repr(fieldContents) )
                 if fieldName in SWORD_CONF_FIELD_NAMES_ALLOWED_VERSIONING and fieldContents and isinstance( fieldContents, str ) \
                 and fieldContents[0].isdigit() and fieldContents[1] in '1234567890.' and fieldContents[2] in '1234567890.' \
                 and '.' in fieldContents[0:3] and ' ' in fieldContents[2:5] \
@@ -189,11 +189,11 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                     logging.warning( "{} conf file encountered badly formed {!r} field ({})" \
                                     .format( abbreviation, fieldName, fieldContents ) )
                     fieldContents = tuple( fieldContents.split( None, 1 ) )
-                    #vPrint( 'Quiet', debuggingThisModule, "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
+                    #dPrint( 'Quiet', debuggingThisModule, "processConfLinesFC", abbreviation, "fieldContents", repr(fieldContents) )
                     assert len(fieldContents) == 2
-                    #vPrint( 'Quiet', debuggingThisModule, j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
+                    #dPrint( 'Quiet', debuggingThisModule, j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
-                    # print( f"fieldName: '{fieldName}'")
+                    # dPrint( 'Info', debuggingThisModule, f"fieldName: '{fieldName}'")
                     assert '_' not in fieldName # now
                 if fieldName=='MinumumVersion': fieldName = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
                 if fieldName=='CompressType' and fieldContents=='Zip': fieldContents = 'ZIP' # Fix error in romcor.conf
@@ -211,13 +211,13 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                         #else:
                         try: confDict[fieldName].append( fieldContents ) #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'lots' )
                         except AttributeError: confDict[fieldName] = [confDict[fieldName], fieldContents ] #; vPrint( 'Quiet', debuggingThisModule, fieldName, 'made list' )
-                    #vPrint( 'Quiet', debuggingThisModule, "here", repr(fieldName), confDict[fieldName] )
+                    #dPrint( 'Quiet', debuggingThisModule, "here", repr(fieldName), confDict[fieldName] )
                 else: confDict[fieldName] = fieldContents # Most fields only occur once
-                #vPrint( 'Quiet', debuggingThisModule, "done", repr(fieldName), confDict[fieldName] )
+                #dPrint( 'Quiet', debuggingThisModule, "done", repr(fieldName), confDict[fieldName] )
         lastLine = line
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        #vPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
+        #dPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
         for cdKey,cdValue in confDict.items(): vPrint( 'Quiet', debuggingThisModule, " {} = {}".format( cdKey, cdValue ) )
 # end of processConfLines
 
@@ -356,11 +356,11 @@ class SwordInstallManager():
         repoSaveFolder = self.currentTempFolder
         repoCompressedSaveFilepath = os.path.join( repoSaveFolder, repoCompressedFilename )
         if os.path.isfile( repoCompressedSaveFilepath ): # delete file if it exists
-            #vPrint( 'Quiet', debuggingThisModule, "Delete1", repoCompressedSaveFilepath )
+            #dPrint( 'Quiet', debuggingThisModule, "Delete1", repoCompressedSaveFilepath )
             os.remove( repoCompressedSaveFilepath )
         repoConfFolder = os.path.join( repoSaveFolder, repoConfFolderName )
         if os.path.isdir( repoConfFolder ): # delete folder if it exists
-            #vPrint( 'Quiet', debuggingThisModule, "Delete2", repoConfFolder )
+            #dPrint( 'Quiet', debuggingThisModule, "Delete2", repoConfFolder )
             shutil.rmtree( repoConfFolder )
 
         vPrint( 'Normal', debuggingThisModule, _("Refreshing/Downloading index files from {} repository…").format( self.currentRepoName ) )
@@ -384,7 +384,7 @@ class SwordInstallManager():
             allConfigsTar = tarfile.open( repoCompressedSaveFilepath, mode='r:gz')
             allConfigsTar.extractall( path=repoSaveFolder )
         repoConfFolder = os.path.join( repoSaveFolder, repoConfFolderName )
-        #vPrint( 'Quiet', debuggingThisModule, 'repoConfFolder', repoConfFolder )
+        #dPrint( 'Quiet', debuggingThisModule, 'repoConfFolder', repoConfFolder )
 
         # Find the names of the .conf files
         confNames = []
@@ -395,35 +395,35 @@ class SwordInstallManager():
                     confNames.append( something[:-5] ) # Remove .conf from filename
                 else: vPrint( 'Quiet', debuggingThisModule, "why", something )
             else: vPrint( 'Quiet', debuggingThisModule, "got", something )
-        #vPrint( 'Quiet', debuggingThisModule, 'confNames', len(confNames), confNames )
+        #dPrint( 'Quiet', debuggingThisModule, 'confNames', len(confNames), confNames )
 
         # Tried to do this all in memory using streams but couldn't make it work :(
         #repoPath = repoSite + repoFolderpath + repoCompressedFilename
-        #vPrint( 'Quiet', debuggingThisModule, _("Getting {!r} module list from {}…").format( repoName, repoPath ) )
+        #dPrint( 'Quiet', debuggingThisModule, _("Getting {!r} module list from {}…").format( repoName, repoPath ) )
         #ftpstream = urllib.request.urlopen( 'ftp://' + repoPath )
         #allConfigsTar = tarfile.open( fileobj=ftpstream, mode='r|gz')
         ##allConfigsTar.extractall()
         #for member in allConfigsTar:
-            #vPrint( 'Quiet', debuggingThisModule, '  m', member, member.name, member.size )
+            #dPrint( 'Quiet', debuggingThisModule, '  m', member, member.name, member.size )
             #assert isinstance( member, tarfile.TarInfo )
-            #vPrint( 'Quiet', debuggingThisModule, '  mf', member.isfile() )
-            #vPrint( 'Quiet', debuggingThisModule, '  md', member.isdir() )
+            #dPrint( 'Quiet', debuggingThisModule, '  mf', member.isfile() )
+            #dPrint( 'Quiet', debuggingThisModule, '  md', member.isdir() )
             #if member.isfile():
                 #configData = allConfigsTar.extractfile( member.name )
-                #vPrint( 'Quiet', debuggingThisModule, '  cD', configData )
+                #dPrint( 'Quiet', debuggingThisModule, '  cD', configData )
 
                 #with gzip.open( configData, 'rt', encoding='utf-8' ) as cFile1:
-                    #vPrint( 'Quiet', debuggingThisModule, '  cFile1', cFile1, dir(cFile1), cFile1.tell() )
-                    ##vPrint( 'Quiet', debuggingThisModule, 'ww', ww )
+                    #dPrint( 'Quiet', debuggingThisModule, '  cFile1', cFile1, dir(cFile1), cFile1.tell() )
+                    ##dPrint( 'Quiet', debuggingThisModule, 'ww', ww )
                     #configStuff = cFile1.readlines()
                     ##for x in cFile1:
-                        ##vPrint( 'Quiet', debuggingThisModule, 'x', x )
+                        ##dPrint( 'Quiet', debuggingThisModule, 'x', x )
                     ##with open( cFile1, mode='rt', encoding='utf-8' ) as cFile2:
-                        ##vPrint( 'Quiet', debuggingThisModule, '  cFile2', cFile2 )
+                        ##dPrint( 'Quiet', debuggingThisModule, '  cFile2', cFile2 )
                         ##configStuff = cFile2.read()
-                #vPrint( 'Quiet', debuggingThisModule, '  cS', configStuff )
+                #dPrint( 'Quiet', debuggingThisModule, '  cS', configStuff )
 
-        #vPrint( 'Quiet', debuggingThisModule, allConfigs )
+        #dPrint( 'Quiet', debuggingThisModule, allConfigs )
 
         # Place the conf files information into a dictionary
         for confName in confNames:
@@ -438,7 +438,7 @@ class SwordInstallManager():
                 else: self.availableModules[moduleName].append( newTuple )
             else: # add it
                 self.availableModules[moduleName] = newTuple
-        #vPrint( 'Quiet', debuggingThisModule, 'availableModules', len(self.availableModules), self.availableModules.keys() )
+        #dPrint( 'Quiet', debuggingThisModule, 'availableModules', len(self.availableModules), self.availableModules.keys() )
         return True
     # end of SwordInstallManager.refreshRemoteSource
 
@@ -486,7 +486,7 @@ class SwordInstallManager():
         with open( confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as confFile:
             processConfLines( confName, confFile, confDict )
 
-        #vPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
+        #dPrint( 'Quiet', debuggingThisModule, 'confDict', confDict )
         return confDict
     # end of SwordInstallManager._getConfFile
 
@@ -533,9 +533,9 @@ class SwordInstallManager():
         if moduleRelativePath.startswith( './' ): moduleRelativePath = moduleRelativePath[2:]
         if str(moduleRelativePath)[-1] != '/':
             moduleRelativePath = f'{moduleRelativePath}/'
-        #vPrint( 'Quiet', debuggingThisModule, repr(moduleName), repr(moduleRelativePath) )
+        #dPrint( 'Quiet', debuggingThisModule, repr(moduleName), repr(moduleRelativePath) )
         fileSaveFolder = os.path.join( self.currentInstallFolderpath, moduleRelativePath )
-        #vPrint( 'Quiet', debuggingThisModule, "Save folder is", fileSaveFolder )
+        #dPrint( 'Quiet', debuggingThisModule, "Save folder is", fileSaveFolder )
         if not os.path.isdir( fileSaveFolder): os.makedirs( fileSaveFolder )
 
         # Assume that we're good to go
@@ -559,11 +559,11 @@ class SwordInstallManager():
                                             .format( repoFolderpath, repoSite, err ) )
                 return False
         for filename,filedict in ftp.mlsd( moduleRelativePath ):
-            #vPrint( 'Quiet', debuggingThisModule, '  ff', repr(filename), filedict )
+            #dPrint( 'Quiet', debuggingThisModule, '  ff', repr(filename), filedict )
             if filename not in ( '.','..', ): # Ignore these
-                #vPrint( 'Quiet', debuggingThisModule, "    Need to download", filename )
+                #dPrint( 'Quiet', debuggingThisModule, "    Need to download", filename )
                 fileSaveFilepath = os.path.join( fileSaveFolder, filename )
-                #vPrint( 'Quiet', debuggingThisModule, "    Save filepath is", fileSaveFilepath )
+                #dPrint( 'Quiet', debuggingThisModule, "    Save filepath is", fileSaveFilepath )
                 ftp.retrbinary( 'RETR ' + moduleRelativePath + filename,
                                     open( fileSaveFilepath, 'wb' ).write )
 

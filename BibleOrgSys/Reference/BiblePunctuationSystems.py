@@ -192,14 +192,14 @@ class BiblePunctuationSystems:
         assert systemName
         assert punctuationSchemeToCheck
         assert self.Lists
-        #vPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
+        #dPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #vPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
@@ -251,7 +251,7 @@ class BiblePunctuationSystem:
         self.__systemName = systemName
         self.__bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         self.__punctuationDict = self.__bpss.getPunctuationSystem( self.__systemName )
-        #vPrint( 'Quiet', debuggingThisModule, "xxx", self.__punctuationDict )
+        #dPrint( 'Quiet', debuggingThisModule, "xxx", self.__punctuationDict )
     # end of __init__
 
     def __str__( self ) -> str:
@@ -300,7 +300,7 @@ class BiblePunctuationSystem:
         """ Returns the value for the name. """
         assert name
         return self.__punctuationDict[name]
-        ##vPrint( 'Quiet', debuggingThisModule, "yyy", self.__punctuationDict )
+        ##dPrint( 'Quiet', debuggingThisModule, "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
         #logging.error( _("No {!r} value in {} punctuation system").format(name,self.__systemName) )
         #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )

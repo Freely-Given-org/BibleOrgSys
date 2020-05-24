@@ -344,7 +344,7 @@ class BibleBooksCodesConverter:
             if element.find('typicalSection') is None: typicalSection = None
             else:
                 typicalSection = element.find('typicalSection').text
-                #vPrint( 'Quiet', debuggingThisModule, 'typicalSection', repr(typicalSection) )
+                #dPrint( 'Quiet', debuggingThisModule, 'typicalSection', repr(typicalSection) )
                 if BibleOrgSysGlobals.debugFlag: assert typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK','???')
 
             # Now put it into my dictionaries for easy access
@@ -495,7 +495,7 @@ class BibleBooksCodesConverter:
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
             if "possibleAlternativeAbbreviations" in self._compulsoryElements or possibleAlternativeAbbreviations:
                 for possibleAlternativeAbbreviation in possibleAlternativeAbbreviations:
-                    #vPrint( 'Quiet', debuggingThisModule, "here", possibleAlternativeAbbreviation, referenceAbbreviation )
+                    #dPrint( 'Quiet', debuggingThisModule, "here", possibleAlternativeAbbreviation, referenceAbbreviation )
                     assert possibleAlternativeAbbreviation.upper() == possibleAlternativeAbbreviation
                     assert possibleAlternativeAbbreviation not in myPossAltBooksDict
                     myPossAltBooksDict[possibleAlternativeAbbreviation] = referenceAbbreviation
@@ -582,7 +582,7 @@ class BibleBooksCodesConverter:
                             #s,f = free[-1]
                             #if f==num-1: free.pop(); free.append( (s, num) ); continue
                     #free.append( num )
-            #vPrint( 'Quiet', debuggingThisModule, "Free reference numbers = {}".format( free ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Free reference numbers = {}".format( free ) )
             #free = [] # Print available sequence numbers
             #for num in range(1, 1000):
                 #if num not in sequenceNumberList:
@@ -593,16 +593,16 @@ class BibleBooksCodesConverter:
                             #s,f = free[-1]
                             #if f==num-1: free.pop(); free.append( (s, num) ); continue
                     #free.append( num )
-            #vPrint( 'Quiet', debuggingThisModule, "Free sequence numbers = {}".format( free ) )
+            #dPrint( 'Quiet', debuggingThisModule, "Free sequence numbers = {}".format( free ) )
 
             ## Compare OSIS and Sword entries
-            #vPrint( 'Quiet', debuggingThisModule, "referenceNumberDict", len(myIDDict), myIDDict[1] )
-            #vPrint( 'Quiet', debuggingThisModule, "referenceAbbreviationDict", len(myRefAbbrDict), myRefAbbrDict['GEN'] )
-            #vPrint( 'Quiet', debuggingThisModule, "OSISAbbreviationDict", len(myOADict) ) #myOADict )
-            #vPrint( 'Quiet', debuggingThisModule, "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
+            #dPrint( 'Quiet', debuggingThisModule, "referenceNumberDict", len(myIDDict), myIDDict[1] )
+            #dPrint( 'Quiet', debuggingThisModule, "referenceAbbreviationDict", len(myRefAbbrDict), myRefAbbrDict['GEN'] )
+            #dPrint( 'Quiet', debuggingThisModule, "OSISAbbreviationDict", len(myOADict) ) #myOADict )
+            #dPrint( 'Quiet', debuggingThisModule, "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
             #for num, entry in myIDDict.items():
                 #if entry['SwordAbbreviation']!=entry['OSISAbbreviation']:
-                    #vPrint( 'Quiet', debuggingThisModule, "{} {} OSIS={!r} Sword={!r}".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
+                    #dPrint( 'Quiet', debuggingThisModule, "{} {} OSIS={!r} Sword={!r}".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of BibleBooksCodesConverter.importDataToPython
