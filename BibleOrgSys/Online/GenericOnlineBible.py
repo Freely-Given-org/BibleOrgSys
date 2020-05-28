@@ -35,7 +35,7 @@ if __name__ == '__main__':
     import re
 import logging # Append the containing folder to the path to search for the BOS
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 
 
@@ -66,7 +66,7 @@ class GenericOnlineBible:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        vPrint( 'Never', debuggingThisModule, "GenericOnlineBible.__init__()" )
+        fnPrint( debuggingThisModule, "GenericOnlineBible.__init__()" )
 
         self.bookList = None
         self.books = {}
@@ -110,7 +110,7 @@ class GenericOnlineBible:
         """
         Given an index, return the book object (or raise an IndexError)
         """
-        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
+        fnPrint( debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of GenericOnlineBible.__getitem__
@@ -145,7 +145,7 @@ class GenericOnlineBible:
         """
         Given a BCV key, add the data to the cache.
         """
-        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
+        fnPrint( debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
             vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
@@ -165,7 +165,7 @@ class GenericOnlineBible:
 
         Return None if not.
         """
-        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
+        fnPrint( debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
             vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
@@ -183,7 +183,7 @@ class GenericOnlineBible:
 
         (Most platforms don't provide the context so an empty list is returned.)
         """
-        vPrint( 'Never', debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )…" )
+        fnPrint( debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )…" )
 
         return self.getVerseDataList( key ), [] # No context
     # end of GenericOnlineBible.getContextVerseData

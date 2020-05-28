@@ -83,7 +83,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -214,7 +214,7 @@ class DrupalBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        vPrint( 'Info', debuggingThisModule, _("DrupalBible__init__ ( {!r}, {!r}, {!r} )").format( sourceFolder, givenName, encoding ) )
+        fnPrint( debuggingThisModule, _("DrupalBible__init__ ( {!r}, {!r}, {!r} )").format( sourceFolder, givenName, encoding ) )
         assert sourceFolder
         assert givenName
 

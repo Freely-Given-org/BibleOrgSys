@@ -49,7 +49,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
@@ -80,7 +80,7 @@ class DCSBibles:
         """
         Create the internal Bibles object.
         """
-        vPrint( 'Never', debuggingThisModule, _("DCSBibles.__init__()…") )
+        fnPrint( debuggingThisModule, "DCSBibles.__init__()" )
 
         # See if the site is online by making a small call to get the API version
         self.onlineVersion = None
@@ -105,7 +105,7 @@ class DCSBibles:
 
         Returns None if the data cannot be fetched.
         """
-        vPrint( 'Never', debuggingThisModule, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
+        fnPrint( debuggingThisModule, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
         vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
@@ -139,7 +139,7 @@ class DCSBibles:
         This can be quite slow.
 
         """
-        vPrint( 'Never', debuggingThisModule, "DCSBibles.fetchAllBibles()…" )
+        fnPrint( debuggingThisModule, "DCSBibles.fetchAllBibles()" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
         vPrint( 'Normal', debuggingThisModule, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
@@ -165,7 +165,7 @@ class DCSBibles:
                     and len(resultDict['data']) < limit: # must be finished
                         break
                     pageNumber += 1
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  BibleList", len(self.BibleList) , self.BibleList )
+            dPrint( 'Quiet', debuggingThisModule, "  BibleList", len(self.BibleList) , self.BibleList )
         return self.BibleList
     # end of DCSBibles.fetchAllBibles
 
@@ -248,7 +248,7 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        vPrint( 'Never', debuggingThisModule, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        fnPrint( debuggingThisModule, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
@@ -272,7 +272,7 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        vPrint( 'Never', debuggingThisModule, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        fnPrint( debuggingThisModule, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
@@ -305,7 +305,7 @@ class DCSBible( USFMBible ):
         or
             an index into the BibleList in the resourcesObject passed as the second parameter
         """
-        vPrint( 'Never', debuggingThisModule, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
+        fnPrint( debuggingThisModule, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
 
         if isinstance( parameterOne, dict ):
             assert resourcesObject is None
@@ -401,7 +401,7 @@ class DCSBible( USFMBible ):
         TODO: This function doesn't check if the USFM book was downloaded by a previous run
                 (and is still up-to-date)
         """
-        vPrint( 'Never', debuggingThisModule, f"DCSBible.loadBookIfNecessary( {BBB} )…" )
+        fnPrint( debuggingThisModule, f"DCSBible.loadBookIfNecessary( {BBB} )" )
 
         if not self.downloadedAllBooks:
             if BBB not in self.attemptedDownload or not self.attemptedDownload[BBB]:

@@ -89,7 +89,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
@@ -134,7 +134,7 @@ class BibleReferenceBase:
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': # default (if we know the punctuation system)
             assert BibleObject is None
             self.punctuationDict = self._BibleOrganisationalSystem.getPunctuationDict()
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
+            dPrint( 'Quiet', debuggingThisModule, "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
         else: # else use a very generic punctuation system
             assert BibleObject is not None
             self.punctuationDict = { 'spaceAllowedAfterBCS': 'E',
@@ -157,7 +157,7 @@ class BibleReferenceBase:
             self.getBookNameFunction = self._BibleOrganisationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganisationalSystem.getBookAbbreviation
             self.getBBBFromText = self._BibleOrganisationalSystem.getBBBFromText # This is the function that finds a book code from the vernacular name or abbreviation
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
+            dPrint( 'Quiet', debuggingThisModule, "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
             assert BibleObject is not None
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
@@ -1236,7 +1236,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
         Basically just returns the first result (if any) from parseReferenceString.
         """
-        vPrint( 'Never', debuggingThisModule, "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
+        fnPrint( debuggingThisModule, "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
         hE, hW, refList = self.parseReferenceString( referenceString, location )
         vPrint( 'Never', debuggingThisModule, "gFR", hE, hW, refList )
         for something in refList: # Just return the first one
@@ -1485,7 +1485,7 @@ class BibleAnchorReference:
 
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
-        vPrint( 'Never', debuggingThisModule, "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
+        fnPrint( debuggingThisModule, "parseAnchorString: {} passed {!r}".format( self.homeTuple, anchorString ) )
         if location is None: location = '(unknown)'
         #dPrint( 'Quiet', debuggingThisModule, "Processing {!r} from {}".format( anchorString, location ) )
         assert anchorString and isinstance( anchorString, str )

@@ -44,7 +44,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
@@ -252,7 +252,7 @@ class ESFMBible( Bible ):
         """
         Create the internal ESFM Bible object.
         """
-        vPrint( 'Quiet', debuggingThisModule, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
+        fnPrint( debuggingThisModule, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -471,7 +471,7 @@ class ESFMBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
         if BBB in self.dontLoadBook: return # Must be a dictionary that's already loaded
         if BBB in self.triedLoadingBook:
@@ -497,7 +497,7 @@ class ESFMBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, "ESFMBible.loadBookMP( {} )".format( BBB_Filename ) )
+        fnPrint( debuggingThisModule, "ESFMBible.loadBookMP( {} )".format( BBB_Filename ) )
         BBB, filename = BBB_Filename
         assert BBB not in self.books
         if BBB in self.dontLoadBook: return None
@@ -516,7 +516,7 @@ class ESFMBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, _("ESFMBible: Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        fnPrint( debuggingThisModule, _("ESFMBible: Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 

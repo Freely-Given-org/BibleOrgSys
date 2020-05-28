@@ -57,7 +57,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 
@@ -266,11 +266,11 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
         #dPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )
         if m1==m2: resultDict['Same']['SameMarkerCount'] += 1
         else:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
+            dPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentMarkerCount'] += 1
         if m1==m2 and l1==l2: resultDict['Same']['SameLineCount'] += 1
         else:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
+            dPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentLineCount'] += 1
         lineIndex += 1
 

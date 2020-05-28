@@ -61,7 +61,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
@@ -415,7 +415,8 @@ class InternalBibleBook:
         if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
             logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
             if marker != 'w': # This can happen with unfoldingWord aligned Bibles
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, self, repr(marker), repr(text) ); halt # How did this happen?
+                dPrint( 'Quiet', debuggingThisModule, self, repr(marker), repr(text) )
+                if debuggingThisModule: halt # How did this happen?
 
         if text is None:
             logging.critical( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
@@ -1303,7 +1304,7 @@ class InternalBibleBook:
         Note: the six parameters for InternalBibleEntry are
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
-        vPrint( 'Never', debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
+        fnPrint( debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
 
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         openMarkers:List[str] = []
@@ -1781,7 +1782,7 @@ class InternalBibleBook:
 
         Note: we don't number lines in the introduction (i.e., before c 1).
         """
-        vPrint( 'Never', debuggingThisModule, f"addVerseStartMarkers() for {self.BBB}" )
+        fnPrint( debuggingThisModule, f"addVerseStartMarkers() for {self.BBB}" )
 
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         fieldsPreceded = ('s','s1','s2','s3','s4','sp')
@@ -2509,7 +2510,7 @@ class InternalBibleBook:
     def debugPrint( self ):
         """
         """
-        vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
+        fnPrint( debuggingThisModule, "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
         numLines = 50
         if '_rawLines' in self.__dict__:
             for j in range( min( numLines, len(self._rawLines) ) ):
@@ -2848,7 +2849,7 @@ class InternalBibleBook:
 
         Stores it in self.versification and self.missingVersesList
         """
-        vPrint( 'Never', debuggingThisModule, "getVersificationIfNecessary()" )
+        fnPrint( debuggingThisModule, "getVersificationIfNecessary()" )
         if self.versificationList is None:
             assert self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None # also
             versificationResult = self.getVersification()

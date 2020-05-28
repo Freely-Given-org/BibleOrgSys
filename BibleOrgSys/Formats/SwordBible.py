@@ -50,7 +50,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible #, BibleBook
 from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterface -- the SwordType gets the old value if SwordType is rebound
                       # Normally it wouldn't be a problem, but we adjust SwordType in DemoTests to test both modes
@@ -112,7 +112,7 @@ def SwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
 
         Returns a list of Bible module names (without the .conf) -- they are the case of the folder name.
         """
-        vPrint( 'Verbose', debuggingThisModule, " SwordBibleFileCheck.confirmThisFolder: Looking for files in given {}".format( checkFolderpath ) )
+        fnPrint( debuggingThisModule, " SwordBibleFileCheck.confirmThisFolder: Looking for files in given {}".format( checkFolderpath ) )
 
         # See if there's any .conf files in the mods.d folder
         confFolder = os.path.join( checkFolderpath, 'mods.d/' )
@@ -260,7 +260,7 @@ class SwordBible( Bible ):
         The module name (if needed) should be the name of one of the .conf files in the mods.d folder
             (with or without the .conf on it).
         """
-        vPrint( 'Never', debuggingThisModule, f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
+        fnPrint( debuggingThisModule, f"SwordBible.__init__( {sourceFolder} {moduleName} {encoding} ) for '{SwordResources.SwordType}'" )
 
         if not sourceFolder and not moduleName:
             logging.critical( _("SwordBible must be passed either a folder path or a module name!" ) )
@@ -351,7 +351,7 @@ class SwordBible( Bible ):
         """
         Load the compressed data file and import book elements.
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordBible.loadBooks()…") )
+        fnPrint( debuggingThisModule, "SwordBible.loadBooks()" )
 
         vPrint( 'Normal', debuggingThisModule, _("\nLoading {} module…").format( self.moduleName ) )
 
@@ -519,9 +519,9 @@ def testSwB( SwFolderpath, SwModuleName=None ):
         except KeyError:
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '' )
+            dPrint( 'Quiet', debuggingThisModule, '' )
             vPrint( 'Quiet', debuggingThisModule, reference, shortText, verseText )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
+            dPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
     return SwBible
 # end of testSwB
 

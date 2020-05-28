@@ -43,7 +43,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
@@ -1151,7 +1151,7 @@ class SwordInterface():
         """
         Adds another path to search for modules in.
         """
-        vPrint( 'Never', debuggingThisModule, f"SwordInterface.augmentModules( {newPath} )…" )
+        fnPrint( debuggingThisModule, f"SwordInterface.augmentModules( {newPath} )…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.library is not None
 
@@ -1169,7 +1169,7 @@ class SwordInterface():
 
         Returns a list of available Sword module codes.
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getAvailableModuleCodes( {} )").format( onlyModuleTypes ) )
+        fnPrint( debuggingThisModule, "SwordInterface.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1194,7 +1194,7 @@ class SwordInterface():
 
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getAvailableModuleCodeDuples( {} )").format( onlyModuleTypes ) )
+        fnPrint( debuggingThisModule, "SwordInterface.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
 
         if SwordType == 'CrosswireLibrary':
             availableModuleCodes = []
@@ -1227,7 +1227,7 @@ class SwordInterface():
 
         (Doesn't load books)
         """
-        vPrint( 'Never', debuggingThisModule, "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
+        fnPrint( debuggingThisModule, "SwordInterface.getModule( {} )".format( moduleAbbreviation ) )
 
         if SwordType == 'CrosswireLibrary':
             #dPrint( 'Quiet', debuggingThisModule, "gM", module.getName() )
@@ -1252,7 +1252,7 @@ class SwordInterface():
         """
         Load the given book from a Sword Module into the given BibleObject.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordInterface.loadBook( {}, …, {} )".format( BBB, moduleAbbreviation ) )
+        fnPrint( debuggingThisModule, "SwordInterface.loadBook( {}, …, {} )".format( BBB, moduleAbbreviation ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert BBB not in BibleObject
 
@@ -1374,7 +1374,7 @@ class SwordInterface():
         """
         Load all the books from a Sword Module into the given BibleObject.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordInterface.loadBooks( …, {} )".format( moduleAbbreviation ) )
+        fnPrint( debuggingThisModule, "SwordInterface.loadBooks( …, {} )".format( moduleAbbreviation ) )
 
         module = self.getModule( moduleAbbreviation )
         if module is None:
@@ -1526,7 +1526,7 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInterface.getContextVerseData( {}, {} )").format( module.getName(), key.getShortText() ) )
+        fnPrint( debuggingThisModule, "SwordInterface.getContextVerseData( {}, {} )".format( module.getName(), key.getShortText() ) )
 
         if SwordType == 'CrosswireLibrary':
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
@@ -1593,7 +1593,7 @@ class SwordInterface():
                                     'In the beginning God created the heavens and the earth.', [])
             ]
         """
-        vPrint( 'Quiet', debuggingThisModule, "SwordResources: getVerseDataList( {}, {} )".format( module, key ) )
+        fnPrint( debuggingThisModule, "SwordResources: getVerseDataList( {}, {} )".format( module, key ) )
 
         if SwordType == 'CrosswireLibrary':
             try: verseText = module.stripText( key )

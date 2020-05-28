@@ -84,7 +84,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
@@ -158,7 +158,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
             and not firstLines[1].startswith( '<!--For Programmers' ) \
             and not firstLines[1].startswith( '<!--Visit the' ) \
             and not firstLines[1].startswith( '<!--http://zefania' ):
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
+                dPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -209,7 +209,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
                 and not firstLines[1].startswith( '<!--Visit the' ) \
                 and not firstLines[1].startswith( '<!--http://zefania' ):
-                    if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
+                    dPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
                     continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename

@@ -74,7 +74,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-02' # by RJH
@@ -394,6 +394,7 @@ class BibleVersificationSystems:
         Create a new versification file if it doesn't match any.
         Returns the number of matched systems (which can also be used as a True/False "matched" flag).
         """
+        fnPrint( debuggingThisModule, f"checkVersificationSystem( {thisSystemName}, … )")
         assert self.__DataDict
         assert versificationSchemeToCheck
         omittedVersesToCheck, combinedVersesToCheck, reorderedVersesToCheck = {}, {}, {}
@@ -547,14 +548,14 @@ class BibleVersificationSystems:
         if systemMatchCount == 1: # What we hope for
             if badOVList: vPrint( 'Quiet', debuggingThisModule, "  " + _("{} roughly matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
             else: vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+            dPrint( 'Quiet', debuggingThisModule, errorSummary )
         elif systemMatchCount == 0: # No matches
             vPrint( 'Quiet', debuggingThisModule, "  " + _("{} mismatched {} versification systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(versificationSchemeToCheck) ) )
             toPrint = allErrors if BibleOrgSysGlobals.debugFlag else errorSummary
             if toPrint: vPrint( 'Quiet', debuggingThisModule, toPrint )
         else: # Multiple matches
             vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} versification system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedVersificationSystemCodes, len(versificationSchemeToCheck) ) )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+            dPrint( 'Quiet', debuggingThisModule, errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', "BibleVersificationSystem_"+thisSystemName + '.xml' )
@@ -717,7 +718,7 @@ class BibleVersificationSystem:
 
         Returns the number of verses (int) in the given book and chapter.
         """
-        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
+        fnPrint( debuggingThisModule, "BibleVersificationSystem.getNumVerses( {}, {!r} )".format( BBB, repr(C) ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
@@ -799,7 +800,7 @@ class BibleVersificationSystem:
         Extended flag allows chapter and verse numbers of zero
             but it allows almost any number of verses in chapter zero (up to 199).
         """
-        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        fnPrint( debuggingThisModule, "BibleVersificationSystem.isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
 
         BBB, C, V, S = referenceTuple
         assert len(BBB) == 3
@@ -827,7 +828,7 @@ class BibleVersificationSystem:
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
-        vPrint( 'Never', debuggingThisModule, "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
+        fnPrint( debuggingThisModule, "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
         assert startRef and len(startRef)==4
         assert endRef and len(endRef)==4
 

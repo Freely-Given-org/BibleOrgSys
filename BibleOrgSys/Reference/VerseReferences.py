@@ -77,7 +77,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-29' # by RJH
@@ -204,7 +204,7 @@ class SimpleVerseKey():
     def __init__( self, BBB:str, C=None, V=None, SI=None, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
+        fnPrint( debuggingThisModule, "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
 
         self.ignoreParseErrors = ignoreParseErrors
 
@@ -336,7 +336,7 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS1_RE, referenceString )
         if match:
@@ -378,7 +378,7 @@ class SimpleVerseKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS1_RE, referenceString )
         if match:
@@ -420,7 +420,7 @@ class SimpleVersesKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -486,7 +486,7 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS2_RE, referenceString )
         if match:
@@ -719,7 +719,7 @@ class SimpleVersesKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS2_RE, referenceString )
         if match:
@@ -809,7 +809,7 @@ class VerseRangeKey():
     def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
 
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
@@ -867,7 +867,7 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
 
         match = re.search( BCVS_RANGE_RE, referenceString )
         if match:
@@ -949,7 +949,7 @@ class VerseRangeKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
 
         match = re.search( OSIS_BCVS_RANGE_RE, referenceString )
         if match:
@@ -1041,7 +1041,7 @@ class FlexibleVersesKey():
     def __init__( self, referenceString, OSIS=False ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( referenceString, str ) and 5<=len(referenceString)<=20
 
@@ -1108,7 +1108,7 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseReferenceString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
@@ -1619,7 +1619,7 @@ class FlexibleVersesKey():
 
         Returns True or False on success
         """
-        vPrint( 'Never', debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
+        fnPrint( debuggingThisModule, "parseOSISString( {!r} )".format( referenceString ) )
         try:
             resultKey = SimpleVerseKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )

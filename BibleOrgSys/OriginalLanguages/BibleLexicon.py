@@ -156,7 +156,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.OriginalLanguages import HebrewLexicon
 from BibleOrgSys.OriginalLanguages import GreekLexicon
 
@@ -299,7 +299,7 @@ class BibleLexicon:
 
         Does not actually cause the XML to be loaded (very slow).
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.__init__( {}, {}, {} )".format( HebrewXMLFolder, GreekXMLFolder, preload ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         fnfCount = 0
         try: self.hLexicon = HebrewLexicon.HebrewLexicon( self.HebrewXMLFolder, preload ) # Create the object
@@ -348,7 +348,7 @@ class BibleLexicon:
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getStrongsEntryData( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getStrongsEntryData( {} )".format( repr(key) ) )
         if key.startswith( 'H' ):
             return self.hLexicon.getStrongsEntryData( key )
         if key.startswith( 'G' ):
@@ -364,7 +364,7 @@ class BibleLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getStrongsEntryField( {}, {} )".format( repr(key), repr(fieldName) ) )
         if key.startswith( 'H' ):
             return self.hLexicon.getStrongsEntryField( key, fieldName )
         if key.startswith( 'G' ):
@@ -390,7 +390,7 @@ class BibleLexicon:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getStrongsEntryHTML( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getStrongsEntryHTML( {} )".format( repr(key) ) )
         if key.startswith( 'H' ):
             return self.hLexicon.getStrongsEntryHTML( key )
         if key.startswith( 'G' ):
@@ -407,7 +407,7 @@ class BibleLexicon:
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryData( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getBrDrBrEntryData( {} )".format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryData( key )
     # end of BibleLexicon.getBrDrBrEntryData
 
@@ -420,7 +420,7 @@ class BibleLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getBrDrBrEntryField( {}, {} )".format( repr(key), repr(fieldName) ) )
         return self.hLexicon.getBrDrBrEntryField( key, fieldName )
     # end of BibleLexicon.getBrDrBrEntryField
 
@@ -432,7 +432,7 @@ class BibleLexicon:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getBrDrBrEntryHTML( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getBrDrBrEntryHTML( {} )".format( repr(key) ) )
         return self.hLexicon.getBrDrBrEntryHTML( key )
     # end of BibleLexicon.getBrDrBrEntryHTML
 
@@ -446,7 +446,7 @@ class BibleLexicon:
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getEntryData( {} )".format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit():
             return self.hLexicon.getStrongsEntryData( key )
@@ -465,7 +465,7 @@ class BibleLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getEntryField( {}, {} )".format( repr(key), repr(fieldName) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit():
             return self.hLexicon.getStrongsEntryField( key, fieldName )
@@ -494,7 +494,7 @@ class BibleLexicon:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        vPrint( 'Never', debuggingThisModule, _("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
+        fnPrint( debuggingThisModule, "BibleLexicon.getEntryHTML( {} )".format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit():
             return self.hLexicon.getStrongsEntryHTML( key )

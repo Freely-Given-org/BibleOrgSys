@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-18' # by RJH
@@ -164,8 +164,8 @@ class XMLFile():
             vPrint( 'Info', debuggingThisModule, "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
             self.validatedWithLint = True
 
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "cPOS  = {!r}".format( checkProgramOutputString ) )
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
+        dPrint( 'Quiet', debuggingThisModule, "cPOS  = {!r}".format( checkProgramOutputString ) )
+        dPrint( 'Quiet', debuggingThisModule, "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
         return self.validatedWithLint, checkProgramOutputString, checkProgramErrorOutputString
     # end of XMLFile.validateWithLint
 

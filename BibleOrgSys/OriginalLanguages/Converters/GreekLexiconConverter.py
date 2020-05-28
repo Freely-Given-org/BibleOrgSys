@@ -40,7 +40,7 @@ if __name__ == '__main__':
     if aboveAboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-04' # by RJH
@@ -91,7 +91,7 @@ class GreekStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        vPrint( 'Never', debuggingThisModule, _("GreekStrongsFileConverter.__init__()…") )
+        fnPrint( debuggingThisModule, "GreekStrongsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.StrongsEntries = None
     # end of GreekStrongsFileConverter.__init__
@@ -118,7 +118,7 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Never', debuggingThisModule, f"loadAndValidate( {XMLFolder} )…" )
+        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder

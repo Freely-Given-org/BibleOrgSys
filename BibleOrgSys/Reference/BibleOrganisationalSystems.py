@@ -64,7 +64,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Reference.BibleBookOrders import BibleBookOrderSystem
@@ -186,7 +186,7 @@ class BibleOrganisationalSystems:
 
         Returns the system dictionary.
         """
-        vPrint( 'Never', debuggingThisModule, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
+        fnPrint( debuggingThisModule, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
         assert systemName
         assert isinstance( systemName, str )
 
@@ -217,7 +217,7 @@ class BibleOrganisationalSystems:
         """
         Gets a value for the system.
         """
-        vPrint( 'Never', debuggingThisModule, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
+        fnPrint( debuggingThisModule, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
         assert systemName and isinstance( systemName, str )
         assert valueName and isinstance( valueName, str )
         thisSystem = self.getOrganisationalSystem( systemName, suppressErrors )
@@ -284,7 +284,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 if 'derivedFrom' in self.__dataDict:
                     trySystemName = self.__dataDict['derivedFrom']
                     if isinstance( trySystemName, str ):
-                        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
+                        dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -316,7 +316,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         versificationSystemName = self.getOrganisationalSystemValue( 'versificationSystem' )
         punctuationSystemName = self.getOrganisationalSystemValue( 'punctuationSystem' )
         booksNamesSystemName = self.getOrganisationalSystemValue( 'booksNamesSystem' )
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
+        dPrint( 'Quiet', debuggingThisModule, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
         if bookOrderSystemName and bookOrderSystemName!='None' and bookOrderSystemName!='Unknown':
             vPrint( 'Info', debuggingThisModule, "Uses {!r} book order system".format( bookOrderSystemName ) )
             BibleBookOrderSystem.__init__( self, bookOrderSystemName )
@@ -391,7 +391,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'usesText' in self.__dataDict:
                 for trySystemName in self.__dataDict['usesText']:
                     if isinstance( trySystemName, str ):
-                        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "trySystemName for 'usesText' is a string: {!r}".format( trySystemName ) )
+                        dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'usesText' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'usesText' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -401,7 +401,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'derivedFrom' in self.__dataDict:
                 trySystemName = self.__dataDict['derivedFrom']
                 if isinstance( trySystemName, str ):
-                    if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
+                    dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
                     #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list
@@ -487,7 +487,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
         The length of the list is the number of chapters in the book.
         """
-        vPrint( 'Never', debuggingThisModule, "getNumVersesList( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, "getNumVersesList( {} )".format( BBB ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
@@ -512,7 +512,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        vPrint( 'Never', debuggingThisModule, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        fnPrint( debuggingThisModule, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()

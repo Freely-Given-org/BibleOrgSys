@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
@@ -209,13 +209,13 @@ class USXXMLBible( Bible ):
         """
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Never', debuggingThisModule, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
@@ -244,7 +244,7 @@ class USXXMLBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Never', debuggingThisModule, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "USXXMLBible._loadBookMP( {}, {} )".format( BBB, filename ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 

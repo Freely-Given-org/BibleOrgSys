@@ -52,7 +52,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
@@ -82,7 +82,7 @@ class Door43CatalogResources:
         """
         Create the internal Bibles object.
         """
-        vPrint( 'Never', debuggingThisModule, "Door43CatalogResources.__init__()…" )
+        fnPrint( debuggingThisModule, "Door43CatalogResources.__init__()" )
 
         self.subjectJsonList = self.subjectNameList = self.subjectsJsonList = self.subjectDict = None
         self.catalogDict = self.languageDict = self.resourceList = self.BibleList = None
@@ -100,7 +100,7 @@ class Door43CatalogResources:
 
         Returns None if the data cannot be fetched.
         """
-        vPrint( 'Never', debuggingThisModule, f"Door43CatalogResources.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
+        fnPrint( debuggingThisModule, f"Door43CatalogResources.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
         vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
@@ -132,7 +132,7 @@ class Door43CatalogResources:
         """
         self.subjectNameList will contain a list/set of the actual subject names (no underscores, only spaces).
         """
-        vPrint( 'Never', debuggingThisModule, "Door43CatalogResources.fetchSubjects()…" )
+        fnPrint( debuggingThisModule, "Door43CatalogResources.fetchSubjects()" )
         vPrint( 'Info', debuggingThisModule, "  Downloading list of available subjects from Door43…" )
 
         if 1: # new code -- only one large download
@@ -224,7 +224,7 @@ class Door43CatalogResources:
                                     langnames, temp-langnames, approved-temp-langnames, new-language-questions
             and self.languageDict (55 entries as of 2019-02)
         """
-        vPrint( 'Never', debuggingThisModule, "Door43CatalogResources.fetchCatalog()…" )
+        fnPrint( debuggingThisModule, "Door43CatalogResources.fetchCatalog()" )
 
         #self.fetchSubjects() # Seems to cover the same info just from a different perspective
 
@@ -332,7 +332,7 @@ class Door43CatalogResources:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        vPrint( 'Never', debuggingThisModule, f"Door43CatalogResources.searchBibles( {languageCode!r}, {BibleTitle!r} )…" )
+        fnPrint( debuggingThisModule, f"Door43CatalogResources.searchBibles( {languageCode!r}, {BibleTitle!r} )…" )
 
         resultsList = []
         for entry in self.BibleList:
@@ -368,7 +368,7 @@ class Door43CatalogBible( USFMBible ):
         or
             an index into the BibleList in the resourcesObject passed as the second parameter
         """
-        vPrint( 'Never', debuggingThisModule, f"Door43CatalogBible.__init__( {parameterOne}, {resourcesObject} )…" )
+        fnPrint( debuggingThisModule, f"Door43CatalogBible.__init__( {parameterOne}, {resourcesObject} )…" )
 
         if isinstance( parameterOne, dict ):
             assert resourcesObject is None

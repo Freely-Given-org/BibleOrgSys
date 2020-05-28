@@ -39,7 +39,7 @@ if __name__ == '__main__':
     if aboveAboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-04' # by RJH
@@ -83,7 +83,7 @@ class AugmentedStrongsIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        vPrint( 'Never', debuggingThisModule, _("AugmentedStrongsIndexFileConverter.__init__()…") )
+        fnPrint( debuggingThisModule, "AugmentedStrongsIndexFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries1 = self.entries2 = None
     # end of AugmentedStrongsIndexFileConverter.__init__
@@ -113,7 +113,7 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
+        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
@@ -233,7 +233,7 @@ class LexicalIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        vPrint( 'Never', debuggingThisModule, _("LexicalIndexFileConverter.__init__()…") )
+        fnPrint( debuggingThisModule, "LexicalIndexFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of LexicalIndexFileConverter.__init__
@@ -263,7 +263,7 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
+        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
@@ -462,7 +462,7 @@ class HebrewStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewStrongsFileConverter.__init__()…") )
+        fnPrint( debuggingThisModule, "HebrewStrongsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of HebrewStrongsFileConverter.__init__
@@ -489,7 +489,7 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
+        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
@@ -669,7 +669,7 @@ class BrownDriverBriggsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        vPrint( 'Never', debuggingThisModule, _("BrownDriverBriggsFileConverter.__init__()…") )
+        fnPrint( debuggingThisModule, "BrownDriverBriggsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of BrownDriverBriggsFileConverter.__init__
@@ -699,7 +699,7 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        vPrint( 'Never', debuggingThisModule, "loadAndValidate( {XMLFolder} )…" )
+        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder

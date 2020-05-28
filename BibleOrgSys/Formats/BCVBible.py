@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
@@ -188,7 +188,7 @@ class BCVBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        vPrint( 'Info', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -311,7 +311,7 @@ class BCVBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "BCVBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, "BCVBible.loadBook( {} )".format( BBB ) )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading BCV {} for {}".format( BBB, self.name ) )
@@ -337,7 +337,7 @@ class BCVBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, _("loadBookMP( {} )").format( BBB ) )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:

@@ -48,7 +48,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-07' # by RJH
@@ -231,7 +231,7 @@ class SwordInstallManager():
     def __init__( self ) -> None:
         """
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.__init__()…") )
+        fnPrint( debuggingThisModule, "SwordInstallManager.__init__()" )
 
         self.userDisclaimerConfirmed = False
 
@@ -252,7 +252,7 @@ class SwordInstallManager():
         """
         Clear our list of available sources.
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.clearSources()…") )
+        fnPrint( debuggingThisModule, "SwordInstallManager.clearSources()" )
 
         self.downloadSources = {}
         self.currentRepoName = None
@@ -269,7 +269,7 @@ class SwordInstallManager():
             3/ Site url (not including folders)
             4/ Site folders (starts with '/' )
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.addSource( {}, {}, {}, {}, {} )").format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
+        fnPrint( debuggingThisModule, "SwordInstallManager.addSource( {}, {}, {}, {}, {} )".format( repoName, repoType, repoSite, repoFolderpath, setAsDefault ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert repoType in ( 'FTP', )
 
@@ -284,7 +284,7 @@ class SwordInstallManager():
 
         This function can be overriden (esp. if you have a GUI).
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.isUserDisclaimerConfirmed()…") )
+        fnPrint( debuggingThisModule, "SwordInstallManager.isUserDisclaimerConfirmed()" )
 
         prompt1 = _("\nAlthough Install Manager provides a convenient way for installing and upgrading SWORD " \
                     "components, it also uses a systematic method for accessing sites which gives packet " \
@@ -308,7 +308,7 @@ class SwordInstallManager():
 
         Use this if you don't want to override isUserDisclaimerConfirmed().
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.setUserDisclaimerConfirmed( {} )").format( flag ) )
+        fnPrint( debuggingThisModule, "SwordInstallManager.setUserDisclaimerConfirmed( {} )".format( flag ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert flag in (True, False)
 
@@ -323,7 +323,7 @@ class SwordInstallManager():
         Places the information in self.availableModules
             (which may need to be cleared to prevent obsolete entries being held).
         """
-        vPrint( 'Verbose', debuggingThisModule, f"SwordInstallManager.refreshRemoteSource( clearFirst={clearFirst} )…" )
+        fnPrint( debuggingThisModule, f"SwordInstallManager.refreshRemoteSource( clearFirst={clearFirst} )" )
         vPrint( 'Never', debuggingThisModule, f"self.downloadSources ({len(self.downloadSources)}) {self.downloadSources}" )
         vPrint( 'Never', debuggingThisModule, f"self.currentRepoName='{self.currentRepoName}'" )
         vPrint( 'Never', debuggingThisModule, f"self.userDisclaimerConfirmed={self.userDisclaimerConfirmed}" )
@@ -451,7 +451,7 @@ class SwordInstallManager():
         Places the information in self.availableModules
             (which is cleared first).
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.refreshRemoteSource()…") )
+        fnPrint( debuggingThisModule, "SwordInstallManager.refreshRemoteSource()" )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )
@@ -476,10 +476,10 @@ class SwordInstallManager():
 
     def _getConfFile( self, confName:str, confPath:Path ) -> Dict[str,Any]:
         """
-        Read a conf file that has already been download from a repository
+        Read a conf file that has already been downloaded from a repository
             and parse the information into self.availableModules.
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager._getConfFile( {}, {} )").format( confName, confPath ) )
+        fnPrint( debuggingThisModule, f"SwordInstallManager._getConfFile( {confName}, {confPath} )" )
 
         # Read the conf file
         confDict:Dict[str,str] = {}
@@ -495,7 +495,7 @@ class SwordInstallManager():
         """
         Install the requested module from the remote repository.
         """
-        vPrint( 'Never', debuggingThisModule, _("SwordInstallManager.installModule( {} )").format( moduleName ) )
+        fnPrint( debuggingThisModule, "SwordInstallManager.installModule( {} )".format( moduleName ) )
 
         if not self.downloadSources:
             logging.critical( _("No remote Sword repository/repositories specified.") )

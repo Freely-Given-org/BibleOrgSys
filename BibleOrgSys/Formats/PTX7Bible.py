@@ -51,7 +51,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
@@ -679,7 +679,7 @@ class PTX7Bible( Bible ):
         """
         Load the BookNames.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXBooksNames()…") )
+        fnPrint( debuggingThisModule, "loadPTXBooksNames()" )
 
         thisFilename = 'BookNames.xml'
         bookNamesFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -737,7 +737,7 @@ class PTX7Bible( Bible ):
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTX7ProjectUsers()…") )
+        fnPrint( debuggingThisModule, "loadPTX7ProjectUsers()" )
 
         thisFilename = 'ProjectUsers.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -809,7 +809,7 @@ class PTX7Bible( Bible ):
         """
         Load the ProjectUserFields.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTX7ProjectUserFields()…") )
+        fnPrint( debuggingThisModule, "loadPTX7ProjectUserFields()" )
 
         thisFilename = 'ProjectUserFields.xml'
         projectUsersFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -881,7 +881,7 @@ class PTX7Bible( Bible ):
         """
         Load the Lexicon.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXLexicon()…") )
+        fnPrint( debuggingThisModule, "loadPTXLexicon()" )
 
         thisFilename = 'Lexicon.xml'
         lexiconFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -1017,7 +1017,7 @@ class PTX7Bible( Bible ):
         """
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXSpellingStatus()…") )
+        fnPrint( debuggingThisModule, "loadPTXSpellingStatus()" )
 
         thisFilename = 'SpellingStatus.xml'
         spellingStatusFilepath = os.path.join( self.sourceFilepath, thisFilename )
@@ -1090,7 +1090,7 @@ class PTX7Bible( Bible ):
         """
         Load the Comments_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX7'].
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXComments()…") )
+        fnPrint( debuggingThisModule, "loadPTXComments()" )
 
         commentFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1191,7 +1191,7 @@ class PTX7Bible( Bible ):
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXBiblicalTermRenderings()…") )
+        fnPrint( debuggingThisModule, "loadPTXBiblicalTermRenderings()" )
 
         BiblicalTermsFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1303,7 +1303,7 @@ class PTX7Bible( Bible ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXProgress()…") )
+        fnPrint( debuggingThisModule, "loadPTXProgress()" )
 
         progressFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1490,7 +1490,7 @@ class PTX7Bible( Bible ):
         """
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX7'].
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXPrintConfig()…") )
+        fnPrint( debuggingThisModule, "loadPTXPrintConfig()" )
 
         printConfigFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1578,7 +1578,7 @@ class PTX7Bible( Bible ):
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXAutocorrects.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXAutocorrects()…") )
+        fnPrint( debuggingThisModule, "loadPTXAutocorrects()" )
 
         autocorrectFilename = 'AutoCorrect.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -1623,7 +1623,7 @@ class PTX7Bible( Bible ):
         """
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
-        vPrint( 'Info', debuggingThisModule, _("loadPTXStyles()…") )
+        fnPrint( debuggingThisModule, "loadPTXStyles()" )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1698,11 +1698,11 @@ class PTX7Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "PTX7Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
@@ -1728,11 +1728,11 @@ class PTX7Bible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB_Filename ) )
+        fnPrint( debuggingThisModule, "loadBookMP( {} )".format( BBB_Filename ) )
 
         BBB, filename = BBB_Filename
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return self.books[BBB] # Already loaded
         #if BBB in self.triedLoadingBook:
             #logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )

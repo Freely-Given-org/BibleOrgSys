@@ -41,7 +41,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-03' # by RJH
@@ -65,7 +65,7 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconIndex.__init__( {} )").format( XMLFolder ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconIndex.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
     # end of HebrewLexiconIndex.__init__
 
@@ -215,7 +215,7 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.__init__( {} )").format( XMLFolder ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = self.BrownDriverBriggsEntries = None
         if preload: self.load()
@@ -270,7 +270,7 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.getStrongsEntryData( {!r} )").format( key ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getStrongsEntryData( {!r} )".format( key ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -288,7 +288,7 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.getStrongsEntryField( {!r}, {!r} )").format( key, fieldName ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getStrongsEntryField( {!r}, {!r} )".format( key, fieldName ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -319,7 +319,7 @@ class HebrewLexiconSimple:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        vPrint( 'Verbose', debuggingThisModule, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
+        fnPrint( debuggingThisModule, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
@@ -374,7 +374,7 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.getBrDrBrEntryData( {!r} )").format( key ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryData( {!r} )".format( key ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -392,7 +392,7 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.getBrDrBrEntryField( {!r}, {!r} )").format( key, fieldName ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -412,7 +412,7 @@ class HebrewLexiconSimple:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexiconSimple.getBrDrBrEntryHTML( {!r} )").format( key ) )
+        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryHTML( {!r} )".format( key ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
@@ -462,7 +462,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexicon.__init__( {} )").format( XMLFolder ) )
+        fnPrint( debuggingThisModule, "HebrewLexicon.__init__( {} )".format( XMLFolder ) )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.XMLFolder = XMLFolder
         self.hlix = None
@@ -476,7 +476,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Otherwise lLoad the actual XML lexicon (slow).
         """
-        vPrint( 'Info', debuggingThisModule, _("HebrewLexicon.load()…") )
+        fnPrint( debuggingThisModule, "HebrewLexicon.load()" )
         standardPickleFilepath = BibleOrgSysGlobals.BOS_DISTRIBUTED_FILES_FOLDERPATH.joinpath( 'HebrewLexicon_Tables.1.pickle' )
         if standardPickleFilepath.is_file():
             import pickle
@@ -530,7 +530,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexicon.getBrDrBrEntryData( {!r} )").format( key ) )
+        fnPrint( debuggingThisModule, "HebrewLexicon.getBrDrBrEntryData( {!r} )".format( key ) )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
@@ -548,7 +548,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        vPrint( 'Never', debuggingThisModule, _("HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )").format( key, fieldName ) )
+        fnPrint( debuggingThisModule, "HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
 
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
@@ -567,7 +567,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        vPrint( 'Never', debuggingThisModule, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
+        fnPrint( debuggingThisModule, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )

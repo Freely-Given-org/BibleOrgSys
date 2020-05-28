@@ -37,7 +37,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-20' # by RJH
@@ -336,7 +336,7 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        vPrint( 'Never', debuggingThisModule, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+        fnPrint( debuggingThisModule, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert someText and isinstance( someText, str )
 

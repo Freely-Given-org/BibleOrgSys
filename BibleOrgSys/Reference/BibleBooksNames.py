@@ -37,7 +37,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-02' # by RJH
@@ -365,7 +365,7 @@ class BibleBooksNamesSystems:
 
         Tries all the known Bible Books Names systems.
         """
-        vPrint( 'Never', debuggingThisModule, "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        fnPrint( debuggingThisModule, "BibleBooksNamesSystems.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 
@@ -534,7 +534,7 @@ class BibleBooksNamesSystem:
 
         If it fails, tries the same named function from BibleBooksCodes
         """
-        vPrint( 'Never', debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
+        fnPrint( debuggingThisModule, "BibleBooksNamesSystem.getBBBFromText( {} )".format( bookNameOrAbbreviation ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert bookNameOrAbbreviation
 

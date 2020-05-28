@@ -65,7 +65,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
@@ -116,7 +116,7 @@ class SwordModuleConfiguration:
         Looks in loadFolder (should be the sword folder that contains the mods.d and modules folders)
             and attempts to load moduleAbbreviation.conf.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModuleConfiguration.__init__( {!r}, {} )".format( moduleAbbreviation, swordFolder ) )
+        fnPrint( debuggingThisModule, "SwordModuleConfiguration.__init__( {!r}, {} )".format( moduleAbbreviation, swordFolder ) )
 
         # Set our defaults
         self.abbreviation = moduleAbbreviation # a string like 'ylt'
@@ -140,7 +140,7 @@ class SwordModuleConfiguration:
             self.encoding (from Encoding entry)
             self.locked (from CipherKey)
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModuleConfiguration.loadConf()" )
+        fnPrint( debuggingThisModule, "SwordModuleConfiguration.loadConf()" )
 
         vPrint( 'Info', debuggingThisModule, "  Loading Sword config file for {}…".format( self.abbreviation ) )
         filename = self.abbreviation + '.conf'
@@ -220,8 +220,6 @@ class SwordModuleConfiguration:
         @return: the name of a Sword object formatted as a string
         @rtype: string
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModuleConfiguration.__str__()" )
-
         result = "SwordModuleConfiguration for {}".format( self.abbreviation )
         #if self.abbreviation: result += ('\n' if result else '') + "  " + _("Abbreviation: ") + self.abbreviation
         if self.swordFolder: result += ('\n' if result else '') + "  " + _("Folder: {}").format( self.swordFolder )
@@ -248,7 +246,7 @@ class SwordModuleConfiguration:
         """
         Return the value for fieldname (str) if it's in the configDict (loading from the Sword module .conf file).
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModuleConfiguration.get( {} )".format( fieldName ) )
+        # fnPrint( debuggingThisModule, "SwordModuleConfiguration.get( {} )".format( fieldName ) )
 
         if fieldName in self.confDict: return self.confDict[fieldName]
     # end of SwordModuleConfiguration.get
@@ -305,7 +303,7 @@ class SwordModule():
         """
         Load an uncompressed lexicon / dictionary type module.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadRawLD()" )
+        fnPrint( debuggingThisModule, "SwordModule.loadRawLD()" )
 
         vPrint( 'Normal', debuggingThisModule, "  Loading {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',)
@@ -456,7 +454,7 @@ class SwordModule():
         """
         Load a compressed lexicon / dictionary type module.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadCompressedLD()" )
+        fnPrint( debuggingThisModule, "SwordModule.loadCompressedLD()" )
 
         vPrint( 'Normal', debuggingThisModule, "  Loading compressed {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('zLD',)
@@ -551,7 +549,7 @@ class SwordModule():
                                     for key, (blockNumber, blockChunkNumber) in LDIndex.items(): # By a slow loop, find the key which points to this entry
                                         if blockNumber==j and blockChunkNumber==c: thisKey = key; break
                                     logging.warning( "Unable to properly decode {} {} {} {} chunk for {}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, j, c, thisKey ) )
-                                    if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
+                                    dPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
                                     thisString = thisUncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                                 assert isinstance( thisString, str )
                                 strings.append( thisString )
@@ -635,7 +633,7 @@ class SwordModule():
         """
         Expand a lexicon / dictionary.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.expandLD()" )
+        fnPrint( debuggingThisModule, "SwordModule.expandLD()" )
 
         # Make cross-references
         vPrint( 'Normal', debuggingThisModule, "  Auto-adding cross-references for {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
@@ -685,7 +683,7 @@ class SwordModule():
     def loadRawGenBook( self ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadRawGenBook()" )
+        fnPrint( debuggingThisModule, "SwordModule.loadRawGenBook()" )
 
         vPrint( 'Normal', debuggingThisModule, "  Loading raw general book from {}…".format( self.dataFolder ) )
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
@@ -731,7 +729,7 @@ class SwordModule():
                             indexString = something.decode( self.SwordModuleConfiguration.encoding )
                         except KeyError:
                             logging.warning( "Unable to properly decode {} {} {} chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, j, offset, length ) )
-                            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
+                            dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
                             indexString = something.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                         #if len(indexString)>100: vPrint( 'Quiet', debuggingThisModule, j, "indexString = ", indexString )
                         endbit = chunk[12+ix+1:12+ix+10+1]
@@ -816,7 +814,7 @@ class SwordModule():
             1: OTOffset = offset if only 39 OT books included
             2: NTOffset = offset if only 27 NT books included
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.createChapterOffsets( {} )".format( versificationString ) )
+        fnPrint( debuggingThisModule, "SwordModule.createChapterOffsets( {} )".format( versificationString ) )
 
         # Now build an index for each book:
         #   0 is the work header
@@ -941,7 +939,7 @@ class SwordModule():
 
         Can load either one or all (if requestedBBB=None) books.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadVersifiedBibleData( {} ) with {}".format( requestedBBB, self.inMemoryFlag ) )
+        fnPrint( debuggingThisModule, "SwordModule.loadVersifiedBibleData( {} ) with {}".format( requestedBBB, self.inMemoryFlag ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
             assert self.SwordModuleConfiguration.modCategory in ('Bible','Commentary','General',)
@@ -1071,7 +1069,7 @@ class SwordModule():
                                             #if testament=='nt' and j>250: vPrint( 'Quiet', debuggingThisModule, '\n', j, chunk )
                                         except KeyError:
                                             logging.warning( "Unable to properly decode {} {} {} {} {} chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, Testament, self.SwordModuleConfiguration.modCategory, unit, j, compressedLength, uncompressedLength ) )
-                                            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
+                                            dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
                                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                                             chunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                                             #dPrint( 'Quiet', debuggingThisModule, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.encoding, chunk )
@@ -1206,7 +1204,7 @@ class SwordModule():
         """
         Load the Sword module index into memory (and possibly also the data)
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadBooks( {} )".format( inMemoryFlag ) )
+        fnPrint( debuggingThisModule, "SwordModule.loadBooks( {} )".format( inMemoryFlag ) )
             #dPrint( 'Quiet', debuggingThisModule, "\n\nSwIndex", self.swordIndex )
             #dPrint( 'Quiet', debuggingThisModule, "\n\nSwData", self.swordData )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -1291,9 +1289,9 @@ class SwordModule():
         """
         Load the Sword module index into memory (and possibly also the data)
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.loadBook( {}, {} )".format( BBB, inMemoryFlag ) )
-            #dPrint( 'Quiet', debuggingThisModule, "\n\nSwIndex", self.swordIndex )
-            #dPrint( 'Quiet', debuggingThisModule, "\n\nSwData", self.swordData )
+        fnPrint( debuggingThisModule, "SwordModule.loadBook( {}, {} )".format( BBB, inMemoryFlag ) )
+        #dPrint( 'Quiet', debuggingThisModule, "\n\nSwIndex", self.swordIndex )
+        #dPrint( 'Quiet', debuggingThisModule, "\n\nSwData", self.swordData )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
 
@@ -1500,7 +1498,7 @@ class SwordModule():
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding )
                     except UnicodeDecodeError:
                         logging.warning( "Unable to properly decode {} {} {} {} book chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, unit, fileOffset, compressedLength, uncompressedLength ) )
-                        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
+                        dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                     verseText = textChunk[verseOffset:verseOffset+verseLength]
@@ -1523,7 +1521,7 @@ class SwordModule():
     def getRawDictData( self, word ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.getRawDictData( {} )".format( word ) )
+        fnPrint( debuggingThisModule, "SwordModule.getRawDictData( {} )".format( word ) )
 
         if self.inMemoryFlag: # it's easy -- we already have all the data
             try: result = self.swordData[word]
@@ -1559,7 +1557,7 @@ class SwordModule():
                             #for key, (fO, cL, blockNumber, blockChunkNumber) in self.swordIndex.items(): # By a slow loop, find the key which points to this entry
                             #    if blockNumber==j and blockChunkNumber==c: thisKey = key; break
                             logging.warning( "Unable to properly decode {} {} chunk for {}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, word ) )
-                            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
+                            dPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
                             thisString = thisUncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                         #dPrint( 'Quiet', debuggingThisModule, c, ix, thisString )
                         if c == blockChunkNumber: break
@@ -1636,7 +1634,7 @@ class SwordModule():
 
         Note: not all module types have BCV references.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModule.filterToHTML( {} )".format( rawData ) )
+        fnPrint( debuggingThisModule, "SwordModule.filterToHTML( {} )".format( rawData ) )
 
         #assert not self.versifiedFlag # for now
         if rawData is None: return None
@@ -1902,8 +1900,7 @@ class SwordBibleModule( SwordModule, Bible ):
 
         TODO: This should be faster if both the above actions were done together.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
-
+        fnPrint( debuggingThisModule, "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
         vPrint( 'Normal', debuggingThisModule, "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
 
         SwordModule.loadBooks( self, inMemoryFlag=False ) # Load the Sword module index
@@ -1964,8 +1961,7 @@ class SwordBibleModule( SwordModule, Bible ):
 
         TODO: This should be faster if both the above actions were done together.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
-
+        fnPrint( debuggingThisModule, "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
         vPrint( 'Normal', debuggingThisModule, "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
 
         SwordModule.loadBook( self, BBB ) # Load the Sword module index
@@ -2106,7 +2102,7 @@ class SwordModules:
 
         Doesn't load the actual modules.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.__init__()" )
+        fnPrint( debuggingThisModule, "SwordModules.__init__()" )
 
         self.searchFolders = SwordSearchFolders
         self.inMemoryFlag = True
@@ -2129,7 +2125,7 @@ class SwordModules:
         """
         Adds another path to search for modules in.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.augmentModules( {}, {} )".format( newPath, someFlag ) )
+        fnPrint( debuggingThisModule, "SwordModules.augmentModules( {}, {} )".format( newPath, someFlag ) )
             #assert newPath not in self.searchFolders
 
         global SwordSearchFolders # Saved between object instances
@@ -2145,7 +2141,7 @@ class SwordModules:
         """
         Load all the conf files that we can find.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.__loadAllConfs()" )
+        fnPrint( debuggingThisModule, "SwordModules.__loadAllConfs()" )
 
         # Things to fill later
         self.folders = [] # Folders where we actually found modules
@@ -2175,7 +2171,7 @@ class SwordModules:
 
         Called automatically by the __init__ routine.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.__loadConfs( {} )".format( loadFolder ) )
+        fnPrint( debuggingThisModule, "SwordModules.__loadConfs( {} )".format( loadFolder ) )
 
         count = 0
         for moduleConfFilename in sorted( os.listdir( os.path.join( loadFolder, 'mods.d/' ) ) ):
@@ -2262,7 +2258,7 @@ class SwordModules:
         """
         For Sword compatibility
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.getModules()" )
+        fnPrint( debuggingThisModule, "SwordModules.getModules()" )
 
         if self.modules:
             halt # not written yet
@@ -2282,7 +2278,7 @@ class SwordModules:
 
         Returns a list of available module codes.
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
+        fnPrint( debuggingThisModule, "SwordModules.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
             vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodes: modules" )
@@ -2310,7 +2306,7 @@ class SwordModules:
 
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
+        fnPrint( debuggingThisModule, "SwordModules.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
             vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodeDuples--modules" )
@@ -2344,7 +2340,7 @@ class SwordModules:
         """
         For Sword compatibility
         """
-        vPrint( 'Never', debuggingThisModule, "SwordModules.getModule( {} )".format( moduleRoughName ) )
+        fnPrint( debuggingThisModule, "SwordModules.getModule( {} )".format( moduleRoughName ) )
 
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
         except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
@@ -2358,7 +2354,7 @@ class SwordModules:
         """
         Loads the requested module indexes or data into memory.
         """
-        vPrint( 'Info', debuggingThisModule, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
+        fnPrint( debuggingThisModule, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
 
         #dPrint( 'Quiet', debuggingThisModule, [key for key in self.confs.keys()] )
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object

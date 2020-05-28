@@ -43,7 +43,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-20' # by RJH
@@ -516,7 +516,7 @@ class USFM3Markers:
         These are fields that need to be displayed inline with the text, albeit with special formatting.
         This excludes footnote and xref markers.
         """
-        vPrint( 'Never', debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
+        fnPrint( debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #dPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
@@ -582,7 +582,7 @@ class USFM3Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        vPrint( 'Never', debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )…" )
+        fnPrint( debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )…" )
         if not text: return []
 
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above

@@ -74,7 +74,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 
@@ -133,7 +133,7 @@ class LDMLFile:
 
         LDML = Locale Data Markup Language (see http://unicode.org/reports/tr35/tr35-4.html)
         """
-        vPrint( 'Info', debuggingThisModule, _("load()…") )
+        fnPrint( debuggingThisModule, "load()" )
 
         SIL_URN_Prefix = '{urn://www.sil.org/ldml/0.1}'
         lenSILURNPrefix = len( SIL_URN_Prefix )

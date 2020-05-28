@@ -49,7 +49,7 @@ if __name__ == '__main__':
     if aboveFolderPath not in sys.path:
         sys.path.insert( 0, aboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in TestBib5 to work
 
 # Some Misc and Apps modules imported below are up a level
@@ -1065,15 +1065,6 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
 
-    moduleName = 'SwordResources'
-    try:
-        from BibleOrgSys.Formats import SwordResources
-        # doTest( moduleName, SwordResources )
-    except KeyboardInterrupt: interrupted=True; return
-    except (ImportError, SyntaxError) as err:
-        print( f"{moduleName} import failed!" )
-        failures.append( f"{moduleName} import" )
-        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
     moduleName = 'SwordInstallManager'
     try:
         from BibleOrgSys.Online import SwordInstallManager
@@ -1103,6 +1094,7 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
     swordTypes = 'CrosswireLibrary', 'OurCode'
+    from BibleOrgSys.Formats import SwordResources
     originalSwordType = SwordResources.SwordType
     print( f"originalSwordType = {originalSwordType}" )
     assert originalSwordType in swordTypes

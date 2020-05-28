@@ -49,7 +49,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
@@ -366,8 +366,7 @@ class OSISXMLBible( Bible ):
 
         NOTE: We could use multiprocessing here
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "OSISXMLBible.loadBooks()" )
+        fnPrint( debuggingThisModule, "OSISXMLBible.loadBooks()" )
 
         loadErrors = []
         if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
@@ -397,8 +396,8 @@ class OSISXMLBible( Bible ):
                 self.stashBook( loadedBook )
                 loadErrors += bookLoadErrors
         else:
-            logging.critical( "OSISXMLBible: Didn't find anything to load at {!r}".format( self.sourceFilepath ) )
-            loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {!r}").format( self.sourceFilepath ) )
+            logging.critical( f"OSISXMLBible: Didn't find anything to load at {self.sourceFilepath}" )
+            loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {}").format( self.sourceFilepath ) )
         if loadErrors:
             self.checkResultsDictionary['Load Errors'] = loadErrors
             #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "loadErrors", len(loadErrors), loadErrors ); halt
@@ -426,7 +425,7 @@ class OSISXMLBible( Bible ):
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading OSIS {} for {}".format( BBB, self.name ) )
@@ -469,7 +468,7 @@ class OSISXMLBible( Bible ):
 
         Returns the book info.
         """
-        vPrint( 'Never', debuggingThisModule, f"_loadBookFileMP( {XMLBookFilename} )…" )
+        fnPrint( debuggingThisModule, f"_loadBookFileMP( {XMLBookFilename} )" )
         vPrint( 'Verbose', debuggingThisModule, f"  LoadingMP {self.name} book from {XMLBookFilename} from {self.sourceFolder}…" )
 
         pathname = os.path.join( self.sourceFolder, XMLBookFilename )
@@ -674,7 +673,7 @@ class OSISXMLBible( Bible ):
                 marker = theType # invented -- used below
             else:
                 marker = 'x--' # Gets ignored below
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, theType, location, verseMilestone ); halt
+                dPrint( 'Quiet', debuggingThisModule, theType, location, verseMilestone ); halt
         else: # What marker do we need ???
             marker = 'fv'
         if marker == 'section': # We don't have marker for this
@@ -2196,7 +2195,7 @@ class OSISXMLBible( Bible ):
         Check/validate and extract data from the given OSIS div record.
             This may be a book group, or directly into a book
         """
-        vPrint( 'Verbose', debuggingThisModule, f"validateAndExtractMainDiv( {len(bookList)}, {len(div)}, {len(loadErrors)} )…" )
+        fnPrint( debuggingThisModule, f"validateAndExtractMainDiv( {len(bookList)}, {len(div)}, {len(loadErrors)} )…" )
         assert isinstance( bookList, list )
         assert isinstance( loadErrors, list )
         vPrint( 'Verbose', debuggingThisModule, _("Loading {}OSIS main div…").format( self.abbreviation+' ' if self.abbreviation else '' ) )
@@ -3262,7 +3261,7 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.error( "95k3 Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (95k3)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, subelement.tag ); halt
+                        dPrint( 'Quiet', debuggingThisModule, subelement.tag )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 ########### Chapter
             elif element.tag == OSISXMLBible.OSISNameSpace+'chapter' or (not BibleOrgSysGlobals.strictCheckingFlag and element.tag=='chapter'):

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Formats.uWNotesBible import loadYAML
@@ -199,7 +199,7 @@ class uWOBSBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        vPrint( 'Info', debuggingThisModule, _("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, f"preload() from {self.sourceFolder}" )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -263,7 +263,7 @@ class uWOBSBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "uWOBSBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"uWOBSBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading uW OBS {} for {}".format( BBB, self.name ) )
@@ -289,7 +289,7 @@ class uWOBSBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, f"loadBookMP( {BBB} )" )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:

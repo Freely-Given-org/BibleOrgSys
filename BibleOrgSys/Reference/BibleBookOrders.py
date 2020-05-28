@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-16' # by RJH
@@ -63,7 +63,7 @@ class BibleBookOrderSystems:
         """
         Constructor:
         """
-        vPrint( 'Never', debuggingThisModule, "BibleBookOrderSystems:__init__()" )
+        fnPrint( debuggingThisModule, "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of BibleBookOrderSystems.__init__
 
@@ -237,13 +237,13 @@ class BibleBookOrderSystems:
         systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
             vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+            dPrint( 'Quiet', debuggingThisModule, errorSummary )
         elif systemMatchCount == 0: # No matches
             vPrint( 'Quiet', debuggingThisModule, "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
             vPrint( 'Quiet', debuggingThisModule, allErrors if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
         else: # Multiple matches
             vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+        dPrint( 'Quiet', debuggingThisModule, errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/', "BibleBookOrder_"+thisSystemName + '.xml' )
@@ -272,7 +272,7 @@ class BibleBookOrderSystem:
         """
         Constructor:
         """
-        vPrint( 'Never', debuggingThisModule, "BibleBookOrderSystem:__init__({})".format( systemName ) )
+        fnPrint( debuggingThisModule, "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         results = self.__bbos.getBookOrderSystem( self.__systemName )

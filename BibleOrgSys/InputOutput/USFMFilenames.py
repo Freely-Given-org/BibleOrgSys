@@ -36,7 +36,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-01-13' # by RJH
@@ -98,7 +98,7 @@ class USFMFilenames:
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
                 dd = digits
         """
-        vPrint( 'Never', debuggingThisModule, "USFMFilenames( {} )".format( givenFolderName ) )
+        fnPrint( debuggingThisModule, f"USFMFilenames( {givenFolderName} )" )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -319,7 +319,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found.
         """
-        vPrint( 'Never', debuggingThisModule, "getUSFMIDsFromFiles( {} )".format( repr(givenFolder) ) )
+        fnPrint( debuggingThisModule, f"getUSFMIDsFromFiles( {givenFolder} )" )
 
         # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values

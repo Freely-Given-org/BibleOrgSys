@@ -45,7 +45,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-04-19' # by RJH
@@ -514,7 +514,7 @@ class MLWriter:
         """
         assert self.__outputFile is not None
         assert self._status == 'Open'
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "autoClose stack: {}", self._openStack )
+        dPrint( 'Quiet', debuggingThisModule, "autoClose stack: {}", self._openStack )
         for index in range( len(self._openStack)-1, -1, -1 ): # Have to step through this backwards
             self.writeLineClose( self._openStack[index] )
         self._sectionName = 'None'

@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -77,7 +77,7 @@ class USXXMLBibleBook( BibleBook ):
         """
         Load a single source USX XML file and extract the information.
         """
-        vPrint( 'Never', debuggingThisModule, "load( {}, {}, {} )".format( filename, folder, encoding ) )
+        fnPrint( debuggingThisModule, "load( {}, {}, {} )".format( filename, folder, encoding ) )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         loadErrors:List[str] = []

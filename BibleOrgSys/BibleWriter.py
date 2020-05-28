@@ -96,7 +96,7 @@ if __name__ == '__main__':
     if aboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput import ControlFiles
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
@@ -206,7 +206,7 @@ class BibleWriter( InternalBible ):
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "toPickleObject( {}, {} )".format( self.abbreviation, outputFolderpath ) )
+        fnPrint( debuggingThisModule, "toPickleObject( {}, {} )".format( self.abbreviation, outputFolderpath ) )
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPickleObject…" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
@@ -275,7 +275,7 @@ class BibleWriter( InternalBible ):
         Note: This can add up to a couple of GB if discovery data is included!
         """
         from BibleOrgSys.Formats.JSONBible import createBOSJSONBible
-        if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "toBOSJSONBible( {}, {}, {} )".format( outputFolderpath, sourceURL, licenceString ) )
+        fnPrint( debuggingThisModule, "toBOSJSONBible( {}, {}, {} )".format( outputFolderpath, sourceURL, licenceString ) )
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toBOSJSONBible" )
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_JSONBible_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
@@ -712,7 +712,7 @@ class BibleWriter( InternalBible ):
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "toUSFM2: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
+                            dPrint( 'Quiet', debuggingThisModule, "toUSFM2: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -883,7 +883,7 @@ class BibleWriter( InternalBible ):
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "toUSFM3: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
+                            dPrint( 'Quiet', debuggingThisModule, "toUSFM3: Added space to {!r} before {!r}".format( bookUSFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): bookUSFM += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -1059,7 +1059,7 @@ class BibleWriter( InternalBible ):
                                 #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
                                 if ESFMLine[-1] != ' ':
                                     ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                                    if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "toESFM: Added space to {!r} before {!r}".format( ESFMLine[-2], pseudoMarker ) )
+                                    dPrint( 'Quiet', debuggingThisModule, "toESFM: Added space to {!r} before {!r}".format( ESFMLine[-2], pseudoMarker ) )
                                 adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                             elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                             elif pseudoMarker in ('fr','fq','ft','xo',): ESFMLine += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -9522,7 +9522,7 @@ class BibleWriter( InternalBible ):
                 if programErrorOutputBytes:
                     programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
                     #with open( os.path.join( outputFolderpath, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
-                    if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "pEOS", programErrorOutputString )
+                    dPrint( 'Quiet', debuggingThisModule, "pEOS", programErrorOutputString )
 
                 # Rename our PDF (and the log file) according to the style
                 try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )

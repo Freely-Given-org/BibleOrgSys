@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
@@ -262,7 +262,7 @@ class DBLBible( Bible ):
         """
         Load the XML metadata files.
         """
-        vPrint( 'Info', debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
         vPrint( 'Normal', debuggingThisModule, _("DBLBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
@@ -301,7 +301,7 @@ class DBLBible( Bible ):
         """
         Load the metadata.xml file and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadDBLLicense()" )
+        fnPrint( debuggingThisModule, "loadDBLLicense()" )
 
         licenseFilepath = os.path.join( self.sourceFilepath, 'license.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading license data from {}…".format( licenseFilepath ) )
@@ -365,7 +365,7 @@ class DBLBible( Bible ):
         """
         Load the metadata.xml file and parse it into the ordered dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadDBLMetadata()" )
+        fnPrint( debuggingThisModule, "loadDBLMetadata()" )
 
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.xml' )
         vPrint( 'Info', debuggingThisModule, "DBLBible.loading supplied DBL metadata from {}…".format( mdFilepath ) )
@@ -1286,7 +1286,7 @@ class DBLBible( Bible ):
         """
         Load the styles.xml file and parse it into the ordered dictionary self.suppliedMetadata['DBL'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadDBLStyles()" )
+        fnPrint( debuggingThisModule, "loadDBLStyles()" )
 
         if self.DBLMetadataVersion == '2.1': styleFilepath = os.path.join( self.sourceFilepath, 'release/', 'styles.xml' )
         else: styleFilepath = os.path.join( self.sourceFilepath, 'styles.xml' )
@@ -1516,7 +1516,7 @@ class DBLBible( Bible ):
         """
         Load the USX XML Bible text files.
         """
-        vPrint( 'Info', debuggingThisModule, "loadBooks()" )
+        fnPrint( debuggingThisModule, "loadBooks()" )
         if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 

@@ -96,7 +96,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -366,7 +366,7 @@ class MyBibleBible( Bible ):
         """
         Load the metadata from the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("preload()…") )
+        fnPrint( debuggingThisModule, "preload()…" )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
 
@@ -471,7 +471,7 @@ class MyBibleBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("loadBooks()…") )
+        fnPrint( debuggingThisModule, "loadBooks()…" )
         assert self.preloadDone
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -494,11 +494,11 @@ class MyBibleBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, "loadBook( {} )".format( BBB ) )
         assert self.preloadDone
 
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading MyBibleBible {} for {}".format( BBB, self.name ) )
@@ -516,7 +516,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
 
         lastC = None
         def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
@@ -627,7 +627,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("__loadBibleCommentaryBook( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, "__loadBibleCommentaryBook( {} )".format( BBB ) )
 
         lastC = None
         def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
@@ -1073,7 +1073,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         """
         Writes a book to the MyBible sqlObject file.
         """
-        vPrint( 'Never', debuggingThisModule, "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
+        fnPrint( debuggingThisModule, "writeMyBibleBook( …, {}, {}, …, {} )".format( BBB, nBBB, ourGlobals ) )
 
         try: verseList = BOS.getNumVersesList( BBB )
         except KeyError: return False

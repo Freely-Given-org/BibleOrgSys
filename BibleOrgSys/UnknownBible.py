@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if aboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats.ESFMBible import ESFMBibleFileCheck
 from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
 from BibleOrgSys.Formats.PTX7Bible import PTX7BibleFileCheck
@@ -147,7 +147,7 @@ class UnknownBible:
         or
             a loaded Bible
         """
-        vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
+        fnPrint( debuggingThisModule, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True

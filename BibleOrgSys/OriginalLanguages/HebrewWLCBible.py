@@ -26,8 +26,8 @@
 Module handling the Hebrew WLC OSIS files from Open Scriptures.
 """
 from gettext import gettext as _
+from pathlib import Path
 import os.path
-# from pathlib import Path
 import logging
 import pickle
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.OriginalLanguages import Hebrew
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry, InternalBibleExtra, parseWordAttributes
 from BibleOrgSys.Formats.OSISXMLBible import OSISXMLBible
@@ -45,7 +45,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 
-LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+LAST_MODIFIED_DATE = '2020-05-27' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
 PROGRAM_VERSION = '0.26'
@@ -54,7 +54,9 @@ programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 debuggingThisModule = False
 
 
-DEFAULT_OSIS_WLC_FILEPATH = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/' )
+INPUT_RESOURCES_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/' )
+
+DEFAULT_OSIS_WLC_FILEPATH = INPUT_RESOURCES_FOLDERPATH.joinpath( 'morphhb/wlc/' )
 DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( f'WLC{ZIPPED_PICKLE_FILENAME_END}' )
 
 DEFAULT_GLOSSING_DICT_FILEPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DATAFILES_FOLDERPATH.joinpath( 'ManuallyEditedFiles/', 'WLCHebrewGlosses.pickle' )
@@ -115,7 +117,7 @@ class HebrewWLCBibleAddon():
         """
         Create an empty object.
         """
-        vPrint( 'Never', debuggingThisModule, "HebrewWLCBibleAddon.__init__()" )
+        fnPrint( debuggingThisModule, "HebrewWLCBibleAddon.__init__()" )
 
         self.glossingDict, self.haveGlossingDictChanges, self.loadedGlossEntryCount = None, False, 0
     # end of HebrewWLCBibleAddon.__init__
@@ -128,7 +130,7 @@ class HebrewWLCBibleAddon():
 
         e.g., {'word': 'הַ/מַּיִם', 'strong': 'd/4325', 'morph': 'HTd/Ncmpa', 'cantillationLevel': '0.1.1.0'}
         """
-        vPrint( 'Never', debuggingThisModule, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
+        fnPrint( debuggingThisModule, "getVerseDictList( {}, {} )".format( verseDataEntry, ref ) )
         assert isinstance( verseDataEntry, InternalBibleEntry )
 
         def handleExtra( thisExtra ):
@@ -230,7 +232,7 @@ class HebrewWLCBibleAddon():
         """
         Return a longer string with the morphology abbreviation(s) converted to something more readable.
         """
-        vPrint( 'Quiet', debuggingThisModule, "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
+        fnPrint( debuggingThisModule, "HebrewWLCBibleAddon.expandMorphologyAbbreviations( {} )".format( morphAbbrev ) )
         if not morphAbbrev: return ''
 
         if morphAbbrev.startswith( 'OSHM:' ): morphAbbrev = morphAbbrev[5:] # Open Scriptures Hebrew Morphology
@@ -424,7 +426,7 @@ class HebrewWLCBibleAddon():
         """
         Save the glossing dictionary to a pickle file.
         """
-        vPrint( 'Never', debuggingThisModule, "saveAnyChangedGlosses()" )
+        fnPrint( debuggingThisModule, "saveAnyChangedGlosses()" )
 
         if self.haveGlossingDictChanges:
             BibleOrgSysGlobals.backupAnyExistingFile( self.glossingDictFilepath, numBackups=9 )
@@ -541,7 +543,7 @@ class HebrewWLCBibleAddon():
         """
         Check a new gloss and add it to the glossing dictionary.
         """
-        vPrint( 'Info', debuggingThisModule, "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
+        fnPrint( debuggingThisModule, "setNewGenericGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, genericGloss, ref ) )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -573,7 +575,7 @@ class HebrewWLCBibleAddon():
 
         There must already be an entry for this Hebrew word (with a generic gloss).
         """
-        vPrint( 'Info', debuggingThisModule, "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
+        fnPrint( debuggingThisModule, "setNewSpecificGloss( {!r}, {!r}, {} )".format( normalizedHebrewWord, specificGloss, ref ) )
         assert isinstance( normalizedHebrewWord, str ) and normalizedHebrewWord
         assert ' ' not in normalizedHebrewWord
         assert ORIGINAL_MORPHEME_BREAK_CHAR not in normalizedHebrewWord # Should already be converted to OUR_MORPHEME_BREAK_CHAR
@@ -599,7 +601,7 @@ class HebrewWLCBibleAddon():
         """
         Add a new ref to the glossing dictionary if it's not already there.
         """
-        vPrint( 'Info', debuggingThisModule, "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
+        fnPrint( debuggingThisModule, "addNewGenericGlossingReference( {!r}, {} )".format( normalizedHebrewWord, ref ) )
         assert isinstance( normalizedHebrewWord, str )
         assert ' ' not in normalizedHebrewWord
         assert '/' not in normalizedHebrewWord # Should already be converted to =
@@ -677,7 +679,7 @@ class OSISHebrewWLCBible( OSISXMLBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        vPrint( 'Never', debuggingThisModule, "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFileOrFilepath ) )
+        fnPrint( debuggingThisModule, "OSISHebrewWLCBible.__init__( {} )".format( OSISXMLFileOrFilepath ) )
 
         if not OSISXMLFileOrFilepath: OSISXMLFileOrFilepath = DEFAULT_OSIS_WLC_FILEPATH
         OSISXMLBible.__init__( self, OSISXMLFileOrFilepath, givenName='Westminster Leningrad Codex', givenAbbreviation='WLC' )
@@ -697,7 +699,7 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
         """
         Create an empty object.
         """
-        vPrint( 'Never', debuggingThisModule, "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
+        fnPrint( debuggingThisModule, "PickledHebrewWLCBible.__init__( {} )".format( zippedPickleFilepath ) )
 
         if not zippedPickleFilepath: zippedPickleFilepath = DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH
         if not os.path.exists( zippedPickleFilepath ):

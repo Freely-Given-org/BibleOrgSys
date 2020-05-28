@@ -52,7 +52,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
@@ -949,7 +949,7 @@ class PTX8Bible( Bible ):
         """
         Load the ProjectUsers.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8ProjectUserAccess()" )
+        fnPrint( debuggingThisModule, "loadPTX8ProjectUserAccess()" )
 
         projectUsersFilepath = os.path.join( self.sourceFilepath, 'ProjectUserAccess.xml' )
         if not os.path.exists( projectUsersFilepath ): return
@@ -1184,7 +1184,7 @@ class PTX8Bible( Bible ):
         """
         Load the CheckingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8CheckingStatus()" )
+        fnPrint( debuggingThisModule, "loadPTX8CheckingStatus()" )
 
         checkingStatusFilepath = os.path.join( self.sourceFilepath, 'CheckingStatus.xml' )
         if not os.path.exists( checkingStatusFilepath ): return
@@ -1248,8 +1248,8 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} checking status books.".format( len(checkingStatusByBookDict) ) )
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} checking status checks.".format( len(checkingStatusByCheckDict) ) )
-        vPrint( 'Quiet', debuggingThisModule, "\ncheckingStatusByBookDict", len(checkingStatusByBookDict), checkingStatusByBookDict )
-        vPrint( 'Quiet', debuggingThisModule, "\ncheckingStatusByCheckDict", len(checkingStatusByCheckDict), checkingStatusByCheckDict )
+        dPrint( 'Never', debuggingThisModule, "\ncheckingStatusByBookDict", len(checkingStatusByBookDict), checkingStatusByBookDict )
+        dPrint( 'Never', debuggingThisModule, "\ncheckingStatusByCheckDict", len(checkingStatusByCheckDict), checkingStatusByCheckDict )
         #for something in checkingStatusDict:
             #dPrint( 'Quiet', debuggingThisModule, "\n  {} = {}".format( something, checkingStatusDict[something] ) )
         if checkingStatusByBookDict: self.suppliedMetadata['PTX8']['CheckingStatusByBook'] = checkingStatusByBookDict
@@ -1261,7 +1261,7 @@ class PTX8Bible( Bible ):
         """
         Load the CommentTags_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8CommentTags()" )
+        fnPrint( debuggingThisModule, "loadPTX8CommentTags()" )
 
         commentTagFilepath = os.path.join( self.sourceFilepath, 'CommentTags.xml' )
         if not os.path.exists( commentTagFilepath ): return
@@ -1328,7 +1328,7 @@ class PTX8Bible( Bible ):
 
         This is usually used for a project like a back translation or daughter translation.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8DerivedTranslationStatus()" )
+        fnPrint( debuggingThisModule, "loadPTX8DerivedTranslationStatus()" )
 
         derivedTranslationStatusFilepath = os.path.join( self.sourceFilepath, 'DerivedTranslationStatus.xml' )
         if not os.path.exists( derivedTranslationStatusFilepath ): return
@@ -1399,7 +1399,7 @@ class PTX8Bible( Bible ):
         """
         Load the license.json file and parse it into the dictionary.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8Licence()" )
+        fnPrint( debuggingThisModule, "loadPTX8Licence()" )
 
         licenceFilename = 'license.json'
         licenceFilepath = os.path.join( self.sourceFilepath, licenceFilename )
@@ -1430,7 +1430,7 @@ class PTX8Bible( Bible ):
         """
         Load the Notes_*.xml files (if they exist) and parse them into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8Notes()" )
+        fnPrint( debuggingThisModule, "loadPTX8Notes()" )
 
         noteFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -1575,7 +1575,7 @@ class PTX8Bible( Bible ):
         """
         Load the ParallelPassageStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8ParallelPassageStatus()" )
+        fnPrint( debuggingThisModule, "loadPTX8ParallelPassageStatus()" )
 
         parallelPassageStatusFilepath = os.path.join( self.sourceFilepath, 'ParallelPassageStatus.xml' )
         if not os.path.exists( parallelPassageStatusFilepath ): return
@@ -1667,7 +1667,7 @@ class PTX8Bible( Bible ):
         """
         Load the BiblicalTerms*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8ProjectBiblicalTerms()" )
+        fnPrint( debuggingThisModule, "loadPTX8ProjectBiblicalTerms()" )
 
         projectBiblicalTermsFilepath = os.path.join( self.sourceFilepath, 'ProjectBiblicalTerms.xml' )
         if not os.path.exists( projectBiblicalTermsFilepath ): return
@@ -1763,7 +1763,7 @@ class PTX8Bible( Bible ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8ProjectProgress()" )
+        fnPrint( debuggingThisModule, "loadPTX8ProjectProgress()" )
 
         projectProgressFilepath = os.path.join( self.sourceFilepath, 'ProjectProgress.xml' )
         if not os.path.exists( projectProgressFilepath ): return
@@ -2085,7 +2085,7 @@ class PTX8Bible( Bible ):
         """
         Load the Progress*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8ProjectProgressCSV()" )
+        fnPrint( debuggingThisModule, "loadPTX8ProjectProgressCSV()" )
 
         projectProgressCSVFilename = 'ProjectProgress.csv'
         projectProgressCSVFilepath = os.path.join( self.sourceFilepath, projectProgressCSVFilename )
@@ -2118,7 +2118,7 @@ class PTX8Bible( Bible ):
         """
         Load the PrintConfig*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8PrintConfig()" )
+        fnPrint( debuggingThisModule, "loadPTX8PrintConfig()" )
 
 # XXXXXXXXXXXXXXX IS THERE REALLY MORE THAN ONE OF THESE???
         printConfigFilenames = []
@@ -2216,7 +2216,7 @@ class PTX8Bible( Bible ):
 
         These lines use the CC (Consisent Changes) format and so use > as the main operator.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8PrintDraftChanges()" )
+        fnPrint( debuggingThisModule, "loadPTX8PrintDraftChanges()" )
 
         autocorrectFilename = 'PrintDraftChanges.txt'
         autocorrectFilepath = os.path.join( self.sourceFilepath, autocorrectFilename )
@@ -2380,7 +2380,7 @@ class PTX8Bible( Bible ):
         """
         Load the SpellingStatus.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8SpellingStatus()" )
+        fnPrint( debuggingThisModule, "loadPTX8SpellingStatus()" )
 
         spellingStatusFilepath = os.path.join( self.sourceFilepath, 'SpellingStatus.xml' )
         if not os.path.exists( spellingStatusFilepath ): return
@@ -2453,7 +2453,7 @@ class PTX8Bible( Bible ):
         """
         Load the something.sty file (which is a SFM file) and parse it into the dictionary PTXStyles.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8Styles()" )
+        fnPrint( debuggingThisModule, "loadPTX8Styles()" )
 
         styleFilenames = []
         for something in os.listdir( self.sourceFilepath ):
@@ -2541,7 +2541,7 @@ class PTX8Bible( Bible ):
         """
         Load the TermRenderings*.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata['PTX8'].
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8TermRenderings()" )
+        fnPrint( debuggingThisModule, "loadPTX8TermRenderings()" )
 
         renderingTermsFilepath = os.path.join( self.sourceFilepath, 'TermRenderings.xml' )
         if not os.path.exists( renderingTermsFilepath ): return
@@ -2656,7 +2656,7 @@ class PTX8Bible( Bible ):
             (e.g. when using Project > Mark Point in Project History).
             It has no other use.
         """
-        vPrint( 'Info', debuggingThisModule, "loadUniqueId()" )
+        fnPrint( debuggingThisModule, "loadUniqueId()" )
 
         uniqueIdFilename = 'unique.id'
         uniqueIdFilepath = os.path.join( self.sourceFilepath, uniqueIdFilename )
@@ -2685,7 +2685,7 @@ class PTX8Bible( Bible ):
         """
         Load the WordAnalyses.xml file (if it exists) and parse it into the dictionary self.suppliedMetadata.
         """
-        vPrint( 'Info', debuggingThisModule, "loadPTX8WordAnalyses()" )
+        fnPrint( debuggingThisModule, "loadPTX8WordAnalyses()" )
 
         wordAnalysesFilepath = os.path.join( self.sourceFilepath, 'WordAnalyses.xml' )
         if not os.path.exists( wordAnalysesFilepath ): return
@@ -2787,11 +2787,11 @@ class PTX8Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "PTX8Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "PTX8Bible.loadBook( {}, {} )".format( BBB, filename ) )
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )
@@ -2820,12 +2820,12 @@ class PTX8Bible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        vPrint( 'Verbose', debuggingThisModule, "_loadBookMP( {} )".format( BBB_Filename_Tuple ) )
+        fnPrint( debuggingThisModule, "_loadBookMP( {} )".format( BBB_Filename_Tuple ) )
 
         BBB, filename = BBB_Filename_Tuple
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading PTX8 USFM {} for {}".format( BBB, self.name ) )

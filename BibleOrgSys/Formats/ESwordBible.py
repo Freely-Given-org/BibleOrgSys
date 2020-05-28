@@ -69,7 +69,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -554,7 +554,7 @@ class ESwordBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        vPrint( 'Never', debuggingThisModule, "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+        fnPrint( debuggingThisModule, "ESwordBible.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -778,7 +778,7 @@ class ESwordBible( Bible ):
     def checkForExtraMaterial( self, cursor, BOS ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, _("checkForExtraMaterial( …, … )") )
+        fnPrint( debuggingThisModule, _("checkForExtraMaterial( …, … )") )
 
         vPrint( 'Quiet', debuggingThisModule, _("Checking {} for extra material…").format( self.sourceFilepath ) )
 
@@ -801,7 +801,7 @@ class ESwordBible( Bible ):
         """
         Load Bible details out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, "preload()" )
+        fnPrint( debuggingThisModule, "preload()" )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -895,7 +895,7 @@ class ESwordBible( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("load()…") )
+        fnPrint( debuggingThisModule, _("load()…") )
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -1078,10 +1078,10 @@ class ESwordBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading e-SwordBible {} for {}".format( BBB, self.name ) )

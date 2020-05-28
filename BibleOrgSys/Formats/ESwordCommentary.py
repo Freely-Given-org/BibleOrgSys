@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Formats.ESwordBible import handleESwordLine
@@ -194,7 +194,7 @@ class ESwordCommentary( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        vPrint( 'Never', debuggingThisModule, "ESwordCommentary.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
+        fnPrint( debuggingThisModule, "ESwordCommentary.init( {!r}, {!r}, {!r} )".format( sourceFolder, givenFilename, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -248,7 +248,7 @@ class ESwordCommentary( Bible ):
         """
         Load Bible details out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("ESwordCommentary.preload()…") )
+        fnPrint( debuggingThisModule, _("ESwordCommentary.preload()…") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
         loadErrors = []
@@ -343,7 +343,7 @@ class ESwordCommentary( Bible ):
         """
         Load all the books out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("load()…") )
+        fnPrint( debuggingThisModule, _("load()…") )
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
@@ -484,10 +484,10 @@ class ESwordCommentary( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        vPrint( 'Never', debuggingThisModule, _("loadBook( {} )").format( BBB ) )
+        fnPrint( debuggingThisModule, _("loadBook( {} )").format( BBB ) )
 
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading e-Sword-Commentary {} for {}".format( BBB, self.name ) )
@@ -914,7 +914,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
         """
         Writes a book to the e-Sword sqlObject file.
         """
-        vPrint( 'Quiet', debuggingThisModule, "toESword.writeESwordCommentaryBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
+        fnPrint( debuggingThisModule, "toESword.writeESwordCommentaryBook( {}, {}, {}".format( sqlObject, BBB, ourGlobals ) )
         halt # Not written yet
 
         nonlocal lineCount

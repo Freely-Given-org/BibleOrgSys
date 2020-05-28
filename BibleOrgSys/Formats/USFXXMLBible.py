@@ -59,7 +59,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
@@ -794,7 +794,7 @@ class USFXXMLBible( Bible ):
     def loadTable( self, element, location, BBB, C, V ):
         """
         """
-        vPrint( 'Never', debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
+        fnPrint( debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
 
         BibleOrgSysGlobals.checkXMLNoText( element, location, 'kg92' )
         BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ka92' )

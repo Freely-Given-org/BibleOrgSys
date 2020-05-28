@@ -41,7 +41,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
@@ -522,7 +522,7 @@ class USFM2Bible( Bible ):
 
         Note that sourceFolder can be None if we don't know that yet.
         """
-        vPrint( 'Quiet', debuggingThisModule, "USFM2Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
+        fnPrint( debuggingThisModule, "USFM2Bible.__init__( {!r}, {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation, encoding ) )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -602,13 +602,13 @@ class USFM2Bible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        vPrint( 'Info', debuggingThisModule, "USFM2Bible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( debuggingThisModule, "USFM2Bible.loadBook( {}, {} )".format( BBB, filename ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USFM2 {} for {}".format( BBB, self.name ) )
@@ -638,11 +638,11 @@ class USFM2Bible( Bible ):
 
         Returns the book info.
         """
-        vPrint( 'Verbose', debuggingThisModule, _("loadBookMP( {} )").format( BBB_Filename_duple ) )
+        fnPrint( debuggingThisModule, "loadBookMP( {} )".format( BBB_Filename_duple ) )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
             return self.books[BBB] # Already loaded
         #if BBB in self.triedLoadingBook:
             #logging.warning( "We had already tried loading USFM2 {} for {}".format( BBB, self.name ) )

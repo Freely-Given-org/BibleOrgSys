@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
@@ -633,11 +633,11 @@ class PierceOnlineBible( Bible ):
             vPrint( 'Info', debuggingThisModule, _("  Loading text opts from {} {}…").format( self.sourceFolder, filename ) )
             with open( filepath, 'rb' ) as myFile: # Automatically closes the file when done
                 optBytes = myFile.read()
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "    {:,} optBytes bytes read".format( len(optBytes) ) )
+            dPrint( 'Quiet', debuggingThisModule, "    {:,} optBytes bytes read".format( len(optBytes) ) )
 
             index = 0
             key, size, zero1, zero2 = optBytes[0], optBytes[1], optBytes[2], optBytes[3]
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "    TextOpt: key={} size={}".format( key, size ) )
+            dPrint( 'Quiet', debuggingThisModule, "    TextOpt: key={} size={}".format( key, size ) )
             assert key == 255
             assert size == 3
             assert zero1 == 0
@@ -1295,7 +1295,7 @@ def testOB( TOBfilename ):
             verseText = fullVerseText = "Verse not available!"
         if BibleOrgSysGlobals.verbosityLevel > 1:
             vPrint( 'Quiet', debuggingThisModule, reference, shortText, verseText )
-            if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
+            dPrint( 'Quiet', debuggingThisModule, '  {}'.format( fullVerseText ) )
 # end of testOB
 
 

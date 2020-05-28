@@ -40,7 +40,7 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
 LAST_MODIFIED_DATE = '2020-05-03' # by RJH
@@ -64,7 +64,7 @@ class GreekLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        vPrint( 'Never', debuggingThisModule, _("GreekLexicon.__init__( {} )").format( XMLFolder ) )
+        fnPrint( debuggingThisModule, "GreekLexicon.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = None
         if preload: self.load()
@@ -76,7 +76,7 @@ class GreekLexicon:
         Load the pickle file if it's there,
             Otherwise use the converter to load the XML (slower).
         """
-        vPrint( 'Never', debuggingThisModule, _("GreekLexicon.load()…") )
+        fnPrint( debuggingThisModule, "GreekLexicon.load()" )
         assert self.StrongsEntries is None
 
         standardPickleFilepath = BibleOrgSysGlobals.BOS_DISTRIBUTED_FILES_FOLDERPATH.joinpath( 'GreekLexicon_Strongs_Table.1.pickle' )
@@ -165,7 +165,7 @@ class GreekLexicon:
                 occasionally in the sense of union (as a contraction of <span class="StrongsRef">G260</span> ).
             </li>
         """
-        vPrint( 'Never', debuggingThisModule, f"GreekLexicon.getStrongsEntryHTML( {key} )…" )
+        fnPrint( debuggingThisModule, f"GreekLexicon.getStrongsEntryHTML( {key} )" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
             assert key and key[0]=='G' and key[1:].isdigit()
         keyDigits = key[1:].lstrip( '0' ) # Remove leading zeroes
