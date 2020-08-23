@@ -237,7 +237,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-    def writeOpenSongBook( writerObject, BBB, bkData ):
+    def writeOpenSongBook( writerObject, BBB:str, bkData ):
         """Writes a book to the OpenSong XML writerObject."""
         #dPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
         OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
@@ -374,7 +374,7 @@ class OpenSongXMLBible( Bible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the XML Bible file converter object.
         """

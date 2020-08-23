@@ -57,7 +57,7 @@ class BiblePunctuationSystems:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -125,7 +125,7 @@ class BiblePunctuationSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #     else: # We have to load the XML (much slower)
@@ -243,7 +243,7 @@ class BiblePunctuationSystem:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self, systemName ):
+    def __init__( self, systemName ) -> None:
         """
         Constructor:
         """

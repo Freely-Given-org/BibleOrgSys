@@ -40,10 +40,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
+# from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-08-20' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.54'
@@ -87,7 +87,7 @@ class USFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        #dPrint( 'Quiet', debuggingThisModule, f"load( filename={filename}, folder={folder}, encoding={encoding} )…" )
+        fnPrint( debuggingThisModule, f"USFMBibleBook.load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
         def doaddLine( originalMarker:str, originalText:str ) -> None:
@@ -97,11 +97,10 @@ class USFMBibleBook( BibleBook ):
             Also convert ~ to a proper non-break space.
 
             Note: for uwAligned data, calls will look something like this:
-                    doaddLine( 'p~', '\w Simon|x-occurrence="1" x-occurrences="1"\w*' )
-                    doaddLine( 'p~', '\w of|x-occurrence="1" x-occurrences="2"\w* \w Cyrene|x-occurrence="1" x-occurrences="1"\w* (\w the|x-occurrence="1" x-occurrences="2"\w*' )
+                    doaddLine( 'p~', '\\w Simon|x-occurrence="1" x-occurrences="1"\\w*' )
+                    doaddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, f"doaddLine( '{originalMarker}', '{originalText}' )" )
+            vPrint( 'Info', debuggingThisModule, f"doaddLine( '{originalMarker}', '{originalText}' )" )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerListFromText( text )
@@ -150,9 +149,9 @@ class USFMBibleBook( BibleBook ):
                 if not BibleOrgSysGlobals.strictCheckingFlag:
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
-                # dPrint( 'Quiet', debuggingThisModule, f"words={variables['words']}=")
-                # dPrint( 'Quiet', debuggingThisModule, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
-                # dPrint( 'Quiet', debuggingThisModule, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"words={variables['words']}=")
+                #dPrint( 'Quiet', debuggingThisModule, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
                 if variables['words'].endswith( '"\\w**' ):
                     vPrint( 'Quiet', debuggingThisModule, "Drop final double asterisk!!!! (for Hindi IRV ???)")
                     variables['words'] = variables['words'][:-1]
@@ -175,16 +174,16 @@ class USFMBibleBook( BibleBook ):
 
                 for j,entry in enumerate( reversed( variables['saved'] ) ):
                     oldC, oldV, oldTextStr, oldWordsStr = entry
-                    # dPrint( 'Quiet', debuggingThisModule, f"Got {self.BBB} {oldC}:{oldV}, {oldTextStr}, {oldWordsStr}")
+                    #dPrint( 'Quiet', debuggingThisModule, f"Got {self.BBB} {oldC}:{oldV}, {oldTextStr}, {oldWordsStr}")
                     if oldV != V or oldC != C: break
-                    # dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} verse {C}:{V} @ -{j}!" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} verse {C}:{V} @ -{j}!" )
                     if oldTextStr == textStr:
                         ix = len(variables['saved']) - j - 1
-                        # dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} {C}:{V} original word @ {ix}!" )
-                        # dPrint( 'Quiet', debuggingThisModule, "Check:", variables['saved'][ix] )
+                        #dPrint( 'Quiet', debuggingThisModule, f"Same {self.BBB} {C}:{V} original word @ {ix}!" )
+                        #dPrint( 'Quiet', debuggingThisModule, "Check:", variables['saved'][ix] )
                         discard = variables['saved'].pop( ix ) # Remove old entry from list
                         assert discard == entry
-                        # dPrint( 'Quiet', debuggingThisModule, f"Combined {self.BBB} {C}:{V} will be: '{oldWordsStr} … {wordsStr}'" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"Combined {self.BBB} {C}:{V} will be: '{oldWordsStr} … {wordsStr}'" )
                         # Append non-contiguous join to oldWordsStr and insert where we deleted
                         #   We use a joiner ' … ' that can easily be detected
                         variables['saved'].insert( ix, (C,V, textStr, f'{oldWordsStr} … {wordsStr}') )
@@ -210,7 +209,7 @@ class USFMBibleBook( BibleBook ):
                 assert marker not in ('zaln-s','zaln-e')
 
                 for numFound in range( 99 ):
-                    ixAlignmentStart = text.find( '\\zaln-s | ' )
+                    ixAlignmentStart = text.find( '\\zaln-s |' )
                     if ixAlignmentStart == -1:
                         if text.find('zaln-s') > 0:
                             logging.error( f"Found unexpected 'zaln-s' without backslash in {self.BBB} {C}:{V} {marker}='{text}'" )
@@ -258,7 +257,7 @@ class USFMBibleBook( BibleBook ):
                         if debuggingThisModule:
                             vPrint( 'Quiet', debuggingThisModule, f"      Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
-                                                + text[ixAlignmentStart+10:ixAlignmentStartEnding]
+                                    + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
                         if debuggingThisModule:
                             vPrint( 'Quiet', debuggingThisModule, f"      Now got alignmentText='{variables['text']}'" )
                         text = text[:ixAlignmentStart] + text[ixAlignmentStartEnding+2:]
@@ -280,7 +279,7 @@ class USFMBibleBook( BibleBook ):
             marker, text = givenMarker, givenText
             if marker == 'zaln-s':
                 assert not variables['text']
-                assert text.startswith('| ')
+                assert text.startswith('|')
                 # Put marker into line then we can use the same function for inline milestone starts
                 marker, text = findInternalStarts( 'SWAPPED', f'\\{marker} {text}', variables )
             elif marker == 'zaln-e': # unexpected
@@ -326,7 +325,7 @@ class USFMBibleBook( BibleBook ):
                     #assert '\\w*\\w' not in variables['words']
 
             vPrint( 'Never', debuggingThisModule, f"Got near end1 with {marker}='{text}'" )
-            # dPrint( 'Quiet', debuggingThisModule, "rawLines", self._rawLines[-4:] )
+            #dPrint( 'Quiet', debuggingThisModule, "rawLines", self._rawLines[-4:] )
             if 'zaln' in text: # error because we have no open levels
                 logging.critical( f"Why is zaln in {self.BBB} text???" )
             if marker == 'SWAPPED': # then we need to supply a remaining marker
@@ -484,7 +483,7 @@ class USFMBibleBook( BibleBook ):
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
                     #  vPrint( 'Quiet', debuggingThisModule, "HERE2", lastMarker, lastText, "now", marker, text)
                     if marker=='w' and lastMarker in ('v', 'p~'):
-                        # dPrint( 'Quiet', debuggingThisModule, f"HereXX with {lastMarker} now {marker}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
                         vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
@@ -510,7 +509,7 @@ class USFMBibleBook( BibleBook ):
                     gotUWAligning = True
                     marker, text = handleUWAlignment( marker, text, alignmentVariables )
                     if marker=='p~' and lastMarker in ('v', 'p~'):
-                        # dPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text
                         vPrint( 'Never', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
@@ -546,7 +545,7 @@ class USFMBibleBook( BibleBook ):
                                 #  vPrint( 'Quiet', debuggingThisModule, "Add3")
                                 doaddLine( lastMarker, lastText )
                                 lastMarker = lastText = None
-                            # dPrint( 'Quiet', debuggingThisModule, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
+                            #dPrint( 'Quiet', debuggingThisModule, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
                             # Move the extra appendage to the marker into the actual text
                             marker, text = tryMarker, marker[len(tryMarker):] + ' ' + text
                             if text:
@@ -597,7 +596,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
@@ -659,7 +658,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )

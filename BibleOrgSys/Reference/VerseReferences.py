@@ -201,7 +201,7 @@ class SimpleVerseKey():
     A BCVS string to be parsed can also be passed as the first (and only) parameter.
         e.g. 'SA2_12:9b'
     """
-    def __init__( self, BBB:str, C=None, V=None, SI=None, OSIS=False, ignoreParseErrors=False ):
+    def __init__( self, BBB:str, C:str=None, V:str=None, SI=None, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
         fnPrint( debuggingThisModule, "SimpleVerseKey.__init__( {!r}, {!r}, {!r}, {!r} )".format( BBB, C, V, SI ) )
@@ -417,7 +417,7 @@ class SimpleVersesKey():
     A string to be parsed can also be passed as the first (and only) parameter.
         e.g. "SA2_12:9b"
     """
-    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
+    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
         fnPrint( debuggingThisModule, "SimpleVersesKey.__init__( {!r} )".format( referenceString ) )
@@ -806,7 +806,7 @@ class VerseRangeKey():
             "SA2_12:22–13:2" (with en-dash)
             "GEN 18"
     """
-    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ):
+    def __init__( self, referenceString, OSIS=False, ignoreParseErrors=False ) -> None:
         """
         """
         fnPrint( debuggingThisModule, "VerseRangeKey.__init__( {!r} )".format( referenceString ) )
@@ -1038,7 +1038,7 @@ class FlexibleVersesKey():
             "SA2_12:22–13:2" (with en-dash)
             "GEN 18"
     """
-    def __init__( self, referenceString, OSIS=False ):
+    def __init__( self, referenceString, OSIS=False ) -> None:
         """
         """
         fnPrint( debuggingThisModule, "FlexibleVersesKey.__init__( {!r} )".format( referenceString ) )
@@ -1755,7 +1755,7 @@ def briefDemo() -> None:
         for someBadString in badVersesStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
-            except TypeError: pass # dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass #dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )
@@ -1837,7 +1837,7 @@ def fullDemo() -> None:
         for someBadString in badVersesStrings:
             vPrint( 'Quiet', debuggingThisModule, "  Testing SimpleVersesKey with bad {!r}".format( someBadString ) )
             try: vPrint( 'Quiet', debuggingThisModule, '  ', repr(someBadString), SimpleVersesKey( someBadString ) )
-            except TypeError: pass # dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
+            except TypeError: pass #dPrint( 'Quiet', debuggingThisModule, '    TypeError' )
 
     goodRangeStrings = ( 'SA2_19:12-19', 'REV_11:2!b-6!a', )
     badRangeStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', 'NUM_1:1', '2SA_19:12', 'JNA_2:3b', 'REV_11:12!z', )

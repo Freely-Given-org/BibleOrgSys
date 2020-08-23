@@ -34,9 +34,9 @@ Module for exporting Bibles in various formats listed below.
 A class which extends InternalBible to add Bible export functions.
 
 Contains functions:
-    toPickleObject( self, outputFolderpath:Optional[Path]=None )
-    toPickledBible( self, outputFolderpath:Optional[Path]=None )
-    toBOSJSONBible( self, outputFolderpath:Optional[Path]=None )
+    toPickleObject( outputFolderpath:Optional[Path]=None )
+    toPickledBible( outputFolderpath:Optional[Path]=None )
+    toBOSJSONBible( outputFolderpath:Optional[Path]=None )
     makeLists( outputFolderpath:Optional[Path]=None )
     toBOSBCV( self, outputFolderpath:Optional[Path]=None ) — one file per verse using our internal Bible format
     toPseudoUSFM( outputFolderpath:Optional[Path]=None ) — this is our internal Bible format — exportable for debugging purposes
@@ -91,6 +91,7 @@ import subprocess
 import multiprocessing
 import signal
 
+# BibleOrgSys imports
 if __name__ == '__main__':
     aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
     if aboveFolderpath not in sys.path:
@@ -99,7 +100,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput import ControlFiles
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS, InternalBibleExtraList
 from BibleOrgSys.Internals.InternalBible import InternalBible
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
@@ -110,7 +111,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2020-05-23' # by RJH
+LAST_MODIFIED_DATE = '2020-07-14' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -211,7 +212,7 @@ class BibleWriter( InternalBible ):
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Bible_Object_Pickle/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
 
-        result = self.pickle( folder=outputFolderpath )
+        result = self.pickle( folderpath=outputFolderpath )
 
         if result: # now create a zipped version
             filename = self.getAName( abbrevFirst=True )
@@ -252,8 +253,7 @@ class BibleWriter( InternalBible ):
         """
         from BibleOrgSys.Formats.PickledBible import createPickledBible
 
-        if BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, "toPickledBible( {}, {}, {}, {} )".format( outputFolderpath, metadataDict, dataLevel, zipOnly ) )
+        fnPrint( debuggingThisModule, f"toPickledBible( {outputFolderpath}, {metadataDict}, {dataLevel}, {zipOnly} )" )
         vPrint( 'Normal', debuggingThisModule, "Running BibleWriter:toPickledBible" )
 
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
@@ -306,7 +306,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.__setupWriter
 
 
-    def __adjustControlDict( self, existingControlDict ):
+    def __adjustControlDict( self, existingControlDict:dict ) -> None:
         """
         Do some global name replacements in the given control dictionary.
         """
@@ -322,7 +322,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def makeLists( self, outputFolderpath:Optional[Path]=None ):
+    def makeLists( self, outputFolderpath:Optional[Path]=None ) -> bool:
         """
         Write the pseudo USFM out directly (for debugging, etc.).
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
@@ -391,9 +391,11 @@ class BibleWriter( InternalBible ):
         ## end of countWords
 
 
-        def printWordCounts( typeString, dictionary ):
-            """ Given a description and a dictionary,
-                    sorts and writes the word count data to text, csv, and xml files. """
+        def printWordCounts( typeString:str, dictionary:Dict[str,int] ) -> None:
+            """
+            Given a description and a dictionary,
+                sorts and writes the word count data to text, csv, and xml files.
+            """
             title = BibleOrgSysGlobals.makeSafeXML( typeString.replace('_',' ') + " sorted by word" )
             filenamePortion = BibleOrgSysGlobals.makeSafeFilename( typeString + "_sorted_by_word." )
             vPrint( 'Info', debuggingThisModule, "  " + _("Writing '{}*'…").format( filenamePortion ) )
@@ -945,7 +947,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toESFM( self, outputFolderpath:Optional[Path]=None ): #, removeVerseBridges=False ):
+    def toESFM( self, outputFolderpath:Optional[Path]=None ) -> bool: #, removeVerseBridges=False ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
@@ -1118,7 +1120,7 @@ class BibleWriter( InternalBible ):
         #verseByVerse = True
 
 
-        def writeTextFile( BBB, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ):
+        def writeTextFile( BBB:str, internalBibleBookData, columnWidth, wtfOutputFolder, withBOMFlag ):
             """
             Helper function to write the actual text file
             """
@@ -1333,7 +1335,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers = set()
 
-        def __formatMarkdownVerseText( BBB, C, V, givenText, extras ):
+        def __formatMarkdownVerseText( BBB:str, C:str, V:str, givenText:str, extras ):
             """
             Format character codes within the text into Markdown
             """
@@ -1710,7 +1712,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def __formatHTMLVerseText( BBB:str, C:str, V:str, givenText:str, extras, ourGlobals:dict ):
+    def __formatHTMLVerseText( BBB:str, C:str, V:str, givenText:str, extras:InternalBibleExtraList, ourGlobals:dict ):
         """
         Format character codes within the text into HTML
 
@@ -1721,7 +1723,7 @@ class BibleWriter( InternalBible ):
         #dPrint( 'Quiet', debuggingThisModule, "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert givenText or extras
 
-        def handleExtras( text:str, extras, ourGlobals:dict ):
+        def handleExtras( text:str, extras:InternalBibleExtraList, ourGlobals:dict ):
             """
             Returns the HTML5 text with footnotes and xrefs processed.
             It also accumulates HTML5 in ourGlobals for the end notes.
@@ -2241,7 +2243,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeAboutPage
 
 
-        def writeHTML5Book( writerObject, BBB, bkData, ourGlobals ):
+        def writeHTML5Book( writerObject, BBB:str, bkData, ourGlobals ):
             """
             Writes a book to the HTML5 writerObject.
             """
@@ -3765,7 +3767,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeUSXBook( BBB, bkData ):
+        def writeUSXBook( BBB:str, bkData ):
             """ Writes a book to the filesFolder. """
 
             def handleInternalTextMarkersForUSX2( originalText ):
@@ -4336,7 +4338,7 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
-        def writeUSFXBook( xw, BBB, bkData ):
+        def writeUSFXBook( xw, BBB:str, bkData ):
             """ Writes a book to the given USFX XML writerObject. """
 
             def handleInternalTextMarkersForUSFX( originalText ):
@@ -4938,7 +4940,7 @@ class BibleWriter( InternalBible ):
         toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
 
-        def writeOSISBook( writerObject, BBB, bkData ):
+        def writeOSISBook( writerObject, BBB:str, bkData ):
             """
             Writes a book to the OSIS XML writerObject.
             """
@@ -4992,7 +4994,7 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toOSISXML.checkOSISText
 
-            def processXRefsAndFootnotes( verse, extras, offset=0 ):
+            def processXRefsAndFootnotes( verse, extras:InternalBibleExtraList, offset=0 ):
                 """
                 Convert cross-references and footnotes and return the adjusted verse text.
                 """
@@ -5149,7 +5151,7 @@ class BibleWriter( InternalBible ):
                 return verse
             # end of toOSISXML.processXRefsAndFootnotes
 
-            def writeVerseStart( writerObject, BBB, chapterRef, verseNumberText ):
+            def writeVerseStart( writerObject, BBB:str, chapterRef, verseNumberText ):
                 """
                 Processes and writes a verse milestone to the OSIS XML writerObject.
                     <verse sID="Gen.1.31" osisID="Gen.1.31"/>
@@ -5651,7 +5653,7 @@ class BibleWriter( InternalBible ):
 
         toZefGlobals = { 'verseRef':'', 'XRefNum':0, 'FootnoteNum':0, 'lastRef':'', 'OneChapterOSISBookCodes':BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
-        def writeZefBook( writerObject, BBB, bkData ):
+        def writeZefBook( writerObject, BBB:str, bkData ):
             """
             Writes a book to the Zefania XML writerObject.
             """
@@ -5662,7 +5664,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
 
-            def handleVerseNumber( BBB, C, V, givenText ):
+            def handleVerseNumber( BBB:str, C:str, V:str, givenText ):
                 """
                 Given verse text, return two strings to be used later.
                 """
@@ -5743,7 +5745,7 @@ class BibleWriter( InternalBible ):
                 return adjText
             # end of toZefaniaXML.checkZefaniaText
 
-            #def convertInternals( BBB, C, V, givenText ):
+            #def convertInternals( BBB:str, C:str, V:str, givenText ):
                 #"""
                 #Do formatting of character styles and footnotes/cross-references, etc.
 
@@ -5757,7 +5759,7 @@ class BibleWriter( InternalBible ):
                 #return newText
             ## end of toZefaniaXML.convertInternals
 
-            def processZefXRefsAndFootnotes( verse, extras, offset=0 ):
+            def processZefXRefsAndFootnotes( verse, extras:InternalBibleExtraList, offset=0 ):
                 """
                 Convert cross-references and footnotes and return the adjusted verse text.
                 """
@@ -6124,7 +6126,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toHaggaiXML.writeHeader
 
-        def writeHagBook( writerObject, BBB, bkData ):
+        def writeHagBook( writerObject, BBB:str, bkData ):
             """
             Writes a book to the Haggai XML writerObject.
             """
@@ -6453,7 +6455,7 @@ class BibleWriter( InternalBible ):
             toSwordGlobals['length'] = 0 # Reset
         # end of toSwordModule.writeIndexEntry
 
-        def writeSwordBook( writerObject, ix, BBB, bkData ):
+        def writeSwordBook( writerObject, ix, BBB:str, bkData ):
             """ Writes a Bible book to the output files. """
 
             def checkSwordText( textToCheck ):
@@ -6616,7 +6618,7 @@ class BibleWriter( InternalBible ):
             # end of toSwordModule.processXRefsAndFootnotes
 
 
-            def writeVerseStart( writerObject, BBB, chapterRef, verseNumberString ):
+            def writeVerseStart( writerObject, BBB:str, chapterRef, verseNumberString ):
                 """
                 Processes and writes a verse to the OSIS XML writerObject.
                     <verse sID="Gen.1.31" osisID="Gen.1.31"/>
@@ -7173,7 +7175,7 @@ class BibleWriter( InternalBible ):
         # end of toSwordSearcher.writeSSHeader
 
 
-        def writeSSBook( writer, BBB, bookObject ):
+        def writeSSBook( writer, BBB:str, bookObject ):
             """
             Convert the internal Bible data to SwordSearcher pre-Forge output.
             """
@@ -7346,7 +7348,7 @@ class BibleWriter( InternalBible ):
         # end of doDrupalTextFormat
 
 
-        def writeDrupalBibleBook( writer, BBB, bookObject ):
+        def writeDrupalBibleBook( writer, BBB:str, bookObject ):
             """
             Convert the internal Bible data to DrupalBible output.
             """
@@ -7611,7 +7613,7 @@ class BibleWriter( InternalBible ):
         ## end of toPhotoBible.renderVerseNumbers
 
 
-        def renderPage( BBB, C, bookName, text, jpegFilepath, fontsize=None ):
+        def renderPage( BBB:str, C:str, bookName, text, jpegFilepath, fontsize=None ):
             """
             Creates a "blank" JPEG file
                 and then writes lines across the top of the background image.
@@ -7802,7 +7804,7 @@ class BibleWriter( InternalBible ):
         # end of toPhotoBible.renderPage
 
 
-        def renderChapterText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
+        def renderChapterText( BBB:str, BBBnum, bookName, bookAbbrev, C:str, intC, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
             """
             Creates as many JPEG image files as needed to display the chapter
                 and puts them in an appropriate (created) folder.
@@ -8810,7 +8812,7 @@ class BibleWriter( InternalBible ):
         # end of toODF.setupStyles
 
 
-        def insertFormattedODFText( BBB, C, V, givenText, extras, document, textCursor, defaultCharacterStyleName ):
+        def insertFormattedODFText( BBB:str, C:str, V:str, givenText:str, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ):
             """
             Format character codes within the text into ODF
             """
@@ -9048,7 +9050,7 @@ class BibleWriter( InternalBible ):
         # end of toODF.insertFormattedODFText
 
 
-        def createODFBook( bookNum, BBB, bookObject ):
+        def createODFBook( bookNum, BBB:str, bookObject ):
             """
             Returns a True/False result
             """
@@ -9083,7 +9085,7 @@ class BibleWriter( InternalBible ):
             else: logger.critical( "toODF: Don't know how to set up running header user text field programmatically yet" )
 
             firstEverParagraphFlag = True
-            def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, document, textCursor, defaultCharacterStyleName ):
+            def insertODFParagraph( BBB:str, C:str, V:str, paragraphStyleName, text, extras:InternalBibleExtraList, document, textCursor, defaultCharacterStyleName ):
                 """
                 Given some text and the paragraph stylename (and the default character stylename)
                     start a new paragraph and insert the text.
@@ -9489,7 +9491,7 @@ class BibleWriter( InternalBible ):
         # end of toTeX:texText
 
 
-        def makePDFs( BBB, texFilepath, timeout ):
+        def makePDFs( BBB:str, texFilepath, timeout ):
             """
             Call xelatex to make the Bible PDF file(s) from the .tex file.
             """
@@ -9682,8 +9684,7 @@ class BibleWriter( InternalBible ):
 
         TODO: Could be a function rather than a method (self is not used).
         """
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', debuggingThisModule, f"BibleWriter.doExportHelper( {ff} )…" )
+        fnPrint( debuggingThisModule, f"BibleWriter.doExportHelper( {ff} )…" )
         function, folder = ff
         if function is None: return None # Some exports are not always requested
 
@@ -10434,7 +10435,7 @@ def fullDemo() -> None:
                 #("ESFMTest2-RV", 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #("WEB", 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
                 # ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) ),
-                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV/USFM.save/' ) ),
+                # ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV/USFM.save/' ) ),
                 #("MS-BT", 'MBTBT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
                 #("MS-ABT", 'MBTABT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
                 #("WEB2", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
@@ -10443,7 +10444,7 @@ def fullDemo() -> None:
                 #("WEB5", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/') ),
                 #("WEB6", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2017-08-22 eng-web_usfm') ),
                 #("WEBLatest", 'WEB', BiblesFolderpath.joinpath( 'USFM Bibles/Haiola USFM test versions/eng-web_usfm/') ),
-                #('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/') ),
+                ('ULT','ULT',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/') ),
                 #('UST','UST',BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/') ),
                 #('UEB','UEB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/UEB/en_ueb/') ),
                 #('ULB','ULB',BiblesFolderpath.joinpath( 'English translations/Door43Versions/ULB/en_ulb/') ),
@@ -10453,13 +10454,15 @@ def fullDemo() -> None:
         for j, (name, abbrev, testFolder) in enumerate( testData ):
             vPrint( 'Quiet', debuggingThisModule, f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
-                UB = USFMBible( testFolder, name, abbrev )
+                UB = USFMBible( testFolder, givenName=name, givenAbbreviation=abbrev )
+                if name in ('ULT','UST'): UB.uWaligned = True
                 UB.load()
                 vPrint( 'Quiet', debuggingThisModule, f" {UB}" )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if UB.books:
                     if debuggingThisModule:
-                        result = UB.toUSXXML(); vPrint( 'Quiet', debuggingThisModule, f"result={result}" ); halt
+                        # result = UB.toUSXXML(); vPrint( 'Quiet', debuggingThisModule, f"result={result}" ); halt
+                        result = UB.makeLists(); vPrint( 'Quiet', debuggingThisModule, f"result={result}" ); halt
                     myFlag = debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3
                     doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                     if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files

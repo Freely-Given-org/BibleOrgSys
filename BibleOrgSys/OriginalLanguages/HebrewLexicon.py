@@ -210,7 +210,7 @@ class HebrewLexiconSimple:
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
-    def __init__( self, XMLFolder=None, preload=False ):
+    def __init__( self, XMLFolder=None, preload=False ) -> None:
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.

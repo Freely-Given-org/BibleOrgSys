@@ -243,7 +243,7 @@ class BibleStylesheet():
     """
     Class to load a Bible stylesheet into a dictionary.
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         """
         self.dataDict = None
@@ -300,7 +300,7 @@ class BibleStylesheet():
         """
         from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
-            vPrint( 'Quiet', debuggingThisModule, _("validate"), USFMMarker, styleData )
+            dPrint( 'Verbose', debuggingThisModule, f"validate {USFMMarker} {styleData}" )
             if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue
             if USFMMarker in ( '###', ): continue # ignore
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check

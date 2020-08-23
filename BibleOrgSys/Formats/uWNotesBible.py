@@ -79,11 +79,11 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
         and return the settings dict.
     """
     debuggingThisFunction = False
-    vPrint( 'Never', debuggingThisModule or debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )…" )
+    fnPrint( debuggingThisModule or debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )" )
 
     # import yaml
     # yamlDict = yaml.safe_load( YAMLFilepath )
-    # dPrint( 'Info', debuggingThisModule, f"yaml.load got ({len(yamlDict)}) {yamlDict!r}"); halt
+    #dPrint( 'Info', debuggingThisModule, f"yaml.load got ({len(yamlDict)}) {yamlDict!r}"); halt
 
     dataDict = {}
     key1 = key2 = None
@@ -248,7 +248,7 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
         logging.critical( f"loadYAML: Unable to load and YAML from {YAMLFilepath}" )
         return None
 
-    # dPrint( 'Info', debuggingThisModule, "\nSettings", len(dataDict), dataDict.keys() )
+    #dPrint( 'Info', debuggingThisModule, "\nSettings", len(dataDict), dataDict.keys() )
     if debuggingThisFunction or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         for j, (section,value) in enumerate( dataDict.items(), start=1 ):
             vPrint( 'Normal', debuggingThisModule, f"  loadYAML.load {j}: {section} = {value!r}" )
@@ -431,12 +431,12 @@ class uWNotesBible( Bible ):
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
-        vPrint( 'Never', debuggingThisModule, "Loading metadata from {!r}".format( metadataFilepath ) )
+        vPrint( 'Never', debuggingThisModule, _("Loading metadata from {!r}").format( metadataFilepath ) )
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         if 'uW' not in self.suppliedMetadata: self.suppliedMetadata['uW'] = {}
         self.suppliedMetadata['uW']['Manifest'] = loadYAML( metadataFilepath )
-        vPrint( 'Never', debuggingThisModule, f"\ns.sM: {self.suppliedMetadata}" )
+        dPrint( 'Never', debuggingThisModule, f"\ns.sM: {self.suppliedMetadata}" )
 
         if self.suppliedMetadata['uW']['Manifest']:
             self.applySuppliedMetadata( 'uW' ) # Copy some to self.settingsDict
@@ -502,8 +502,8 @@ class uWNotesBible( Bible ):
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Loading {} uW Notes books using {} processes…".format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} uW Notes books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -593,7 +593,7 @@ class uWNotesBibleBook( BibleBook ):
         # end of doAddLine
 
 
-        fixErrors = []
+        fixErrors:List[str] = []
         lineCount = 0
         lastC, lastV = '-1', '0'
         with open( os.path.join( self.filepath ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -660,7 +660,7 @@ def briefDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -673,7 +673,7 @@ def briefDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -723,7 +723,7 @@ def briefDemo() -> None:
                     uWnB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -773,7 +773,7 @@ def fullDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -790,7 +790,7 @@ def fullDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -840,7 +840,7 @@ def fullDemo() -> None:
                     uWnB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

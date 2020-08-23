@@ -27,16 +27,6 @@ Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python dat
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
-SHORT_PROGRAM_NAME = "ISOLanguagesConverter"
-PROGRAM_NAME = "ISO 639_3_Languages handler"
-PROGRAM_VERSION = '0.84'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os.path
 from datetime import datetime
@@ -52,6 +42,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
+LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+SHORT_PROGRAM_NAME = "ISOLanguagesConverter"
+PROGRAM_NAME = "ISO 639_3_Languages handler"
+PROGRAM_VERSION = '0.84'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
 
 
 @singleton # Can only ever have one instance
@@ -60,7 +58,7 @@ class ISO_639_3_LanguagesConverter:
     Class for handling and converting ISO 639-3 language codes.
     """
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
@@ -113,7 +111,7 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFileOrFilepath = XMLFileOrFilepath
         assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
-        vPrint( 'Info', debuggingThisModule, "Loading ISO 639-3 languages XML file from {!r}…".format( XMLFileOrFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading ISO 639-3 languages XML file from {!r}…").format( XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( XMLFileOrFilepath )
         assert self._XMLTree # Fail here if we didn't load anything at all
 
@@ -236,7 +234,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -262,7 +260,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
-        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
 
         IDDict, NameDict = self.__DataDicts
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -291,7 +289,7 @@ class ISO_639_3_LanguagesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
-        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -355,7 +353,7 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Normal', debuggingThisModule, "Exporting to {}…".format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self.__DataDicts

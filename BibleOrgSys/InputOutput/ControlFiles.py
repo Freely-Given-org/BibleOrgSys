@@ -27,16 +27,6 @@ Module for reading and parsing simple text control files.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2017-03-08' # by RJH
-SHORT_PROGRAM_NAME = "ControlFiles"
-PROGRAM_NAME = "Control Files"
-PROGRAM_VERSION = '0.06'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 
@@ -47,6 +37,15 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+
+
+LAST_MODIFIED_DATE = '2017-03-08' # by RJH
+SHORT_PROGRAM_NAME = "ControlFiles"
+PROGRAM_NAME = "Control Files"
+PROGRAM_VERSION = '0.06'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 

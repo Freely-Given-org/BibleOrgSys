@@ -190,7 +190,7 @@ class ESwordCommentary( Bible ):
     """
     Class for reading, validating, and converting ESwordCommentary files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -251,7 +251,7 @@ class ESwordCommentary( Bible ):
         fnPrint( debuggingThisModule, _("ESwordCommentary.preload()…") )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -347,7 +347,7 @@ class ESwordCommentary( Bible ):
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         #fileExtensionUpper = self.fileExtension.upper()
         #if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -495,7 +495,7 @@ class ESwordCommentary( Bible ):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         vPrint( 'Info', debuggingThisModule, _("Loading {} from {}…").format( BBB, self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         # Create the book
         thisBook = BibleBook( self, BBB )
@@ -624,7 +624,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
-    def adjustLine( BBB, C, V, originalLine ):
+    def adjustLine( BBB:str, C:str, V:str, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -707,7 +707,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     # end of toESword.adjustLine
 
 
-    def handleIntroduction( BBB, bookData, ourGlobals ):
+    def handleIntroduction( BBB:str, bookData, ourGlobals ):
         """
         Go through the book introduction (if any) and extract main titles for e-Sword export.
 
@@ -752,7 +752,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     # end of toESword.handleIntroduction
 
 
-    def composeVerseLine( BBB, C, V, verseData, ourGlobals ):
+    def composeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         """
         Composes a single line representing a verse.
 
@@ -910,7 +910,7 @@ def createESwordCommentaryModule( self, outputFolder, controlDict ):
     # end of toESword.composeVerseLine
 
 
-    def writeESwordCommentaryBook( sqlObject, BBB, ourGlobals ):
+    def writeESwordCommentaryBook( sqlObject, BBB:str, ourGlobals ):
         """
         Writes a book to the e-Sword sqlObject file.
         """

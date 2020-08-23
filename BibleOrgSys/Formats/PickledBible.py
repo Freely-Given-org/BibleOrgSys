@@ -349,6 +349,7 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
     while True: # Load name/value pairs for Bible attributes
         try: attributeName = pickle.load( pickleFileObject )
         except EOFError: break
+        #dPrint( 'Quiet', debuggingThisModule, f"_loadObjectAttributes got attributeName: {attributeName!r}" )
         assert isinstance( attributeName, str ) # Leave these asserts enabled for security
         assert '__' not in attributeName # Leave these asserts enabled for security
         attributeValue = pickle.load( pickleFileObject )
@@ -460,7 +461,7 @@ class PickledBible( Bible ):
     Class to load and manipulate Pickle Bibles.
 
     """
-    def __init__( self, sourceFileOrFolder ):
+    def __init__( self, sourceFileOrFolder ) -> None:
         """
         Create the internal Pickle Bible object.
 
@@ -490,7 +491,7 @@ class PickledBible( Bible ):
             myDict['WriterVersionDate'] = pickle.load( pickleFileObject )
             assert isinstance( myDict['WriterVersionDate'], str ) # Security check
             myDict['DataLevel'] = pickle.load( pickleFileObject )
-            # dPrint( 'Quiet', debuggingThisModule, "myDict", myDict )
+            #dPrint( 'Quiet', debuggingThisModule, "myDict", myDict )
             assert isinstance( myDict['DataLevel'], int ) # Security check
             myDict['WrittenDateTime'] = pickle.load( pickleFileObject )
             assert isinstance( myDict['WrittenDateTime'], str ) # Security check
@@ -782,7 +783,7 @@ def briefDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -805,7 +806,7 @@ def briefDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -835,7 +836,7 @@ def briefDemo() -> None:
                 pBible.check()
                 #dPrint( 'Quiet', debuggingThisModule, pBible.books['GEN']._processedLines[0:40] )
                 pBibleErrors = pBible.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, UBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 pBible.pickle()
                 ##pBible.toDrupalBible()
@@ -990,7 +991,7 @@ def fullDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -1013,7 +1014,7 @@ def fullDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -1042,12 +1043,13 @@ def fullDemo() -> None:
                     pBible.check()
                     #dPrint( 'Quiet', debuggingThisModule, pBible.books['GEN']._processedLines[0:40] )
                     pBibleErrors = pBible.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
-                    pBible.pickle()
+                    pBible.pickle( name )
                     ##pBible.toDrupalBible()
                     pBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                    # newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
+                    newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH )
                     vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
                 if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey

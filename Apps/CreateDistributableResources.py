@@ -53,10 +53,10 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2020-05-28' # by RJH
+LAST_MODIFIED_DATE = '2020-06-14' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
-PROGRAM_VERSION = '0.20'
+PROGRAM_VERSION = '0.21'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -75,10 +75,10 @@ HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
 PROCESS_ALL_FLAG = __name__ != '__main__'
-PROCESS_WLC_FLAG = True
-PROCESS_EBIBLE_FLAG = True
-PROCESS_DOOR43_FLAG = False
-PROCESS_OTHERS_FLAG = True
+PROCESS_WLC_FLAG = False
+PROCESS_EBIBLE_FLAG = False
+PROCESS_DOOR43_FLAG = True
+PROCESS_OTHERS_FLAG = False
 
 PROCESS_CHANGES_ONLY = False
 
@@ -173,7 +173,7 @@ def makeIt( abbreviation:str, BibleObject, metadataDict, outputFolderpath:Path, 
     assert isinstance( outputFolderpath, Path )
     assert isinstance( submit2BDB, bool )
 
-    vPrint( 'Quiet', debuggingThisModule, f"\nLoading {abbreviation}…" )
+    vPrint( 'Quiet', debuggingThisModule, _("\nLoading {}…").format( abbreviation ) )
     BibleObject.loadBooks() # Load and process the XML books
 
     if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
@@ -667,16 +667,17 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 ### UNFOLDING WORD / DOOR43
     if PROCESS_DOOR43_FLAG or PROCESS_ALL_FLAG: # UnfoldingWord/Door43 versions
         if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'UHB', 'unfoldingWord Hebrew Bible'
-            uwFolder = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
-            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord {} from internet…".format( abbreviation ) )
-            repo_changed = runGitPull( uwFolder ) # Make sure we have the latest version
+            abbreviation, name = 'UHB', 'unfoldingWord® Hebrew Bible'
+            uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
-                thisBible = USFMBible( uwFolder, givenName=name, givenAbbreviation=abbreviation )
+                thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
+                thisBible.uWaligned = True # TODO: Shouldn't be required ???
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,
-                                'About':'The unfoldingWord Hebrew Bible is based on the Open Scriptures Hebrew Bible, from https://github.com/openscriptures/morphhb, which is licensed as CC BY 4.0.',
+                                'About':'The unfoldingWord® Hebrew Bible is based on the Open Scriptures Hebrew Bible, from https://github.com/openscriptures/morphhb, which is licensed as CC BY 4.0.',
                                 'Source':'https://unfoldingWord.Bible/uhb/',
                                 'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
                                 'LanguageName':'Hebrew',
@@ -684,16 +685,17 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'UGNT', 'unfoldingWord Hebrew Bible'
-            uwFolder = BIBLES_FOLDERPATH.joinpath( 'Original languages/UGNT/' )
-            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord {} from internet…".format( abbreviation ) )
-            repo_changed = runGitPull( uwFolder ) # Make sure we have the latest version
+            abbreviation, name = 'UGNT', 'unfoldingWord® Hebrew Bible'
+            uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UGNT/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
-                thisBible = USFMBible( uwFolder, givenName=name, givenAbbreviation=abbreviation )
+                thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
+                thisBible.uWaligned = True # TODO: Shouldn't be required ???
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,
-                                'About':'The unfoldingWord Greek New Testament is based on the Bunning Heuristic Prototype Greek New Testament, from https://greekcntr.org/, which is licensed as CC BY-SA 4.0.',
+                                'About':'The unfoldingWord® Greek New Testament is based on the Bunning Heuristic Prototype Greek New Testament, from https://greekcntr.org/, which is licensed as CC BY-SA 4.0.',
                                 'Source':'https://unfoldingWord.Bible/ugnt/',
                                 'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
                                 'LanguageName':'Greek',
@@ -701,12 +703,12 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'ULT', 'unfoldingWord Literal Text'
-            uwFolder = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ult/' )
-            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord {} from internet…".format( abbreviation ) )
-            repo_changed = runGitPull( uwFolder ) # Make sure we have the latest version
+            abbreviation, name = 'ULT', 'unfoldingWord® Literal Text'
+            uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ult/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
-                thisBible = USFMBible( uwFolder, givenName=name, givenAbbreviation=abbreviation )
+                thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
                 thisBible.uWaligned = True
                 metadataDict = {
                                 'Abbreviation':abbreviation,
@@ -719,12 +721,12 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'UST', 'unfoldingWord Simplified Text'
-            uwFolder = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ust/' )
-            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord {} from internet…".format( abbreviation ) )
-            repo_changed = runGitPull( uwFolder ) # Make sure we have the latest version
+            abbreviation, name = 'UST', 'unfoldingWord® Simplified Text'
+            uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ust/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
-                thisBible = USFMBible( uwFolder, givenName=name, givenAbbreviation=abbreviation )
+                thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
                 thisBible.uWaligned = True
                 metadataDict = {
                                 'Abbreviation':abbreviation,
@@ -846,7 +848,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     if not os.path.exists( TEST_OUTPUT_FOLDERPATH ):
-        vPrint( 'Quiet', debuggingThisModule, "Creating folder {}…".format( TEST_OUTPUT_FOLDERPATH ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Creating folder {}…").format( TEST_OUTPUT_FOLDERPATH ) )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
 
     global PROCESS_ALL_FLAG, PROCESS_WLC_FLAG, PROCESS_DOOR43_FLAG, PROCESS_EBIBLE_FLAG, PROCESS_OTHERS_FLAG

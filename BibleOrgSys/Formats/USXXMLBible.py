@@ -157,7 +157,7 @@ class USXXMLBible( Bible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
         """
         Create the internal USX Bible object.
         """
@@ -391,7 +391,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
         bitResult = bit
         match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
         if match:  # e.g., Jos 3:4-4:5
-            # dPrint( 'Info', debuggingThisModule, f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+            #dPrint( 'Info', debuggingThisModule, f"MatchA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
             currentBBB = BRL.getBBBFromText( match.group(2) )
             USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
             if USFMBookCode:
@@ -399,7 +399,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
         else:
             match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE}):({CorV_RE})([-–])({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
             if match: # e.g., Jos 3:4-7,12
-                # dPrint( 'Info', debuggingThisModule, f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}' '{match.group(8)}' '{match.group(9)}'")
+                #dPrint( 'Info', debuggingThisModule, f"MatchB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}' '{match.group(8)}' '{match.group(9)}'")
                 currentBBB = BRL.getBBBFromText( match.group(2) )
                 USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                 if USFMBookCode:
@@ -407,7 +407,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
             else:
                 match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
                 if match: # e.g., Jos 3:4-7
-                    # dPrint( 'Info', debuggingThisModule, f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                    #dPrint( 'Info', debuggingThisModule, f"MatchC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                     currentBBB = BRL.getBBBFromText( match.group(2) )
                     USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                     if USFMBookCode:
@@ -415,7 +415,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                 else:
                     match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
                     if match: # e.g., Jos 3:4,9
-                        # dPrint( 'Info', debuggingThisModule, f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
+                        #dPrint( 'Info', debuggingThisModule, f"MatchD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}':'{match.group(4)}' '{match.group(5)}' '{match.group(6)}' '{match.group(7)}'")
                         currentBBB = BRL.getBBBFromText( match.group(2) )
                         USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                         if USFMBookCode:
@@ -423,7 +423,7 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                     else:
                         match = re.match( rf'(\s*)({bkName_RE}) ({CV_RE})(\s*\.?)$', bit )
                         if match: # e.g., Jos 3:4
-                            # dPrint( 'Info', debuggingThisModule, f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                            #dPrint( 'Info', debuggingThisModule, f"MatchE '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                             currentBBB = BRL.getBBBFromText( match.group(2) )
                             USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                             if USFMBookCode:
@@ -431,9 +431,9 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                         else:
                             match = re.match( rf'(\s*)({bkName_RE}) ({CorV_RE})(\s*\.?)$', bit )
                             if match: # e.g., Jud 4
-                                # dPrint( 'Info', debuggingThisModule, f"MatchF '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
+                                #dPrint( 'Info', debuggingThisModule, f"MatchF '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}'")
                                 currentBBB = BRL.getBBBFromText( match.group(2) )
-                                # dPrint( 'Info', debuggingThisModule, currentBBB )
+                                #dPrint( 'Info', debuggingThisModule, currentBBB )
                                 assert BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( currentBBB )
                                 USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                                 if USFMBookCode:
@@ -441,28 +441,28 @@ def makeRefs( BBB:str, C:str, V:str, BRL, text:str ) -> str:
                             else:
                                 match = re.match( rf'(\s*)({CV_RE}[-–]{CV_RE})(\s*\.?)$', bit )
                                 if match: # e.g., 1:2-3:4
-                                    # dPrint( 'Info', debuggingThisModule, f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                    #dPrint( 'Info', debuggingThisModule, f"MatchAA '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
                                     USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                                     if USFMBookCode:
                                         bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                 else:
                                     match = re.match( rf'(\s*)({CV_RE}[-–]{CorV_RE})(\s*\.?)$', bit )
                                     if match: # e.g., 1:2-6
-                                        # dPrint( 'Info', debuggingThisModule, f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                        #dPrint( 'Info', debuggingThisModule, f"MatchBB '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
                                         USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                                         if USFMBookCode:
                                             bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2).replace("–","-")}">{match.group(2)}</ref>{match.group(3)}'
                                     else:
                                         match = re.match( rf'(\s*)({CorV_RE}):({CorV_RE})(, ?)({CorV_RE})(\s*\.?)$', bit )
                                         if match: # e.g., 3:5,9
-                                            # dPrint( 'Info', debuggingThisModule, f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}'")
+                                            #dPrint( 'Info', debuggingThisModule, f"MatchCC '{match.group(1)}' '{match.group(2)}' '{match.group(3)}' '{match.group(4)}' '{match.group(5)}' '{match.group(6)}'")
                                             USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                                             if USFMBookCode:
                                                 bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(3)}">{match.group(2)}:{match.group(3)}</ref>{match.group(4)}<ref loc="{USFMBookCode} {match.group(2)}:{match.group(5)}">{match.group(5)}</ref>{match.group(6)}'
                                         else:
                                             match = re.match( rf'(\s*)({CV_RE})(\s*\.?)$', bit )
                                             if match: # e.g., 3:5
-                                                # dPrint( 'Info', debuggingThisModule, f"MatchDD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
+                                                #dPrint( 'Info', debuggingThisModule, f"MatchDD '{match.group(1)}' '{match.group(2)}' '{match.group(3)}'")
                                                 USFMBookCode = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( currentBBB ).upper()
                                                 if USFMBookCode:
                                                     bitResult = f'{match.group(1)}<ref loc="{USFMBookCode} {match.group(2)}">{match.group(2)}</ref>{match.group(3)}'
@@ -507,7 +507,7 @@ def createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema ) -
     ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
 
-    def writeUSX3Book( BBB, bkData ):
+    def writeUSX3Book( BBB:str, bkData ):
         """ Writes a book to the filesFolder. """
 
 
@@ -1167,7 +1167,7 @@ def briefDemo() -> None:
             if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
             if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             #UBErrors = UB.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+            #dPrint( 'Quiet', debuggingThisModule, UBErrors )
             #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
             #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -1236,7 +1236,7 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UBErrors = UB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):

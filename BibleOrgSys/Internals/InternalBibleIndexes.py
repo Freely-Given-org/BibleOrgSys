@@ -83,10 +83,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2020-05-23' # by RJH
+LAST_MODIFIED_DATE = '2020-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.77'
+PROGRAM_VERSION = '0.78'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -108,6 +108,9 @@ class InternalBibleBookCVIndexEntry:
         2/ entryCount: the number of BibleEntries
         3/ context: a list containing contextual markers which still apply to this entry.
     """
+    __slots__ = ('entryIndex','entryCount','context') # Define allowed self variables (more efficient than a dict when have many instances)
+
+
     def __init__( self, entryIndex:str, entryCount:int, context:Optional[List[str]]=None ) -> None:
         """
         """
@@ -116,6 +119,7 @@ class InternalBibleBookCVIndexEntry:
         self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
         #self.indexNext = self.entryIndex + entryCount
     # end of InternalBibleBookCVIndexEntry.__init__
+
 
     def __str__( self ) -> str:
         """
@@ -126,6 +130,7 @@ class InternalBibleBookCVIndexEntry:
                     " ctxt={}".format(self.context) if self.context else '' )
         return result
     # end of InternalBibleBookCVIndexEntry.__str__
+
 
     def __len__( self ) -> int: return 3
     def __getitem__( self, keyIndex ):
@@ -155,7 +160,11 @@ class InternalBibleBookCVIndex:
     """
     Handles the C:V index for an internal Bible book.
     """
-    def __init__( self, workName, BBB ):
+    __slots__ = ('workName','BBB','__indexData','givenBibleEntries',
+                 '_indexedFlag') # Define allowed self variables (more efficient than a dict when have many instances)
+
+
+    def __init__( self, workName, BBB ) -> None:
         """
         Creates the index object for a Bible book.
 
@@ -539,10 +548,8 @@ class InternalBibleBookCVIndex:
         """
         Just run a quick internal check on the index.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "  " + _("Checking {} {} {} CV index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', debuggingThisModule, self )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Checking {} {} {} CV index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, self )
 
         # Check that all C,V entries (the index to the index) are digits
         for ixKey in self.__indexData:
@@ -741,6 +748,11 @@ class InternalBibleBookSectionIndexEntry:
         4/ entryCount: the number of BibleEntries
         5/ context: a list containing contextual markers which still apply to this entry.
     """
+    __slots__ = ('startC', 'startV', 'endC', 'endV',
+                 'startIx', 'endIx', 'reasonMarker', 'sectionName',
+                 'context') # Define allowed self variables (more efficient than a dict when have many instances)
+
+
     def __init__( self, startC:str, startV:str, endC:str, endV:str, startIx:int, endIx:int,
                             reasonMarker:str, sectionName:str, context:Optional[List[str]]=None ) -> None:
                  #startCV:str, endCV:str, entryIndex:int, entryCount:int, context:Optional[List[str]]=None ) -> None:
@@ -753,6 +765,7 @@ class InternalBibleBookSectionIndexEntry:
         self.context = context
     # end of InternalBibleBookSectionIndexEntry.__init__
 
+
     def __str__( self ) -> str:
         """
         Just display a simplified view of the index entry.
@@ -763,6 +776,7 @@ class InternalBibleBookSectionIndexEntry:
                  f"{' ctxt={}'.format(self.context) if self.context else ''}"
         return result
     # end of InternalBibleBookSectionIndexEntry.__str__
+
 
     def __len__( self ): return 9
     def __getitem__( self, keyIndex ):
@@ -802,6 +816,11 @@ class InternalBibleBookSectionIndex:
     """
     Handles the C:V index for an internal Bible book.
     """
+    __slots__ = ('BBB', 'bookObject', 'BibleObject', 'workName',
+                 '__indexData', 'givenBibleEntries'
+                 ) # Define allowed self variables (more efficient than a dict when have many instances)
+
+
     def __init__( self, bookObject, BibleObject ) -> None:
         """
         Creates the index object for a Bible book.
@@ -902,15 +921,15 @@ class InternalBibleBookSectionIndex:
         from BibleOrgSys.Bible import Bible
         fnPrint( debuggingThisModule, f"InternalBibleBookSectionIndex.makeBookSectionIndex() for {self.BBB}" )
         assert isinstance( self.BibleObject, Bible )
-        # dPrint( 'Info', debuggingThisModule, "makeBookSectionIndex-BibleObject", self.BBB, self.BibleObject.getAName(), len(self.BibleObject.books) )
+        #dPrint( 'Info', debuggingThisModule, "makeBookSectionIndex-BibleObject", self.BBB, self.BibleObject.getAName(), len(self.BibleObject.books) )
         assert 'discoveryResults' in self.BibleObject.__dict__
 
         self.__indexData:Dict[str,Tuple[str,str,str,str,int,int,str]] = {}
         errorData = []
 
-        # dPrint( 'Info', debuggingThisModule, "self.BBB", self.BBB )
-        # dPrint( 'Info', debuggingThisModule, "DR", self.BibleObject.discoveryResults.keys() )
-        # dPrint( 'Info', debuggingThisModule, "book DR", self.BibleObject.discoveryResults[self.BBB].keys() )
+        #dPrint( 'Info', debuggingThisModule, "self.BBB", self.BBB )
+        #dPrint( 'Info', debuggingThisModule, "DR", self.BibleObject.discoveryResults.keys() )
+        #dPrint( 'Info', debuggingThisModule, "book DR", self.BibleObject.discoveryResults[self.BBB].keys() )
         # The following line can give a KeyError if the BBB doesn't exist in the discoveryResults
         haveSectionHeadingsForBook = self.BibleObject.discoveryResults[self.BBB]['haveSectionHeadings']
         vPrint( 'Never', debuggingThisModule, f"\nhaveSectionHeadingsForBook {self.BBB}={haveSectionHeadingsForBook}" ) #, self.discoveryResults[BBB] )
@@ -1190,7 +1209,7 @@ class InternalBibleBookSectionIndex:
             vPrint( 'Quiet', debuggingThisModule, f"We got {len(self.__indexData)} index entries for {self.BBB}." )
             for j, (key,value) in enumerate(self.__indexData.items(), start=1):
                 vPrint( 'Quiet', debuggingThisModule, f"  {j:2}/ {key} = {value}" )
-        # dPrint( 'Info', debuggingThisModule, f"  makeBookSectionIndex() for {self.BBB} finished." )
+        #dPrint( 'Info', debuggingThisModule, f"  makeBookSectionIndex() for {self.BBB} finished." )
         return
 
         # if errorData: # We got some overwriting errors
@@ -1262,7 +1281,7 @@ class InternalBibleBookSectionIndex:
 
         # if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         #     self.checkBookSectionIndex() # Make sure our code above worked properly
-        # dPrint( 'Info', debuggingThisModule, f"  makeBookSectionIndex() for {self.BBB} finished." )
+        #dPrint( 'Info', debuggingThisModule, f"  makeBookSectionIndex() for {self.BBB} finished." )
     # end of InternalBibleBookSectionIndex.makeBookSectionIndex
 
 
@@ -1271,10 +1290,8 @@ class InternalBibleBookSectionIndex:
         Just run a quick internal check on the index.
         """
         fnPrint( debuggingThisModule, "InternalBibleBookSectionIndex.checkBookSectionIndex()")
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "  " + _("Checking {} {} {} section index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', debuggingThisModule, self )
+        vPrint( 'Info', debuggingThisModule, "  " + _("Checking {} {} {} section index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
+        vPrint( 'Verbose', debuggingThisModule, self )
 
         # Check that all C,V entries (the index to the index) are digits
         for ixKey in self.__indexData:

@@ -150,7 +150,7 @@ def replaceFixedPairs( replacementList, verseLine ):
 
 
 
-def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
+def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of OSIS segments,
         convert it into our internal format
@@ -803,7 +803,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB, C, V ):
 # end of filterOSISVerseLine
 
 
-def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
+def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of OSIS segments,
         convert it into our internal format
@@ -832,7 +832,7 @@ def importOSISVerseLine( osisVerseString, thisBook, moduleName, BBB, C, V ):
 
 
 
-def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
+def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of GBF (General Bible Format) segments,
         convert it into our internal format.
@@ -974,7 +974,7 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB, C, V ):
     return verseLine
 # end of filterGBFVerseLine
 
-def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
+def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of GBF (General Bible Format) segments,
         convert it into our internal format
@@ -999,7 +999,7 @@ def importGBFVerseLine( gbfVerseString, thisBook, moduleName, BBB, C, V ):
 
 
 
-def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
+def filterTHMLVerseLine( thmlVerseString, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of THML segments,
         convert it into our internal format.
@@ -1088,7 +1088,7 @@ def filterTHMLVerseLine( thmlVerseString, moduleName, BBB, C, V ):
     return verseLine
 # end of filterTHMLVerseLine
 
-def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB, C, V ):
+def importTHMLVerseLine( thmlVerseString, thisBookObject, moduleName, BBB:str, C:str, V ):
     """
     Given a verse entry string made up of THML segments,
         convert it into our internal format
@@ -1132,7 +1132,7 @@ class SwordInterface():
     This is the interface class that we use between our higher level code
         and the code reading the actual installed Sword modules.
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         """
         vPrint( 'Normal', debuggingThisModule, f"SwordResources.SwordInterface is using '{SwordType}'." )
@@ -1496,7 +1496,7 @@ class SwordInterface():
     # end of SwordInterface.loadBooks
 
 
-    def makeKey( self, BBB:str, C, V ):
+    def makeKey( self, BBB:str, C:str, V ):
         #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             #dPrint( 'Quiet', debuggingThisModule, "SwordInterface.makeKey( {} {}:{} )".format( BBB, C, V ) )
 

@@ -156,7 +156,7 @@ class PierceOnlineBible( Bible ):
         NT has  7,957 verses = 1F15
         Total  31,102 verses = 797E
     """
-    def __init__( self, sourceFolder, encoding=None ):
+    def __init__( self, sourceFolder, encoding=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -336,8 +336,8 @@ class PierceOnlineBible( Bible ):
                 vLen = vBytes[0]
                 if vLen > 0 and vBytes[1]:
                     vString = vBytes[1:vLen+1].decode()
-                    # dPrint( 'Quiet', debuggingThisModule, 'Vstring', vString )
-                    # dPrint( 'Quiet', debuggingThisModule, "    vBl1 {} {!r}".format( vLen, vString ), end='' )
+                    #dPrint( 'Quiet', debuggingThisModule, 'Vstring', vString )
+                    #dPrint( 'Quiet', debuggingThisModule, "    vBl1 {} {!r}".format( vLen, vString ), end='' )
                     # assert not vString[0].islower()
                     strings1.append( vString )
                 index += length
@@ -1273,7 +1273,7 @@ def testOB( TOBfilename ):
         olb.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         olbErrors = olb.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, olbErrors )
+        #dPrint( 'Quiet', debuggingThisModule, olbErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##olb.toDrupalBible()
         olb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

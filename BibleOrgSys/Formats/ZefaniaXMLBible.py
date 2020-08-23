@@ -61,18 +61,7 @@ or
 or
       <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
 """
-
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-03-15' # by RJH
-SHORT_PROGRAM_NAME = "ZefaniaBible"
-PROGRAM_NAME = "Zefania XML Bible format handler"
-PROGRAM_VERSION = '0.36'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os
 from pathlib import Path
@@ -87,6 +76,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-06-04' # by RJH
+SHORT_PROGRAM_NAME = "ZefaniaBible"
+PROGRAM_NAME = "Zefania XML Bible format handler"
+PROGRAM_VERSION = '0.37'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -158,7 +156,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
             and not firstLines[1].startswith( '<!--For Programmers' ) \
             and not firstLines[1].startswith( '<!--Visit the' ) \
             and not firstLines[1].startswith( '<!--http://zefania' ):
-                dPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
+                dPrint( 'Verbose', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -209,7 +207,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
                 and not firstLines[1].startswith( '<!--Visit the' ) \
                 and not firstLines[1].startswith( '<!--http://zefania' ):
-                    dPrint( 'Quiet', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting1 second line: {}".format( firstLines[1] ) )
+                    dPrint( 'Verbose', debuggingThisModule, "ZefaniaXMLBibleFileCheck rejecting2 second line: {}".format( firstLines[1] ) )
                     continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
@@ -244,7 +242,7 @@ class ZefaniaXMLBible( Bible ):
     grTag = 'gr'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Zefania Bible object.
         """
@@ -462,7 +460,6 @@ class ZefaniaXMLBible( Bible ):
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
         """
-
         vPrint( 'Verbose', debuggingThisModule, _("Validating XML book…") )
 
         # Process the div attributes first
@@ -507,7 +504,6 @@ class ZefaniaXMLBible( Bible ):
             finding and saving chapter numbers and
             finding and saving verse elements.
         """
-
         vPrint( 'Verbose', debuggingThisModule, _("Validating XML chapter…") )
 
         # Process the chapter attributes first
@@ -559,7 +555,6 @@ class ZefaniaXMLBible( Bible ):
             finding and saving chapter numbers and
             finding and saving verse elements.
         """
-
         vPrint( 'Verbose', debuggingThisModule, _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )

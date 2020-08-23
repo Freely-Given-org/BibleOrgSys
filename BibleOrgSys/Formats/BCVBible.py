@@ -168,7 +168,7 @@ class BCVBible( Bible ):
     Class to load and manipulate BCV Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ) -> None:
         """
         Create the internal BCV Bible object.
 
@@ -234,8 +234,7 @@ class BCVBible( Bible ):
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
-        if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "Loading metadata from {!r}".format( metadataFilepath ) )
+        vPrint( 'Verbose', debuggingThisModule, _("Loading metadata from {!r}").format( metadataFilepath ) )
         #if encoding is None: encoding = 'utf-8'
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -356,15 +355,15 @@ class BCVBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, "Loading {} from {}…".format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Loading {} BCV books using {} processes…".format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} BCV books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -510,7 +509,7 @@ class BCVBibleBook( BibleBook ):
         # Read book metadata
         self.loadBookMetadata( os.path.join( self.sourceFolder, self.BBB+'__BookMetadata.txt' ) )
 
-        fixErrors = []
+        fixErrors:List[str] = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
 
         DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
@@ -591,7 +590,7 @@ def briefDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -604,7 +603,7 @@ def briefDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -654,7 +653,7 @@ def briefDemo() -> None:
                     bcvB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = bcvB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -686,7 +685,7 @@ def fullDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -699,7 +698,7 @@ def fullDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -749,7 +748,7 @@ def fullDemo() -> None:
                     bcvB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = bcvB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##bcvB.toDrupalBible()
                     bcvB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

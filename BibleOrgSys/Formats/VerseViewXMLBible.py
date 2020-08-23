@@ -224,7 +224,7 @@ class VerseViewXMLBible( Bible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the VerseView Bible object.
         """
@@ -568,7 +568,7 @@ def briefDemo() -> None:
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()
-                        # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                        #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                     #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
                     #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -627,7 +627,7 @@ def fullDemo() -> None:
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         vvB.check()
                         #UBErrors = UB.getCheckResults()
-                        # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                        #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                     #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
                     #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):

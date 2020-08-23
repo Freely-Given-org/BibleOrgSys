@@ -36,16 +36,6 @@ Functions for replace and regex replace which explain what they did.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-10' # by RJH
-SHORT_PROGRAM_NAME = "NoisyReplaceFunctions"
-PROGRAM_NAME = "Noisy Replace Functions"
-PROGRAM_VERSION = '0.07'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import re
 
@@ -59,6 +49,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-10' # by RJH
+SHORT_PROGRAM_NAME = "NoisyReplaceFunctions"
+PROGRAM_NAME = "Noisy Replace Functions"
+PROGRAM_VERSION = '0.07'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 

@@ -294,7 +294,7 @@ class Hebrew():
     """
     Class for handling a Hebrew string.
     """
-    def __init__( self, text ):
+    def __init__( self, text ) -> None:
         """ Create an new Hebrew object. """
         self.originalText = text
         self.currentText = text

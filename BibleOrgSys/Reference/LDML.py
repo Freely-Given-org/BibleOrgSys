@@ -52,16 +52,6 @@ NOTE: This preliminary module currently parses a range of XML files
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-05-28' # by RJH
-SHORT_PROGRAM_NAME = "LDML_Handler"
-PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
-PROGRAM_VERSION = '0.13'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import sys
 import os
 import logging
@@ -77,6 +67,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
+LAST_MODIFIED_DATE = '2019-05-28' # by RJH
+SHORT_PROGRAM_NAME = "LDML_Handler"
+PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
+PROGRAM_VERSION = '0.13'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 DRAFT_VALUES = ( 'provisional', 'contributed', 'unconfirmed', 'approved',
@@ -111,7 +108,7 @@ class LDMLFile:
     """
     A class to load and validate the XML Unicode LOCALE DATA MARKUP LANGUAGE files.
     """
-    def __init__( self, givenFolderName, givenFilename ):
+    def __init__( self, givenFolderName, givenFilename ) -> None:
         """
         """
         assert givenFolderName

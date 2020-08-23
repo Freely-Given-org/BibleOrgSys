@@ -48,7 +48,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2020-05-19' # by RJH
+LAST_MODIFIED_DATE = '2020-07-15' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.78'
@@ -487,7 +487,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ) -> None:
         """
         Create the internal USFM Bible object.
 
@@ -578,7 +578,7 @@ class USFMBible( Bible ):
         NOTE: You should ensure that preload() has been called first.
         """
         fnPrint( debuggingThisModule, f"USFMBible.loadBook( {BBB}, {filename} )" )
-        # dPrint( 'Info', debuggingThisModule, debuggingThisModule, f"USFMBible.loadBook( {BBB}, {filename} )", id(self) )
+        #dPrint( 'Info', debuggingThisModule, debuggingThisModule, f"USFMBible.loadBook( {BBB}, {filename} )", id(self) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             assert self.preloadDone
 
@@ -621,7 +621,7 @@ class USFMBible( Bible ):
         Returns the book info.
         """
         fnPrint( debuggingThisModule, f"USFMBible._loadBookMP( {BBB_Filename_duple} )" )
-        # dPrint( 'Info', debuggingThisModule, f"USFMBible._loadBookMP( {BBB_Filename_duple} )", id(self) )
+        #dPrint( 'Info', debuggingThisModule, f"USFMBible._loadBookMP( {BBB_Filename_duple} )", id(self) )
 
         BBB, filename = BBB_Filename_duple
         if BBB in self.books:
@@ -663,7 +663,7 @@ class USFMBible( Bible ):
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
-                        # dPrint( 'Info', debuggingThisModule, f"Stashing {bBook.BBB} {id(bBook)} with {id(bBook.containerBibleObject)}" )
+                        #dPrint( 'Info', debuggingThisModule, f"Stashing {bBook.BBB} {id(bBook)} with {id(bBook.containerBibleObject)}" )
                         bBook.containerBibleObject = self # Because the pickling and unpickling messes this up
                         self.stashBook( bBook ) # Saves them in the correct order
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
@@ -724,7 +724,7 @@ def briefDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -734,7 +734,7 @@ def briefDemo() -> None:
     if 1: # Load and process some of our test versions
         name, encoding, testFolder = random.choice( (
                         ('ULT', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ult/' ) ),
-                        ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/' ) ),
+                        # ('UST', 'utf-8', BiblesFolderpath.joinpath( 'English translations/unfoldingWordVersions/en_ust/' ) ),
                         #('ULT', 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ult/en_ult/' ) ),
                         #('UST', 'utf-8', BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( 'Door43ContentServiceOnline/unfoldingWord--en_ust/en_ust/' ) ),
                         #("Matigsalug", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/') ),
@@ -752,29 +752,27 @@ def briefDemo() -> None:
             UsfmB.abbreviation = name
             if name in ('ULT','UST'): UsfmB.uWaligned = True
             UsfmB.load()
-            if BibleOrgSysGlobals.verbosityLevel > 1:
-                vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
+            vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, UsfmB )
-            UsfmB.analyseUWalignments()
+            # UsfmB.analyseUWalignments() # Not for briefDemo()
             if BibleOrgSysGlobals.strictCheckingFlag:
                 UsfmB.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                 UsfmBErrors = UsfmB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, UBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 UsfmB.pickle()
                 ##UsfmB.toDrupalBible()
                 UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                 vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-            if 0:
+            if 0: # Not for briefDemo()
                 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
                 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
-                if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, "Displaying text from some given references…")
+                vPrint( 'Info', debuggingThisModule, _("Displaying text from some given references…") )
                 for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                     svk = SimpleVerseKey( BBB, C, V )
                     shortText = svk.getShortText()
@@ -898,7 +896,7 @@ def fullDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -926,35 +924,33 @@ def fullDemo() -> None:
                 UsfmB.abbreviation = name
                 if name in ('ULT','UST'): UsfmB.uWaligned = True
                 UsfmB.load()
-                if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, UsfmB )
-                UsfmB.analyseUWalignments()
+                # if UsfmB.uWaligned: UsfmB.analyseUWalignments()
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = UsfmB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     UsfmB.pickle()
                     ##UsfmB.toDrupalBible()
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-                if 0:
+                if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
                     from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, "Displaying text from some given references…")
+                    vPrint( 'Info', debuggingThisModule, _("Displaying text from some given references…") )
                     for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
                         svk = SimpleVerseKey( BBB, C, V )
                         shortText = svk.getShortText()
                         verseDataList = UsfmB.getVerseDataList( svk )
                         if BibleOrgSysGlobals.verbosityLevel > 0:
-                            vPrint( 'Quiet', debuggingThisModule, "\n{}\n{}".format( shortText, verseDataList ) )
+                            vPrint( 'Quiet', debuggingThisModule, f"\n{shortText}\n{verseDataList}" )
                         if verseDataList is None: continue
                         for verseDataEntry in verseDataList:
                             # This loop is used for several types of data
@@ -962,15 +958,14 @@ def fullDemo() -> None:
                             marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                             adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                             fullText = verseDataEntry.getFullText()
-                            if BibleOrgSysGlobals.verbosityLevel > 0:
-                                vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
-                                                        " extras={}".format( extras ) if extras else '' ) )
-                                if adjustedText and adjustedText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
-                                if fullText and fullText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
-                                if originalText and originalText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
+                            vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                                    f" extras={extras}" if extras else '' ) )
+                            if adjustedText and adjustedText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), f"adjustedText=({len(adjustedText)}) {adjustedText}" )
+                            if fullText and fullText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), f"fullText=({len(fullText)}) {fullText}" )
+                            if originalText and originalText!=cleanText:
+                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), f"originalText=({len(originalText)}) {originalText}" )
             elif BibleOrgSysGlobals.verbosityLevel > 0:
                 vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 

@@ -666,8 +666,7 @@ class UnknownBible:
             if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
                 # We did a strict check the first time, but strict checking wasn't specified on the command line
                 #   so let's try again without the strict check
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: retrying without strict checking criteria" )
+                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
                 if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )

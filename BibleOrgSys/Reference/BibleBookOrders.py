@@ -59,7 +59,7 @@ class BibleBookOrderSystems:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -268,7 +268,7 @@ class BibleBookOrderSystem:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self, systemName ):
+    def __init__( self, systemName ) -> None:
         """
         Constructor:
         """

@@ -177,7 +177,7 @@ class GreekStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib ==  'strongs':
                 strongs5 = value
-                # dPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
+                #dPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
@@ -340,7 +340,7 @@ class GreekStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'GreekLexicon_Strongs_Table.1.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.StrongsEntries, myFile )
     # end of GreekStrongsFileConverter.pickle

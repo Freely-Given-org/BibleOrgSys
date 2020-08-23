@@ -34,16 +34,6 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
-SHORT_PROGRAM_NAME = "ESFMFile"
-PROGRAM_NAME = "ESFM File loader"
-PROGRAM_VERSION = '0.87'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import sys
 
@@ -57,6 +47,14 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput.USFMFile import splitMarkerFromText
 
 
+LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+SHORT_PROGRAM_NAME = "ESFMFile"
+PROGRAM_NAME = "ESFM File loader"
+PROGRAM_VERSION = '0.87'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
 
 DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
 
@@ -68,7 +66,7 @@ class ESFMFile:
     Each line is a tuple consisting of (SFMMarker, SFMValue).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.lines = []
     # end of ESFMFile.__init__
 

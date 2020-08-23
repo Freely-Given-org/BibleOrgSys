@@ -248,7 +248,7 @@ class ESFMBible( Bible ):
     Class to load and manipulate ESFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None ) -> None:
         """
         Create the internal ESFM Bible object.
         """
@@ -612,7 +612,7 @@ def briefDemo() -> None:
                     EsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, EsfmB.books['GEN']._processedLines[0:40] )
                     EsfmBErrors = EsfmB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##EsfmB.toDrupalBible()
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
@@ -724,7 +724,7 @@ def fullDemo() -> None:
                     EsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, EsfmB.books['GEN']._processedLines[0:40] )
                     EsfmBErrors = EsfmB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##EsfmB.toDrupalBible()
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )

@@ -64,7 +64,7 @@ class SFMLines:
     Each line is a tuple consisting of (SFMMarker, SFMValue).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.lines = []
 
     def __str__(self):
@@ -163,7 +163,7 @@ class SFMRecords:
     Each line is a 2-tuple consisting of (SFMMarker, SFMValue).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.records = []
 
     def __str__(self):

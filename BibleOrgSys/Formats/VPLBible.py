@@ -264,7 +264,7 @@ class VPLBible( Bible ):
     """
     Class for reading, validating, and converting VPLBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -660,7 +660,7 @@ def testVPL( VPLfolder ):
         vb.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+        #dPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -709,7 +709,7 @@ def briefDemo() -> None:
                 result2.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result2.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result2.toDrupalBible()
                 result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -723,7 +723,7 @@ def briefDemo() -> None:
                 result3.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -775,7 +775,7 @@ def fullDemo() -> None:
                     result2.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     vBErrors = result2.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -789,7 +789,7 @@ def fullDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     vBErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

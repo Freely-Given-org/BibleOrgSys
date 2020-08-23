@@ -85,16 +85,6 @@ and
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
-SHORT_PROGRAM_NAME = "UnboundBible"
-PROGRAM_NAME = "Unbound Bible format handler"
-PROGRAM_VERSION = '0.29'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import logging
 import os
 from pathlib import Path
@@ -108,6 +98,15 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+
+
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+SHORT_PROGRAM_NAME = "UnboundBible"
+PROGRAM_NAME = "Unbound Bible format handler"
+PROGRAM_VERSION = '0.29'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -236,7 +235,7 @@ class UnboundBible( Bible ):
     """
     Class for reading, validating, and converting UnboundBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -398,7 +397,7 @@ def testUB( TUBfilename ):
         ub.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         uBErrors = ub.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, uBErrors )
+        #dPrint( 'Quiet', debuggingThisModule, uBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ub.toDrupalBible()
         ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

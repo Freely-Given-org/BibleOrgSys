@@ -36,16 +36,6 @@ TODO: Needs internationalisation _("around strings")
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
-SHORT_PROGRAM_NAME = "USFMBookCompare"
-PROGRAM_NAME = "USFM book file comparator"
-PROGRAM_VERSION = '0.17'
-programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from pathlib import Path
@@ -60,6 +50,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput.USFMFile import USFMFile
+
+
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+SHORT_PROGRAM_NAME = "USFMBookCompare"
+PROGRAM_NAME = "USFM book file comparator"
+PROGRAM_VERSION = '0.17'
+programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
+
+debuggingThisModule = False
 
 
 

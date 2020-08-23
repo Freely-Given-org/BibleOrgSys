@@ -6,7 +6,7 @@
 # Command-line app to download the UGNT and ULT from the Door43 Resource Catalog
 #   and then do some automated comparisons of the two texts.
 #
-# Copyright (C) 2019 Robert Hunt
+# Copyright (C) 2019-2020 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -53,15 +53,7 @@ This app also demonstrates how little actual code is required to use the BOS to 
 The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows and OS-X (although not so well tested).
 """
-
-from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-02-24' # by RJH
-SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
-PROGRAM_NAME = "Check Literal NT vs Greek"
-PROGRAM_VERSION = '0.02'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
+# from gettext import gettext as _
 import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
@@ -73,6 +65,16 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
+
+
+LAST_MODIFIED_DATE = '2020-06-10' # by RJH
+SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
+PROGRAM_NAME = "Check Literal NT vs Greek"
+PROGRAM_VERSION = '0.03'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+
+debuggingThisModule = False
 
 
 
@@ -94,8 +96,8 @@ def main() -> None:
     door43CatalogResources.fetchCatalog()
     vPrint( 'Info', debuggingThisModule, '\n{door43CatalogResources}\n\n' )
 
-    # Download and load all books from the UGNT = unfoldingWord Greek New Testament
-    UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord Greek New Testament' )
+    # Download and load all books from the UGNT = unfoldingWord® Greek New Testament
+    UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord® Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
         #dPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
@@ -104,8 +106,8 @@ def main() -> None:
         Door43CatalogUGNTBible.load()
         vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible, end='\n\n' )
 
-    # Download the ULT = unfoldingWord Literal Text
-    ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord Literal Text' )
+    # Download the ULT = unfoldingWord® Literal Text
+    ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord® Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
         #dPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
@@ -149,11 +151,18 @@ def main() -> None:
     vPrint( 'Quiet', debuggingThisModule, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
+def briefDemo() -> None:
+    """
+    Fast demo to check class is working
+    """
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+# end of briefDemo
+
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    briefDemo()
+    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 # end of fullDemo
 
 if __name__ == '__main__':

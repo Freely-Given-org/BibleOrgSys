@@ -27,16 +27,6 @@ Module handling BibleBookOrder_*.xml files and to export to pickle, JSON, C, and
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-07' # by RJH
-SHORT_PROGRAM_NAME = "BibleBookOrderSystemsConverter"
-PROGRAM_NAME = "Bible Book Order Systems converter"
-PROGRAM_VERSION = '0.85'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 from datetime import datetime
@@ -52,6 +42,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
+LAST_MODIFIED_DATE = '2020-04-07' # by RJH
+SHORT_PROGRAM_NAME = "BibleBookOrderSystemsConverter"
+PROGRAM_NAME = "Bible Book Order Systems converter"
+PROGRAM_VERSION = '0.85'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
 
 
 @singleton # Can only ever have one instance
@@ -60,7 +58,7 @@ class BibleBookOrdersConverter:
     A class to handle data for Bible book order systems.
     """
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor.
         """
@@ -326,7 +324,7 @@ class BibleBookOrdersConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Normal', debuggingThisModule, f"Exporting to {filepath}…" )
+        vPrint( 'Quiet', debuggingThisModule, f"Exporting to {filepath}…" )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -350,7 +348,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -388,7 +386,7 @@ class BibleBookOrdersConverter:
         assert self.__DataDicts and self.__DataLists
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -447,7 +445,7 @@ class BibleBookOrdersConverter:
         if not filepath: filepath = str( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' ) )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \

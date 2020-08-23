@@ -212,7 +212,7 @@ class BibleBooksNamesSystems:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -284,7 +284,7 @@ class BibleBooksNamesSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+        #         vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #             #self.__ExpandedDicts = pickle.load( pickleFile )
@@ -462,7 +462,7 @@ class BibleBooksNamesSystem:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self, systemName, bookList=None ):
+    def __init__( self, systemName, bookList=None ) -> None:
         """
         Grabs a particular BibleBooksNames system from the singleton object
                             which contains all of the known books names systems.

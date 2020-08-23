@@ -43,16 +43,6 @@ Module handling xxx to produce C and Python data tables.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2018-12-12' # by RJH
-SHORT_PROGRAM_NAME = "GreekNTHandler"
-PROGRAM_NAME = "Greek NT format handler"
-PROGRAM_VERSION = '0.08'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 
@@ -68,6 +58,15 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "GreekNTHandler"
+PROGRAM_NAME = "Greek NT format handler"
+PROGRAM_VERSION = '0.08'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
+
 
 class GreekNT( Bible ):
     """
@@ -75,7 +74,7 @@ class GreekNT( Bible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ):
+    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ) -> None:
         """
         Constructor: expects the filepath of the source folder.
         Loads (and crudely validates the file(s)) into ???.
@@ -140,7 +139,7 @@ class GreekNT( Bible ):
     def loadBooks( self ):
         """
         """
-        vPrint( 'Info', debuggingThisModule, "Loading Greek NT from {}…".format( self.sourceFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading Greek NT from {}…").format( self.sourceFilepath ) )
         for BBB in Greek.morphgntBookList:
             self.loadBook( BBB, Greek.morphgntFilenameDict[BBB] )
         vPrint( 'Verbose', debuggingThisModule, "{} books loaded.".format( len(self.books) ) )

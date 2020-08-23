@@ -126,7 +126,7 @@ class DBPBibles:
     Class to download and manipulate online DBP Bibles.
 
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Create the internal Bibles object.
         """
@@ -598,8 +598,7 @@ class DBPBible( GenericOnlineBible ):
                 GenericOnlineBible.cacheVerse( self, key, resultList )
             return resultList
         else: # This version doesn't have this book
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "  getVerseDataList: {} not in {} {}".format( BBB, self.damRoot, self.books.keys() ) )
+            vPrint( 'Info', debuggingThisModule, "  getVerseDataList: {} not in {} {}".format( BBB, self.damRoot, self.books.keys() ) )
     # end of DBPBible.getVerseDataList
 
 

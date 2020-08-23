@@ -27,16 +27,6 @@ Module handling ISO_639_3_Languages.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-05' # by RJH
-SHORT_PROGRAM_NAME = "ISOLanguages"
-PROGRAM_NAME = "ISO 639_3_Languages handler"
-PROGRAM_VERSION = '0.85'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 
 if __name__ == '__main__':
@@ -47,6 +37,15 @@ if __name__ == '__main__':
 from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+
+
+LAST_MODIFIED_DATE = '2020-04-05' # by RJH
+SHORT_PROGRAM_NAME = "ISOLanguages"
+PROGRAM_NAME = "ISO 639_3_Languages handler"
+PROGRAM_VERSION = '0.85'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 
@@ -60,7 +59,7 @@ class ISO_639_3_Languages:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -97,7 +96,7 @@ class ISO_639_3_Languages:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation

@@ -59,7 +59,7 @@ class GenericOnlineBible:
     Note that this Bible class is NOT based on the Bible class
         because it's so unlike most Bibles which are local.
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Create the Digital Bible Platform Bible object.
             Accepts a 6-character code which is the initial part of the DAM:

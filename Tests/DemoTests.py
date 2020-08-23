@@ -54,12 +54,12 @@ from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in Tes
 
 # Some Misc and Apps modules imported below are up a level
 sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
-# dPrint( 'Info', debuggingThisModule, sys.path )
+#dPrint( 'Info', debuggingThisModule, sys.path )
 
-LAST_MODIFIED_DATE = '2020-05-24' # by RJH
+LAST_MODIFIED_DATE = '2020-07-20' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
-PROGRAM_VERSION = '0.67'
+PROGRAM_VERSION = '0.68'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -142,7 +142,7 @@ def formatAndPublish( timeList ):
 # end of formatAndPublish
 
 
-def formatFailureDetails( exceptionObject:Exception ):
+def formatFailureDetails( exceptionObject:Exception ) -> Tuple[str,Exception,str]:
     """
     Returns a 3-tuple.
     """
@@ -176,7 +176,7 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
     """
     global interrupted
 
-    def doTest( moduleName, testModule ):
+    def doTest( moduleName:str, testModule ) -> None:
         """
         Run either fullDemo() or briefDemo() for the given module as required.
         """
@@ -916,6 +916,16 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failures.append( f"{moduleName} import" )
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
+    moduleName = 'TokenisedBible'
+    try:
+        from BibleOrgSys.Formats import TokenisedBible
+        doTest( moduleName, TokenisedBible )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
     moduleName = 'uWNotesBible'
     try:
         from BibleOrgSys.Formats import uWNotesBible
@@ -1399,41 +1409,329 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
 
-    if includeGIUs: # Biblelator
-        sys.path.insert( 0, '../Biblelator/' )
-        moduleName = 'Biblelator'
-        try:
-            import Biblelator
+    # Biblelator
+    ############
+    sys.path.insert( 0, '../Biblelator/' )
+
+    # Biblelator programs
+    moduleName = 'Biblelator'
+    try:
+        from Biblelator import Biblelator
+        if includeGIUs:
             doTest( moduleName, Biblelator )
-        except KeyboardInterrupt: interrupted=True; return
-        except (ImportError, SyntaxError) as err:
-            print( f"{moduleName} import failed!" )
-            failures.append( f"{moduleName} import" )
-            failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BiblelatorGlobals'
+    try:
+        from Biblelator import BiblelatorGlobals
+        if includeGIUs:
+            doTest( moduleName, BiblelatorGlobals )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
 
-        # Biblelator Apps
-        sys.path.insert( 0, '../Biblelator/Apps/' )
-        moduleName = 'SwordManager'
-        try:
-            import SwordManager
+    # Biblelator Apps
+    moduleName = 'SwordManager'
+    try:
+        from Biblelator.Apps import SwordManager
+        if includeGIUs:
             doTest( moduleName, SwordManager )
-        except KeyboardInterrupt: interrupted=True; return
-        except (ImportError, SyntaxError) as err:
-            print( f"{moduleName} import failed!" )
-            failures.append( f"{moduleName} import" )
-            failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
-
-        moduleName = 'BOSManager'
-        try:
-            import BOSManager
+    moduleName = 'BOSManager'
+    try:
+        from Biblelator.Apps import BOSManager
+        if includeGIUs:
             doTest( moduleName, BOSManager )
-        except KeyboardInterrupt: interrupted=True; return
-        except (ImportError, SyntaxError) as err:
-            print( f"{moduleName} import failed!" )
-            failures.append( f"{moduleName} import" )
-            failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BiblelatorSettingsEditor'
+    try:
+        from Biblelator.Apps import BiblelatorSettingsEditor
+        if includeGIUs:
+            doTest( moduleName, BiblelatorSettingsEditor )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'FRepEx'
+    try:
+        from Biblelator.Apps import FRepEx
+        if includeGIUs:
+            doTest( moduleName, FRepEx )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+
+    # Biblelator Dialogs
+    moduleName = 'About'
+    try:
+        from Biblelator.Dialogs import About
+        if includeGIUs:
+            doTest( moduleName, About )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BiblelatorDialogs'
+    try:
+        from Biblelator.Dialogs import BiblelatorDialogs
+        if includeGIUs:
+            doTest( moduleName, BiblelatorDialogs )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BiblelatorSimpleDialogs'
+    try:
+        from Biblelator.Dialogs import BiblelatorSimpleDialogs
+        if includeGIUs:
+            doTest( moduleName, BiblelatorSimpleDialogs )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'Help'
+    try:
+        from Biblelator.Dialogs import Help
+        if includeGIUs:
+            doTest( moduleName, Help )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'ModalDialog'
+    try:
+        from Biblelator.Dialogs import ModalDialog
+        if includeGIUs:
+            doTest( moduleName, ModalDialog )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+
+    # Biblelator Helpers
+    moduleName = 'AutocompleteFunctions'
+    try:
+        from Biblelator.Helpers import AutocompleteFunctions
+        if includeGIUs:
+            doTest( moduleName, AutocompleteFunctions )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'AutocorrectFunctions'
+    try:
+        from Biblelator.Helpers import AutocorrectFunctions
+        if includeGIUs:
+            doTest( moduleName, AutocorrectFunctions )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BiblelatorHelpers'
+    try:
+        from Biblelator.Helpers import BiblelatorHelpers
+        if includeGIUs:
+            doTest( moduleName, BiblelatorHelpers )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'SpellChecking'
+    try:
+        from Biblelator.Helpers import SpellChecking
+        if includeGIUs:
+            doTest( moduleName, SpellChecking )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+
+    # Biblelator Settings
+    moduleName = 'BiblelatorSettingsFunctions'
+    try:
+        from Biblelator.Settings import BiblelatorSettingsFunctions
+        if includeGIUs:
+            doTest( moduleName, BiblelatorSettingsFunctions )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'Settings'
+    try:
+        from Biblelator.Settings import Settings
+        if includeGIUs:
+            doTest( moduleName, Settings )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+
+    # Biblelator Windows
+    moduleName = 'BibleNotesWindow'
+    try:
+        from Biblelator.Windows import BibleNotesWindow
+        if includeGIUs:
+            doTest( moduleName, BibleNotesWindow )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BibleReferenceCollection'
+    try:
+        from Biblelator.Windows import BibleReferenceCollection
+        if includeGIUs:
+            doTest( moduleName, BibleReferenceCollection )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BibleResourceCollection'
+    try:
+        from Biblelator.Windows import BibleResourceCollection
+        if includeGIUs:
+            doTest( moduleName, BibleResourceCollection )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'BibleResourceWindows'
+    try:
+        from Biblelator.Windows import BibleResourceWindows
+        if includeGIUs:
+            doTest( moduleName, BibleResourceWindows )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'ChildWindows'
+    try:
+        from Biblelator.Windows import ChildWindows
+        if includeGIUs:
+            doTest( moduleName, ChildWindows )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'ESFMEditWindow'
+    try:
+        from Biblelator.Windows import ESFMEditWindow
+        if includeGIUs:
+            doTest( moduleName, ESFMEditWindow )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'LexiconResourceWindows'
+    try:
+        from Biblelator.Windows import LexiconResourceWindows
+        if includeGIUs:
+            doTest( moduleName, LexiconResourceWindows )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'TextBoxes'
+    try:
+        from Biblelator.Windows import TextBoxes
+        if includeGIUs:
+            doTest( moduleName, TextBoxes )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'TextEditWindow'
+    try:
+        from Biblelator.Windows import TextEditWindow
+        if includeGIUs:
+            doTest( moduleName, TextEditWindow )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'TSVEditWindow'
+    try:
+        from Biblelator.Windows import TSVEditWindow
+        if includeGIUs:
+            doTest( moduleName, TSVEditWindow )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
+    moduleName = 'USFMEditWindow'
+    try:
+        from Biblelator.Windows import USFMEditWindow
+        if includeGIUs:
+            doTest( moduleName, USFMEditWindow )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
 # end of doAll
 
 
@@ -1536,22 +1834,22 @@ def main():
 
     if testDefault:
         if failuresDefault:
-            publishResultLine( "\n\nHad {} default mode failures: {}".format( len(failuresDefault), sorted(failuresDefault) ) )
-            publishResultLine( "  Details: {}".format( sorted(failureDetailsDefault) ) )
+            publishResultLine( f"\n\nHad {len(failuresDefault)} default mode failures: {sorted(failuresDefault)}" )
+            publishResultLine( f"  Details: {sorted(failureDetailsDefault)}" )
         else:
             publishResultLine( "\n\nAll default mode tests succeeded." )
         if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            publishResultLine( "Had {} default mode successes: {}".format( len(successesDefault), sorted(successesDefault) ) )
+            publishResultLine( f"Had {len(successesDefault)} default mode successes: {sorted(successesDefault)}" )
         formatAndPublish( timesDefault )
 
     if testVerbose:
         if failuresVerbose:
-            publishResultLine( "\n\nHad {} verbose mode failures: {}".format( len(failuresVerbose), sorted(failuresVerbose) ) )
-            publishResultLine( "  Details: {}".format( sorted(failureDetailsVerbose) ) )
+            publishResultLine( f"\n\nHad {len(failuresVerbose)} verbose mode failures: {sorted(failuresVerbose)}" )
+            publishResultLine( f"  Details: {sorted(failureDetailsVerbose)}" )
         else:
             publishResultLine( "\n\nAll verbose mode tests succeeded." )
         if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            publishResultLine( "Had {} verbose mode successes: {}".format( len(successesVerbose), sorted(successesVerbose) ) )
+            publishResultLine( f"Had {len(successesVerbose)} verbose mode successes: {sorted(successesVerbose)}" )
         formatAndPublish( timesVerbose )
 
     #if testStrict:
@@ -1592,22 +1890,22 @@ def main():
 
     if testStrictVerboseDebug:
         if failuresStrictVerboseDebug:
-            publishResultLine( "\n\nHad {} strict verbose debug mode failures: {}".format( len(failuresStrictVerboseDebug), sorted(failuresStrictVerboseDebug) ) )
-            publishResultLine( "  Details: {}".format( sorted(failureDetailsStrictVerboseDebug) ) )
+            publishResultLine( f"\n\nHad {len(failuresStrictVerboseDebug)} strict verbose debug mode failures: {sorted(failuresStrictVerboseDebug)}" )
+            publishResultLine( f"  Details: {sorted(failureDetailsStrictVerboseDebug)}" )
         else:
             publishResultLine( "\n\nAll strict verbose debug mode tests succeeded." )
         if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            publishResultLine( "Had {} strict verbose debug mode successes: {}".format( len(successesStrictVerboseDebug), sorted(successesStrictVerboseDebug) ) )
+            publishResultLine( f"Had {len(successesStrictVerboseDebug)} strict verbose debug mode successes: {sorted(successesStrictVerboseDebug)}" )
         formatAndPublish( timesStrictVerboseDebug )
 
     if testStrictVerboseDebugExport:
         if failuresStrictVerboseDebugExport:
-            publishResultLine( "\n\nHad {} strict export verbose debug mode failures: {}".format( len(failuresStrictVerboseDebugExport), sorted(failuresStrictVerboseDebugExport) ) )
-            publishResultLine( "  Details: {}".format( sorted(failureDetailsStrictVerboseDebugExport) ) )
+            publishResultLine( f"\n\nHad {len(failuresStrictVerboseDebugExport)} strict export verbose debug mode failures: {sorted(failuresStrictVerboseDebugExport)}" )
+            publishResultLine( f"  Details: {sorted(failureDetailsStrictVerboseDebugExport)}" )
         else:
             publishResultLine( "\n\nAll strict verbose debug export mode tests succeeded." )
         if BibleOrgSysGlobals.commandLineArguments.passes or BibleOrgSysGlobals.verbosityLevel > 2:
-            publishResultLine( "Had {} strict verbose debug export mode successes: {}".format( len(successesStrictVerboseDebugExport), sorted(successesStrictVerboseDebugExport) ) )
+            publishResultLine( f"Had {len(successesStrictVerboseDebugExport)} strict verbose debug export mode successes: {sorted(successesStrictVerboseDebugExport)}" )
         formatAndPublish( timesStrictVerboseDebugExport )
 # end of main
 

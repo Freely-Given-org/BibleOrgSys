@@ -69,13 +69,6 @@ inputFolder = Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2019-01-29' # by RJH
-SHORT_PROGRAM_NAME = "MakePhotoBible"
-PROGRAM_NAME = "Make PhotoBible"
-PROGRAM_VERSION = '0.23'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
 import os
 
 # Allow the system to find the BOS even when the app is down in its own folder
@@ -86,6 +79,13 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.UnknownBible import UnknownBible
+
+
+LAST_MODIFIED_DATE = '2019-01-29' # by RJH
+SHORT_PROGRAM_NAME = "MakePhotoBible"
+PROGRAM_NAME = "Make PhotoBible"
+PROGRAM_VERSION = '0.23'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 

@@ -42,6 +42,7 @@ import os
 import re
 import multiprocessing
 
+# BibleOrgSys imports
 if __name__ == '__main__':
     import sys
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -52,7 +53,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-06-14' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
 PROGRAM_VERSION = '0.32'
@@ -79,20 +80,21 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one CSV Bible is found,
         returns the loaded CSVBible object.
     """
-    fnPrint( debuggingThisModule, "CSVBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
-    if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
+    fnPrint( debuggingThisModule, f"CSVBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if BibleOrgSysGlobals.debugFlag:
+        assert givenFolderName and isinstance( givenFolderName, (str,Path) )
+        assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("CSVBibleFileCheck: Given {} folder is unreadable").format( repr(givenFolderName) ) )
+        logging.critical( _("CSVBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("CSVBibleFileCheck: Given {} path is not a folder").format( repr(givenFolderName) ) )
+        logging.critical( _("CSVBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " CSVBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
+    vPrint( 'Verbose', debuggingThisModule, " CSVBibleFileCheck: Looking for files in given {!r}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -189,10 +191,12 @@ class CSVBible( Bible ):
     """
     Class for reading, validating, and converting CSVBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName:str, encoding:str='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
+        fnPrint( debuggingThisModule, f"CSVBible.__init__( {sourceFolder}, {givenName}, {encoding} )" )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'CSV Bible object'
@@ -233,7 +237,7 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                #dPrint( 'Quiet', debuggingThisModule, "CSV file line {} is {}".format( lineCount, repr(line) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "CSV file line {} is {!r}".format( lineCount, line ) )
                 if line[0]=='#': continue # Just discard comment lines
                 if lineCount==1:
                     if line.startswith( '"Book",' ):
@@ -358,7 +362,7 @@ def testCSV( CSVfolder ):
         vb.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+        #dPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -409,7 +413,7 @@ def briefDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             vBErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+            #dPrint( 'Quiet', debuggingThisModule, vBErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -463,7 +467,7 @@ def fullDemo() -> None:
                 result3.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

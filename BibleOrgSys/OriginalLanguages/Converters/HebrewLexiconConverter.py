@@ -79,7 +79,7 @@ class AugmentedStrongsIndexFileConverter:
     treeTag = HebLexNameSpace + "index"
 
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
@@ -189,7 +189,7 @@ class AugmentedStrongsIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_AugStrongsIndex_Tables.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries1, myFile )
             pickle.dump( self.entries2, myFile )
@@ -229,7 +229,7 @@ class LexicalIndexFileConverter:
     treeTag = HebLexNameSpace + "index"
 
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
@@ -413,7 +413,7 @@ class LexicalIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Index_Table.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -458,7 +458,7 @@ class HebrewStrongsFileConverter:
     treeTag = HebLexNameSpace + "lexicon"
 
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: just sets up the file converter object.
         """
@@ -522,7 +522,7 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                # dPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
+                #dPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
@@ -623,7 +623,7 @@ class HebrewStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Strongs_Table.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -665,7 +665,7 @@ class BrownDriverBriggsFileConverter:
     treeTag = HebLexNameSpace + "lexicon"
 
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor: just sets up the file converter object.
         """
@@ -732,7 +732,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                # dPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
+                #dPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
@@ -761,7 +761,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                # dPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
+                #dPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -787,7 +787,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                # dPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
+                #dPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
@@ -844,7 +844,7 @@ class BrownDriverBriggsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_BDB_Table.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -929,7 +929,7 @@ def fullDemo() -> None:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Tables.1.pickle' )
-            vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+            vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
             with open( filepath, 'wb' ) as myFile:
                 pickle.dump( asixfc.entries1, myFile )
                 pickle.dump( asixfc.entries2, myFile )

@@ -109,7 +109,7 @@ class SwordModuleConfiguration:
     """
     A class that loads, processes, and stores a Sword .conf file.
     """
-    def __init__( self, moduleAbbreviation, swordFolder ):
+    def __init__( self, moduleAbbreviation, swordFolder ) -> None:
         """
         Create the config object.
 
@@ -197,12 +197,10 @@ class SwordModuleConfiguration:
         # Checked for locked modules
         if 'CipherKey' in self.confDict:
             if self.confDict['CipherKey']:
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
+                vPrint( 'Info', debuggingThisModule, "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
                 self.locked = False
             else:
-                if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
+                vPrint( 'Info', debuggingThisModule, "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
                 self.locked = True
 
         # Check we got everything we should have
@@ -259,7 +257,7 @@ class SwordModule():
     Class to load and manipulate a Sword module.
     """
 
-    def __init__( self, loadedSwordModuleConfiguration ):
+    def __init__( self, loadedSwordModuleConfiguration ) -> None:
         """
         Create the Sword Module object.
         """
@@ -560,7 +558,7 @@ class SwordModule():
                 assert blankCount == 0
                 # Now save the lexicon/dictionary data in an easily accessible format
                 for key, value in LDIndex.items():
-                    # dPrint( 'Quiet', debuggingThisModule, f"key='{key}' value={value}" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"key='{key}' value={value}" )
                     if isinstance( value, list ): # This key has two entries
                         for j, (blockNumber, blockChunkNumber) in enumerate(value):
                             try:
@@ -587,9 +585,9 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
                                 logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
-                                # dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             self.swordData[adjKey] = chunk.strip()
-                            # dPrint( 'Quiet', debuggingThisModule, "   ", adjKey, "->", chunk )
+                            #dPrint( 'Quiet', debuggingThisModule, "   ", adjKey, "->", chunk )
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
             else: # we're just loading the index, not the data
@@ -621,7 +619,7 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordIndex:
                                 logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
-                                # dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             self.swordIndex[adjKey] = entry
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
@@ -1212,7 +1210,7 @@ class SwordModule():
 
         self.inMemoryFlag = inMemoryFlag
 
-        vPrint( 'Quiet', debuggingThisModule, "Loading {!r} module…".format( self.SwordModuleConfiguration.abbreviation ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Loading {!r} module…").format( self.SwordModuleConfiguration.abbreviation ) )
         self.store = self.swordData if self.inMemoryFlag else self.swordIndex
         if self.SwordModuleConfiguration.locked:
             logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
@@ -1297,7 +1295,7 @@ class SwordModule():
 
         self.inMemoryFlag = inMemoryFlag
 
-        vPrint( 'Quiet', debuggingThisModule, "Loading {!r} book {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Loading {!r} book {}…").format( self.SwordModuleConfiguration.abbreviation, BBB ) )
         self.store = self.swordData if self.inMemoryFlag else self.swordIndex
         if self.SwordModuleConfiguration.locked:
             logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
@@ -1428,7 +1426,7 @@ class SwordModule():
     # end of SwordModule.convertNTIndexToReference
 
 
-    def getVersifiedOffset( self, BBB:str, C, V, offsetType=0 ): # The 0 selects the OTNTOffset (1 is OTOffset, 2 is NTOffset)
+    def getVersifiedOffset( self, BBB:str, C:str, V:str, offsetType=0 ): # The 0 selects the OTNTOffset (1 is OTOffset, 2 is NTOffset)
         """
         Get the OTNTOffset for a given reference. (All parameters must be strings.)
 
@@ -1628,7 +1626,7 @@ class SwordModule():
     ## end of SwordModule.preprocessRawGenBookEntry
 
 
-    def filterToHTML( self, rawData, BBB=None, C=None, V=None ):
+    def filterToHTML( self, rawData, BBB:str=None, C:str=None, V:str=None ):
         """
         Does preprocessing on the raw data from the module.
 
@@ -1670,7 +1668,7 @@ class SwordModule():
     # end of SwordModule.filterToHTML
 
 
-    def filterToUSFM( self, rawData, BBB, C, V ):
+    def filterToUSFM( self, rawData, BBB:str, C:str, V ):
         """
         Does preprocessing on the raw data from the module.
         """
@@ -1873,7 +1871,7 @@ class SwordBibleModule( SwordModule, Bible ):
     """
     A Sword module for a Bible or commentary that has versification.
     """
-    def __init__( self, loadedSwordModuleConfiguration ):
+    def __init__( self, loadedSwordModuleConfiguration ) -> None:
         """
         Create the Sword Module object.
         """
@@ -2096,7 +2094,7 @@ class SwordModules:
     """
 
 
-    def __init__( self ): # This can't take other parameters for a singleton
+    def __init__( self ) -> None: # This can't take other parameters for a singleton
         """
         Creates the object and then loads all the .conf files we can find.
 

@@ -33,16 +33,6 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
-SHORT_PROGRAM_NAME = "USFMFile"
-PROGRAM_NAME = "USFM File loader"
-PROGRAM_VERSION = '0.86'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 from typing import Tuple, Optional
 import sys
 import logging
@@ -55,6 +45,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+
+LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+SHORT_PROGRAM_NAME = "USFMFile"
+PROGRAM_NAME = "USFM File loader"
+PROGRAM_VERSION = '0.86'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a line

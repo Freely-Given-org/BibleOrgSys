@@ -93,10 +93,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-17' # by RJH
+LAST_MODIFIED_DATE = '2020-07-09' # by RJH
 SHORT_PROGRAM_NAME = "CompareBibles"
 PROGRAM_NAME = "Bible compare analyzer"
-PROGRAM_VERSION = '0.26'
+PROGRAM_VERSION = '0.27'
 programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 programNameVersionDate = '{} {} {}'.format( programNameVersion, _("last modified"), LAST_MODIFIED_DATE )
 
@@ -193,12 +193,12 @@ def loadWordCompares( folder, filename ):
     """
     Returns two dicts (longest entries first)
     """
-    vPrint( 'Verbose', debuggingThisModule, f"loadWordCompares( {folder}, {filename} )…" )
+    fnPrint( debuggingThisModule, f"loadWordCompares( {folder}, {filename} )" )
 
     dict12, dict21 = {}, {} # Not worried about sorting yet
 
     filepath = os.path.join( folder, filename )
-    vPrint( 'Normal', debuggingThisModule, "Loading word compares from {}…".format( filepath ) )
+    vPrint( 'Normal', debuggingThisModule, _("Loading word compares from {}…").format( filepath ) )
 
     lineCount = 0
     with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
@@ -303,7 +303,7 @@ def loadWordCompares( folder, filename ):
 #         if line1:
 #             line1len = len(line1)
 #             for left,right in matchingPairs:
-#                 hadMatchingError1 = hadMatchingError2 = False
+#                 hadMatching1Error = hadMatching2Error = False
 #                 ixl = -1
 #                 while True:
 #                     ixl = line1.find( left, ixl+1 )
@@ -315,7 +315,7 @@ def loadWordCompares( folder, filename ):
 #                         if contextStart > 0 and context[0]!=' ': context = '…' + context
 #                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
 #                         bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
-#                         hadMatchingError1 = True
+#                         hadMatching1Error = True
 #                 ixl = -1
 #                 ixr = 9999
 #                 while True:
@@ -328,9 +328,9 @@ def loadWordCompares( folder, filename ):
 #                         if contextStart > 0 and context[0]!=' ': context = '…' + context
 #                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
 #                         bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
-#                         hadMatchingError1 = True
+#                         hadMatching1Error = True
 #                 # The above doesn't detect ( ) ) so we do it here
-#                 if not hadMatchingError1: # already
+#                 if not hadMatching1Error: # already
 #                     l1cl, l1cr = line1.count( left ), line1.count( right )
 #                     if l1cl > l1cr:
 #                         bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
@@ -386,6 +386,46 @@ def loadWordCompares( folder, filename ):
 # # end of checkBookPedantic
 
 
+def checkLeftPair( lChar:str, rChar:str, text:str ) -> int:
+    """
+    Return the index of a mismatched left char, e.g., '(' in a string.
+
+    Returns -1 if no mismatches.
+    Returns -2,-3,... if extra right chars
+    """
+    rCount = 0
+    for ix, char in enumerate( reversed(text) ): # work backwards from right
+        # print( "L", ix, char, rCount )
+        if char == rChar: rCount += 1
+        elif char == lChar:
+            if rCount: rCount -= 1 # Nice match
+            else:
+                # print( f"LReturning1 {len(text)-ix-1}")
+                return len(text)-ix-1 # Left not preceding a right
+    # print( f"LReturning2 {-1 - rCount}")
+    return -1 - rCount
+# end of checkLeftPair
+
+
+def checkRightPair( lChar:str, rChar:str, text:str ) -> int:
+    """
+    Return the index of a mismatched right char, e.g., ']' in a string.
+
+    Returns -1 if no mismatches.
+    """
+    lCount = 0
+    for ix, char in enumerate( text ):
+        # print( "R", ix, char, lCount )
+        if char == lChar: lCount += 1
+        elif char == rChar:
+            if lCount: lCount -= 1 # Nice match
+            else:
+                # print( f"RReturning1 {ix}")
+                return ix # Right not following a left
+    # print( f"RReturning2 {-1 - lCount}")
+    return -1 - lCount
+# end of checkRightPair
+
 
 def compareBooksPedantic( book1, book2,
         compareQuotes=DEFAULT_COMPARE_QUOTES,
@@ -416,12 +456,13 @@ def compareBooksPedantic( book1, book2,
                                         illegalCleanTextOnlyStrings1, illegalCleanTextOnlyStrings2, matchingPairs,
                                         breakOnOne, book1.BBB ) )
     assert book1.BBB == book2.BBB
-    # dPrint( 'Info', debuggingThisModule, book1.workName, book2.workName )
+    #dPrint( 'Info', debuggingThisModule, book1.workName, book2.workName )
     assert book1.workName != 'utf-8'
     assert book2.workName != 'utf-8'
     assert book1.workName != book2.workName
 
     bcResults:List[Tuple[Tuple[str,str,str],str]] = []
+    tempResults:List[Tuple[Tuple[str,str,str],str]] = [] # Used for warnings which might be rescinded, esp, parentheses closed in a different verse
 
     len1, len2 = len(book1), len(book2)
     #dPrint( 'Quiet', debuggingThisModule, 'len', len1, len2 )
@@ -436,7 +477,8 @@ def compareBooksPedantic( book1, book2,
     while (ix1+offset1)<len1 and (ix2+offset2)<len2:
         entry1 = book1._processedLines[ix1+offset1] # InternalBibleEntry object
         entry2 = book2._processedLines[ix2+offset2] # InternalBibleEntry object
-        #dPrint( 'Quiet', debuggingThisModule, 'entry', entry1, entry2 )
+        # if book1.BBB == 'DEU' and C == '10':
+        #     dPrint( 'Quiet', debuggingThisModule, f"{C}:{V} entry {ix1+offset1} '{entry1}' {ix2+offset2} '{entry2}'" )
 
         # lastMarker1, lastLine1 = marker1, line1
         # lastMarker2, lastLine2 = marker1, line2
@@ -454,6 +496,13 @@ def compareBooksPedantic( book1, book2,
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getCleanText() )
         originalMarker = entry1.getOriginalMarker()
         reference = (C,V,' ' if originalMarker is None else originalMarker)
+
+        if tempResults \
+        and marker1 in ('c','p','s1','s2','s3','s4', 'ms', 'r', 'd', 'sp'):
+            # parenthesis shouldn't normally cross these boundaries
+            while tempResults:
+                print( f"At {reference} activating {tempResults[0]}" )
+                bcResults.append(tempResults.pop(0))
 
         if marker1 == marker2: # ok, formats of both books match
             numMismatchedMarkers = 0
@@ -479,63 +528,61 @@ def compareBooksPedantic( book1, book2,
                         bcResults.append( (reference,"Mismatched digit: {} vs {} {!r}".format( c1, c2, digit )) )
                         if breakOnOne: break
                 for left,right in matchingPairs:
-                    hadMatchingError1 = hadMatchingError2 = False
-                    ixl = -1
-                    while True:
-                        ixl = line1.find( left, ixl+1 )
-                        if ixl == -1: break
-                        ixr = line1.find( right, ixl+2 )
-                        if ixr == -1:
-                            contextStart, contextEnd = max(0,ixl-5), ixl+7
-                            context = line1[contextStart:contextEnd]
-                            if contextStart > 0 and context[0]!=' ': context = '…' + context
-                            if contextEnd < line1len and context[-1]!=' ': context = context + '…'
-                            bcResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
-                            hadMatchingError1 = True
-                    ixl = -1
-                    while True:
-                        ixl = line2.find( left, ixl+1 )
-                        if ixl == -1: break
-                        ixr = line2.find( right, ixl+2 )
-                        if ixr == -1:
-                            contextStart, contextEnd = max(0,ixl-5), ixl+7
-                            context = line2[contextStart:contextEnd]
-                            if contextStart > 0 and context[0]!=' ': context = '…' + context
-                            if contextEnd < line2len and context[-1]!=' ': context = context + '…'
-                            bcResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, context )) )
-                            hadMatchingError2 = True
-                    ixr = 9999
-                    while True:
-                        ixr = line1.rfind( right, 0, ixr )
-                        if ixr == -1: break
-                        ixl = line1.rfind( left, 0, ixr )
-                        if ixl == -1:
-                            contextStart, contextEnd = max(0,ixr-6), ixr+6
-                            context = line1[contextStart:contextEnd]
-                            if contextStart > 0 and context[0]!=' ': context = '…' + context
-                            if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                    hadMatching1Error = hadMatching2Error = False
+                    ixl = checkLeftPair( left, right, line1 )
+                    if ixl >= 0:
+                        contextStart, contextEnd = max(0,ixl-5), ixl+7
+                        context = line1[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                        tempResults.append( (reference,"Missing second part of pair in Bible1: {!r} after {!r}".format( right, context )) )
+                        # print( f"Saved1 tmp {tempResults[-1]}" )
+                        hadMatching1Error = True
+                    ixl = checkLeftPair( left, right, line2 )
+                    if ixl >= 0:
+                        contextStart, contextEnd = max(0,ixl-5), ixl+7
+                        context = line2[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                        tempResults.append( (reference,"Missing second part of pair in Bible2: {!r} after {!r}".format( right, context )) )
+                        # print( f"Saved2 tmp {tempResults[-1]}" )
+                        hadMatching2Error = True
+                    ixr = checkRightPair( left, right, line1 )
+                    if ixr >= 0:
+                        contextStart, contextEnd = max(0,ixr-6), ixr+6
+                        context = line1[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line1len and context[-1]!=' ': context = context + '…'
+                        if tempResults and "Missing second part" in tempResults[0][-1]:
+                            # print( f"At {reference} supressing1 {tempResults[0][-1]}" )
+                            tempResults.pop(0) # We match the number of messages, but don't check for exact matches
+                        else:
+                            assert not tempResults
                             bcResults.append( (reference,"Missing first part of pair in Bible1: {!r} before {!r}".format( left, context )) )
-                            hadMatchingError1 = True
-                    ixr = 9999
-                    while True:
-                        ixr = line2.rfind( right, 0, ixr )
-                        if ixr == -1: break
-                        ixl = line2.rfind( left, 0, ixr )
-                        if ixl == -1:
-                            contextStart, contextEnd = max(0,ixr-6), ixr+6
-                            context = line2[contextStart:contextEnd]
-                            if contextStart > 0 and context[0]!=' ': context = '…' + context
-                            if contextEnd < line2len and context[-1]!=' ': context = context + '…'
+                            # print( f"1 Appended {bcResults[-1]=}" )
+                        hadMatching1Error = True # So we don't get more errors below
+                    ixr = checkRightPair( left, right, line2 )
+                    if ixr >= 0:
+                        contextStart, contextEnd = max(0,ixr-6), ixr+6
+                        context = line2[contextStart:contextEnd]
+                        if contextStart > 0 and context[0]!=' ': context = '…' + context
+                        if contextEnd < line2len and context[-1]!=' ': context = context + '…'
+                        if tempResults and "Missing second part" in tempResults[-1][-1]:
+                            # print( f"At {reference} supressing2 {tempResults[-1][-1]}" )
+                            tempResults.pop() # We match the number of messages, but don't check for exact matches
+                        else:
+                            assert not tempResults
                             bcResults.append( (reference,"Missing first part of pair in Bible2: {!r} before {!r}".format( left, context )) )
-                            hadMatchingError2 = True
+                            # print( f"2 Appended {bcResults[-1]=}" )
+                        hadMatching2Error = True # So we don't get more errors below
                     # The above doesn't detect ( ) ) so we do it here
-                    if not hadMatchingError1: # already
+                    if not hadMatching1Error: # already
                         l1cl, l1cr = line1.count( left ), line1.count( right )
                         if l1cl > l1cr:
                             bcResults.append( (reference,"Too many {!r} in Bible1".format( left )) )
                         elif l1cr > l1cl:
                             bcResults.append( (reference,"Too many {!r} in Bible1".format( right )) )
-                    if not hadMatchingError2: # already
+                    if not hadMatching2Error: # already
                         l2cl, l2cr = line2.count( left ), line2.count( right )
                         if l2cl > l2cr:
                             bcResults.append( (reference,"Too many {!r} in Bible2".format( left )) )
@@ -1150,6 +1197,18 @@ def fullDemo() -> None:
     from BibleOrgSys.Formats.USFMBible import USFMBible
 
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+
+    # Test functions
+    for j, line in enumerate(
+            ("(This is a (very) valid paragraph (I think).)",
+            "(This is a (not very valid paragraph (I think).)",
+            "(This is a not very) valid paragraph (I think).)",
+            ), start=1 ):
+        print( f"Line {j} ({len(line)}): {line}" )
+        resultL = checkLeftPair( '(', ')', line )
+        resultR = checkRightPair( '(', ')', line )
+        print( f"Results {j}: {resultL} {resultR}" )
+        assert (resultL, resultR) == ((-1,-1),(0,-2),(-2,47))[j-1]
 
     # Load a USFM Bible and BT
     vPrint( 'Quiet', debuggingThisModule, "\nLoading USFM Bible…" )

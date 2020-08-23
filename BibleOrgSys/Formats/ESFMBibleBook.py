@@ -93,7 +93,7 @@ class ESFMBibleBook( BibleBook ):
             vPrint( 'Quiet', debuggingThisModule, "ESFM.load( {}, {} )".format( filename, folder ) )
 
 
-        def ESFMPreprocessing( BBB, C, V, marker, originalText ):
+        def ESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
             """
             Converts ESFM tagging to pseudo-USFM codes for easier handling later on.
 
@@ -118,7 +118,7 @@ class ESFMBibleBook( BibleBook ):
                 vPrint( 'Quiet', debuggingThisModule, "\n\nESFMPreprocessing( {} {}:{}, {}, {!r} )".format( BBB, C, V, marker, originalText ) )
 
 
-            def saveWord( BBB, C, V, word ):
+            def saveWord( BBB:str, C:str, V:str, word ):
                 """
                 """
                 if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
@@ -126,7 +126,7 @@ class ESFMBibleBook( BibleBook ):
                 assert word and ' ' not in word
             # end of saveWord
 
-            def saveSemanticTag( BBB, C, V, word, tag ):
+            def saveSemanticTag( BBB:str, C:str, V:str, word, tag ):
                 """
                 Fills the semantic dictionary with keys:
                     'Tag errors': contains a list of 4-tuples (BBB,C,V,errorWord)
@@ -174,7 +174,7 @@ class ESFMBibleBook( BibleBook ):
             # end of saveSemanticTag
 
 
-            def saveStrongsTag( BBB, C, V, word, tag ):
+            def saveStrongsTag( BBB:str, C:str, V:str, word, tag ):
                 """
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
@@ -443,9 +443,9 @@ class ESFMBibleBook( BibleBook ):
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
-        loadErrors = []
+        loadErrors:List[str] = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            # dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
+            #dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
             if not marker:
                 logging.critical( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
                 if debuggingThisModule: halt
@@ -544,7 +544,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( EBB.getField( 'id' ) ) )
@@ -595,7 +595,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( EBB.getField( 'id' ) ) )

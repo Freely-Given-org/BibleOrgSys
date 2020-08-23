@@ -92,7 +92,7 @@ class BibleOrganisationalSystems:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -117,7 +117,7 @@ class BibleOrganisationalSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
@@ -258,7 +258,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self, systemName ):
+    def __init__( self, systemName ) -> None:
         """
         Constructor:
         """
@@ -296,7 +296,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             logging.error( _("{} Bible Organisational System has no {} specified (b)").format(self.__systemName,valueName) )
         # end of getOrganisationalSystemValue
 
-        vPrint( 'Info', debuggingThisModule, "Loading {!r} system".format( systemName ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading {!r} system").format( systemName ) )
         assert systemName and isinstance( systemName, str )
         self.__boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganisationalSystem( systemName )
@@ -316,7 +316,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         versificationSystemName = self.getOrganisationalSystemValue( 'versificationSystem' )
         punctuationSystemName = self.getOrganisationalSystemValue( 'punctuationSystem' )
         booksNamesSystemName = self.getOrganisationalSystemValue( 'booksNamesSystem' )
-        dPrint( 'Quiet', debuggingThisModule, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
+        dPrint( 'Never', debuggingThisModule, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
         if bookOrderSystemName and bookOrderSystemName!='None' and bookOrderSystemName!='Unknown':
             vPrint( 'Info', debuggingThisModule, "Uses {!r} book order system".format( bookOrderSystemName ) )
             BibleBookOrderSystem.__init__( self, bookOrderSystemName )
@@ -548,7 +548,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     # end of BibleOrganisationalSystem.__makeAbsoluteVerseList
 
 
-    def getAbsoluteVerseNumber( self, BBB:str, C, V ):
+    def getAbsoluteVerseNumber( self, BBB:str, C:str, V ):
         """
         Convert the given reference (in this versification system)
             to an absolute verse number.
@@ -604,8 +604,8 @@ def briefDemo() -> None:
             bos = BibleOrganisationalSystem( testString )
             vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
             vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
-            # dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
-            # dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            #dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            #dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
             vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
             #    vPrint( 'Quiet', debuggingThisModule, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
@@ -643,8 +643,8 @@ def fullDemo() -> None:
             bos = BibleOrganisationalSystem( testString )
             vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
             vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
-            # dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
-            # dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            #dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            #dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
             vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
             #    vPrint( 'Quiet', debuggingThisModule, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )

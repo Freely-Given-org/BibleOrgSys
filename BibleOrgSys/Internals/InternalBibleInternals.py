@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2020-07-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.78'
+PROGRAM_VERSION = '0.79'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -158,7 +158,7 @@ assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
 
-def parseWordAttributes( workName, BBB, C, V, wordAttributeString, errorList=None ):
+def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ):
     """
     Take the attributes of a USFM3 \w field (the attributes include the first pipe/vertical-bar symbol)
         and analyze them.
@@ -247,7 +247,7 @@ betterAttributeNames3 = ( 'altDescription', 'sourceFilename', 'relativeSize', 'l
 # The names for USFM2 are determined by position
 figureAttributeNames2 = ( betterAttributeNames3[0], betterAttributeNames3[1], betterAttributeNames3[2], betterAttributeNames3[3], betterAttributeNames3[4], 'caption', betterAttributeNames3[5] )
 
-def parseFigureAttributes( workName, BBB, C, V, figureAttributeString, errorList=None ):
+def parseFigureAttributes( workName, BBB:str, C:str, V:str, figureAttributeString, errorList=None ):
     """
     Take the contents of a USFM2 or USFM3 \fig field and analyze them.
 
@@ -344,8 +344,10 @@ class InternalBibleExtra:
     Each object/entry contains an index back to the adjusted text
         (and hence that index must be adjusted if the text string is edited).
     """
+    __slots__ = ('myType', 'index', 'noteText', 'cleanNoteText') # Define allowed self variables (more efficient than a dict when have many instances)
 
-    def __init__( self, myType, indexToAdjText, noteText, cleanNoteText, location ):
+
+    def __init__( self, myType, indexToAdjText, noteText, cleanNoteText, location ) -> None:
         """
         Accept the parameters and double-check them if requested.
 
@@ -406,8 +408,10 @@ class InternalBibleExtraList:
 
     (It's mainly here for extra data validation and the str function for debugging.)
     """
+    __slots__ = ('data',) # Define allowed self variables (more efficient than a dict when have many instances)
 
-    def __init__( self, initialData=None ):
+
+    def __init__( self, initialData=None ) -> None:
         """
         """
         self.data = []
@@ -530,6 +534,8 @@ class InternalBibleEntry:
     Each entry holds the original and adjusted markers (e.g., \s will be adjusted to \s1)
         plus the cleanText with notes, etc. removed and stored in the "extras" list.
     """
+    __slots__ = ('marker', 'originalMarker', 'adjustedText', 'cleanText', 'extras', 'originalText') # Define allowed self variables (more efficient than a dict when have many instances)
+
 
     def __init__( self, marker:str, originalMarker:str,
                         adjustedText:str, cleanText:str,
@@ -714,8 +720,10 @@ class InternalBibleEntryList:
 
     (It's mainly here for extra data validation and the str function for debugging.)
     """
+    __slots__ = ('data',) # Define allowed self variables (more efficient than a dict when have many instances)
 
-    def __init__( self, initialData=None ):
+
+    def __init__( self, initialData=None ) -> None:
         """
         """
         self.data = []

@@ -75,7 +75,7 @@ class MLWriter:
     A class to handle data for Bible book order systems.
     """
 
-    def __init__( self, filename, folder=None, outputType=None ):
+    def __init__( self, filename, folder=None, outputType=None ) -> None:
         """
         Constructor.
             filename: filename string or complete filepath

@@ -113,7 +113,7 @@ class HebrewWLCBibleAddon():
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Create an empty object.
         """
@@ -675,7 +675,7 @@ class OSISHebrewWLCBible( OSISXMLBible, HebrewWLCBibleAddon ):
     """
     Class for handling a Hebrew WLC (OSIS XML) object (which may contain one or more Bible books)
     """
-    def __init__( self, OSISXMLFileOrFilepath=None ):
+    def __init__( self, OSISXMLFileOrFilepath=None ) -> None:
         """
         Create an empty object.
         """
@@ -695,7 +695,7 @@ class PickledHebrewWLCBible( PickledBible, HebrewWLCBibleAddon ):
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
-    def __init__( self, zippedPickleFilepath=None ):
+    def __init__( self, zippedPickleFilepath=None ) -> None:
         """
         Create an empty object.
         """

@@ -344,7 +344,7 @@ theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
     'ip','ipi','im','imi','ipq','imq','ipr', 'iq1','iq2','iq3','iq4', 'ib', 'ili1','ili2','ili3','ili4',
     'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', )
 
-def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
+def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
     """
     Go through the book introduction (if any) and extract main titles for theWord export.
 
@@ -796,7 +796,7 @@ class theWordBible( Bible ):
     """
     Class for reading, validating, and converting theWordBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -965,7 +965,7 @@ class theWordBible( Bible ):
 
 
 
-def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
+def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
     """
     Composes a single line representing a verse.
 
@@ -1156,7 +1156,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     import zipfile
 
 
-    def writetWBook( writerObject, BBB, ourGlobals ):
+    def writetWBook( writerObject, BBB:str, ourGlobals ):
         """
         Writes a book to the theWord writerObject file.
         """

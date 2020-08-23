@@ -36,16 +36,6 @@ There seems to be some incomplete documentation at http://digitalbiblelibrary.or
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
-SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
-PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
-PROGRAM_VERSION = '0.29'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os
 import logging
 import multiprocessing
@@ -64,6 +54,14 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersifications
 from BibleOrgSys.Formats.PTX8Bible import getFlagFromAttribute
 
+
+LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
+PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
+PROGRAM_VERSION = '0.29'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 COMPULSORY_FILENAMES = ( 'METADATA.XML', 'LICENSE.XML', 'STYLES.XML' ) # Must all be UPPER-CASE
@@ -309,7 +307,7 @@ class DBLBible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         DBLLicense = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='license':
@@ -456,7 +454,7 @@ class DBLBible( Bible ):
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['DBL'] = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='DBLMetadata':
@@ -1345,7 +1343,7 @@ class DBLBible( Bible ):
         # end of getStyle
 
         DBLStyles = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='stylesheet':
@@ -1517,8 +1515,7 @@ class DBLBible( Bible ):
         Load the USX XML Bible text files.
         """
         fnPrint( debuggingThisModule, "loadBooks()" )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("DBLBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 
         if not self.preloadDone: self.preload()
         if not self.preloadDone: return # coz it must have failed
@@ -1788,7 +1785,7 @@ def briefDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 DB.loadBooks()
                 #DBErrors = DB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, DB.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -1967,7 +1964,7 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 DB.loadBooks()
                 #DBErrors = DB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, DB.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):

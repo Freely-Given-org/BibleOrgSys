@@ -42,7 +42,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2020-08-20' # by RJH
 SHORT_PROGRAM_NAME = "USFM2BibleBook"
 PROGRAM_NAME = "USFM2 Bible book handler"
 PROGRAM_VERSION = '0.53'
@@ -125,7 +125,7 @@ class USFM2BibleBook( BibleBook ):
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
-        loadErrors = []
+        loadErrors:List[str] = []
 
         vPrint( 'Info', debuggingThisModule, "  " + _("Preloading {}…").format( filename ) )
         with open( self.sourceFilepath, 'rt', encoding=encoding) as f:
@@ -148,7 +148,7 @@ class USFM2BibleBook( BibleBook ):
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
-        loadErrors = []
+        loadErrors:List[str] = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             #dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 
@@ -273,7 +273,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFM2BibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
@@ -325,7 +325,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFM2BibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )

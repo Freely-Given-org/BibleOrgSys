@@ -213,7 +213,7 @@ class USFXXMLBible( Bible ):
     Class to load and manipulate USFX Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName=None, encoding='utf-8' ) -> None:
         """
         Create the internal USFX Bible object.
         """
@@ -575,7 +575,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadBook
 
 
-    def loadParagraph( self, paragraphElement, paragraphLocation, BBB, C ):
+    def loadParagraph( self, paragraphElement, paragraphLocation, BBB:str, C ):
         """
         Load the paragraph (p or q) container from the XML data file.
         """
@@ -718,7 +718,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadParagraph
 
 
-    def loadWordFormatting( self, element, location, BBB, C, V ):
+    def loadWordFormatting( self, element, location, BBB:str, C:str, V ):
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -748,7 +748,7 @@ class USFXXMLBible( Bible ):
         self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, (' '+tail) if tail else '' ) )
 
 
-    def loadCharacterFormatting( self, element, location, BBB, C, V ):
+    def loadCharacterFormatting( self, element, location, BBB:str, C:str, V ):
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -791,7 +791,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadFigure
 
 
-    def loadTable( self, element, location, BBB, C, V ):
+    def loadTable( self, element, location, BBB:str, C:str, V ):
         """
         """
         fnPrint( debuggingThisModule, "\nUSFXXMLBible.loadTable( {}, {} )".format( BibleOrgSysGlobals.elementStr( element ), location ) )
@@ -843,7 +843,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadTable
 
 
-    def loadFootnote( self, element, location, BBB, C, V ):
+    def loadFootnote( self, element, location, BBB:str, C:str, V ):
         """
         Handles footnote fields, including xt field.
         """
@@ -1026,7 +1026,7 @@ def briefDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, UsfxB.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, UsfxB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -1077,7 +1077,7 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: UsfxB.check()
                 if BibleOrgSysGlobals.commandLineArguments.export: UsfxB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #UsfxBErrors = UsfxB.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, UsfxBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, UsfxB.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, UsfxB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):

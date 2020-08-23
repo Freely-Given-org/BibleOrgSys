@@ -76,7 +76,7 @@ class DCSBibles:
     Class to download and manipulate online DCS Bibles.
 
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Create the internal Bibles object.
         """
@@ -296,7 +296,7 @@ class DCSBible( USFMBible ):
 
     The interface provides a link to a zip file containing all of the USFM books.
     """
-    def __init__( self, parameterOne, resourcesObject=None, downloadAllBooks=False ):
+    def __init__( self, parameterOne, resourcesObject=None, downloadAllBooks=False ) -> None:
         """
         Create the Door43 cataloged Bible object.
 
@@ -352,7 +352,7 @@ class DCSBible( USFMBible ):
                     #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                     logging.critical( "DCS URLError '{}' from {}".format( err, zipURL ) )
                     return
-                # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+                #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
                 contentType = HTTPResponseObject.info().get( 'content-type' )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
@@ -426,7 +426,7 @@ class DCSBible( USFMBible ):
                     #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                     logging.critical( "DCS URLError '{}' from {}".format( err, zipURL ) )
                     return
-                # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+                #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
                 contentType = HTTPResponseObject.info().get( 'content-type' )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )

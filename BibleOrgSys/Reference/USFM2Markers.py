@@ -287,7 +287,7 @@ class USFM2Markers:
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -312,7 +312,7 @@ class USFM2Markers:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -584,8 +584,7 @@ class USFM2Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "USFM2Markers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
+        fnPrint( debuggingThisModule, "USFM2Markers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
         if not text: return []
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )

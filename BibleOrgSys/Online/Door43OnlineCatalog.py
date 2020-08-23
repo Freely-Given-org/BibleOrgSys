@@ -46,6 +46,7 @@ import zipfile
 from datetime import datetime
 import logging
 
+# BibleOrgSys imports
 if __name__ == '__main__':
     import sys
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -57,10 +58,10 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
-LAST_MODIFIED_DATE = '2020-05-07' # by RJH
+LAST_MODIFIED_DATE = '2020-06-10' # by RJH
 SHORT_PROGRAM_NAME = "Door43OnlineCatalog"
 PROGRAM_NAME = "Door43 Online Catalog online handler"
-PROGRAM_VERSION = '0.08'
+PROGRAM_VERSION = '0.09'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -78,7 +79,7 @@ class Door43CatalogResources:
     Class to download and manipulate online Door43 Bibles.
 
     """
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Create the internal Bibles object.
         """
@@ -110,7 +111,7 @@ class Door43CatalogResources:
             #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             logging.error( "Door43 URLError '{}' from {}".format( err, requestString ) )
             return None
-        # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+        #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
         contentType = HTTPResponseObject.info().get( 'content-type' )
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
@@ -184,7 +185,7 @@ class Door43CatalogResources:
                         #dPrint( 'Quiet', debuggingThisModule, "      subjectJsonURL", subjectJsonURL )
                     #bits1 = subjectJsonURL.split('/')
                     #assert len(bits1) == 6 # e.g., ['https:', '', 'api.door43.org', 'v3', 'subjects', 'Hebrew_Old_Testament.json']
-                    ## dPrint( 'Quiet', debuggingThisModule, "      bits1", bits1 )
+                    ##dPrint( 'Quiet', debuggingThisModule, "      bits1", bits1 )
                     #jsonFilenameList.append( bits1[-1] )
                     #subjectName = bits1[-1].split('.')[0] # e.g., 'Translation_Academy'
                     #self.subjectNameList.append( subjectName.replace( '_', ' ' ) )
@@ -359,7 +360,7 @@ class Door43CatalogBible( USFMBible ):
 
     The interface provides a link to a zip file containing all of the USFM books.
     """
-    def __init__( self, parameterOne, resourcesObject=None ):
+    def __init__( self, parameterOne, resourcesObject=None ) -> None:
         """
         Create the Door43 cataloged Bible object.
 
@@ -422,7 +423,7 @@ class Door43CatalogBible( USFMBible ):
                 #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                 logging.critical( "Door43 URLError '{}' from {}".format( err, zipURL ) )
                 return None
-            # dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+            #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
             contentType = HTTPResponseObject.info().get( 'content-type' )
             vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
             if contentType == 'application/zip':
@@ -551,10 +552,10 @@ def briefDemo() -> None:
                                         ('ru','Russian Unlocked Literal Bible'),
                                         ('ru','Russian Open Bible'),
                                         ('ru','Russion Literal Bible'),
-                                        ('en','unfoldingWord Literal Text'),
-                                        ('en', 'unfoldingWord Simplified Text'),
-                                        ('fr','unfoldingWord Literal Text'),
-                                        ('el-x-koine','unfoldingWord Greek New Testament'),
+                                        ('en','unfoldingWord® Literal Text'),
+                                        ('en', 'unfoldingWord® Simplified Text'),
+                                        ('fr','unfoldingWord® Literal Text'),
+                                        ('el-x-koine','unfoldingWord® Greek New Testament'),
                                     ) )
         vPrint( 'Quiet', debuggingThisModule, '' )
         searchResultDict = door43CatalogResources.searchBibles( lgCode, desiredTitle )
@@ -671,10 +672,10 @@ def fullDemo() -> None:
                                         ('ru','Russian Unlocked Literal Bible'),
                                         ('ru','Russian Open Bible'),
                                         ('ru','Russion Literal Bible'),
-                                        ('en','unfoldingWord Literal Text'),
-                                        ('en', 'unfoldingWord Simplified Text'),
-                                        ('fr','unfoldingWord Literal Text'),
-                                        ('el-x-koine','unfoldingWord Greek New Testament'),
+                                        ('en','unfoldingWord® Literal Text'),
+                                        ('en', 'unfoldingWord® Simplified Text'),
+                                        ('fr','unfoldingWord® Literal Text'),
+                                        ('el-x-koine','unfoldingWord® Greek New Testament'),
                                     ):
             vPrint( 'Quiet', debuggingThisModule, '' )
             searchResultDict = door43CatalogResources.searchBibles( lgCode, desiredTitle )

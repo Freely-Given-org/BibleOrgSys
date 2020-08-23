@@ -112,7 +112,7 @@ class BibleReferenceBase:
     Base class which provides some common functions for the others.
     """
 
-    def __init__( self, BOSObject, BibleObject ): # The BibleObject passed by the superclass may be None
+    def __init__( self, BOSObject, BibleObject ) -> None: # The BibleObject passed by the superclass may be None
         """
         Initialize the object with necessary sub-systems.
             A Bible Organisation system, e.g., BibleOrganisationalSystem( 'RSV' )
@@ -180,7 +180,7 @@ class BibleSingleReference( BibleReferenceBase ):
         Only use this class if you really want to enforce that it's only a reference to a single verse.
     """
 
-    def __init__( self, BOSObject, BibleObject=None ):
+    def __init__( self, BOSObject, BibleObject=None ) -> None:
         """ Initialize the object with necessary sub-systems. """
         assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
@@ -375,7 +375,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         Only use this class if you really want to enforce that it's only references to single verses.
     """
 
-    def __init__( self, BOSObject, BibleObject=None ):
+    def __init__( self, BOSObject, BibleObject=None ) -> None:
         """ Initialize the object with necessary sub-systems. """
         assert BOSObject
         BibleReferenceBase.__init__( self, BOSObject, BibleObject ) # Initialise the base class
@@ -401,7 +401,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples
         """
 
-        def saveReference( BBB, C, V, S, refList ):
+        def saveReference( BBB:str, C:str, V:str, S, refList ):
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings
             if len(S) > 1:
@@ -648,7 +648,7 @@ class BibleReferenceList( BibleReferenceBase ):
     containsReference see if the BBB,C,V,S reference is in our internal list
     """
 
-    def __init__( self, BOSObject, BibleObject=None ):
+    def __init__( self, BOSObject, BibleObject=None ) -> None:
         """ Initialize the object with necessary sub-systems.
                 A Bible Organisation system, e.g., BibleOrganisationalSystem( 'RSV' )
                     gives various things including:
@@ -718,7 +718,7 @@ class BibleReferenceList( BibleReferenceBase ):
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
 
-        def saveReference( BBB, C, V, S, refList ):
+        def saveReference( BBB:str, C:str, V:str, S, refList ):
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
@@ -736,7 +736,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveReference
 
 
-        def saveStartReference( BBB, C, V, S ):
+        def saveStartReference( BBB:str, C:str, V:str, S ):
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -749,7 +749,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple, BBB, C, V, S, refList ):
+        def saveReferenceRange( startTuple, BBB:str, C:str, V:str, S, refList ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
@@ -1347,7 +1347,7 @@ class BibleReferenceList( BibleReferenceBase ):
     ## end of BibleReferenceList.containsReferenceTuple
 
 
-    def containsReference( self, BBB:str, C, V, S=None ):
+    def containsReference( self, BBB:str, C:str, V:str, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
         #dPrint( 'Verbose', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert BBB and len(BBB)==3
@@ -1434,7 +1434,7 @@ class BibleAnchorReference:
     containsReference see if the BBB,C,V,S reference is in our internal list
     """
 
-    def __init__( self, BBB:str, chapterString, verseString, suffixString=None ):
+    def __init__( self, BBB:str, chapterString, verseString, suffixString=None ) -> None:
         """ Initialize the object with known information.
         """
         self.objectNameString = 'Bible anchor reference object'
@@ -1492,7 +1492,7 @@ class BibleAnchorReference:
         assert location and isinstance( location, str )
 
 
-        def saveReference( BBB, C, V, S, refList ):
+        def saveReference( BBB:str, C:str, V:str, S, refList ):
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             #dPrint( 'Quiet', debuggingThisModule, "saveReference:", BBB, C, V, S, refList )
             nonlocal haveErrors, haveWarnings, totalVerseList
@@ -1511,7 +1511,7 @@ class BibleAnchorReference:
         # end of saveReference
 
 
-        def saveStartReference( BBB, C, V, S ):
+        def saveStartReference( BBB:str, C:str, V:str, S ):
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -1524,7 +1524,7 @@ class BibleAnchorReference:
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple, BBB, C, V, S, refList ):
+        def saveReferenceRange( startTuple, BBB:str, C:str, V:str, S, refList ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
@@ -1799,7 +1799,7 @@ class BibleAnchorReference:
     # end of BibleAnchorReference:getReferenceList
 
 
-    #def xxxcontainsReference( self, BBB:str, C, V, S=None ):
+    #def xxxcontainsReference( self, BBB:str, C:str, V:str, S=None ):
         #""" Returns True/False if the internal reference list contains the given reference. """
         #assert BBB and len(BBB)==3
         #assert C and C.isdigit()

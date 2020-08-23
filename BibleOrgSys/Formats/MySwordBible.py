@@ -193,7 +193,7 @@ class MySwordBible( Bible ):
     """
     Class for reading, validating, and converting MySwordBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -466,7 +466,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
 
-    def writeMSBook( sqlObject, BBB, ourGlobals ):
+    def writeMSBook( sqlObject, BBB:str, ourGlobals ):
         """
         Writes a book to the MySword sqlObject file.
         """

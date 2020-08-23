@@ -193,7 +193,7 @@ def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> No
                     assert len(fieldContents) == 2
                     #dPrint( 'Quiet', debuggingThisModule, j, "Now", abbreviation, repr(fieldName), repr(fieldContents) )
                 if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
-                    # dPrint( 'Info', debuggingThisModule, f"fieldName: '{fieldName}'")
+                    #dPrint( 'Info', debuggingThisModule, f"fieldName: '{fieldName}'")
                     assert '_' not in fieldName # now
                 if fieldName=='MinumumVersion': fieldName = 'MinimumVersion' # Fix spelling error in several modules: nheb,nhebje,nhebme,cslelizabeth,khmernt, morphgnt, etc.
                 if fieldName=='CompressType' and fieldContents=='Zip': fieldContents = 'ZIP' # Fix error in romcor.conf

@@ -28,16 +28,6 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2018-12-02' # by RJH
-SHORT_PROGRAM_NAME = "FreeBibleConverter"
-PROGRAM_NAME = "FreeBible Converter"
-PROGRAM_VERSION = '0.09'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os.path
 import logging
 from datetime import datetime
@@ -51,6 +41,15 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyFind, noisyRegExFind, \
                                     noisyReplaceAll, noisyDeleteAll, noisyRegExReplaceAll
+
+
+LAST_MODIFIED_DATE = '2018-12-02' # by RJH
+SHORT_PROGRAM_NAME = "FreeBibleConverter"
+PROGRAM_NAME = "FreeBible Converter"
+PROGRAM_VERSION = '0.09'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 ID_LINE = "Free Bible Version New Testament Version 2.1.1"
@@ -78,11 +77,11 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
     writtenCount = 0
     splitOnString = '\\id '
     for splitText in entireBibleText.split( splitOnString ):
-        # dPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
+        #dPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
         if not splitText: continue # coz it gets a blank one right at the beginning
         assert splitText[3] == ' '
         bookID = splitText[:3]
-        # dPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
+        #dPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
         assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
 
@@ -122,10 +121,10 @@ def main() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', debuggingThisModule, "Loading {}…".format( INPUT_FILEPATH ) )
+    vPrint( 'Quiet', debuggingThisModule, _("Loading {}…").format( INPUT_FILEPATH ) )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
-    vPrint( 'Normal', debuggingThisModule, "  Loaded {:,} characters ({:,} lines)".format( len(originalText), originalText.count('\n') ) )
+    vPrint( 'Normal', debuggingThisModule, _("  Loaded {:,} characters ({:,} lines)").format( len(originalText), originalText.count('\n') ) )
 
     # Preparation by inserting some lines at the beginning
     entireText = '\\id FRT -- {}\n'.format( ID_LINE )

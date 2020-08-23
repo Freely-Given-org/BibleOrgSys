@@ -244,7 +244,7 @@ class uWOBSBible( Bible ):
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
-        vPrint( 'Never', debuggingThisModule, "Loading metadata from {!r}".format( metadataFilepath ) )
+        vPrint( 'Never', debuggingThisModule, _("Loading metadata from {!r}").format( metadataFilepath ) )
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         if 'uW' not in self.suppliedMetadata: self.suppliedMetadata['uW'] = {}
@@ -315,8 +315,8 @@ class uWOBSBible( Bible ):
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Loading {} uW OBS books using {} processes…".format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} uW OBS books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -409,7 +409,7 @@ class uWOBSBibleBook( BibleBook ):
         # end of doAddLine
 
 
-        fixErrors = []
+        fixErrors:List[str] = []
         for storyNumber in range(1,50+1):
             storyNumberString = str(storyNumber).zfill(2)
             mdFilepath = os.path.join( contentFolder, f'{storyNumberString}.md' )
@@ -421,7 +421,7 @@ class uWOBSBibleBook( BibleBook ):
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
                         logging.info( "loaduWOBSBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
-                    # dPrint( 'Quiet', debuggingThisModule, state, lineCount, "line", line )
+                    #dPrint( 'Quiet', debuggingThisModule, state, lineCount, "line", line )
                     if lineCount == 1: # Title line
                         assert state == 0
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -482,7 +482,7 @@ def briefDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -495,7 +495,7 @@ def briefDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -545,7 +545,7 @@ def briefDemo() -> None:
                     uWnB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -576,7 +576,7 @@ def fullDemo() -> None:
             result2.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -593,7 +593,7 @@ def fullDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -643,7 +643,7 @@ def fullDemo() -> None:
                     uWnB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

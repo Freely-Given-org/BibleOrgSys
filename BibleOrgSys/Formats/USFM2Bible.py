@@ -516,7 +516,7 @@ class USFM2Bible( Bible ):
     Class to load and manipulate USFM2 Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ) -> None:
         """
         Create the internal USFM2 Bible object.
 
@@ -735,7 +735,7 @@ def briefDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -768,7 +768,7 @@ def briefDemo() -> None:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = UsfmB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     UsfmB.pickle()
                     ##UsfmB.toDrupalBible()
@@ -902,7 +902,7 @@ def fullDemo() -> None:
                     result3.check()
                     #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = result3.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -934,7 +934,7 @@ def fullDemo() -> None:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
                     UsfmBErrors = UsfmB.getCheckResults()
-                    # dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     UsfmB.pickle()
                     ##UsfmB.toDrupalBible()

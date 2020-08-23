@@ -61,7 +61,7 @@ class BibleReferencesLinks:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -75,7 +75,7 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            vPrint( 'Info', debuggingThisModule, "Loading pickle index file {}…".format( standardIndexPickleFilepath ) )
+            vPrint( 'Info', debuggingThisModule, _("Loading pickle index file {}…").format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -179,7 +179,7 @@ class BibleReferencesLinks:
     #Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     #"""
 
-    #def __init__( self ): # We can't give this parameters because of the singleton
+    #def __init__( self ) -> None: # We can't give this parameters because of the singleton
         #"""
         #Constructor:
         #"""
@@ -203,7 +203,7 @@ class BibleReferencesLinks:
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #dPrint( 'Info', debuggingThisModule, "Loading pickle file {}…".format( standardPickleFilepath ) )
+                #dPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it

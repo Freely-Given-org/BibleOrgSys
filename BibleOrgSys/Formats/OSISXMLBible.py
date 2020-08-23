@@ -263,7 +263,7 @@ class OSISXMLBible( Bible ):
     divTag = OSISNameSpace + 'div'
 
 
-    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
+    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the OSIS Bible object.
 
@@ -368,7 +368,7 @@ class OSISXMLBible( Bible ):
         """
         fnPrint( debuggingThisModule, "OSISXMLBible.loadBooks()" )
 
-        loadErrors = []
+        loadErrors:List[str] = []
         if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
             if BibleOrgSysGlobals.maxProcesses > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
@@ -442,7 +442,7 @@ class OSISXMLBible( Bible ):
             #BB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             #self.stashBook( BB )
         #else: logging.info( "OSIS book {} was completely blank".format( BBB ) )
-        loadErrors = []
+        loadErrors:List[str] = []
         pathname = os.path.join( self.sourceFolder, filename )
         loadedBooks = self.__loadFile( pathname )
         assert len(loadedBooks) == 1
@@ -3254,7 +3254,7 @@ class OSISXMLBible( Bible ):
                             thisBook.addLine( 'p', '' )
 
                         else:
-                            # dPrint( 'Quiet', debuggingThisModule, "p = {!r}".format( element.text ) ); halt
+                            #dPrint( 'Quiet', debuggingThisModule, "p = {!r}".format( element.text ) ); halt
                             #bookResults.append( ('paragraph', p) )
                             #bookResults.append( ('p', p) )
                             thisBook.addLine( 'p', p )

@@ -54,12 +54,6 @@ The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
 
 from gettext import gettext as _
 
-LAST_MODIFIED_DATE = '2018-12-12' # by RJH
-SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
-PROGRAM_NAME = "Get KJV Verse Number"
-PROGRAM_VERSION = '0.10'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
     import sys
@@ -69,6 +63,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleReferences import BibleSingleReference
+
+
+LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
+PROGRAM_NAME = "Get KJV Verse Number"
+PROGRAM_VERSION = '0.10'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
 
 
 def main() -> None:

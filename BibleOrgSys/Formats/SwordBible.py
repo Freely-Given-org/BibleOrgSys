@@ -252,7 +252,7 @@ class SwordBible( Bible ):
     """
     Class for reading, validating, and converting SwordBible files.
     """
-    def __init__( self, sourceFolder=None, moduleName=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder=None, moduleName=None, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
 
@@ -496,7 +496,7 @@ def testSwB( SwFolderpath, SwModuleName=None ):
         SwBible.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         SwBErrors = SwBible.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, SwBErrors )
+        #dPrint( 'Quiet', debuggingThisModule, SwBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##SwBible.toDrupalBible()
         SwBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

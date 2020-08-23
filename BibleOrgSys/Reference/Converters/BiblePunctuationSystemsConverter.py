@@ -57,7 +57,7 @@ class BiblePunctuationSystemsConverter:
     A class to handle data for Bible punctuation systems.
     """
 
-    def __init__( self ):
+    def __init__( self ) -> None:
         """
         Constructor.
         """
@@ -301,7 +301,7 @@ class BiblePunctuationSystemsConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self._DataDict, myFile )
     # end of pickle
@@ -324,7 +324,7 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
 
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -355,7 +355,7 @@ class BiblePunctuationSystemsConverter:
         assert self._DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self._DataDict, myFile, indent=2 )
     # end of exportDataToJSON
@@ -414,7 +414,7 @@ class BiblePunctuationSystemsConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Normal', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \

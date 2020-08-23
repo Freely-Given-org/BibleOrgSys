@@ -27,6 +27,16 @@ Module which tests the regular expression for Bible Books Codes.
 """
 
 from gettext import gettext as _
+import sys
+import re
+
+# Allow the app to run from either the BOS folder or in this Apps subfolder
+if __name__ == '__main__':
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
+    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
+from BibleOrgSys import BibleOrgSysGlobals
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+
 
 LAST_MODIFIED_DATE = '2019-05-12' # by RJH
 SHORT_PROGRAM_NAME = "TestBooksCodesRE"
@@ -35,18 +45,6 @@ PROGRAM_VERSION = '0.20'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
-
-
-import sys, re
-
-# Allow the app to run from either the BOS folder or in this Apps subfolder
-if __name__ == '__main__':
-    import sys
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
-from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-
 
 
 # Regular expressions to be searched for

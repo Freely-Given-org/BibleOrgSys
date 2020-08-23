@@ -24,6 +24,17 @@
 
 """
 Module handling BibleBooksCodes functions.
+
+BibleOrgSys uses a three-character book code to identify books.
+    These referenceAbbreviations are nearly always represented as BBB in the program code
+            (although formally named referenceAbbreviation
+                and possibly still represented as that in some of the older code),
+        and in a sense, this is the centre of the BibleOrgSys.
+    The referenceAbbreviation/BBB always starts with a letter, and letters are always UPPERCASE
+        so 2 Corinthians is 'CO2' not '2Co' or anything.
+        This was because early versions of HTML ID fields used to need
+                to start with a letter (not a digit),
+            (and most identifiers in computer languages still require that).
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple
@@ -40,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
+LAST_MODIFIED_DATE = '2020-07-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.83'
+PROGRAM_VERSION = '0.84'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -60,7 +71,7 @@ class BibleBooksCodes:
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
 
-    def __init__( self ): # We can't give this parameters because of the singleton
+    def __init__( self ) -> None: # We can't give this parameters because of the singleton
         """
         Constructor:
         """
@@ -142,23 +153,25 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.__len__
 
 
-    def __contains__( self, BBB:str ):
+    def __contains__( self, BBB:str ) -> bool:
         """ Returns True or False. """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
 
 
-    def __iter__( self ):
+    def __iter__( self ) -> str:
         """ Yields the next BBB. """
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             yield BBB
 
 
-    def isValidBBB( self, BBB:str ):
-        """ Returns True or False. """
+    def isValidBBB( self, BBB:str ) -> bool:
+        """
+        Returns True or False.
+        """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
 
 
-    def getBBBFromReferenceNumber( self, referenceNumber ):
+    def getBBBFromReferenceNumber( self, referenceNumber ) -> str:
         """
         Return the referenceAbbreviation for the given book number (referenceNumber).
 
@@ -171,18 +184,18 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromReferenceNumber
 
 
-    def getAllReferenceAbbreviations( self ):
+    def getAllReferenceAbbreviations( self ) -> List[str]:
         """ Returns a list of all possible BBB codes. """
         return [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']]
         #return self.__DataDicts['referenceAbbreviationDict'].keys() # Why didn't this work?
 
 
-    def getReferenceNumber( self, BBB:str ):
+    def getReferenceNumber( self, BBB:str ) -> int:
         """ Return the referenceNumber 1..999 for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
 
-    def getSequenceList( self, myList=None ):
+    def getSequenceList( self, myList=None ) -> List[str]:
         """
         Return a list of BBB codes in a sequence that could be used for the print order if no further information is available.
             If you supply a list of books, it puts your actual book codes into the default order.
@@ -209,49 +222,49 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getSequenceList
 
 
-    def _getFullEntry( self, BBB:str ):
+    def _getFullEntry( self, BBB:str ) -> dict:
         """
         Return the full dictionary for the given book (code).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]
 
 
-    def getCCELNumber( self, BBB:str ):
+    def getCCELNumber( self, BBB:str ) -> int:
         """ Return the CCEL number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['CCELNumberString']
 
 
-    def getSBLAbbreviation( self, BBB:str ):
+    def getSBLAbbreviation( self, BBB:str ) -> str:
         """ Return the SBL abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SBLAbbreviation']
 
 
-    def getOSISAbbreviation( self, BBB:str ):
+    def getOSISAbbreviation( self, BBB:str ) -> str:
         """ Return the OSIS abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['OSISAbbreviation']
 
 
-    def getSwordAbbreviation( self, BBB:str ):
+    def getSwordAbbreviation( self, BBB:str ) -> str:
         """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SwordAbbreviation']
 
 
-    def getUSFMAbbreviation( self, BBB:str ):
+    def getUSFMAbbreviation( self, BBB:str ) -> str:
         """ Return the USFM abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
-    def getUSFMNumber( self, BBB:str ):
+    def getUSFMNumber( self, BBB:str ) -> str:
         """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMNumberString']
 
 
-    def getUSXNumber( self, BBB:str ):
+    def getUSXNumber( self, BBB:str ) -> str:
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USXNumberString']
 
 
-    def getUnboundBibleCode( self, BBB:str ):
+    def getUnboundBibleCode( self, BBB:str ) -> str:
         """
         Return the three character (two-digits and one uppercase letter) Unbound Bible code
             for the given book code (referenceAbbreviation).
@@ -259,35 +272,35 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['UnboundCodeString']
 
 
-    def getBibleditNumber( self, BBB:str ):
+    def getBibleditNumber( self, BBB:str ) -> str:
         """
         Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['BibleditNumberString']
 
 
-    def getNETBibleAbbreviation( self, BBB:str ):
+    def getNETBibleAbbreviation( self, BBB:str ) -> str:
         """
         Return the NET Bible abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['NETBibleAbbreviation']
 
 
-    def getDrupalBibleAbbreviation( self, BBB:str ):
+    def getDrupalBibleAbbreviation( self, BBB:str ) -> str:
         """
         Return the DrupalBible abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['DrupalBibleAbbreviation']
 
 
-    def getByzantineAbbreviation( self, BBB:str ):
+    def getByzantineAbbreviation( self, BBB:str ) -> str:
         """
         Return the Byzantine abbreviation string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
-    def getBBBFromOSISAbbreviation( self, osisAbbreviation:str, strict=False ):
+    def getBBBFromOSISAbbreviation( self, osisAbbreviation:str, strict:bool=False ) -> str:
         """
         Return the reference abbreviation string for the given OSIS book code string.
 
@@ -299,7 +312,7 @@ class BibleBooksCodes:
             except KeyError: # Maybe Sword has an informal abbreviation???
                 return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
 
-    def getBBBFromUSFMAbbreviation( self, USFMAbbreviation:str, strict=False ):
+    def getBBBFromUSFMAbbreviation( self, USFMAbbreviation:str, strict:bool=False ) -> str:
         """
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
@@ -311,7 +324,7 @@ class BibleBooksCodes:
         return result[0] # Assume that the first entry is the best pick
 
 
-    def getBBBFromUnboundBibleCode( self, UnboundBibleCode:str ):
+    def getBBBFromUnboundBibleCode( self, UnboundBibleCode:str ) -> str:
         """
         Return the reference abbreviation string for the given Unbound Bible book code string.
         """
@@ -319,7 +332,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromUnboundBibleCode
 
 
-    def getBBBFromDrupalBibleCode( self, DrupalBibleCode:str ):
+    def getBBBFromDrupalBibleCode( self, DrupalBibleCode:str ) -> str:
         """
         Return the reference abbreviation string for the given DrupalBible book code string.
         """
@@ -327,7 +340,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
 
-    def getBBBFromText( self, someText:str ):
+    def getBBBFromText( self, someText:str ) -> str:
         """
         Attempt to return the BBB reference abbreviation string for the given book information (text).
 
@@ -364,7 +377,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromText
 
 
-    def getExpectedChaptersList( self, BBB:str ):
+    def getExpectedChaptersList( self, BBB:str ) -> List[str]:
         """
         Gets a list with the number of expected chapters for the given book code (referenceAbbreviation).
         The number(s) of expected chapters is left in string form (not int).
@@ -375,7 +388,7 @@ class BibleBooksCodes:
         #if BBB not in self.__DataDicts['referenceAbbreviationDict'] \
         #or "numExpectedChapters" not in self.__DataDicts['referenceAbbreviationDict'][BBB] \
         #or self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is None:
-        if "numExpectedChapters" not in self.__DataDicts['referenceAbbreviationDict'][BBB] \
+        if 'numExpectedChapters' not in self.__DataDicts['referenceAbbreviationDict'][BBB] \
         or self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is None:
             return []
 
@@ -384,7 +397,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getExpectedChaptersList
 
 
-    def getMaxChapters( self, BBB:str ):
+    def getMaxChapters( self, BBB:str ) -> int:
         """
         Returns an integer with the maximum number of chapters to be expected for this book.
         """
@@ -397,9 +410,9 @@ class BibleBooksCodes:
     # end of getMaxChapters
 
 
-    def getSingleChapterBooksList( self ):
+    def getSingleChapterBooksList( self ) -> List[str]:
         """
-        Makes up and returns a list of single chapter book codes.
+        Makes up and returns a list of single chapter book codes (BBB).
         """
         results = []
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
@@ -410,12 +423,22 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getSingleChapterBooksList
 
 
-    def isSingleChapterBook( self, BBB:str ):
-        """ Returns True or False if the number of chapters for the book is only one. """
+    def isSingleChapterBook( self, BBB:str ) -> bool:
+        """
+        Returns True or False if the number of chapters for the book is only one.
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] == '1'
 
 
-    def getOSISSingleChapterBooksList( self ):
+    def isChapterVerseBook( self, BBB:str ) -> bool:
+        """
+        Returns True or False if this book is expected to have chapters and verses.
+        """
+        return 'numExpectedChapters' in self.__DataDicts['referenceAbbreviationDict'][BBB] \
+            and self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is not None
+
+
+    def getOSISSingleChapterBooksList( self ) -> List[str]:
         """ Gets a list of OSIS single chapter book abbreviations. """
         results = []
         for BBB in self.getSingleChapterBooksList():
@@ -425,7 +448,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getOSISSingleChapterBooksList
 
 
-    def getAllOSISBooksCodes( self ):
+    def getAllOSISBooksCodes( self ) -> List[str]:
         """
         Return a list of all available OSIS book codes (in no particular order).
         """
@@ -433,7 +456,7 @@ class BibleBooksCodes:
     #end of BibleBooksCodes.getAllOSISBooksCodes
 
 
-    def getAllUSFMBooksCodes( self, toUpper=False ):
+    def getAllUSFMBooksCodes( self, toUpper:bool=False ) -> List[str]:
         """
         Return a list of all available USFM book codes.
         """
@@ -448,11 +471,12 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getAllUSFMBooksCodes
 
 
-    def getAllUSFMBooksCodeNumberTriples( self ):
+    def getAllUSFMBooksCodeNumberTriples( self ) -> List[Tuple[str,int,str]]:
         """
         Return a list of all available USFM book codes.
 
-        The list contains tuples of: USFMAbbreviation, USFMNumber, referenceAbbreviation
+        The list contains tuples of:
+            USFMAbbreviation, USFMNumber, referenceAbbreviation/BBB
         """
         found, result = [], []
         for BBB, values in self.__DataDicts['referenceAbbreviationDict'].items():
@@ -594,9 +618,9 @@ class BibleBooksCodes:
         Sort an iterable containing 3-tuples of BBB,C,V
             or 4-tuples of BBB,C,V,S
         """
-        # dPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
+        #dPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )
-        # dPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
+        #dPrint( 'Quiet', debuggingThisModule, f"  sortBCVReferences returning ({len(sortedList)}) {sortedList}" )
         # assert len(sortedList) == len(referencesList)
         return sortedList
     # end of BibleBooksCodes.sortBCVReferences

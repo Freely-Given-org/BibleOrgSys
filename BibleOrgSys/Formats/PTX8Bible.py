@@ -118,13 +118,11 @@ def PTX8BibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
     if not check2Result:
         check3Result =  USFMBibleFileCheck( givenFolderName, strictCheck, discountSSF=True ) # no autoloads
     if not check2Result and not check3Result:
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "PTX8BibleFileCheck: No USFMBible found (preliminary check)")
+        vPrint( 'Info', debuggingThisModule, "PTX8BibleFileCheck: No USFMBible found (preliminary check)")
         return False
 
     # Find all the files and folders in this folder
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-        vPrint( 'Quiet', debuggingThisModule, f" PTX8BibleFileCheck: Looking for files in given {givenFolderName}" )
+    vPrint( 'Verbose', debuggingThisModule, f" PTX8BibleFileCheck: Looking for files in given {givenFolderName}" )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -392,8 +390,7 @@ def loadPTX8Versifications( BibleObject ):
         versificationName = versificationFilename[:-4] # Remove the .vrs
 
         versificationFilepath = os.path.join( BibleObject.sourceFilepath, versificationFilename )
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-            vPrint( 'Quiet', debuggingThisModule, "PTX8Bible.loading versification from {}…".format( versificationFilepath ) )
+        vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading versification from {}…".format( versificationFilepath ) )
 
         assert versificationName not in PTXVersifications
         PTXVersifications[versificationName] = {}
@@ -485,7 +482,7 @@ class PTX8Bible( Bible ):
     The PTX8Bible object contains USFM 2 or 3 BibleBooks.
         (i.e., there's not PTX8BibleBook object types.)
     """
-    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
+    def __init__( self, givenFolderName, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
         """
         Create the internal Paratext Bible object.
         """
@@ -746,7 +743,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='BookNames':
@@ -810,7 +807,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         def processLexiconItem( element, treeLocation ):
             """
@@ -959,7 +956,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='ProjectUserAccess':
@@ -1095,7 +1092,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         canonsDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'Canons':
@@ -1194,7 +1191,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         checkingStatusByBookDict, checkingStatusByCheckDict = {}, {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'CheckingStatuses':
@@ -1267,7 +1264,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( commentTagFilepath ): return
 
         commentTagDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
 
@@ -1338,7 +1335,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         derivedTranslationStatusByBookDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'DerivedTranslationVerseList':
@@ -1388,10 +1385,11 @@ class PTX8Bible( Bible ):
         except ValueError: logging.critical( "PTX8 derived translation status file seemed unexpected: {}".format( derivedTranslationStatusFilepath ) )
 
         vPrint( 'Info', debuggingThisModule, "  Loaded {:,} derived translation status books.".format( len(derivedTranslationStatusByBookDict) ) )
-        vPrint( 'Quiet', debuggingThisModule, "\nderivedTranslationStatusByBookDict", len(derivedTranslationStatusByBookDict), derivedTranslationStatusByBookDict )
+        dPrint( 'Never', debuggingThisModule, "\nderivedTranslationStatusByBookDict", len(derivedTranslationStatusByBookDict), derivedTranslationStatusByBookDict )
         #for something in derivedTranslationStatusByBookDict:
             #dPrint( 'Quiet', debuggingThisModule, "\n  {} = {}".format( something, derivedTranslationStatusByBookDict[something] ) )
-        if derivedTranslationStatusByBookDict: self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'] = derivedTranslationStatusByBookDict
+        if derivedTranslationStatusByBookDict:
+            self.suppliedMetadata['PTX8']['DerivedTranslationStatusByBook'] = derivedTranslationStatusByBookDict
     # end of PTX8Bible.loadPTX8DerivedTranslationStatus
 
 
@@ -1443,7 +1441,7 @@ class PTX8Bible( Bible ):
         if not noteFilenames: return
 
         notesDictByName, notesDictByThread = {}, {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         for noteFilename in noteFilenames:
             noterName = noteFilename[6:-4] # Remove the Notes_ and the .xml
@@ -1585,7 +1583,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         parallelPassageStatusDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'PassageStatus':
@@ -1673,7 +1671,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( projectBiblicalTermsFilepath ): return
 
         projectBiblicalTermsDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
 
@@ -1769,7 +1767,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( projectProgressFilepath ): return
 
         projectProgressDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         vPrint( 'Verbose', debuggingThisModule, "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
 
@@ -2132,7 +2130,7 @@ class PTX8Bible( Bible ):
         if not printConfigFilenames: return
 
         printConfigDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         for printConfigFilename in printConfigFilenames:
             printConfigType = printConfigFilename[5:-4] # Remove the .xml
@@ -2390,7 +2388,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'SpellingStatus':
@@ -2695,7 +2693,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         wordAnalysesDict = {}
-        #loadErrors = []
+        #loadErrors:List[str] = []
 
 
         def processWordAnalysis( word, element, treeLocation ):
@@ -2850,7 +2848,7 @@ class PTX8Bible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, "Loading {} from {}…".format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -2859,8 +2857,8 @@ class PTX8Bible( Bible ):
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Loading {} PTX8 books using {} processes…".format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} PTX8 books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -3015,7 +3013,7 @@ def briefDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX8_Bible.check()
 
                 #DBErrors = PTX8_Bible.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -3079,7 +3077,7 @@ def briefDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, PTX8_Bible )
                                     if BibleOrgSysGlobals.strictCheckingFlag: PTX8_Bible.check()
                                     #DBErrors = PTX8_Bible.getCheckResults()
-                                    # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                                    #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                                     #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getVersification() )
                                     #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getAddedUnits() )
                                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -3195,7 +3193,7 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.strictCheckingFlag: PTX8_Bible.check()
 
                 #DBErrors = PTX8_Bible.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                 #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getVersification() )
                 #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -3260,7 +3258,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, PTX8_Bible )
                                     if BibleOrgSysGlobals.strictCheckingFlag: PTX8_Bible.check()
                                     #DBErrors = PTX8_Bible.getCheckResults()
-                                    # dPrint( 'Quiet', debuggingThisModule, DBErrors )
+                                    #dPrint( 'Quiet', debuggingThisModule, DBErrors )
                                     #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getVersification() )
                                     #dPrint( 'Quiet', debuggingThisModule, PTX8_Bible.getAddedUnits() )
                                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):

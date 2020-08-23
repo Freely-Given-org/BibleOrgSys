@@ -108,7 +108,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-05-24' # by RJH
+LAST_MODIFIED_DATE = '2020-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.88'
@@ -149,30 +149,29 @@ if debuggingThisModule:
 
 
 # Some language independant punctuation help
-OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # The length and order of these two strings must match
-CLOSING_SPEECH_CHARACTERS = """”»"’›?!"""
+OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # } The length and order of these
+CLOSING_SPEECH_CHARACTERS = """”»"’›?!""" # }  two strings must match
+assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
 MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
 MATCHING_CLOSING_CHARACTERS = {')':'(', ']':'[', '}':'{', '>':'<', '>>':'<<', '”':'“', '‘':'‘', '»':'«', '›':'‹', '?':'¿', '!':'¡', }
+assert len(MATCHING_OPENING_CHARACTERS) == len(MATCHING_CLOSING_CHARACTERS)
 MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
+assert len(MATCHING_OPENING_CHARACTERS) + len(MATCHING_CLOSING_CHARACTERS) == len(MATCHING_CHARACTERS)
+
 LEADING_WORD_PUNCT_CHARS = """“«„"‘¿¡‹'([{<"""
+for o_char in OPENING_SPEECH_CHARACTERS: assert o_char in LEADING_WORD_PUNCT_CHARS
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '–—' # en-dash and em-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>%…—।""" # Last one is from Hindi: DEVANAGARI DANDA / purna viram
+for c_char in CLOSING_SPEECH_CHARACTERS: assert c_char in TRAILING_WORD_PUNCT_CHARS
 TRAILING_WORD_END_CHARS = ' ' + TRAILING_WORD_PUNCT_CHARS
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 MAX_NESTED_QUOTE_LEVELS = 5
 
-if debuggingThisModule:
-    assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
-    assert len(MATCHING_OPENING_CHARACTERS) == len(MATCHING_CLOSING_CHARACTERS)
-    assert len(MATCHING_OPENING_CHARACTERS) + len(MATCHING_CLOSING_CHARACTERS) == len(MATCHING_CHARACTERS)
-    for o_char in OPENING_SPEECH_CHARACTERS: assert o_char in LEADING_WORD_PUNCT_CHARS
-    for c_char in CLOSING_SPEECH_CHARACTERS: assert c_char in TRAILING_WORD_PUNCT_CHARS
-
-    ##import unicodedata
-    #BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
-    #BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
+##import unicodedata
+#BibleOrgSysGlobals.printUnicodeInfo( LEADING_WORD_PUNCT_CHARS, "LEADING_WORD_PUNCT_CHARS" )
+#BibleOrgSysGlobals.printUnicodeInfo( TRAILING_WORD_PUNCT_CHARS, "TRAILING_WORD_PUNCT_CHARS" )
 
 
 ALLOWED_ORGANISATIONAL_TYPES = ( 'edition', 'revision', 'translation', 'original', ) # NOTE: The order is important here
@@ -251,12 +250,12 @@ def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
         increaseLevel = 1 # Should always be an int now
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
     if debugFlag: increaseLevel += 1
-    # dPrint( 'Info', debuggingThisModule, "args1", len(args), repr(args) )
+    #dPrint( 'Info', debuggingThisModule, "args1", len(args), repr(args) )
     if not kwargs and args \
     and isinstance( args[-1], str ) and not args[-1].endswith( '…' ):
         args = ( f'{args[0]}…', ) if len(args)==1 else ( args[:-1], f'{args[-1]}…', ) # Append an ellipsis
-    # dPrint( 'Info', debuggingThisModule, "args2", len(args), repr(args) )
-    # dPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
+    #dPrint( 'Info', debuggingThisModule, "args2", len(args), repr(args) )
+    #dPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
     vPrint( 'Verbose', increaseLevel, *args, **kwargs )
 # end of BibleOrgSysGlobals.fnPrint function
 
@@ -295,7 +294,7 @@ BOS_SETTINGS_FILEPATH = BOS_SETTINGS_FOLDERPATH.joinpath( 'BibleOrgSys.ini' )
 settingsData = configparser.ConfigParser()
 settingsData.optionxform = lambda option: option # Force true case matches for options (default is all lower case)
 settingsData['Default'] = { 'OutputBaseFolder':f'{BOS_HOME_FOLDERPATH}/' }
-# dPrint( 'Quiet', debuggingThisModule, "settingsData Default OutputFolder", settingsData['Default']['OutputFolder'] )
+#dPrint( 'Quiet', debuggingThisModule, "settingsData Default OutputFolder", settingsData['Default']['OutputFolder'] )
 if BOS_SETTINGS_FILEPATH.is_file():
     settingsData.read( BOS_SETTINGS_FILEPATH )
 else: # we don't seem to have a pre-existing settings file -- save our default one
@@ -491,7 +490,7 @@ def getLatestPythonModificationDate() -> str:
         #dPrint( 'Quiet', debuggingThisModule, f"folderpath = '{folderpath}'" )
         searchString = 'LAST_MODIFIED_DATE = '
         for filename in os.listdir( folderpath ):
-            # dPrint( 'Quiet', debuggingThisModule, f"filename = '{filename}'" )
+            #dPrint( 'Quiet', debuggingThisModule, f"filename = '{filename}'" )
             filepath = folderpath.joinpath( filename )
             #dPrint( 'Quiet', debuggingThisModule, f"filepath = '{filepath}'" )
             if filepath.is_file() and filepath.name.endswith( '.py' ):
@@ -499,7 +498,7 @@ def getLatestPythonModificationDate() -> str:
                 with open( filepath, 'rt', encoding='utf-8' ) as pythonFile:
                     for line in pythonFile:
                         if line.startswith( searchString ):
-                            # dPrint( 'Quiet', debuggingThisModule, filepath, line )
+                            #dPrint( 'Quiet', debuggingThisModule, filepath, line )
                             #dPrint( 'Quiet', debuggingThisModule, filepath )
                             lineBit = line[len(searchString):]
                             if '#' in lineBit: lineBit = lineBit.split('#',1)[0]
@@ -1303,8 +1302,10 @@ def unpickleObject( filename, folderName=None ):
 
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
+    fnPrint( debuggingThisModule, f"BibleOrgSysGlobals.unpickleObject( {filename!r}, {folderName!r} )" )
     assert filename
     if folderName is None: folderName = DEFAULT_WRITEABLE_CACHE_FOLDERPATH
+
     filepath = Path( folderName, filename )
     vPrint( 'Info', debuggingThisModule, _("Loading object from pickle file {}…").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
@@ -1516,9 +1517,9 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     if maxProcesses > 1:
         # Don't use 1-3 processes
         reservedProcesses = max( 1, maxProcesses*15//100 )
-        # dPrint( 'Quiet', debuggingThisModule, "reservedProcesses", reservedProcesses )
+        #dPrint( 'Quiet', debuggingThisModule, "reservedProcesses", reservedProcesses )
         maxProcesses = maxProcesses - reservedProcesses
-        # dPrint( 'Quiet', debuggingThisModule, "maxProcesses", maxProcesses )
+        #dPrint( 'Quiet', debuggingThisModule, "maxProcesses", maxProcesses )
     if commandLineArguments.single: maxProcesses = 1
     if debugFlag or debuggingThisModule:
         if maxProcesses > 1:

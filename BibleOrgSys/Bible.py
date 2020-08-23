@@ -62,7 +62,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
     #Class for handling Bible front and back matter.
     #"""
 
-    #def __init__( self ):
+    #def __init__( self ) -> None:
         #"""
         #Constructor: creates an empty Bible extra object.
         #"""
@@ -88,7 +88,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
     #Class for handling Bible divisions (like Old Testament and New Testament).
     #"""
 
-    #def __init__( self ):
+    #def __init__( self ) -> None:
         #"""
         #Constructor: creates an empty Bible extra object.
         #"""

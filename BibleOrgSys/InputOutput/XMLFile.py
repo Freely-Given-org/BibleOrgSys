@@ -57,7 +57,7 @@ class XMLFile():
     """
     Class for reading and validating XML files.
     """
-    def __init__( self, sourceFilename, sourceFolder=None, schema=None ):
+    def __init__( self, sourceFilename, sourceFolder=None, schema=None ) -> None:
         """
         Constructor: just sets up the XML Bible file converter object.
         """

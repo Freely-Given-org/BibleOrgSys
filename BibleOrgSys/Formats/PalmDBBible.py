@@ -172,7 +172,7 @@ class PalmDBBible( Bible ):
     """
     Class for reading, validating, and converting PalmDBBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -202,7 +202,7 @@ class PalmDBBible( Bible ):
         Load a single source file and load book elements.
         """
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
         mainDBIndex = []
 
 
@@ -303,10 +303,10 @@ class PalmDBBible( Bible ):
             """
             """
             nonlocal words
-            vPrint( 'Quiet', debuggingThisModule, _("loadWordlists()…") )
+            fnPrint( debuggingThisModule, "loadWordlists()" )
 
             # Now read the word index info
-            vPrint( 'Normal', debuggingThisModule, "Loading word index info…" )
+            vPrint( 'Normal', debuggingThisModule, _("Loading word index info…") )
             binary = readRecord( wordIndexIndex, myFile )
             byteOffset = 0
             totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
@@ -460,7 +460,7 @@ class PalmDBBible( Bible ):
 
 
         hadP = False
-        def saveSegment( BBB, C, V, verseText ):
+        def saveSegment( BBB:str, C:str, V:str, verseText ):
             """
             Used to save the verse data into the global thisBook.
             """
@@ -536,7 +536,7 @@ class PalmDBBible( Bible ):
         # main code for load()
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             # Read the PalmDB header info
-            vPrint( 'Normal', debuggingThisModule, "Loading PalmDB header info…" )
+            vPrint( 'Normal', debuggingThisModule, _("Loading PalmDB header info…") )
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -621,13 +621,13 @@ class PalmDBBible( Bible ):
             # Now load the word lists
             loadWordlists()
             numWords = len(words)
-            vPrint( 'Never', debuggingThisModule, "numWords =", numWords )
+            dPrint( 'Never', debuggingThisModule, "numWords =", numWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #dPrint( 'Quiet', debuggingThisModule, "words", numWords, words[:200], words[-80:] )
                 #halt
 
             # Now read in the Bible book chapter/verse data
-            vPrint( 'Normal', debuggingThisModule, "Loading Bible book chapter/verse lists…" )
+            vPrint( 'Normal', debuggingThisModule, _("Loading Bible book chapter/verse lists…") )
             ## There seems to be no absolute standard for these :-(
             #convertSNtoBBB = {'GE':'GEN', 'EX':'EXO', 'DTN':'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
                             #'1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',

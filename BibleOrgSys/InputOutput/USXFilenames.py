@@ -27,16 +27,6 @@ Module for creating and manipulating USX filenames.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
-SHORT_PROGRAM_NAME = "USXBible"
-PROGRAM_NAME = "USX Bible filenames handler"
-PROGRAM_VERSION = '0.54'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 from typing import List, Tuple
 import os
 import logging
@@ -49,6 +39,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+SHORT_PROGRAM_NAME = "USXBible"
+PROGRAM_NAME = "USX Bible filenames handler"
+PROGRAM_VERSION = '0.54'
+programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 # All of the following must be all UPPER CASE
@@ -185,7 +183,7 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
-        # dPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
+        #dPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -263,11 +261,11 @@ class USXFilenames:
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
         #dPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuples()" )
-        # dPrint( 'Quiet', debuggingThisModule, "self.fileList", len(self.fileList), self.fileList )
+        #dPrint( 'Quiet', debuggingThisModule, "self.fileList", len(self.fileList), self.fileList )
 
         resultList = []
         for possibleFilename in self.fileList:
-            # dPrint( 'Quiet', debuggingThisModule, len(resultList), possibleFilename )
+            #dPrint( 'Quiet', debuggingThisModule, len(resultList), possibleFilename )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
@@ -291,7 +289,7 @@ class USXFilenames:
                                 continue # so it doesn't get added
                         self.doListAppend( BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        # dPrint( 'Quiet', debuggingThisModule, "final resultList", len(resultList), resultList )
+        #dPrint( 'Quiet', debuggingThisModule, "final resultList", len(resultList), resultList )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
     # end of USXFilenames.getPossibleFilenameTuples
 

@@ -89,7 +89,7 @@ class USFMFilenames:
     Always returns lists of USFM filenames in the default rough sequence order from the BibleBooksCodes module.
     """
 
-    def __init__( self, givenFolderName ):
+    def __init__( self, givenFolderName ) -> None:
         """
         Create the object by inspecting files in the given folder.
 

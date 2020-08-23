@@ -373,7 +373,7 @@ class EasyWorshipBible( Bible ):
         NT has  7,957 verses = 1F15 in 27 = 1B books
         Total  31,102 verses = 797E in 66 = 42 books
     """
-    def __init__( self, sourceFolder, sourceFilename ):
+    def __init__( self, sourceFolder, sourceFilename ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -471,8 +471,7 @@ class EasyWorshipBible( Bible ):
             assert fileBytes[index+j:index+51] == b'\x00' * (51-j) # Skipped some zeroes here
             index += 51
             if bookName and bookName[-1] == '.': bookName = bookName[:-1] # Remove final period
-            #if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                #dPrint( 'Quiet', debuggingThisModule, 'bookName', repr(bookName) )
+            #dPrint( 'Info', debuggingThisModule, 'bookName', repr(bookName) )
             numChapters = fileBytes[index]
             numVerses = []
             for j in range( numChapters ):
@@ -682,7 +681,7 @@ def testEWB( TEWBfilename ):
         ewb.check()
         #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
         ewbErrors = ewb.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, ewbErrors )
+        #dPrint( 'Quiet', debuggingThisModule, ewbErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ewb.toDrupalBible()
         ewb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )

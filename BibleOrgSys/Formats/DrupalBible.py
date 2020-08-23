@@ -210,7 +210,7 @@ class DrupalBible( Bible ):
     """
     Class for reading, validating, and converting DrupalBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """

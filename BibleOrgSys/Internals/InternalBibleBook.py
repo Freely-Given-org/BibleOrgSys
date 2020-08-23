@@ -55,6 +55,7 @@ import logging
 import re
 import unicodedata
 
+# BibleOrgSys imports
 if __name__ == '__main__':
     import sys
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -73,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-05-12' # by RJH
+LAST_MODIFIED_DATE = '2020-08-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -134,7 +135,7 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
     maxOriginalWords = maxTranslatedWords = 0
     cleanedAlignmentList:List[Tuple[str,str,str,str]] = []
     for j, (C,V, textString,wordsString) in enumerate( originalAlignments, start=1 ):
-        vPrint( 'Never', debuggingThisModule, f"{j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
+        dPrint( 'Never', debuggingThisModule, f"cleanUWalignments {j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
 
         assert isinstance( C, str ) and C
         assert isinstance( V, str ) and V
@@ -266,7 +267,7 @@ class InternalBibleBook:
             from BibleOrgSys.Bible import Bible
             assert isinstance( parameter1, Bible )
             self.containerBibleObject = parameter1
-            # dPrint( 'Info', debuggingThisModule, f"set {BBB} cBO to {id(parameter1)} for {id(self)}" )
+            #dPrint( 'Info', debuggingThisModule, f"set {BBB} cBO to {id(parameter1)} for {id(self)}" )
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
@@ -440,7 +441,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addLine
 
 
-    def appendToLastLine( self, additionalText:str, expectedLastMarker=None ) -> None:
+    def appendToLastLine( self, additionalText:str, expectedLastMarker:Optional[str]=None ) -> None:
         """
         Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
@@ -475,7 +476,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.appendToLastLine
 
 
-    def addVerseSegments( self, V, text, location=None ):
+    def addVerseSegments( self, V:str, text:str, location:Optional[str]=None ) -> None:
         """
         Takes a text line that might optionally include
             \\NL** markers to indicate a new line.
@@ -598,7 +599,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addVerseSegments
 
 
-    def processLineFix( self, C,V, originalMarker, text, fixErrors ):
+    def processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] ) -> Tuple[str,str,InternalBibleExtraList]:
         """
         Does character fixes on a specific line and moves the following out of the main text:
             footnotes, cross-references, and figures, Strongs numbers.
@@ -694,7 +695,7 @@ class InternalBibleBook:
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.
         if '|' in adjText: # Mostly won't happen
-            # dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
             ixW = adjText.find( '\\w ' )
             if not BibleOrgSysGlobals.strictCheckingFlag:
                 if ixW == -1:
@@ -1257,7 +1258,7 @@ class InternalBibleBook:
 
         # if 'afterMoses' in cleanText or 'andthe' in cleanText: halt
         # if 'afterMoses' in adjText or 'andthe' in adjText: halt
-        # dPrint( 'Quiet', debuggingThisModule, f"{self.BBB} Returning '{adjText}' '{cleanText}'" )
+        #dPrint( 'Quiet', debuggingThisModule, f"{self.BBB} Returning '{adjText}' '{cleanText}'" )
         # if self.BBB == 'JOS' and C == '2': halt
         return adjText, cleanText, extras
     # end of InternalBibleBook.processLines.processLineFix
@@ -1987,15 +1988,14 @@ class InternalBibleBook:
 
             Uses self._rawLines and fills self._processedLines.
         """
-        #if self._processedFlag: return # Can only do it once
-        vPrint( 'Info', debuggingThisModule, "  " + _("Processing {} ({} {!r}) {} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
-        if BibleOrgSysGlobals.debugFlag: assert not self._processedFlag # Can only do it once
-        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+        vPrint( 'Info', debuggingThisModule, "  " + _("Processing {} {} {!r} {} {:,} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB, len(self._rawLines) ) )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
             assert self._rawLines # or else the book was totally blank
+            assert not self._processedFlag # Can only do it once
         #dPrint( 'Quiet', debuggingThisModule, self._rawLines[:20] ); halt # for debugging
 
 
-        def __doAppendEntry( adjMarker, originalMarker, text, originalText ):
+        def __doAppendEntry( adjMarker:str, originalMarker:str, text:str, originalText:str ) -> None:
             """
             Append the entry to self._processedLines
             """
@@ -2044,7 +2044,7 @@ class InternalBibleBook:
         # end of __doAppendEntry
 
 
-        def processLine( originalMarker, originalText ):
+        def processLine( originalMarker:str, originalText:str ) -> None:
             """
             Process one USFM line by
                 normalizing USFM markers (e.g., q -> q1, s -> s1 )
@@ -2070,11 +2070,11 @@ class InternalBibleBook:
                 logging.error( f"processLine-check: unknown {self.objectTypeString} originalMarker = {originalMarker}" )
                 adjustedMarker = originalMarker # temp……
 
-            def splitCNumber( inputString ):
+            def splitChapterNumber( inputString:str ) -> List[str]:
                 """
                 Splits a chapter number and returns a list of bits (normally 1, maximum 2 if there's a foonote on the chapter number))
                 """
-                #dPrint( 'Quiet', debuggingThisModule, "splitCNumber( {} )".format( repr(inputString) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "splitChapterNumber( {} )".format( repr(inputString) ) )
                 bit1, bit2 = '', ''
                 snStatus = 0 # 0 = idle, 1 = getting chapter number, 2 = getting rest
                 for char in inputString:
@@ -2090,13 +2090,13 @@ class InternalBibleBook:
                 #if bit2: nBits.append( bit2 )
                 #dPrint( 'Quiet', debuggingThisModule, "  splitNumber is returning:", nBits )
                 return [bit1,bit2] if bit2 else [bit1]
-            # end of splitCNumber
+            # end of splitChapterNumber
 
-            def splitVNumber( inputString ):
+            def splitVerseNumber( inputString:str ) -> List[str]:
                 """
                 Splits a verse number and returns a list of bits (normally 2, maximum 3 if there's a foonote on the verse number)
                 """
-                #dPrint( 'Quiet', debuggingThisModule, "splitVNumber( {} )".format( repr(inputString) ) )
+                #dPrint( 'Quiet', debuggingThisModule, "splitVerseNumber( {} )".format( repr(inputString) ) )
                 bit1, bit2, bit3 = '', '', ''
                 snStatus = 0 # 0 = idle, 1 = getting verseNumber, 2 = getting footnote, 3 = getting rest
                 for char in inputString:
@@ -2120,10 +2120,10 @@ class InternalBibleBook:
                 nBits = [bit1]
                 if bit2: nBits.append( bit2 )
                 nBits.append( bit3 )
-                #dPrint( 'Quiet', debuggingThisModule, "  splitCNumber is returning:", nBits )
+                #dPrint( 'Quiet', debuggingThisModule, "  splitChapterNumber is returning:", nBits )
                 #if bit2: halt
                 return nBits
-            # end of splitCNumber
+            # end of splitChapterNumber
 
 
             # Main code of processLine -- keep track of where we are
@@ -2135,7 +2135,7 @@ class InternalBibleBook:
                     logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace before chapter number around {}").format( self.__makeErrorRef(C,V) ) )
                     self.addPriorityError( 20, C, V, _("Extra whitespace before chapter number") )
                     text = text.lstrip()
-                cBits = splitCNumber( text )
+                cBits = splitChapterNumber( text )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and len(cBits)>1:
                     vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.processLine: cbits", cBits )
                 C, V = cBits[0], '0'
@@ -2184,7 +2184,7 @@ class InternalBibleBook:
                 if C == '-1': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
-                vBits = splitVNumber( text )
+                vBits = splitVerseNumber( text )
                 V = vBits[0] # Get the actual verse number
                 if C == '-1': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
                     if not self.isSingleChapterBook:
@@ -2411,7 +2411,7 @@ class InternalBibleBook:
 
         # This is the main processLines code
         if self.objectTypeString == 'OSIS': self.reorderRawOsisLines()
-        fixErrors = []
+        fixErrors:List[str] = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         C, V = '-1', '-1' # So first/id line starts at -1:0
         haveWaitingC = False
@@ -2488,12 +2488,12 @@ class InternalBibleBook:
         """
         from BibleOrgSys.Bible import Bible
         fnPrint( debuggingThisModule, f"InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
-        # dPrint( 'Info', debuggingThisModule, "_makeBookSectionIndex", id(self.containerBibleObject) )
+        #dPrint( 'Info', debuggingThisModule, "_makeBookSectionIndex", id(self.containerBibleObject) )
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedFlag
             assert not self._indexedSectionsFlag
         if self._indexedSectionsFlag:
-            # dPrint( 'Info', debuggingThisModule, "Already done InternalBibleBook._makeBookSectionIndex!" )
+            #dPrint( 'Info', debuggingThisModule, "Already done InternalBibleBook._makeBookSectionIndex!" )
             return # Can only do it once
 
         vPrint( 'Info', debuggingThisModule, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
@@ -2503,11 +2503,11 @@ class InternalBibleBook:
         self._SectionIndex.makeBookSectionIndex()
 
         self._indexedSectionsFlag = True
-        # dPrint( 'Info', debuggingThisModule, f"  Finished InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
+        #dPrint( 'Info', debuggingThisModule, f"  Finished InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
     # end of InternalBibleBook._makeBookSectionIndex
 
 
-    def debugPrint( self ):
+    def debugPrint( self ) -> None:
         """
         """
         fnPrint( debuggingThisModule, "InternalBibleBook.debugPrint: {}".format( self.BBB ) )
@@ -2520,7 +2520,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.debugPrint
 
 
-    def validateMarkers( self ):
+    def validateMarkers( self ) -> None:
         """
         Validate the loaded book.
         This is usually called from loadBook() in the various Bible importers.
@@ -2528,12 +2528,11 @@ class InternalBibleBook:
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
-        validationErrors = []
+        validationErrors:List[str] = []
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for j, entry in enumerate(self._processedLines):
@@ -2596,7 +2595,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.validateMarkers
 
 
-    def getField( self, fieldName ):
+    def getField( self, fieldName:str ) -> str:
         """
         Extract a SFM field from the loaded book.
         """
@@ -2616,7 +2615,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getField
 
 
-    def getAssumedBookNames( self ):
+    def getAssumedBookNames( self ) -> List[str]:
         """
         Attempts to deduce a bookname and book abbreviations from the loaded book.
         Use the English name as a last resort.
@@ -2631,8 +2630,7 @@ class InternalBibleBook:
         """
         #dPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
@@ -2713,11 +2711,10 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getVersification'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getVersification'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
-        versificationErrors = []
+        versificationErrors:List[str] = []
 
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
@@ -2843,7 +2840,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getVersification
 
 
-    def getVersificationIfNecessary( self ):
+    def getVersificationIfNecessary( self ) -> None:
         """
         Obtain the versification for this book if we haven't done it already.
 
@@ -2875,8 +2872,7 @@ class InternalBibleBook:
         """
         fnPrint( debuggingThisModule, f"_discover() for {self.BBB}" )
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         vPrint( 'Never', debuggingThisModule, f"InternalBibleBook._discover() for {self.BBB}…" )
@@ -2904,10 +2900,15 @@ class InternalBibleBook:
         bkDict['mainTextWordCounts'], bkDict['mainTextCaseInsensitiveWordCounts'] = {}, {}
 
 
-        def countWords( marker, segment, location ):
+        def countWordsForDiscover( marker:str, segment:str, location:str ) -> None:
             """
             Breaks the segment into words and counts them.
+
+                location can be 'main' or 'notes'
             """
+            try: uwaFlag = self.containerBibleObject.uWaligned
+            except AttributeError: uwaFlag = False
+            fnPrint( debuggingThisModule, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB} {C}:{V}{' (uWaligned)' if uwaFlag else ''}" )
             #def stripWordPunctuation( word ):
                 #"""Removes leading and trailing punctuation from a word.
                     #Returns the "clean" word."""
@@ -2919,7 +2920,7 @@ class InternalBibleBook:
                 #return word
             ## end of stripWordPunctuation
 
-            # countWords() main code
+            # countWordsForDiscover() main code
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
             for j,rawWord in enumerate(words):
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
@@ -2934,16 +2935,22 @@ class InternalBibleBook:
                                                 + _("Have unexpected character starting word {!r}").format( word ) )
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
+                    if '|' in word or 'x-' in word: # Should never happen
+                        logging.critical( f"word content problem: {self.BBB} {C}:{V} Got {word!r} from {marker} {segment!r} {location}" )
+                        if marker not in ('fig','ww') \
+                        and not segment.startswith('<p '): # commentary with HTML entries
+                            halt # word processing errors with | or x-
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
                             if not char.isalnum() and (k==0 or k==len(word)-1 or char not in BibleOrgSysGlobals.MEDIAL_WORD_PUNCT_CHARS):
                                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                                     vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     lcWord = word.lower()
-                    isAReferenceOrNumber = True
-                    for char in word:
-                        if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
-                    if not isAReferenceOrNumber:
+                    # isAReferenceOrNumber = True
+                    # for char in word:
+                    #     if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
+                    # if not isAReferenceOrNumber:
+                    if any(map(lambda x:not x.isdigit() and x not in ':-,.', word )): # not a reference or number
                         bkDict['wordCount'] += 1
                         #if word not in bkDict['allWordCounts']:
                             #bkDict['uniqueWordCount'] += 1
@@ -2955,7 +2962,7 @@ class InternalBibleBook:
                             bkDict['mainTextWordCounts'][word] = 1 if word not in bkDict['mainTextWordCounts'] else bkDict['mainTextWordCounts'][word] + 1
                             bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['mainTextCaseInsensitiveWordCounts'] else bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] + 1
                     #else: vPrint( 'Quiet', debuggingThisModule, "excluded reference or number", word )
-        # end of countWords
+        # end of countWordsForDiscover
 
 
         # _discover() main code
@@ -3006,7 +3013,7 @@ class InternalBibleBook:
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
             if text and marker in BOS_PRINTABLE_MARKERS: # process this main text
-                countWords( marker, cleanText, 'main' )
+                countWordsForDiscover( marker, cleanText, 'main' )
             #elif text: vPrint( 'Quiet', debuggingThisModule, "Ignoring {} {}:{} {}={}".format( self.BBB, C, V, marker, repr(text) ) )
 
             if extras:
@@ -3031,7 +3038,7 @@ class InternalBibleBook:
                         if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
                         if cleanExtraText and cleanExtraText[-1] in '.።' or cleanExtraText.endswith('.”'):
                             xrefsPeriodCount += 1
-                    countWords( extraType, cleanExtraText, "notes" )
+                    countWordsForDiscover( extraType, cleanExtraText, 'notes' )
             lastMarker = marker
         #dPrint( 'Quiet', debuggingThisModule, 'wordCount', self.BBB, bkDict['wordCount'] )
         #dPrint( 'Quiet', debuggingThisModule, 'uniqueWordCount', self.BBB, bkDict['uniqueWordCount'] )
@@ -3073,7 +3080,7 @@ class InternalBibleBook:
             bkDict['crossReferencesPeriodFlag'] = bkDict['crossReferencesPeriodRatio'] > 0.7
         #dPrint( 'Quiet', debuggingThisModule, self.BBB, bkDict['sectionReferencesParenthesisRatio'] )
 
-        # dPrint( 'Info', debuggingThisModule, f"  _discover() for {self.BBB} finished." )
+        #dPrint( 'Info', debuggingThisModule, f"  _discover() for {self.BBB} finished." )
         return bkDict
     # end of InternalBibleBook._discover
 
@@ -3084,11 +3091,10 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAddedUnits'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAddedUnits'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
-        addedUnitErrors = []
+        addedUnitErrors:List[str] = []
 
         paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences, wordsOfJesus = [], [], [], [], [], [], []
         chapterNumberStr = verseNumberStr = '0'
@@ -3165,7 +3171,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getAddedUnits
 
 
-    def doCheckAddedUnits( self, typicalAddedUnitData, severe=False ):
+    def doCheckAddedUnits( self, typicalAddedUnitData, severe:bool=False ) -> None:
         """
         Checkthe units added to the text of the book including paragraph breaks, section headings, and section references.
         """
@@ -3353,7 +3359,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckAddedUnits
 
 
-    def doCheckSFMs( self, discoveryDict ):
+    def doCheckSFMs( self, discoveryDict ) -> None:
         """
         Runs a number of comprehensive checks on the USFM codes in this Bible book.
         """
@@ -3374,9 +3380,9 @@ class InternalBibleBook:
 
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = {}, {}, {}
         #newlineMarkerCounts['Total'], internalMarkerCounts['Total'], noteMarkerCounts['Total'] = 0, 0, 0 # Put these first in the ordered dict
-        newlineMarkerErrors, internalMarkerErrors, noteMarkerErrors = [], [], []
+        newlineMarkerErrors:List[str] = []; internalMarkerErrors:List[str] = []; noteMarkerErrors:List[str] = []
         functionalCounts = {}
-        modifiedMarkerList = []
+        modifiedMarkerList:List[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         section, lastMarker, lastModifiedMarker = '', '', None
         lastMarkerEmpty = True
@@ -3796,10 +3802,10 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckSFMs
 
 
-    def doCheckCharacters( self ):
+    def doCheckCharacters( self ) -> None:
         """Runs a number of checks on the characters used."""
 
-        def countCharacters( adjText ):
+        def countCharacters( adjText:str ) -> None:
             """
             Counts the characters for the given text (with internal markers already removed).
 
@@ -3887,7 +3893,7 @@ class InternalBibleBook:
 
         haveNonAsciiChars = False
         simpleCharacterCounts, unicodeCharacterCounts, letterCounts, punctuationCounts = {}, {}, {}, {} # We don't care about the order in which they appeared
-        characterErrors = []
+        characterErrors:List[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
@@ -3948,26 +3954,30 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckCharacters
 
 
-    def doCheckSpeechMarks( self ):
+    def doCheckSpeechMarks( self ) -> None:
         """
         Runs a number of checks on the speech marks in the Bible book.
         """
-        goodNow = True # Yes, this code needs fixing badly
+        debuggingThisFunction = False
+        if 'Version' not in self.workName: debuggingThisFunction = False
+        # if self.BBB != 'MIC': debuggingThisFunction = False
 
-        vPrint( 'Never', debuggingThisModule, "InternalBibleBook.doSpeechMarks()…" )
+        fnPrint( debuggingThisModule, "InternalBibleBook.doSpeechMarks()" )
 
         reopenQuotesAtParagraph = True # Opening quotes are reused after a paragraph break if the speech is continuing
         closeQuotesAtParagraphEnd = False # Closing quotes are used at the end of a paragraph even if the speech is continuing into the next paragraph
         closeQuotesAtSectionEnd = True # Closing quotes are used at the end of a section even if the speech is continuing into the next section
 
-        speechMarkErrors, openChars = [], []
+        speechMarkErrors, openSpeechChars = [], []
         newSection = newParagraph = newBit = False
         bitMarker = ''
         startsWithOpen = endedWithClose = False
         C, V = '-1', '-1' # So first/id line starts at -1:0
+        lastV = None
         for entry in self._processedLines:
             marker, originalMarker, text, cleanText = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText()
             if marker[0] == '¬': continue # ignore these added endMarkers here
+            if marker in ('r', ): continue # We don't care about these
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -3979,107 +3989,158 @@ class InternalBibleBook:
                 continue # v fields contain no quote signs and don't affect formatting blocks
             elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
 
-            lineLocation = '{} {}:{}'.format( self.BBB, C, V )
-            lineLocationSpace = lineLocation + ' '
+            lineLocation = f'{self.BBB} {C}:{V}'
+            lineLocationSpace = f'{lineLocation} '
 
             if marker in ('s1','s2','s3','s4', 'qa'):
                 newSection = True; bitMarker = originalMarker; continue # Nothing more to process here (although will miss check rare notes in section headings)
-            if marker in ('p','ip','b', ): # Note 'm' is NOT included in this list
+            elif marker in ('p','pi1','pi2','pi3','pi4', 'b', 'ip' ): # Note 'm' is intentionally NOT included in this list
                 newParagraph = True
-                if not bitMarker: bitMarker = originalMarker
-            if marker in ('m', ): newBit = True; bitMarker = originalMarker
+                # if not bitMarker: bitMarker = originalMarker
+                bitMarker = originalMarker
+            elif marker in ( 'm', ): newBit = True; bitMarker = originalMarker
+            elif marker in ( 'q1','q2','q3','q4', ): bitMarker = originalMarker
 
-            if marker in ('r', ): continue # We don't care about these
-            if not cleanText: continue # Nothing to do for an empty field
+            if not cleanText: continue # Nothing else to do here for an empty field
 
             # From here on, we have relevant markers and something in cleanText
             startsWithOpen = False
             if cleanText[0] in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
                 startsWithOpen = True
                 openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[0] )
-            elif len(cleanText)>1 and cleanText[0]==' ' and cleanText[1] in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS: # This can occur after a leading xref with an extra space after it
+            elif cleanText[0]==' ' and cleanText[1] in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS: # This can occur after a leading xref with an extra space after it
                 startsWithOpen = True
                 openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[1] )
 
-            vPrint( 'Never', debuggingThisModule, f"{C}:{V} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openChars} {marker} '{cleanText}'" )
-            if openChars:
+            if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, f"{self.BBB} {C}:{V} {marker} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openSpeechChars} '{cleanText}'" )
+            if openSpeechChars:
                 if newSection and closeQuotesAtSectionEnd \
                 or newParagraph and closeQuotesAtParagraphEnd:
-                    match = openChars if len(openChars)>1 else "{!r}".format( openChars[0] )
+                    match = openSpeechChars if len(openSpeechChars)>1 else "{!r}".format( openSpeechChars[0] )
                     speechMarkErrors.append( lineLocationSpace + _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
                     logging.error( _("Unclosed speech marks matching {} before {} marker at").format( match, bitMarker ) \
                                                             + " {} {}:{}".format( self.BBB, C, V ) )
                     self.addPriorityError( 56, C, V, _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
-                    openChars = []
+                    if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, f'Gave "Unclosed speech marks matching {match} before {bitMarker} marker" error' )
+                    openSpeechChars = []
                 elif newParagraph and reopenQuotesAtParagraph and not startsWithOpen:
-                    match = openChars if len(openChars)>1 else "{!r}".format( openChars[0] )
+                    match = openSpeechChars if len(openSpeechChars)>1 else "{!r}".format( openSpeechChars[0] )
                     speechMarkErrors.append( lineLocationSpace \
-                                                + _("Unclosed speech marks matching {} before {} marker or missing reopening quotes").format( match, originalMarker ) )
+                                                + _("Unclosed speech marks matching {} before {} marker or missing reopening quotes at v{}").format( match, originalMarker, V ) )
                     logging.error( _("Unclosed speech marks matching {} before {} marker or missing reopening quotes at").format( match, originalMarker ) \
                                                             + " {} {}:{}".format( self.BBB, C, V ) )
-                    self.addPriorityError( 55, C, V, _("Unclosed speech marks matching {} after {} marker or missing reopening quotes").format( match, originalMarker ) )
-                    openChars = []
+                    self.addPriorityError( 55, C, V, _("Unclosed speech marks matching {} in v{} or missing reopening quotes at v{}").format( match, lastV if originalMarker=='v' else V, V ) )
+                    if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, f'Gave "Unclosed speech marks matching {match} after {originalMarker} marker" error' )
+                    openSpeechChars = []
 
-            if newSection and startsWithOpen and endedWithClose and not closeQuotesAtSectionEnd:
-                if openQuoteIndex == closeQuoteIndex:
-                    speechMarkErrors.append( lineLocationSpace + _("Unnecessary closing of speech marks before section heading") )
-                    logging.error( _("Unnecessary closing of speech marks before section heading") + " {} {}:{}".format( self.BBB, C, V ) )
-                    self.addPriorityError( 50, C, V, _("Unnecessary closing of speech marks before section heading") )
+            if newSection \
+            and startsWithOpen and endedWithClose and not closeQuotesAtSectionEnd \
+            and openQuoteIndex == closeQuoteIndex:
+                speechMarkErrors.append( lineLocationSpace + _("Unnecessary closing of speech marks before section heading") )
+                logging.error( _("Unnecessary closing of speech marks before section heading") + " {} {}:{}".format( self.BBB, C, V ) )
+                self.addPriorityError( 50, C, V, _("Unnecessary closing of speech marks before section heading") )
+                if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, 'Gave "Unnecessary closing of speech marks before section heading" error' )
 
-            #dPrint( 'Quiet', debuggingThisModule, C, V, openChars, newParagraph, marker, '<' + cleanText + '>' )
-            for j,char in enumerate(cleanText): # Go through each character handling speech marks
+            # TODO: Do we need to check for more than 2 speech marks in a row?
+            if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here0 at {self.BBB} {C}:{V} with ", openSpeechChars, newParagraph, marker, '<' + cleanText + '>' )
+            j = -1
+            while j < len(cleanText) - 1: # Go through each character handling speech marks
+                # Loop like this so we can advance j coz we look-ahead
+                j += 1 # Increment at beginning of loop so safe if we use 'continue'
+                char = cleanText[j]
                 if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
-                    if reopenQuotesAtParagraph and newParagraph and (j==0 or (j==1 and cleanText[0]==' ')) and openChars and char==openChars[-1]:
+                    #Look ahead first
+                    jump, char2 = 0, ''
+                    if j < len(cleanText)-1: jump, char2 = 1, cleanText[j+1]
+                    if char2 == ' ': # Try one more time
+                        if j < len(cleanText)-2: jump, char2 = 2, cleanText[j+2]
+                    if reopenQuotesAtParagraph and newParagraph and openSpeechChars \
+                    and (j==0 or (j==1 and cleanText[0]==' ')):
                         # This above also handles cross-references with an extra space at the beginning of a verse causing the opening quote(s) to be the second character
-                        #dPrint( 'Quiet', debuggingThisModule, C, V, "Ignored (restarting new paragraph quotation)", char, "with", openChars )
-                        pass
+                        if char==openSpeechChars[-1][0] and char2 not in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
+                            if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here2a at {j} {self.BBB} {C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} (and {char2!r}) with {openSpeechChars}" )
+                            last = openSpeechChars.pop()
+                            openSpeechChars.append( last.replace( ')', f',{C}:{V}:{originalMarker})' ) ) # Add repeat reference
+                        elif len(openSpeechChars)>1 and char==openSpeechChars[-2][0] and char2==openSpeechChars[-1][0]:
+                            if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here2b at {j} {self.BBB} {C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} and {char2!r} with {openSpeechChars}, advancing j by {jump}" )
+                            last1 = openSpeechChars.pop()
+                            last2 = openSpeechChars.pop()
+                            openSpeechChars.append( last2.replace( ')', f',{C}:{V}:{originalMarker})' ) ) # Add repeat references
+                            openSpeechChars.append( last1.replace( ')', f',{C}:{V}:{originalMarker})' ) )
+                            j += jump
                     else:
-                        #dPrint( 'Quiet', debuggingThisModule, "here0 with ", char, C, V, openChars )
-                        if openChars and char==openChars[-1]:
+                        have1Again = have2Again = False
+                        if openSpeechChars and char==openSpeechChars[-1][0]:
+                            have1Again = True
+                        elif len(openSpeechChars)>1 and char==openSpeechChars[-2][0] and char2==openSpeechChars[-1][0]:
+                            have2Again = True
+                        if have2Again:
                             if newBit:
+                                if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here3a at {j} {self.BBB} {C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]} then {openSpeechChars[-2]}" )
                                 speechMarkErrors.append( lineLocationSpace \
-                                                                            + _("Seemed to reopen {!r} speech marks after {}").format( char, bitMarker ) )
-                                logging.warning( _("Seemed to reopen {!r} speech marks after {} at").format( char, bitMarker ) \
+                                                                            + _("Seemed to reopen {} and {} speech marks after {}").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker ) )
+                                logging.warning( _("Seemed to reopen {} and {} speech marks after {} at").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker ) \
                                                                             + " {} {}:{}".format( self.BBB, C, V ) )
-                                self.addPriorityError( 43, C, V, _("Seemed to reopen {!r} speech marks after {}").format( char, bitMarker ) )
-                                openChars.pop()
+                                self.addPriorityError( 43, C, V, _("Seemed to reopen {} and {} speech marks after {}").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker ) )
+                                openSpeechChars.pop() # char2
+                                openSpeechChars.pop() # char
                             else:
+                                if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here3b at {j} {self.BBB} {C}:{V} giving 'unclosed or improperly nested or reopened error'" )
                                 speechMarkErrors.append( lineLocationSpace \
-                                                                            + _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
-                                logging.error( _("Unclosed {!r} speech marks (or improperly nested speech marks) after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
-                                self.addPriorityError( 53, C, V, _("Unclosed {!r} speech marks (or improperly nested speech marks) after {}").format( char, openChars ) )
-                        openChars.append( char )
-                    if len(openChars)>4:
-                        speechMarkErrors.append( lineLocationSpace + _("Excessive nested speech marks {}").format( openChars ) )
-                        logging.error( _("Excessive nested speech marks {} at").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
-                        self.addPriorityError( 50, C, V, _("Excessive nested speech marks {}").format( openChars ) )
-                    elif len(openChars)>3:
-                        speechMarkErrors.append( lineLocationSpace + _("Lots of nested speech marks {}").format( openChars ) )
-                        logging.warning( _("Lots of nested speech marks {} at").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
-                        self.addPriorityError( 40, C, V, _("Lots of nested speech marks {}").format( openChars ) )
+                                                                            + _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker ) )
+                                logging.error( _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {}) at {}").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker, self.__makeErrorRef(C,V) ) )
+                                self.addPriorityError( 53, C, V, _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker ) )
+                        elif have1Again:
+                            if newBit:
+                                if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here4a at {j} {self.BBB} {C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]}" )
+                                speechMarkErrors.append( lineLocationSpace \
+                                                                            + _("Seemed to reopen {} speech marks after {}").format( openSpeechChars[-1], bitMarker ) )
+                                logging.warning( _("Seemed to reopen {} speech marks after {} at").format( openSpeechChars[-1], bitMarker ) \
+                                                                            + " {} {}:{}".format( self.BBB, C, V ) )
+                                self.addPriorityError( 43, C, V, _("Seemed to reopen {} speech marks after {}").format( openSpeechChars[-1], bitMarker ) )
+                                openSpeechChars.pop() # char
+                            else:
+                                if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here4b at {j} {self.BBB} {C}:{V} giving 'unclosed or improperly nested or reopened error'" )
+                                speechMarkErrors.append( lineLocationSpace \
+                                                                            + _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-1], bitMarker, bitMarker ) )
+                                logging.error( _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {}) at {}").format( openSpeechChars[-1], bitMarker, bitMarker, self.__makeErrorRef(C,V) ) )
+                                self.addPriorityError( 53, C, V, _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-1], bitMarker, bitMarker ) )
+                        if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here5 at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars, f"adding {char}" )
+                        openSpeechChars.append( f'{char} ({_("opened at")} {C}:{V}:{originalMarker})' )
+                    if len(openSpeechChars)>4:
+                        speechMarkErrors.append( lineLocationSpace + _("Excessive nested speech marks {}").format( openSpeechChars ) )
+                        logging.error( _("Excessive nested speech marks {} at").format( openSpeechChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+                        self.addPriorityError( 50, C, V, _("Excessive nested speech marks {}").format( openSpeechChars ) )
+                    elif len(openSpeechChars)>3:
+                        speechMarkErrors.append( lineLocationSpace + _("Lots of nested speech marks {}").format( openSpeechChars ) )
+                        logging.warning( _("Lots of nested speech marks {} at").format( openSpeechChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+                        self.addPriorityError( 40, C, V, _("Lots of nested speech marks {}").format( openSpeechChars ) )
                 elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
                     closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
-                    if not openChars:
-                        #dPrint( 'Quiet', debuggingThisModule, "here1 with ", char, C, V, openChars )
+                    if not openSpeechChars:
+                        if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here7a at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars )
                         if char not in '?!': # Ignore the dual purpose punctuation characters
                             speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
                             logging.error( _("Unexpected {!r} speech closing character at {}").format( char, self.__makeErrorRef(C,V) ) )
                             self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
-                    elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
-                        #dPrint( 'Quiet', debuggingThisModule, "here2 with ", char, C, V )
-                        openChars.pop()
+                    elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openSpeechChars[-1][0]): # A good closing match
+                        if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here7b at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars, f"popping {openSpeechChars[-1]}" )
+                        openSpeechChars.pop()
                     elif char not in '?!': # Ignore the dual purpose punctuation characters
                         # We have closing marker that doesn't match
-                        #dPrint( 'Quiet', debuggingThisModule, "here3 with ", char, C, V, openChars )
-                        speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
-                        logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openChars, self.__makeErrorRef(C,V) ) )
-                        self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openChars ) )
+                        if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here7c at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars )
+                        speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openSpeechChars ) )
+                        logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openSpeechChars, self.__makeErrorRef(C,V) ) )
+                        self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openSpeechChars ) )
+                lastV = V
+                # end of main loop
+            if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here8 at {self.BBB} {C}:{V} with ", openSpeechChars )
 
             # End of processing clean-up
             endedWithClose = cleanText[-1] in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS
             if endedWithClose: closeQuoteIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( cleanText[-1] )
             newSection = newParagraph = newBit = False
-            bitMarker = ''
+            # bitMarker = ''
 
             #if C=='9': halt
             extras = entry.getExtras()
@@ -4094,42 +4155,42 @@ class InternalBibleBook:
                         #assert 0 <= extraIndex <= len(text)+3
                         assert extraType in BOS_EXTRA_TYPES
                         assert '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText # Only the contents of these fields should be in extras
-                    extraOpenChars = []
+                    extrasOpenSpeechChars = []
                     for char in extraText:
                         if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
-                            if extraOpenChars and char==extraOpenChars[-1]:
-                                speechMarkErrors.append( lineLocationSpace + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
-                                logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extraOpenChars ) \
+                            if extrasOpenSpeechChars and char==extrasOpenSpeechChars[-1]:
+                                speechMarkErrors.append( lineLocationSpace + _("Improperly nested speech marks {} after {} in note").format( char, extrasOpenSpeechChars ) )
+                                logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extrasOpenSpeechChars ) \
                                                                         + " {} {}:{}".format( self.BBB, C, V ) )
-                                self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
-                            extraOpenChars.append( char )
+                                self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extrasOpenSpeechChars ) )
+                            extrasOpenSpeechChars.append( char )
                         elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
                             closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
-                            if not extraOpenChars:
-                                #dPrint( 'Quiet', debuggingThisModule, "here1 with ", char, C, V, extraOpenChars )
+                            if not extrasOpenSpeechChars:
+                                #dPrint( 'Quiet', debuggingThisModule, "here11 with ", char, C, V, extrasOpenSpeechChars )
                                 if char not in '?!': # Ignore the dual purpose punctuation characters
                                     speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character in note").format( char ) )
                                     logging.error( _("Unexpected {!r} speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
                                     self.addPriorityError( 43, C, V, _("Unexpected {!r} speech closing character in note").format( char ) )
-                            elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(extraOpenChars[-1]): # A good closing match
-                                #dPrint( 'Quiet', debuggingThisModule, "here2 with ", char, C, V )
-                                extraOpenChars.pop()
+                            elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(extrasOpenSpeechChars[-1]): # A good closing match
+                                #dPrint( 'Quiet', debuggingThisModule, "here22 with ", char, C, V )
+                                extrasOpenSpeechChars.pop()
                             elif char not in '?!': # Ignore the dual purpose punctuation characters
-                                #dPrint( 'Quiet', debuggingThisModule, "here3 with ", char, C, V, extraOpenChars )
-                                speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {} in note").format( char, extraOpenChars ) )
-                                logging.error( _("Mismatched {!r} speech closing character after {} in note in").format( char, extraOpenChars ) \
+                                #dPrint( 'Quiet', debuggingThisModule, "here33 with ", char, C, V, extrasOpenSpeechChars )
+                                speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {} in note").format( char, extrasOpenSpeechChars ) )
+                                logging.error( _("Mismatched {!r} speech closing character after {} in note in").format( char, extrasOpenSpeechChars ) \
                                                                             + " {} {}:{}".format( self.BBB, C, V ) )
-                                self.addPriorityError( 42, C, V, _("Mismatched {!r} speech closing character after {} in note").format( char, extraOpenChars ) )
-                    if extraOpenChars: # We've finished the note but some things weren't closed
-                        speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
-                        logging.error( _("Unclosed {} speech marks at end of note in").format( extraOpenChars ) + " {} {}:{}".format( self.BBB, C, V ) )
-                        self.addPriorityError( 47, C, V, _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
+                                self.addPriorityError( 42, C, V, _("Mismatched {!r} speech closing character after {} in note").format( char, extrasOpenSpeechChars ) )
+                    if extrasOpenSpeechChars: # We've finished the note but some things weren't closed
+                        speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of note").format( extrasOpenSpeechChars ) )
+                        logging.error( _("Unclosed {} speech marks at end of note in").format( extrasOpenSpeechChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+                        self.addPriorityError( 47, C, V, _("Unclosed {} speech marks at end of note").format( extrasOpenSpeechChars ) )
 
-        if openChars: # We've finished the book but some things weren't closed
-            #dPrint( 'Quiet', debuggingThisModule, "here9 with ", openChars )
-            speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of book").format( openChars ) )
-            logging.error( _("Unclosed {} speech marks at end of book after").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
-            self.addPriorityError( 54, C, V, _("Unclosed {} speech marks at end of book").format( openChars ) )
+        if openSpeechChars: # We've finished the book but some things weren't closed
+            if debuggingThisFunction: dPrint( 'Quiet', debuggingThisModule, f"here9 at {self.BBB} with ", openSpeechChars )
+            speechMarkErrors.append( lineLocationSpace + _("Unclosed {} speech marks at end of book").format( openSpeechChars ) )
+            logging.error( _("Unclosed {} speech marks at end of book after").format( openSpeechChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+            self.addPriorityError( 54, C, V, _("Unclosed {} speech marks at end of book").format( openSpeechChars ) )
 
         # Add up the totals
         if (speechMarkErrors) and 'Speech Marks' not in self.checkResultsDictionary: self.checkResultsDictionary['Speech Marks'] = {}
@@ -4137,18 +4198,19 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckSpeechMarks
 
 
-    def doCheckWords( self ):
+    def doCheckWords( self ) -> None:
         """
         Runs a number of checks on the words used.
         """
 
-        def countWords( marker, segment, lastWordTuple=None ):
-            """Breaks the segment into words and counts them.
+        def countWordsForCheck( marker:str, segment:str, lastWordTuple:Optional[Tuple[str,str]]=None ) -> Tuple[str,str]:
+            """
+            Breaks the segment into words and counts them.
                 Also checks for repeated words.
                 If lastWordTuple is given, checks for words repeated across segments (and returns the new value).
             """
 
-            def stripWordPunctuation( word ):
+            def stripWordPunctuation( word:str ) -> str:
                 """Removes leading and trailing punctuation from a word.
                     Returns the "clean" word."""
                 while word and word[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
@@ -4194,12 +4256,12 @@ class InternalBibleBook:
                         repeatedWordErrors.append( lineLocationSpace + _("Have possible repeated word with {} {}").format( ourLastRawWord, rawWord ) )
                     ourLastWord, ourLastRawWord = word, rawWord
             return ourLastWord, ourLastRawWord
-        # end of countWords
+        # end of countWordsForCheck
 
 
         # Count all the words
         wordCounts, caseInsensitiveWordCounts = {}, {}
-        wordErrors, repeatedWordErrors = [], []
+        wordErrors:List[str] = []; repeatedWordErrors:List[str] = []
         lastTextWordTuple = ('','')
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
@@ -4214,7 +4276,7 @@ class InternalBibleBook:
             lineLocationSpace = lineLocation + ' '
 
             if text and BibleOrgSysGlobals.loadedUSFMMarkers.isPrinted(marker): # process this main text
-                lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
+                lastTextWordTuple = countWordsForCheck( marker, cleanText, lastTextWordTuple )
 
             extras = entry.getExtras()
             if extras:
@@ -4233,7 +4295,7 @@ class InternalBibleBook:
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
                     #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
                     #    cleanExtraText = cleanExtraText.replace( marker, '' )
-                    countWords( extraType, cleanExtraText )
+                    countWordsForCheck( extraType, cleanExtraText )
 
         # Add up the totals
         if (wordErrors or wordCounts or caseInsensitiveWordCounts) and 'Words' not in self.checkResultsDictionary: self.checkResultsDictionary['Words'] = {} # So we hopefully get the errors first
@@ -4251,13 +4313,12 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckWords
 
 
-    def doCheckFileControls( self ):
+    def doCheckFileControls( self ) -> None:
         """
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckFileControls'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckFileControls'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4279,17 +4340,17 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckFileControls
 
 
-    def doCheckHeadings( self, discoveryDict ):
+    def doCheckHeadings( self, discoveryDict ) -> None:
         """
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckHeadings'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckHeadings'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
-        titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList, headingErrors = [], [], [], [], []
+        titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList = [], [], [], []
+        headingErrors:List[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
@@ -4359,17 +4420,17 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckHeadings
 
 
-    def doCheckIntroduction( self ):
+    def doCheckIntroduction( self ) -> None:
         """
         Runs a number of checks on introductory parts.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckIntroduction'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckIntroduction'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
-        mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
+        mainTitleList, headingList, titleList, outlineList = [], [], [], []
+        introductionErrors:List[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
@@ -4425,7 +4486,7 @@ class InternalBibleBook:
                 #and not cleanText.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
                     if cleanText.endswith(')') or cleanText.endswith(']'): # do we still need this
                         introductionErrors.append( lineLocationSpace + _("{} introduction text possibly does not have closing punctuation (period): {}").format( marker, text ) )
-                        self.addPriorityError( 26, C, V, _("Introduction text possibly ends without closing punctuation (period)") )
+                        self.addPriorityError( 26, C, V, _("Introduction text possibly ends without closing punctuation (period): '{}'").format( cleanText[-5:]) )
                     else:
                         introductionErrors.append( lineLocationSpace + _("{} introduction text does not have closing punctuation (period): {}").format( marker, text ) )
                         self.addPriorityError( 46, C, V, _("Introduction text ends without closing punctuation (period)") )
@@ -4440,13 +4501,12 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckIntroduction
 
 
-    def doCheckNotes( self, discoveryDict ):
+    def doCheckNotes( self, discoveryDict ) -> None:
         """
         Runs a number of checks on footnotes and cross-references.
         """
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckNotes'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckNotes'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4454,7 +4514,7 @@ class InternalBibleBook:
 
         footnoteList, xrefList = [], []
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
-        footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
+        footnoteErrors:List[str] = []; xrefErrors:List[str] = []; noteMarkerErrors:List[str] = []
         leaderCounts = {}
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
@@ -4717,14 +4777,13 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckNotes
 
 
-    def checkBook( self, discoveryDict=None, typicalAddedUnitData=None ):
+    def checkBook( self, discoveryDict=None, typicalAddedUnitData=None ) -> None:
         """
         Runs a number of checks on the book and returns the error dictionary.
         """
         fnPrint( debuggingThisModule, "checkBook()" )
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'checkBook'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'checkBook'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4776,7 +4835,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumChapters
 
 
-    def getNumVerses( self, C ) -> int:
+    def getNumVerses( self, C:str ) -> int:
         """
         Returns the number of verses (int) in the given chapter.
 
@@ -4808,8 +4867,7 @@ class InternalBibleBook:
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
-            if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getContextVerseData'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getContextVerseData'".format( self.BBB, self.workName ) )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
@@ -4821,7 +4879,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getContextVerseData
 
 
-    def writeBOSBCVFiles( self, bookFolderpath ):
+    def writeBOSBCVFiles( self, bookFolderpath ) -> None:
         """
         Write the internal pseudoUSFM out directly with one file per verse in one folder for the book.
         """
@@ -4916,7 +4974,7 @@ def fullDemo() -> None:
 
     from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( BBB, filename ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )

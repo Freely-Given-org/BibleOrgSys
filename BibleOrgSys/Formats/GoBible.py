@@ -163,7 +163,7 @@ class GoBible( Bible ):
     """
     Class for reading, validating, and converting GoBible files.
     """
-    def __init__( self, sourceFileOrFolder, givenName=None ):
+    def __init__( self, sourceFileOrFolder, givenName=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -436,7 +436,7 @@ class GoBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, "Loading {} from {}…".format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -444,8 +444,8 @@ class GoBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Loading {} GoBible books using {} processes…".format( len(self.bookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} GoBible books using {} processes…").format( len(self.bookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.bookList ) # have the pool do our loads
@@ -508,7 +508,7 @@ class GoBibleBook( BibleBook ):
         fnPrint( debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
         folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         # Load the book index first
         indexPath = os.path.join( folderpath, 'Index' )
@@ -620,7 +620,7 @@ def testGoBible( GoBibleFile ):
         vb.check()
         #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+        #dPrint( 'Quiet', debuggingThisModule, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -675,7 +675,7 @@ def briefDemo() -> None:
             result3.check()
             #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
             vBErrors = result3.getCheckResults()
-            # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+            #dPrint( 'Quiet', debuggingThisModule, vBErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             if isinstance( result2, GoBible ):
@@ -734,7 +734,7 @@ def fullDemo() -> None:
                 result3.check()
                 #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                # dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 if isinstance( result2, GoBible ):

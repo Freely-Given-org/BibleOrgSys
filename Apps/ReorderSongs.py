@@ -80,22 +80,22 @@ def main() -> None:
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', debuggingThisModule, "Loading songs from {}…".format( songsInputFilepath ) )
+    vPrint( 'Quiet', debuggingThisModule, _("Loading songs from {}…").format( songsInputFilepath ) )
     songs = SFMFile.SFMRecords()
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    vPrint( 'Normal', debuggingThisModule, "  {} songs loaded".format( len(songs.records) ) )
+    vPrint( 'Normal', debuggingThisModule, _("  {} songs loaded").format( len(songs.records) ) )
     vPrint( 'Never', debuggingThisModule, songs )
 
     # Extract the information out of the file that we want to use for sorting
     #   (We get the \s field, plus keep track of the index of each record)
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
-        vPrint( 'Never', debuggingThisModule, "songRecord", songRecord )
+        dPrint( 'Never', debuggingThisModule, "songRecord", songRecord )
         sFieldData = songRecord[1] # Get the second line of the song record (assumed to be the \s or title line )
         assert sFieldData[0] == 's' # This is a 2-tuple of marker (without backslash) and marker contents
         keyPairs.append( (sFieldData[1],j) ) # Store the contents of the \s field, along with the index of this record
-    vPrint( 'Never', debuggingThisModule, "keyPairs", keyPairs )
+    dPrint( 'Never', debuggingThisModule, "keyPairs", keyPairs )
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd

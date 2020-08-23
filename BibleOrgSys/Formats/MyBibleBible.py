@@ -90,6 +90,7 @@ import multiprocessing
 from random import randrange
 from pathlib import Path
 
+# BibleOrgSys imports
 if __name__ == '__main__':
     import sys
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -101,7 +102,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2020-06-14' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
 PROGRAM_VERSION = '0.21'
@@ -238,7 +239,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one MyBible Bible is found,
         returns the loaded MyBibleBible object.
     """
-    fnPrint( debuggingThisModule, "MyBibleBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, f"MyBibleBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag:
         assert givenFolderName and isinstance( givenFolderName, (str,Path) )
         assert autoLoad in (True,False,)
@@ -336,7 +337,7 @@ class MyBibleBible( Bible ):
     """
     Class for reading, validating, and converting MyBibleBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -519,7 +520,7 @@ class MyBibleBible( Bible ):
         fnPrint( debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
 
         lastC = None
-        def importVerseLine( name, BBB, C, V, originalLine, bookObject ):
+        def importVerseLine( name, BBB:str, C:str, V:str, originalLine, bookObject ):
             """
             Change MyBible format codes to our codes
                 and then add the line to the given bookObject
@@ -630,7 +631,7 @@ class MyBibleBible( Bible ):
         fnPrint( debuggingThisModule, "__loadBibleCommentaryBook( {} )".format( BBB ) )
 
         lastC = None
-        def importCommentaryLine( name, BBB, C, V, footnoteNumber, originalLine, bookObject ):
+        def importCommentaryLine( name, BBB:str, C:str, V:str, footnoteNumber, originalLine, bookObject ):
             """
             Change MyBible format codes to our codes
                 and then add the line to the given bookObject
@@ -753,7 +754,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
 
-    def adjustLine( BBB, C, V, originalLine ):
+    def adjustLine( BBB:str, C:str, V:str, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -869,7 +870,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     # end of toMyBible.adjustLine
 
 
-    #def handleIntroduction( BBB, bookData, ourGlobals ):
+    #def handleIntroduction( BBB:str, bookData, ourGlobals ):
         #"""
         #Go through the book introduction (if any) and extract main titles for MyBible export.
 
@@ -914,7 +915,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
     ## end of toMyBible.handleIntroduction
 
 
-    def composeVerseLine( BBB, C, V, verseData, ourGlobals ):
+    def composeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         """
         Composes a single line representing a verse.
 

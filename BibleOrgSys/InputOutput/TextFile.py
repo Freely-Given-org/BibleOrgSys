@@ -27,16 +27,6 @@ Module for reading and parsing simple text control files.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2016-12-28' # by RJH
-SHORT_PROGRAM_NAME = "TextFile"
-PROGRAM_NAME = "Text File"
-PROGRAM_VERSION = '0.03'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import os.path
 import logging
 
@@ -49,11 +39,20 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
+LAST_MODIFIED_DATE = '2016-12-28' # by RJH
+SHORT_PROGRAM_NAME = "TextFile"
+PROGRAM_NAME = "Text File"
+PROGRAM_VERSION = '0.03'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
+
+
 
 class TextFile:
     """
     """
-    def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ):
+    def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ) -> None:
         if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
             vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding, autoLoad ) )
 

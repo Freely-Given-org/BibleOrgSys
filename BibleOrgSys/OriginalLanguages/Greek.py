@@ -27,18 +27,7 @@ Module handling Greek language particularities.
 """
 
 from gettext import gettext as _
-
-LAST_MODIFIED_DATE = '2016-06-07' # by RJH
-SHORT_PROGRAM_NAME = "GreekLanguageHandler"
-PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.02'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-debuggingThisModule = False
-
-
 import unicodedata
-
 
 if __name__ == '__main__':
     import sys
@@ -48,6 +37,14 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+
+LAST_MODIFIED_DATE = '2016-06-07' # by RJH
+SHORT_PROGRAM_NAME = "GreekLanguageHandler"
+PROGRAM_NAME = "Greek language handler"
+PROGRAM_VERSION = '0.02'
+programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+debuggingThisModule = False
 
 
 # Consonants
@@ -164,7 +161,7 @@ class Greek():
     """
     Class for handling a Greek string.
     """
-    def __init__( self, text ):
+    def __init__( self, text ) -> None:
         """ Create an new Greek object. """
         self.originalText = text
         self.currentText = text

@@ -187,7 +187,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
 
 
 
-def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleRTFLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject, myGlobals ):
     """
     self here is a BibleObject
 
@@ -409,7 +409,7 @@ def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals 
 # end of ESwordModule.handleRTFLine
 
 
-def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleHTMLLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject, myGlobals ):
     """
     self here is a BibleObject
 
@@ -504,7 +504,7 @@ def handleHTMLLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals
 # end of ESwordModule.handleHTMLLine
 
 
-def handleESwordLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleESwordLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject, myGlobals ):
     """
     self here is a BibleObject
 
@@ -550,7 +550,7 @@ class ESwordBible( Bible ):
     """
     Class for reading, validating, and converting ESwordBible files.
     """
-    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenFilename, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -579,7 +579,7 @@ class ESwordBible( Bible ):
     # end of ESwordBible.__init__
 
 
-    #def handleRTFLine( self, myName, BBB, C, V, originalLine, bookObject, myGlobals ):
+    #def handleRTFLine( self, myName, BBB:str, C:str, V:str, originalLine, bookObject, myGlobals ):
         #"""
         #Adjusts the formatting of the RTF line for Bible reference BBB C:V
             #and then writes it to the bookObject.
@@ -804,7 +804,7 @@ class ESwordBible( Bible ):
         fnPrint( debuggingThisModule, "preload()" )
 
         vPrint( 'Info', debuggingThisModule, _("Preloading {}…").format( self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -899,7 +899,7 @@ class ESwordBible( Bible ):
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         #fileExtensionUpper = self.fileExtension.upper()
         #if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -1089,7 +1089,7 @@ class ESwordBible( Bible ):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         vPrint( 'Info', debuggingThisModule, _("Loading {} from {}…").format( BBB, self.sourceFilepath ) )
-        loadErrors = []
+        loadErrors:List[str] = []
 
         # Create the book
         thisBook = BibleBook( self, BBB )
@@ -1171,7 +1171,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
     from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
-    def adjustLine( BBB, C, V, originalLine ):
+    def adjustLine( BBB:str, C:str, V:str, originalLine ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
@@ -1254,7 +1254,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     # end of toESword.adjustLine
 
 
-    def handleIntroduction( BBB, bookData, ourGlobals ):
+    def handleIntroduction( BBB:str, bookData, ourGlobals ):
         """
         Go through the book introduction (if any) and extract main titles for e-Sword export.
 
@@ -1299,7 +1299,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     # end of toESword.handleIntroduction
 
 
-    def composeVerseLine( BBB, C, V, verseData, ourGlobals ):
+    def composeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         """
         Composes a single line representing a verse.
 
@@ -1462,7 +1462,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
     # end of toESword.composeVerseLine
 
 
-    def writeESwordBibleBook( sqlObject, BBB, ourGlobals ):
+    def writeESwordBibleBook( sqlObject, BBB:str, ourGlobals ):
         """
         Writes a book to the e-Sword sqlObject file.
         """
