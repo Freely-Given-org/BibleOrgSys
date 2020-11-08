@@ -80,10 +80,10 @@ from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
 #from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2020-11-08' # by RJH
 SHORT_PROGRAM_NAME = "UnknownBible"
 PROGRAM_NAME = "Unknown Bible object handler"
-PROGRAM_VERSION = '0.36'
+PROGRAM_VERSION = '0.37'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -668,9 +668,8 @@ class UnknownBible:
                 #   so let's try again without the strict check
                 vPrint( 'Info', debuggingThisModule, "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
-                if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
+                vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
                 totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
         elif totalBibleCount > 1:
             if totalBibleTypes == 1:
@@ -689,12 +688,10 @@ class UnknownBible:
                 self.foundType = 'Many types found'
                 if not strictCheck:
                     # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: retrying with strict checking criteria" )
+                    vPrint( 'Info', debuggingThisModule, "UnknownBible.search: retrying with strict checking criteria" )
                     totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
-                    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                        vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                        vPrint( 'Quiet', debuggingThisModule, "  UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
+                    vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                    vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
                     totalBibleCount, totalBibleTypes, typesFound = totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
             if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
                 # If there's only one of a particular type, we'll go for that one
@@ -882,22 +879,22 @@ def briefDemo() -> None:
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', debuggingThisModule, "  A2 result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A2 result2 is: {}".format( result2 ) )
+        vPrint( 'Info', debuggingThisModule, "  A2 strict result1 is: {}".format( result1 ) )
+        vPrint( 'Info', debuggingThisModule, "  A2 strict result2 is: {}".format( result2 ) )
         vPrint( 'Quiet', debuggingThisModule, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A2 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A2 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A2 strict result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A2 strict result4 is: {}".format( result4 ) )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
         #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
@@ -1044,22 +1041,22 @@ def fullDemo() -> None:
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', debuggingThisModule, "  A2 result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A2 result2 is: {}".format( result2 ) )
+        vPrint( 'Info', debuggingThisModule, "  A2 strict result1 is: {}".format( result1 ) )
+        vPrint( 'Info', debuggingThisModule, "  A2 strict result2 is: {}".format( result2 ) )
         vPrint( 'Quiet', debuggingThisModule, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A2 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A2 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A2 strict result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', debuggingThisModule, "  A2 strict result4 is: {}".format( result4 ) )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
         #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )

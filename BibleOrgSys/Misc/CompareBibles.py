@@ -93,7 +93,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-07-09' # by RJH
+LAST_MODIFIED_DATE = '2020-11-05' # by RJH
 SHORT_PROGRAM_NAME = "CompareBibles"
 PROGRAM_NAME = "Bible compare analyzer"
 PROGRAM_VERSION = '0.27'
@@ -165,7 +165,7 @@ DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_COMMON = (
                     r'\\f \\+ [^\\][^f][^r][^ ]', # Footnote that doesn't start with \fr
                     r'\\fr [0-9]{1,3}:[0-9]{1,3} [^\\][^f][^t][^ ]', # Footnote that doesn't start with \ft
                     r'\\fr [0-9]{1,3}:[0-9]{1,3}-[0-9]{1,3} [^\\][^f][^t][^ ]', # Bridged footnote that doesn't start with \ft
-                    r'[^.?!)”*]\\f\*', # Footnote that doesn't end with period, etc.
+                    r'[^.?!)”’*]\\f\*', # Footnote that doesn't end with period, etc.
                     r'\\x [^+][^ ]', # Cross-reference that doesn't start with +
                     r'\\x \\+ [^\\][^x][^o][^ ]', # Cross-reference that doesn't start with \ft
                     r'\\xo [0-9]{1,3}:[0-9]{1,3}(-[0-9]{1,3})? ', # Cross-reference (incl. bridged) that doesn't end with colon
@@ -489,7 +489,8 @@ def compareBooksPedantic( book1, book2,
         elif marker1 == 'v':
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
+        elif C == '-1' and marker1!='intro' and marker1[0]!='¬':
+            V = str( int(V) + 1 )
         #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
@@ -1095,7 +1096,7 @@ def briefDemo() -> None:
     vPrint( 'Quiet', debuggingThisModule, "\nLoading USFM Bible…" )
     name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
     name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
-    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
+    MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'C','c','F','f','J','j','O','o','Q','q','V','v','X','x','Z','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
                              'Your ','your ','yours ',' the the ', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_BACK_TRANSLATION

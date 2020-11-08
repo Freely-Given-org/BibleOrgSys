@@ -44,10 +44,10 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2020-04-22' # by RJH
+LAST_MODIFIED_DATE = '2020-11-08' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
-PROGRAM_VERSION = '0.38'
+PROGRAM_VERSION = '0.39'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -67,7 +67,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
     if autoLoad is true and exactly one USX Bible is found,
         returns the loaded USXXMLBible object.
     """
-    fnPrint( debuggingThisModule, "USXXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, f"USXXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -161,6 +161,8 @@ class USXXMLBible( Bible ):
         """
         Create the internal USX Bible object.
         """
+        fnPrint( debuggingThisModule, f"USXXMLBible.__init__( {givenFolderName}, {givenName}, {givenAbbreviation}, {encoding} )" )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'USX XML Bible object'
@@ -181,7 +183,7 @@ class USXXMLBible( Bible ):
         """
         Tries to determine USX filename pattern.
         """
-        vPrint( 'Info', debuggingThisModule, "USXXMLBible preload() from {}".format( self.sourceFolder ) )
+        fnPrint( debuggingThisModule, f"USXXMLBible.preload() from {self.sourceFolder}" )
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
@@ -215,7 +217,7 @@ class USXXMLBible( Bible ):
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                vPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )

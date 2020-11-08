@@ -40,10 +40,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2020-11-08' # by RJH
 SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
-PROGRAM_VERSION = '0.54'
+PROGRAM_VERSION = '0.55'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -66,7 +66,14 @@ class USXFilenames:
     def __init__( self, givenFolderName ) -> None:
         """
         Create the object by inspecting files in the given folder.
+
+        Creates a self.pattern (Paratext template) for USFM filenames where
+            nnn = language code (lower case) or NNN = language code (UPPER CASE)
+            bbb = book code (lower case) or BBB = book code (UPPER CASE)
+            dd = digits
         """
+        fnPrint( debuggingThisModule, f"USXFilenames.__init__( {givenFolderName} )" )
+
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -98,7 +105,7 @@ class USXFilenames:
 
         matched = False
         for foundFilename in self.fileList:
-            #dPrint( 'Quiet', debuggingThisModule, foundFilename )
+            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames found {foundFilename}" )
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
             containsDigits = False
@@ -108,41 +115,50 @@ class USXFilenames:
                     break
             #matched = False
             #dPrint( 'Quiet', debuggingThisModule, repr(foundFileBit), foundLength, containsDigits, repr(foundExtBit) )
-            if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
-                    #dPrint( 'Quiet', debuggingThisModule, USXBookCode,USXDigits,BBB )
-                    if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
-                        digitsIndex = foundFileBit.index( USXDigits )
-                        USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
-                        USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                        #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, USXBookCodeIndex )
-                        if foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
-                            self.digitsIndex = digitsIndex
-                            self.hyphenIndex = None
-                            self.USXBookCodeIndex = USXBookCodeIndex
-                            self.pattern = 'dddbbb'
-                        else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
-                        if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                        self.fileExtension = foundExtBit[1:]
-                        matched = True
-                        break
-                    elif USXDigits[1:] in foundFileBit and '-' in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
-                        digitsIndex = foundFileBit.index( USXDigits[1:] ) # Without the leading zero for the 66 books
-                        hyphenIndex = foundFileBit.index( '-' )
-                        USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
-                        USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                        #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, hyphenIndex, USXBookCodeIndex )
-                        if foundLength==6 and digitsIndex==0 and hyphenIndex==2 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
-                            self.digitsIndex = digitsIndex
-                            self.hyphenIndex = hyphenIndex
-                            self.USXBookCodeIndex = USXBookCodeIndex
-                            self.pattern = 'dd-bbb'
-                        else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
-                        if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                        self.fileExtension = foundExtBit[1:]
-                        matched = True
-                        break
-            if matched: break
+            if foundExtBit == f'.{self.fileExtension}' or foundExtBit.lower() == f'.{self.fileExtension}':
+                self.fileExtension = foundExtBit[1:]
+                if foundLength == 3:
+                    self.hyphenIndex = None
+                    for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                        if foundFileBit == BBB:
+                            self.pattern = 'BBB'
+                            matched = True
+                        elif foundFileBit.upper() == BBB:
+                            self.pattern = 'bbb'
+                            matched = True
+                elif foundLength>=6 and containsDigits:
+                    for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                        #dPrint( 'Quiet', debuggingThisModule, USXBookCode,USXDigits,BBB )
+                        if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
+                            digitsIndex = foundFileBit.index( USXDigits )
+                            USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
+                            USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
+                            #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, USXBookCodeIndex )
+                            if foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
+                                self.digitsIndex = digitsIndex
+                                self.hyphenIndex = None
+                                self.USXBookCodeIndex = USXBookCodeIndex
+                                self.pattern = 'dddbbb'
+                            else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
+                            if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
+                            matched = True
+                            break
+                        elif USXDigits[1:] in foundFileBit and '-' in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
+                            digitsIndex = foundFileBit.index( USXDigits[1:] ) # Without the leading zero for the 66 books
+                            hyphenIndex = foundFileBit.index( '-' )
+                            USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
+                            USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
+                            #dPrint( 'Quiet', debuggingThisModule, foundLength, digitsIndex, containsDigits, hyphenIndex, USXBookCodeIndex )
+                            if foundLength==6 and digitsIndex==0 and hyphenIndex==2 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
+                                self.digitsIndex = digitsIndex
+                                self.hyphenIndex = hyphenIndex
+                                self.USXBookCodeIndex = USXBookCodeIndex
+                                self.pattern = 'dd-bbb'
+                            else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
+                            if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
+                            matched = True
+                            break
+                if matched: break
         #dPrint( 'Quiet', debuggingThisModule, matched )
         if BibleOrgSysGlobals.verbosityLevel>2 and not matched:
             logging.info( _("Unable to recognize valid USX files in ") + str(self.givenFolderName) )
@@ -183,7 +199,8 @@ class USXFilenames:
                 then add them as a 2-tuple.
             If there is a duplicate, remove both (as we're obviously unsure).
         """
-        #dPrint( 'Quiet', debuggingThisModule, f"doListAppend( {BBB}, {filename}, {givenList}, {caller} )…" )
+        fnPrint( debuggingThisModule, f"USXFilenames.doListAppend( {BBB}, {filename}, {givenList}, {caller} )" )
+
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
@@ -203,13 +220,21 @@ class USXFilenames:
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
+        fnPrint( debuggingThisModule, "USXFilenames.getDerivedFilenameTuples()" )
+
         resultList = []
         if self.pattern:
             for USFMBookCode,USXDigits,BBB in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 if self.hyphenIndex is None:
-                    filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
-                else: # have a hyphen so assumeonly two digits
+                    if self.pattern == 'BBB':
+                        filename = USFMBookCode.upper()
+                    elif self.pattern == 'bbb':
+                        filename = USFMBookCode.lower()
+                    else:
+                        filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
+                        filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
+                else: # have a hyphen so assume only two digits
                     if USXDigits.isdigit():
                         USXInt = int( USXDigits )
                         if USXInt > 39:
@@ -217,8 +242,8 @@ class USXFilenames:
                             USXDigits = '0'*(3-len(USXDigits)) + USXDigits
                             #dPrint( 'Quiet', debuggingThisModule, repr(USXDigits) ); halt
                     filename = filename[:self.digitsIndex] + USXDigits[1:] + filename[self.digitsIndex+len(USXDigits)-1:]
-                filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
-                filename += '.' + self.fileExtension
+                    filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
+                filename += f'.{self.fileExtension}'
                 #dPrint( 'Quiet', debuggingThisModule, "getDerivedFilenames: Filename is {!r}".format( filename ) )
                 resultList.append( (BBB,filename,) )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
@@ -233,10 +258,12 @@ class USXFilenames:
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
+        fnPrint( debuggingThisModule, f"USXFilenames.getConfirmedFilenameTuples( {strictCheck} )" )
+
         resultList = []
         for BBB,possibleFilename in self.getDerivedFilenameTuples():
             possibleFilepath = os.path.join( self.givenFolderName, possibleFilename )
-            #dPrint( 'Quiet', debuggingThisModule, '  Looking for: ' + possibleFilename )
+            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getConfirmedFilenameTuples looking for: {possibleFilename}" )
             if os.access( possibleFilepath, os.R_OK ):
                 #dPrint( 'Quiet', debuggingThisModule, "possibleFilepath", possibleFilepath )
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
@@ -260,12 +287,12 @@ class USXFilenames:
                 i.e., look only externally at the filenames.
             If the strictCheck flag is set, the program also looks at the first line(s) inside the files.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuples()" )
+        fnPrint( debuggingThisModule, f"USXFilenames.getPossibleFilenameTuples( {strictCheck} )" )
         #dPrint( 'Quiet', debuggingThisModule, "self.fileList", len(self.fileList), self.fileList )
 
         resultList = []
         for possibleFilename in self.fileList:
-            #dPrint( 'Quiet', debuggingThisModule, len(resultList), possibleFilename )
+            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getPossibleFilenameTuples looking for: {possibleFilename}" )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
@@ -299,6 +326,7 @@ class USXFilenames:
         Return a list of filenames which didn't match the USFX template.
             The order of the filenames in the list has no meaning.
         """
+        fnPrint( debuggingThisModule, "USXFilenames.getUnusedFilenames()" )
         folderFilenames = os.listdir( self.givenFolderName )
         actualFilenames = self.getConfirmedFilenameTuples()
         filelist = []

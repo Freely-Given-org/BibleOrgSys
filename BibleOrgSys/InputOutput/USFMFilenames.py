@@ -39,10 +39,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-01-13' # by RJH
+LAST_MODIFIED_DATE = '2020-11-08' # by RJH
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
-PROGRAM_VERSION = '0.68'
+PROGRAM_VERSION = '0.69'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -93,12 +93,12 @@ class USFMFilenames:
         """
         Create the object by inspecting files in the given folder.
 
-            Creates a self.pattern (Paratext template) for USFM filenames where
-                nnn = language code (lower case) or NNN = language code (UPPER CASE)
-                bbb = book code (lower case) or BBB = book code (UPPER CASE)
-                dd = digits
+        Creates a self.pattern (Paratext template) for USFM filenames where
+            nnn = language code (lower case) or NNN = language code (UPPER CASE)
+            bbb = book code (lower case) or BBB = book code (UPPER CASE)
+            dd = digits
         """
-        fnPrint( debuggingThisModule, f"USFMFilenames( {givenFolderName} )" )
+        fnPrint( debuggingThisModule, f"USFMFilenames.__init__( {givenFolderName} )" )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -150,7 +150,7 @@ class USFMFilenames:
                             self.languageCode = None
                             self.digitsIndex = digitsIndex
                             self.USFMBookCodeIndex = None
-                            self.pattern = "Dd_BEName"
+                            self.pattern = 'Dd_BEName'
                             self.fileExtension = foundExtBit[1:]
                             matched = True
                             break
@@ -162,7 +162,7 @@ class USFMFilenames:
                             self.languageCode = None
                             self.digitsIndex = 0
                             self.USFMBookCodeIndex = None
-                            self.pattern = "dd-OEBName"
+                            self.pattern = 'dd-OEBName'
                             self.fileExtension = foundExtBit[1:]
                             matched = True
                             break
@@ -189,7 +189,7 @@ class USFMFilenames:
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
                             self.USFMBookCodeIndex = USFMBookCodeIndex
-                            self.pattern = "ddbbb" + 'l'*(foundLength-5)
+                            self.pattern = 'ddbbb' + 'l'*(foundLength-5)
                             matched = True
                         elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
                             if debuggingThisModule:
@@ -198,7 +198,7 @@ class USFMFilenames:
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
                             self.USFMBookCodeIndex = USFMBookCodeIndex
-                            self.pattern = "lllddbbb"
+                            self.pattern = 'lllddbbb'
                             matched = True
                         else: # we'll try to be more generic
                             if debuggingThisModule:

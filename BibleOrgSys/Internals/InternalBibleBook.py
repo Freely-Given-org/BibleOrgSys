@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-08-20' # by RJH
+LAST_MODIFIED_DATE = '2020-11-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -4014,8 +4014,8 @@ class InternalBibleBook:
 
             if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, f"{self.BBB} {C}:{V} {marker} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openSpeechChars} '{cleanText}'" )
             if openSpeechChars:
-                if newSection and closeQuotesAtSectionEnd \
-                or newParagraph and closeQuotesAtParagraphEnd:
+                if (newSection and closeQuotesAtSectionEnd) \
+                or (newParagraph and closeQuotesAtParagraphEnd):
                     match = openSpeechChars if len(openSpeechChars)>1 else "{!r}".format( openSpeechChars[0] )
                     speechMarkErrors.append( lineLocationSpace + _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
                     logging.error( _("Unclosed speech marks matching {} before {} marker at").format( match, bitMarker ) \
@@ -4023,7 +4023,7 @@ class InternalBibleBook:
                     self.addPriorityError( 56, C, V, _("Unclosed speech marks matching {} before {} marker").format( match, bitMarker ) )
                     if debuggingThisFunction: dPrint( 'Normal', debuggingThisModule, f'Gave "Unclosed speech marks matching {match} before {bitMarker} marker" error' )
                     openSpeechChars = []
-                elif newParagraph and reopenQuotesAtParagraph and not startsWithOpen:
+                elif newParagraph and reopenQuotesAtParagraph and V!='0' and not startsWithOpen:
                     match = openSpeechChars if len(openSpeechChars)>1 else "{!r}".format( openSpeechChars[0] )
                     speechMarkErrors.append( lineLocationSpace \
                                                 + _("Unclosed speech marks matching {} before {} marker or missing reopening quotes at v{}").format( match, originalMarker, V ) )

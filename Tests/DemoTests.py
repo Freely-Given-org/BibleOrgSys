@@ -70,7 +70,7 @@ debuggingThisModule = False
 ##################################################################################################
 
 testDemos = True # Setting to False only checks importing (very fast)
-testFullDemos = False # Setting to False only runs briefDemos
+testFullDemos = False # Setting to False only runs briefDemos (20-30 mins cf. 2-3 hrs)
 
 testDefault = True
 #testStrict = False
