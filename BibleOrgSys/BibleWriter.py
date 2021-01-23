@@ -10455,7 +10455,7 @@ def fullDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, f"\nBibleWriter B{j+1}/ {abbrev} from {testFolder}…" )
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, givenName=name, givenAbbreviation=abbrev )
-                if name in ('ULT','UST'): UB.uWaligned = True
+                if name in ('ULT','UST'): UB.uWencoded = True
                 UB.load()
                 vPrint( 'Quiet', debuggingThisModule, f" {UB}" )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()

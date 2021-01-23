@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,7 +40,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNamesConverter"
 PROGRAM_NAME = "Bible Books Names Systems converter"
 PROGRAM_VERSION = '0.36'
@@ -500,7 +500,7 @@ class BibleBooksNamesConverter:
             #if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
             #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.XMLTree), self.XMLTreeTag ) )
-            json.dump( self.__BookNamesSystemsDict, myFile, indent=2 )
+            json.dump( self.__BookNamesSystemsDict, myFile, ensure_ascii=False, indent=2 )
             #myFile.write( "\n\n# end of {}".format(os.path.basename(filepath) )
     # end of exportDataToJSON
 

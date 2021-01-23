@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,6 +33,7 @@ Contains functions:
 Contains the singleton class: USFM3Markers
 """
 from gettext import gettext as _
+from typing import List, Optional
 import os
 import logging
 
@@ -46,10 +47,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-20' # by RJH
+LAST_MODIFIED_DATE = '2021-01-10' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.09'
+PROGRAM_VERSION = '0.10'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -520,7 +521,7 @@ class USFM3Markers:
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #dPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
-            if self.markerOccursIn(marker) in ("Text","Canonical Text","Poetry","Table row","Introduction",):
+            if self.markerOccursIn(marker) in ('Text','Canonical Text','Poetry','Table row','Introduction','Numbering'):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
                 if includeNestedMarkers:
@@ -561,7 +562,7 @@ class USFM3Markers:
     # end of USFM3Markers.getTypicalNoteSets
 
 
-    def getMarkerListFromText( self, text, includeInitialText=False, verifyMarkers=False ):
+    def getMarkerListFromText( self, text:str, includeInitialText:Optional[bool]=False, verifyMarkers:Optional[bool]=False ) -> List[str]:
         """
         Given a text, return a dict of the actual markers
             (along with their positions and other useful derived information).
@@ -582,7 +583,7 @@ class USFM3Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        fnPrint( debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )…" )
+        fnPrint( debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )" )
         if not text: return []
 
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above

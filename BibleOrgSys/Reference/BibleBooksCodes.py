@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-07-02' # by RJH
+LAST_MODIFIED_DATE = '2021-01-01' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -694,6 +694,17 @@ class BibleBooksCodes:
                 htmlFile.write( "</table></body></html>\n" )
     # end of BibleBooksCodes.createLists
 # end of BibleBooksCodes class
+
+
+
+def tidyBBB( BBB:str ) -> str:
+    """
+    Change book codes like SA1 to the conventional 1SA.
+
+    BBB is always three characters starting with an UPPERCASE LETTER.
+    """
+    return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
+# end of tidyBBB
 
 
 

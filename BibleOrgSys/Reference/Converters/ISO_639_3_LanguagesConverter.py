@@ -5,7 +5,7 @@
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "ISOLanguagesConverter"
 PROGRAM_NAME = "ISO 639_3_Languages handler"
 PROGRAM_VERSION = '0.84'
@@ -291,7 +291,7 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
         vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            json.dump( self.__DataDicts, myFile, indent=2 )
+            json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
 
     def exportDataToC( self, filepath=None ):

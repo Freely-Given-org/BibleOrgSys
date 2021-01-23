@@ -5,7 +5,7 @@
 #
 # Module handling USFM2Markers.xml to produce C and Python data tables
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import vPrint
 
 
-LAST_MODIFIED_DATE = '2020-03-31' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "USFM2MarkersConverter"
 PROGRAM_NAME = "USFM2 Markers converter"
 PROGRAM_VERSION = '0.64'
@@ -454,7 +454,7 @@ class USFM2MarkersConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
         vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            json.dump( self.__DataDicts, myFile, indent=2 )
+            json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
 
     def exportDataToC( self, filepath=None ):

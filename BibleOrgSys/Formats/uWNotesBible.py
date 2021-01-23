@@ -5,7 +5,7 @@
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020 Robert Hunt
+# Copyright (C) 2020-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,7 +56,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-05-12' # by RJH
+LAST_MODIFIED_DATE = '2021-01-01' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
 PROGRAM_VERSION = '0.03'
@@ -78,8 +78,8 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
     Load the given YAML file
         and return the settings dict.
     """
-    debuggingThisFunction = False
-    fnPrint( debuggingThisModule or debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )" )
+    debuggingThisFunction = debuggingThisModule or False
+    fnPrint( debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )" )
 
     # import yaml
     # yamlDict = yaml.safe_load( YAMLFilepath )

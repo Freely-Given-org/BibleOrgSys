@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2020-07-12' # by RJH
+LAST_MODIFIED_DATE = '2021-01-10' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.88'
@@ -152,8 +152,8 @@ if debuggingThisModule:
 OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # } The length and order of these
 CLOSING_SPEECH_CHARACTERS = """”»"’›?!""" # }  two strings must match
 assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
-MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
-MATCHING_CLOSING_CHARACTERS = {')':'(', ']':'[', '}':'{', '>':'<', '>>':'<<', '”':'“', '‘':'‘', '»':'«', '›':'‹', '?':'¿', '!':'¡', }
+MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'’', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
+MATCHING_CLOSING_CHARACTERS = {')':'(', ']':'[', '}':'{', '>':'<', '>>':'<<', '”':'“', '’':'‘', '»':'«', '›':'‹', '?':'¿', '!':'¡', }
 assert len(MATCHING_OPENING_CHARACTERS) == len(MATCHING_CLOSING_CHARACTERS)
 MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
@@ -251,12 +251,13 @@ def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
     if debugFlag: increaseLevel += 1
     #dPrint( 'Info', debuggingThisModule, "args1", len(args), repr(args) )
+    args0 = f'FN: {args[0]}'
     if not kwargs and args \
     and isinstance( args[-1], str ) and not args[-1].endswith( '…' ):
-        args = ( f'{args[0]}…', ) if len(args)==1 else ( args[:-1], f'{args[-1]}…', ) # Append an ellipsis
+        args = ( f'{args0}…', ) if len(args)==1 else ( args0, args[1:-1], f'{args[-1]}…', ) # Append an ellipsis
     #dPrint( 'Info', debuggingThisModule, "args2", len(args), repr(args) )
     #dPrint( 'Quiet', increaseLevel, *args, **kwargs ) # Only for debugging programme flow
-    vPrint( 'Verbose', increaseLevel, *args, **kwargs )
+    vPrint( 'Never', increaseLevel, *args, **kwargs )
 # end of BibleOrgSysGlobals.fnPrint function
 
 
@@ -1436,6 +1437,7 @@ def setStrictCheckingFlag( newValue=True ):
 loadedBibleBooksCodes:Optional[List[str]] = None
 loadedUSFMMarkers:Optional[List[str]] = None
 USFMParagraphMarkers:Optional[List[str]] = None
+USFMCharacterMarkers:Optional[List[str]] = None
 internal_SFMs_to_remove:Optional[List[str]] = None
 
 def preloadCommonData() -> None:
@@ -1444,7 +1446,7 @@ def preloadCommonData() -> None:
         This includes BibleBooksCode and USFMMarkers
     """
     # Load Bible data sets that are globally useful
-    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, internal_SFMs_to_remove
+    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, internal_SFMs_to_remove
     from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
     loadedBibleBooksCodes = BibleBooksCodes().loadData()
     assert loadedBibleBooksCodes # Why didn't this load ???
@@ -1467,8 +1469,10 @@ def preloadCommonData() -> None:
     loadedUSFMMarkers = USFM3Markers().loadData()
     assert loadedUSFMMarkers # Why didn't this load ???
     USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
-    assert USFMParagraphMarkers # Why didn't this work ???
+    assert USFMParagraphMarkers # Why didn't the above line work ???
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
+    USFMCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList()
+    assert USFMCharacterMarkers # Why didn't the above line work ???
     internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
     internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
 # end of BibleOrgSysGlobals.preloadCommonData

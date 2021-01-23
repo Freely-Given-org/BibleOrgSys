@@ -5,7 +5,7 @@
 #
 # Module handling BibleReferencesLinks.xml to produce C and Python data tables
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey, FlexibleVersesKey
 
 
-LAST_MODIFIED_DATE = '2020-05-18' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinksConverter"
 PROGRAM_NAME = "Bible References Links converter"
 PROGRAM_VERSION = '0.41'
@@ -568,15 +568,15 @@ class BibleReferencesLinksConverter:
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             for something in self.__DataList: # temp for debugging … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 vPrint( 'Quiet', debuggingThisModule, "Dumping something", something )
-                json.dump( something, myFile, indent=2 )
-            json.dump( self.__DataList, myFile, indent=2 )
+                json.dump( something, myFile, ensure_ascii=False, indent=2 )
+            json.dump( self.__DataList, myFile, ensure_ascii=False, indent=2 )
 
             for someKey,someItem in self.__DataDict.items(): # temp for debugging … xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                 vPrint( 'Quiet', debuggingThisModule, "Dumping someKey", someKey )
-                json.dump( someKey, myFile, indent=2 )
+                json.dump( someKey, myFile, ensure_ascii=False, indent=2 )
                 vPrint( 'Quiet', debuggingThisModule, "Dumping someItem", someItem )
-                json.dump( someItem, myFile, indent=2 )
-            json.dump( self.__DataDict, myFile, indent=2 )
+                json.dump( someItem, myFile, ensure_ascii=False, indent=2 )
+            json.dump( self.__DataDict, myFile, ensure_ascii=False, indent=2 )
     # end of BibleReferencesLinksConverter.exportDataToJSON
 
 

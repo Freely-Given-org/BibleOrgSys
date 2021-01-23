@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
 PROGRAM_VERSION = '0.81'
@@ -711,7 +711,7 @@ class BibleBooksCodesConverter:
         vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             # WARNING: The following code converts int referenceNumber keys from int to str !!!
-            json.dump( self.__DataDicts, myFile, indent=2 )
+            json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of BibleBooksCodesConverter.exportDataToJSON
 
 

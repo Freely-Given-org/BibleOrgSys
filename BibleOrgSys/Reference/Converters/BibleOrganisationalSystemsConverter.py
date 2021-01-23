@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganisationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -47,7 +47,7 @@ from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSy
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
 
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystemsConverter"
 PROGRAM_NAME = "Bible Organisation Systems converter"
 PROGRAM_VERSION = '0.27'
@@ -444,7 +444,7 @@ class BibleOrganisationalSystemsConverter:
             #if self.PROGRAM_VERSION: myFile.write( "#  Version: {}\n".format( self.PROGRAM_VERSION ) )
             #if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
             #myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLTree), self._treeTag ) )
-            json.dump( self.__dataDicts, myFile, indent=2 )
+            json.dump( self.__dataDicts, myFile, ensure_ascii=False, indent=2 )
             #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToJSON
 

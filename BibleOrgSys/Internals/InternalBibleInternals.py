@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-07-07' # by RJH
+LAST_MODIFIED_DATE = '2021-01-01' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.79'
@@ -167,8 +167,7 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
 
     TODO: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )…" )
+    fnPrint( debuggingThisModule, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )…" )
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
@@ -234,7 +233,8 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
         assert value
         resultDict[name] = value
         state = 0
-    assert state == 0
+    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        assert state == 0
     #dPrint( 'Quiet', debuggingThisModule, "Returning2: {}".format( resultDict ) )
     return resultDict
 # end of parseWordAttributes
@@ -263,8 +263,7 @@ def parseFigureAttributes( workName, BBB:str, C:str, V:str, figureAttributeStrin
 
     NOTE: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
+    fnPrint( debuggingThisModule, "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
@@ -353,9 +352,8 @@ class InternalBibleExtra:
 
         location parameter is just for better error messages and is not currently stored.
         """
+        fnPrint( debuggingThisModule, "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, indexToAdjText, noteText, cleanNoteText, location ) )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, indexToAdjText, noteText, cleanNoteText, location ) )
             assert myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES # Mustn't be blank
             assert '\\' not in myType and ' ' not in myType and '*' not in myType
             assert isinstance( indexToAdjText, int ) and indexToAdjText >= 0
@@ -787,7 +785,7 @@ class InternalBibleEntryList:
         """
         Append the newBibleEntry to the InternalBibleEntryList.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntryList.append( {} )".format( newBibleEntry ) )
+        fnPrint( debuggingThisModule, f"InternalBibleEntryList.append( {newBibleEntry} )" )
         assert isinstance( newBibleEntry, InternalBibleEntry )
         self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append

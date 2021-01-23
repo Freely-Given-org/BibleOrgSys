@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ To use the InternalBibleBook class,
     Finally, call makeBookCVIndex() to index _processedLines by CV.
 """
 from gettext import gettext as _
-from typing import List, Tuple, Optional, Union
+from typing import Dict, List, Tuple, Optional, Union
 import os
 from pathlib import Path
 import logging
@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2020-11-05' # by RJH
+LAST_MODIFIED_DATE = '2021-01-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -121,121 +121,131 @@ def hasClosingPunctuation( text:str ) -> bool:
 def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
                         -> List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]:
     """
-    Cleans up the unfoldingWord alignment info first
+    Cleans up the unfoldingWord alignment info for the given book
 
     Returns the cleaned-up list
     """
-    #debuggingThisModule = False
-    fnPrint( debuggingThisModule, f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
+    debuggingThisFunction = debuggingThisModule or False #(99 if BBB=='TI1' else False)
+    fnPrint( debuggingThisFunction, f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
 
-    vPrint( 'Verbose', debuggingThisModule, f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
+    vPrint( 'Verbose', debuggingThisFunction, f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
     maxOriginalWords = maxTranslatedWords = 0
     cleanedAlignmentList:List[Tuple[str,str,str,str]] = []
-    for j, (C,V, textString,wordsString) in enumerate( originalAlignments, start=1 ):
-        dPrint( 'Never', debuggingThisModule, f"cleanUWalignments {j} {BBB} {C}:{V} '{textString}'\n    = '{wordsString}'" )
+    for j, (C,V, originalLanguageTextString,translatedWordsString) in enumerate( originalAlignments, start=1 ):
+        if C == '1':
+            dPrint( 'Never', debuggingThisFunction, f"cleanUWalignmentsL {j} {BBB} {C}:{V} '{originalLanguageTextString}'\n    = '{translatedWordsString}'" )
 
         assert isinstance( C, str ) and C
         assert isinstance( V, str ) and V
 
-        assert isinstance( textString, str ) and textString
-        assert textString.startswith( 'x-strong="' )
-        assert '\\w' not in textString
-        assert 'x-strong="' in textString
-        assert 'x-lemma="' in textString
-        assert 'x-morph="' in textString
-        assert 'x-occurrence="' in textString
-        assert 'x-occurrences="' in textString
-        assert 'x-content="' in textString
+        assert isinstance( originalLanguageTextString, str ) and originalLanguageTextString
+        assert originalLanguageTextString.startswith( 'x-strong="' )
+        assert '\\w' not in originalLanguageTextString
+        assert 'x-strong="' in originalLanguageTextString
+        assert 'x-lemma="' in originalLanguageTextString
+        assert 'x-morph="' in originalLanguageTextString
+        assert 'x-occurrence="' in originalLanguageTextString
+        assert 'x-occurrences="' in originalLanguageTextString
+        assert 'x-content="' in originalLanguageTextString
 
-        assert isinstance( wordsString, str ) and wordsString
-        #dPrint( 'Quiet', debuggingThisModule, f"wordsString1='{wordsString}'" )
-        #assert not wordsString.startswith( ' ' )
-        wordsString = wordsString.lstrip()
-        assert not wordsString.endswith( ' ' )
+        assert isinstance( translatedWordsString, str ) and translatedWordsString
+        #dPrint( 'Quiet', debuggingThisFunction, f"translatedWordsString1='{translatedWordsString}'" )
+        #assert not translatedWordsString.startswith( ' ' )
+        translatedWordsString = translatedWordsString.lstrip()
+        assert not translatedWordsString.endswith( ' ' )
 
-        while True:
+        # Remove (unnecessary here) USFM paragraph markers
+        while True: # Keep looping as long as there's changes
             changedSomething = False
             for paragraphMarker in ('q','q1','q2','q3', 'p','m','pi','pi1',):
-                if wordsString.startswith( f'\\{paragraphMarker} ' ):
-                    vPrint( 'Never', debuggingThisModule, f"             Removing \\{paragraphMarker} number from '{wordsString}'" )
-                    wordsString = wordsString[len(paragraphMarker)+2:] # Remove the unwanted paragraph formatting
+                if translatedWordsString.startswith( f'\\{paragraphMarker} ' ):
+                    # vPrint( 'Never', debuggingThisFunction, f"             cleanUWalignments1 {BBB} {C}:{V}: Removing \\{paragraphMarker} number from '{translatedWordsString}'" )
+                    translatedWordsString = translatedWordsString[len(paragraphMarker)+2:] # Remove the unwanted paragraph formatting
                     changedSomething = True
                     break
             if not changedSomething: break
-        wordsString = wordsString.lstrip()
+        translatedWordsString = translatedWordsString.lstrip()
 
-        while '\\v ' in wordsString: # Remove the verse number
-            ix = wordsString.find( '\\v ' )
+        while '\\v ' in translatedWordsString: # Remove the verse number
+            ix = translatedWordsString.find( '\\v ' )
             assert ix != -1
-            vPrint( 'Never', debuggingThisModule, f"             Removing verse number from '{wordsString}'" )
-            assert wordsString[ix+3].isdigit()
-            ixSpace = wordsString[ix+3:].find( ' ' )
+            # vPrint( 'Never', debuggingThisFunction, f"             cleanUWalignments2 {BBB} {C}:{V}: Removing verse number from '{translatedWordsString}'" )
+            assert translatedWordsString[ix+3].isdigit()
+            ixSpace = translatedWordsString[ix+3:].find( ' ' )
             assert ixSpace != -1
-            wordsString = wordsString[:ix] + wordsString[ix+ixSpace+4:]
-            vPrint( 'Never', debuggingThisModule, f"               Removed verse number now '{wordsString[:20]}'…" )
-        assert '\\v' not in wordsString
+            translatedWordsString = translatedWordsString[:ix] + translatedWordsString[ix+ixSpace+4:]
+            # vPrint( 'Never', debuggingThisFunction, f"               cleanUWalignments3 {BBB} {C}:{V}: Removed verse number now '{translatedWordsString[:20]}'…" )
+        assert '\\v' not in translatedWordsString
 
-        if wordsString.startswith( '\\q '): wordsString = wordsString[3:] # Handle a bug in ULT Acts 4:25
+        if translatedWordsString.startswith( '\\q '): translatedWordsString = translatedWordsString[3:] # Handle a bug in ULT Acts 4:25
 
-        #dPrint( 'Quiet', debuggingThisModule, f"wordsString2='{wordsString}'" )
+        #dPrint( 'Quiet', debuggingThisFunction, f"translatedWordsString2='{translatedWordsString}'" )
         # Note the following code fails with two leading punct chars at Rev 16:15 ("\wLook …
-        if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-            assert wordsString.startswith( '\\w ' ) \
-                or ( wordsString[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—'
-                        and wordsString[1:].startswith( '\\w ' ) )
-        assert 'x-occurrence="' in wordsString
-        assert 'x-occurrences="' in wordsString
+        if 0 and debuggingThisFunction or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+            assert translatedWordsString.startswith( '\\w ' ) \
+                or ( translatedWordsString[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—-”' # Last two to cope with bad ULT data
+                        and translatedWordsString[1:].startswith( '\\w ' ) ) \
+                or ( translatedWordsString[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—-' # To cope with bad ULT data
+                        and translatedWordsString[1] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS + '—-'
+                        and translatedWordsString[2:].startswith( '\\w ' ) )
+        assert 'x-occurrence="' in translatedWordsString
+        assert 'x-occurrences="' in translatedWordsString
 
-        textCount = textString.count( '|' ) + 1 # Our separator character
+        textCount = originalLanguageTextString.count( '|' ) + 1 # Our separator character
         if textCount > maxOriginalWords: maxOriginalWords = textCount
-        #if textCount > 1 and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, f"  This one has {textCount} original language words" )
+        #if textCount > 1 and debuggingThisFunction:
+            #dPrint( 'Quiet', debuggingThisFunction, f"  This one has {textCount} original language words" )
         # Allow for x-strong, x-lemma and x-morph to be empty (originally it was just x-lemma)
         textRE = re.compile( r'x-strong="(.*?)" x-lemma="(.*?)" x-morph="(.*?)" x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})" x-content="(.+?)"' )
         textList = []
-        match =  textRE.search( textString )
+        match =  textRE.search( originalLanguageTextString )
         while match:
-            textList.append( (match.group(1),match.group(2),match.group(3),match.group(4),match.group(5),match.group(6)) )
+            # Convert occurrence and occurrences to ints (from digit strings) as we go
+            textList.append( (match.group(1),match.group(2),match.group(3),int(match.group(4)),int(match.group(5)),match.group(6)) )
             for xx in range(1,7):
                 if not match.group(xx):
-                    logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {textString}" )
+                    logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
                     # assert xx == 2 # It's the lemma field that's empty
             #index = match.end()
-            textString = f'{textString[:match.start()]}{textString[match.end():]}'
-            match =  textRE.search( textString )
-        #dPrint( 'Quiet', debuggingThisModule, f"{abbreviation} {BBB} {C}:{V} textString={textString!r}" )
-        if textString.replace( '|', '' ):
-            logging.critical( f"Got an unexpected uW {abbreviation} alignment field at {BBB} {C}:{V} in {textString}" )
+            originalLanguageTextString = f'{originalLanguageTextString[:match.start()]}{originalLanguageTextString[match.end():]}'
+            match =  textRE.search( originalLanguageTextString )
+        #dPrint( 'Quiet', debuggingThisFunction, f"{abbreviation} {BBB} {C}:{V} originalLanguageTextString={originalLanguageTextString!r}" )
+        if originalLanguageTextString.replace( '|', '' ):
+            logging.critical( f"Got an unexpected uW {abbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
         else: assert len(textList) == textCount
 
-        wordsCount = wordsString.count( '\\w ' )
+        wordsCount = translatedWordsString.count( '\\w ' )
         if wordsCount > maxTranslatedWords: maxTranslatedWords = wordsCount
-        assert wordsString.count( '\\w*' ) == wordsCount
-        #dPrint( 'Never', debuggingThisModule, f"  This one has {wordsCount} translated words" )
+        twsCount = translatedWordsString.count( '\\w*' )
+        if twsCount != wordsCount:
+            logging.critical( f"Programming error at {BBB} {C}:{V}: {twsCount} doesn't match {wordsCount} with '{translatedWordsString}'" )
+        assert twsCount == wordsCount # else mismatch between \\w and \\w* counts in string
+        #dPrint( 'Never', debuggingThisFunction, f"  This one has {wordsCount} translated words" )
         wordRE = re.compile( r'\\w (.+?)\|x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})"\\w\*' )
         wordsList = []
-        match =  wordRE.search( wordsString )
+        match =  wordRE.search( translatedWordsString )
         while match:
             for xx in range(1,4): assert match.group(xx)
-            wordsList.append( (match.group(1),match.group(2),match.group(3)) )
+            # Convert occurrence and occurrences to ints (from digit strings) as we go
+            wordsList.append( (match.group(1),int(match.group(2)),int(match.group(3))) )
             #index = match.end()
-            wordsString = f'{wordsString[:match.start()]}{match.group(1)}{wordsString[match.end():]}'
-            match =  wordRE.search( wordsString )
+            translatedWordsString = f'{translatedWordsString[:match.start()]}{match.group(1)}{translatedWordsString[match.end():]}'
+            match =  wordRE.search( translatedWordsString )
         assert len(wordsList) == wordsCount
 
-        cleanedAlignmentList.append( (C,V, textList, wordsString,wordsList) )
+        cleanedAlignmentList.append( (C,V, textList, translatedWordsString,wordsList) )
 
-    if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 3:
-        vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(cleanedAlignmentList):,} alignment entries for {abbreviation} {BBB}" )
-        vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxOriginalWords} original language words in one {abbreviation} {BBB} entry" )
-        vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxTranslatedWords} translated words in one {abbreviation} {BBB} entry" )
-        if debuggingThisModule:
-            for j, (C,V, textList, wordsString,wordsList) in enumerate( cleanedAlignmentList, start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {BBB} {C}:{V} {textList} '{wordsString}' {wordsList}" )
-                if j > 8: break
+    vPrint( 'Info', debuggingThisFunction,
+f'''\nInternalBibleBook cleanUWalignments: Have {len(cleanedAlignmentList):,} alignment entries for {abbreviation} {BBB}
+  Maximum of {maxOriginalWords} original language words in one {abbreviation} {BBB} entry
+  Maximum of {maxTranslatedWords} translated words in one {abbreviation} {BBB} entry''' )
+    if debuggingThisModule:
+        for j, (C,V, textList, translatedWordsString,wordsList) in enumerate( cleanedAlignmentList, start=1 ):
+            vPrint( 'Quiet', debuggingThisModule, f"{j} {BBB} {C}:{V} {textList} '{translatedWordsString}' {wordsList}" )
+            if j > 8: break
 
     return cleanedAlignmentList
 # end of cleanUWalignments function
@@ -277,6 +287,7 @@ class InternalBibleBook:
 
         self._rawLines = [] # Contains 2-tuples (marker,text) which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedCVFlag = self._indexedSectionsFlag = False
+        self.notices = [] # Contains 6-tuples (priority, message, BBB, C, V, options)
         self.checkResultsDictionary = {}
         self.checkResultsDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
         self.givenAngleBracketWarning = self.givenDoubleQuoteWarning = False
@@ -340,10 +351,50 @@ class InternalBibleBook:
     # end of InternalBibleBook.__iter__
 
 
+    def addNotice( self, priority:int, message:str, C:str, V:str, options:Dict[str,any] ) -> None:
+        """
+        Adds a notice to self.notices and then logs it at an appropriate level.
+
+        We use the term notice as there's not a clear distinction between errors and warnings.
+
+        Typical fields in options (dict) include:
+            type: 'load'
+            filename:
+            lineNumber: 1-based line number
+            characterIndex: 0-character index
+            excerpt:
+            logger: logging.critical, logging.error, logging.warning
+        """
+        fnPrint( debuggingThisModule, f"InternalBibleBook.addNotice( {priority} {message} {C}:{V} {options} )" )
+        if BibleOrgSysGlobals.debugFlag:
+            assert isinstance( priority, int ) and ( 0 <= priority <= 1000 )
+            assert isinstance( message, str ) and message
+            assert isinstance( C, str ) and C
+            assert isinstance( V, str ) and V
+
+        # Save a 6-tuple with the compulsory parameters as the first five values
+        #   followed by the options dict
+        self.notices.append( (priority, message, self.BBB, C, V, options) )
+
+        if 'logger' in options and options['logger']:
+            loggingFunction = options['logger']
+        elif priority >= 900:
+            loggingFunction = logging.critical
+        elif priority >= 700:
+            loggingFunction = logging.error
+        else: loggingFunction = logging.warning
+
+        logString = f"{self.BBB} {C}:{V} {message}"
+        if options: logString = f'{logString} with {options}'
+        loggingFunction( logString )
+    # end of InternalBibleBook.addNotice
+
+
     def addPriorityError( self, priority:int, C:str, V:str, errorString:str ) -> None:
         """
         Adds a priority error to self.checkResultsDictionary.
         """
+        fnPrint( debuggingThisModule, f"InternalBibleBook.addPriorityError( {priority} {C}:{V} {errorString} )" )
         if BibleOrgSysGlobals.debugFlag:
             assert isinstance( priority, int ) and ( 0 <= priority <= 100 )
             assert isinstance( errorString, str ) and errorString
@@ -489,8 +540,8 @@ class InternalBibleBook:
         No return value.
         """
         forceDebugHere = False
+        fnPrint( debuggingThisModule, f"\nInternalBibleBook.addVerseSegments( {V!r}, {text!r}, {location!r} )" )
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
-            vPrint( 'Quiet', debuggingThisModule, "\nInternalBibleBook.addVerseSegments( {!r}, {!r}, {!r} )".format( V, text, location ) )
             assert not self._processedFlag
         ourText = text # Work on a copy so we can still print the original for error messages
 
@@ -825,7 +876,7 @@ class InternalBibleBook:
                 if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
-                parseFigureAttributes( 'workname', self.BBB, C, V,
+                parseFigureAttributes( self.workName, self.BBB, C, V,
                                       adjText[ixFIG+5:ix2].replace( '&quot;', '"' ), fixErrors )
                 # (returned dictionary above is just ignored here)
             elif ix1 == ixSTR:
@@ -843,7 +894,7 @@ class InternalBibleBook:
                 if ix2 == -1: ix2 = adjText.find( '\\WW*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1 = 'ww', 2, 'Word attributes', 'ww'
-                parseWordAttributes( 'workname', self.BBB, C, V,
+                parseWordAttributes( self.workName, self.BBB, C, V,
                                     adjText[ixWW+4:ix2].replace( '&quot;', '"' ), fixErrors )
                 # (returned dictionary above is just ignored here)
             elif ix1 == ixVP:
@@ -1676,11 +1727,11 @@ class InternalBibleBook:
                     #assert isinstance( entry, InternalBibleEntry )
                     ##dPrint( 'Quiet', debuggingThisModule, f"{j:4}/ {entry}" )
                     #marker, cleanText = entry.getMarker(), entry.getCleanText()
-                    #cleanTextString = f'={cleanText}' if cleanText else ''
+                    #cleanoriginalLanguageTextString = f'={cleanText}' if cleanText else ''
                     #if marker in BOS_NESTING_MARKERS:
                         #indentLevel += 1
                         #if indentLevel > maxNestingLevel: maxNestingLevel = indentLevel
-                    #dPrint( 'Quiet', debuggingThisModule, f"{j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanTextString}" )
+                    #dPrint( 'Quiet', debuggingThisModule, f"{j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanoriginalLanguageTextString}" )
                     #if marker[0] == '¬':
                         #if indentLevel > 0: indentLevel -= 1
                         #else: vPrint( 'Quiet', debuggingThisModule, "INDENT LEVEL PROBLEM" ); halt
@@ -1709,12 +1760,12 @@ class InternalBibleBook:
                 except IndexError: nextMarker = None # Out of range
                 try: nextNextMarker = newLines[j+2].getMarker()
                 except IndexError: nextNextMarker = None # Out of range
-                cleanTextString = f'={cleanText}' if cleanText else f' in {self.BBB} {C}:{V}'
+                cleanoriginalLanguageTextString = f'={cleanText}' if cleanText else f' in {self.BBB} {C}:{V}'
                 if marker in BOS_NESTING_MARKERS:
                     markerContext.append( marker )
                     indentLevel += 1
                     if indentLevel > maxNestingLevel: maxNestingLevel = indentLevel
-                vPrint( 'Never', debuggingThisModule, f"CheckingNesting: {j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanTextString} {markerContext} ({lastMarker}… …{nextMarker} {nextNextMarker})" )
+                vPrint( 'Never', debuggingThisModule, f"CheckingNesting: {j:4} {indentLevel} {'  '*indentLevel}{marker}{cleanoriginalLanguageTextString} {markerContext} ({lastMarker}… …{nextMarker} {nextNextMarker})" )
                 if marker[0] == '¬':
                     if indentLevel > 0: indentLevel -= 1
                     else: vPrint( 'Quiet', debuggingThisModule, "INDENT LEVEL PROBLEM" ); halt
@@ -2528,7 +2579,7 @@ class InternalBibleBook:
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'validateMarkers'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'validateMarkers'" )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
@@ -2630,7 +2681,7 @@ class InternalBibleBook:
         """
         #dPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAssumedBookNames'".format( self.BBB, self.workName ) ) # This is usually the first call from the Bible Drop Box
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
@@ -2711,7 +2762,7 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getVersification'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getVersification'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         versificationErrors:List[str] = []
@@ -2872,7 +2923,7 @@ class InternalBibleBook:
         """
         fnPrint( debuggingThisModule, f"_discover() for {self.BBB}" )
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'discover'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'discover'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         vPrint( 'Never', debuggingThisModule, f"InternalBibleBook._discover() for {self.BBB}…" )
@@ -2906,9 +2957,9 @@ class InternalBibleBook:
 
                 location can be 'main' or 'notes'
             """
-            try: uwaFlag = self.containerBibleObject.uWaligned
+            try: uwaFlag = self.containerBibleObject.uWencoded
             except AttributeError: uwaFlag = False
-            fnPrint( debuggingThisModule, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB} {C}:{V}{' (uWaligned)' if uwaFlag else ''}" )
+            fnPrint( debuggingThisModule, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB} {C}:{V}{' (uWencoded)' if uwaFlag else ''}" )
             #def stripWordPunctuation( word ):
                 #"""Removes leading and trailing punctuation from a word.
                     #Returns the "clean" word."""
@@ -3091,7 +3142,7 @@ class InternalBibleBook:
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getAddedUnits'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAddedUnits'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
         addedUnitErrors:List[str] = []
@@ -3958,8 +4009,8 @@ class InternalBibleBook:
         """
         Runs a number of checks on the speech marks in the Bible book.
         """
-        debuggingThisFunction = False
-        if 'Version' not in self.workName: debuggingThisFunction = False
+        debuggingThisFunction = debuggingThisModule or False
+        # if 'Version' not in self.workName: debuggingThisFunction = False
         # if self.BBB != 'MIC': debuggingThisFunction = False
 
         fnPrint( debuggingThisModule, "InternalBibleBook.doSpeechMarks()" )
@@ -4318,7 +4369,7 @@ class InternalBibleBook:
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckFileControls'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'doCheckFileControls'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4345,7 +4396,7 @@ class InternalBibleBook:
         Runs a number of checks on headings and section cross-references.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckHeadings'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'doCheckHeadings'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4425,7 +4476,7 @@ class InternalBibleBook:
         Runs a number of checks on introductory parts.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckIntroduction'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'doCheckIntroduction'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4506,7 +4557,7 @@ class InternalBibleBook:
         Runs a number of checks on footnotes and cross-references.
         """
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'doCheckNotes'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'doCheckNotes'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4783,7 +4834,7 @@ class InternalBibleBook:
         """
         fnPrint( debuggingThisModule, "checkBook()" )
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'checkBook'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'checkBook'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
@@ -4867,7 +4918,7 @@ class InternalBibleBook:
         if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
         else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
-            vPrint( 'Info', debuggingThisModule, "InternalBibleBook {} {!r}: processing lines called from 'getContextVerseData'".format( self.BBB, self.workName ) )
+            vPrint( 'Info', debuggingThisModule, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getContextVerseData'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert self._processedLines

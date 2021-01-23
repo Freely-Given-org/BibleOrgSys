@@ -239,7 +239,7 @@ Here is the code for a simple **Bible (e.g., USFM) to USX converter** using Bibl
 #
 # Command-line app to export a USX (XML) Bible.
 #
-# Copyright (C) 2019-2020 Robert Hunt
+# Copyright (C) 2019-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #

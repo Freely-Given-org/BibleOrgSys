@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2020-07-15' # by RJH
+LAST_MODIFIED_DATE = '2021-01-10' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.78'
@@ -566,6 +566,7 @@ class USFMBible( Bible ):
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.availableBBBs.add( BBB )
             self.possibleFilenameDict[BBB] = filename
+        # dPrint( 'Quiet', debuggingThisModule, f"possibleFilenameDict ({len(self.possibleFilenameDict)}): {self.possibleFilenameDict}" )
 
         self.preloadDone = True
     # end of USFMBible.preload
@@ -750,7 +751,7 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "\nUSFM B/" )
             UsfmB = USFMBible( testFolder, name, encoding=encoding )
             UsfmB.abbreviation = name
-            if name in ('ULT','UST'): UsfmB.uWaligned = True
+            if name in ('UHB','UGNT','ULT','UST'): UsfmB.uWencoded = True
             UsfmB.load()
             vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
@@ -922,14 +923,14 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, "\nUSFM B{}/".format( j+1 ) )
                 UsfmB = USFMBible( testFolder, name, encoding=encoding )
                 UsfmB.abbreviation = name
-                if name in ('ULT','UST'): UsfmB.uWaligned = True
+                if name in ('ULT','UST'): UsfmB.uWencoded = True
                 UsfmB.load()
                 vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, UsfmB )
-                # if UsfmB.uWaligned: UsfmB.analyseUWalignments()
+                # if UsfmB.uWencoded: UsfmB.analyseUWalignments()
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )

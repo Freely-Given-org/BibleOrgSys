@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-11-08' # by RJH
+LAST_MODIFIED_DATE = '2021-01-14' # by RJH
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
 PROGRAM_VERSION = '0.69'
@@ -213,7 +213,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            vPrint( 'Info', debuggingThisModule, "Pattern is {!r}".format( self.pattern ) )
+                            vPrint( 'Verbose', debuggingThisModule, "Pattern is {!r}".format( self.pattern ) )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -221,7 +221,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                vPrint( 'Info', debuggingThisModule, "More generic pattern is {!r}".format( self.pattern ) )
+                                vPrint( 'Verbose', debuggingThisModule, "More generic pattern is {!r}".format( self.pattern ) )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -513,7 +513,7 @@ class USFMFilenames:
         resultListInt = self.getPossibleFilenameTuplesInt()
         if len(resultListInt) > len(resultList):
             resultString, resultList = 'Internal', resultListInt
-        vPrint( 'Info', debuggingThisModule, "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
+        vPrint( 'Info', debuggingThisModule, f"getMaximumPossibleFilenameTuples: using {resultString} ({len(resultList)})" )
 
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  getMaximumPossibleFilenameTuples doing strictCheck…" )

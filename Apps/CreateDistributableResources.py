@@ -673,7 +673,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
-                thisBible.uWaligned = True # TODO: Shouldn't be required ???
+                thisBible.uWencoded = True # TODO: Shouldn't be required ???
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,
@@ -691,7 +691,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
-                thisBible.uWaligned = True # TODO: Shouldn't be required ???
+                thisBible.uWencoded = True # TODO: Shouldn't be required ???
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,
@@ -709,7 +709,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
-                thisBible.uWaligned = True
+                thisBible.uWencoded = True
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,
@@ -727,7 +727,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             repo_changed = runGitPull( uwFolderpath ) # Make sure we have the latest version
             if repo_changed or not PROCESS_CHANGES_ONLY:
                 thisBible = USFMBible( uwFolderpath, givenName=name, givenAbbreviation=abbreviation )
-                thisBible.uWaligned = True
+                thisBible.uWencoded = True
                 metadataDict = {
                                 'Abbreviation':abbreviation,
                                 'WorkName':name,

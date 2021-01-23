@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-23' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.84'
@@ -82,6 +82,8 @@ programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
+
+JSON_INDENT = 0 # None gives smallest file (no newlines), then 0, 1, 2, ....
 
 OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
         'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
@@ -160,7 +162,7 @@ class InternalBible:
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
-            if 'uWaligned' in self.__dict__ and self.uWaligned:
+            if 'uWencoded' in self.__dict__ and self.uWencoded:
                 result += ('\n' if result else '') + ' '*indent + _("Contains translation alignments: True")
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for fieldName in ( 'Status', 'Font', 'Copyright', 'Licence', ):
@@ -178,7 +180,7 @@ class InternalBible:
         #if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
         #if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
         result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
-                                        .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<5 else '' )
+                                        .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<7 else '' )
         return result
     # end of InternalBible.__str__
 
@@ -1243,7 +1245,7 @@ class InternalBible:
             self.discoverPTX8()
 
         self.__aggregateDiscoveryResults()
-        if 'uWaligned' in self.__dict__ and self.uWaligned:
+        if 'uWencoded' in self.__dict__ and self.uWencoded:
             self.__aggregateAlignmentResults()
     # end of InternalBible.discover
 
@@ -1548,7 +1550,7 @@ class InternalBible:
         if givenOutputFolderName is None:
             givenOutputFolderName = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'CheckResultFiles/' )
             if not os.access( givenOutputFolderName, os.F_OK ):
-                if 1 or BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
+                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doExtensiveChecks: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag:
             assert givenOutputFolderName and isinstance( givenOutputFolderName, (str,Path) )
@@ -2548,9 +2550,235 @@ class InternalBible:
     # end of InternalBible.writeBOSBCVFiles
 
 
+    def analyseUWoriginal( self ) -> None:
+        """
+        Aggregates all the information from each original language (UHB/UGNT) book,
+            produces some other interesting dicts and lists,
+            and saves them as json files for analysis by other programs
+            XXXand also saves some as text files for direct viewing.
+
+        TODO: Save plain USFM files (without and word info)
+                And what about some pickles also?
+        """
+        debuggingThisFunction = debuggingThisModule or False
+        fnPrint( debuggingThisFunction, f"analyseUWoriginal() for {self.abbreviation}" )
+
+        if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.verbosityLevel > 2:
+            assert self.uWencoded
+        vPrint( 'Quiet', debuggingThisFunction, f"Analysing unfoldingWord {self.abbreviation} words…" )
+
+        # Firstly, aggregate the word data from all of the separate books
+        analysedBookCount = 0
+        analysedOTBookList:List[str] = []
+        analysedDCBookList:List[str] = []
+        analysedNTBookList:List[str] = []
+        # perVerseWordDict:List[Tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsOTList:List[Tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsDCList:List[Tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
+        perVerseWordDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
+        for BBB,bookObject in self.books.items():
+            assert 'uWalignments' not in bookObject.__dict__
+            ref = BBB, '1', '1'
+            origVerseText = self.getVerseText( ref )
+            dPrint( 'Info', debuggingThisModule, '  InternalBible.analyseUWoriginal', ref, origVerseText )
+            if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
+
+            if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+                analysedOTBookList.append( BBB )
+            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+                analysedNTBookList.append( BBB )
+            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+                analysedDCBookList.append( BBB )
+            analysedBookCount += 1
+
+            """
+            Typical entries look like:
+                p(p)=''
+                v(v)='15'
+                v~(v)='εἰρήνη σοι. ἀσπάζονταί σε οἱ φίλοι. ἀσπάζου τοὺς φίλους κατ’ ὄνομα.'
+                adjText=\w εἰρήνη\w* \w σοι\w*. \w ἀσπάζονταί\w* \w σε\w* \w οἱ\w* \w φίλοι\w*. \w ἀσπάζου\w* \w τοὺς\w* \w φίλους\w* \w κατ’\w* \w ὄνομα\w*.
+                extras=InternalBibleExtraList object:
+                1 ww @ 12 = 'εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"'
+                2 ww @ 22 = 'σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"'
+                3 ww @ 40 = 'ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"'
+                4 ww @ 49 = 'σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"'
+                5 ww @ 58 = 'οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"'
+                6 ww @ 70 = 'φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"'
+                7 ww @ 85 = 'ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"'
+                8 ww @ 96 = 'τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"'
+                9 ww @ 109 = 'φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"'
+                10 ww @ 120 = 'κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"'
+                11 ww @ 132 = 'ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"'
+                originalText=\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\w* \w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\w*. \w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\w* \w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\w* \w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\w* \w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\w*. \w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\w* \w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\w* \w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\w* \w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\w* \w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\w*.
+            """
+            lines:Dict[Tuple(str,str),List[Union[str,Tuple[str,str,str,str]]]] = defaultdict( list )
+            C, V = -1, 0
+            for entry in bookObject._processedLines:
+                pseudoMarker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
+                originalMarker = entry.getOriginalMarker()
+                originalText = entry.getOriginalText()
+
+                # See where we are
+                if pseudoMarker=='c': C, V = cleanText, '0'
+                elif pseudoMarker == 'v': V = cleanText
+
+                if pseudoMarker[0] != '¬':
+                    vPrint( 'Never', debuggingThisFunction, f"{pseudoMarker}({originalMarker})='{cleanText}'")
+                    # if adjText != cleanText: vPrint( 'Quiet', debuggingThisFunction, f"   adjText={adjText}")
+                    # if extras: vPrint( 'Quiet', debuggingThisFunction, f"   extras={extras}")
+                    if originalText != cleanText: vPrint( 'Never', debuggingThisFunction, f"   originalText={originalText}" )
+
+                    if originalText:
+                        if '\\w ' in originalText:
+                            ix = 0
+                            line:List[Union[str,Tuple[str,str,str,str]]] = []
+                            while ix < len(originalText):
+                                if originalText[ix:].startswith( '\\w '):
+                                    ixEnd = ix + 4 + originalText[ix+4:].index( '\\w*' )
+                                    wField = originalText[ix+3:ixEnd]
+                                    dPrint( 'Never', debuggingThisFunction, f"Got w field='{wField}'" )
+                                    ixBar = ix + 4 + originalText[ix+4:].index( '|' )
+                                    word = originalText[ix+3:ixBar]
+                                    dPrint( 'Verbose', debuggingThisFunction, f"Got word='{word}'")
+                                    assert originalText[ixBar+1:].startswith('lemma="')
+                                    ixQuote1 = ixBar + 8 + originalText[ixBar+8:].index( '"' )
+                                    lemma = originalText[ixBar+8:ixQuote1]
+                                    dPrint( 'Verbose', debuggingThisFunction, f"Got lemma='{lemma}'" )
+                                    assert originalText[ixQuote1+1:].startswith(' strong="')
+                                    ixQuote2 = ixQuote1 + 10 + originalText[ixQuote1+10:].index( '"' )
+                                    strongs = originalText[ixQuote1+10:ixQuote2]
+                                    # assert strongs[0] in 'GH' # Fails on 'b:H7800' etc.
+                                    dPrint( 'Verbose', debuggingThisFunction, f"Got strongs='{strongs}'")
+                                    if originalText[ixQuote2+1:].startswith(' x-morph="'):
+                                        ixQuote3 = ixQuote2 + 11 + originalText[ixQuote2+11:].index( '"' )
+                                        morph = originalText[ixQuote2+11:ixQuote3]
+                                        dPrint( 'Verbose', debuggingThisFunction, f"Got morph='{morph}'" )
+                                        if morph.startswith( 'He,' ):
+                                            assert morph.count( ',' ) == 1
+                                        elif morph.startswith( 'Ar,' ):
+                                            assert morph.count( ',' ) == 1
+                                        elif morph.startswith( 'Gr,' ):
+                                            assert 4 <= morph.count( ',' ) <= 10
+                                            # POS = morph.split(',')[1]
+                                            # if POS in ( 'V', ): assert 4 <= morph.count( ',' ) <= 7
+                                            # elif POS in ( 'NS','RP', ): assert 5 <= morph.count( ',' ) <= 6
+                                            # elif POS in ( 'AA', 'EA','ED','EF','EP','EQ', 'NP', 'RD','RI','RR','RT', ):
+                                            #     assert morph.count( ',' ) == 6
+                                            # elif POS in ('N',): assert morph.count( ',' ) == 7
+                                            # elif POS in ( 'CC','CO','CS', 'DO', 'IE', 'P', ):
+                                            #     assert morph.count( ',' ) == 9
+                                            # elif POS in ( 'D', ): assert morph.count( ',' ) == 10
+                                            # else: print( POS, morph, morph.count(',') ); halt # Unrecognised morph POS
+                                        else:
+                                            print( f"Unrecognised language code in '{morph}' from {BBB} {C}:{V} '{wField}'" )
+                                            # halt # Unrecognised morph language code
+                                        morph = morph[3:] # No need for that language code
+                                    else: # only one is UHB NEH 1:6
+                                        morph = ''
+                                        dPrint( 'Quiet', debuggingThisFunction, f"No morph for {BBB} {C}:{V} {wField}" )
+                                    line.append( (word,lemma,strongs,morph) )
+                                    ix = ixEnd + 3
+                                else: # next part of line is NOT a \\w entry
+                                    char, charName = originalText[ix], 'unknown'
+                                    if char == ' ': charName = 'space'
+                                    elif char in '1234567890': charName = 'digit'
+                                    elif char in BibleOrgSysGlobals.ALL_WORD_PUNCT_CHARS: charName = 'punctuation'
+                                    elif char in '׀־׃': charName = 'Hebrew punctuation'
+                                    else: dPrint( 'Verbose', debuggingThisFunction, f"Got {BBB} {C}:{V} {pseudoMarker} {charName} '{char}'" )
+                                    if line and isinstance( line[-1], str ):
+                                        line[-1] += char # Append consecutive chars into a single string
+                                    else: line.append( char )
+                                    ix += 1
+                        else: # no word entries in line, e.g., for intro lines, section headings, etc.
+                            line = [originalText]
+                        dPrint( 'Verbose', debuggingThisFunction, f"Got {BBB} {C}:{V} line={line}" )
+                        if len(line) > 1: # not just a single string
+                            # assert (C,V) not in lines # Fails for 1 Tim 6:2 with \p in middle of verse
+                            lines[f'{C}:{V}'] += line # For Python we would just do (C,V) but JSON doesn't allow a tuple as the dict key
+
+            dPrint( 'Never', debuggingThisFunction, f"Got {BBB} lines({len(lines)})={lines}" )
+            perVerseWordDict[BBB] = lines
+
+        # Save the original list and all the derived dictionaries for any futher analysis/processing
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseUWalignments writing {self.abbreviation} analysis JSON files…" )
+        import json
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
+        try: os.makedirs( outputFolderpath )
+        except FileExistsError: pass
+        for dataObject, objectName in (
+                    (analysedOTBookList, 'analysedOTBookList'),
+                    (analysedDCBookList, 'analysedDCBookList'),
+                    (analysedNTBookList, 'analysedNTBookList'),
+                (perVerseWordDict, 'perVerseWordDict'),
+                ):
+            assert isinstance( dataObject, (dict,list) )
+            if dataObject: # Don't write blank files
+                with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
+                    json.dump( dataObject, xf, ensure_ascii=False, indent=JSON_INDENT )
+
+        # # Save some text files for manually looking through
+        # with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
+        #     for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
+        #         assert isinstance( originalWord, str )
+        #         assert originalWord
+        #         translations = originalFormToTransOccurrencesDict[originalWord]
+        #         #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
+        #         assert isinstance( translations, dict )
+        #         for translation,tCount in translations.items():
+        #             assert isinstance( translation, str )
+        #             assert isinstance( tCount, int )
+        #             #dPrint( 'Quiet', debuggingThisFunction, "translation", translation, "tCount", tCount )
+        #             #dPrint( 'Quiet', debuggingThisFunction, f"For '{originalWord}', have {translation}: {tCount}" )
+        #             if tCount == 1: # Let's find the reference
+        #                 refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
+        #                 #dPrint( 'Quiet', debuggingThisFunction, "refList1", refList )
+        #                 assert isinstance( refList, list )
+        #                 for ref in refList:
+        #                     #dPrint( 'Quiet', debuggingThisFunction, "ref", ref )
+        #                     assert isinstance( ref, tuple )
+        #                     assert len(ref) == 4
+        #                     if ref[3] == translation:
+        #                         translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
+        #                         #dPrint( 'Quiet', debuggingThisFunction, f"Now '{originalWord}', have {translations}" )
+        #                         break
+        #         xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
+        # #dPrint( 'Quiet', debuggingThisFunction, "keys", originalLemmaToTransOccurrencesDict.keys() )
+        # #dPrint( 'Quiet', debuggingThisFunction, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
+        # #dPrint( 'Quiet', debuggingThisFunction, "blank", originalLemmaToTransOccurrencesDict[''] )
+        # with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
+        #     for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
+        #         assert isinstance( originalLemma, str )
+        #         #assert originalLemma # NO, THESE CAN BE BLANK
+        #         translations = originalLemmaToTransOccurrencesDict[originalLemma]
+        #         #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
+        #         assert isinstance( translations, dict )
+        #         for translation,tCount in translations.items():
+        #             assert isinstance( translation, str )
+        #             assert isinstance( tCount, int )
+        #             #dPrint( 'Quiet', debuggingThisModule, "translation", translation, "tCount", tCount )
+        #             #dPrint( 'Quiet', debuggingThisModule, f"For '{originalLemma}', have {translation}: {tCount}" )
+        #             if tCount == 1: # Let's find the reference
+        #                 refList = originalLemmaToTransAlignmentsDict[originalLemma] # List of 4-tuples B,C,V,translation
+        #                 #dPrint( 'Quiet', debuggingThisModule, "refList2", refList )
+        #                 assert isinstance( refList, list )
+        #                 for ref in refList:
+        #                     #dPrint( 'Quiet', debuggingThisModule, "ref", ref )
+        #                     assert isinstance( ref, tuple )
+        #                     assert len(ref) == 4
+        #                     if ref[3] == translation:
+        #                         translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
+        #                         #dPrint( 'Quiet', debuggingThisModule, f"Now '{originalLemma}', have {translations}" )
+        #                         break
+        #         xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
+
+        vPrint( 'Quiet', debuggingThisFunction, f"  InternalBible.analyseUWoriginal: Done for {self.abbreviation}" )
+    # end of InternalBible.analyseUWoriginal
+
+
     def analyseUWalignments( self ) -> None:
         """
-        Aggregate all the alignments from each book.
+        Aggregates all the alignments with UHB/UGNT from each translated book.
 
         The cleaned aligments are
             List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]
@@ -2559,12 +2787,17 @@ class InternalBible:
         Also produces some other interesting dicts and lists
             and saves them as json files for analysis by other programs
             and also saves some as text files for direct viewing.
+
+        TODO: Save plain USFM files (without alignment and word info)
+                And what about some pickles also?
         """
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
-        fnPrint( debuggingThisModule, f"analyseUWalignments() for {self.abbreviation}" )
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 2:
-            assert self.uWaligned
+        debuggingThisFunction = debuggingThisModule or False
+        fnPrint( debuggingThisFunction, f"analyseUWalignments() for {self.abbreviation}" )
+        if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.verbosityLevel > 2:
+            assert self.uWencoded
+        vPrint( 'Quiet', debuggingThisFunction, f"Analysing unfoldingWord {self.abbreviation} alignments…" )
 
         # Firstly, aggregate the alignment data from all of the separate books
         alignedBookCount = 0
@@ -2582,8 +2815,13 @@ class InternalBible:
         alignmentDCDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         for BBB,bookObject in self.books.items():
+            ref = BBB, '1', '1'
+            origVerseText = self.getVerseText( ref )
+            dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseUWalignments', ref, origVerseText )
+            if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
+
             if 'uWalignments' in bookObject.__dict__:
-                vPrint( 'Never', debuggingThisModule, f"Cleaning alignments for {BBB} and aggregating…" )
+                vPrint( 'Never', debuggingThisFunction, f"Cleaning alignments for {BBB} and aggregating…" )
                 alignedBookList.append( BBB )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                     alignedOTBookList.append( BBB )
@@ -2602,7 +2840,6 @@ class InternalBible:
                     #     largeAlignmentsList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
 
                     ref = f'{BBB}_{C}:{V}' # Must be a str for json (can't be a tuple)
-                    # if ref not in alignmentDict: alignmentDict[ref] = []
                     alignmentDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
                     if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
@@ -2612,7 +2849,6 @@ class InternalBible:
                     elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                         thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
                     thisList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
-                    # if ref not in thisDict: thisDict[ref] = []
                     thisDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
 
@@ -2622,8 +2858,8 @@ class InternalBible:
         maxOriginalWords = maxTranslatedWords = 0
         singleTranslatedWordsSet = set()
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
-            #dPrint( 'Quiet', debuggingThisModule, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
-            # if len(originalWordsList) == 0: vPrint( 'Quiet', debuggingThisModule, f"tWS='{translatedWordsString}'")
+            #dPrint( 'Quiet', debuggingThisFunction, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
+            # if len(originalWordsList) == 0: vPrint( 'Quiet', debuggingThisFunction, f"tWS='{translatedWordsString}'")
             assert isinstance( BBB, str ) and len(BBB)==3
             assert isinstance( C, str ) and C
             assert isinstance( V, str ) and V
@@ -2638,11 +2874,11 @@ class InternalBible:
 
             if len(translatedWordsList) == 1:
                 singleTranslatedWordsSet.add( translatedWordsString )
-        vPrint( 'Info', debuggingThisModule, f"Have {len(singleTranslatedWordsSet):,} unique single translated words")
+        vPrint( 'Info', debuggingThisFunction, f"Have {len(singleTranslatedWordsSet):,} unique single translated words")
 
 
         # Second pass to go through the alignment data for the whole Bible
-        vPrint( 'Info', debuggingThisModule, f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
+        vPrint( 'Info', debuggingThisFunction, f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
         originalFormToTransOccurrencesDict:Dict[str,dict] = {}
         originalFormToTransOccurrencesOTDict:Dict[str,dict] = {}
         originalFormToTransOccurrencesDCDict:Dict[str,dict] = {}
@@ -2667,6 +2903,15 @@ class InternalBible:
         oneToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
         oneToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
         oneToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsDict:Dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsDict:Dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
+
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
             #dPrint( 'Quiet', debuggingThisModule, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
             # if len(originalWordsList) == 0: vPrint( 'Quiet', debuggingThisModule, f"tWS='{translatedWordsString}'")
@@ -2682,8 +2927,8 @@ class InternalBible:
             # maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
             # maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
-            # For counting occurrences (not alignments), remove ellipsis (non-continguous words joiner)
-            cleanedTranslatedWordsString = translatedWordsString.replace( ' … ', ' ' )
+            # For counting occurrences (not alignments), remove ampersand (non-continguous words joiner)
+            cleanedTranslatedWordsString = translatedWordsString.replace( ' & ', ' ' )
 
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
@@ -2774,67 +3019,86 @@ class InternalBible:
                                 'Beyond','Chase','Dismiss'): # special cases -- Grrrh!!!
                         # TODO: Maybe could use an English dictionary here ???
                         # Then maybe this word was only capitalised because it started a sentence???
-                        vPrint( 'Verbose', debuggingThisModule, f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
+                        vPrint( 'Verbose', debuggingThisFunction, f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
                         combinedMorphString = ' + '.join( (x[2] for x in originalWordsList) )
-                        vPrint( 'Verbose', debuggingThisModule, f"    combinedMorphString='{combinedMorphString}'")
+                        vPrint( 'Verbose', debuggingThisFunction, f"    combinedMorphString='{combinedMorphString}'")
                         if ',Np' not in combinedMorphString \
-                        and thistranslatedWord not in ('God','Lord','Father',): # special words which might intentionally occur in both cases
+                        and thistranslatedWord not in ('God','Lord','Father','Son','Spirit'): # special words which might intentionally occur in both cases
                             # Not a Hebrew proper noun -- don't have anything similar for Greek unfortunately
-                            vPrint( 'Info', debuggingThisModule, f"    Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
+                            dPrint( 'Verbose', debuggingThisFunction, f"    analyseUWalignments: Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
                             thistranslatedWord = thistranslatedWordLower
                         else:
-                            vPrint( 'Verbose', debuggingThisModule, f"    Not converting exception '{thistranslatedWord}'")
+                            vPrint( 'Verbose', debuggingThisFunction, f"    Not converting exception '{thistranslatedWord}'")
                     else:
-                        vPrint( 'Verbose', debuggingThisModule, f"    Not converting '{thistranslatedWord}'")
+                        vPrint( 'Verbose', debuggingThisFunction, f"    Not converting '{thistranslatedWord}'")
 
-                oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
+                if len(originalWordsList) == 1:
+                    oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList[0]) )
+                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+                        thisDict = oneToOneTransToOriginalAlignmentsOTDict
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+                        thisDict = oneToOneTransToOriginalAlignmentsNTDict
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+                        thisDict = oneToOneTransToOriginalAlignmentsDCDict
+                    thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList[0]) )
+                else: # len(originalWordsList) > 1
+                    manyToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
+                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+                        thisDict = manyToOneTransToOriginalAlignmentsOTDict
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+                        thisDict = manyToOneTransToOriginalAlignmentsNTDict
+                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+                        thisDict = manyToOneTransToOriginalAlignmentsDCDict
+                    thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
+
+                anyToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = oneToOneTransToOriginalAlignmentsOTDict
+                    thisDict = anyToOneTransToOriginalAlignmentsOTDict
                 elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = oneToOneTransToOriginalAlignmentsNTDict
+                    thisDict = anyToOneTransToOriginalAlignmentsNTDict
                 elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = oneToOneTransToOriginalAlignmentsDCDict
+                    thisDict = anyToOneTransToOriginalAlignmentsDCDict
                 thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
 
             else: # len(translatedWordsList) > 1:
                 # TODO: Find/count multi-word forms!!!
                 pass
 
-        if debuggingThisModule and BibleOrgSysGlobals.debugFlag:
+        if debuggingThisFunction and BibleOrgSysGlobals.debugFlag:
             max_each = 6
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(originalFormToTransOccurrencesDict):,} form occurrences" )
             for j, (key,value) in enumerate( originalFormToTransOccurrencesDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, dict )
                 if j > max_each: break
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalLemmaToTransOccurrencesDict):,} lemma occurrences" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(originalLemmaToTransOccurrencesDict):,} lemma occurrences" )
             for j, (key,value) in enumerate( originalLemmaToTransOccurrencesDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, dict )
                 if j > max_each: break
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalFormToTransAlignmentsDict):,} form alignments" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(originalFormToTransAlignmentsDict):,} form alignments" )
             for j, (key,value) in enumerate( originalFormToTransAlignmentsDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(originalLemmaToTransAlignmentsDict):,} lemma alignments" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(originalLemmaToTransAlignmentsDict):,} lemma alignments" )
             for j, (key,value) in enumerate( originalLemmaToTransAlignmentsDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(origStrongsToTransAlignmentsDict):,} Strongs alignments" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(origStrongsToTransAlignmentsDict):,} Strongs alignments" )
             for j, (key,value) in enumerate( origStrongsToTransAlignmentsDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
-            vPrint( 'Quiet', debuggingThisModule, f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
+            vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
             for j, (key,value) in enumerate( oneToOneTransToOriginalAlignmentsDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggingThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggidebuggingThisFunctionngThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
@@ -2847,6 +3111,7 @@ class InternalBible:
         self.uWalignments['oneToOneTransToOriginalAlignmentsDict'] = oneToOneTransToOriginalAlignmentsDict
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseUWalignments writing {self.abbreviation} alignment JSON files…" )
         import json
         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
         try: os.makedirs( outputFolderpath )
@@ -2888,11 +3153,19 @@ class InternalBible:
                     (oneToOneTransToOriginalAlignmentsOTDict, 'oneToOneTransToOriginalAlignmentsOTDict'),
                     (oneToOneTransToOriginalAlignmentsDCDict, 'oneToOneTransToOriginalAlignmentsDCDict'),
                     (oneToOneTransToOriginalAlignmentsNTDict, 'oneToOneTransToOriginalAlignmentsNTDict'),
+                (manyToOneTransToOriginalAlignmentsDict, 'manyToOneTransToOriginalAlignmentsDict'),
+                    (manyToOneTransToOriginalAlignmentsOTDict, 'manyToOneTransToOriginalAlignmentsOTDict'),
+                    (manyToOneTransToOriginalAlignmentsDCDict, 'manyToOneTransToOriginalAlignmentsDCDict'),
+                    (manyToOneTransToOriginalAlignmentsNTDict, 'manyToOneTransToOriginalAlignmentsNTDict'),
+                (anyToOneTransToOriginalAlignmentsDict, 'anyToOneTransToOriginalAlignmentsDict'),
+                    (anyToOneTransToOriginalAlignmentsOTDict, 'anyToOneTransToOriginalAlignmentsOTDict'),
+                    (anyToOneTransToOriginalAlignmentsDCDict, 'anyToOneTransToOriginalAlignmentsDCDict'),
+                    (anyToOneTransToOriginalAlignmentsNTDict, 'anyToOneTransToOriginalAlignmentsNTDict'),
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
                 with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
-                    json.dump( dataObject, xf )
+                    json.dump( dataObject, xf, ensure_ascii=False, indent=JSON_INDENT )
 
         # Save some text files for manually looking through
         with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
@@ -2900,35 +3173,35 @@ class InternalBible:
                 assert isinstance( originalWord, str )
                 assert originalWord
                 translations = originalFormToTransOccurrencesDict[originalWord]
-                #dPrint( 'Quiet', debuggingThisModule, "translations", translations ) # dict of word: numOccurrences
+                #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
                     assert isinstance( tCount, int )
-                    #dPrint( 'Quiet', debuggingThisModule, "translation", translation, "tCount", tCount )
-                    #dPrint( 'Quiet', debuggingThisModule, f"For '{originalWord}', have {translation}: {tCount}" )
+                    #dPrint( 'Quiet', debuggingThisFunction, "translation", translation, "tCount", tCount )
+                    #dPrint( 'Quiet', debuggingThisFunction, f"For '{originalWord}', have {translation}: {tCount}" )
                     if tCount == 1: # Let's find the reference
                         refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
-                        #dPrint( 'Quiet', debuggingThisModule, "refList1", refList )
+                        #dPrint( 'Quiet', debuggingThisFunction, "refList1", refList )
                         assert isinstance( refList, list )
                         for ref in refList:
-                            #dPrint( 'Quiet', debuggingThisModule, "ref", ref )
+                            #dPrint( 'Quiet', debuggingThisFunction, "ref", ref )
                             assert isinstance( ref, tuple )
                             assert len(ref) == 4
                             if ref[3] == translation:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
-                                #dPrint( 'Quiet', debuggingThisModule, f"Now '{originalWord}', have {translations}" )
+                                #dPrint( 'Quiet', debuggingThisFunction, f"Now '{originalWord}', have {translations}" )
                                 break
                 xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
-        #dPrint( 'Quiet', debuggingThisModule, "keys", originalLemmaToTransOccurrencesDict.keys() )
-        #dPrint( 'Quiet', debuggingThisModule, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
-        #dPrint( 'Quiet', debuggingThisModule, "blank", originalLemmaToTransOccurrencesDict[''] )
+        #dPrint( 'Quiet', debuggingThisFunction, "keys", originalLemmaToTransOccurrencesDict.keys() )
+        #dPrint( 'Quiet', debuggingThisFunction, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
+        #dPrint( 'Quiet', debuggingThisFunction, "blank", originalLemmaToTransOccurrencesDict[''] )
         with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
             for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
                 translations = originalLemmaToTransOccurrencesDict[originalLemma]
-                #dPrint( 'Quiet', debuggingThisModule, "translations", translations ) # dict of word: numOccurrences
+                #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
                 assert isinstance( translations, dict )
                 for translation,tCount in translations.items():
                     assert isinstance( translation, str )
@@ -2977,10 +3250,10 @@ class InternalBible:
         #         for count,outputString in sorted( toList, reverse=True ):
         #             xf.write( outputString )
 
-        if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 1:
-            vPrint( 'Quiet', debuggingThisModule, f"Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}" )
-            vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry" )
-            vPrint( 'Quiet', debuggingThisModule, f"  Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry" )
+        vPrint( 'Normal', debuggingThisFunction,
+f'''  InternalBible.analyseUWalignments: Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}
+    Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry
+    Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry''' )
         #halt
     # end of InternalBible.analyseUWalignments
 # end of class InternalBible

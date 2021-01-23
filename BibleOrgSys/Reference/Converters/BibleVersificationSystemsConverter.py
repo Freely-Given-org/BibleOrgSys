@@ -5,7 +5,7 @@
 #
 # Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystemsConverter"
 PROGRAM_NAME = "Bible Versification Systems converter"
 PROGRAM_VERSION = '0.51'
@@ -486,7 +486,7 @@ class BibleVersificationSystemsConverter:
             #if self.__ProgVersion: myFile.write( "#  Version:{}\n".format( self.__ProgVersion ) )
             #if self.__dateString: myFile.write( "#  Date:{}\n#\n".format( self.__dateString ) )
             #myFile.write( "#  {}{} loaded from the original XML file.\n#\n\n".format( len(self.__XMLTree), self.__treeTag ) )
-            json.dump( self.__DataDict, myFile, indent=2 )
+            json.dump( self.__DataDict, myFile, ensure_ascii=False, indent=2 )
             #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of BibleVersificationSystemsConverter.exportDataToJSON
 

@@ -390,7 +390,7 @@ class DCSBible( USFMBible ):
             except FileExistsError: pass
             USFMBible.__init__( self, unzippedFolderpath, givenName=resourceDict['name'] )
         self.objectNameString = 'DCS USFM Bible object'
-        self.uWaligned = True
+        self.uWencoded = True
     # end of DCSBible.__init__
 
 
