@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -111,7 +111,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2020-07-14' # by RJH
+LAST_MODIFIED_DATE = '2021-02-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -793,7 +793,7 @@ class BibleWriter( InternalBible ):
         #assert controlDict and isinstance( controlDict, dict )
 
         ignoredMarkers = set()
-        addedUSFMfield = False
+        addedUSFMversionField = False
 
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
@@ -816,7 +816,7 @@ class BibleWriter( InternalBible ):
             if internalBibleBookData.contains( 'id', 1 ) is None:
                 bookUSFM += '\\id {} — BibleOrgSys USFM3 export v{}'.format( USFMAbbreviation.upper(), PROGRAM_VERSION )
                 bookUSFM += '\n\\usfm 3.0'
-                addedUSFMfield = True
+                addedUSFMversionField = True
                 if internalBibleBookData.contains( 'h', 8 ) is None:
                     try:
                         h = self.suppliedMetadata['File'][BBB+'ShortName']
@@ -840,9 +840,11 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker in ('c#','vp#',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
-                if pseudoMarker not in ('id','usfm') and not addedUSFMfield:
+                if pseudoMarker == 'usfm': # It was already in the file
+                    addedUSFMversionField = True # Well, actually it will be added further down!
+                if pseudoMarker not in ('id','usfm') and not addedUSFMversionField:
                     bookUSFM += '\n\\usfm 3.0'
-                    addedUSFMfield = True
+                    addedUSFMversionField = True
 
                 #fullText = cleanText # (temp)
                 #dPrint( 'Never', debuggingThisModule, "toUSFM: pseudoMarker = {!r} fullText = {!r}".format( pseudoMarker, fullText ) )
