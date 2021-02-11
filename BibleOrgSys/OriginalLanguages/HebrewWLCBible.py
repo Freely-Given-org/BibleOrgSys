@@ -5,7 +5,7 @@
 #
 # Module handling Open Scriptures Hebrew WLC.
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,7 +45,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 
-LAST_MODIFIED_DATE = '2020-05-27' # by RJH
+LAST_MODIFIED_DATE = '2021-02-07' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
 PROGRAM_VERSION = '0.26'
@@ -365,7 +365,7 @@ class HebrewWLCBibleAddon():
             if genericReferencesList:
                 for reference in genericReferencesList:
                     assert isinstance( reference, tuple )
-                    assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
+                    assert len(reference) == 4 # BBB,C,V,wordNumber (starting with 1)
                     for part in reference:
                         assert isinstance( part, str ) # We don't use INTs for references
                     assert genericReferencesList.count( reference ) == 1 # Don't allow multiples
@@ -379,7 +379,7 @@ class HebrewWLCBibleAddon():
             for reference,specificGloss in specificReferencesDict.items():
                 vPrint( 'Quiet', debuggingThisModule, "{!r} {!r} {} {!r}".format( word, genericGloss, reference, specificGloss ) )
                 assert isinstance( reference, tuple )
-                assert len(reference) == 4 # BBB,C,V,word# (starting with 1)
+                assert len(reference) == 4 # BBB,C,V,wordNumber (starting with 1)
                 for part in reference:
                     assert isinstance( part, str ) # We don't use INTs for references
                 assert reference in genericReferencesList
@@ -401,20 +401,19 @@ class HebrewWLCBibleAddon():
             self.glossingDictFilepath = DEFAULT_GLOSSING_DICT_FILEPATH
 
         # Read our glossing data from the pickle file
-        if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, _("Loading Hebrew glossing dictionary from '{}'…").format( self.glossingDictFilepath ) )
+        vPrint( 'Quiet', debuggingThisModule, _("Loading Hebrew glossing dictionary from '{}'…").format( self.glossingDictFilepath ) )
         with open( self.glossingDictFilepath, 'rb' ) as pickleFile:
             self.glossingDict = pickle.load( pickleFile )
             # It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
             #   Hebrew keys have morphological breaks separated by =
-            #   2-tuple entries consist of a generic gloss,
+            #   3-tuple entries consist of a generic gloss,
             #      (with generic gloss alternatives separated by /)
             #   followed by a list of currently known/parsed references
-            #dPrint( 'Quiet', debuggingThisModule, "glossingDict:", self.glossingDict )
+            #   followed by the dictionary of specific glosses
+        # dPrint( 'Quiet', debuggingThisModule, f"glossingDict: {self.glossingDict}" )
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
-        if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "  "+_("{:,} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
+        vPrint( 'Quiet', debuggingThisModule, "  "+_("{:,} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )
 
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
             self._checkLoadedDict()
@@ -448,6 +447,14 @@ class HebrewWLCBibleAddon():
         NOTE: Usually we use the much faster loadGlossingDict (load pickle) function above.
 
         The overrideFlag lets you override an already-loaded glossing dictionary.
+
+        It's a dictionary with (pointed and parsed) Hebrew keys and 2-tuple entries
+          Hebrew keys have morphological breaks separated by =
+          3-tuple entries consist of a generic gloss,
+             (with generic gloss alternatives separated by /)
+          followed by a list of currently known/parsed references
+          and a dictionary of specific references
+        i.e., word:(genericGloss,genericReferencesList,specificReferencesDict)
         """
         import ast
         #dPrint( 'Quiet', debuggingThisModule, "importGlossingDictionary()" )

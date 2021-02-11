@@ -758,7 +758,7 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, UsfmB )
-            # UsfmB.analyseUWalignments() # Not for briefDemo()
+            # UsfmB.analyseAndExportUWalignments() # Not for briefDemo()
             if BibleOrgSysGlobals.strictCheckingFlag:
                 UsfmB.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
@@ -930,7 +930,7 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, UsfmB )
-                # if UsfmB.uWencoded: UsfmB.analyseUWalignments()
+                # if UsfmB.uWencoded: UsfmB.analyseAndExportUWalignments()
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )

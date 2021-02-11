@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-01' # by RJH
+LAST_MODIFIED_DATE = '2021-01-23' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.85'
+PROGRAM_VERSION = '0.86'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -705,6 +705,13 @@ def tidyBBB( BBB:str ) -> str:
     """
     return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
 # end of tidyBBB
+
+def tidyBBBs( BBBs:List[str] ) -> List[str]:
+    """
+    Change a list of book codes like SA1 to the conventional 1SA.
+    """
+    return [tidyBBB(BBB) for BBB in BBBs]
+# end of tidyBBBs
 
 
 

@@ -5,7 +5,7 @@
 #
 # Module which checks regular expressions.
 #
-# Copyright (C) 2015-2019 Robert Hunt
+# Copyright (C) 2015-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,6 +29,7 @@ Module which tests the regular expression for Bible Books Codes.
 from gettext import gettext as _
 import sys
 import re
+from collections import defaultdict
 
 # Allow the app to run from either the BOS folder or in this Apps subfolder
 if __name__ == '__main__':
@@ -38,10 +39,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2019-05-12' # by RJH
+LAST_MODIFIED_DATE = '2021-01-23' # by RJH
 SHORT_PROGRAM_NAME = "TestBooksCodesRE"
 PROGRAM_NAME = "TestBooksCodes Regular Expressions"
-PROGRAM_VERSION = '0.20'
+PROGRAM_VERSION = '0.21'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -66,15 +67,12 @@ OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v
 
 def doBBB():
     vPrint( 'Quiet', debuggingThisModule, "\ndoBBB" )
-    L0, L1, L2 = {}, {}, {}
+    Letter0, Letter1, Letter2 = defaultdict( int ), defaultdict( int ), defaultdict( int )
     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
         #dPrint( 'Quiet', debuggingThisModule, BBB )
-        if BBB[0] in L0: L0[BBB[0]] += 1
-        else: L0[BBB[0]] = 1
-        if BBB[1] in L1: L1[BBB[1]] += 1
-        else: L1[BBB[1]] = 1
-        if BBB[2] in L2: L2[BBB[2]] += 1
-        else: L2[BBB[2]] = 1
+        Letter0[BBB[0]] += 1
+        Letter1[BBB[1]] += 1
+        Letter2[BBB[2]] += 1
     vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L0) )
     vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L1) )
     vPrint( 'Quiet', debuggingThisModule, ' ', sorted(L2) )

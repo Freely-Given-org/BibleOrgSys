@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-01-14' # by RJH
+LAST_MODIFIED_DATE = '2021-02-08' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -204,7 +204,8 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
         match =  textRE.search( originalLanguageTextString )
         while match:
             # Convert occurrence and occurrences to ints (from digit strings) as we go
-            textList.append( (match.group(1),match.group(2),match.group(3),int(match.group(4)),int(match.group(5)),match.group(6)) )
+            # Note that we change the order, e.g., move the word from the end to the beginning and then the lemma
+            textList.append( (match.group(6), match.group(2), match.group(1),match.group(3),int(match.group(4)),int(match.group(5))) )
             for xx in range(1,7):
                 if not match.group(xx):
                     logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )

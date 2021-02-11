@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-01-01' # by RJH
+LAST_MODIFIED_DATE = '2021-02-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.79'
@@ -690,7 +690,7 @@ class InternalBibleEntry:
                     offset += len(extraText ) + 2*lenUSFM + 4
                 # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
                 #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
-                result = re.sub('\\\\w (.+?)\\\\w\\*','',result) # Remove all \w …\w* fields
+                result = re.sub( '\\\\w (.+?)\\\\w\\*', '', result ) # Remove all \w …\w* fields
                 result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
 
             if result != self.adjustedText:

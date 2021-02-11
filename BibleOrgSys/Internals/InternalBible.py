@@ -53,6 +53,7 @@ The calling class then fills
     self.books by calling stashBook() which updates:
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
+from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
 import os
@@ -62,6 +63,7 @@ from pathlib import Path
 from collections import defaultdict
 import re
 import multiprocessing
+import copy
 
 if __name__ == '__main__':
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -69,15 +71,15 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-01-19' # by RJH
+LAST_MODIFIED_DATE = '2021-02-08' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -2550,7 +2552,30 @@ class InternalBible:
     # end of InternalBible.writeBOSBCVFiles
 
 
-    def analyseUWoriginal( self ) -> None:
+    def _getBibleWithoutWFields( self ) -> InternalBible:
+        """
+        Create a new InternalBible object (so we don't mess-up the current one)
+        Replace \\w …\\w* fields with the actual word they contain (losing the attributes)
+        Return the new adjusted object.
+        """
+        copiedSelf = copy.deepcopy( self )
+        for BBB,bookObject in copiedSelf.books.items():
+            internalBibleBookData = copy.copy( bookObject._processedLines )
+            bookObject._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
+            for processedBibleEntry in internalBibleBookData:
+                fullText = processedBibleEntry[5] # toUSFM3() only uses marker and fullText
+                if fullText:
+                    while True: # replace \\w …\\w* fields with the actual word they contain (losing the attributes)
+                        match = re.search( '\\\\w (.+?)\\|.+?\\\\w\\*', fullText )
+                        if not match: break
+                        fullText = f'{fullText[:match.start()]}{match.group(1)}{fullText[match.end():]}'
+                bookObject._processedLines.append( InternalBibleEntry( processedBibleEntry[0], processedBibleEntry[1], processedBibleEntry[2],
+                    processedBibleEntry[3], processedBibleEntry[4], fullText ) )
+        return copiedSelf
+    # end of InternalBible._getBibleWithoutWFields
+
+
+    def analyseAndExportUWoriginal( self ) -> None:
         """
         Aggregates all the information from each original language (UHB/UGNT) book,
             produces some other interesting dicts and lists,
@@ -2561,7 +2586,7 @@ class InternalBible:
                 And what about some pickles also?
         """
         debuggingThisFunction = debuggingThisModule or False
-        fnPrint( debuggingThisFunction, f"analyseUWoriginal() for {self.abbreviation}" )
+        fnPrint( debuggingThisFunction, f"analyseAndExportUWoriginal() for {self.abbreviation}" )
 
         if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.verbosityLevel > 2:
             assert self.uWencoded
@@ -2578,10 +2603,10 @@ class InternalBible:
         # aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
         perVerseWordDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         for BBB,bookObject in self.books.items():
-            assert 'uWalignments' not in bookObject.__dict__
+            assert 'uWalignments' not in bookObject.__dict__ # This is an original -- not an aligned translation
             ref = BBB, '1', '1'
             origVerseText = self.getVerseText( ref )
-            dPrint( 'Info', debuggingThisModule, '  InternalBible.analyseUWoriginal', ref, origVerseText )
+            dPrint( 'Info', debuggingThisModule, '  InternalBible.analyseAndExportUWoriginal', ref, origVerseText )
             if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
 
             if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
@@ -2701,9 +2726,9 @@ class InternalBible:
             perVerseWordDict[BBB] = lines
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
-        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseUWalignments writing {self.abbreviation} analysis JSON files…" )
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} analysis JSON files…" )
         import json
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_Analysis/' )
         try: os.makedirs( outputFolderpath )
         except FileExistsError: pass
         for dataObject, objectName in (
@@ -2717,66 +2742,19 @@ class InternalBible:
                 with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
                     json.dump( dataObject, xf, ensure_ascii=False, indent=JSON_INDENT )
 
-        # # Save some text files for manually looking through
-        # with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
-        #     for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
-        #         assert isinstance( originalWord, str )
-        #         assert originalWord
-        #         translations = originalFormToTransOccurrencesDict[originalWord]
-        #         #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
-        #         assert isinstance( translations, dict )
-        #         for translation,tCount in translations.items():
-        #             assert isinstance( translation, str )
-        #             assert isinstance( tCount, int )
-        #             #dPrint( 'Quiet', debuggingThisFunction, "translation", translation, "tCount", tCount )
-        #             #dPrint( 'Quiet', debuggingThisFunction, f"For '{originalWord}', have {translation}: {tCount}" )
-        #             if tCount == 1: # Let's find the reference
-        #                 refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
-        #                 #dPrint( 'Quiet', debuggingThisFunction, "refList1", refList )
-        #                 assert isinstance( refList, list )
-        #                 for ref in refList:
-        #                     #dPrint( 'Quiet', debuggingThisFunction, "ref", ref )
-        #                     assert isinstance( ref, tuple )
-        #                     assert len(ref) == 4
-        #                     if ref[3] == translation:
-        #                         translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
-        #                         #dPrint( 'Quiet', debuggingThisFunction, f"Now '{originalWord}', have {translations}" )
-        #                         break
-        #         xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
-        # #dPrint( 'Quiet', debuggingThisFunction, "keys", originalLemmaToTransOccurrencesDict.keys() )
-        # #dPrint( 'Quiet', debuggingThisFunction, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
-        # #dPrint( 'Quiet', debuggingThisFunction, "blank", originalLemmaToTransOccurrencesDict[''] )
-        # with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
-        #     for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
-        #         assert isinstance( originalLemma, str )
-        #         #assert originalLemma # NO, THESE CAN BE BLANK
-        #         translations = originalLemmaToTransOccurrencesDict[originalLemma]
-        #         #dPrint( 'Quiet', debuggingThisFunction, "translations", translations ) # dict of word: numOccurrences
-        #         assert isinstance( translations, dict )
-        #         for translation,tCount in translations.items():
-        #             assert isinstance( translation, str )
-        #             assert isinstance( tCount, int )
-        #             #dPrint( 'Quiet', debuggingThisModule, "translation", translation, "tCount", tCount )
-        #             #dPrint( 'Quiet', debuggingThisModule, f"For '{originalLemma}', have {translation}: {tCount}" )
-        #             if tCount == 1: # Let's find the reference
-        #                 refList = originalLemmaToTransAlignmentsDict[originalLemma] # List of 4-tuples B,C,V,translation
-        #                 #dPrint( 'Quiet', debuggingThisModule, "refList2", refList )
-        #                 assert isinstance( refList, list )
-        #                 for ref in refList:
-        #                     #dPrint( 'Quiet', debuggingThisModule, "ref", ref )
-        #                     assert isinstance( ref, tuple )
-        #                     assert len(ref) == 4
-        #                     if ref[3] == translation:
-        #                         translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
-        #                         #dPrint( 'Quiet', debuggingThisModule, f"Now '{originalLemma}', have {translations}" )
-        #                         break
-        #         xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
+        # Save the original text without \w fields for easier reading
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} text-only USFM files…" )
+        self._getBibleWithoutWFields().toUSFM3( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_TextOnly_USFM/' ) )
+        # Check that we didn't mess up the original object -- it should still have the \\w fields with attributes
+        # Actually, we'll leave this in, coz these files have each verse on a separate line,
+        #   not each WORD on a separate line like the unfoldingWord originals
+        self.toUSFM3( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_Normalised_USFM/' ) )
 
-        vPrint( 'Quiet', debuggingThisFunction, f"  InternalBible.analyseUWoriginal: Done for {self.abbreviation}" )
-    # end of InternalBible.analyseUWoriginal
+        vPrint( 'Quiet', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal: Done for {self.abbreviation}" )
+    # end of InternalBible.analyseAndExportUWoriginal
 
 
-    def analyseUWalignments( self ) -> None:
+    def analyseAndExportUWalignments( self ) -> None:
         """
         Aggregates all the alignments with UHB/UGNT from each translated book.
 
@@ -2794,7 +2772,7 @@ class InternalBible:
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
 
         debuggingThisFunction = debuggingThisModule or False
-        fnPrint( debuggingThisFunction, f"analyseUWalignments() for {self.abbreviation}" )
+        fnPrint( debuggingThisFunction, f"analyseAndExportUWalignments() for {self.abbreviation}" )
         if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.verbosityLevel > 2:
             assert self.uWencoded
         vPrint( 'Quiet', debuggingThisFunction, f"Analysing unfoldingWord {self.abbreviation} alignments…" )
@@ -2817,7 +2795,7 @@ class InternalBible:
         for BBB,bookObject in self.books.items():
             ref = BBB, '1', '1'
             origVerseText = self.getVerseText( ref )
-            dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseUWalignments', ref, origVerseText )
+            dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )
             if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
 
             if 'uWalignments' in bookObject.__dict__:
@@ -2932,7 +2910,7 @@ class InternalBible:
 
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
-                thisOrigStrongs, thisoriginalLemma, thisoriginalWord = thisOrigEntry[0], thisOrigEntry[1], thisOrigEntry[5]
+                thisoriginalWord, thisoriginalLemma, thisOrigStrongs = thisOrigEntry[0], thisOrigEntry[1], thisOrigEntry[2]
                 thisOriginalWordPlusLemma = f'{thisoriginalWord}~~{thisoriginalLemma}'
 
                 if thisOriginalWordPlusLemma not in originalFormToTransOccurrencesDict:
@@ -3025,7 +3003,7 @@ class InternalBible:
                         if ',Np' not in combinedMorphString \
                         and thistranslatedWord not in ('God','Lord','Father','Son','Spirit'): # special words which might intentionally occur in both cases
                             # Not a Hebrew proper noun -- don't have anything similar for Greek unfortunately
-                            dPrint( 'Verbose', debuggingThisFunction, f"    analyseUWalignments: Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
+                            dPrint( 'Verbose', debuggingThisFunction, f"    analyseAndExportUWalignments: Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
                             thistranslatedWord = thistranslatedWordLower
                         else:
                             vPrint( 'Verbose', debuggingThisFunction, f"    Not converting exception '{thistranslatedWord}'")
@@ -3111,9 +3089,9 @@ class InternalBible:
         self.uWalignments['oneToOneTransToOriginalAlignmentsDict'] = oneToOneTransToOriginalAlignmentsDict
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
-        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseUWalignments writing {self.abbreviation} alignment JSON files…" )
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWalignments writing {self.abbreviation} alignment JSON files…" )
         import json
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'unfoldingWordAlignments/' )
+        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Analysis/' )
         try: os.makedirs( outputFolderpath )
         except FileExistsError: pass
         for dataObject, objectName in (
@@ -3250,12 +3228,21 @@ class InternalBible:
         #         for count,outputString in sorted( toList, reverse=True ):
         #             xf.write( outputString )
 
+        # Save the original text without \w fields for easier reading
+        #   (Both outputs below have the alignment information already removed)
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWalignments writing {self.abbreviation} text-only USFM files…" )
+        self._getBibleWithoutWFields().toUSFM3( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_TextOnly_USFM/' ) )
+        # Check that we didn't mess up the original object -- it should still have the \\w fields with attributes
+        # Actually, we'll leave this in, coz these files have each verse on a separate line,
+        #   not each WORD on a separate line like the unfoldingWord originals
+        self.toUSFM3( BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Normalised_USFM/' ) )
+
         vPrint( 'Normal', debuggingThisFunction,
-f'''  InternalBible.analyseUWalignments: Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}
+f'''  InternalBible.analyseAndExportUWalignments: Have {len(aggregatedAlignmentsList):,} alignment entries for {self.abbreviation}
     Maximum of {maxOriginalWords} original language words in one {self.abbreviation} entry
     Maximum of {maxTranslatedWords} translated words in one {self.abbreviation} entry''' )
         #halt
-    # end of InternalBible.analyseUWalignments
+    # end of InternalBible.analyseAndExportUWalignments
 # end of class InternalBible
 
 
