@@ -5,7 +5,7 @@
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2021-02-19' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
 PROGRAM_VERSION = '0.09'
@@ -295,15 +295,16 @@ class Hebrew():
     Class for handling a Hebrew string.
     """
     def __init__( self, text ) -> None:
-        """ Create an new Hebrew object. """
-        self.originalText = text
-        self.currentText = text
+        """
+        Create an new Hebrew object.
+        """
+        self.originalText = self.currentText = text
     # end of Hebrew.__init__
 
 
     def __str__( self ) -> str:
         """
-        This method returns the string representation of a Bible book code.
+        This method returns the string representation of a Hebrew string.
 
         @return: the name of a Bible object formatted as a string
         @rtype: string

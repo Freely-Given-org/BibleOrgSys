@@ -350,7 +350,7 @@ class BibleWriter( InternalBible ):
         #def countWords( marker, segment, location ):
             #""" Breaks the segment into words and counts them.
             #"""
-            #def stripWordPunctuation( word ):
+            #def stripWordEndsPunctuation( word ):
                 #"""Removes leading and trailing punctuation from a word.
                     #Returns the "clean" word."""
                 #while word and word[0] in InternalBibleBook.LEADING_WORD_PUNCT_CHARS:
@@ -359,16 +359,16 @@ class BibleWriter( InternalBible ):
                     #word = word[:-1] # Remove trailing punctuation
                 #if  '<' in word or '>' in word or '"' in word: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, C, V, repr(word) )
                 #return word
-            ## end of stripWordPunctuation
+            ## end of stripWordEndsPunctuation
 
             #words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
             #for j,rawWord in enumerate(words):
                 #if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 #word = rawWord
                 #for internalMarker in InternalBibleBook.INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
-                #word = stripWordPunctuation( word )
+                #word = stripWordEndsPunctuation( word )
                 #if word and not word[0].isalnum():
-                    ##dPrint( 'Quiet', debuggingThisModule, word, stripWordPunctuation( word ) )
+                    ##dPrint( 'Quiet', debuggingThisModule, word, stripWordEndsPunctuation( word ) )
                     #if len(word) > 1:
                         #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word {!r}").format( word ) )
                         #word = word[1:]

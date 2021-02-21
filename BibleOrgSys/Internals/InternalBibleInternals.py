@@ -64,7 +64,7 @@ Some notes about internal formats:
         (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List
 import logging
 import re
 
@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-02-04' # by RJH
+LAST_MODIFIED_DATE = '2021-02-20' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.79'
+PROGRAM_VERSION = '0.80'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -100,11 +100,11 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
             Usually only one of c or c# is used for exports
     v= the verse number (not to be printed)
             that the next field(s) (usually a section heading) logically belong together with
-    v~  verse text -- anything after the verse number on a \v line is split off into here
-    p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.) is split off into here
-    cl¤ used to rename cl markers BEFORE the '\c 1' marker --
+    v~  verse text -- anything after the verse number on a \\v line is split off into here
+    p~  verse text -- anything that was on a paragraph line (e.g., \\p, \\q, \\q2, etc.) is split off into here
+    cl¤ used to rename cl markers BEFORE the '\\c 1' marker --
                             represents the text for "chapter" (e.g., Psalm) to be used throughout the book
-        cl markers AFTER the '\c 1' marker remain unchanged (the text for the individual chapter/psalm heading)
+        cl markers AFTER the '\\c 1' marker remain unchanged (the text for the individual chapter/psalm heading)
     vp# used for the vp (character field) when it is copied and converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s) that contained the vp (character) field.
 """
@@ -529,7 +529,7 @@ class InternalBibleEntry:
     """
     This class represents an entry in the InternalBibleEntryList (_processedLines).
 
-    Each entry holds the original and adjusted markers (e.g., \s will be adjusted to \s1)
+    Each entry holds the original and adjusted markers (e.g., \\s will be adjusted to \\s1)
         plus the cleanText with notes, etc. removed and stored in the "extras" list.
     """
     __slots__ = ('marker', 'originalMarker', 'adjustedText', 'cleanText', 'extras', 'originalText') # Define allowed self variables (more efficient than a dict when have many instances)
@@ -707,6 +707,17 @@ class InternalBibleEntry:
             if BibleOrgSysGlobals.debugFlag and self.originalText is not None: assert result == self.originalText.strip()
             return result
     # end of InternalBibleEntry.getFullText
+
+
+    def setCleanText( self, newValue:str ) -> None:
+        """
+        Allows the entry to be changed
+            if it has no extras
+        """
+        fnPrint( debuggingThisModule, f"InternalBibleEntry.setCleanText( {newValue} ) for {self.marker}" )
+        assert not self.extras
+        self.cleanText = self.adjustedText = self.originalText = newValue
+    # end of InternalBibleEntry.setCleanText
 # end of class InternalBibleEntry
 
 
@@ -830,6 +841,7 @@ def briefDemo() -> None:
     """
     Demonstrate reading and processing some Bible databases.
     """
+    # from pathlib import Path
     global debuggingThisModule
 
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
@@ -844,28 +856,28 @@ def briefDemo() -> None:
     #IBB.sourceFilepath = 'Nowhere'
     #dPrint( 'Quiet', debuggingThisModule, IBB )
 
-    if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
-        import os
-        from BibleOrgSys.Formats.USFMBible import USFMBible
+    # if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
+    #     import os
+    #     from BibleOrgSys.Formats.USFMBible import USFMBible
 
-        testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
-                ) # You can put your USFM test folder here
+    #     testData = ( # name, abbreviation, folderpath for USFM files
+    #             ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+    #             ) # You can put your USFM test folder here
 
-        for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
-            if os.access( testFolder, os.R_OK ):
-                UB = USFMBible( testFolder, name, abbrev )
-                UB.load()
-                UB.discover() # Why does this only help if -1 flag is enabled???
-                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
-                if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #debuggingThisModule = False
-                for BBB,bookObject in UB.books.items():
-                    bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
-                    bookObject._SectionIndex.makeBookSectionIndex()
-                    if BBB=='GEN': halt
-            else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+    #     for j, (name, abbrev, testFolder) in enumerate( testData ):
+    #         vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+    #         if os.access( testFolder, os.R_OK ):
+    #             UB = USFMBible( testFolder, name, abbrev )
+    #             UB.load()
+    #             UB.discover() # Why does this only help if -1 flag is enabled???
+    #             vPrint( 'Quiet', debuggingThisModule, ' ', UB )
+    #             if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+    #             #debuggingThisModule = False
+    #             for BBB,bookObject in UB.books.items():
+    #                 bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
+    #                 bookObject._SectionIndex.makeBookSectionIndex()
+    #                 if BBB=='GEN': halt
+    #         else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of InternalBibleInternals.briefDemo
 
 
@@ -887,28 +899,28 @@ def fullDemo() -> None:
     #IBB.sourceFilepath = 'Nowhere'
     #dPrint( 'Quiet', debuggingThisModule, IBB )
 
-    if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
-        import os
-        from BibleOrgSys.Formats.USFMBible import USFMBible
+    # if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
+    #     import os
+    #     from BibleOrgSys.Formats.USFMBible import USFMBible
 
-        testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
-                ) # You can put your USFM test folder here
+    #     testData = ( # name, abbreviation, folderpath for USFM files
+    #             ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+    #             ) # You can put your USFM test folder here
 
-        for j, (name, abbrev, testFolder) in enumerate( testData ):
-            vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
-            if os.access( testFolder, os.R_OK ):
-                UB = USFMBible( testFolder, name, abbrev )
-                UB.load()
-                UB.discover() # Why does this only help if -1 flag is enabled???
-                vPrint( 'Quiet', debuggingThisModule, ' ', UB )
-                if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #debuggingThisModule = False
-                for BBB,bookObject in UB.books.items():
-                    bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
-                    bookObject._SectionIndex.makeBookSectionIndex()
-                    if BBB=='GEN': halt
-            else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+    #     for j, (name, abbrev, testFolder) in enumerate( testData ):
+    #         vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+    #         if os.access( testFolder, os.R_OK ):
+    #             UB = USFMBible( testFolder, name, abbrev )
+    #             UB.load()
+    #             UB.discover() # Why does this only help if -1 flag is enabled???
+    #             vPrint( 'Quiet', debuggingThisModule, ' ', UB )
+    #             if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
+    #             #debuggingThisModule = False
+    #             for BBB,bookObject in UB.books.items():
+    #                 bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
+    #                 bookObject._SectionIndex.makeBookSectionIndex()
+    #                 if BBB=='GEN': halt
+    #         else: logger.error( f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of InternalBibleInternals.fullDemo
 
 if __name__ == '__main__':

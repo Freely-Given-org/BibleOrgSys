@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-02-08' # by RJH
+LAST_MODIFIED_DATE = '2021-02-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.85'
@@ -1263,15 +1263,15 @@ class InternalBible:
         for BBB in self.discoveryResults:
             #dPrint( 'Quiet', debuggingThisModule, "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
-            if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+            if isOT:
                 isOT = True
                 if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'], aggregateResults['OTBookCodes'] = 1, [BBB]
                 else: aggregateResults['OTBookCount'] += 1; aggregateResults['OTBookCodes'].append( BBB )
-            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+            elif isNT:
                 isNT = True
                 if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'], aggregateResults['NTBookCodes'] = 1, [BBB]
                 else: aggregateResults['NTBookCount'] += 1; aggregateResults['NTBookCodes'].append( BBB )
-            elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+            elif isDC:
                 isDC = True
                 if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'], aggregateResults['DCBookCodes'] = 1, [BBB]
                 else: aggregateResults['DCBookCount'] += 1; aggregateResults['DCBookCodes'].append( BBB )
@@ -2386,7 +2386,7 @@ class InternalBible:
             assert optionsDict['wordMode'] in ( 'Any', 'Whole', 'Begins', 'EndsWord', 'EndsLine', )
             if optionsDict['wordMode'] != 'Any': assert ' ' not in optionsDict['findText']
             if optionsDict['markerList']:
-                assert isinstance( markerList, list )
+                assert isinstance( optionsDict['markerList'], list )
                 assert not optionsDict['includeIntroFlag']
                 assert not optionsDict['includeMainTextFlag']
                 assert not optionsDict['includeMarkerTextFlag']
@@ -2761,6 +2761,8 @@ class InternalBible:
         The cleaned aligments are
             List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]
             i.e., list entries of 5-tuples of C,V,originalWordsList,translatedWordsString,translatedWordsList.
+                    where originalWordsList contains 6-tuples: (origWord, lemma, strongs, morph, occurrence,occurrences)
+                    and translatedWordsList contains 3-tuples: (transWord, occurrence,occurrences).
 
         Also produces some other interesting dicts and lists
             and saves them as json files for analysis by other programs
@@ -2770,6 +2772,7 @@ class InternalBible:
                 And what about some pickles also?
         """
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
+        from BibleOrgSys.OriginalLanguages.Hebrew import Hebrew
 
         debuggingThisFunction = debuggingThisModule or False
         fnPrint( debuggingThisFunction, f"analyseAndExportUWalignments() for {self.abbreviation}" )
@@ -2798,15 +2801,16 @@ class InternalBible:
             dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )
             if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
 
+            isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
+            isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
+            isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
+
             if 'uWalignments' in bookObject.__dict__:
                 vPrint( 'Never', debuggingThisFunction, f"Cleaning alignments for {BBB} and aggregating…" )
                 alignedBookList.append( BBB )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    alignedOTBookList.append( BBB )
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    alignedNTBookList.append( BBB )
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    alignedDCBookList.append( BBB )
+                if isOT: alignedOTBookList.append( BBB )
+                elif isNT: alignedNTBookList.append( BBB )
+                elif isDC: alignedDCBookList.append( BBB )
                 alignedBookCount += 1
 
                 for C,V,originalWordsList,translatedWordsString,translatedWordsList \
@@ -2820,12 +2824,9 @@ class InternalBible:
                     ref = f'{BBB}_{C}:{V}' # Must be a str for json (can't be a tuple)
                     alignmentDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
-                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                        thisList, thisDict = aggregatedAlignmentsOTList, alignmentOTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                        thisList, thisDict = aggregatedAlignmentsNTList, alignmentNTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                        thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
+                    if isOT: thisList, thisDict = aggregatedAlignmentsOTList, alignmentOTDict
+                    elif isNT: thisList, thisDict = aggregatedAlignmentsNTList, alignmentNTDict
+                    elif isDC: thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
                     thisList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
                     thisDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
@@ -2889,6 +2890,10 @@ class InternalBible:
         anyToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
         anyToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
         anyToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
+        HebrewOTWordDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        HebrewOTLemmaDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        GreekNTWordDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        GreekNTLemmaDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
 
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
             #dPrint( 'Quiet', debuggingThisModule, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
@@ -2905,80 +2910,92 @@ class InternalBible:
             # maxOriginalWords = max( len(originalWordsList), maxOriginalWords )
             # maxTranslatedWords = max( len(translatedWordsList), maxTranslatedWords )
 
+            isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
+            isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
+            isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
+
             # For counting occurrences (not alignments), remove ampersand (non-continguous words joiner)
             cleanedTranslatedWordsString = translatedWordsString.replace( ' & ', ' ' )
 
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
-                thisoriginalWord, thisoriginalLemma, thisOrigStrongs = thisOrigEntry[0], thisOrigEntry[1], thisOrigEntry[2]
-                thisOriginalWordPlusLemma = f'{thisoriginalWord}~~{thisoriginalLemma}'
+                thisOriginalWord, thisOriginalLemma, thisOrigStrongs, thisOrigMorph, thisOrigOccurrence, thisOrigOccurrences = thisOrigEntry
+                if isOT:
+                    hWord = Hebrew( thisOriginalWord )
+                    if thisOriginalWord != hWord.removeCantillationMarks():
+                        dPrint( 'Verbose', debuggingThisFunction, f"Hebrew '{thisOriginalWord}' without cantillation marks will be '{hWord.removeCantillationMarks()}'" )
+                        thisOriginalWord = hWord.removeCantillationMarks()
 
-                if thisOriginalWordPlusLemma not in originalFormToTransOccurrencesDict:
-                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma]:
-                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] += 1
+                # thisOriginalWordPlusLemma = f'{thisOriginalWord}~~{thisOriginalLemma}'
+
+                # was thisOriginalWordPlusLemma but that was real messy
+                if thisOriginalWord not in originalFormToTransOccurrencesDict:
+                    originalFormToTransOccurrencesDict[thisOriginalWord] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in originalFormToTransOccurrencesDict[thisOriginalWord]:
+                    originalFormToTransOccurrencesDict[thisOriginalWord][cleanedTranslatedWordsString] += 1
                 else:
-                    originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] = 1
-                assert isinstance( originalFormToTransOccurrencesDict[thisOriginalWordPlusLemma], dict )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
+                    originalFormToTransOccurrencesDict[thisOriginalWord][cleanedTranslatedWordsString] = 1
+                assert isinstance( originalFormToTransOccurrencesDict[thisOriginalWord], dict )
+                if isOT:
                     thisDict = originalFormToTransOccurrencesOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
+                    thisWordDict, thisLemmaDict = HebrewOTWordDict, HebrewOTLemmaDict
+                elif isNT:
                     thisDict = originalFormToTransOccurrencesNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
+                    thisWordDict, thisLemmaDict = GreekNTWordDict, GreekNTLemmaDict
+                elif isDC:
                     thisDict = originalFormToTransOccurrencesDCDict
-                if thisOriginalWordPlusLemma not in thisDict:
-                    thisDict[thisOriginalWordPlusLemma] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in thisDict[thisOriginalWordPlusLemma]:
-                    thisDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] += 1
+                    thisWordDict = thisLemmaDict = None
+                if thisOriginalWord not in thisDict:
+                    thisDict[thisOriginalWord] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in thisDict[thisOriginalWord]:
+                    thisDict[thisOriginalWord][cleanedTranslatedWordsString] += 1
                 else:
-                    thisDict[thisOriginalWordPlusLemma][cleanedTranslatedWordsString] = 1
+                    thisDict[thisOriginalWord][cleanedTranslatedWordsString] = 1
 
-                if thisoriginalLemma not in originalLemmaToTransOccurrencesDict:
-                    originalLemmaToTransOccurrencesDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in originalLemmaToTransOccurrencesDict[thisoriginalLemma]:
-                    originalLemmaToTransOccurrencesDict[thisoriginalLemma][cleanedTranslatedWordsString] += 1
+                if thisOriginalLemma not in originalLemmaToTransOccurrencesDict:
+                    originalLemmaToTransOccurrencesDict[thisOriginalLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in originalLemmaToTransOccurrencesDict[thisOriginalLemma]:
+                    originalLemmaToTransOccurrencesDict[thisOriginalLemma][cleanedTranslatedWordsString] += 1
                 else:
-                    originalLemmaToTransOccurrencesDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
-                assert isinstance( originalLemmaToTransOccurrencesDict[thisoriginalLemma], dict )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = originalLemmaToTransOccurrencesOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = originalLemmaToTransOccurrencesNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = originalLemmaToTransOccurrencesDCDict
-                if thisoriginalLemma not in thisDict:
-                    thisDict[thisoriginalLemma] = {cleanedTranslatedWordsString:1}
-                elif cleanedTranslatedWordsString in thisDict[thisoriginalLemma]:
-                    thisDict[thisoriginalLemma][cleanedTranslatedWordsString] += 1
+                    originalLemmaToTransOccurrencesDict[thisOriginalLemma][cleanedTranslatedWordsString] = 1
+                assert isinstance( originalLemmaToTransOccurrencesDict[thisOriginalLemma], dict )
+                if isOT: thisDict = originalLemmaToTransOccurrencesOTDict
+                elif isNT: thisDict = originalLemmaToTransOccurrencesNTDict
+                elif isDC: thisDict = originalLemmaToTransOccurrencesDCDict
+                if thisOriginalLemma not in thisDict:
+                    thisDict[thisOriginalLemma] = {cleanedTranslatedWordsString:1}
+                elif cleanedTranslatedWordsString in thisDict[thisOriginalLemma]:
+                    thisDict[thisOriginalLemma][cleanedTranslatedWordsString] += 1
                 else:
-                    thisDict[thisoriginalLemma][cleanedTranslatedWordsString] = 1
+                    thisDict[thisOriginalLemma][cleanedTranslatedWordsString] = 1
 
-                originalFormToTransAlignmentsDict[thisOriginalWordPlusLemma].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = originalFormToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = originalFormToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = originalFormToTransAlignmentsDCDict
-                thisDict[thisOriginalWordPlusLemma].append( (BBB,C,V,translatedWordsString) )
+                # was thisOriginalWordPlusLemma
+                originalFormToTransAlignmentsDict[thisOriginalWord].append( (BBB,C,V,thisOriginalLemma,translatedWordsString) )
+                if isOT: thisDict = originalFormToTransAlignmentsOTDict
+                elif isNT: thisDict = originalFormToTransAlignmentsNTDict
+                elif isDC: thisDict = originalFormToTransAlignmentsDCDict
+                thisDict[thisOriginalWord].append( (BBB,C,V,thisOriginalLemma,translatedWordsString) )
 
-                originalLemmaToTransAlignmentsDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = originalLemmaToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = originalLemmaToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = originalLemmaToTransAlignmentsDCDict
-                thisDict[thisoriginalLemma].append( (BBB,C,V,translatedWordsString) )
+                originalLemmaToTransAlignmentsDict[thisOriginalLemma].append( (BBB,C,V,translatedWordsString) )
+                if isOT: thisDict = originalLemmaToTransAlignmentsOTDict
+                elif isNT: thisDict = originalLemmaToTransAlignmentsNTDict
+                elif isDC: thisDict = originalLemmaToTransAlignmentsDCDict
+                thisDict[thisOriginalLemma].append( (BBB,C,V,translatedWordsString) )
 
                 origStrongsToTransAlignmentsDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = origStrongsToTransAlignmentsOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = origStrongsToTransAlignmentsNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = origStrongsToTransAlignmentsDCDict
+                if isOT: thisDict = origStrongsToTransAlignmentsOTDict
+                elif isNT: thisDict = origStrongsToTransAlignmentsNTDict
+                elif isDC: thisDict = origStrongsToTransAlignmentsDCDict
                 thisDict[thisOrigStrongs].append( (BBB,C,V,translatedWordsString) )
+
+                # Note: I tried doing this with tuples but JSON can't handle tuples as dict keys
+                dictEntry = (BBB,C,V, thisOrigOccurrence,thisOrigOccurrences, translatedWordsString)
+                if thisWordDict is not None:
+                    assert '//' not in thisOriginalLemma and '//' not in thisOrigStrongs and '//' not in thisOrigMorph
+                    thisWordDict[thisOriginalWord][f'{thisOriginalLemma}//{thisOrigStrongs}//{thisOrigMorph}'].append( dictEntry )
+                if thisLemmaDict is not None:
+                    assert '//' not in thisOriginalWord and '//' not in thisOrigStrongs and '//' not in thisOrigMorph
+                    thisLemmaDict[thisOriginalLemma][f'{thisOriginalWord}//{thisOrigStrongs}//{thisOrigMorph}'].append( dictEntry )
 
             else: # len(originalWordsList) > 1:
                 # TODO: Find/count multi-word forms!!!
@@ -3000,8 +3017,8 @@ class InternalBible:
                         vPrint( 'Verbose', debuggingThisFunction, f"  Investigating '{thistranslatedWord}' from {originalWordsList}…")
                         combinedMorphString = ' + '.join( (x[2] for x in originalWordsList) )
                         vPrint( 'Verbose', debuggingThisFunction, f"    combinedMorphString='{combinedMorphString}'")
-                        if ',Np' not in combinedMorphString \
-                        and thistranslatedWord not in ('God','Lord','Father','Son','Spirit'): # special words which might intentionally occur in both cases
+                        if not combinedMorphString.endswith(',Np') and not combinedMorphString.endswith(':Np') \
+                        and thistranslatedWord not in ('I','God','Lord','Father','Son','Spirit'): # special words which might intentionally occur in both cases
                             # Not a Hebrew proper noun -- don't have anything similar for Greek unfortunately
                             dPrint( 'Verbose', debuggingThisFunction, f"    analyseAndExportUWalignments: Converting '{thistranslatedWord}' to '{thistranslatedWordLower}'")
                             thistranslatedWord = thistranslatedWordLower
@@ -3012,30 +3029,21 @@ class InternalBible:
 
                 if len(originalWordsList) == 1:
                     oneToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList[0]) )
-                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                        thisDict = oneToOneTransToOriginalAlignmentsOTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                        thisDict = oneToOneTransToOriginalAlignmentsNTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                        thisDict = oneToOneTransToOriginalAlignmentsDCDict
+                    if isOT: thisDict = oneToOneTransToOriginalAlignmentsOTDict
+                    elif isNT: thisDict = oneToOneTransToOriginalAlignmentsNTDict
+                    elif isDC: thisDict = oneToOneTransToOriginalAlignmentsDCDict
                     thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList[0]) )
                 else: # len(originalWordsList) > 1
                     manyToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
-                    if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                        thisDict = manyToOneTransToOriginalAlignmentsOTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                        thisDict = manyToOneTransToOriginalAlignmentsNTDict
-                    elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                        thisDict = manyToOneTransToOriginalAlignmentsDCDict
+                    if isOT: thisDict = manyToOneTransToOriginalAlignmentsOTDict
+                    elif isNT: thisDict = manyToOneTransToOriginalAlignmentsNTDict
+                    elif isDC: thisDict = manyToOneTransToOriginalAlignmentsDCDict
                     thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
 
                 anyToOneTransToOriginalAlignmentsDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
-                if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
-                    thisDict = anyToOneTransToOriginalAlignmentsOTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
-                    thisDict = anyToOneTransToOriginalAlignmentsNTDict
-                elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
-                    thisDict = anyToOneTransToOriginalAlignmentsDCDict
+                if isOT: thisDict = anyToOneTransToOriginalAlignmentsOTDict
+                elif isNT: thisDict = anyToOneTransToOriginalAlignmentsNTDict
+                elif isDC: thisDict = anyToOneTransToOriginalAlignmentsDCDict
                 thisDict[thistranslatedWord].append( (BBB,C,V,originalWordsList) )
 
             else: # len(translatedWordsList) > 1:
@@ -3076,7 +3084,7 @@ class InternalBible:
                 if j > max_each: break
             vPrint( 'Quiet', debuggingThisFunction, f"\nHave {len(oneToOneTransToOriginalAlignmentsDict):,} word reverse alignments" )
             for j, (key,value) in enumerate( oneToOneTransToOriginalAlignmentsDict.items(), start=1 ):
-                vPrint( 'Quiet', debuggidebuggingThisFunctionngThisModule, f"{j} {key} = {value if len(value)<200 else len(value)}" )
+                vPrint( 'Quiet', debuggingThisFunction, f"{j} {key} = {value if len(value)<200 else len(value)}" )
                 assert isinstance( key, str )
                 assert isinstance( value, list )
                 if j > max_each: break
@@ -3139,6 +3147,10 @@ class InternalBible:
                     (anyToOneTransToOriginalAlignmentsOTDict, 'anyToOneTransToOriginalAlignmentsOTDict'),
                     (anyToOneTransToOriginalAlignmentsDCDict, 'anyToOneTransToOriginalAlignmentsDCDict'),
                     (anyToOneTransToOriginalAlignmentsNTDict, 'anyToOneTransToOriginalAlignmentsNTDict'),
+                (HebrewOTWordDict, 'HebrewOTWordDict'),
+                    (HebrewOTLemmaDict, 'HebrewOTLemmaDict'),
+                (GreekNTWordDict, 'GreekNTWordDict'),
+                    (GreekNTLemmaDict, 'GreekNTLemmaDict'),
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
@@ -3159,14 +3171,13 @@ class InternalBible:
                     #dPrint( 'Quiet', debuggingThisFunction, "translation", translation, "tCount", tCount )
                     #dPrint( 'Quiet', debuggingThisFunction, f"For '{originalWord}', have {translation}: {tCount}" )
                     if tCount == 1: # Let's find the reference
-                        refList = originalFormToTransAlignmentsDict[originalWord] # List of 4-tuples B,C,V,translation
+                        refList = originalFormToTransAlignmentsDict[originalWord] # List of 5-tuples B,C,V,lemma,translation
                         #dPrint( 'Quiet', debuggingThisFunction, "refList1", refList )
                         assert isinstance( refList, list )
                         for ref in refList:
                             #dPrint( 'Quiet', debuggingThisFunction, "ref", ref )
-                            assert isinstance( ref, tuple )
-                            assert len(ref) == 4
-                            if ref[3] == translation:
+                            assert isinstance( ref, tuple ) and len(ref) == 5 # B,C,V,lemma,translation
+                            if ref[4] == translation:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
                                 #dPrint( 'Quiet', debuggingThisFunction, f"Now '{originalWord}', have {translations}" )
                                 break

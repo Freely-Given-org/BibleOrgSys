@@ -713,7 +713,7 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[s
         for rawWord in segment.split():
             word = rawWord
             for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
-            word = BibleOrgSysGlobals.stripWordPunctuation( word )
+            word = BibleOrgSysGlobals.stripWordEndsPunctuation( word )
             if word and not word[0].isalnum():
                 #dPrint( 'Quiet', debuggingThisModule, "not alnum", repr(rawWord), repr(word) )
                 if len(word) > 1:

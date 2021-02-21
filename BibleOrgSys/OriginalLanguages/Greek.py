@@ -5,7 +5,7 @@
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2016 Robert Hunt
+# Copyright (C) 2012-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,6 +30,7 @@ from gettext import gettext as _
 import unicodedata
 
 if __name__ == '__main__':
+    import os
     import sys
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
     if aboveAboveFolderpath not in sys.path:
@@ -38,71 +39,103 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2016-06-07' # by RJH
+LAST_MODIFIED_DATE = '2021-02-19' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.02'
+PROGRAM_VERSION = '0.03'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
 
 
-# Consonants
+# Lower-case letters
 alpha = 'α'
 beta = 'β'
-gamma = ''
-normalConsonants = ( alpha, beta, gamma, )
-assert len(normalConsonants) == 3
-#finalConsonants = ( memFinal, nunFinal, tsadiFinal, qofFinal, )
-#consonants = normalConsonants + finalConsonants
-#allFinalConsonants = ( alef, bet, gimel, dalet, he, waw, zayin, het, tet, yod, kaf, lamed, memFinal, nunFinal, samekh, ayin, pe, tsadiFinal, qofFinal, resh, sinShin, taw, )
+gamma = 'γ'
+delta = 'δ'
+epsilon = 'ε'
+zeta = 'ζ'
+eta = 'η'
+theta = 'θ'
+iota = 'ι'
+kappa = 'κ'
+Lambda = 'λ'
+mu = 'μ'
+nu = 'ν'
+xi = 'ξ'
+omicron = 'ο'
+pi = 'π'
+rho = 'ρ'
+sigma = 'σ'; sigmaFinal = 'ς'
+tau = 'τ'
+upsilon = 'υ'
+phi = 'φ'
+chi = 'χ'
+psi = 'ψ'
+omega = 'ω'
+normalConsonants = ( beta, gamma, delta, zeta, theta, kappa, Lambda, mu, nu, xi, pi, rho, sigma, tau, phi, chi, psi )
+vowels = ( alpha, epsilon, eta, iota, omicron, upsilon, omega )
+normalLetters = normalConsonants + vowels
+assert len(normalLetters) == 24
+finalConsonants = ( sigmaFinal, )
+consonants = normalConsonants + finalConsonants
+allFinalConsonants = ( beta, gamma, delta, zeta, theta, kappa, Lambda, mu, nu, xi, pi, rho, sigmaFinal, tau, phi, chi, psi )
+
+# UPPER-CASE letters
+ALPHA = 'α'
+BETA = 'β'
+GAMMA = 'γ'
+DELTA = 'δ'
+EPSILON = 'ε'
+ZETA = 'ζ'
+ETA = 'η'
+THETA = 'θ'
+IOTA = 'ι'
+KAPPA = 'κ'
+LAMBDA = 'λ'
+MU = 'μ'
+NU = 'ν'
+XI = 'ξ'
+OMICRON = 'ο'
+PI = 'π'
+RHO = 'ρ'
+SIGMA = 'σ'; SIGMA_FINAL = 'ς'
+TAU = 'τ'
+UPSILON = 'υ'
+PHI = 'φ'
+CHI = 'χ'
+PSI = 'ψ'
+OMEGA = 'ω'
+NORMAL_CONSONANTS = ( BETA, GAMMA, DELTA, ZETA, THETA, KAPPA, LAMBDA, MU, NU, XI, PI, RHO, SIGMA, TAU, PHI, CHI, PSI )
+VOWELS = ( ALPHA, EPSILON, ETA, IOTA, OMICRON, UPSILON, OMEGA )
+NORMAL_LETTERS = NORMAL_CONSONANTS + VOWELS
+assert len(NORMAL_LETTERS) == len(normalLetters)
+FINAL_CONSONANTS = ( SIGMA_FINAL, )
+CONSONANTS = NORMAL_CONSONANTS + FINAL_CONSONANTS
+ALL_FINAL_CONSONANTS = ( BETA, GAMMA, DELTA, ZETA, THETA, KAPPA, LAMBDA, MU, NU, XI, PI, RHO, SIGMA_FINAL, TAU, PHI, CHI, PSI )
 
 
 # Other marks
-#dageshOrMapiq = 'ּ'
-#rafe = 'ֿ'
-#paseq = '׀'
-#shinDot = 'ׁ'
-#sinDot = 'ׂ'
-#upperDot = 'ׄ'
-#lowerDot = 'ׅ'
-#qamatzQatan = 'ׇ'
 #otherMarks = ( dageshOrMapiq, rafe, paseq, shinDot, sinDot, upperDot, lowerDot, qamatzQatan, )
 
 
-if 0 and BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
+if BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
         #dPrint( 'Quiet', debuggingThisModule, j, letter )
         assert normalConsonants.count(letter)==1
-        assert letter not in vowelPoints
-        assert letter not in otherMarks
-        assert letter not in cantillationMarks
-    for j,mark in enumerate( vowelPoints ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
-        assert vowelPoints.count(mark)==1
-        assert mark not in normalConsonants
-        assert mark not in otherMarks
-        assert mark not in cantillationMarks
-    for j,mark in enumerate( otherMarks ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
-        assert otherMarks.count(mark)==1
-        assert mark not in normalConsonants
-        assert mark not in vowelPoints
-        assert mark not in cantillationMarks
-    for j,mark in enumerate( cantillationMarks ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
-        assert cantillationMarks.count(mark)==1
-        assert mark not in normalConsonants
-        assert mark not in vowelPoints
-        assert mark not in otherMarks
+        assert letter not in vowels
+    for j,letter in enumerate( vowels ):
+        #dPrint( 'Quiet', debuggingThisModule, j, letter )
+        assert vowels.count(letter)==1
+        assert letter not in normalConsonants
 
 
 # Filenames for morphgnt
-morphgntBookList = ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', \
+MORPHGNT_BOOKLIST = ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', \
                     'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', \
                     'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' ]
 
-morphgntFilenameList = [ ('MAT','61-Mt-morphgnt.txt'), ('MRK','62-Mk-morphgnt.txt'), ('LUK','63-Lk-morphgnt.txt'),
+MORPHGNT_FILENAME_LIST = [ ('MAT','61-Mt-morphgnt.txt'), ('MRK','62-Mk-morphgnt.txt'), ('LUK','63-Lk-morphgnt.txt'),
                         ('JHN','64-Jn-morphgnt.txt'), ('ACT','65-Ac-morphgnt.txt'), ('ROM','66-Ro-morphgnt.txt'),
                         ('CO1','67-1Co-morphgnt.txt'), ('CO2','68-2Co-morphgnt.txt'), ('GAL','69-Ga-morphgnt.txt'),
                         ('EPH','70-Eph-morphgnt.txt'), ('PHP','71-Php-morphgnt.txt'), ('COL','72-Col-morphgnt.txt'),
@@ -113,7 +146,7 @@ morphgntFilenameList = [ ('MAT','61-Mt-morphgnt.txt'), ('MRK','62-Mk-morphgnt.tx
                         ('JN3','85-3Jn-morphgnt.txt'), ('JDE','86-Jud-morphgnt.txt'), ('REV','87-Re-morphgnt.txt' )
                       ]
 morphgntFilenameDict = {}
-for BBB,fn in morphgntFilenameList: morphgntFilenameDict[BBB] = fn
+for BBB,fn in MORPHGNT_FILENAME_LIST: morphgntFilenameDict[BBB] = fn
 
 # Codes for morphgnt
 # e.g., 180101 N- ----NSM- Παῦλος Παῦλος Παῦλος Παῦλος
@@ -162,14 +195,15 @@ class Greek():
     Class for handling a Greek string.
     """
     def __init__( self, text ) -> None:
-        """ Create an new Greek object. """
-        self.originalText = text
-        self.currentText = text
+        """
+        Create an new Greek object.
+        """
+        self.originalText = self.currentText = text
     # end of __init__
 
     def __str__( self ) -> str:
         """
-        This method returns the string representation of the Greek object.
+        This method returns the string representation of the Greek string.
 
         @return: the name of a Greek object formatted as a string
         @rtype: string

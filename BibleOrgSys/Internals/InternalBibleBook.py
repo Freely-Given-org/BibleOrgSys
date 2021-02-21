@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-02-08' # by RJH
+LAST_MODIFIED_DATE = '2021-02-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -123,7 +123,23 @@ def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[
     """
     Cleans up the unfoldingWord alignment info for the given book
 
-    Returns the cleaned-up list
+    Typical input data is:
+cleanUWalignmentsL 140 TI1 1:11 'x-strong="G25960" x-lemma="κατά" x-morph="Gr,P,,,,,A,,," x-occurrence="1" x-occurrences="1" x-content="κατὰ"'
+    = ' \v 11 \w according|x-occurrence="1" x-occurrences="1"\w* \w to|x-occurrence="1" x-occurrences="1"\w*'
+cleanUWalignmentsL 141 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,ANS," x-occurrence="1" x-occurrences="1" x-content="τὸ"'
+    = '\w the|x-occurrence="1" x-occurrences="2"\w*'
+cleanUWalignmentsL 142 TI1 1:11 'x-strong="G20980" x-lemma="εὐαγγέλιον" x-morph="Gr,N,,,,,ANS," x-occurrence="1" x-occurrences="1" x-content="εὐαγγέλιον"'
+    = '\w gospel|x-occurrence="1" x-occurrences="1"\w*'
+cleanUWalignmentsL 143 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,GFS," x-occurrence="1" x-occurrences="1" x-content="τῆς"|x-strong="G13910" x-lemma="δόξα" x-morph="Gr,N,,,,,GFS," x-occurrence="1" x-occurrences="1" x-content="δόξης"'
+    = '\w of|x-occurrence="1" x-occurrences="2"\w* \w glory|x-occurrence="1" x-occurrences="1"\w*'
+cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,GMS," x-occurrence="1" x-occurrences="1" x-content="τοῦ"'
+    = '\w of|x-occurrence="2" x-occurrences="2"\w* \w the|x-occurrence="2" x-occurrences="2"\w*'
+
+    Extracts the actual data fields and gets rid of the USFM fluff.
+
+    Returns the cleaned-up list of 5-tuples: (C,V, textList, translatedWordsString,wordsList)
+        where textList contains 6-tuples: (origWord, lemma, strongs, morph, occurrence,occurrences)
+        and wordsList contains 3-tuples: (transWord, occurrence,occurrences).
     """
     debuggingThisFunction = debuggingThisModule or False #(99 if BBB=='TI1' else False)
     fnPrint( debuggingThisFunction, f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
@@ -2649,14 +2665,15 @@ class InternalBibleBook:
 
     def getField( self, fieldName:str ) -> str:
         """
-        Extract a SFM field from the loaded book.
+        Extract a SFM field contents from the loaded book.
+
+        Returns the contents of the first field in the book with a marker match.
         """
         if not self._processedFlag:
-            vPrint( 'Never', debuggingThisModule, "InternalBibleBook {}: calling processLines from 'getField'".format( self.BBB ) )
+            dPrint( 'Never', debuggingThisModule, f"InternalBibleBook {self.BBB}: calling processLines from 'getField'" )
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             assert self._processedLines
-        if BibleOrgSysGlobals.debugFlag:
             assert fieldName and isinstance( fieldName, str )
         adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( fieldName )
 
@@ -2665,6 +2682,29 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not entry.getExtras() # We're maybe losing some info here
                 return entry.getText()
     # end of InternalBibleBook.getField
+
+
+    def setField( self, fieldName:str, newValue:str ) -> bool:
+        """
+        Replace the contents of an existing SFM field in the loaded book.
+        """
+        if not self._processedFlag:
+            dPrint( 'Never', debuggingThisModule, f"InternalBibleBook {self.BBB}: calling processLines from 'setField'" )
+            self.processLines()
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            assert self._processedLines
+            assert fieldName and isinstance( fieldName, str )
+        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( fieldName )
+
+        for entry in self._processedLines:
+            assert isinstance( entry, InternalBibleEntry )
+            if entry.getMarker() == adjFieldName:
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not entry.getExtras() # We're maybe losing some info here
+                dPrint( 'Normal', debuggingThisModule, f"InternalBibleBook.setField replace {self.BBB} '{entry.getText()}' with '{newValue}'" )
+                ebtry.setCleanText( newValue )
+                return True
+        return False
+    # end of InternalBibleBook.setField
 
 
     def getAssumedBookNames( self ) -> List[str]:
@@ -2961,7 +3001,7 @@ class InternalBibleBook:
             try: uwaFlag = self.containerBibleObject.uWencoded
             except AttributeError: uwaFlag = False
             fnPrint( debuggingThisModule, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB} {C}:{V}{' (uWencoded)' if uwaFlag else ''}" )
-            #def stripWordPunctuation( word ):
+            #def stripWordEndsPunctuation( word ):
                 #"""Removes leading and trailing punctuation from a word.
                     #Returns the "clean" word."""
                 #while word and word[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
@@ -2970,7 +3010,7 @@ class InternalBibleBook:
                     #word = word[:-1] # Remove trailing punctuation
                 #if  '<' in word or '>' in word or '"' in word: vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.discover: Need to escape HTML chars here 3s42", self.BBB, C, V, repr(word) )
                 #return word
-            ## end of stripWordPunctuation
+            ## end of stripWordEndsPunctuation
 
             # countWordsForDiscover() main code
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
@@ -2978,9 +3018,9 @@ class InternalBibleBook:
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 word = rawWord
                 for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
-                word = BibleOrgSysGlobals.stripWordPunctuation( word )
+                word = BibleOrgSysGlobals.stripWordEndsPunctuation( word )
                 if word and not word[0].isalnum():
-                    #dPrint( 'Quiet', debuggingThisModule, word, BibleOrgSysGlobals.stripWordPunctuation( word ) )
+                    #dPrint( 'Quiet', debuggingThisModule, word, BibleOrgSysGlobals.stripWordEndsPunctuation( word ) )
                     if len(word) > 1:
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) \
@@ -4262,7 +4302,7 @@ class InternalBibleBook:
                 If lastWordTuple is given, checks for words repeated across segments (and returns the new value).
             """
 
-            def stripWordPunctuation( word:str ) -> str:
+            def stripWordEndsPunctuation( word:str ) -> str:
                 """Removes leading and trailing punctuation from a word.
                     Returns the "clean" word."""
                 while word and word[0] in BibleOrgSysGlobals.LEADING_WORD_PUNCT_CHARS:
@@ -4270,7 +4310,7 @@ class InternalBibleBook:
                 while word and word[-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
                 return word
-            # end of stripWordPunctuation
+            # end of stripWordEndsPunctuation
 
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
             if lastWordTuple is None: ourLastWord = ourLastRawWord = '' # No need to check words repeated across segment boundaries
@@ -4283,9 +4323,9 @@ class InternalBibleBook:
                 if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
                 word = rawWord
                 for internalMarker in BibleOrgSysGlobals.internal_SFMs_to_remove: word = word.replace( internalMarker, '' )
-                word = stripWordPunctuation( word )
+                word = stripWordEndsPunctuation( word )
                 if word and not word[0].isalnum():
-                    #dPrint( 'Quiet', debuggingThisModule, word, stripWordPunctuation( word ) )
+                    #dPrint( 'Quiet', debuggingThisModule, word, stripWordEndsPunctuation( word ) )
                     #dPrint( 'Quiet', debuggingThisModule, lineLocationSpace + _("Have unexpected character starting word {!r}").format( word ) )
                     wordErrors.append( lineLocationSpace + _("Have unexpected character starting word {!r}").format( word ) )
                     word = word[1:]

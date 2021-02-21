@@ -61,7 +61,8 @@ Contains functions:
     isBlank( elementText )
 
     applyStringAdjustments( originalText, adjustmentList )
-    stripWordPunctuation( wordToken )
+    stripWordEndsPunctuation( wordToken )
+    removeStringEndings( originalText, endingsList )
 
     pickleObject( theObject, filename, folderName=None )
     unpickleObject( filename, folderName=None )
@@ -108,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2021-01-10' # by RJH
+LAST_MODIFIED_DATE = '2021-02-21' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.88'
@@ -1208,10 +1209,19 @@ def applyStringAdjustments( originalText, adjustmentList ):
 # end of BibleOrgSysGlobals.applyStringAdjustments
 
 
-def stripWordPunctuation( wordToken ):
+def stripWordEndsPunctuation( wordToken:str ) -> str:
     """
-    Removes leading and trailing punctuation from a word.
+    Remove leading and trailing punctuation from words (or strings of words).
 
+    However, in cases like '“The people who are carrying … {the stones}'
+        we don't want to remove that final brace.
+
+    So
+        “The people who are carrying … {the stones} -> The people who are carrying … {the stones}
+        {the stones} -> the stones
+        ‘Lord,’ -> Lord
+        ‘my Lord,’ -> my Lord
+        ‘You will & put & to the test.’” -> You will & put & to the test
     Returns the "clean" word.
 
     Note: Words like 'you(pl)' will be returned unchanged (because matching parenthesis is inside the word).
@@ -1219,11 +1229,12 @@ def stripWordPunctuation( wordToken ):
     if debugFlag or strictCheckingFlag or debuggingThisModule:
         for badChar in ' \t\r\n': assert badChar not in wordToken
 
-    # First remove matching punctuation
+    # First remove matching end punctuation pairs
     for startChar,endChar in MATCHING_OPENING_CHARACTERS.items():
         #if wordToken and wordToken[0]==startChar and wordToken[-1]==endChar:
             #wordToken = wordToken[1:-1] # Remove front and back matching/opposite characters
-        if wordToken.startswith(startChar) and wordToken.endswith(endChar):
+        if wordToken.startswith(startChar) and wordToken.endswith(endChar) \
+        and startChar not in wordToken[1:-1] and endChar not in wordToken[1:-1]:
             wordToken = wordToken[len(startChar):-len(endChar)] # Remove front and back matching/opposite characters
     # Now remove non-matching punctuation
     while wordToken and wordToken[0] in LEADING_WORD_PUNCT_CHARS:
@@ -1232,12 +1243,26 @@ def stripWordPunctuation( wordToken ):
     while wordToken and wordToken[-1] in TRAILING_WORD_PUNCT_CHARS:
         if wordToken[-1] in MATCHING_CHARACTERS and MATCHING_CHARACTERS[wordToken[-1]] in wordToken: break
         wordToken = wordToken[:-1] # Remove trailing punctuation
-    # Now remove any remaining matching punctuation
+    # Now remove any remaining matching end punctuation pairs
     for startChar,endChar in MATCHING_OPENING_CHARACTERS.items():
-        if wordToken.startswith(startChar) and wordToken.endswith(endChar):
+        if wordToken.startswith(startChar) and wordToken.endswith(endChar) \
+        and startChar not in wordToken[1:-1] and endChar not in wordToken[1:-1]:
             wordToken = wordToken[len(startChar):-len(endChar)] # Remove front and back matching/opposite characters
     return wordToken
-# end of BibleOrgSysGlobals.stripWordPunctuation
+# end of BibleOrgSysGlobals.stripWordEndsPunctuation
+
+
+def removeStringEndings( originalText:str, endingsList:List[str] ) -> str:
+    """
+    Go through the given list of endings (in order)
+        and remove any endings from the end of the string.
+    """
+    newText = originalText
+    for ending in endingsList:
+        if newText.endswith( ending ):
+            newText = newText[:-len(ending)]
+    return newText
+# end of BibleOrgSysGlobals.stripWordEndsPunctuation
 
 
 ##########################################################################################################
@@ -1640,7 +1665,7 @@ def briefDemo() -> None:
 
     vPrint( 'Quiet', debuggingThisModule, '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
+        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordEndsPunctuation(someText) ) )
 
     vPrint( 'Quiet', debuggingThisModule, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.briefDemo
@@ -1684,7 +1709,7 @@ def fullDemo() -> None:
 
     vPrint( 'Quiet', debuggingThisModule, '\nstripWordPunctuation() tests…' )
     for someText in ( '(hello', 'again', '(hello)', '"Hello"', 'there)', 'you(sg)', 'you(pl),', '(we(incl))!', '(in)front', '(in)front.', '(wow).', '(wow.)', 'it_work(s)', 'it_work(s)_now!', 'Is_','he','still','_alive?', ):
-        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordPunctuation(someText) ) )
+        vPrint( 'Quiet', debuggingThisModule, '  {!r} -> {!r}'.format( someText, stripWordEndsPunctuation(someText) ) )
 
     vPrint( 'Quiet', debuggingThisModule, "\ncpu_count", os.cpu_count() )
 # end of BibleOrgSysGlobals.fullDemo
