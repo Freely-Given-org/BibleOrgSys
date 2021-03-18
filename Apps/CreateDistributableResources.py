@@ -5,7 +5,7 @@
 #
 # App to create zipped PickledBible for distributable Bible/commentary resources.
 #
-# Copyright (C) 2018-2020 Robert Hunt
+# Copyright (C) 2018-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,6 +30,8 @@ App to create zipped PickledBible for distributable Bible/commentary resources,
 
 Made to be run from the BibleOrgSys folder, i.e.,
     Apps/CreateDistributableResources.py
+
+Use --export (-x) to also do BibleDropBox submissions.
 """
 from gettext import gettext as _
 import os
@@ -53,7 +55,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2020-06-14' # by RJH
+LAST_MODIFIED_DATE = '2021-03-18' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
 PROGRAM_VERSION = '0.21'
@@ -72,9 +74,11 @@ DEFAULT_DATA_LEVEL = 1 # We use level 1 of PickledBible which saves minimal data
 HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM test versions/' )
 
 
+# NOTE: Use --export (-x) to also do BibleDropBox submissions
+
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
-PROCESS_ALL_FLAG = __name__ != '__main__'
+PROCESS_ALL_FLAG = True or __name__ != '__main__'
 PROCESS_WLC_FLAG = False
 PROCESS_EBIBLE_FLAG = False
 PROCESS_DOOR43_FLAG = True
