@@ -42,10 +42,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2021-01-10' # by RJH
+LAST_MODIFIED_DATE = '2021-03-11' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.55'
+PROGRAM_VERSION = '0.56'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -100,7 +100,7 @@ class USFMBibleBook( BibleBook ):
                     doaddLine( 'p~', '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w Cyrene|x-occurrence="1" x-occurrences="1"\\w* (\\w the|x-occurrence="1" x-occurrences="2"\\w*' )
             """
             fnPrint( debuggingThisModule, f"doaddLine( '{addMarker}', '{addText}' )" )
-            assert addText.count('\\w ') == addText.count('\\w*')
+            # assert addText.count('\\w ') == addText.count('\\w*') # Logged around line 445
             # The below is a false assumption
             #   See: \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
             # assert '\\w*\\w' not in addText
@@ -442,7 +442,12 @@ class USFMBibleBook( BibleBook ):
                 logging.error( _("Found wrongly coded w fields in \\{}='{}' after {} {} {}:{}") \
                                     .format( marker, text, self.workName, self.BBB, C, V ) )
                 text = f'{text}\\w*' if marker=='w' else ' '
-            assert (text.count('\\w ')+1 ==  text.count('\\w*')) if marker=='w' else text.count('\\w ') ==  text.count('\\w*')
+            if (marker == 'w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
+            or (marker != 'w' and  text.count('\\w ') !=  text.count('\\w*')):
+                loadErrors.append( _("{} {}:{} Found mismatched w fields in \\{}='{}'") \
+                            .format( self.BBB, C, V, marker, text ) )
+                logging.critical( _("Found mismatched w fields in \\{}='{}' after {} {} {}:{}") \
+                            .format( marker, text, self.workName, self.BBB, C, V ) )
 
             if marker == 's5': # it's a Door43 translatable section, i.e., obsolete chunking marker
                 # We remove these
