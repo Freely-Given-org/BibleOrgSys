@@ -74,7 +74,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-02-20' # by RJH
+LAST_MODIFIED_DATE = '2021-03-22' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -3025,12 +3025,15 @@ class InternalBibleBook:
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             vPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) \
                                                 + _("Have unexpected character starting word {!r}").format( word ) )
+                        # print(f"rawWord='{rawWord}' word='{word}'")
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if '|' in word or 'x-' in word: # Should never happen
-                        logging.critical( f"word content problem: {self.BBB} {C}:{V} Got {word!r} from {marker} {segment!r} {location}" )
+                        logging.critical( f"word content problem: {self.BBB} {C}:{V} Got '{word}' from '{rawWord}' from {marker}='{segment}' in {location}" )
+                        # '<p ' is for commentary with HTML entries
                         if marker not in ('fig','ww') \
-                        and not segment.startswith('<p '): # commentary with HTML entries
+                        and not segment.startswith('<p ') \
+                        and (BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and debuggingThisModule)):
                             halt # word processing errors with | or x-
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
