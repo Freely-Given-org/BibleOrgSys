@@ -8,8 +8,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.21'
-LAST_MODIFIED_DATE = '2020-05-04' # by RJH — when setup.py was modified below
+VERSION = '0.0.22'
+LAST_MODIFIED_DATE = '2021-04-28' # by RJH — when setup.py was modified below
 
 
 # NOTE: The package doesn't include the XML data files, only the derived pickles
@@ -373,6 +373,8 @@ This library forms the basis of the experimental
         # 'python_requires' below.
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
 
         'Operating System :: OS Independent',
     ],
