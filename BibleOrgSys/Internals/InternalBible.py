@@ -52,6 +52,10 @@ self.suppliedMetadata is a dictionary containing the following possible entries 
 The calling class then fills
     self.books by calling stashBook() which updates:
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
+
+Note that this software does write some files to
+    BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
+        which is usually ~/BibleOrgSysData/BOSOutputFiles/
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 from gettext import gettext as _
@@ -76,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-02-20' # by RJH
+LAST_MODIFIED_DATE = '2021-04-25' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.85'
@@ -2728,8 +2732,8 @@ class InternalBible:
         # Save the original list and all the derived dictionaries for any futher analysis/processing
         vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} analysis JSON files…" )
         import json
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_Analysis/' )
-        try: os.makedirs( outputFolderpath )
+        originalsAnalysisOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_Analysis/' )
+        try: os.makedirs( originalsAnalysisOutputFolderpath )
         except FileExistsError: pass
         for dataObject, objectName in (
                     (analysedOTBookList, 'analysedOTBookList'),
@@ -2739,8 +2743,8 @@ class InternalBible:
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
-                with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
-                    json.dump( dataObject, xf, ensure_ascii=False, indent=JSON_INDENT )
+                with open( originalsAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as exportFile:
+                    json.dump( dataObject, exportFile, ensure_ascii=False, indent=JSON_INDENT )
 
         # Save the original text without \w fields for easier reading
         vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} text-only USFM files…" )
@@ -2773,6 +2777,7 @@ class InternalBible:
         """
         from BibleOrgSys.Internals.InternalBibleBook import cleanUWalignments
         from BibleOrgSys.OriginalLanguages.Hebrew import Hebrew
+        import json
 
         debuggingThisFunction = debuggingThisModule or False
         fnPrint( debuggingThisFunction, f"analyseAndExportUWalignments() for {self.abbreviation}" )
@@ -2795,11 +2800,16 @@ class InternalBible:
         alignmentOTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         alignmentDCDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
         alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
+
+        alignmentsOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Alignments_ByBook/' )
+        try: os.makedirs( alignmentsOutputFolderpath )
+        except FileExistsError: pass
+
         for BBB,bookObject in self.books.items():
             ref = BBB, '1', '1'
             origVerseText = self.getVerseText( ref )
             dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )
-            if len(origVerseText) < 11: halt # Should be at least eleven characters (Jesus wept.)
+            if len(origVerseText) < 11: SOMETHING_WRONG # Should be at least eleven characters (Jesus wept.)
 
             isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
             isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
@@ -2813,6 +2823,7 @@ class InternalBible:
                 elif isDC: alignedDCBookList.append( BBB )
                 alignedBookCount += 1
 
+                bookAlignmentsDict = defaultdict( list )
                 for C,V,originalWordsList,translatedWordsString,translatedWordsList \
                                     in cleanUWalignments( self.abbreviation, BBB, bookObject.uWalignments):
                     aggregatedAlignmentsList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
@@ -2821,14 +2832,22 @@ class InternalBible:
                     # or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
                     #     largeAlignmentsList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
 
-                    ref = f'{BBB}_{C}:{V}' # Must be a str for json (can't be a tuple)
-                    alignmentDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+                    CVref = f'{C}:{V}' # Must be a str for json (can't be a tuple)
+                    BCVref = f'{BBB}_{CVref}' # Must be a str for json (can't be a tuple)
+
+                    bookAlignmentsDict[CVref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+                    alignmentDict[BCVref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
                     if isOT: thisList, thisDict = aggregatedAlignmentsOTList, alignmentOTDict
                     elif isNT: thisList, thisDict = aggregatedAlignmentsNTList, alignmentNTDict
                     elif isDC: thisList, thisDict = aggregatedAlignmentsDCList, alignmentDCDict
                     thisList.append( (BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList) )
-                    thisDict[ref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+                    thisDict[BCVref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
+
+                # Write out the alignment data for each book (in JSON)
+                with open( alignmentsOutputFolderpath.joinpath( f'{BBB}_alignments.json' ), 'wt' ) as exportFile:
+                    json.dump( bookAlignmentsDict, exportFile, ensure_ascii=False, indent=JSON_INDENT )
+
 
 
         # Preliminary pass to go through the alignment data for the whole Bible
@@ -3097,11 +3116,10 @@ class InternalBible:
         self.uWalignments['oneToOneTransToOriginalAlignmentsDict'] = oneToOneTransToOriginalAlignmentsDict
 
         # Save the original list and all the derived dictionaries for any futher analysis/processing
-        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWalignments writing {self.abbreviation} alignment JSON files…" )
-        import json
-        outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Analysis/' )
-        try: os.makedirs( outputFolderpath )
+        alignedAnalysisOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Analysis/' )
+        try: os.makedirs( alignedAnalysisOutputFolderpath )
         except FileExistsError: pass
+        vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWalignments writing {self.abbreviation} alignment JSON files…" )
         for dataObject, objectName in (
                 (alignedBookList, 'alignedBookList'),
                     (alignedOTBookList, 'alignedOTBookList'),
@@ -3154,11 +3172,11 @@ class InternalBible:
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
-                with open( outputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as xf:
-                    json.dump( dataObject, xf, ensure_ascii=False, indent=JSON_INDENT )
+                with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as exportFile:
+                    json.dump( dataObject, exportFile, ensure_ascii=False, indent=JSON_INDENT )
 
         # Save some text files for manually looking through
-        with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as xf:
+        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as exportFile:
             for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
                 assert isinstance( originalWord, str )
                 assert originalWord
@@ -3181,11 +3199,11 @@ class InternalBible:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
                                 #dPrint( 'Quiet', debuggingThisFunction, f"Now '{originalWord}', have {translations}" )
                                 break
-                xf.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
+                exportFile.write( f"'{originalWord}' translated as {str(translations).replace(': ',':')}\n" )
         #dPrint( 'Quiet', debuggingThisFunction, "keys", originalLemmaToTransOccurrencesDict.keys() )
         #dPrint( 'Quiet', debuggingThisFunction, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
         #dPrint( 'Quiet', debuggingThisFunction, "blank", originalLemmaToTransOccurrencesDict[''] )
-        with open( outputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as xf:
+        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as exportFile:
             for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
@@ -3209,11 +3227,11 @@ class InternalBible:
                                 translations[translation] = f'{ref[0]}_{ref[1]}:{ref[2]}'
                                 #dPrint( 'Quiet', debuggingThisModule, f"Now '{originalLemma}', have {translations}" )
                                 break
-                xf.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
+                exportFile.write( f"'{originalLemma}' translated as {str(translations).replace(': ',':')}\n" )
 
         # Best to make these decisions in the analysis -- not here
         # if self.abbreviation == 'ULT':
-        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as xf:
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as exportFile:
         #         fromList, toList = [], []
         #         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
         #             if len(originalWordsList) == 1:
@@ -3231,13 +3249,13 @@ class InternalBible:
         #                 toList.append( (len(translatedWordsList),outputString) )
         #             if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
         #             or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
-        #                 xf.write( outputString )
-        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as xf:
+        #                 exportFile.write( outputString )
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as exportFile:
         #         for count,outputString in sorted( fromList, reverse=True ):
-        #             xf.write( outputString )
-        #     with open( outputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as xf:
+        #             exportFile.write( outputString )
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as exportFile:
         #         for count,outputString in sorted( toList, reverse=True ):
-        #             xf.write( outputString )
+        #             exportFile.write( outputString )
 
         # Save the original text without \w fields for easier reading
         #   (Both outputs below have the alignment information already removed)
