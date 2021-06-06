@@ -5,7 +5,7 @@
 #
 # Module handling "MyBible" Bible module files
 #
-# Copyright (C) 2016-2020 Robert Hunt
+# Copyright (C) 2016-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -102,10 +102,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-06-14' # by RJH
+LAST_MODIFIED_DATE = '2021-06-06' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
-PROGRAM_VERSION = '0.21'
+PROGRAM_VERSION = '0.22'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -127,7 +127,7 @@ KNOWN_INFO_FIELD_NAMES = ( 'description',
 
 
 # NOTE that color values can vary between modules
-BOOK_TABLE = {
+BOOK_TABLE = { # with Russian and English book names and abbreviations
     'GEN': ( '#ccccff', 10, 'Быт', 'Бытие', 'Gen', 'Genesis'),
     'EXO': ( '#ccccff', 20, 'Исх', 'Исход', 'Exo', 'Exodus'),
     'LEV': ( '#ccccff', 30, 'Лев', 'Левит', 'Lev', 'Leviticus'),
@@ -416,9 +416,23 @@ class MyBibleBible( Bible ):
             #dPrint( 'Quiet', debuggingThisModule, "  BOOKS_ALL rows", len(rows) )
             isPresent = True
             for j, row in enumerate( rows ):
+                # dPrint( 'Quiet', debuggingThisModule, f"{list(row)}" )
                 assert len(row) == 5
-                bookColor, bookNumber, shortName, longName, isPresent = row
-                #dPrint( 'Quiet', debuggingThisModule, bookColor, bookNumber, shortName, longName, isPresent )
+                for attempt in (1,2):
+                    # Why are there two different possible orders here ???
+                    if attempt == 1: bookColor, bookNumber, shortName, longName, isPresent = row
+                    elif attempt == 2: bookNumber, shortName, longName, bookColor, isPresent = row
+                    try:
+                        # dPrint( 'Quiet', debuggingThisModule, f"{attempt=}: {bookColor=}, {bookNumber=}, {shortName=}, {longName=}, {isPresent=}" )
+                        assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
+                        assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
+                        assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
+                        assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
+                        break
+                    except AssertionError as err:
+                        # dPrint( 'Quiet', debuggingThisModule, f"Failed assertion: {err}")
+                        if attempt == 1: pass
+                        else: halt
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
@@ -478,11 +492,10 @@ class MyBibleBible( Bible ):
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
 
         for BBB in self.suppliedMetadata['MyBible']['BookInfo']:
-            #dPrint( 'Quiet', debuggingThisModule, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
+            # dPrint( 'Quiet', debuggingThisModule, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
             if self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent']:
                 self.loadBook( BBB )
-            elif BibleOrgSysGlobals.verbosityLevel > 1:
-                vPrint( 'Quiet', debuggingThisModule, "   {} is not present in this Bible".format( BBB ) )
+            else: vPrint( 'Info', debuggingThisModule, f"   {BBB} is not present in this Bible" )
 
         self.cursor.close()
         del self.cursor
@@ -495,7 +508,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        fnPrint( debuggingThisModule, "loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"loadBook( {BBB} )" )
         assert self.preloadDone
 
         if BBB in self.books:
@@ -517,7 +530,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        fnPrint( debuggingThisModule, "__loadBibleBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"__loadBibleBook( {BBB} )" )
 
         lastC = None
         def importVerseLine( name, BBB:str, C:str, V:str, originalLine, bookObject ):
@@ -628,7 +641,7 @@ class MyBibleBible( Bible ):
         """
         Load the requested Bible book out of the SQLite3 database.
         """
-        fnPrint( debuggingThisModule, "__loadBibleCommentaryBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"__loadBibleCommentaryBook( {BBB} )" )
 
         lastC = None
         def importCommentaryLine( name, BBB:str, C:str, V:str, footnoteNumber, originalLine, bookObject ):
@@ -1314,7 +1327,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     vPrint( 'Quiet', debuggingThisModule, "  Test folder/filename are {!r} {!r}".format( MyBBfolder, MyBBfilename ) )
     MyBB = MyBibleBible( MyBBfolder, MyBBfilename )
     MyBB.preload()
-    #MyBB.load() # Load and process the file
+    #MyBB.loadBooks() # Load and process the file
     vPrint( 'Normal', debuggingThisModule, MyBB ) # Just print a summary
     #dPrint( 'Quiet', debuggingThisModule, MyBB.suppliedMetadata['MyBible'] )
     if MyBB is not None:
