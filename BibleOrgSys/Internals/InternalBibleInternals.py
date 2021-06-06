@@ -255,7 +255,7 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert state == 0
 
-    # dPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes() returning: {resultDict}" )
+    #dPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes() returning: {resultDict}" )
     return resultDict
 # end of parseWordAttributes
 

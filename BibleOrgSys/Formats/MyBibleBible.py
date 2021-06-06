@@ -416,21 +416,21 @@ class MyBibleBible( Bible ):
             #dPrint( 'Quiet', debuggingThisModule, "  BOOKS_ALL rows", len(rows) )
             isPresent = True
             for j, row in enumerate( rows ):
-                # dPrint( 'Quiet', debuggingThisModule, f"{list(row)}" )
+                #dPrint( 'Quiet', debuggingThisModule, f"{list(row)}" )
                 assert len(row) == 5
                 for attempt in (1,2):
                     # Why are there two different possible orders here ???
                     if attempt == 1: bookColor, bookNumber, shortName, longName, isPresent = row
                     elif attempt == 2: bookNumber, shortName, longName, bookColor, isPresent = row
                     try:
-                        # dPrint( 'Quiet', debuggingThisModule, f"{attempt=}: {bookColor=}, {bookNumber=}, {shortName=}, {longName=}, {isPresent=}" )
+                        #dPrint( 'Quiet', debuggingThisModule, f"{attempt=}: {bookColor=}, {bookNumber=}, {shortName=}, {longName=}, {isPresent=}" )
                         assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
                         assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
                         assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
                         assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
                         break
                     except AssertionError as err:
-                        # dPrint( 'Quiet', debuggingThisModule, f"Failed assertion: {err}")
+                        #dPrint( 'Quiet', debuggingThisModule, f"Failed assertion: {err}")
                         if attempt == 1: pass
                         else: halt
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
@@ -492,7 +492,7 @@ class MyBibleBible( Bible ):
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
 
         for BBB in self.suppliedMetadata['MyBible']['BookInfo']:
-            # dPrint( 'Quiet', debuggingThisModule, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
+            #dPrint( 'Quiet', debuggingThisModule, 'isPresent', self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent'] )
             if self.suppliedMetadata['MyBible']['BookInfo'][BBB]['isPresent']:
                 self.loadBook( BBB )
             else: vPrint( 'Info', debuggingThisModule, f"   {BBB} is not present in this Bible" )

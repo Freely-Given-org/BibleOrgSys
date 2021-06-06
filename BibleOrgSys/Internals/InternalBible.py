@@ -366,7 +366,7 @@ class InternalBible:
     # end of InternalBible.getAName
 
 
-    def loadBookIfNecessary( self, BBB ) -> None:
+    def loadBookIfNecessary( self, BBB:str ) -> None:
         """
         Checks to see if a requested book has already been loaded
             or already failed at loading.

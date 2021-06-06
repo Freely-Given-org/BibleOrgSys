@@ -731,7 +731,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVerses
 
 
-    def getNumVersesList( self, BBB ) -> List[int]:
+    def getNumVersesList( self, BBB:str ) -> List[int]:
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 
@@ -745,7 +745,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVersesList
 
 
-    def getTotalNumVerses( self, BBB ) -> int:
+    def getTotalNumVerses( self, BBB:str ) -> int:
         """
         Returns an integer indicating the total number of verses in the book.
         """

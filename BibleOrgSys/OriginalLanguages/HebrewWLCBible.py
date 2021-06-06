@@ -410,7 +410,7 @@ class HebrewWLCBibleAddon():
             #      (with generic gloss alternatives separated by /)
             #   followed by a list of currently known/parsed references
             #   followed by the dictionary of specific glosses
-        # dPrint( 'Quiet', debuggingThisModule, f"glossingDict: {self.glossingDict}" )
+        #dPrint( 'Quiet', debuggingThisModule, f"glossingDict: {self.glossingDict}" )
         self.loadedGlossEntryCount = len( self.glossingDict )
         self.haveGlossingDictChanges = False
         vPrint( 'Quiet', debuggingThisModule, "  "+_("{:,} Hebrew gloss entries read.").format( self.loadedGlossEntryCount ) )

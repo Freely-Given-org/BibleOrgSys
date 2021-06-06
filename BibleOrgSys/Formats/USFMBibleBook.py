@@ -244,7 +244,7 @@ class USFMBibleBook( BibleBook ):
                         if marker == 'INLINE': assert not variables['words']
                         text = text.replace( '\\zaln-e\\*' * lookForCount, '', 1 ) # Remove whatever we found above
                         while ixAlignmentEnd<len(text) and text[ixAlignmentEnd] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
-                            # dPrint( 'Quiet', debuggingThisFunction, f"        findInternalStarts: Appended punctuation {text[ixAlignmentEnd]} to '{variables['words']}'" )
+                            #dPrint( 'Quiet', debuggingThisFunction, f"        findInternalStarts: Appended punctuation {text[ixAlignmentEnd]} to '{variables['words']}'" )
                             # variables['words'] += text[ixAlignmentEnd+9] # Append the punctuation
                             ixAlignmentEnd += 1 # Account for the punctuation or space
                         variables['words'] += text[:ixAlignmentEnd] if marker=='INLINE' \
@@ -320,7 +320,7 @@ class USFMBibleBook( BibleBook ):
                     adjustedText = text.replace( endMarkers, '', 1 ) # Remove whatever we found above
                     punctCount = 0
                     while (ixEndMarkers+punctCount)<len(adjustedText) and adjustedText[ixEndMarkers+punctCount] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS:
-                        # dPrint( 'Quiet', debuggingThisFunction, f"        findInternalStarts: Appended punctuation {text[ixAlignmentEnd]} to '{variables['words']}'" )
+                        #dPrint( 'Quiet', debuggingThisFunction, f"        findInternalStarts: Appended punctuation {text[ixAlignmentEnd]} to '{variables['words']}'" )
                         # variables['words'] += text[ixAlignmentEnd+9] # Append the punctuation
                         punctCount += 1 # Account for the punctuation or space
                     variables['words'] += adjustedText[:ixEndMarkers+punctCount] if marker=='INLINE' \
@@ -568,7 +568,7 @@ class USFMBibleBook( BibleBook ):
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB} {C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
                         marker = 'p'
                     else:
-                        # dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
+                        #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB} {C}:{V} text after '{lastMarker}': {marker}='{text}'" )
                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \

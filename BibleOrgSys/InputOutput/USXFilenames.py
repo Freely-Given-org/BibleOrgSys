@@ -105,7 +105,7 @@ class USXFilenames:
 
         matched = False
         for foundFilename in self.fileList:
-            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames found {foundFilename}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames found {foundFilename}" )
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
             containsDigits = False
@@ -263,7 +263,7 @@ class USXFilenames:
         resultList = []
         for BBB,possibleFilename in self.getDerivedFilenameTuples():
             possibleFilepath = os.path.join( self.givenFolderName, possibleFilename )
-            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getConfirmedFilenameTuples looking for: {possibleFilename}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getConfirmedFilenameTuples looking for: {possibleFilename}" )
             if os.access( possibleFilepath, os.R_OK ):
                 #dPrint( 'Quiet', debuggingThisModule, "possibleFilepath", possibleFilepath )
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
@@ -292,7 +292,7 @@ class USXFilenames:
 
         resultList = []
         for possibleFilename in self.fileList:
-            # dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getPossibleFilenameTuples looking for: {possibleFilename}" )
+            #dPrint( 'Quiet', debuggingThisModule, f"  USXFilenames.getPossibleFilenameTuples looking for: {possibleFilename}" )
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
