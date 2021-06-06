@@ -364,7 +364,7 @@ class MySwordBible( Bible ):
         """
         Load the requested book out of the SQLite3 database.
         """
-        fnPrint( debuggingThisModule, "loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"loadBook( {BBB} )" )
         assert self.preloadDone
 
         if BBB in self.books:

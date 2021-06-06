@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2021-02-20' # by RJH
+LAST_MODIFIED_DATE = '2021-05-25' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.80'
+PROGRAM_VERSION = '0.81'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -157,8 +157,7 @@ BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
 assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
-
-def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ):
+def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> Dict[str,str]:
     """
     Take the attributes of a USFM3 \w field (the attributes include the first pipe/vertical-bar symbol)
         and analyze them.
@@ -175,6 +174,26 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
         assert wordAttributeString.count( '|' ) == 1
         assert errorList is None or isinstance( errorList, list )
 
+    # if 1:
+    #     import ctypes
+    #     libInternals = ctypes.CDLL("./libInternals.so")
+
+    #     #call C function to check connection
+    #     libInternals.connect()
+
+    #     #calling randNum() C function
+    #     #it returns random number
+    #     varRand = libInternals.randNum()
+    #     print( "Random Number:", varRand, type(varRand) )
+
+    #     #calling addNum() C function
+    #     #it returns addition of two numbers
+    #     varAdd = libInternals.addNum(20,30)
+    #     print( "Addition : ", varAdd )
+
+    #     libInternals.parseWordAttributes.restype = ctypes.c_wchar_p
+    #     resultDict = libInternals.parseWordAttributes( ctypes.c_wchar_p(workName), ctypes.c_wchar_p(BBB), ctypes.c_wchar_p(C), ctypes.c_wchar_p(V), ctypes.c_wchar_p(wordAttributeString), ctypes.c_wchar_p(errorList) )
+    # else:
     word, attributeString = wordAttributeString.split( '|', 1 )
     resultDict = { 'word':word }
     if '=' not in attributeString: # Assume it's a single (unnamed) lemma
@@ -235,7 +254,8 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
         state = 0
     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         assert state == 0
-    #dPrint( 'Quiet', debuggingThisModule, "Returning2: {}".format( resultDict ) )
+
+    # dPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes() returning: {resultDict}" )
     return resultDict
 # end of parseWordAttributes
 
@@ -891,6 +911,10 @@ def fullDemo() -> None:
 
     vPrint( 'Quiet', debuggingThisModule, "Since these are only helper classes, they can't actually do much at all." )
     vPrint( 'Quiet', debuggingThisModule, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
+
+    resultDict = parseWordAttributes('testWork', 'GEN','1','2', 'word|x=pos="noun"')
+    print( f"resultDict = {resultDict}" )
+    assert resultDict == {'word': 'word', 'x': 'pos="noun"'}
 
     #IBB = InternalBibleInternals( 'GEN' )
     ## The following fields would normally be filled in a by "load" routine in the derived class

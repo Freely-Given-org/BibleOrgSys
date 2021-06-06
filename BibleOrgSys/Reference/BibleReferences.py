@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -80,6 +80,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
     If I'm wrong, please show me.
 """
 from gettext import gettext as _
+from typing import Tuple, List, Optional
 import logging
 
 if __name__ == '__main__':
@@ -93,10 +94,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-05-17' # by RJH
+LAST_MODIFIED_DATE = '2021-05-30' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
-PROGRAM_VERSION = '0.35'
+PROGRAM_VERSION = '0.34'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -201,7 +202,7 @@ class BibleSingleReference( BibleReferenceBase ):
         return result
     # end of BibleSingleReference:__str__
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString:str ) -> Tuple[bool,bool,str,str,str,str]:
         """
         Returns a 6-tuple with True/False result, haveWarnings, BBB, C, V, S
         """
@@ -396,7 +397,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         return result
     # end ofBibleSingleReferences: __str__
 
-    def parseReferenceString( self, referenceString ):
+    def parseReferenceString( self, referenceString:str ) -> Tuple[bool,bool,List[Tuple[str,str,str,str]]]:
         """
         Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples
         """
@@ -677,7 +678,7 @@ class BibleReferenceList( BibleReferenceBase ):
         return result
     # end of BibleReferenceList.__str__
 
-    def makeReferenceString( self, refTuple, location=None ):
+    def makeReferenceString( self, refTuple:Tuple[str,str,Optional[str],Optional[str]], location:Optional[str]=None ) -> str:
         """
         Makes a string out of a reference tuple
         """
@@ -706,7 +707,7 @@ class BibleReferenceList( BibleReferenceBase ):
         return resultString
     # end of BibleReferenceList.makeReferenceString
 
-    def parseReferenceString( self, referenceString, location=None ):
+    def parseReferenceString( self, referenceString:str, location:Optional[str]=None ) -> Tuple[bool,bool,List[Tuple[str,str,str,str]]]:
         """
         A complex state machine that
         returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples.
@@ -718,7 +719,7 @@ class BibleReferenceList( BibleReferenceBase ):
         We could rewrite this using RegularExpressions, but would it be able to give such precise formatting error messages?
         """
 
-        def saveReference( BBB:str, C:str, V:str, S, refList ):
+        def saveReference( BBB:str, C:str, V:str, S:str, refList:List[Tuple[str,str,str,str]] ) -> None:
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
@@ -736,7 +737,7 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveReference
 
 
-        def saveStartReference( BBB:str, C:str, V:str, S ):
+        def saveStartReference( BBB:str, C:str, V:str, S:str ) -> None:
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -749,11 +750,11 @@ class BibleReferenceList( BibleReferenceBase ):
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple, BBB:str, C:str, V:str, S, refList ):
+        def saveReferenceRange( startTuple:Tuple[str,str,str,str], BBB:str, C:str, V:str, S:str, refList:List[Tuple[str,str,str,str]] ) -> None:
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
-            vPrint( 'Quiet', debuggingThisModule, "BibleReferences.saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
+            fnPrint( debuggingThisModule, f"BibleReferences.saveReferenceRange( startTuple={startTuple}, {BBB}, {C}:{V}, S={S}, refList={refList}" )
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
             if V=='3O': V = '30' # Fix a bug in byr-w.usfm
@@ -1230,7 +1231,7 @@ class BibleReferenceList( BibleReferenceBase ):
     # end of BibleReferenceList.parseReferenceString
 
 
-    def getFirstReference( self, referenceString, location=None ):
+    def getFirstReference( self, referenceString:str, location:Optional[str]=None ):
         """
         Just return the first reference, even if given a range.
 
@@ -1246,7 +1247,7 @@ class BibleReferenceList( BibleReferenceBase ):
     # end of BibleReferenceList.getFirstReference
 
 
-    def parseOSISReferenceString( self, referenceString ):
+    def parseOSISReferenceString( self, referenceString:str ) -> Tuple[bool,bool,List[Tuple[str,str,str,str]]]:
         """
         Returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples.
             A range is expressed as a tuple containing a pair of (BBB, C, V, S) tuples.
@@ -1272,7 +1273,7 @@ class BibleReferenceList( BibleReferenceBase ):
     # end of BibleReferenceList.parseOSISReferenceString
 
 
-    def getReferenceList( self, expanded=False ):
+    def getReferenceList( self, expanded:bool=False ) -> List[Tuple[str,str,str,str]]:
         """ Returns the internal list of Bible references.
 
             If expanded, fills out any ranges according to the specified versification system. """
@@ -1290,7 +1291,7 @@ class BibleReferenceList( BibleReferenceBase ):
     # end of BibleReferenceList.getReferenceList
 
 
-    def getOSISRefList( self ):
+    def getOSISRefList( self ) -> str:
         """ Converts our internal reference list to OSIS format.
                 OSIS defines reference ranges
                     e.g., Gen.1.1-Gen.1.2 or Gen.1.1-Gen.2.3 (inclusive).
@@ -1320,7 +1321,7 @@ class BibleReferenceList( BibleReferenceBase ):
         return result
     # end of BibleReferenceList.getOSISRefList
 
-    def parseToOSIS( self, referenceString, location=None ):
+    def parseToOSIS( self, referenceString:str, location:Optional[str]=None ) -> str:
         """ Just combines the two above routines.
                 Parses a vernacular reference string and returns an OSIS reference string
                     or None if a valid reference cannot be parsed. """
@@ -1347,7 +1348,7 @@ class BibleReferenceList( BibleReferenceBase ):
     ## end of BibleReferenceList.containsReferenceTuple
 
 
-    def containsReference( self, BBB:str, C:str, V:str, S=None ):
+    def containsReference( self, BBB:str, C:str, V:str, S:Optional[str]=None ) -> bool:
         """ Returns True/False if the internal reference list contains the given reference. """
         #dPrint( 'Verbose', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert BBB and len(BBB)==3
@@ -1434,7 +1435,7 @@ class BibleAnchorReference:
     containsReference see if the BBB,C,V,S reference is in our internal list
     """
 
-    def __init__( self, BBB:str, chapterString, verseString, suffixString=None ) -> None:
+    def __init__( self, BBB:str, chapterString:str, verseString:str, suffixString:Optional[str]=None ) -> None:
         """ Initialize the object with known information.
         """
         self.objectNameString = 'Bible anchor reference object'
@@ -1474,7 +1475,7 @@ class BibleAnchorReference:
     # end of BibleAnchorReference:__str__
 
 
-    def parseAnchorString( self, anchorString, location=None ):
+    def parseAnchorString( self, anchorString:str, location:Optional[str]=None ) -> Tuple[bool,bool,List[Tuple[str,str,str,str]]]:
         """
         A complex state machine that
         returns a tuple with True/False result, haveWarnings, list of (BBB, C, V, S) tuples.
@@ -1492,7 +1493,7 @@ class BibleAnchorReference:
         assert location and isinstance( location, str )
 
 
-        def saveReference( BBB:str, C:str, V:str, S, refList ):
+        def saveReference( BBB:str, C:str, V:str, S:str, refList:List[Tuple[str,str,str,str]] ):
             """ Checks the reference info then saves it as a referenceTuple in the refList. """
             #dPrint( 'Quiet', debuggingThisModule, "saveReference:", BBB, C, V, S, refList )
             nonlocal haveErrors, haveWarnings, totalVerseList
@@ -1511,7 +1512,7 @@ class BibleAnchorReference:
         # end of saveReference
 
 
-        def saveStartReference( BBB:str, C:str, V:str, S ):
+        def saveStartReference( BBB:str, C:str, V:str, S:str ) -> None:
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
             if len(S) > 1:
@@ -1524,7 +1525,7 @@ class BibleAnchorReference:
         # end of saveStartReference
 
 
-        def saveReferenceRange( startTuple, BBB:str, C:str, V:str, S, refList ):
+        def saveReferenceRange( startTuple:Tuple[str,str,str,str], BBB:str, C:str, V:str, S:str, refList:List[Tuple[str,str,str,str]] ) -> None:
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
@@ -1780,7 +1781,7 @@ class BibleAnchorReference:
     # end of BibleAnchorReference:parseAnchorString
 
 
-    def getReferenceList( self, expanded=False ):
+    def getReferenceList( self, expanded:bool=False ) -> List[Tuple[str,str,str,str]]:
         """ Returns the internal list of Bible references.
 
             If expanded, fills out any ranges according to the specified versification system. """
@@ -1858,7 +1859,7 @@ class BibleAnchorReference:
     ## end of BibleAnchorReference:containsReference
 
 
-    def matchesAnchorString( self, anchorString, location=None ):
+    def matchesAnchorString( self, anchorString:str, location:Optional[str]=None ) -> bool:
         """
         Compares the given footnote or cross-reference anchor string, and sees if it matches where we are in the text.
 
@@ -1918,7 +1919,7 @@ def briefDemo() -> None:
             if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
             vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
         vPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (bad)" )
-        for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
+        for ref in ("Intro","Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
             vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
 
@@ -2018,10 +2019,10 @@ def briefDemo() -> None:
                                             ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
                                             ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
             BAR = BibleAnchorReference( ourBBB, ourC, ourV )
-            vPrint( 'Quiet', debuggingThisModule, BAR ) # Just print a summary
+            vPrint( 'Quiet', debuggingThisModule, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
             result = BAR.matchesAnchorString( ourAnchor )
-            if result: vPrint( 'Quiet', debuggingThisModule, "  Matched {!r}".format( ourAnchor ) )
-            else: vPrint( 'Quiet', debuggingThisModule, "  DIDN'T MATCH {!r} <--------------------- Oops!".format( ourAnchor ) )
+            if result: vPrint( 'Quiet', debuggingThisModule, f"    Matched ourAnchor '{ourAnchor}'" )
+            else: vPrint( 'Quiet', debuggingThisModule, f"    DIDN'T MATCH ourAnchor '{ourAnchor}' <--------------------- Oops!" )
 # end of BibleReferences.briefDemo
 
 def fullDemo() -> None:
@@ -2042,7 +2043,7 @@ def fullDemo() -> None:
             if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
             vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
         vPrint( 'Quiet', debuggingThisModule, "\nSingle Reference (bad)" )
-        for ref in ("Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
+        for ref in ("Intro","Mat 0:3","Mat.7:0","Mat. 77:3","Mt. 7:93","M 7:3","Mit 7:3","Mt. 7:3","Mit. 7:3","Mat. 7:3ab","Mat, 7:3","Mat. 7:3xyz5"):
             if printProcessingMessages: vPrint( 'Quiet', debuggingThisModule, "Processing {!r} reference string…".format( ref ) )
             vPrint( 'Quiet', debuggingThisModule, "  From {!r} BSR got {}".format(ref, BSR.parseReferenceString(ref)) )
 
@@ -2142,10 +2143,10 @@ def fullDemo() -> None:
                                             ('JOS','12','17,18', '12:17'), ('JDG','12','17,18', '12:18'), ('SA1','12','17', '12:17,18'), ('SA2','12','18', '12:17,18'), \
                                             ('CH1','12','17-19', '12:18'), ('CH2','12','18', '12:17-19'), ):
             BAR = BibleAnchorReference( ourBBB, ourC, ourV )
-            vPrint( 'Quiet', debuggingThisModule, BAR ) # Just print a summary
+            vPrint( 'Quiet', debuggingThisModule, f"From {ourBBB} '{ourC}' '{ourV}' got BibleAnchorReference = {BAR}" ) # Just print a summary
             result = BAR.matchesAnchorString( ourAnchor )
-            if result: vPrint( 'Quiet', debuggingThisModule, "  Matched {!r}".format( ourAnchor ) )
-            else: vPrint( 'Quiet', debuggingThisModule, "  DIDN'T MATCH {!r} <--------------------- Oops!".format( ourAnchor ) )
+            if result: vPrint( 'Quiet', debuggingThisModule, f"    Matched ourAnchor '{ourAnchor}'" )
+            else: vPrint( 'Quiet', debuggingThisModule, f"    DIDN'T MATCH ourAnchor '{ourAnchor}' <--------------------- Oops!" )
 # end of BibleReferences.fullDemo
 
 if __name__ == '__main__':

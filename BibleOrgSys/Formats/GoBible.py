@@ -392,7 +392,7 @@ class GoBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( debuggingThisModule, "GoBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"GoBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading GoBible {} for {}".format( BBB, self.name ) )

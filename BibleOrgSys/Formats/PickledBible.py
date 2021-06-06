@@ -640,7 +640,7 @@ class PickledBible( Bible ):
 
         This function is multiprocessing safe.
         """
-        fnPrint( debuggingThisModule, "PickledBible._loadBookEssentials( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"PickledBible._loadBookEssentials( {BBB} )" )
 
         self.triedLoadingBook[BBB] = True
 

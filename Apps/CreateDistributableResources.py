@@ -55,7 +55,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2021-03-18' # by RJH
+LAST_MODIFIED_DATE = '2021-05-23' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
 PROGRAM_VERSION = '0.21'
@@ -115,6 +115,7 @@ def runGitPull( gitFolderpath ) -> bool:
             programOutputString = programOutputString[:-1] # Remove unneeded EOL character
             if debuggingThisModule or BibleOrgSysGlobals.verbosityLevel > 0:
                 print( f"  {gitFolderpath} git response: {programOutputString!r}" ) # Use REPR so it all stays on one line
+    else: programOutputString = None
     if programErrorOutputBytes:
         programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
         #with open( os.path.join( outputFolderpath, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )

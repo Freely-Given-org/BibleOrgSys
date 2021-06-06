@@ -487,7 +487,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
         The length of the list is the number of chapters in the book.
         """
-        fnPrint( debuggingThisModule, "getNumVersesList( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"getNumVersesList( {BBB} )" )
         if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 

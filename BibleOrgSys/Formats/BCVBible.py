@@ -310,7 +310,7 @@ class BCVBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( debuggingThisModule, "BCVBible.loadBook( {} )".format( BBB ) )
+        fnPrint( debuggingThisModule, f"BCVBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading BCV {} for {}".format( BBB, self.name ) )

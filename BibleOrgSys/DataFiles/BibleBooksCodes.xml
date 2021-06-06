@@ -122,8 +122,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.80</version>
-      <date>2020-05-06</date>
+      <version>0.81</version>
+      <date>2021-04-29</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -246,7 +246,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Joshua / Joshua son of Nun</nameEnglish>
+    <nameEnglish>Joshua / Joshua son of Nun</nameEnglish> <!-- See also Joshua A and Joshua B -->
     <referenceAbbreviation>JOS</referenceAbbreviation>
     <referenceNumber>6</referenceNumber>
     <sequenceNumber>30</sequenceNumber>
@@ -268,7 +268,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Judges</nameEnglish>
+    <nameEnglish>Judges</nameEnglish> <!-- See also Judges A and Judges B -->
     <referenceAbbreviation>JDG</referenceAbbreviation>
     <referenceNumber>7</referenceNumber>
     <sequenceNumber>32</sequenceNumber>
@@ -2476,7 +2476,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
 
   <BibleBookCodes>
-    <nameEnglish>Joshua A</nameEnglish> <!-- Variant in Rahlfs from Codex Alexandrinus (vs. Vaticanus) -->
+    <nameEnglish>Joshua A</nameEnglish> <!-- From Codex Alexandrinus (vs. Vaticanus) -->
     <referenceAbbreviation>JSA</referenceAbbreviation>
     <referenceNumber>154</referenceNumber>
     <sequenceNumber>370</sequenceNumber>
@@ -2488,22 +2488,46 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Judges B</nameEnglish> <!-- Variant in Rahlfs from Codex Vaticanus (vs. Alexandrinus) -->
-    <referenceAbbreviation>JGB</referenceAbbreviation>
+    <nameEnglish>Joshua B</nameEnglish> <!-- From Codex Vaticanus (vs. Alexandrinus) -->
+    <referenceAbbreviation>JSB</referenceAbbreviation>
     <referenceNumber>155</referenceNumber>
     <sequenceNumber>371</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
+    <SwordAbbreviation>JoshB</SwordAbbreviation>
+    <USFMAbbreviation>JsB</USFMAbbreviation>
+    <BibleWorksAbbreviation>JSB</BibleWorksAbbreviation>
+    <possibleAlternativeBooks>JOS</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Judges A</nameEnglish> <!-- from Codex Alexandrinus (vs. Vaticanus) -->
+    <referenceAbbreviation>JGA</referenceAbbreviation>
+    <referenceNumber>156</referenceNumber>
+    <sequenceNumber>372</sequenceNumber>
+    <expectedChapters>21</expectedChapters>
+    <SwordAbbreviation>JudgA</SwordAbbreviation>
+    <USFMAbbreviation>JdA</USFMAbbreviation>
+    <BibleWorksAbbreviation>JDA</BibleWorksAbbreviation> <!-- Judges A ??? Versions in LXT, BLM, BGT, BGM -->
+    <possibleAlternativeBooks>JDG</possibleAlternativeBooks>
+    <typicalSection>???</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Judges B</nameEnglish>  <!-- From Codex Vaticanus (vs. Alexandrinus) -->
+    <referenceAbbreviation>JGB</referenceAbbreviation>
+    <referenceNumber>157</referenceNumber>
+    <sequenceNumber>373</sequenceNumber>
     <expectedChapters>21</expectedChapters>
     <SwordAbbreviation>JudgB</SwordAbbreviation>
     <USFMAbbreviation>JdB</USFMAbbreviation>
-    <BibleWorksAbbreviation>JDA</BibleWorksAbbreviation> <!-- Judges A ??? Versions in LXT, BLM, BGT, BGM -->
+    <BibleWorksAbbreviation>JDB</BibleWorksAbbreviation> <!-- Judges A ??? Versions in LXT, BLM, BGT, BGM -->
     <possibleAlternativeBooks>JDG</possibleAlternativeBooks>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Tobit S</nameEnglish> <!-- Variant in Rahlfs from Codex Sinaiticus (vs. Vaticanus & Alexandrinus) -->
     <referenceAbbreviation>TBS</referenceAbbreviation>
-    <referenceNumber>156</referenceNumber>
-    <sequenceNumber>372</sequenceNumber>
+    <referenceNumber>158</referenceNumber>
+    <sequenceNumber>374</sequenceNumber>
     <expectedChapters>14</expectedChapters>
     <SwordAbbreviation>TobS</SwordAbbreviation>
     <USFMAbbreviation>TbS</USFMAbbreviation>
@@ -2514,8 +2538,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Susanna θ / Susanna Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>SST</referenceAbbreviation>
-    <referenceNumber>157</referenceNumber>
-    <sequenceNumber>373</sequenceNumber>
+    <referenceNumber>159</referenceNumber>
+    <sequenceNumber>375</sequenceNumber>
     <expectedChapters>1</expectedChapters>
     <SwordAbbreviation>SusTh</SwordAbbreviation>
     <USFMAbbreviation>SsT</USFMAbbreviation>
@@ -2526,8 +2550,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Daniel θ / Daniel Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>DNT</referenceAbbreviation>
-    <referenceNumber>158</referenceNumber>
-    <sequenceNumber>374</sequenceNumber>
+    <referenceNumber>160</referenceNumber>
+    <sequenceNumber>376</sequenceNumber>
     <expectedChapters>12</expectedChapters>
     <SwordAbbreviation>DanTh</SwordAbbreviation>
     <USFMAbbreviation>DnT</USFMAbbreviation>
@@ -2538,8 +2562,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Bel and the dragon θ / Bel and the dragon Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>BLT</referenceAbbreviation>
-    <referenceNumber>159</referenceNumber>
-    <sequenceNumber>375</sequenceNumber>
+    <referenceNumber>161</referenceNumber>
+    <sequenceNumber>377</sequenceNumber>
     <expectedChapters>1</expectedChapters>
     <SwordAbbreviation>BelTh</SwordAbbreviation>
     <USFMAbbreviation>BlT</USFMAbbreviation>
@@ -2552,77 +2576,77 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Gospel of the Hebrews</nameEnglish>
     <referenceAbbreviation>GHE</referenceAbbreviation>
-    <referenceNumber>160</referenceNumber>
+    <referenceNumber>170</referenceNumber>
     <sequenceNumber>700</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Truth</nameEnglish>
     <referenceAbbreviation>GTR</referenceAbbreviation>
-    <referenceNumber>161</referenceNumber>
+    <referenceNumber>171</referenceNumber>
     <sequenceNumber>702</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Mary</nameEnglish>
     <referenceAbbreviation>GMA</referenceAbbreviation>
-    <referenceNumber>162</referenceNumber>
+    <referenceNumber>172</referenceNumber>
     <sequenceNumber>704</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Marcion</nameEnglish>
     <referenceAbbreviation>GMC</referenceAbbreviation>
-    <referenceNumber>163</referenceNumber>
+    <referenceNumber>173</referenceNumber>
     <sequenceNumber>706</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of the Twelve</nameEnglish>
     <referenceAbbreviation>GTW</referenceAbbreviation>
-    <referenceNumber>164</referenceNumber>
+    <referenceNumber>174</referenceNumber>
     <sequenceNumber>708</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Philip</nameEnglish>
     <referenceAbbreviation>GPH</referenceAbbreviation>
-    <referenceNumber>165</referenceNumber>
+    <referenceNumber>175</referenceNumber>
     <sequenceNumber>710</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Thomas</nameEnglish>
     <referenceAbbreviation>GTH</referenceAbbreviation>
-    <referenceNumber>166</referenceNumber>
+    <referenceNumber>176</referenceNumber>
     <sequenceNumber>712</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Judas</nameEnglish>
     <referenceAbbreviation>GJU</referenceAbbreviation>
-    <referenceNumber>167</referenceNumber>
+    <referenceNumber>177</referenceNumber>
     <sequenceNumber>714</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Gospel of Bartholomew</nameEnglish>
     <referenceAbbreviation>GBA</referenceAbbreviation>
-    <referenceNumber>168</referenceNumber>
+    <referenceNumber>178</referenceNumber>
     <sequenceNumber>716</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Apocrypha of James / Apocryphal James</nameEnglish>
     <referenceAbbreviation>AJA</referenceAbbreviation>
-    <referenceNumber>169</referenceNumber>
+    <referenceNumber>179</referenceNumber>
     <sequenceNumber>718</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Wisdom of Jesus Christ</nameEnglish>
     <referenceAbbreviation>WJC</referenceAbbreviation>
-    <referenceNumber>170</referenceNumber>
+    <referenceNumber>180</referenceNumber>
     <sequenceNumber>720</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
@@ -2631,147 +2655,147 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <nameEnglish>Testament of Adam</nameEnglish>
     <referenceAbbreviation>TAD</referenceAbbreviation>
-    <referenceNumber>180</referenceNumber>
+    <referenceNumber>190</referenceNumber>
     <sequenceNumber>400</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Life of Adam and Eve</nameEnglish>
     <referenceAbbreviation>LAE</referenceAbbreviation>
-    <referenceNumber>181</referenceNumber>
+    <referenceNumber>191</referenceNumber>
     <sequenceNumber>402</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Assumption of Moses / Testament of Moses</nameEnglish>
     <referenceAbbreviation>ASS</referenceAbbreviation>
-    <referenceNumber>182</referenceNumber>
+    <referenceNumber>192</referenceNumber>
     <sequenceNumber>404</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Testament of Solomon</nameEnglish>
     <referenceAbbreviation>TSO</referenceAbbreviation>
-    <referenceNumber>183</referenceNumber>
+    <referenceNumber>193</referenceNumber>
     <sequenceNumber>406</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Testament of Job</nameEnglish>
     <referenceAbbreviation>TJB</referenceAbbreviation>
-    <referenceNumber>184</referenceNumber>
+    <referenceNumber>194</referenceNumber>
     <sequenceNumber>408</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Martyrdom and Ascension of Isaiah</nameEnglish>
     <referenceAbbreviation>MAI</referenceAbbreviation>
-    <referenceNumber>185</referenceNumber>
+    <referenceNumber>195</referenceNumber>
     <sequenceNumber>410</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Apocrypha of Ezekiel / Apocryphon of Ezekiel</nameEnglish>
     <referenceAbbreviation>AEZ</referenceAbbreviation>
-    <referenceNumber>186</referenceNumber>
+    <referenceNumber>196</referenceNumber>
     <sequenceNumber>412</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Ezekiel the Tragedian</nameEnglish>
     <referenceAbbreviation>EZT</referenceAbbreviation>
-    <referenceNumber>187</referenceNumber>
+    <referenceNumber>197</referenceNumber>
     <sequenceNumber>414</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Eupolemus</nameEnglish>
     <referenceAbbreviation>EUP</referenceAbbreviation>
-    <referenceNumber>188</referenceNumber>
+    <referenceNumber>198</referenceNumber>
     <sequenceNumber>416</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Pseudo of Eupolemus / Pseudo-Eupolemus</nameEnglish>
     <referenceAbbreviation>PEU</referenceAbbreviation>
-    <referenceNumber>189</referenceNumber>
+    <referenceNumber>199</referenceNumber>
     <sequenceNumber>418</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Visions of Amram</nameEnglish>
     <referenceAbbreviation>VAM</referenceAbbreviation>
-    <referenceNumber>190</referenceNumber>
+    <referenceNumber>200</referenceNumber>
     <sequenceNumber>420</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Letter of Aristeas / Epistle of Aristeas</nameEnglish>
     <referenceAbbreviation>LAR</referenceAbbreviation>
-    <referenceNumber>191</referenceNumber>
+    <referenceNumber>201</referenceNumber>
     <sequenceNumber>422</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Aristeas the Exegete</nameEnglish>
     <referenceAbbreviation>ARI</referenceAbbreviation>
-    <referenceNumber>192</referenceNumber>
+    <referenceNumber>202</referenceNumber>
     <sequenceNumber>424</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Aristobulus</nameEnglish>
     <referenceAbbreviation>ABL</referenceAbbreviation>
-    <referenceNumber>193</referenceNumber>
+    <referenceNumber>203</referenceNumber>
     <sequenceNumber>426</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Artapanus</nameEnglish>
     <referenceAbbreviation>ART</referenceAbbreviation>
-    <referenceNumber>194</referenceNumber>
+    <referenceNumber>204</referenceNumber>
     <sequenceNumber>428</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Cleodemus Malchus</nameEnglish>
     <referenceAbbreviation>CLM</referenceAbbreviation>
-    <referenceNumber>195</referenceNumber>
+    <referenceNumber>205</referenceNumber>
     <sequenceNumber>430</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Eldad and Modad</nameEnglish>
     <referenceAbbreviation>ELM</referenceAbbreviation>
-    <referenceNumber>196</referenceNumber>
+    <referenceNumber>206</referenceNumber>
     <sequenceNumber>432</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>History of the Rechabites</nameEnglish>
     <referenceAbbreviation>HRE</referenceAbbreviation>
-    <referenceNumber>197</referenceNumber>
+    <referenceNumber>207</referenceNumber>
     <sequenceNumber>434</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Lives of the Prophets</nameEnglish>
     <referenceAbbreviation>LPR</referenceAbbreviation>
-    <referenceNumber>198</referenceNumber>
+    <referenceNumber>208</referenceNumber>
     <sequenceNumber>436</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Philo the Epic Poet</nameEnglish>
     <referenceAbbreviation>EPL</referenceAbbreviation>
-    <referenceNumber>199</referenceNumber>
+    <referenceNumber>209</referenceNumber>
     <sequenceNumber>438</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Theodotus</nameEnglish>
     <referenceAbbreviation>TEO</referenceAbbreviation>
-    <referenceNumber>200</referenceNumber>
+    <referenceNumber>210</referenceNumber>
     <sequenceNumber>440</sequenceNumber>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
