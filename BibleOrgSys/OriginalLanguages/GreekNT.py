@@ -5,7 +5,7 @@
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2018 Robert Hunt
+# Copyright (C) 2012-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -41,7 +41,7 @@ Module handling xxx to produce C and Python data tables.
     010102 C- -------- δὲ δὲ δέ δέ
     010102 V- 3AAI-S-- ἐγέννησεν ἐγέννησεν ἐγέννησε(ν) γεννάω
 """
-
+from typing import Optional
 from gettext import gettext as _
 import os
 import logging
@@ -58,10 +58,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2018-12-12' # by RJH
+LAST_MODIFIED_DATE = '2021-06-06' # by RJH
 SHORT_PROGRAM_NAME = "GreekNTHandler"
 PROGRAM_NAME = "Greek NT format handler"
-PROGRAM_VERSION = '0.08'
+PROGRAM_VERSION = '0.09'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -74,11 +74,13 @@ class GreekNT( Bible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFilepath, givenName:Optional[str]=None, encoding:str='utf-8' ) -> None:
         """
         Constructor: expects the filepath of the source folder.
         Loads (and crudely validates the file(s)) into ???.
         """
+        fnPrint( debuggingThisModule, f"GreekNT. __init__( {sourceFilepath}, {givenName}, {encoding} )" )
+
          # Setup and initialise the base class first
         Bible.__init__( self )
         self.objectNameString = 'Greek NT Bible object'
@@ -139,9 +141,11 @@ class GreekNT( Bible ):
     def loadBooks( self ):
         """
         """
+        fnPrint( debuggingThisModule, "GreekNT.loadBooks()" )
         vPrint( 'Info', debuggingThisModule, _("Loading Greek NT from {}…").format( self.sourceFilepath ) )
-        for BBB in Greek.morphgntBookList:
-            self.loadBook( BBB, Greek.morphgntFilenameDict[BBB] )
+        for BBB in Greek.MORPHGNT_BOOKLIST:
+            self.loadBook( BBB )
+            break
         vPrint( 'Verbose', debuggingThisModule, "{} books loaded.".format( len(self.books) ) )
         #if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             #for filename in self.possibleFilenames:
@@ -156,7 +160,10 @@ class GreekNT( Bible ):
         self.loadBooks()
 
 
-    def loadBook( self, BBB:str, filename, encoding='utf-8' ):
+    def loadBook( self, BBB:str ) -> None:
+        fnPrint( debuggingThisModule, f"GreekNT.loadBook( {BBB} )" )
+        filename = Greek.morphgntFilenameDict[BBB]
+        encoding = 'utf-8'
 
         def unpackLine( line ):
             # Should be seven parts in the line
@@ -226,15 +233,15 @@ class GreekNT( Bible ):
                     ref, grammar, words = unpackedLine
                     bn, cn, vn = ref
                     POSCode, parsingCode = grammar
-                    word1, word2, word3, word4 = words
+                    wordWithPunctuation, wordOnly, wordNormalised, wordLemma = words
                     if cn != lastC:
                         self.thisBook.addLine( 'c', cn )
                         lastC, lastV = cn, None
                     if vn != lastV:
                         self.thisBook.addLine( 'v', vn )
                         lastV = vn
-                    self.thisBook.addLine( 'vw', "{}/{}/{}/{}".format( word1, word2, word3, word4 ) )
-                    self.thisBook.addLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
+                    self.thisBook.appendToLastLine( f' \\w {wordOnly}|lemma="{wordLemma}" x-pos="{POSCode}" x-morph="{parsingCode}"\\w*{wordWithPunctuation[len(wordOnly):]}', 'v' )
+                    # self.thisBook.addLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
                     #dPrint( 'Quiet', debuggingThisModule, reference,bits[1],bits[2] ); halt
@@ -255,6 +262,7 @@ class GreekNT( Bible ):
 
         Used by the interlinearizer app.
         """
+        fnPrint( debuggingThisModule, "GreekNT.analyzeWords()" )
         vPrint( 'Verbose', debuggingThisModule, "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
 
         self.wordCounts = {} # Wordcount organised by BBB
