@@ -8,7 +8,7 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.22'
+VERSION = '0.0.21'
 LAST_MODIFIED_DATE = '2021-04-28' # by RJH — when setup.py was modified below
 
 
