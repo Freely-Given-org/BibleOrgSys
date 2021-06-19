@@ -17,7 +17,7 @@ The online lexicon can be viewed at http://openscriptures.github.io/HebrewLexico
 According to the readme.md:
 
 These files are released under the
-[Creative Commons Attribution 4.0 International](http://creativecommons.org/licenses/by/4.0/)
+[Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/)
 license. The actual text of Brown, Driver, Briggs and Strong’s Hebrew
 dictionary remain in the public domain.  For attribution purposes,
 credit the Open Scriptures Hebrew Bible Project.
@@ -32,4 +32,4 @@ The online lexicon can be viewed at https://greeklexicon.org/.
 According to the README.md:
 
 Released under the Creative Commons CC0 waiver.
-http://creativecommons.org/publicdomain/zero/1.0/
+https://creativecommons.org/publicdomain/zero/1.0/

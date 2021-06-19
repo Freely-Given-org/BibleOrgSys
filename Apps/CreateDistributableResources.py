@@ -20,7 +20,7 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 App to create zipped PickledBible for distributable Bible/commentary resources,
@@ -78,7 +78,7 @@ HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM 
 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
-PROCESS_ALL_FLAG = True or __name__ != '__main__'
+PROCESS_ALL_FLAG = False or __name__ != '__main__'
 PROCESS_WLC_FLAG = False
 PROCESS_EBIBLE_FLAG = False
 PROCESS_DOOR43_FLAG = True
@@ -671,7 +671,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 
 ### UNFOLDING WORD / DOOR43
     if PROCESS_DOOR43_FLAG or PROCESS_ALL_FLAG: # UnfoldingWord/Door43 versions
-        if 1 or PROCESS_ALL_FLAG:
+        if 0 and 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'UHB', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -689,7 +689,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'heb',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if 0 and 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'UGNT', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UGNT/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -743,7 +743,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'eng',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if 0 and 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'UEB', 'Unlocked English Bible'
             d43Folder = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UEB/en_ueb/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )

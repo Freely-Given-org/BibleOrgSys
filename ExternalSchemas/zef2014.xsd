@@ -16,7 +16,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License 3 for more details.
 
 You should have received a copy of the GNU General Public License
-along with Zefania XML 2014. If not, see http://www.gnu.org/licenses/.
+along with Zefania XML 2014. If not, see https://www.gnu.org/licenses/.
 
 This file is based on the Zefania XML Schema published by Wolfgang Schultz
 under GNU General Public License version 3. The complete source code
@@ -345,4 +345,4 @@ Das markierte Element soll als Eingabe für eine andere externe Resource verwend
 </xsd:restriction>
 </xsd:simpleType>
 </xsd:schema>
- 
+

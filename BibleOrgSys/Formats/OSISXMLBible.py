@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2021 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -20,7 +20,7 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 Module handling the reading and import of OSIS XML Bibles.
@@ -55,7 +55,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2021-06-19' # by RJH
 SHORT_PROGRAM_NAME = "OSISBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
 PROGRAM_VERSION = '0.65'
@@ -66,7 +66,7 @@ debuggingThisModule = False
 
 FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA') # Must be UPPERCASE
 EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
-                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
@@ -87,7 +87,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one OSIS Bible is found,
         returns the loaded OSISXMLBible object.
     """
-    fnPrint( debuggingThisModule, "OSISXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( debuggingThisModule, f"OSISXMLBibleFileCheck( {givenFolderName}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False)
 
@@ -124,7 +124,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                     #dPrint( 'Quiet', debuggingThisModule, 'obc', osisBkCode, upperFilename )
                     if osisBkCode in somethingUpper:
                         foundBookFiles.append( something ); break
-    #dPrint( 'Quiet', debuggingThisModule, 'ff', foundFiles, foundBookFiles )
+    #dPrint( 'Never', debuggingThisModule, 'OSIS ff', foundFiles, foundBookFiles )
 
     # See if there's an OSIS project here in this folder
     numFound = 0
@@ -136,9 +136,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', debuggingThisModule, "OsisB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                #dPrint( 'Verbose', debuggingThisModule, f"OSISa (unexpected) first line was {firstLines} in {thisFilename}" )
                 continue
-            if not (firstLines[1].startswith( '<osis ' ) or firstLines[2].startswith( '<osis ' )):
+            if '<osis' not in firstLines[1] and '<osis' not in firstLines[2]:
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
@@ -180,7 +180,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                             if osisBkCode in somethingUpper:
                                 foundSubBookFiles.append( something ); break
         except PermissionError: pass # can't read folder, e.g., system folder
-        #dPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles, foundSubBookFiles )
+        #dPrint( 'Never', debuggingThisModule, 'OSIS fsf', foundSubfiles, foundSubBookFiles )
 
         # See if there's an OSIS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -189,9 +189,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', debuggingThisModule, "OsisB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    #dPrint( 'Verbose', debuggingThisModule, f"OSISb (unexpected) first line was {firstLines} in {thisFilename}" )
                     continue
-                if not firstLines[1].startswith( '<osis ' ):
+                if '<osis' not in firstLines[1]:
                     continue
             foundProjects.append( (tryFolderName, thisFilename) )
             lastFilenameFound = thisFilename
@@ -425,7 +425,7 @@ class OSISXMLBible( Bible ):
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                vPrint( 'Quiet', debuggingThisModule, f"  {BBB} is already loaded -- returning" )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading OSIS {} for {}".format( BBB, self.name ) )
@@ -1022,12 +1022,13 @@ class OSISXMLBible( Bible ):
             if noteType == 'crossReference': # This could be something like '1:6:' or '1:8: a'
                 thisBook.appendToLastLine( '\\xt {}'.format( clean(noteText) ) )
             elif noteType == 'footnote': # This could be something like '4:3 In Greek: some note.' or it could just be random text
-                #dPrint( 'Quiet', debuggingThisModule, "  noteType =", noteType, "noteText =", noteText )
+                #dPrint( 'Quiet', debuggingThisModule, f"  {noteType=}, {noteText=!r}" )
                 if BibleOrgSysGlobals.debugFlag: assert noteText
                 if ':' in noteText and noteText[0].isdigit(): # Let's roughly assume that it starts with a chapter:verse reference
                     bits = noteText.split( None, 1 )
                     if BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
-                    sourceText, footnoteText = bits
+                    try: sourceText, footnoteText = bits
+                    except ValueError: sourceText, footnoteText = noteText, ''
                     if BibleOrgSysGlobals.debugFlag: assert sourceText and footnoteText
                     #dPrint( 'Quiet', debuggingThisModule, "  footnoteSource = {!r}, sourceText = {!r}".format( footnoteSource, sourceText ) )
                     if not sourceText[-1] == ' ': sourceText += ' '
@@ -1898,7 +1899,7 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} (2d5g)".format( attrib, value, sublocation ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                         #dPrint( 'Quiet', debuggingThisModule, "id", repr(identifierType) )
-                        if BibleOrgSysGlobals.debugFlag: assert identifierType in ('OSIS','URL','x-ebible-id')
+                        if BibleOrgSysGlobals.debugFlag: assert identifierType in ('OSIS','URL','ISBN','x-ebible-id')
                         vPrint( 'Info', debuggingThisModule, "    Identifier ({}) is {!r}".format( identifierType, identifier ) )
                         #dPrint( 'Quiet', debuggingThisModule, "Here vds1", repr(self.name), repr(self.abbreviation) )
                         if identifierType=='OSIS':
@@ -3261,7 +3262,7 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.error( "95k3 Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (95k3)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                        dPrint( 'Quiet', debuggingThisModule, subelement.tag )
+                        #dPrint( 'Quiet', debuggingThisModule, subelement.tag )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
 ########### Chapter
             elif element.tag == OSISXMLBible.OSISNameSpace+'chapter' or (not BibleOrgSysGlobals.strictCheckingFlag and element.tag=='chapter'):

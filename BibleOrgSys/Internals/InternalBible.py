@@ -21,7 +21,7 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 Module for defining and manipulating Bibles in our internal USFM-based 'lines' format.
@@ -80,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-04-25' # by RJH
+LAST_MODIFIED_DATE = '2021-06-11' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.85'
@@ -2606,6 +2606,10 @@ class InternalBible:
         # aggregatedAlignmentsDCList:List[Tuple[str,str,str,list,str,list]] = []
         # aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
         perVerseWordDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
+        OTLemmaDictSet:Dict[str,Set[str]] = defaultdict( set )
+        NTLemmaDictSet:Dict[str,Set[str]] = defaultdict( set )
+        OTStrongsDictSet:Dict[str,Set[str]] = defaultdict( set )
+        NTStrongsDictSet:Dict[str,Set[str]] = defaultdict( set )
         for BBB,bookObject in self.books.items():
             assert 'uWalignments' not in bookObject.__dict__ # This is an original -- not an aligned translation
             ref = BBB, '1', '1'
@@ -2615,10 +2619,13 @@ class InternalBible:
 
             if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB ):
                 analysedOTBookList.append( BBB )
+                lemmaDictSet, StrongsDictSet = OTLemmaDictSet, OTStrongsDictSet
             elif BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB ):
                 analysedNTBookList.append( BBB )
+                lemmaDictSet, StrongsDictSet = NTLemmaDictSet, NTStrongsDictSet
             elif BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB ):
                 analysedDCBookList.append( BBB )
+                lemmaDictSet, StrongsDictSet = None, None
             analysedBookCount += 1
 
             """
@@ -2707,6 +2714,8 @@ class InternalBible:
                                         morph = ''
                                         dPrint( 'Quiet', debuggingThisFunction, f"No morph for {BBB} {C}:{V} {wField}" )
                                     line.append( (word,lemma,strongs,morph) )
+                                    lemmaDictSet[lemma].add( strongs )
+                                    StrongsDictSet[strongs].add( lemma )
                                     ix = ixEnd + 3
                                 else: # next part of line is NOT a \\w entry
                                     char, charName = originalText[ix], 'unknown'
@@ -2729,6 +2738,22 @@ class InternalBible:
             dPrint( 'Never', debuggingThisFunction, f"Got {BBB} lines({len(lines)})={lines}" )
             perVerseWordDict[BBB] = lines
 
+        # The following lists help to track potential errors in the UHB and UGNT
+        #   where normally the same lemma should always have the same Strongs' number
+        OTLemmaList:List[str,List[str]] = []
+        NTLemmaList:List[str,List[str]] = []
+        OTStrongsList:List[str,List[str]] = []
+        NTStrongsList:List[str,List[str]] = []
+        for dictSet,listList in ( (OTLemmaDictSet,OTLemmaList),(NTLemmaDictSet,NTLemmaList),(OTStrongsDictSet,OTStrongsList),(NTStrongsDictSet,NTStrongsList) ):
+            # for key,theSet in dictSet.items():
+            #     listList.append( (key, list( theSet )) ) # Convert set to list coz JSON can't encode lists
+            # Presumably this list comprehension is faster ???
+            listList.extend( [(key, list(theSet)) for key,theSet in dictSet.items()] ) # Convert set to list coz JSON can't encode lists
+        OTLemmaList.sort( key=lambda x: len(x[1]), reverse=True ) # Put the lemmas with the most Strongs' entries first
+        NTLemmaList.sort( key=lambda x: len(x[1]), reverse=True )
+        OTStrongsList.sort( key=lambda x: len(x[1]), reverse=True ) # Put the Strongs' entries with the most lemmas first
+        NTStrongsList.sort( key=lambda x: len(x[1]), reverse=True )
+
         # Save the original list and all the derived dictionaries for any futher analysis/processing
         vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} analysis JSON files…" )
         import json
@@ -2740,6 +2765,10 @@ class InternalBible:
                     (analysedDCBookList, 'analysedDCBookList'),
                     (analysedNTBookList, 'analysedNTBookList'),
                 (perVerseWordDict, 'perVerseWordDict'),
+                    (OTLemmaList, 'OTLemmaList'),
+                    (NTLemmaList, 'NTLemmaList'),
+                    (OTStrongsList, 'OTStrongsList'),
+                    (NTStrongsList, 'NTStrongsList'),
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files

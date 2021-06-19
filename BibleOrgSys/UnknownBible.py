@@ -20,7 +20,7 @@
 #   GNU General Public License for more details.
 #
 #   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 Module handling an unknown Bible object.
@@ -1021,15 +1021,15 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
     # Now demo the class
-    if 0: # Just test one folder
+    if 1: # Just test one folder
         testFolder = 'Put your folder here/'
         vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
         vPrint( 'Quiet', debuggingThisModule, uB )
-        vPrint( 'Info', debuggingThisModule, "  A1 result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A1 result2 is: {}".format( result2 ) )
+        vPrint( 'Info', debuggingThisModule, f"  A1 result1 is: {result1}" )
+        vPrint( 'Info', debuggingThisModule, f"  A1 result2 is: {result2}" )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
