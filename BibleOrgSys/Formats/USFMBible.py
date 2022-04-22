@@ -572,7 +572,7 @@ class USFMBible( Bible ):
     # end of USFMBible.preload
 
 
-    def loadBook( self, BBB:str, filename=None ):
+    def loadBook( self, BBB:str, filename=None ) -> None:
         """
         Load the requested book into self.books if it's not already loaded.
 

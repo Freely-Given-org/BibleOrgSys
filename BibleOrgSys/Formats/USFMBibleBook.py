@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,10 +42,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2021-03-11' # by RJH
+LAST_MODIFIED_DATE = '2022-03-04' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.56'
+PROGRAM_VERSION = '0.57'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -159,19 +159,20 @@ class USFMBibleBook( BibleBook ):
                 if not BibleOrgSysGlobals.strictCheckingFlag:
                     variables['words'] = variables['words'].rstrip() # Shouldn't really be necessary
                 #assert variables['words'].startswith( '\\w ' ) # Not currently true (e.g., might have verse number)
-                #dPrint( 'Quiet', debuggingThisFunction, f"words={variables['words']}=")
-                #dPrint( 'Quiet', debuggingThisFunction, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
-                #dPrint( 'Quiet', debuggingThisFunction, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
+                dPrint( 'Verbose', debuggingThisFunction, f"{self.workName} {self.BBB} {C}:{V} words={variables['words']}=")
+                dPrint( 'Verbose', debuggingThisFunction, f"-1={variables['words'][-1]} -2={variables['words'][-2]}" )
+                # dPrint( 'Quiet', debuggingThisFunction, f"-5:-1={variables['words'][-5:-1]} -6:-2={variables['words'][-6:-2]}" )
                 if variables['words'].endswith( '"\\w**' ):
                     vPrint( 'Quiet', debuggingThisFunction, "Drop final double asterisk!!!! (for Hindi IRV ???)")
                     variables['words'] = variables['words'][:-1]
-                assert variables['words'].endswith( '"\\w*' ) \
+                assert ( variables['words'].endswith( '"\\w*' )
+                or variables['words'].endswith( '\\w*{' ) # UST Act 1:18 (or should this have been handled earlier)
                 or ((variables['words'][-1] in '-\u200c' # Zero-width non-joiner (for Kannada IEV)
-                or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
-                    and variables['words'][-5:-1] == '"\\w*' ) \
+                    or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
+                        and variables['words'][-5:-1] == '"\\w*' ) \
                 or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
                     and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
-                    and variables['words'][-6:-2] == '"\\w*' )
+                    and variables['words'][-6:-2] == '"\\w*' ) )
                 assert 'zaln' not in variables['words']
             if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
 
@@ -424,7 +425,7 @@ class USFMBibleBook( BibleBook ):
             # Check for lines like:
             #   \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
             if '\\w*\\w ' in text: # two separate words with no space or punctuation between them
-                if marker in ('w','v'):
+                if marker in ('w','v','zaln-s'):
                     ixWordEndIndex = text.index( '|' )
                     firstWord = text[:ixWordEndIndex]
                     if not firstWord.isdigit():
@@ -433,7 +434,7 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}") \
                                     .format( marker, text, self.workName, self.BBB, C, V ) )
                     # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB} {C}:{V}")
-                else: print( f"Mismatched \w fields {marker}='{text}'" ); halt # Some other marker
+                else: print( f"Mismatched in \w fields {marker}='{text}'" ); halt # Some other marker
 
             if (marker=='w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker!='w' and text.count('\\w ') !=  text.count('\\w*')):
@@ -486,6 +487,10 @@ class USFMBibleBook( BibleBook ):
                         text = text.lstrip() # Can be an extra space in here!!! (eg., ULT MAT 12:17)
                         if text.startswith( '\\v ' ):
                             marker, text = 'v', text[3:] # Drop \ts\\* and adjust marker
+                        elif text.startswith( '\\w ' ):
+                            marker, text = 'w', text[3:] # Drop \ts\\* and adjust marker
+                        elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
+                            marker = 'p~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
                             dPrint( 'Quiet', debuggingThisModule, f"ts\\* text='{text}'" )
                             halt
@@ -549,13 +554,13 @@ class USFMBibleBook( BibleBook ):
                     #  dPrint( 'Quiet', debuggingThisModule, "HERE1", lastMarker, lastText, "now", marker, text)
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
                     #  dPrint( 'Quiet', debuggingThisModule, "HERE2", lastMarker, lastText, "now", marker, text)
-                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'p~', 'd', 'q','pi','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker in BibleOrgSysGlobals.USFMCharacterMarkers and (lastMarker in ('c', 'v', 'p~', 'd', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', debuggingThisModule, f"HereXX with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + marker + ' ' + text
                         dPrint( 'Never', debuggingThisModule, f"{self.BBB} {C} {V} Appended1a {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
-                    elif marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    elif marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         dPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}='{text}'" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText += text
@@ -591,7 +596,7 @@ class USFMBibleBook( BibleBook ):
                 if marker in ('zaln-s','zaln-e'): # it's a Door43 translation alignment marker (should be self-closed)
                     gotUWEncoding = True
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
-                    if marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    if marker=='p~' and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
                         #dPrint( 'Quiet', debuggingThisModule, f"HereYY with {lastMarker} now {marker}" )
                         if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  text

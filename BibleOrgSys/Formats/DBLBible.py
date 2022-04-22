@@ -6,7 +6,7 @@
 # Module handling Digital Bible Library (DBL) compilations of USX XML Bible books
 #                                               along with XML and other metadata
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -55,10 +55,10 @@ from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersificatio
 from BibleOrgSys.Formats.PTX8Bible import getFlagFromAttribute
 
 
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+LAST_MODIFIED_DATE = '2022-04-22' # by RJH
 SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
 PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
-PROGRAM_VERSION = '0.29'
+PROGRAM_VERSION = '0.30'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -1216,7 +1216,7 @@ class DBLBible( Bible ):
             and try to standardise it at the same time.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata({} )".format( applyMetadataType ) )
+            vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata( {} )".format( applyMetadataType ) )
         assert applyMetadataType in ( 'DBL', 'Project', )
 
         if applyMetadataType == 'Project': # This is different stuff
@@ -1603,7 +1603,7 @@ class DBLBible( Bible ):
 
 def __processDBLBible( parametersTuple ): # for demo
     """
-    Special shim function used for multiprocessing.
+    Special shim function used below for multiprocessing.
     """
     codeLetter, mainFolderName, subFolderName = parametersTuple
     vPrint( 'Normal', debuggingThisModule, "\nDBL {} Trying {}".format( codeLetter, subFolderName ) )
@@ -1741,35 +1741,37 @@ def briefDemo() -> None:
 
 
     if 1: # all discovered modules in the test folder
-        foundFolders, foundFiles = [], []
-        for something in os.listdir( testFolder ):
-            somepath = os.path.join( testFolder, something )
-            if os.path.isdir( somepath ): foundFolders.append( something ); break
-            elif os.path.isfile( somepath ): foundFiles.append( something )
+        if os.path.isdir(testFolder) and os.access(testFolder, os.R_OK):
+            foundFolders, foundFiles = [], []
+            for something in os.listdir( testFolder ):
+                somepath = os.path.join( testFolder, something )
+                if os.path.isdir( somepath ): foundFolders.append( something ); break
+                elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
-            parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
-                                                for j,folderName in enumerate(sorted(foundFolders))]
-            BibleOrgSysGlobals.alreadyMultiprocessing = True
-            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
-                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
-            BibleOrgSysGlobals.alreadyMultiprocessing = False
-        else: # Just single threaded
-            for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nDBL H{}/ Trying {}".format( j+1, folderName ) )
-                myTestFolder = os.path.join( testFolder, folderName+'/' )
-                DBL_Bible = DBLBible( myTestFolder, folderName )
-                DBL_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
-                    BBB = 'JN1'
-                    if BBB in DBL_Bible:
-                        DBL_Bible.books[BBB].debugPrint()
-                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+            if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+                #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+                parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
+                                                    for j,folderName in enumerate(sorted(foundFolders))]
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
+                with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                    results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
+                    assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
+            else: # Just single threaded
+                for j, folderName in enumerate( sorted( foundFolders ) ):
+                    vPrint( 'Normal', debuggingThisModule, "\nDBL H{}/ Trying {}".format( j+1, folderName ) )
+                    myTestFolder = os.path.join( testFolder, folderName+'/' )
+                    DBL_Bible = DBLBible( myTestFolder, folderName )
+                    DBL_Bible.load()
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                        BBB = 'JN1'
+                        if BBB in DBL_Bible:
+                            DBL_Bible.books[BBB].debugPrint()
+                            for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                                vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+        else: vPrint( 'Normal', debuggingThisModule, f"DBL H Skipped unreadable testFolder: {testFolder}")
 
     if 00:
         testFolders = (
@@ -1920,35 +1922,37 @@ def fullDemo() -> None:
 
 
     if 1: # all discovered modules in the test folder
-        foundFolders, foundFiles = [], []
-        for something in os.listdir( testFolder ):
-            somepath = os.path.join( testFolder, something )
-            if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ): foundFiles.append( something )
+        if os.path.isdir(testFolder) and os.access(testFolder, os.R_OK):
+            foundFolders, foundFiles = [], []
+            for something in os.listdir( testFolder ):
+                somepath = os.path.join( testFolder, something )
+                if os.path.isdir( somepath ): foundFolders.append( something )
+                elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
-            parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
-                                                for j,folderName in enumerate(sorted(foundFolders))]
-            BibleOrgSysGlobals.alreadyMultiprocessing = True
-            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
-                assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
-            BibleOrgSysGlobals.alreadyMultiprocessing = False
-        else: # Just single threaded
-            for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nDBL H{}/ Trying {}".format( j+1, folderName ) )
-                myTestFolder = os.path.join( testFolder, folderName+'/' )
-                DBL_Bible = DBLBible( myTestFolder, folderName )
-                DBL_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
-                    BBB = 'JN1'
-                    if BBB in DBL_Bible:
-                        DBL_Bible.books[BBB].debugPrint()
-                        for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+            if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+                #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', debuggingThisModule, _("Loading {} DBL modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+                vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+                parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
+                                                    for j,folderName in enumerate(sorted(foundFolders))]
+                BibleOrgSysGlobals.alreadyMultiprocessing = True
+                with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                    results = pool.map( __processDBLBible, parameters ) # have the pool do our loads
+                    assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
+                BibleOrgSysGlobals.alreadyMultiprocessing = False
+            else: # Just single threaded
+                for j, folderName in enumerate( sorted( foundFolders ) ):
+                    vPrint( 'Normal', debuggingThisModule, "\nDBL H{}/ Trying {}".format( j+1, folderName ) )
+                    myTestFolder = os.path.join( testFolder, folderName+'/' )
+                    DBL_Bible = DBLBible( myTestFolder, folderName )
+                    DBL_Bible.load()
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                        BBB = 'JN1'
+                        if BBB in DBL_Bible:
+                            DBL_Bible.books[BBB].debugPrint()
+                            for entryKey in DBL_Bible.books[BBB]._CVIndex:
+                                vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+        else: vPrint( 'Normal', debuggingThisModule, f"DBL H Skipped unreadable testFolder: {testFolder}")
 
     if 00:
         testFolders = (

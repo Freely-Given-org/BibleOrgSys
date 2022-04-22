@@ -5,7 +5,7 @@
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,6 +33,7 @@ Currently aware of the following Bible types:
     Unbound Bible (table based), theWord (line based), MySword (SQLite based), e-Sword (SQLite based)
     OSIS, USX, USFX, OpenSong, Zefania, Haggai, VerseView (all XML)
     Digital Bible Library (DB) which is USX (XML) plus XML metadata
+    Scripture Burrito which is JSON metadata plus USFM or USX
     Sword modules (binary).
 """
 from gettext import gettext as _
@@ -52,6 +53,7 @@ from BibleOrgSys.Formats.PTX8Bible import PTX8BibleFileCheck
 from BibleOrgSys.Formats.PTX7Bible import PTX7BibleFileCheck
 from BibleOrgSys.Formats.USFMBible import USFMBibleFileCheck
 from BibleOrgSys.Formats.USFM2Bible import USFM2BibleFileCheck
+from BibleOrgSys.Formats.ScriptureBurritoBible import ScriptureBurritoBibleFileCheck
 from BibleOrgSys.Formats.DBLBible import DBLBibleFileCheck
 from BibleOrgSys.Formats.USXXMLBible import USXXMLBibleFileCheck
 from BibleOrgSys.Formats.USFXXMLBible import USFXXMLBibleFileCheck
@@ -80,10 +82,10 @@ from BibleOrgSys.Formats.VPLBible import VPLBibleFileCheck
 #from BibleOrgSys.Formats.SwordResources import SwordInterface # What about these?
 
 
-LAST_MODIFIED_DATE = '2020-11-08' # by RJH
+LAST_MODIFIED_DATE = '2022-04-22' # by RJH
 SHORT_PROGRAM_NAME = "UnknownBible"
 PROGRAM_NAME = "Unknown Bible object handler"
-PROGRAM_VERSION = '0.37'
+PROGRAM_VERSION = '0.38'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -298,6 +300,14 @@ class UnknownBible:
                     typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
                     vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
 
+                # Search for SB Bibles -- put BEFORE USFM and USX
+                SBBibleStrictCount = ScriptureBurritoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
+                if SBBibleStrictCount:
+                    totalBibleStrictCount += SBBibleStrictCount
+                    totalBibleStrictTypes += 1
+                    typesStrictlyFound.append( 'SB:' + str(SBBibleStrictCount) )
+                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: SBBibleStrictCount", SBBibleStrictCount )
+
                 # Search for USFM Bibles
                 USFM2BibleStrictCount = USFM2BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
                 if USFM2BibleStrictCount:
@@ -404,7 +414,7 @@ class UnknownBible:
                 MyBibleBibleStrictCount = PDBBibleStrictCount = PierceOnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
                 SwordBibleStrictCount = UnboundBibleStrictCount = DrupalBibleStrictCount = YETBibleStrictCount = 0
                 ESFMBibleStrictCount = PTX8BibleStrictCount = PTX7BibleStrictCount = USFM2BibleStrictCount = USFMBibleStrictCount = 0
-                DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
+                SBBibleStrictCount = DBLBibleStrictCount = USXBibleStrictCount = USFXBibleStrictCount = OSISBibleStrictCount = 0
                 OpenSongBibleStrictCount = ZefaniaBibleStrictCount = HaggaiBibleStrictCount = VerseViewBibleStrictCount = 0
                 GoBibleStrictCount = CSVBibleStrictCount = F4SSBibleStrictCount = VPLBibleStrictCount = 0
 
@@ -549,6 +559,14 @@ class UnknownBible:
                 typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
                 vPrint( 'Info', debuggingThisModule, "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
 
+            # Search for SB Bibles -- put BEFORE USFM and USX
+            SBBibleCount = ScriptureBurritoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+            if SBBibleCount:
+                totalBibleCount += SBBibleCount
+                totalBibleTypes += 1
+                typesFound.append( 'SB:' + str(SBBibleCount) )
+                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: SBBibleCount", SBBibleCount )
+
             # Search for USFM Bibles
             USFM2BibleCount = USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
             if USFM2BibleCount:
@@ -655,7 +673,7 @@ class UnknownBible:
             MyBibleBibleCount = PDBBibleCount = PierceOnlineBibleCount = EasyWorshipBibleCount = 0
             SwordBibleCount = UnboundBibleCount = DrupalBibleCount = YETBibleCount = 0
             ESFMBibleCount = PTX8BibleCount = PTX7BibleCount = USFM2BibleCount = USFMBibleCount = 0
-            DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
+            SBBibleCount = DBLBibleCount = USXBibleCount = USFXBibleCount = OSISBibleCount = 0
             OpenSongBibleCount = ZefaniaBibleCount = HaggaiBibleCount = VerseViewBibleCount = 0
             GoBibleCount = CSVBibleCount = F4SSBibleCount = VPLBibleCount = 0
 
@@ -705,7 +723,7 @@ class UnknownBible:
             #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
-                #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, DBLBibleCount ) )
+                #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, SBBibleCount, DBLBibleCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
@@ -714,7 +732,7 @@ class UnknownBible:
             #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
-                #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, DBLBibleStrictCount ) )
+                #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, SBBibleStrictCount, DBLBibleStrictCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
             #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
@@ -790,6 +808,10 @@ class UnknownBible:
             elif PTX7BibleCount == 1: # Must be ahead of USFM
                 self.foundType = 'PTX7 Bible'
                 if autoLoad: return PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
+            elif SBBibleCount == 1: # Must be ahead of USFM and USX
+                self.foundType = 'SB Bible'
+                if autoLoad: return ScriptureBurritoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
             elif USFM2BibleCount == 1:
                 self.foundType = 'USFM2 Bible'
@@ -928,6 +950,7 @@ def briefDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'SBTest/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
@@ -1090,6 +1113,7 @@ def fullDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/' ),
+                    BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'SBTest/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),

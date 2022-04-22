@@ -6,7 +6,7 @@
 # Module running various other modules demo() or main() functions
 #                           as a way of testing the overall systems.
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,6 +34,9 @@ and how many failed.
 
 This isn't as thorough as the proper test routines
     but it's still much better than nothing.
+
+CHANGELOG:
+    2022-04-22 added ScriptureBurritoBible test
 """
 from gettext import gettext as _
 from typing import List, Tuple
@@ -56,10 +59,10 @@ from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in Tes
 sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
 #dPrint( 'Info', debuggingThisModule, sys.path )
 
-LAST_MODIFIED_DATE = '2020-07-20' # by RJH
+LAST_MODIFIED_DATE = '2022-04-22' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
-PROGRAM_VERSION = '0.68'
+PROGRAM_VERSION = '0.69'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -847,6 +850,16 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failures.append( f"{moduleName} import" )
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
+    moduleName = 'ScriptureBurritoBible'
+    try:
+        from BibleOrgSys.Formats import ScriptureBurritoBible
+        doTest( moduleName, ScriptureBurritoBible )
+    except KeyboardInterrupt: interrupted=True; return
+    except (ImportError, SyntaxError) as err:
+        print( f"{moduleName} import failed!" )
+        failures.append( f"{moduleName} import" )
+        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+
     # moduleName = 'DigitalBibleLibraryOnline'
     # try:
     #     from BibleOrgSys.NotIncluded.Online import DigitalBibleLibraryOnline
@@ -1064,10 +1077,10 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         print( f"{moduleName} import failed!" )
         failures.append( f"{moduleName} import" )
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
-    moduleName = 'DBPOnline'
+    moduleName = 'BibleBrainOnline'
     try:
-        from BibleOrgSys.Online import DBPOnline
-        doTest( moduleName, DBPOnline )
+        from BibleOrgSys.Online import BibleBrainOnline
+        doTest( moduleName, BibleBrainOnline )
     except KeyboardInterrupt: interrupted=True; return
     except (ImportError, SyntaxError) as err:
         print( f"{moduleName} import failed!" )

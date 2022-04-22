@@ -39,7 +39,7 @@ Module for defining and manipulating internal Bible objects including:
 
 Some notes about internal formats:
     The BibleOrgSys internal format is based on
-        ESFM (see http://Freely-Given.org/Software/BibleDropBox/ESFMBibles.html )
+        ESFM (see https://Freely-Given.org/Software/BibleDropBox/ESFMBibles.html )
         which is turn is based on USFM 3 (see https://ubsicap.github.io/usfm/index.html).
     Each Bible book (including front and back matter) is stored in
         a separate InternalBibleBook object.

@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-23' # by RJH
+LAST_MODIFIED_DATE = '2022-03-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.87'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -582,6 +582,9 @@ class BibleBooksCodes:
         """
         Convert a BCV or BCVS reference to an integer
             especially so that references can be sorted.
+
+        If a V is a verse span with a hyphen (e.g., '3-4'),
+            it uses the value before the hyphen.
         """
         try:
             BBB, C, V = BCVReferenceTuple
@@ -598,7 +601,7 @@ class BibleBooksCodes:
         result = result * 100 + intC
 
         try:
-            intV = int( V )
+            intV = int( V.split('-')[0] ) # If it's a verse span e.g., 3-4, just take the first part
         except ValueError:
             vPrint( 'Quiet', debuggingThisModule, repr(V) ); halt # Need to finish handling V
         result = result * 150 + intV
@@ -615,8 +618,8 @@ class BibleBooksCodes:
 
     def sortBCVReferences( self, referencesList ) -> List[Tuple[str,str,str]]:
         """
-        Sort an iterable containing 3-tuples of BBB,C,V
-            or 4-tuples of BBB,C,V,S
+        Sort an iterable containing 3-tuples of BBB,C,V strings
+            or 4-tuples of BBB,C,V,S strings
         """
         #dPrint( 'Quiet', debuggingThisModule, f"sortBCVReferences( ({len(referencesList)}) {referencesList} )…" )
         sortedList = sorted( referencesList, key=self.BCVReferenceToInt )

@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -80,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-06-11' # by RJH
+LAST_MODIFIED_DATE = '2022-03-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.85'
@@ -488,7 +488,7 @@ class InternalBible:
         Load the fields from the given metadata text file into self.suppliedMetadata['File']
             and then copy them into self.settingsDict.
 
-        See http://freely-given.org/Software/BibleDropBox/Metadata.html for
+        See https://Freely-Given.org/Software/BibleDropBox/Metadata.html for
             a description of the format and the typical, allowed fields.
         """
         def saveMetadataField( fieldName, contents ):
@@ -651,8 +651,8 @@ class InternalBible:
                                 break
                     self.settingsDict[newKey] = value
 
-# NOTE: Some of these could be spread out into individual modules, e.g., the DBL example ???
-#           Either that, or bring the DBL one into here
+# NOTE: Some of these could be spread out into individual modules, e.g., the DBL and SB examples ???
+#           Either that, or bring the DBL and SB ones into here
         elif applyMetadataType == 'SSF':
             # This is a special case (coz it's inside the PTX7 metadata)
             wantedDict = { 'Copyright':'Copyright', 'FullName':'WorkName', 'LanguageIsoCode':'ISOLanguageCode' }
@@ -1243,9 +1243,11 @@ class InternalBible:
                     self.discoveryResults[BBB] = results[j] # Saves them in the correct order
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
+            vPrint( 'Normal', debuggingThisModule, " " + _("Prechecking in single-threaded mode!") )
             for BBB in self.books: # Do individual book prechecks
-                vPrint( 'Verbose', debuggingThisModule, "  " + _("Prechecking {}…").format( BBB ) )
+                vPrint( 'Info', debuggingThisModule, "  " + _("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
+                vPrint( 'Verbose', debuggingThisModule, "    " + _("Finished prechecking {}").format( BBB ) )
 
         if self.objectTypeString == 'PTX8':
             self.discoverPTX8()
@@ -1926,7 +1928,7 @@ class InternalBible:
                                             ListPart += '</p>'
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", ListPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -1971,7 +1973,7 @@ class InternalBible:
                                                 CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -1982,7 +1984,7 @@ class InternalBible:
                                                 CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                                                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                                             webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -1992,7 +1994,7 @@ class InternalBible:
                 if BBBPart: # Create the error page for this book
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", BBBPart ).replace( "__EXTRAS__", '' ) \
-                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                                 #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                     webPageFilename = "{}.html".format( BBB )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -2123,7 +2125,7 @@ class InternalBible:
                 if categoryPart: # Create the error page for this catebory
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", categoryPart ).replace( "__EXTRAS__", '' ) \
-                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                                 #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
                     webPageFilename = "{}.html".format( category )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -2156,7 +2158,7 @@ class InternalBible:
             BBBIndexPart += '<small>{}</small>'.format( help1Part )
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
                         .replace( "__MAIN_PART__", BBBIndexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "BBBIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -2170,7 +2172,7 @@ class InternalBible:
         if categoryIndexPart: # Create the by category index page
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
                         .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "categoryIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -2183,7 +2185,7 @@ class InternalBible:
             indexPart += '<small>{}</small>'.format( help2Part )
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle ) \
                         .replace( "__MAIN_PART__", indexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", '/BibleDropBox/' )
                         #.replace( "__TOP_PATH__", '../'*6 ).replace( "__SUB_PATH__", '../'*5 ).replace( "__SUB_SUB_PATH__", '../'*4 )
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
@@ -2835,6 +2837,8 @@ class InternalBible:
         except FileExistsError: pass
 
         for BBB,bookObject in self.books.items():
+            if BBB == 'FRT': continue # nothing to do here
+
             ref = BBB, '1', '1'
             origVerseText = self.getVerseText( ref )
             dPrint( 'Info', debuggingThisFunction, '  InternalBible.analyseAndExportUWalignments', ref, origVerseText )

@@ -221,7 +221,7 @@ However, it has been tested on hundreds of Bible filesets,
 including USFM, OSIS, USX, USFX, and many other import formats.
 
 This library forms the basis of the online Bible Drop Box service
-hosted at http://Freely-Given.org/Software/BibleDropBox/.
+hosted at https://Freely-Given.org/Software/BibleDropBox/.
 
 This package will not reach v1.0.0 until versification mapping is added.
 The API will not become fixed/stable until the v1.0.0 release.
@@ -325,7 +325,7 @@ This library forms the basis of the experimental
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url="http://Freely-Given.org/Software/BibleOrganisationalSystem/",
+    url="https://Freely-Given.org/Software/BibleOrganisationalSystem/",
 
     # List additional URLs that are relevant to your project as a dict.
     #

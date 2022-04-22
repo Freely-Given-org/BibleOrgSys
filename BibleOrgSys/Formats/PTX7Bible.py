@@ -1793,7 +1793,7 @@ class PTX7Bible( Bible ):
 
 def __processPTX7Bible( parametersTuple ): # for demo
     """
-    Special shim function used for multiprocessing.
+    Special shim function used below for multiprocessing.
     """
     codeLetter, mainFolderName, subFolderName = parametersTuple
     vPrint( 'Normal', debuggingThisModule, "\nPTX7 {} Trying {}".format( codeLetter, subFolderName ) )
