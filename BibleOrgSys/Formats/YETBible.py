@@ -234,9 +234,12 @@ class YETBible( Bible ):
         """
         vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
 
+        loadErrors:List[str] = []
         def decodeVerse( encodedVerseString ):
             """
             Decodes the verse which has @ format codes.
+
+            Uses nonlocal BBB, chapterNumberString, verseNumberString for assembling error messages
             """
             verseString = encodedVerseString
             if verseString.startswith( '@@' ): # This simply means that encoding follows
@@ -255,7 +258,9 @@ class YETBible( Bible ):
             verseString = re.sub( r'@<x([0-9])@>@/', r'\\xx\1', verseString )
             #dPrint( 'Quiet', debuggingThisModule, repr( verseString ) )
             if '@' in verseString: # still -- did we miss something or was there an error????
-                logging.warning( f"Why did this verse string still contain @: '{verseString}'" )
+                loadErrors.append( _("{} {}:{} Found unrecognised @ format fields in '{}'") \
+                            .format( BBB, chapterNumberString, verseNumberString, verseString ) )
+                logging.error( f"Found unrecognised @ format fields in {BBB} {chapterNumberString}:{verseNumberString} '{verseString}'" )
             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert '@' not in verseString
             return verseString
         # end of decodeVerse
@@ -439,6 +444,7 @@ class YETBible( Bible ):
                         #dPrint( 'Quiet', debuggingThisModule, "mV", marker, repr(bit), repr(verseString) )
                         thisBook.addLine( marker, bit.rstrip() )
             self.stashBook( thisBook )
+        if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
         self.doPostLoadProcessing()
     # end of YETBible.load
 # end of YETBible class
