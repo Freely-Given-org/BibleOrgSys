@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+This file is now deprecated as it's superceded by the one at https://github.com/Freely-Given-org/BibleBooksCodes/tree/main/sourceXML.
+
 This file gives a table of Bible booknames codes including
 these four compulsory fields:
     An English book name (as a comment only)
