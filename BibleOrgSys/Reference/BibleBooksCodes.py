@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-03-04' # by RJH
+LAST_MODIFIED_DATE = '2022-05-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -364,6 +364,13 @@ class BibleBooksCodes:
         if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
             return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
+        if SomeUppercaseText == 'EPJER': return 'LJE' # Special case but TODO: why isn't this one already there???
+        # TODO: We need to find a way to add these
+        if SomeUppercaseText == 'MK': return 'MRK'
+        if SomeUppercaseText == '1THS': return 'TH1'
+        if SomeUppercaseText == '2THS': return 'TH2'
+        if SomeUppercaseText == 'PS151': return 'PS2' # Special case
+
         # Ok, let's try guessing
         matchCount, foundBBB = 0, None
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
@@ -371,9 +378,9 @@ class BibleBooksCodes:
                 #dPrint( 'Quiet', debuggingThisModule, 'getBBB1', BBB, SomeUppercaseText )
                 matchCount += 1
                 foundBBB = BBB
-        #dPrint( 'Quiet', debuggingThisModule, 'getBBB2', repr(someText), matchCount, foundBBB )
+        # dPrint( 'Quiet', debuggingThisModule, 'getBBB2', repr(someText), matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        #dPrint( 'Quiet', debuggingThisModule, sorted(self.__DataDicts['allAbbreviationsDict']) )
+        # dPrint( 'Quiet', debuggingThisModule, sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBBFromText
 
 
