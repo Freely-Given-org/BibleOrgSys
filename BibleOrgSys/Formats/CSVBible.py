@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2020 Robert Hunt
+# Copyright (C) 2014-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,6 +34,14 @@ e.g.,
     "66","22","19","Si suprime algo del mensaje profético del libro, Dios lo desgajará del árbol de la vida y lo excluirá de la ciudad santa descritos en este libro."
     "66","22","20","El que da fe de todo esto proclama: — Sí, estoy a punto de llegar. ¡Amén! ¡Ven, Señor Jesús!"
     "66","22","21","Que la gracia de Jesús, el Señor, esté con todos. Amén."
+
+Note: CSV can also be used for a generic term and include tab-separated values
+        or include separators other than commas. (Modified May 2022)
+e.g.,
+    Book|Chapter|Verse|Text
+    Gen|1|1|<pb/>In the beginning when God created <f>[1]</f> the heavens and the earth,
+    Gen|1|2|the earth was a formless void and darkness covered the face of the deep, while a wind from God <f>[2]</f> swept over the face of the waters.
+    Gen|1|3|Then God said, ‘Let there be light’; and there was light.
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -53,10 +61,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-06-14' # by RJH
+LAST_MODIFIED_DATE = '2022-05-06' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.32'
+PROGRAM_VERSION = '0.33'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -118,12 +126,13 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
-        elif thisFilename.endswith( '.txt' ):
+        elif thisFilename.endswith( '.csv' ) or thisFilename.endswith( '.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
-                and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,'):
+                and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
+                and not firstLine.startswith( 'Book|Chapter|Verse|' ):
                     vPrint( 'Verbose', debuggingThisModule, "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
@@ -164,11 +173,13 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
 
         # See if there's an CSV Bible here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if thisFilename.endswith( '.txt' ):
+            if thisFilename.endswith( '.csv' ) or thisFilename.endswith( '.txt' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
-                    if not firstLine.startswith( "Ge 1:1 " ):
+                    if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
+                    and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
+                    and not firstLine.startswith( 'Book|Chapter|Verse|' ):
                         vPrint( 'Verbose', debuggingThisModule, "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if debuggingThisModule: halt
                         continue
@@ -204,15 +215,15 @@ class CSVBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.txt' )
-
-        # Do a preliminary check on the readability of our file
-        if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("CSVBible: File {!r} is unreadable").format( self.sourceFilepath ) )
+        for self.sourceFilename in (f'{self.givenName}.csv', f'{self.givenName}.tsv', f'{self.givenName}.txt', self.givenName):
+            self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
+            # Do a preliminary check on the readability of our file
+            if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
+                break
+        else:
+            logging.critical( _("CSVBible: Unable to discover filename in {}".format( self.sourceFolder )) )
 
         self.name = self.givenName
-        #if self.name is None:
-            #pass
     # end of CSVBible.__init__
 
 
@@ -220,8 +231,9 @@ class CSVBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("CSVBible: Loading {}…").format( self.sourceFilepath ) )
 
+        separator = ',' # Default to comma
         lastLine, lineCount = '', 0
         BBB = None
         lastBookNumber = lastChapterNumber = lastVerseNumber = -1
@@ -241,13 +253,19 @@ class CSVBible( Bible ):
                 if line[0]=='#': continue # Just discard comment lines
                 if lineCount==1:
                     if line.startswith( '"Book",' ):
-                        quoted = True
+                        separator, quoted = ',', True
                         continue # Just discard header line
                     elif line.startswith( 'Book,' ):
-                        quoted = False
+                        separator, quoted = ',', False
+                        continue # Just discard header line
+                    elif line.startswith( '"Book"|' ):
+                        separator, quoted = '|', True
+                        continue # Just discard header line
+                    elif line.startswith( 'Book|' ):
+                        separator, quoted = '|', False
                         continue # Just discard header line
 
-                bits = line.split( ',', 3 )
+                bits = line.split( separator, 3 )
                 #dPrint( 'Quiet', debuggingThisModule, lineCount, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bString, chapterNumberString, verseNumberString, vText = bits
@@ -269,7 +287,10 @@ class CSVBible( Bible ):
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
                 #if BibleOrgSysGlobals.debugFlag: assert verseNumberString.isdigit()
-                bookNumber = int( bString )
+                try: bookNumber = int( bString )
+                except ValueError: # Assume it's a book code of some sort or a book name
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bString )
+                    bookNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
 
