@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,6 +48,9 @@ Formatting includes:
     {footnotes}
     <scriptref>Cross references</scripref>
     +r/This text is red-letter-r/
+
+CHANGELOG:
+    2022-06-04 correctly tested for Bible instance in full and brief demos
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -67,10 +70,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2022-06-04' # by RJH
 SHORT_PROGRAM_NAME = "ForgeForSwordSearcherBible"
 PROGRAM_NAME = "Forge for SwordSearcher Bible format handler"
-PROGRAM_VERSION = '0.37'
+PROGRAM_VERSION = '0.38'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -523,7 +526,7 @@ def briefDemo() -> None:
 
         result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
         vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA2", result2 )
-        if result2 is not None:
+        if isinstance( result2, Bible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -537,7 +540,7 @@ def briefDemo() -> None:
 
         result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
         vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA3", result3 )
-        if result3 is not None:
+        if isinstance( result3, Bible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -589,7 +592,7 @@ def fullDemo() -> None:
 
             result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
             vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA2", result2 )
-            if result2 is not None:
+            if isinstance( result2, Bible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -603,7 +606,7 @@ def fullDemo() -> None:
 
             result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
             vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA3", result3 )
-            if result3 is not None:
+            if isinstance( result3, Bible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:

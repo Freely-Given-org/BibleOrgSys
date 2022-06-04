@@ -705,7 +705,7 @@ def briefDemo() -> None:
 
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
         vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
-        if isinstance( result2, VPLBible):
+        if isinstance( result2, Bible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -719,7 +719,7 @@ def briefDemo() -> None:
 
         result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
         vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
-        if isinstance( result3, VPLBible):
+        if isinstance( result3, Bible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -771,7 +771,7 @@ def fullDemo() -> None:
 
             result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
             vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
-            if isinstance( result2, VPLBible):
+            if isinstance( result2, Bible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -785,7 +785,7 @@ def fullDemo() -> None:
 
             result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
             vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
-            if isinstance( result3, VPLBible):
+            if isinstance( result3, Bible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
