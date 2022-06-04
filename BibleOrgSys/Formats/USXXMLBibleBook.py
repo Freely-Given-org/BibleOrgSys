@@ -349,13 +349,13 @@ class USXXMLBibleBook( BibleBook ):
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 #dPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteField) )
                 if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteField
+                if self.doExtraChecking: assert '\n' not in noteField
             noteField += '\\{}*'.format( noteStyle )
 
             if not noteElement.text and len(noteElement) == 0: # no subelements either
                 logging.error( _("Note ({}) has no text at {} {}:{} {} -- note will be ignored").format( noteStyle, self.BBB, C, V, noteLocation ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning and debuggingThisModule: halt
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteField
+            if self.doExtraChecking: assert '\n' not in noteField
 
             # Now process the left-overs (tail)
             if noteElement.tail:
@@ -366,7 +366,7 @@ class USXXMLBibleBook( BibleBook ):
                 noteField += noteTail
 
             vPrint( 'Never', debuggingThisModule, "  loadNoteField returning noteField: {!r}".format( noteField ) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert '\n' not in noteField
+            if self.doExtraChecking: assert '\n' not in noteField
             noteField = noteField.replace( ' \\f*', '\\f*' ) # TODO: WHY!!!
             return noteField.replace( '  ', ' ' ) # TODO: Why do we get doubled spaces before \\ft fields in footnotes and \\xt fields in cross-references?
         # end of load.loadNoteField

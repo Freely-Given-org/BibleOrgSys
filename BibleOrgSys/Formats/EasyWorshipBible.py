@@ -511,8 +511,7 @@ class EasyWorshipBible( Bible ):
         keep['length3'] = (index,length3)
         if length3:
             bookInfoBlock = fileBytes[index+4:index+4+length3-4-6]
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "cHeader2 for {}: {}={} {}={}".format( self.abbreviation, bookInfoBlock[0], hexlify(bookInfoBlock[0:1]), bookInfoBlock[1], hexlify(bookInfoBlock[1:2]) ) )
+            vPrint( 'Quiet', debuggingThisModule, "cHeader2 for {}: {}={} {}={}".format( self.abbreviation, bookInfoBlock[0], hexlify(bookInfoBlock[0:1]), bookInfoBlock[1], hexlify(bookInfoBlock[1:2]) ) )
             assert bookInfoBlock[0]==0x78 and bookInfoBlock[1]==0xda # Zlib compression header (for compression levels 7-9)
             byteResult = zlib.decompress( bookInfoBlock )
             #rewriteResult1 = zlib.compress( byteResult, 9 )

@@ -456,7 +456,7 @@ class ESFMBibleBook( BibleBook ):
             elif marker=='v' and originalText:
                 V = originalText.split()[0]
                 if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 )
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data

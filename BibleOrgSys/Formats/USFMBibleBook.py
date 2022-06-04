@@ -42,7 +42,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-03-04' # by RJH
+LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.57'
@@ -528,7 +528,7 @@ class USFMBibleBook( BibleBook ):
                     self.addPriorityError( 100, C, V, _("Got unexpected chapter number") )
                 V = newV
                 if C == '-1': C = '1' # Some single chapter books don't have an explicit chapter 1 marker
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 )
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 )
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
@@ -575,7 +575,7 @@ class USFMBibleBook( BibleBook ):
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB} {C}:{V} text after '{lastMarker}': {marker}='{text}'" )
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                        if self.doExtraChecking: halt
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -608,7 +608,7 @@ class USFMBibleBook( BibleBook ):
                     else:
                         # print( 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB} {C}:{V} text after '{lastMarker}': {marker}='{text}'" )
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                        if self.doExtraChecking: halt
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
                         loadErrors.append( _("{} {}:{} Found '\\{}' unknown custom marker at beginning of line with text: {!r}") \

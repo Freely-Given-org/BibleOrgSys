@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -84,7 +84,7 @@ from pathlib import Path
 from datetime import datetime
 import re
 import json
-import pickle
+# import pickle
 import zipfile
 import tarfile
 import subprocess
@@ -111,7 +111,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2021-02-04' # by RJH
+LAST_MODIFIED_DATE = '2022-06-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -141,7 +141,6 @@ def setDefaultControlFolderpath( newFolderName:Path ) -> None:
 
 
 
-ALL_CHAR_MARKERS = None
 # The following are used by both toHTML5 and toBibleDoor
 ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
                     'ipq':'introductionQuoteParagraph', 'ipr':'introductionRightAlignedParagraph',
@@ -196,10 +195,6 @@ class BibleWriter( InternalBible ):
         #    """
         InternalBible.__init__( self  ) # Initialise the base class
         self.doneSetupGeneric = False
-
-        global ALL_CHAR_MARKERS
-        if ALL_CHAR_MARKERS is None:
-            ALL_CHAR_MARKERS = BibleOrgSysGlobals.loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
     # end of BibleWriter.__init_
 
 
@@ -571,7 +566,7 @@ class BibleWriter( InternalBible ):
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                     #dPrint( 'Quiet', debuggingThisModule, repr(marker), repr(cleanText), repr(adjText) )
                     if marker in USFM_PRECHAPTER_MARKERS:
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        if self.doExtraChecking:
                             assert C=='-1' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
                     if marker == 'c': C, V = adjText, '0'
@@ -710,7 +705,7 @@ class BibleWriter( InternalBible ):
                 else: # not a continuation marker
                     adjValue = fullText
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
+                    if pseudoMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # Character markers to be closed
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
@@ -725,7 +720,7 @@ class BibleWriter( InternalBible ):
 
             # Adjust the bookUSFM output
             bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            if self.doExtraChecking:
                 assert '\\str' not in bookUSFM
                 assert '&quot;' not in bookUSFM
                 assert '&amp;' not in bookUSFM
@@ -883,7 +878,7 @@ class BibleWriter( InternalBible ):
                 else: # not a continuation marker
                     adjValue = fullText
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
+                    if pseudoMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # Character markers to be closed
                         #if (bookUSFM[-2]=='\\' or bookUSFM[-3]=='\\') and bookUSFM[-1]!=' ':
                         if bookUSFM[-1] != ' ':
                             bookUSFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
@@ -898,7 +893,7 @@ class BibleWriter( InternalBible ):
 
             # Adjust the bookUSFM output
             bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            if self.doExtraChecking:
                 assert '\\str' not in bookUSFM
                 assert '&quot;' not in bookUSFM
                 assert '&amp;' not in bookUSFM
@@ -1059,7 +1054,7 @@ class BibleWriter( InternalBible ):
                         else: # not a continuation marker
                             adjValue = value
                             #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed — had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                            if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
+                            if pseudoMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # Character markers to be closed
                                 #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
                                 if ESFMLine[-1] != ' ':
                                     ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
@@ -1585,8 +1580,12 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'sem':
                             extra = ''
                         elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        else: dPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
+                            extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                        elif extraType == 'ww':
+                            extra = '' # temp
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"__formatMarkdownVerseText.handleExtras: Unexpected {extraType=}" )
+                            extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         if extra:
                             adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
@@ -1653,7 +1652,7 @@ class BibleWriter( InternalBible ):
                 for entry in internalBibleBookData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                     if marker in USFM_PRECHAPTER_MARKERS:
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        if self.doExtraChecking:
                             assert C=='-1' or marker=='rem' or marker.startswith('mte')
                         V = str( int(V) + 1 )
 
@@ -1966,8 +1965,12 @@ class BibleWriter( InternalBible ):
                 elif extraType == 'sem':
                     extra = ''
                 elif extraType == 'vp':
-                    extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                else: dPrint( 'Never', debuggingThisModule, 'eT', extraType ); halt
+                    extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                elif extraType == 'ww':
+                    extra = '' # temp
+                else:
+                    dPrint( 'Quiet', debuggingThisModule, f"__formatHTMLVerseText.handleExtras: Unexpected {extraType=}" )
+                    extra = f"--UNKNOWN {extraType} EXTRA--"
                 #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                 adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                 offset -= len( extra )
@@ -2284,7 +2287,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -2594,7 +2597,7 @@ class BibleWriter( InternalBible ):
             """
             nonlocal bookText, savedC, savedV, savedText, currentText, sectionCV
 
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            if self.doExtraChecking:
                 vPrint( 'Quiet', debuggingThisModule, f"After {self.abbreviation} {BBB} {C}:{V} '{pseudoMarker}': saving index entry {savedC}:{savedV}—{lastC}:{lastV} @ {len(bookText):,} with sectionCV={sectionCV}" )
                 for j,line in enumerate( currentText.splitlines() ):
                     #dPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
@@ -2647,7 +2650,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', debuggingThisModule, f"{C}:{V} {pseudoMarker}={cleanText}" )
                 if pseudoMarker in USFM_PRECHAPTER_MARKERS \
                 or C == 'I': # This second part also copes with misuse of
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='I' or pseudoMarker=='rem' or pseudoMarker.startswith('mte')
                     V = str( int(V) + 1 )
                     lastV = V
@@ -2735,7 +2738,7 @@ class BibleWriter( InternalBible ):
             if len(currentText) > 0: # save the final index entry
                 if not haveSectionHeadingsForBook: savedC, V = C, '1' # Catch up on the chapter number
                 savePreviousSection()
-                #if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                #if self.doExtraChecking:
                     #dPrint( 'Quiet', debuggingThisModule, f"At {BBB} {C}:{V} '{pseudoMarker}': saving final index entry {savedC}:{savedV} @ {len(bookText):,} with sectionCV={sectionCV}" )
                     #for j,line in enumerate( currentText.splitlines() ):
                         ##dPrint( 'Quiet', debuggingThisModule, f"  {j+1}/ {line}" )
@@ -2747,7 +2750,7 @@ class BibleWriter( InternalBible ):
 
             ## Adjust the bookText output
             #bookText = noisyRegExDeleteAll( bookText, '\\\\str .+?\\\str\\*' )
-            #if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            #if self.doExtraChecking:
                 #assert '\\str' not in bookText
                 #assert '&quot;' not in bookText
                 #assert '&amp;' not in bookText
@@ -3253,7 +3256,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('usfm','v='):
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -3788,7 +3791,7 @@ class BibleWriter( InternalBible ):
                 # Old code
                 adjText = originalText
                 haveOpenChar = False
-                for charMarker in ALL_CHAR_MARKERS:
+                for charMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers:
                     #dPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSX2", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
@@ -3995,7 +3998,7 @@ class BibleWriter( InternalBible ):
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
                             #dPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
-                            if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
+                            if firstToken in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     USXfootnoteXML += f'>{adjToken}</char>'
@@ -4008,7 +4011,7 @@ class BibleWriter( InternalBible ):
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
+                                if firstToken[-1]=='*' and firstToken[:-1] in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -4019,7 +4022,7 @@ class BibleWriter( InternalBible ):
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #dPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # it's a closing tag
                                         if fCharOpen:
                                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
                                                 assert not frOpen
@@ -4030,7 +4033,7 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logger.critical( _("toUSX2XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        vPrint( 'Quiet', debuggingThisModule, "toUSX2XML ALL_CHAR_MARKERS", ALL_CHAR_MARKERS )
+                                        vPrint( 'Quiet', debuggingThisModule, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag \
                                         or BibleOrgSysGlobals.strictCheckingFlag:
                                             halt
@@ -4083,8 +4086,12 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                            extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                        elif extraType == 'ww':
+                            extra = '' # temp
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"toUSX2XML.handleNotes: Unexpected {extraType=}" )
+                            extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
@@ -4118,7 +4125,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('v=','cl¤'):
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
@@ -4150,7 +4157,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     #dPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
                     C, V = text, '0' # not adjText!
-                    xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
+                    xw.writeLineOpenSelfclose( 'chapter', [('number',C),('style','c')] )
                     if adjText != text:
                         logger.warning( "toUSX2XML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
@@ -4173,7 +4180,7 @@ class BibleWriter( InternalBible ):
                         if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
                      # Remove anything that'll cause a big XML problem later
                     if adjText:
-                        xw.writeLineOpenSelfclose ( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
+                        xw.writeLineOpenSelfclose( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
 
                 elif marker in ('v~','p~',):
                     if not adjText: logger.warning( "toUSX2XML: Missing text for {}".format( marker ) ); continue
@@ -4186,7 +4193,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     if adjText:
                         logger.error( "toUSX2XML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
-                    xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
+                    xw.writeLineOpenSelfclose( 'para', ('style',marker) )
                 elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
                         xw.removeFinalNewline( suppressFollowingIndent=True )
@@ -4359,7 +4366,7 @@ class BibleWriter( InternalBible ):
                 # Old code
                 adjText = originalText
                 haveOpenChar = False
-                for charMarker in ALL_CHAR_MARKERS:
+                for charMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers:
                     #dPrint( 'Quiet', debuggingThisModule, "handleInternalTextMarkersForUSFX", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
@@ -4510,7 +4517,7 @@ class BibleWriter( InternalBible ):
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
                             #dPrint( 'Quiet', debuggingThisModule, "ft", firstToken )
-                            if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
+                            if firstToken in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                     USFXfootnoteXML += '>' + adjToken + '</char>'
@@ -4523,7 +4530,7 @@ class BibleWriter( InternalBible ):
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
+                                if firstToken[-1]=='*' and firstToken[:-1] in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
                                         if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -4534,7 +4541,7 @@ class BibleWriter( InternalBible ):
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #dPrint( 'Quiet', debuggingThisModule, firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers: # it's a closing tag
                                         if fCharOpen:
                                             if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not frOpen
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -4544,7 +4551,7 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSFXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                     else:
                                         logger.critical( _("toUSFXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
-                                        #dPrint( 'Quiet', debuggingThisModule, ALL_CHAR_MARKERS )
+                                        #dPrint( 'Quiet', debuggingThisModule, BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
                                         #halt
                     #dPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
@@ -4593,8 +4600,12 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                            extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                        elif extraType == 'ww':
+                            extra = '' # temp
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"toUSFXXML.handleNotes: Unexpected {extraType=}" )
+                            extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
@@ -4619,7 +4630,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 getMarkerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
@@ -4648,7 +4659,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     #dPrint( 'Quiet', debuggingThisModule, BBB, 'C', repr(text), repr(adjText) )
                     C, V = text, '0' # not adjText!
-                    xw.writeLineOpenSelfclose ( 'c', ('id',C) )
+                    xw.writeLineOpenSelfclose( 'c', ('id',C) )
                     if adjText != text:
                         logger.warning( "toUSFXXML: Lost additional note text on c for {} {!r}".format( BBB, C ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
@@ -4670,7 +4681,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( suppressFollowingIndent=True )
                      # Remove anything that'll cause a big XML problem later
                     if adjText:
-                        xw.writeLineOpenSelfclose ( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
+                        xw.writeLineOpenSelfclose( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
 
                 elif marker in ('v~','p~',):
                     if not adjText: logger.warning( "toUSFXXML: Missing text for {}".format( marker ) ); continue
@@ -4684,7 +4695,7 @@ class BibleWriter( InternalBible ):
                         haveOpenPara = False
                     if adjText:
                         logger.error( "toUSFXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
-                    xw.writeLineOpenSelfclose ( marker )
+                    xw.writeLineOpenSelfclose( marker )
                 elif getMarkerContentType == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
                         xw.removeFinalNewline( suppressFollowingIndent=True )
@@ -5144,8 +5155,12 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                            extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                        elif extraType == 'ww':
+                            extra = '' # temp
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"toOSISXML.handleNotes: Unexpected {extraType=}" )
+                            extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
@@ -5288,7 +5303,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
@@ -5929,8 +5944,12 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'sem':
                             extra = '' # temp
                         elif extraType == 'vp':
-                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                        else: dPrint( 'Never', debuggingThisModule, extraType ); halt
+                            extra = f"\\vp {extraText}\\vp*" # Will be handled later
+                        elif extraType == 'ww':
+                            extra = '' # temp
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"toZefaniaXML.handleNotes: Unexpected {extraType=}" )
+                            extra = f"--UNKNOWN {extraType} EXTRA--"
                         #dPrint( 'Quiet', debuggingThisModule, "was", verse )
                         verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
@@ -5950,7 +5969,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -6148,7 +6167,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -6742,7 +6761,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
                 #dPrint( 'Quiet', debuggingThisModule, BBB, marker, text )
@@ -7195,7 +7214,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -7367,7 +7386,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -7900,7 +7919,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -9042,7 +9061,10 @@ class BibleWriter( InternalBible ):
                         elif extraType == 'str': pass # don't know how to encode this yet
                         elif extraType == 'sem': pass # don't know how to encode this yet
                         elif extraType == 'vp': pass # it's already been converted to a newline field
-                        else: halt
+                        elif extraType == 'ww': pass # don't know how to encode this yet
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, f"toODF.insertFormattedODFText: Unexpected {extraType=}" )
+                            handleTextSubsegment( f"--UNKNOWN {extraType} EXTRA--" )
                         lastIndex = extraIndex
                     handleTextSegment( givenText[lastIndex:] )
                 else: # no useful extras like footnotes, etc.
@@ -9118,7 +9140,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                    if self.doExtraChecking:
                         assert C=='-1' or marker=='rem' or marker.startswith('mte')
                     V = str( int(V) + 1 )
 
@@ -9473,7 +9495,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
 
             # Handle regular character formatting — this will cause TeX to fail if closing markers are not matched
-            for charMarker in ALL_CHAR_MARKERS:
+            for charMarker in BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers:
                 fullCharMarker = '\\' + charMarker + ' '
                 if fullCharMarker in text:
                     endCharMarker = '\\' + charMarker + '*'
@@ -9560,7 +9582,7 @@ class BibleWriter( InternalBible ):
                         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
                             continue # Just ignore added markers — not needed here
                         if marker in USFM_PRECHAPTER_MARKERS:
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            if self.doExtraChecking:
                                 assert C=='-1' or marker=='rem' or marker.startswith('mte')
                             V = str( int(V) + 1 )
 
@@ -9692,7 +9714,22 @@ class BibleWriter( InternalBible ):
 
         try: result = function( folder )
         except Exception as err: # Got to catch and report the exceptions here
-            vPrint( 'Quiet', debuggingThisModule, f"BibleWriter.doExportHelper: Unexpected error in {function} using {folder}:", sys.exc_info()[0], err)
+            import traceback
+            # import linecache
+            # exc_type, exc_obj, exc_traceback = sys.exc_info()
+            # print( f"{exc_type=}\n  {exc_obj=}\n  {traceback=}" )
+                # exc_type=<class 'NameError'>
+                # exc_obj=NameError("name 'halt' is not defined")
+                # exc_traceback=<traceback object at 0x7effe4ce4840>
+            # frame, lineno = exc_traceback.tb_frame, exc_traceback.tb_lineno
+            # filename = frame.f_code.co_filename
+            # linecache.checkcache( filename )
+            # line = linecache.getline( filename, lineno, frame.f_globals ) # Not really helpful -- it's only the toplevel line -- not where the error often is
+            vPrint( 'Quiet', debuggingThisModule,
+                f'BibleWriter.doExportHelper: Unexpected {err} in {function} using folder {folder}: {traceback.format_exc()})' )
+            # print( f"{traceback.format_exc()=}" ) # This is the helpful one
+            # print( f"{traceback.print_tb(err.__traceback__)=}" ) # None
+            # print( f"{traceback.print_stack()=}" ) # None
             result = False
         return result
     # end of BibleWriter.doExportHelper

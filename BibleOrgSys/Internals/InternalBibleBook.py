@@ -67,14 +67,13 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, US
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
-    InternalBibleEntryList, InternalBibleEntry, \
-    InternalBibleExtra, InternalBibleExtraList, \
+    InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-03-05' # by RJH
+LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -286,6 +285,7 @@ class InternalBibleBook:
             BBB: book reference code
         """
         fnPrint( debuggingThisModule, f"InternalBibleBook.__init__( {BBB} )" )
+        self.doExtraChecking = debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if isinstance( parameter1, str ):
             logging.critical( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
             self.containerBibleObject = None
@@ -297,8 +297,7 @@ class InternalBibleBook:
             #dPrint( 'Info', debuggingThisModule, f"set {BBB} cBO to {id(parameter1)} for {id(self)}" )
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
         self.BBB = BBB
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
+        if self.doExtraChecking: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
 
         self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( self.BBB )
 
@@ -483,7 +482,7 @@ class InternalBibleBook:
 
         if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
             logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
-            if marker != 'w': # This can happen with unfoldingWord aligned Bibles
+            if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 dPrint( 'Quiet', debuggingThisModule, self, repr(marker), repr(text) )
                 if debuggingThisModule: halt # How did this happen?
 
@@ -759,13 +758,15 @@ class InternalBibleBook:
 
         largeDummyValue = 99999
 
-        # Adjust \w fields to remove attributes (and copy the word) into a separate \ww field
+        # \w fields can indicate glossary entries.
+        # However, it's also a way to assign attributes to a word (after a |).
+        # Adjust \w ('w') fields to remove attributes (and copy the word) into a separate \ww ('ww') field
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.
-        if '|' in adjText: # Mostly won't happen
+        if '|' in adjText: # Only if it has a pipe somewhere in the line
             #dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
             ixW = adjText.find( '\\w ' )
-            if not BibleOrgSysGlobals.strictCheckingFlag:
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                 if ixW == -1:
                     ixW = adjText.find( '\\W ' )
                     if ixW != -1:
@@ -779,7 +780,7 @@ class InternalBibleBook:
                 if ixWend == -1: ixWend = adjText.find( '\\W*', ixW+3 )
                 if ixWend == -1: ixWend = largeDummyValue
                 ixPipe = adjText.find( '|', ixW+3 )
-                if ixPipe == -1: break # No pipe -- just a plain \w word\w* field
+                if ixPipe == -1: break # No pipe -- this one is just a plain \w word\w* field
                 #dPrint( 'Quiet', debuggingThisModule, "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
                 if ixPipe < ixWend: # There is a pipe inside this particular \w field
                     # Convert attributes into a \ww note field (that will then be removed below)
@@ -787,7 +788,7 @@ class InternalBibleBook:
                     adjText = adjText[:ixPipe] + '\\w*\\ww ' + word + adjText[ixPipe:ixWend+2] + 'w' + adjText[ixWend+2:]
                     #dPrint( 'Quiet', debuggingThisModule, "  now adjText = {}".format( adjText ) )
                 ixW = adjText.find( '\\w ', ixWend+4 )
-                if not BibleOrgSysGlobals.strictCheckingFlag:
+                if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                     if ixW == -1:
                         ixW = adjText.find( '\\W ', ixWend+4 )
                         if ixW != -1:
@@ -803,7 +804,7 @@ class InternalBibleBook:
         #dPrint( 'Quiet', debuggingThisModule, "QQQ MOVE OUT NOTES" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
         ixFN = adjText.find( '\\f ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixFN == -1:
                 ixFN = adjText.find( '\\F ' )
                 if ixFN != -1:
@@ -812,7 +813,7 @@ class InternalBibleBook:
                     self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
         if ixFN == -1: ixFN = largeDummyValue
         ixEN = adjText.find( '\\fe ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixEN == -1:
                 ixEN = adjText.find( '\\FE ' )
                 if ixEN != -1:
@@ -821,7 +822,7 @@ class InternalBibleBook:
                     self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
         if ixEN == -1: ixEN = largeDummyValue
         ixXR = adjText.find( '\\x ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixXR == -1:
                 ixXR = adjText.find( '\\X ' )
                 if ixXR != -1:
@@ -830,7 +831,7 @@ class InternalBibleBook:
                     self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
         if ixXR == -1: ixXR = largeDummyValue
         ixFIG = adjText.find( '\\fig ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixFIG == -1:
                 ixFIG = adjText.find( '\\FIG ' )
                 if ixFIG != -1:
@@ -839,7 +840,7 @@ class InternalBibleBook:
                     self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
         if ixFIG == -1: ixFIG = largeDummyValue
         ixSTR = adjText.find( '\\str ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixSTR == -1:
                 ixSTR = adjText.find( '\\STR ' )
                 if ixSTR != -1:
@@ -848,7 +849,7 @@ class InternalBibleBook:
                     self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
         if ixSTR == -1: ixSTR = largeDummyValue
         ixSEM = adjText.find( '\\sem ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag:
+        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
             if ixSEM == -1:
                 ixSEM = adjText.find( '\\SEM ' )
                 if ixSEM != -1:
@@ -869,7 +870,7 @@ class InternalBibleBook:
                 ix2 = adjText.find( '\\f*' )
                 if ix2 == -1: ix2 = adjText.find( '\\F*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'f', 1, 'footnote', 'fn', ix1
                 if ixFN and adjText[ixFN-1]==' ':
                     fixErrors.append( lineLocationSpace + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
@@ -878,7 +879,7 @@ class InternalBibleBook:
                 ix2 = adjText.find( '\\fe*' )
                 if ix2 == -1: ix2 = adjText.find( '\\FE*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'fe', 2, 'endnote', 'en', ix1
                 if ixEN and adjText[ixEN-1]==' ':
                     fixErrors.append( lineLocationSpace + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
                     logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
@@ -887,12 +888,12 @@ class InternalBibleBook:
                 ix2 = adjText.find( '\\x*' )
                 if ix2 == -1: ix2 = adjText.find( '\\X*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'B', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'x', 1, 'cross-reference', 'xr'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'x', 1, 'cross-reference', 'xr', ix1
             elif ix1 == ixFIG:
                 ix2 = adjText.find( '\\fig*' )
                 if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'fig', 3, 'figure', 'fig', ix1
                 parseFigureAttributes( self.workName, self.BBB, C, V,
                                       adjText[ixFIG+5:ix2].replace( '&quot;', '"' ), fixErrors )
                 # (returned dictionary above is just ignored here)
@@ -900,17 +901,20 @@ class InternalBibleBook:
                 ix2 = adjText.find( '\\str*' )
                 if ix2 == -1: ix2 = adjText.find( '\\STR*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'str', 3, 'Strongs-number', 'str', ix1
             elif ix1 == ixSEM:
                 ix2 = adjText.find( '\\sem*' )
                 if ix2 == -1: ix2 = adjText.find( '\\SEM*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'sem', 3, 'Semantic info', 'sem', ix1
             elif ix1 == ixWW:
+                assert adjText[ix1-3:ix1] == '\\w*' # \ww word and attributes must always immediately follow the \w field
+                ixW = adjText.rfind('\\w ', 0, ix1-3)
+                assert ixW != -1
                 ix2 = adjText.find( '\\ww*' )
                 if ix2 == -1: ix2 = adjText.find( '\\WW*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'ww', 2, 'Word attributes', 'ww'
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'ww', 2, 'Word attributes', 'ww', ixW+3 # We will insert the ww field contents immediate inside the w field (after the opening marker space)
                 parseWordAttributes( self.workName, self.BBB, C, V,
                                     adjText[ixWW+4:ix2].replace( '&quot;', '"' ), fixErrors )
                 # (returned dictionary above is just ignored here)
@@ -922,8 +926,8 @@ class InternalBibleBook:
                 ix2 = adjText.find( '\\vp*' )
                 if ix2 == -1: ix2 = adjText.find( '\\VP*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
-            elif BibleOrgSysGlobals.debugFlag: halt # programming error
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'vp', 2, 'verse-character', 'vp', ix1
+            elif self.doExtraChecking: halt # programming error
             if ix2 == -1: # no closing marker
                 fixErrors.append( lineLocationSpace + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                 logging.error( _("processLineFix: Found unmatched {} open after {} in \\{}: {}").format( thisOne, self.__makeErrorRef(C,V), originalMarker, adjText ) )
@@ -1041,14 +1045,16 @@ class InternalBibleBook:
             #dPrint( 'Quiet', debuggingThisModule, "Note: {!r} Cleaned note: {!r}".format( note, cleanedNote ) )
 
             # Save it all and finish off
-            if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote,lineLocation) ) # Saves 4 bits: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+            if note:
+                extras.append( InternalBibleExtra(this1,noteIndexAdjText,note,cleanedNote,lineLocation) ) # Saves 4 bits: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
                 #dPrint( 'Quiet', debuggingThisModule, "InternalBibleBook.processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
                 if BibleOrgSysGlobals.debugFlag: assert originalMarker in ('v~','p~',) # Shouldn't occur in other fields
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
-            # Get ready for the next loop
+
+            # Get ready for the next loop iteration
             ixFN = adjText.find( '\\f ' )
             if ixFN == -1: ixFN = adjText.find( '\\F ' )
             if ixFN == -1: ixFN = largeDummyValue
@@ -1374,7 +1380,7 @@ class InternalBibleBook:
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
         fnPrint( debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
-
+        vPrint( 'Info', debuggingThisModule, f"  addNestingMarkers started with {len(self._rawLines)=} {len(self._processedLines)=} for {self.BBB}" )
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         openMarkers:List[str] = []
 
@@ -1382,7 +1388,7 @@ class InternalBibleBook:
             """
             Insert a new open marker into the book.
             """
-            if BibleOrgSysGlobals.debugFlag: assert newMarker not in openMarkers
+            if self.doExtraChecking: assert newMarker not in openMarkers
             newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
             openMarkers.append( newMarker )
         # end of addNestingMarkers.openMarker
@@ -1399,8 +1405,7 @@ class InternalBibleBook:
             """
             Close the last marker (with the "not" sign) and pop it off our list
             """
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook.addNestingMarkers.closeLastOpenMarker( withText={withText!r} ) for {openMarkers[-1] if openMarkers else 'INVALID'} from {openMarkers}" )
+            fnPrint( debuggingThisModule, f"InternalBibleBook.addNestingMarkers.closeLastOpenMarker( withText={withText!r} ) for {openMarkers[-1] if openMarkers else 'INVALID'} from {openMarkers}" )
             #dPrint( 'Quiet', debuggingThisModule, "  add", '¬'+openMarkers[-1], withText, "in closeLastOpenMarker" )
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of addNestingMarkers.closeLastOpenMarker
@@ -1414,11 +1419,12 @@ class InternalBibleBook:
             """
             assert openMarkers
             lastMarker = openMarkers[-1]
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook.addNestingMarkers.closeOpenMarker( {endMarker}, {withText!r} ) @ {self.BBB} {C}:{V} rather than {lastMarker} from {openMarkers}" )
+            fnPrint( debuggingThisModule, f"InternalBibleBook.addNestingMarkers.closeOpenMarker( {endMarker}, {withText!r} ) @ {self.BBB} {C}:{V} rather than {lastMarker} from {openMarkers}" )
+
             if endMarker == lastMarker:
-                vPrint( 'Quiet', debuggingThisModule, f"  You should have called closeLastOpenMarker for closing {endMarker} with {openMarkers} @ {self.BBB} {C}:{V}" )
-                halt # You should have called closeLastOpenMarker()
+                vPrint( 'Quiet', debuggingThisModule, f"  Should have called closeLastOpenMarker for closing {endMarker} with {openMarkers} @ {self.BBB} {C}:{V}" )
+                if self.doExtraChecking:
+                    assert endMarker != lastMarker, f"Should have called closeLastOpenMarker for closing {endMarker=} with {openMarkers} @ {self.BBB} {C}:{V}"
             if endMarker=='c' and lastMarker=='s1':
                 logging.info( f"  We have a {lastMarker} section crossing a chapter boundary at {self.BBB} {C}:{V}" )
                 # There's too many of these to document
@@ -1460,6 +1466,7 @@ class InternalBibleBook:
                     if nextMarker in ( 's1', 'v', 'v~','p~', ):
                         #dPrint( 'Quiet', debuggingThisModule, "  cE = False", nextMarker )
                         return False
+                    # Otherwise, keep looping and looking
                 #dPrint( 'Quiet', debuggingThisModule, "  cE = True2" )
                 return True # at end of file
             # end of addNestingMarkers.chapterHasEnded
@@ -1470,12 +1477,13 @@ class InternalBibleBook:
                 """
                 for k in range( currentIndex+1, number_of_processed_lines ):
                     nextMarker = self._processedLines[k].getMarker()
-                    if nextMarker == 'v':
+                    if nextMarker in ('v', 'c'):
                         #dPrint( 'Quiet', debuggingThisModule, "  vE = True1", nextMarker )
                         return True
                     if nextMarker in ( 'v~','p~', ):
                         #dPrint( 'Quiet', debuggingThisModule, "  vE = False", nextMarker )
                         return False
+                    # Otherwise, keep looping and looking
                 #dPrint( 'Quiet', debuggingThisModule, "  vE = True2" )
                 return True # at end of file
             # end of addNestingMarkers.verseHasEnded
@@ -1502,6 +1510,7 @@ class InternalBibleBook:
                     if nextMarker in ( 'c', 'v', 'v~','p~', ):
                         #dPrint( 'Quiet', debuggingThisModule, "  sE = False", nextMarker )
                         return False
+                    # Otherwise, keep looping and looking
                 #dPrint( 'Quiet', debuggingThisModule, "  sE = True2" )
                 return True # at end of file
             # end of addNestingMarkers.sectionHasEnded
@@ -1519,23 +1528,25 @@ class InternalBibleBook:
                     if nextMarker in ( 'v', 'v~','p~', ):
                         #dPrint( 'Quiet', debuggingThisModule, "  pE = False", nextMarker )
                         return False
+                    # Otherwise, keep looping and looking
                 #dPrint( 'Quiet', debuggingThisModule, "  pE = True2" )
                 return True # at end of file
             # end of addNestingMarkers.paragraphHasEnded
 
             def findNextRelevantMarker( currentIndex:int ) -> Optional[str]:
                 """
-                Returns the next v=, v, v~ or p~ marker.
+                Returns the next v, v~ or p~ marker.
 
                 Returns None if we're at the end of the book.
                 """
                 for k in range( currentIndex+1, number_of_processed_lines ):
                     nextRelevantMarker = self._processedLines[k].getMarker()
-                    if nextRelevantMarker in ( 'v=', 'v', 'v~','p~', ) \
+                    if nextRelevantMarker in ( 'v', 'v~','p~', ) \
                     or nextRelevantMarker in ourHeadingMarkers \
                     or nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS:
                         #dPrint( 'Quiet', debuggingThisModule, "  nRM =", nextRelevantMarker )
                         return nextRelevantMarker # Found one
+                    # Otherwise, keep looping and looking
                 return None
             # end of addNestingMarkers.findNextRelevantMarker
 
@@ -1550,24 +1561,36 @@ class InternalBibleBook:
                     if nextRelevantListMarker not in ( 'c', 'v=', 'v', 'v~','p~', ):
                         #dPrint( 'Quiet', debuggingThisModule, "  nRLM1 =", nextRelevantListMarker )
                         return nextRelevantListMarker # Found one
+                    # Otherwise, keep looping and looking
                 return None
             # end of addNestingMarkers.findNextRelevantListMarker
 
 
             # Main loop in addNestingMarkers
             marker, text = dataLine.getMarker(), dataLine.getCleanText()
+            markerContentType = BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType( marker )
             #nextDataLine = self._processedLines[j+1] if j<lastJ else None
             #nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
             try: nextMarker = self._processedLines[j+1].getMarker()
             except IndexError: nextMarker = None
             try: nextNextMarker = self._processedLines[j+2].getMarker()
             except IndexError: nextNextMarker = None
-            try: nextNextNextMarker = self._processedLines[j+1].getMarker()
-            except IndexError: nextNextNextMarker = None
-            if debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}={text!r} then {nextMarker} now have {openMarkers}" )
+            # try: nextNextNextMarker = self._processedLines[j+1].getMarker()
+            # except IndexError: nextNextNextMarker = None
+            vPrint( 'Silent', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
+
+            if marker == 'h':
+                if self.doExtraChecking:
+                    # NOTE: There are files with h1 and h2 fields, e.g., CEVUK
+                    assert not openMarkers, f"{self.BBB} {C}:{V} {openMarkers=} {j} {marker}={text}"
+                if 'headers' not in openMarkers:
+                    openMarker( 'headers' )
 
             if marker in USFM_ALL_INTRODUCTION_MARKERS and 'intro' not in openMarkers:
+                if 'headers' in openMarkers:
+                    for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                        # print(f"1 {lMarker=}")
+                        closeLastOpenMarker()
                 openMarker( 'intro' )
                 haveIntro += 1 # now 'true' but counted to detect errors
                 if haveIntro > 1:
@@ -1584,8 +1607,13 @@ class InternalBibleBook:
                     closeOpenMarker( 'list' )
 
             if marker == 'c':
+                if 'headers' in openMarkers:
+                    for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                        # print(f"2 {lMarker=}")
+                        closeLastOpenMarker()
                 if 'intro' in openMarkers:
                     for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                        # print(f"3 {lMarker=}")
                         closeLastOpenMarker()
                     #haveIntro = False # Just so we don't repeat this
                 if getLastOpenMarker() == 'v':
@@ -1671,7 +1699,7 @@ class InternalBibleBook:
                 #if marker=='is' or marker=='is1': vPrint( 'Quiet', debuggingThisModule, "YY", marker, openMarkers, lastPMarker )
             #elif marker in USFM_ALL_INTRODUCTION_MARKERS:
                 #haveIntro = True
-            elif marker in ourMainListMarkers:
+            elif marker in ourMainListMarkers: # li# markers
                 assert not text
                 while True:
                     madeChange = False
@@ -1690,7 +1718,7 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
                 lastPMarker = marker
-            elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
+            elif marker in USFM_BIBLE_PARAGRAPH_MARKERS: # e.g., p, q1, m, etc.
                 assert not text
                 #dPrint( 'Quiet', debuggingThisModule, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
                 while True:
@@ -1707,7 +1735,21 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert marker not in openMarkers
                 openMarkers.append( marker )
                 lastPMarker = marker
-            #else: vPrint( 'Quiet', debuggingThisModule, "  Ignore {}={}".format( marker, repr(text) ) )
+            elif markerContentType == 'N': # N = never, e.g., b, nb
+                assert not text
+                #dPrint( 'Quiet', debuggingThisModule, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
+                while True:
+                    madeChange = False
+                    lastOpenMarker = getLastOpenMarker()
+                    if lastOpenMarker=='v' and verseHasEnded( j ):
+                        closeLastOpenMarker( withText=V ); madeChange = True
+                    elif lastPMarker and lastOpenMarker == lastPMarker:
+                        closeLastOpenMarker(); madeChange = True
+                        lastPMarker = None
+                    if not madeChange: break
+                if 'v' in openMarkers and verseHasEnded( j ): closeOpenMarker( 'v', V )
+            else:
+                vPrint( 'Info', debuggingThisModule, "  addNestingMarkers: ignoring {}={}".format( marker, repr(text) ) )
 
             newLines.append( dataLine )
             if BibleOrgSysGlobals.debugFlag and len(openMarkers) > 7: # Should only be 7: e.g., chapters c s1 p v list li1
@@ -1733,7 +1775,7 @@ class InternalBibleBook:
             #assert 'q1 p~ ¬v ¬q1' not in markerListString
             #if self.BBB=='GEN': halt
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if 0 and self.doExtraChecking: # TODO: Why does this "check" remove verse end markers, etc.???
             # Check the results of this function
             #if 1: # Display indented markers
                 #from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
@@ -1815,9 +1857,10 @@ class InternalBibleBook:
                 assert 'q1 p~ ¬v ¬q1' not in markerListString
                 #if self.BBB=='GEN': halt
 
-        if debuggingThisModule and (len(newLines) != len(self._processedLines)):
-            vPrint( 'Quiet', debuggingThisModule, "  addNestingMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
+        if (len(newLines) != len(self._processedLines)):
+            vPrint( 'Info', debuggingThisModule, "  addNestingMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
         self._processedLines = newLines # replace the old set
+        vPrint( 'Info', debuggingThisModule, f"  addNestingMarkers finishing with {len(self._rawLines)=} {len(self._processedLines)=}")
     # end of InternalBibleBook.processLines.addNestingMarkers
 
 
@@ -1882,7 +1925,7 @@ class InternalBibleBook:
                         elif nextMarker not in fieldsAlsoPreceded: break # got something else
             newLines.append( dataEntry ) # Put pre-existing line in
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if self.doExtraChecking:
             # Check the results of this function
             if 0: # Display indented markers
                 from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
@@ -2047,6 +2090,18 @@ class InternalBibleBook:
         #dPrint( 'Quiet', debuggingThisModule, self.BBB, "RL" )
         #for j in range( 50 ): vPrint( 'Quiet', debuggingThisModule, "", j, self._rawLines[j] )
     # end of InternalBibleBook.processLines.reorderRawOsisLines
+
+
+    def displayProcessedLines( self, heading:str="displayProcessedLines" ) -> None:
+        """
+        This function is mostly used for debugging.
+        """
+        print( f"{heading} -- have {len(self._processedLines)} processLines:" )
+        for n,processedBibleEntry in enumerate( self._processedLines, start=1 ):
+            marker, originalMarker, text, _extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
+            print(f" {n:4} {marker=} {originalMarker=} {text=}")
+        print("-------------")
+    # end of InternalBibleBook.processLines.displayProcessedLines
 
 
     def processLines( self ):
@@ -2489,11 +2544,14 @@ class InternalBibleBook:
             processLine( marker, text ) # Saves its results in self._processedLines
         del self.pntsCount, self.nfvnCount, self.owfvnCount, self.rtsCount, self.sahtCount, self.fwmifCount, self.fswncCount
 
-        # Both of the next two function calls affect self._processedLines
-        # Go through the lines and add nesting markers like 'intro', 'chapter', etc.
+        # Both of the next two function calls expand self._processedLines
+        if debuggingThisModule: self.displayProcessedLines( "Before adding nesting markers" )
+        # Go through the lines and add nesting markers like 'headers', 'intro', 'chapter', etc.
         self.addNestingMarkers()
+        if debuggingThisModule: self.displayProcessedLines( "After adding nesting markers" )
         # Go through and add v= markers (for "logical" verses before section headings, etc.)
         self.addVerseStartMarkers()
+        if debuggingThisModule: self.displayProcessedLines( "After adding start markers" )
 
         # Get rid of data that we don't need
         #if not BibleOrgSysGlobals.debugFlag:
@@ -2620,7 +2678,7 @@ class InternalBibleBook:
                 else:
                     validationErrors.append( '{} {}:{} '.format( self.BBB, C, V ) + _("Missing verse number").format( self.BBB, C, V ) )
                     logging.error( _("Missing verse number after") + " {} {}:{}".format( self.BBB, C, V ) )
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             # Temporarily substitute some markers just to make this check go easier
             if marker == 'c~': marker = 'v'
@@ -3160,7 +3218,7 @@ class InternalBibleBook:
             if bkDict['seemsFinished']:
                 if bkDict['percentageProgress']!=100 or not bkDict['havePopulatedCVmarkers'] or not bkDict['haveVerseText']:
                     vPrint( 'Quiet', debuggingThisModule, f"toProgrammer: InternalBibleBook._discover {self.workName} {self.BBB} seems finished but percentageProgress={bkDict['percentageProgress']}, havePopulatedCVmarkers={bkDict['havePopulatedCVmarkers']}, haveVerseText={bkDict['haveVerseText']}!" )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if self.doExtraChecking:
                     assert bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText']
             if not bkDict['haveVerseText']: assert bkDict['percentageProgress']==0 and not bkDict['seemsFinished']
             bkDict['notStarted'] = not bkDict['haveVerseText']
@@ -3493,7 +3551,7 @@ class InternalBibleBook:
             elif marker=='v' and text:
                 V = text.split()[0]
                 functionalCounts['Verses'] = 1 if 'Verses' not in functionalCounts else (functionalCounts['Verses'] + 1)
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -3998,7 +4056,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V= text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -4084,7 +4142,7 @@ class InternalBibleBook:
             elif marker=='v':
                 if text: V = text.split()[0]
                 continue # v fields contain no quote signs and don't affect formatting blocks
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = f'{self.BBB} {C}:{V}'
             lineLocationSpace = f'{lineLocation} '
@@ -4367,7 +4425,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -4426,7 +4484,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker1!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker1 not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             if marker == 'id': IDList.append( "{} '{}'".format( self.BBB, text ) )
             elif marker == 'ide': encodingList.append( "{} '{}'".format( self.BBB, text ) )
@@ -4454,7 +4512,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -4535,7 +4593,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
@@ -4620,7 +4678,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker!='intro': V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '

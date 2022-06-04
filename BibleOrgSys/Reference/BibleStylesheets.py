@@ -5,7 +5,7 @@
 #
 # Module handling Bible (including Paratext) stylesheets
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,10 +40,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 #from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.InputOutput import SFMFile
 
-LAST_MODIFIED_DATE = '2019-10-09' # by RJH
+LAST_MODIFIED_DATE = '2022-03-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleStylesheets"
 PROGRAM_NAME = "Bible stylesheet handler"
-PROGRAM_VERSION = '0.16'
+PROGRAM_VERSION = '0.17'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -98,6 +98,7 @@ DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'toc2': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory3', },
     'toc3': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'ivory4', },
 # Our added fields
+    'headers': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
     'intro': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
     'chapters': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, DEFAULT_FONTSIZE ), 'background':'lightYellow', },
 # Headings

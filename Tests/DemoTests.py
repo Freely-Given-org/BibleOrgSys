@@ -36,6 +36,7 @@ This isn't as thorough as the proper test routines
     but it's still much better than nothing.
 
 CHANGELOG:
+    2022-06-04 commented out TokenisedBible test (uncompleted module has been removed)
     2022-04-22 added ScriptureBurritoBible test
 """
 from gettext import gettext as _
@@ -929,15 +930,16 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         failures.append( f"{moduleName} import" )
         failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
-    moduleName = 'TokenisedBible'
-    try:
-        from BibleOrgSys.Formats import TokenisedBible
-        doTest( moduleName, TokenisedBible )
-    except KeyboardInterrupt: interrupted=True; return
-    except (ImportError, SyntaxError) as err:
-        print( f"{moduleName} import failed!" )
-        failures.append( f"{moduleName} import" )
-        failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
+    # This module is removed, at least for now
+    # moduleName = 'TokenisedBible'
+    # try:
+    #     from BibleOrgSys.Formats import TokenisedBible
+    #     doTest( moduleName, TokenisedBible )
+    # except KeyboardInterrupt: interrupted=True; return
+    # except (ImportError, SyntaxError) as err:
+    #     print( f"{moduleName} import failed!" )
+    #     failures.append( f"{moduleName} import" )
+    #     failureDetails.append( f"{moduleName}: {formatFailureDetails( err )}" )
 
     moduleName = 'uWNotesBible'
     try:

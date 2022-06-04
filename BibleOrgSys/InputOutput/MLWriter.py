@@ -5,7 +5,7 @@
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,6 +35,7 @@ TODO: Add writeAutoDTD
 
 """
 from gettext import gettext as _
+from typing import Optional, Union, Tuple, Dict, List
 import os
 import logging
 from pathlib import Path
@@ -48,10 +49,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-19' # by RJH
+LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "MLWriter"
 PROGRAM_NAME = "ML Writer"
-PROGRAM_VERSION = '0.37'
+PROGRAM_VERSION = '0.38'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -72,17 +73,19 @@ HTML_PREDEFINED_CHARACTER_ENTITIES = (
 
 class MLWriter:
     """
-    A class to handle data for Bible book order systems.
+    A class to write (and check) data with XML type syntax.
+
+    Note that character escapes are not automatically done by this class.
     """
 
-    def __init__( self, filename, folder=None, outputType=None ) -> None:
+    def __init__( self, filename:Union[Path,str], folder:Optional[Union[Path,str]]=None, outputType:Optional[str]=None ) -> None:
         """
         Constructor.
             filename: filename string or complete filepath
             folder (optional): will be prepended to the filename
             outputType( optional): defaults to 'XML' but can also be 'HTML'
         """
-        assert filename and isinstance( filename, str )
+        assert filename and isinstance( filename, (Path,str) )
         if folder: assert isinstance( folder, (Path,str) )
         if outputType is None: outputType = 'XML' # default
         assert outputType in allowedOutputTypes
@@ -123,7 +126,7 @@ class MLWriter:
     # end of MLWriter.__str__
 
 
-    def setOutputType( self, newType ):
+    def setOutputType( self, newType:str ) -> None:
         """
         Set the output type = XML or HTML
                 Use XML for xHTML.
@@ -134,7 +137,7 @@ class MLWriter:
     # end of MLWriter.setOutputType
 
 
-    def setHumanReadable( self, value='All', indentSize=2 ):
+    def setHumanReadable( self, value:str='All', indentSize:int=2 ) -> None:
         """
         Set the human readable flag.
             'All': The entire file
@@ -150,7 +153,7 @@ class MLWriter:
     # end of MLWriter.setHumanReadableFlag
 
 
-    def setSectionName( self, sectionName ):
+    def setSectionName( self, sectionName:Optional[str] ) -> None:
         """ Tells the writer the current section that we are writing.
             This can affect formatting depending on the _humanReadable flag. """
         assert sectionName in ('None', 'Header', 'Main')
@@ -158,7 +161,7 @@ class MLWriter:
     # end of MLWriter.setSection
 
 
-    def _writeToFile( self, string ):
+    def _writeToFile( self, string:str ) -> None:
         """ Writes a string to the file.
             NOTE: This doesn't update self._currentColumn (because we don't know what we're writing here). """
         assert self.__outputFile is not None
@@ -166,7 +169,7 @@ class MLWriter:
     # end of MLWriter._writeToFile
 
 
-    def _writeBuffer( self, writeAll=True ):
+    def _writeBuffer( self, writeAll:bool=True ) -> None:
         """ Writes the buffer to the file. """
         assert self.__outputFile is not None
         if self._buffer:
@@ -182,7 +185,7 @@ class MLWriter:
     # end of MLWriter._writeBuffer
 
 
-    def _writeToBuffer( self, string ):
+    def _writeToBuffer( self, string:str ) -> None:
         """ Writes a string to the buffer.
             NOTE: This doesn't update self._currentColumn (because we don't know what we're writing here). """
         if len(self._buffer) >= self._bufferFlushSize: # Our buffer is getting too big (and slow)
@@ -191,7 +194,7 @@ class MLWriter:
     # end of MLWriter._writeToBuffer
 
 
-    def _autoWrite( self, string, noNL=False ):
+    def _autoWrite( self, string:str, noNL:bool=False ) -> int:
         """
         Writes a string to the buffer.
             Prepends appropriate indenting.
@@ -213,7 +216,7 @@ class MLWriter:
     # end of MLWriter._write
 
 
-    def getFilePosition( self ):
+    def getFilePosition( self ) -> int:
         """ Returns the current position through the file (in bytes from the beginning of the file).
                 (This can be used by software that wants to index into the XML file.) """
         assert self.__outputFile is not None
@@ -222,7 +225,7 @@ class MLWriter:
     # end of MLWriter.getFilePosition
 
 
-    def _SP( self ):
+    def _SP( self ) -> str:
         """Returns an indent with space characters if required (else an empty string)."""
         if self._suppressFollowingIndent: self._suppressFollowingIndent = False; return ''
         if self._humanReadable == "None": return ''
@@ -233,7 +236,7 @@ class MLWriter:
     # end of MLWriter._SP
 
 
-    def _NL( self ):
+    def _NL( self ) -> str:
         """
         Returns a newline character if required (else an empty string).
         """
@@ -252,7 +255,7 @@ class MLWriter:
     # end of MLWriter._NL
 
 
-    def removeFinalNewline( self, suppressFollowingIndent=False ):
+    def removeFinalNewline( self, suppressFollowingIndent:bool=False ) -> None:
         """
         Removes a final newline sequence from the buffer.
         """
@@ -266,12 +269,32 @@ class MLWriter:
                 removed = True
         if not removed:
             logging.error( "MLWriter: " + _("No newline to remove") )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+            if self.doExtraChecking: halt
         self._suppressFollowingIndent = suppressFollowingIndent
     # end of MLWriter.removeFinalNewline
 
+    @staticmethod
+    def escape_characters( rawTextString:str, checkFirst:bool=False ) -> str:
+        """
+        Does XML escapes, e.g., & -> &amp;
 
-    def start( self, lineEndings='l', noAutoXML=False, writeBOM=False ):
+        If checkFirst is set, prechecks that escapes haven't already been done
+
+        This function is not called anywhere in this module,
+            i.e., the user is responsible for calling it appropriately
+        """
+        if checkFirst:
+            for char,escaped_chars in (('&','&amp;'),('"','&quot;'),('<','&lt;'),('>','&gt;')):
+                if escaped_chars in rawTextString:
+                    pass
+                rawTextString = rawTextString.replace( char, escaped_chars )
+            return rawTextString
+
+        # else no checkfirst
+        return rawTextString.replace('&','&amp;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
+    # end of MLWriter.escape_characters static function
+
+    def start( self, lineEndings:str='l', noAutoXML:bool=False, writeBOM:bool=False ) -> None:
         """
         Opens the file and writes a header record to it.
             lineEndings: l for Linux
@@ -282,7 +305,7 @@ class MLWriter:
         elif lineEndings == 'w': self._nl = '\r\n'
         else:
             logging.error( "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings ) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+            if self.doExtraChecking: halt
         if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
@@ -302,7 +325,7 @@ class MLWriter:
     # end of MLWriter.start
 
 
-    def checkTag( self, tagString ):
+    def checkTag( self, tagString:str ) -> str:
         """
         Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
         """
@@ -313,7 +336,7 @@ class MLWriter:
     # end of MLWriter.checkTag
 
 
-    def checkText( self, textString ):
+    def checkText( self, textString:str ) -> str:
         """
         Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
         """
@@ -326,17 +349,17 @@ class MLWriter:
             ix2 = textString.find( ';', ix+1 )
             if ix2 == -1:
                 logging.error( "MLWriter:checkText: " + _("unescaped ampersand (&) found in {} {!r}").format( self._outputType, textString ) )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                if self.doExtraChecking: halt
                 break # Only give one error
             elif self._outputType == 'XML':
                 if textString[ix+1:ix2] not in XML_PREDEFINED_ENTITIES:
                     logging.error( "MLWriter:checkText: " + _("unknown entity starting with ampersand (&) found in XML {!r}").format( textString ) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    if self.doExtraChecking: halt
                     break # Only give one error
             elif self._outputType == 'HTML':
                 if textString[ix+1:ix2] not in HTML_PREDEFINED_CHARACTER_ENTITIES:
                     logging.error( "MLWriter:checkText: " + _("unknown character entity starting with ampersand (&) found in XML {!r}").format( textString ) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                    if self.doExtraChecking: halt
                     break # Only give one error
             else: programmingError
             ix = textString.find( '&', ix+1 )
@@ -344,7 +367,7 @@ class MLWriter:
     # end of MLWriter.checkText
 
 
-    def checkAttribName( self, nameString ):
+    def checkAttribName( self, nameString:str ) -> str:
         """
         Returns a checked string containing the attribute name. Note that special characters should have already been handled before calling this routine.
         """
@@ -354,7 +377,7 @@ class MLWriter:
     # end of MLWriter.checkAttribName
 
 
-    def checkAttribValue( self, valueString ):
+    def checkAttribValue( self, valueString:str ) -> str:
         """
         Returns a checked string containing the attribute value. Note that special characters should have already been handled before calling this routine.
         """
@@ -365,7 +388,7 @@ class MLWriter:
     # end of MLWriter.checkAttribValue
 
 
-    def getAttributes( self, attribInfo ):
+    def getAttributes( self, attribInfo:Union[Tuple,List,Dict] ) -> str:
         """
         Returns a string containing the validated attributes.
         """
@@ -390,7 +413,7 @@ class MLWriter:
     # end of MLWriter.getAttributes
 
 
-    def writeNewLine( self, count=1 ):
+    def writeNewLine( self, count:int=1 ) -> None:
         """
         Writes a (1 or more) new line sequence to the output.
         """
@@ -399,7 +422,7 @@ class MLWriter:
     # end of MLWriter.writeNewLine
 
 
-    def writeLineComment( self, text, noTextCheck=False ):
+    def writeLineComment( self, text:str, noTextCheck:bool=False ) -> int:
         """
         Writes an XML comment field.
         """
@@ -407,7 +430,7 @@ class MLWriter:
     # end of MLWriter.writeLineComment
 
 
-    def writeLineText( self, text, noTextCheck=False, noNL=None ):
+    def writeLineText( self, text:str, noTextCheck:bool=False, noNL:Optional[bool]=None ) -> int:
         """
         Writes raw text onto a line.
         """
@@ -418,7 +441,7 @@ class MLWriter:
     # end of MLWriter.writeLineText
 
 
-    def writeLineOpen( self, openTag, attribInfo=None, noNL=None ):
+    def writeLineOpen( self, openTag:str, attribInfo:Optional[Union[Tuple,List]]=None, noNL:Optional[bool]=None ) -> None:
         """
         Writes an opening tag on a line.
             Attributes might by 2-tuples or a list of 2-tuples.
@@ -433,7 +456,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpen
 
 
-    def writeLineOpenText( self, openTag, text, attribInfo=None, noTextCheck=False ):
+    def writeLineOpenText( self, openTag:str, text:str, attribInfo:Optional[Union[Tuple,List]]=None, noTextCheck:bool=False ) -> None:
         """
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
@@ -448,7 +471,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpenText
 
 
-    def writeLineClose( self, closeTag ):
+    def writeLineClose( self, closeTag:str ) -> None:
         """
         Writes a closing tag on a line.
         """
@@ -466,7 +489,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpen
 
 
-    def writeLineOpenClose( self, tag, text, attribInfo=None, noTextCheck=False ):
+    def writeLineOpenClose( self, tag:str, text:str, attribInfo:Optional[Union[Tuple,List]]=None, noTextCheck:bool=False ) -> int:
         """
         Writes an opening and closing tag on the same line.
         """
@@ -480,7 +503,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpenClose
 
 
-    def writeLineOpenSelfclose( self, tag, attribInfo=None ):
+    def writeLineOpenSelfclose( self, tag:str, attribInfo=None ) -> int:
         """
         Writes a self-closing tag with optional attributes.
         """
@@ -492,7 +515,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpenSelfclose
 
 
-    def close( self, writeFinalNL=False ):
+    def close( self, writeFinalNL:bool=False ) -> None:
         """
         Finish everything up and close the file.
         """
@@ -508,7 +531,7 @@ class MLWriter:
     # end of MLWriter.close
 
 
-    def autoClose( self ):
+    def autoClose( self ) -> None:
         """
         Close all open tags and finish everything up and close the file.
         """
@@ -522,7 +545,7 @@ class MLWriter:
     # end of MLWriter.autoClose
 
 
-    def validate( self, schemaFilepath ):
+    def validate( self, schemaFilepath:Union[Path,str] ) -> Tuple:
         """
         Validate the just closed file against the given schema (pathname or URL).
 
@@ -545,7 +568,7 @@ class MLWriter:
                 returnCode = checkProcess.returncode
             except FileNotFoundError:
                 logging.error( "MLWriter.validate is unable to open {!r}".format( parameters[0] ) )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                if self.doExtraChecking: halt
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
             if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )

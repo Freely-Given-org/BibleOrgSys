@@ -291,7 +291,7 @@ def loadWordCompares( folder, filename ):
 #         elif marker1 == 'v':
 #             if C == '-1': C = '1' # Some one chapter books might not have a C marker
 #             V = line1.split()[0]
-#         elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
+#         elif C == '-1' and marker1 not in ('headers','intro'): V = str( int(V) + 1 )
 #         #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
 #         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
 #         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )
@@ -489,7 +489,7 @@ def compareBooksPedantic( book1, book2,
         elif marker1 == 'v':
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '-1' and marker1!='intro' and marker1[0]!='¬':
+        elif C == '-1' and marker1 not in ('headers','intro') and marker1[0]!='¬':
             V = str( int(V) + 1 )
         #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
@@ -788,7 +788,7 @@ def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
         elif marker1 == 'v':
             if C == '-1': C = '1' # Some one chapter books might not have a C marker
             V = line1.split()[0]
-        elif C == '-1' and marker1!='intro': V = str( int(V) + 1 )
+        elif C == '-1' and marker1 not in ('headers','intro'): V = str( int(V) + 1 )
         #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}/{}={}/{}'.format( book1.BBB, C, V, marker1, marker2, line1, line2 ) )
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getOriginalText() )
         #dPrint( 'Quiet', debuggingThisModule, ' ', entry1.getAdjustedText() )

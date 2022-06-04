@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -109,10 +109,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2021-02-21' # by RJH
+LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.88'
+PROGRAM_VERSION = '0.89'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -1463,6 +1463,7 @@ loadedBibleBooksCodes:Optional[List[str]] = None
 loadedUSFMMarkers:Optional[List[str]] = None
 USFMParagraphMarkers:Optional[List[str]] = None
 USFMCharacterMarkers:Optional[List[str]] = None
+USFMAllExpandedCharacterMarkers:Optional[List[str]] = None
 internal_SFMs_to_remove:Optional[List[str]] = None
 
 def preloadCommonData() -> None:
@@ -1471,34 +1472,24 @@ def preloadCommonData() -> None:
         This includes BibleBooksCode and USFMMarkers
     """
     # Load Bible data sets that are globally useful
-    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, internal_SFMs_to_remove
+    global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
+
     from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
     loadedBibleBooksCodes = BibleBooksCodes().loadData()
-    assert loadedBibleBooksCodes # Why didn't this load ???
-    #from BibleOrgSys.Reference.USFM2Markers import USFM2Markers
-    #USFM2Markers = USFM2Markers().loadData()
-    #USFM2ParagraphMarkers = USFM2Markers.getNewlineMarkersList( 'CanonicalText' )
-    #USFM2ParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    #dPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) )
-    #for marker in ( ):
-        #dPrint( 'Quiet', debuggingThisModule, marker )
-        #USFM2ParagraphMarkers.remove( marker )
-    # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
-    #    'qm1', 'qm2', 'qm3', 'qm4']
-    # now 33 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
-    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qc',
-    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr'] without 'qa'
-    #dPrint( 'Quiet', debuggingThisModule, len(USFM2ParagraphMarkers), sorted(USFM2ParagraphMarkers) ); halt
+    assert len(loadedBibleBooksCodes) >= 243
+
     from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
     loadedUSFMMarkers = USFM3Markers().loadData()
-    assert loadedUSFMMarkers # Why didn't this load ???
+    assert len(loadedUSFMMarkers) >= 220
     USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
-    assert USFMParagraphMarkers # Why didn't the above line work ???
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
+    assert len(USFMParagraphMarkers) >= 33
     USFMCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList()
-    assert USFMCharacterMarkers # Why didn't the above line work ???
+    assert len(USFMCharacterMarkers) >= 40
+    USFMAllExpandedCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+    assert len(USFMAllExpandedCharacterMarkers) >= 64
     internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    assert len(internal_SFMs_to_remove) >= 160
     internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
 # end of BibleOrgSysGlobals.preloadCommonData
 

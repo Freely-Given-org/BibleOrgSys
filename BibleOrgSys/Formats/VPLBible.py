@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2020 Robert Hunt
+# Copyright (C) 2014-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -67,6 +67,9 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
     And everything was great.
     $$ Ge 1:3
     And God rested.
+
+CHANGELOG:
+    2022-06-04 correctly tested for Bible instance in full and brief demos
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -86,10 +89,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-04' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.38'
+PROGRAM_VERSION = '0.39'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -702,7 +705,7 @@ def briefDemo() -> None:
 
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
         vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
-        if result2 is not None:
+        if isinstance( result2, VPLBible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -716,7 +719,7 @@ def briefDemo() -> None:
 
         result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
         vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
-        if result3 is not None:
+        if isinstance( result3, VPLBible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -768,7 +771,7 @@ def fullDemo() -> None:
 
             result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
             vPrint( 'Normal', debuggingThisModule, "VPL TestA2", result2 )
-            if result2 is not None:
+            if isinstance( result2, VPLBible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
@@ -782,7 +785,7 @@ def fullDemo() -> None:
 
             result3 = VPLBibleFileCheck( testFolder, autoLoadBooks=True )
             vPrint( 'Normal', debuggingThisModule, "VPL TestA3", result3 )
-            if result3 is not None:
+            if isinstance( result3, VPLBible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:

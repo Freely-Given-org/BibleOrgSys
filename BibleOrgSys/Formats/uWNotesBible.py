@@ -620,7 +620,7 @@ class uWNotesBibleBook( BibleBook ):
                 try: intC = int(C)
                 except ValueError: intC = -999
                 if (V != lastV or C != lastC) and intC > 0:
-                    doAddLine( 'v', '0' if V=='intro' else V )
+                    doAddLine( 'v', '0' if V in ('headers','intro') else V )
                 # NOTE: We don't save the ID field (nor the BBB field, of course)
                 if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
                 if origQuote: doAddLine( 'q1' if intC>0 else 'iq1', origQuote )

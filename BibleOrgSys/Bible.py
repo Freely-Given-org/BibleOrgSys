@@ -5,7 +5,7 @@
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,10 +44,10 @@ from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleObjects"
 PROGRAM_NAME = "Bible object handler"
-PROGRAM_VERSION = '0.14'
+PROGRAM_VERSION = '0.15'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -131,7 +131,8 @@ class BibleBook ( InternalBibleBook ):
         """
         Constructor: creates an empty Bible book.
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        self.doExtraChecking = debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
+        if self.doExtraChecking:
             if isinstance( containerBibleObject, str ):
                 logger.critical( "containerBibleObject is a string '{}' (not a Bible object): presumably this is a test???".format( containerBibleObject ) )
             else: assert isinstance( containerBibleObject, Bible )
@@ -198,6 +199,7 @@ class Bible( BibleWriter ):
         Constructor: creates an empty Bible object.
         """
         BibleWriter.__init__( self )
+        self.doExtraChecking = debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         self.objectNameString = 'Bible object (generic/unknown type)'
         self.objectTypeString = 'Unknown'
 
