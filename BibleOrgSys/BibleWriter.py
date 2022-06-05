@@ -111,7 +111,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-06-04' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -6019,10 +6019,10 @@ class BibleWriter( InternalBible ):
                         #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                             #if '\\' in text: vPrint( 'Quiet', debuggingThisModule, "toZefaniaX: {} {}:{} {!r}".format( BBB,C,V, text ) )
                             #assert '\\' not in text
-                        if '<NOTE' in text or '<XREF' in text: haveNotesFlag = True
+                        if '<NOTE' in text or '<XREF' in text or '<STYLE' in text: haveEmbeddedStyles = True
                     writerObject.writeLineOpenClose ( 'VERS', text,
                             ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)],
-                            noTextCheck=haveNotesFlag )
+                            noTextCheck=haveEmbeddedStyles )
                 elif marker == 'p~':
                     if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert text or extras
                     text = processZefXRefsAndFootnotes( text, extras )
@@ -6030,8 +6030,8 @@ class BibleWriter( InternalBible ):
                     #if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                         #if '\\' in text: vPrint( 'Quiet', debuggingThisModule, "toZefaniaY: {} {}:{} {!r}".format( BBB,C,V, text ) )
                         #assert '\\' not in text
-                    if '<NOTE' in text or '<XREF' in text: haveNotesFlag = True
-                    if text: writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveNotesFlag )
+                    if '<NOTE' in text or '<XREF' in text or '<STYLE' in text: haveEmbeddedStyles = True
+                    if text: writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveEmbeddedStyles )
                 else:
                     if text:
                         logger.error( "toZefania: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
