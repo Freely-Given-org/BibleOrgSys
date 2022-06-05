@@ -46,6 +46,9 @@ To use the InternalBibleBook class,
         removes footnotes and other additional info
         and places the processed Bible info into _processedLines.
     Finally, call makeBookCVIndex() to index _processedLines by CV.
+
+CHANGELOG:
+    2022-06-05 reduced surplus "addNestingMarkers ignored" messages
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
@@ -73,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -1748,7 +1751,7 @@ class InternalBibleBook:
                         lastPMarker = None
                     if not madeChange: break
                 if 'v' in openMarkers and verseHasEnded( j ): closeOpenMarker( 'v', V )
-            else:
+            elif marker not in ('v~','p~', 'c#', 'id','h','toc1','toc2','toc3','mt1','mt2'):
                 vPrint( 'Info', debuggingThisModule, "  addNestingMarkers: ignoring {}={}".format( marker, repr(text) ) )
 
             newLines.append( dataLine )
