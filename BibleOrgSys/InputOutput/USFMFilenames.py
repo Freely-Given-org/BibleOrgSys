@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-14' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
 PROGRAM_VERSION = '0.69'
@@ -180,11 +180,9 @@ class USFMFilenames:
                         digitsIndex = foundFileBit.index( USFMDigits )
                         USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
                         USFMBookCode = foundFileBit[USFMBookCodeIndex:USFMBookCodeIndex+3]
-                        if debuggingThisModule:
-                            vPrint( 'Quiet', debuggingThisModule, f"USFMFilenames dI={digitsIndex} UBCI={USFMBookCodeIndex} UBC={USFMBookCode}" )
+                        vPrint( 'Verbose', debuggingThisModule, f"USFMFilenames dI={digitsIndex} UBCI={USFMBookCodeIndex} UBC={USFMBookCode}" )
                         if foundLength>=8 and digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
-                            if debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "USFMFilenames: Trying1…" )
+                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying1…" )
                             self.languageIndex = 5
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
@@ -192,8 +190,7 @@ class USFMFilenames:
                             self.pattern = 'ddbbb' + 'l'*(foundLength-5)
                             matched = True
                         elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
-                            if debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "USFMFilenames: Trying2…" )
+                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying2…" )
                             self.languageIndex = 0
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
@@ -201,8 +198,7 @@ class USFMFilenames:
                             self.pattern = 'lllddbbb'
                             matched = True
                         else: # we'll try to be more generic
-                            if debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "USFMFilenames: Trying generic…" )
+                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying generic…" )
                             self.languageIndex = None
                             self.languageCode = None
                             self.digitsIndex = digitsIndex
@@ -231,12 +227,12 @@ class USFMFilenames:
                 if matched: break
             if matched: break
         #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
-        #dPrint( 'Quiet', debuggingThisModule, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+        #dPrint( 'Verbose', debuggingThisModule, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
         self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
-        #dPrint( 'Quiet', debuggingThisModule, "fD", self._fileDictionary )
-    # end of __init__
+        #dPrint( 'Verbose', debuggingThisModule, "fD", self._fileDictionary )
+    # end of USFMFilenames.__init__
 
 
     def __str__( self ) -> str:
@@ -253,7 +249,7 @@ class USFMFilenames:
         if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
         if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: ({}) {}").format( len(self.fileList), self.fileList )
         return result
-    # end of __str___
+    # end of USFMFilenames.__str___
 
 
     def __len__( self ):
@@ -265,7 +261,7 @@ class USFMFilenames:
         """
         if self.lastTupleList is None: return 0
         return len( self.lastTupleList )
-    # end of __len___
+    # end of USFMFilenames.__len___
 
 
     def getUSFMIDFromFile( self, folder, thisFilename, filepath, encoding=None ):
@@ -310,7 +306,7 @@ class USFMFilenames:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
                 logging.info( "getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}".format( filepath ) ) # Could be binary or a different encoding
         return None
-    # end of getUSFMIDFromFile
+    # end of USFMFilenames.getUSFMIDFromFile
 
 
     def getUSFMIDsFromFiles( self, givenFolder ):
@@ -348,7 +344,7 @@ class USFMFilenames:
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
         #dPrint( 'Quiet', debuggingThisModule, "fD2", self._fileDictionary )
         return len(self._fileDictionary)
-    # end of getUSFMIDsFromFiles
+    # end of USFMFilenames.getUSFMIDsFromFiles
 
 
     def getFilenameTemplate( self ):
@@ -359,7 +355,7 @@ class USFMFilenames:
                 dd = Paratext digits (can actually include some letters)
         """
         return self.pattern
-    # end of getFilenameTemplate
+    # end of USFMFilenames.getFilenameTemplate
 
 
     def getAllFilenames( self ):
@@ -368,7 +364,7 @@ class USFMFilenames:
             This excludes names of subfolders and backup files.
         """
         return self.fileList
-    # end of getAllFilenames
+    # end of USFMFilenames.getAllFilenames
 
 
     def doListAppend( self, BBB:str, filename, givenList, caller ):
@@ -387,7 +383,7 @@ class USFMFilenames:
                 removeBBB, removeFilename = existingBBB, existingFilename
         if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
         else: givenList.append( (BBB,filename,) )
-    # end of doListAppend
+    # end of USFMFilenames.doListAppend
 
 
     def getDerivedFilenameTuples( self ):
@@ -421,7 +417,7 @@ class USFMFilenames:
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                     self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
-    # end of getDerivedFilenameTuples
+    # end of USFMFilenames.getDerivedFilenameTuples
 
 
     def getConfirmedFilenameTuples( self, strictCheck=False ):
@@ -547,7 +543,7 @@ class USFMFilenames:
             #dPrint( 'Quiet', debuggingThisModule, BBB, actualFilename )
             if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
         return folderFilenames
-    # end of getUnusedFilenames
+    # end of USFMFilenames.getUnusedFilenames
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
@@ -586,8 +582,8 @@ class USFMFilenames:
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
         vPrint( 'Info', debuggingThisModule, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist
-    # end of getSSFFilenames
-# end of class USFMFiles
+    # end of USFMFilenames.getSSFFilenames
+# end of class USFMFilenames
 
 
 def briefDemo() -> None:

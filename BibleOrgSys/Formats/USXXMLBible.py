@@ -45,10 +45,10 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -94,7 +94,7 @@ def USXXMLBibleFileCheck( givenFolderName:Union[Path,str], strictCheck:bool=True
     # See if there's an USXBible project here in this given folder
     numFound = 0
     UFns = USXFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    vPrint( 'Info', debuggingThisModule, UFns )
+    dPrint( 'Never', debuggingThisModule, UFns )
     #filenameTuples = UFns.getPossibleFilenameTuples( strictCheck=True )
     #dPrint( 'Quiet', debuggingThisModule, 'P', len(filenameTuples) )
     filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
@@ -131,7 +131,7 @@ def USXXMLBibleFileCheck( givenFolderName:Union[Path,str], strictCheck:bool=True
 
         # See if there's an USX Bible with standard Paratext style filenames here in this folder
         UFns = USXFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        vPrint( 'Info', debuggingThisModule, UFns )
+        dPrint( 'Never', debuggingThisModule, UFns )
         #filenameTuples = UFns.getPossibleFilenameTuples()
         filenameTuples = UFns.getConfirmedFilenameTuples( strictCheck=True )
         vPrint( 'Verbose', debuggingThisModule, "Confirmed:", len(filenameTuples), filenameTuples )

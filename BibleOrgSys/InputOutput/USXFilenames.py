@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012-2020 Robert Hunt
+# Copyright (C) 2012-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -40,10 +40,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-11-08' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USXBible"
 PROGRAM_NAME = "USX Bible filenames handler"
-PROGRAM_VERSION = '0.55'
+PROGRAM_VERSION = '0.56'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -384,11 +384,11 @@ def briefDemo() -> None:
     for testFolder in testFolders:
         vPrint( 'Quiet', debuggingThisModule, '\n' )
         if os.access( testFolder, os.R_OK ):
-            UFns = USXFilenames( testFolder )
-            vPrint( 'Quiet', debuggingThisModule, UFns )
-            result = UFns.getDerivedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nPossible:", len(result), result )
-            result = UFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nConfirmed:", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "\nOther:", len(result), result )
+            UsxFns = USXFilenames( testFolder )
+            vPrint( 'Quiet', debuggingThisModule, UsxFns )
+            result = UsxFns.getDerivedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nPossible:", len(result), result )
+            result = UsxFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nConfirmed:", len(result), result )
+            result = UsxFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "\nOther:", len(result), result )
         else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 # end of fullDemo
 

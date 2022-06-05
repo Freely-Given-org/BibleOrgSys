@@ -48,10 +48,10 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
-PROGRAM_VERSION = '0.78'
+PROGRAM_VERSION = '0.79'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -124,7 +124,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     # See if there's an USFMBible project here in this given folder
     numFound = 0
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    vPrint( 'Info', debuggingThisModule, UFns )
+    dPrint( 'Never', debuggingThisModule, UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
     vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
     # Check they are USFM3 (not 2)
@@ -192,7 +192,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
         # See if there's an USFM Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        vPrint( 'Info', debuggingThisModule, UFns )
+        dPrint( 'Never', debuggingThisModule, UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
         vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
         # Check they are USFM3 (not 2)
@@ -541,8 +541,7 @@ class USFMBible( Bible ):
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and debuggingThisModule):
-            vPrint( 'Quiet', debuggingThisModule, "USFMFilenamesObject", self.USFMFilenamesObject )
+        vPrint( 'Never', debuggingThisModule, "USFMFilenamesObject", self.USFMFilenamesObject )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         #if self.ssfFilepath is None: # it might have been loaded first

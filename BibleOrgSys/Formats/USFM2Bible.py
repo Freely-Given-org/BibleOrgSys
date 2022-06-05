@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM2 Bible books
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -47,10 +47,10 @@ from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2020-05-23' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USFM2Bible"
 PROGRAM_NAME = "USFM2 Bible handler"
-PROGRAM_VERSION = '0.78'
+PROGRAM_VERSION = '0.79'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -109,7 +109,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
     # See if there's an USFM2Bible project here in this given folder
     numFound = 0
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
-    vPrint( 'Info', debuggingThisModule, UFns )
+    dPrint( 'Never', debuggingThisModule, UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
     vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
     # Check they are USFM2 (not 3)
@@ -213,7 +213,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
 
         # See if there's an USFM2 Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
-        vPrint( 'Info', debuggingThisModule, UFns )
+        dPrint( 'Never', debuggingThisModule, UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples( strictCheck=strictCheck ) # Returns (BBB,filename) 2-tuples
         vPrint( 'Verbose', debuggingThisModule, "  Maximum:", len(filenameTuples), filenameTuples )
         # Check they are USFM2 (not 3)
