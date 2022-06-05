@@ -63,6 +63,9 @@ Some notes about internal formats:
 
     The introduction is stored as chapter '-1'. (All our chapter and verse "numbers" are stored as strings.)
         (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
+
+CHANGELOG:
+    2022-06-05 quieten makeBookCVIndex print statement
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional
@@ -83,7 +86,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.78'
@@ -488,7 +491,7 @@ class InternalBibleBookCVIndex:
         # Now calculate the contextMarkerList for each CV entry and create the proper (full) InternalBibleBookCVIndexEntries
         contextMarkerList = []
         for (C,V), (indexStart,count) in self.__indexData.items():
-            vPrint( 'Info', debuggingThisModule, "makeBookCVIndex for {} {} {}:{} {} {} {}".format( self.workName, self.BBB, C, V, indexStart, count, contextMarkerList ) )
+            vPrint( 'Verbose', debuggingThisModule, "makeBookCVIndex for {} {} {}:{} {} {} {}".format( self.workName, self.BBB, C, V, indexStart, count, contextMarkerList ) )
             # Replace the existing (temporary) index entry to include a copy of the previous contextMarkerList
             #   e.g., a typical verse might be inside a paragraph in a section
             #            thus getting the contextMarkerList: ['chapters','c','s1','p']
