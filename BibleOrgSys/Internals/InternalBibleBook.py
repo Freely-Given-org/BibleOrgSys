@@ -1580,7 +1580,7 @@ class InternalBibleBook:
             except IndexError: nextNextMarker = None
             # try: nextNextNextMarker = self._processedLines[j+1].getMarker()
             # except IndexError: nextNextNextMarker = None
-            vPrint( 'Silent', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
+            vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
 
             if marker == 'h':
                 if self.doExtraChecking:

@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2021 Robert Hunt
+# Copyright (C) 2011-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -47,7 +47,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-10' # by RJH
+LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
 PROGRAM_VERSION = '0.10'
@@ -650,6 +650,7 @@ class USFM3Markers:
             elif x==' ' or x=='': # Open marker in line or at end of line
                 if cx \
                 and cx[0] not in ('f','fr','fq') and m not in ('fr','fq','ft'):
+                    # TODO: Investigate why we get this for fqa, xo, etc.
                     logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT2 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
                     if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
