@@ -1751,7 +1751,7 @@ class InternalBibleBook:
                         lastPMarker = None
                     if not madeChange: break
                 if 'v' in openMarkers and verseHasEnded( j ): closeOpenMarker( 'v', V )
-            elif marker not in ('v~','p~', 'c#', 'id','h','toc1','toc2','toc3','mt1','mt2'):
+            elif marker not in ('v~','p~', 'c#', 'id','h','toc1','toc2','toc3','mt1','mt2', 'ip'):
                 vPrint( 'Info', debuggingThisModule, "  addNestingMarkers: ignoring {}={}".format( marker, repr(text) ) )
 
             newLines.append( dataLine )
