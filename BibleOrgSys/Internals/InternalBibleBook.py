@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-06-06' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -3057,7 +3057,7 @@ class InternalBibleBook:
             """
             Breaks the segment into words and counts them.
 
-                location can be 'main' or 'notes'
+                location can be 'main' or 'extra'
             """
             try: uwaFlag = self.containerBibleObject.uWencoded
             except AttributeError: uwaFlag = False
@@ -3090,10 +3090,9 @@ class InternalBibleBook:
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if '|' in word or 'x-' in word: # Should never happen
-                        logging.critical( f"word content problem: {self.BBB} {C}:{V} Got '{word}' from '{rawWord}' from {marker}='{segment}' in {location}" )
+                        logging.critical( f"countWordsForDiscover({marker}, '{segment}', {location}) word content problem: {self.BBB} {C}:{V} Got '{word}' from '{rawWord}'" )
                         # '<p ' is for commentary with HTML entries
-                        if marker not in ('fig','ww') \
-                        and not segment.startswith('<p ') \
+                        if not segment.startswith('<p ') \
                         and (BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and debuggingThisModule)):
                             halt # word processing errors with | or x-
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
@@ -3195,7 +3194,8 @@ class InternalBibleBook:
                         if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
                         if cleanExtraText and cleanExtraText[-1] in '.።' or cleanExtraText.endswith('.”'):
                             xrefsPeriodCount += 1
-                    countWordsForDiscover( extraType, cleanExtraText, 'notes' )
+                    if extraType not in ('fig','ww'): # No useful words in those two extra types
+                        countWordsForDiscover( extraType, cleanExtraText, 'extra' )
             lastMarker = marker
         #dPrint( 'Quiet', debuggingThisModule, 'wordCount', self.BBB, bkDict['wordCount'] )
         #dPrint( 'Quiet', debuggingThisModule, 'uniqueWordCount', self.BBB, bkDict['uniqueWordCount'] )
