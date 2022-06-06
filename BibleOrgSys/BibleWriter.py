@@ -114,7 +114,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-06-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -4031,7 +4031,7 @@ class BibleWriter( InternalBible ):
                                         logger.warning( _("toUSX2XML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logger.critical( _("toUSX2XML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        vPrint( 'Quiet', debuggingThisModule, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
+                                        dPrint( 'Never', debuggingThisModule, "toUSX2XML USFMAllExpandedCharacterMarkers", BibleOrgSysGlobals.USFMAllExpandedCharacterMarkers )
                                         if self.doExtraChecking: halt
                     #dPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
