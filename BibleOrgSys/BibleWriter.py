@@ -93,6 +93,7 @@ import tarfile
 import subprocess
 import multiprocessing
 import signal
+import traceback
 
 # BibleOrgSys imports
 if __name__ == '__main__':
@@ -114,7 +115,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-06-06' # by RJH
+LAST_MODIFIED_DATE = '2022-06-08' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -587,8 +588,10 @@ class BibleWriter( InternalBible ):
                     if marker in BOS_NESTING_MARKERS:
                         indentLevel += 1
                     elif indentLevel and marker[0]=='¬': indentLevel -= 1
-                    if indentLevel > 7: vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}".format( BBB, C, V,
-                                                                                                                    Level, marker ) )
+                    if indentLevel > 7:
+                        dPrint( 'Quiet', debuggingThisModule,
+                                "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}"
+                                                    .format( BBB, C, V, indentLevel, marker ) )
                     if self.doExtraChecking: assert indentLevel <= 7 # Should only be 7: e.g., chapters c s1 p v list li1
             if self.doExtraChecking: assert indentLevel == 0
 
@@ -1022,29 +1025,29 @@ class BibleWriter( InternalBible ):
 
                         #value = cleanText # (temp)
                         #dPrint( 'Never', debuggingThisModule, "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
-                        if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
-                            if vBridgeStartInt and vBridgeEndInt:
-                                for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
-                                    ESFMLine += '\n\\v {}'.format( vNum )
-                            vBridgeStartInt = vBridgeEndInt = None
+                        # if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
+                        #     if vBridgeStartInt and vBridgeEndInt:
+                        #         for vNum in range( vBridgeStartInt+1, vBridgeEndInt+1 ): # Fill in missing verse numbers
+                        #             ESFMLine += '\n\\v {}'.format( vNum )
+                        #     vBridgeStartInt = vBridgeEndInt = None
 
                         if pseudoMarker == 'vp#': continue
                         elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                             #if self.doExtraChecking: assert value
-                            if pseudoMarker=='v' and 0 and removeVerseBridges:
-                                vString = value
-                                for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                                    ix = vString.find( bridgeChar )
-                                    if ix != -1:
-                                        value = vString[:ix] # Remove verse bridges
-                                        vEnd = vString[ix+1:]
-                                        #dPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
-                                        try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
-                                        except ValueError:
-                                            logger.warning( "toESFM: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
-                                            vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
-                                        #dPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
-                                        break
+                            # if pseudoMarker=='v' and 0 and removeVerseBridges:
+                            #     vString = value
+                            #     for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                            #         ix = vString.find( bridgeChar )
+                            #         if ix != -1:
+                            #             value = vString[:ix] # Remove verse bridges
+                            #             vEnd = vString[ix+1:]
+                            #             #dPrint( 'Quiet', debuggingThisModule, BBB, repr(value), repr(vEnd) )
+                            #             try: vBridgeStartInt, vBridgeEndInt = int( value ), int( vEnd )
+                            #             except ValueError:
+                            #                 logger.warning( "toESFM: bridge doesn't seem to be integers in {} {!r}".format( BBB, vString ) )
+                            #                 vBridgeStartInt = vBridgeEndInt = None # One of them isn't an integer
+                            #             #dPrint( 'Quiet', debuggingThisModule, ' ', BBB, repr(vBridgeStartInt), repr(vBridgeEndInt) )
+                            #             break
                             if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                         elif pseudoMarker[-1]=='~' or BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                             if inField is not None:
@@ -1725,7 +1728,7 @@ class BibleWriter( InternalBible ):
         NOTE: This is actually a function not a method (i.e., no self argument).
         """
         #dPrint( 'Quiet', debuggingThisModule, "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-        if self.doExtraChecking: assert givenText or extras
+        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert givenText or extras
 
         def handleExtras( text:str, extras:InternalBibleExtraList, ourGlobals:dict ):
             """
@@ -1819,7 +1822,7 @@ class BibleWriter( InternalBible ):
                     bits = rawFootnoteContents.split( ' ', 1 )
                     if len(bits)==2: # assume the caller is the first bit
                         caller = bits[0]
-                        if self.doExtraChecking: assert len(caller) == 1 # Normally a +
+                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert len(caller) == 1 # Normally a +
                         fnText = fnTitle = bits[1]
                     else: # no idea really what the format was
                         fnText = fnTitle = rawFootnoteContents
@@ -2498,8 +2501,9 @@ class BibleWriter( InternalBible ):
                 else:
                     try: writeHTML5Book( xw, BBB, bookData, html5Globals )
                     except Exception as err:
-                        vPrint( 'Quiet', debuggingThisModule, BBB, "Unexpected error:", sys.exc_info()[0], err)
-                        logger.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
+                        vPrint( 'Quiet', debuggingThisModule,
+                            f'BibleWriter.toHTML5: Unexpected {err} with {BBB}: {traceback.format_exc()})' )
+                        logger.error( "toHTML5: Oops, creating {} failed with {}!".format( BBB, err ) )
                 xw.writeLineClose( 'html' )
                 xw.close()
             writeHomePage()
@@ -6009,16 +6013,17 @@ class BibleWriter( InternalBible ):
                     if not text: # this is an empty (untranslated) verse
                          #logger.warning( "toZefania: Missing text for v~" )
                         text = '- - -' # but we'll put in a filler
+                        haveEmbeddedStylesFlag = False
                     else:
                         text = processZefXRefsAndFootnotes( text, extras )
                         text = checkZefaniaText( text, checkLeftovers=self.doExtraChecking )
                         #if self.doExtraChecking:
                             #if '\\' in text: vPrint( 'Quiet', debuggingThisModule, "toZefaniaX: {} {}:{} {!r}".format( BBB,C,V, text ) )
                             #assert '\\' not in text
-                        if '<NOTE' in text or '<XREF' in text or '<STYLE' in text: haveEmbeddedStyles = True
+                        haveEmbeddedStylesFlag = '<NOTE' in text or '<XREF' in text or '<STYLE' in text
                     writerObject.writeLineOpenClose ( 'VERS', text,
                             ('vnumber',verseNumberString) if endVerseNumberString is None else [('vnumber',verseNumberString),('enumber',endVerseNumberString)],
-                            noTextCheck=haveEmbeddedStyles )
+                            noTextCheck=haveEmbeddedStylesFlag )
                 elif marker == 'p~':
                     if self.doExtraChecking: assert text or extras
                     text = processZefXRefsAndFootnotes( text, extras )
@@ -6026,8 +6031,9 @@ class BibleWriter( InternalBible ):
                     #if self.doExtraChecking:
                         #if '\\' in text: vPrint( 'Quiet', debuggingThisModule, "toZefaniaY: {} {}:{} {!r}".format( BBB,C,V, text ) )
                         #assert '\\' not in text
-                    if '<NOTE' in text or '<XREF' in text or '<STYLE' in text: haveEmbeddedStyles = True
-                    if text: writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveEmbeddedStyles )
+                    if text:
+                        haveEmbeddedStylesFlag = '<NOTE' in text or '<XREF' in text or '<STYLE' in text
+                        writerObject.writeLineOpenClose ( 'VERS', text, noTextCheck=haveEmbeddedStylesFlag )
                 else:
                     if text:
                         logger.error( "toZefania: {} lost text in {} field in {} {}:{} {!r}".format( self.abbreviation, marker, BBB, C, V, text ) )
@@ -8993,7 +8999,7 @@ class BibleWriter( InternalBible ):
                             textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
                             document.Text.insertString( textCursor, txt, 0 )
                         elif marker in charODFStyleDict and nextSignificantChar=='-': # it's a closing nesting marker
-                            assertcontext
+                            assert context
                             #dPrint( 'Quiet', debuggingThisModule, "  BibleWriter.toODF: 3dc3", BBB, C, V, charODFStyleDict[marker], repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[context[0]] )
                             document.Text.insertString( textCursor, txt, 0 )
@@ -9306,9 +9312,10 @@ class BibleWriter( InternalBible ):
                     if createODFBook( j, BBB, bookObject ):
                         createCount += 1
                 except Exception as err:
-                    vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF {} Unexpected error:".format( BBB ), sys.exc_info()[0], err)
+                    vPrint( 'Quiet', debuggingThisModule,
+                        f'BibleWriter.toODF: Unexpected {err} with {BBB}: {traceback.format_exc()})' )
+                    logger.error( "toODF: Oops, creating {} failed with {}!".format( BBB, err ) )
                     killLibreOfficeServiceManager()
-                    logger.error( "BibleWriter.doAllExports.toODF: Oops, {} failed!".format( BBB ) )
                     break
             else: # *nix system hopefully
                 if 0: # Signal doesn't time out when LOSM locks up :-(
@@ -9326,8 +9333,8 @@ class BibleWriter( InternalBible ):
                             createCount += 1
                         signal.alarm( 0 ) # Disable timeout
                     except ODFTimeoutException as err:
-                        vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
-                        logger.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                        vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                        logger.critical( "BibleWriter.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
                         killLibreOfficeServiceManager() # Shut down the locked-up  process
                         if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
                 else: # try something else # NOTE: Linux-only code!!!
@@ -9343,8 +9350,8 @@ class BibleWriter( InternalBible ):
                             killLibreOfficeServiceManager() # Shut down the locked-up  process
                             raise KeyboardInterrupt
                         except Exception as err: # BibleWriter.DisposedException (where does BibleWriter.com.sun.star.lang.DisposedException come from???)
-                            vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
-                            logger.critical( "BibleWriter.doAllExports.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
+                            vPrint( 'Quiet', debuggingThisModule, "BibleWriter.toODF {} Timeout error:".format( BBB ), sys.exc_info()[0], err)
+                            logger.critical( "BibleWriter.toODF: Oops, {} timed out. Aborting!".format( BBB ) )
                             killLibreOfficeServiceManager() # Shut down the locked-up  process
                             if not restartLOSMForEachBook: break # No real point in continuing with locked-up system
                     else:
@@ -9708,7 +9715,6 @@ class BibleWriter( InternalBible ):
 
         try: result = function( folder )
         except Exception as err: # Got to catch and report the exceptions here
-            import traceback
             # import linecache
             # exc_type, exc_obj, exc_traceback = sys.exc_info()
             # print( f"{exc_type=}\n  {exc_obj=}\n  {traceback=}" )
@@ -9938,9 +9944,10 @@ class BibleWriter( InternalBible ):
                 try: ODFExportResult = self.toODF( ODFOutputFolder )
                 except Exception as err:
                     ODFExportResult = False
-                    vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    vPrint( 'Quiet', debuggingThisModule,
+                        f'BibleWriter.toODF: Unexpected {err}: {traceback.format_exc()})' )
+                    logger.error( "toODF: Oops, failed with {}!".format( err ) )
                     killLibreOfficeServiceManager()
-                    logger.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
                 #else: # *nix system hopefully
                     #timeoutSeconds = int(60*len(self.books)*processorFactor) # (was 1200s=20m but failed for projects with > 66 books)
                     #def TimeoutHandler( signum, frame ):
@@ -9960,162 +9967,162 @@ class BibleWriter( InternalBible ):
             try: pickledBibleOutputResult = self.toPickledBible( pickledBibleOutputFolder )
             except Exception as err:
                 pickledBibleOutputResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toPickledBible Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toPickledBible: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toPickledBible: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toPickledBible: Oops, failed with {}!".format( err ) )
             try: listOutputResult = self.makeLists( listOutputFolder )
             except Exception as err:
                 listOutputResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.makeLists Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.makeLists: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.makeLists: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.makeLists: Oops, failed with {}!".format( err ) )
             try: BCVExportResult = self.toBOSBCV( BCVOutputFolder )
             except Exception as err:
                 BCVExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toBOSBCV Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toBOSBCV: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toBOSBCV: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toBOSBCV: Oops, failed with {}!".format( err ) )
             try: pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
             except Exception as err:
                 pseudoUSFMExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toPseudoUSFM Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toPseudoUSFM: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toPseudoUSFM: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toPseudoUSFM: Oops, failed with {}!".format( err ) )
             try: USFM2ExportResult = self.toUSFM2( USFM2OutputFolder )
             except Exception as err:
                 USFM2ExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toUSFM2 Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toUSFM2: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toUSFM2: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toUSFM2: Oops, failed with {}!".format( err ) )
             try: USFM3ExportResult = self.toUSFM3( USFM3OutputFolder )
             except Exception as err:
                 USFM3ExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toUSFM3 Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toUSFM3: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toUSFM3: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toUSFM3: Oops, failed with {}!".format( err ) )
             try: ESFMExportResult = self.toESFM( ESFMOutputFolder )
             except Exception as err:
                 ESFMExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toESFM Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toESFM: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toESFM: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toESFM: Oops, failed with {}!".format( err ) )
             try: textExportResult = self.toText( textOutputFolder )
             except Exception as err:
                 textExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toText: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toText: Oops, failed with {}!".format( err ) )
             try: VPLExportResult = self.toVPL( VPLOutputFolder )
             except Exception as err:
                 VPLExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toVPL Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toVPL: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toVPL: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toVPL: Oops, failed with {}!".format( err ) )
             try: markdownExportResult = self.toMarkdown( markdownOutputFolder )
             except Exception as err:
                 markdownExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toMarkdown Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toMarkdown: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toMarkdown: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toMarkdown: Oops, failed with {}!".format( err ) )
             #try: D43ExportResult = self.toDoor43( D43OutputFolder )
             #except Exception as err:
                 #D43ExportResult = False
-                #dPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toDoor43 Unexpected error:", sys.exc_info()[0], err)
-                #logger.error( "BibleWriter.doAllExports.toDoor43: Oops, failed!" )
+                # vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toDoor43: Unexpected {err}: {traceback.format_exc()})' )
+                # logger.error( "BibleWriter.doAllExports.toDoor43: Oops, failed with {}!".format( err ) )
             try: htmlExportResult = self.toHTML5( htmlOutputFolder )
             except Exception as err:
                 htmlExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toHTML5: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toHTML5: Oops, failed with {}!".format( err ) )
             try: BDExportResult = self.toBibleDoor( BDOutputFolder )
             except Exception as err:
                 BDExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toBibleDoor Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toBibleDoor: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toBibleDoor: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toBibleDoor: Oops, failed with {}!".format( err ) )
             try: EWBExportResult = self.toEasyWorshipBible( EWBOutputFolder )
             except Exception as err:
                 EWBExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toEasyWorshipBible Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toEasyWorshipBible: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toEasyWorshipBible: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toEasyWorshipBible: Oops, failed with {}!".format( err ) )
             try: USX2ExportResult = self.toUSX2XML( USX2OutputFolder )
             except Exception as err:
                 USX2ExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toUSX2XML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toUSX2XML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toUSX2XML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toUSX2XML: Oops, failed with {}!".format( err ) )
             try: USX3ExportResult = self.toUSXXML( USX3OutputFolder )
             except Exception as err:
                 USX3ExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toUSXXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toUSXXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toUSXXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toUSXXML: Oops, failed with {}!".format( err ) )
             try: USFXExportResult = self.toUSFXXML( USFXOutputFolder )
             except Exception as err:
                 USFXExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toUSFXXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toUSFXXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toUSFXXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toUSFXXML: Oops, failed with {}!".format( err ) )
             try: OSISExportResult = self.toOSISXML( OSISOutputFolder )
             except Exception as err:
                 OSISExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toOSISXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toOSISXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toOSISXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toOSISXML: Oops, failed with {}!".format( err ) )
             try: ZefExportResult = self.toZefaniaXML( zefOutputFolder )
             except Exception as err:
                 ZefExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toZefaniaXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toZefaniaXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toZefaniaXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toZefaniaXML: Oops, failed with {}!".format( err ) )
             try: HagExportResult = self.toHaggaiXML( hagOutputFolder )
             except Exception as err:
                 HagExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toHaggaiXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toHaggaiXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toHaggaiXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toHaggaiXML: Oops, failed with {}!".format( err ) )
             try: OSExportResult = self.toOpenSongXML( OSOutputFolder )
             except Exception as err:
                 OSExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toOpenSongXML Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toOpenSongXML: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toOpenSongXML: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toOpenSongXML: Oops, failed with {}!".format( err ) )
             try: swExportResult = self.toSwordModule( swOutputFolder )
             except Exception as err:
                 swExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toSwordModule Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toSwordModule: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toSwordModule: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toSwordModule: Oops, failed with {}!".format( err ) )
             try: tWExportResult = self.totheWord( tWOutputFolder )
             except Exception as err:
                 tWExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.totheWord Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.totheWord: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.totheWord: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.totheWord: Oops, failed with {}!".format( err ) )
             try: MySwExportResult = self.toMySword( MySwOutputFolder )
             except Exception as err:
                 MySwExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toMySword Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toMySword: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toMySword: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toMySword: Oops, failed with {}!".format( err ) )
             try: ESwExportResult = self.toESword( ESwOutputFolder )
             except Exception as err:
                 ESwExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toESword Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toESword: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toESword: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toESword: Oops, failed with {}!".format( err ) )
             try: MyBExportResult = self.toMyBible( MyBOutputFolder )
             except Exception as err:
                 MyBExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toMyBible Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toMyBible: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toMyBible: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toMyBible: Oops, failed with {}!".format( err ) )
             try: SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             except Exception as err:
                 SwSExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toSwordSearcher Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toSwordSearcher: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toSwordSearcher: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toSwordSearcher: Oops, failed with {}!".format( err ) )
             try: DrExportResult = self.toDrupalBible( DrOutputFolder )
             except Exception as err:
                 DrExportResult = False
-                vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
-                logger.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
+                vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toDrupalBible: Unexpected {err}: {traceback.format_exc()})' )
+                logger.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed with {}!".format( err ) )
             if wantPhotoBible:
                 try: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
                 except Exception as err:
                     PhotoBibleExportResult = False
-                    vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
-                    logger.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
+                    vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toPhotoBible: Unexpected {err}: {traceback.format_exc()})' )
+                    logger.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed with {}!".format( err ) )
             if wantODFs:
                 try: ODFExportResult = self.toODF( ODFOutputFolder )
                 except Exception as err:
                     ODFExportResult = False
-                    vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toODF: Unexpected {err}: {traceback.format_exc()})' )
+                    logger.error( "BibleWriter.doAllExports.toODF: Oops, failed with {}!".format( err ) )
                     killLibreOfficeServiceManager()
-                    logger.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPDFs: # Do TeX export last because it's slowest
                 try: TeXExportResult = self.toTeX( TeXOutputFolder )
                 except Exception as err:
                     TeXExportResult = False
-                    vPrint( 'Quiet', debuggingThisModule, "BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
-                    logger.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
+                    vPrint( 'Quiet', debuggingThisModule, f'BibleWriter.doAllExports.toTeX: Unexpected {err}: {traceback.format_exc()})' )
+                    logger.error( "BibleWriter.doAllExports.toTeX: Oops, failed with {}!".format( err ) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             finishString = "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM2={} USFM3={} ESFM={} Tx={} VPL={}  md={}  " \
@@ -10331,7 +10338,7 @@ def briefDemo() -> None:
 
     if 0: # Test reading and writing a USX Bible
         from BibleOrgSys.Formats.USXXMLBible import USXXMLBible
-        from BibleOrgSys.Formats.USXFilenames import USXFilenames
+        from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
         testData = (
                 #('Matigsalug', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/') ),
                 ('MatigsalugUSX', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/') ),
@@ -10593,7 +10600,7 @@ def fullDemo() -> None:
 
     if 0: # Test reading and writing a USX Bible
         from BibleOrgSys.Formats.USXXMLBible import USXXMLBible
-        from BibleOrgSys.Formats.USXFilenames import USXFilenames
+        from BibleOrgSys.InputOutput.USXFilenames import USXFilenames
         testData = (
                 #('Matigsalug', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/') ),
                 ('MatigsalugUSX', BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/') ),

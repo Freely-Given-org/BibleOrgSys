@@ -42,8 +42,6 @@ CHANGELOG:
 from gettext import gettext as _
 from typing import List, Tuple
 import sys
-import linecache
-import traceback
 import os.path
 from datetime import datetime
 from pathlib import Path
@@ -60,7 +58,7 @@ from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in Tes
 sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
 #dPrint( 'Info', debuggingThisModule, sys.path )
 
-LAST_MODIFIED_DATE = '2022-04-22' # by RJH
+LAST_MODIFIED_DATE = '2022-06-07' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
 PROGRAM_VERSION = '0.69'
@@ -150,7 +148,9 @@ def formatFailureDetails( exceptionObject:Exception ) -> Tuple[str,Exception,str
     """
     Returns a 3-tuple.
     """
-    exc_type, exc_obj, traceback_obj = sys.exc_info()
+    import traceback
+    # import linecache
+    exc_type, _exc_obj, traceback_obj = sys.exc_info()
     #frame = traceback_obj.tb_frame
     #lineNum = traceback_obj.tb_lineno
     #filename = frame.f_code.co_filename

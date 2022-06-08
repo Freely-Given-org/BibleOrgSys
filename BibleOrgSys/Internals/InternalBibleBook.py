@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-06-06' # by RJH
+LAST_MODIFIED_DATE = '2022-06-08' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -1580,7 +1580,7 @@ class InternalBibleBook:
             except IndexError: nextNextMarker = None
             # try: nextNextNextMarker = self._processedLines[j+1].getMarker()
             # except IndexError: nextNextNextMarker = None
-            vPrint( 'Quiet', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
+            vPrint( 'Never', debuggingThisModule, f"InternalBibleBook.processLines.addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
 
             if marker == 'h':
                 if self.doExtraChecking:
@@ -2762,7 +2762,7 @@ class InternalBibleBook:
             if entry.getMarker() == adjFieldName:
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not entry.getExtras() # We're maybe losing some info here
                 dPrint( 'Normal', debuggingThisModule, f"InternalBibleBook.setField replace {self.BBB} '{entry.getText()}' with '{newValue}'" )
-                ebtry.setCleanText( newValue )
+                entry.setCleanText( newValue )
                 return True
         return False
     # end of InternalBibleBook.setField
@@ -4487,7 +4487,7 @@ class InternalBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
-            elif C == '-1' and marker1 not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
+            elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be 0:0
 
             if marker == 'id': IDList.append( "{} '{}'".format( self.BBB, text ) )
             elif marker == 'ide': encodingList.append( "{} '{}'".format( self.BBB, text ) )
