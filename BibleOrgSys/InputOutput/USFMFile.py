@@ -43,19 +43,16 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 
 
-LAST_MODIFIED_DATE = '2022-06-30' # by RJH
+LAST_MODIFIED_DATE = '2022-07-03' # by RJH
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
 PROGRAM_VERSION = '0.87'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
-
-
-DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a line
 
 
 
@@ -79,12 +76,12 @@ def splitUSFMMarkerFromText( line:str ) -> Tuple[Optional[str],str]:
     ixSP = lineAfterLeadingBackslash.find( ' ' )
     ixAS = lineAfterLeadingBackslash.find( '*' )
     ixBS = lineAfterLeadingBackslash.find( '\\' )
-    if ixSP==-1: ixSP = DUMMY_VALUE
-    if ixAS==-1: ixAS = DUMMY_VALUE
-    if ixBS==-1: ixBS = DUMMY_VALUE
+    if ixSP==-1: ixSP = LARGE_DUMMY_VALUE
+    if ixAS==-1: ixAS = LARGE_DUMMY_VALUE
+    if ixBS==-1: ixBS = LARGE_DUMMY_VALUE
     ix = min( ixSP, ixAS, ixBS ) # Find the first terminating character (if any)
 
-    if ix == DUMMY_VALUE: # The line is only the marker
+    if ix == LARGE_DUMMY_VALUE: # The line is only the marker
         return lineAfterLeadingBackslash, ''
     else:
         if ix == ixBS: # Marker stops before a backslash

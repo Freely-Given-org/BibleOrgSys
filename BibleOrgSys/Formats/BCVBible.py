@@ -5,7 +5,7 @@
 #
 # Module handling Bibles where each verse is stored in a separate file.
 #
-# Copyright (C) 2014-2020 Robert Hunt
+# Copyright (C) 2014-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,12 +37,12 @@ if __name__ == '__main__':
     if aboveAboveFolderpath not in sys.path:
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
-from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2022-07-03' # by RJH
 SHORT_PROGRAM_NAME = "BCVBible"
 PROGRAM_NAME = "BCV Bible handler"
 PROGRAM_VERSION = '0.22'
@@ -512,7 +512,6 @@ class BCVBibleBook( BibleBook ):
         fixErrors:List[str] = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
 
-        DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
         for CV in self.givenCVList:
             lineCount = 0
             if isinstance( CV, tuple) and len(CV)==2:
@@ -533,18 +532,18 @@ class BCVBibleBook( BibleBook ):
                     assert line and line[0]=='\\'
                     ixEQ = line.find( '=' )
                     ixLL = line.find( '<<' )
-                    if ixEQ == -1: ixEQ = DUMMY_VALUE
-                    if ixLL == -1: ixLL = DUMMY_VALUE
+                    if ixEQ == -1: ixEQ = LARGE_DUMMY_VALUE
+                    if ixLL == -1: ixLL = LARGE_DUMMY_VALUE
                     ix = min( ixEQ, ixLL )
                     marker = line[1:ix]
                     #dPrint( 'Quiet', debuggingThisModule, 'marker', repr(marker) )
-                    if ixLL == DUMMY_VALUE:
+                    if ixLL == LARGE_DUMMY_VALUE:
                         originalMarker = None
                         if marker == 'v~': originalMarker = 'v'
                         elif marker == 'c#': originalMarker = 'c'
                     else: originalMarker = line[ixLL+2:ixEQ]
                     #dPrint( 'Quiet', debuggingThisModule, 'originalMarker', repr(originalMarker) )
-                    if ixEQ == DUMMY_VALUE: text = None
+                    if ixEQ == LARGE_DUMMY_VALUE: text = None
                     else: text = line[ixEQ+1:]
                     #dPrint( 'Quiet', debuggingThisModule, 'text', repr(text) )
 

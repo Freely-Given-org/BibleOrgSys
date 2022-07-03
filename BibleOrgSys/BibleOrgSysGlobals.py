@@ -109,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-07-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.89'
@@ -147,6 +147,9 @@ verbosityString = 'Normal'
 COMMONLY_IGNORED_FOLDERS = '.hg', '.git','.gitignore','.github', '__MACOSX' # Used when searching for Bibles
 if debuggingThisModule:
     LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
+
+
+LARGE_DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a line
 
 
 # Some language independant punctuation help
