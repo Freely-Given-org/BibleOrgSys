@@ -763,7 +763,7 @@ class InternalBibleBook:
 
         # \w fields can indicate glossary entries.
         # However, it's also a way to assign attributes to a word (after a |).
-        # Adjust \w ('w') fields to remove attributes (and copy the word) into a separate \ww ('ww') field
+        # Adjust \w or \+w ('w') fields to remove attributes (and copy the word) into a separate \ww ('ww') field
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.
         if '|' in adjText: # Only if it has a pipe somewhere in the line
@@ -788,7 +788,7 @@ class InternalBibleBook:
                 if ixPipe < ixWend: # There is a pipe inside this particular \w field
                     # Convert attributes into a \ww note field (that will then be removed below)
                     word = adjText[ixW+3:ixPipe] # We also copy the word into the \ww field
-                    adjText = adjText[:ixPipe] + '\\w*\\ww ' + word + adjText[ixPipe:ixWend+2] + 'w' + adjText[ixWend+2:]
+                    adjText = f'{adjText[:ixPipe]}\\w*\\ww {word}{adjText[ixPipe:ixWend+2]}w{adjText[ixWend+2:]}'
                     #dPrint( 'Quiet', debuggingThisModule, "  now adjText = {}".format( adjText ) )
                 ixW = adjText.find( '\\w ', ixWend+4 )
                 if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
@@ -799,6 +799,37 @@ class InternalBibleBook:
                             logging.warning( _("processLineFix: Found UPPERCASE word marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
                             self.addPriorityError( 9, C, V, _("Word marker is UPPERCASE") )
                 if ixW == -1: ixW = largeDummyValue
+            ixW = adjText.find( '\\+w ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixW == -1:
+                    ixW = adjText.find( '\\+W ' )
+                    if ixW != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE embedded word marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE embedded word marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Embedded word marker is UPPERCASE") )
+            if ixW == -1: ixW = largeDummyValue
+            while ixW < largeDummyValue: # We have one or the other
+                #dPrint( 'Quiet', debuggingThisModule, "  ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
+                ixWend = adjText.find( '\\+w*', ixW+4 )
+                if ixWend == -1: ixWend = adjText.find( '\\+W*', ixW+4 )
+                if ixWend == -1: ixWend = largeDummyValue
+                ixPipe = adjText.find( '|', ixW+4 )
+                if ixPipe == -1: break # No pipe -- this one is just a plain \w word\w* field
+                #dPrint( 'Quiet', debuggingThisModule, "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
+                if ixPipe < ixWend: # There is a pipe inside this particular \w field
+                    # Convert attributes into a \ww note field (that will then be removed below)
+                    word = adjText[ixW+4:ixPipe] # We also copy the word into the \ww field
+                    adjText = f'{adjText[:ixPipe]}\\+w*\\ww {word}{adjText[ixPipe:ixWend+1]}ww{adjText[ixWend+3:]}'
+                    # dPrint( 'Quiet', debuggingThisModule, f"  now {adjText=}" )
+                ixW = adjText.find( '\\+w ', ixWend+5 )
+                if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                    if ixW == -1:
+                        ixW = adjText.find( '\\+W ', ixWend+5 )
+                        if ixW != -1:
+                            fixErrors.append( lineLocationSpace + _("Found UPPERCASE embedded word marker in \\{}: {}").format( originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found UPPERCASE embedded word marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                            self.addPriorityError( 9, C, V, _("Embedded word marker is UPPERCASE") )
+                if ixW == -1: ixW = largeDummyValue
 
         # Move all footnotes and cross-references, etc. from the main text out to extras
         #  (This includes our \ww fields which contain the atttributes from \w fields)
@@ -806,69 +837,71 @@ class InternalBibleBook:
 
         #dPrint( 'Quiet', debuggingThisModule, "QQQ MOVE OUT NOTES" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-        ixFN = adjText.find( '\\f ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixFN == -1:
-                ixFN = adjText.find( '\\F ' )
-                if ixFN != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE footnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
-        if ixFN == -1: ixFN = largeDummyValue
-        ixEN = adjText.find( '\\fe ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixEN == -1:
-                ixEN = adjText.find( '\\FE ' )
-                if ixEN != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE endnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
-        if ixEN == -1: ixEN = largeDummyValue
-        ixXR = adjText.find( '\\x ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixXR == -1:
-                ixXR = adjText.find( '\\X ' )
-                if ixXR != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE cross-reference marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
-        if ixXR == -1: ixXR = largeDummyValue
-        ixFIG = adjText.find( '\\fig ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixFIG == -1:
-                ixFIG = adjText.find( '\\FIG ' )
-                if ixFIG != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE figure marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
-        if ixFIG == -1: ixFIG = largeDummyValue
-        ixSTR = adjText.find( '\\str ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixSTR == -1:
-                ixSTR = adjText.find( '\\STR ' )
-                if ixSTR != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE Strongs marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
-        if ixSTR == -1: ixSTR = largeDummyValue
-        ixSEM = adjText.find( '\\sem ' )
-        if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
-            if ixSEM == -1:
-                ixSEM = adjText.find( '\\SEM ' )
-                if ixSEM != -1:
-                    fixErrors.append( lineLocationSpace + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
-        if ixSEM == -1: ixSEM = largeDummyValue
-        ixWW = adjText.find( '\\ww ' )
-        if ixWW == -1: ixWW = adjText.find( '\\WW ' )
-        if ixWW == -1: ixWW = largeDummyValue
-        ixVP = adjText.find( '\\vp ' )
-        if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-        if ixVP == -1: ixVP = largeDummyValue
-        #dPrint( 'Quiet', debuggingThisModule, 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
-        ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixWW, ixVP )
-        while ix1 < largeDummyValue: # We have one or the other
+        while True:
+            ixFN = adjText.find( '\\f ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixFN == -1:
+                    ixFN = adjText.find( '\\F ' )
+                    if ixFN != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE footnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE footnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Footnote marker is UPPERCASE") )
+            if ixFN == -1: ixFN = largeDummyValue
+            ixEN = adjText.find( '\\fe ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixEN == -1:
+                    ixEN = adjText.find( '\\FE ' )
+                    if ixEN != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE endnote marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE endnote marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Endnote marker is UPPERCASE") )
+            if ixEN == -1: ixEN = largeDummyValue
+            ixXR = adjText.find( '\\x ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixXR == -1:
+                    ixXR = adjText.find( '\\X ' )
+                    if ixXR != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE cross-reference marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE cross-reference marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Cross-reference marker is UPPERCASE") )
+            if ixXR == -1: ixXR = largeDummyValue
+            ixFIG = adjText.find( '\\fig ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixFIG == -1:
+                    ixFIG = adjText.find( '\\FIG ' )
+                    if ixFIG != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE figure marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE figure marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Figure marker is UPPERCASE") )
+            if ixFIG == -1: ixFIG = largeDummyValue
+            ixSTR = adjText.find( '\\str ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixSTR == -1:
+                    ixSTR = adjText.find( '\\STR ' )
+                    if ixSTR != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE Strongs marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE Strongs marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Strongs marker is UPPERCASE") )
+            if ixSTR == -1: ixSTR = largeDummyValue
+            ixSEM = adjText.find( '\\sem ' )
+            if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
+                if ixSEM == -1:
+                    ixSEM = adjText.find( '\\SEM ' )
+                    if ixSEM != -1:
+                        fixErrors.append( lineLocationSpace + _("Found UPPERCASE semantic marker in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found UPPERCASE semantic marker {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 9, C, V, _("Semantic marker is UPPERCASE") )
+            if ixSEM == -1: ixSEM = largeDummyValue
+            ixWW = adjText.find( '\\ww ' )
+            if ixWW == -1: ixWW = adjText.find( '\\WW ' )
+            if ixWW == -1: ixWW = largeDummyValue
+            ixVP = adjText.find( '\\vp ' )
+            if ixVP == -1: ixVP = adjText.find( '\\VP ' )
+            if ixVP == -1: ixVP = largeDummyValue
+            #dPrint( 'Quiet', debuggingThisModule, 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
+            ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixWW, ixVP )
+            if ix1 == largeDummyValue: break # out of while True loop
+
             if ix1 == ixFN:
                 ix2 = adjText.find( '\\f*' )
                 if ix2 == -1: ix2 = adjText.find( '\\F*' )
@@ -911,13 +944,18 @@ class InternalBibleBook:
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                 noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'sem', 3, 'Semantic info', 'sem', ix1
             elif ix1 == ixWW:
-                assert adjText[ix1-3:ix1] == '\\w*' # \ww word and attributes must always immediately follow the \w field
+                # \ww word and attributes must always immediately follow the \w* or \+w* field
+                assert adjText[ix1-3:ix1] == '\\w*' or adjText[ix1-4:ix1] == '\\+w*'
                 ixW = adjText.rfind('\\w ', 0, ix1-3)
+                embedded = 0
+                if ixW == -1:
+                    embedded = 1
+                    ixW = adjText.rfind('\\+w ', 0, ix1-4)
                 assert ixW != -1
                 ix2 = adjText.find( '\\ww*' )
                 if ix2 == -1: ix2 = adjText.find( '\\WW*' )
                 #dPrint( 'Quiet', debuggingThisModule, 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'ww', 2, 'Word attributes', 'ww', ixW+3 # We will insert the ww field contents immediate inside the w field (after the opening marker space)
+                noteSFM, lenSFM, thisOne, this1, noteIndexAdjText = 'ww', 2, 'Word attributes', 'ww', ixW+3+embedded # We will insert the ww field contents immediate inside the w field (after the opening marker space)
                 parseWordAttributes( self.workName, self.BBB, C, V,
                                     adjText[ixWW+4:ix2].replace( '&quot;', '"' ), fixErrors )
                 # (returned dictionary above is just ignored here)
@@ -1056,33 +1094,8 @@ class InternalBibleBook:
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
+            # end of while True loop
 
-            # Get ready for the next loop iteration
-            ixFN = adjText.find( '\\f ' )
-            if ixFN == -1: ixFN = adjText.find( '\\F ' )
-            if ixFN == -1: ixFN = largeDummyValue
-            ixEN = adjText.find( '\\fe ' )
-            if ixEN == -1: ixEN = adjText.find( '\\FE ' )
-            if ixEN == -1: ixEN = largeDummyValue
-            ixXR = adjText.find( '\\x ' )
-            if ixXR == -1: ixXR = adjText.find( '\\X ' )
-            if ixXR == -1: ixXR = largeDummyValue
-            ixFIG = adjText.find( '\\fig ' )
-            if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
-            if ixFIG == -1: ixFIG = largeDummyValue
-            ixSTR = adjText.find( '\\str ' )
-            if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
-            if ixSTR == -1: ixSTR = largeDummyValue
-            ixSEM = adjText.find( '\\sem ' )
-            if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
-            if ixSEM == -1: ixSEM = largeDummyValue
-            ixWW = adjText.find( '\\ww ' )
-            if ixWW == -1: ixWW = adjText.find( '\\WW ' )
-            if ixWW == -1: ixWW = largeDummyValue
-            ixVP = adjText.find( '\\vp ' )
-            if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-            if ixVP == -1: ixVP = largeDummyValue
-            ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixWW, ixVP )
         #if extras: vPrint( 'Quiet', debuggingThisModule, "Fix gave {!r} and {!r}".format( adjText, extras ) )
         #if len(extras)>1: vPrint( 'Quiet', debuggingThisModule, "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )
 
@@ -1241,6 +1254,9 @@ class InternalBibleBook:
             #dPrint( 'Quiet', debuggingThisModule, "aT", adjText )
             #dPrint( 'Quiet', debuggingThisModule, "exp", extras )
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
+        if '|' in adjText: # this will become a problem
+            logging.critical( "\nprocessLineFix: Why do we still have a vertical pipe in {!r}\n  from {!r}?".format( adjText, text ) )
+            if 1 or BibleOrgSysGlobals.debugFlag: halt
 
         # Check trailing spaces again now
         if adjText and adjText[-1].isspace():
@@ -1751,8 +1767,8 @@ class InternalBibleBook:
                         lastPMarker = None
                     if not madeChange: break
                 if 'v' in openMarkers and verseHasEnded( j ): closeOpenMarker( 'v', V )
-            elif marker not in ('v~','p~', 'c#', 'id','h','toc1','toc2','toc3','mt1','mt2', 'ip'):
-                vPrint( 'Info', debuggingThisModule, "  addNestingMarkers: ignoring {}={}".format( marker, repr(text) ) )
+            elif marker not in ('v~','p~', 'c#','d','sp', 'id','usfm','ide','h','toc1','toc2','toc3','mt1','mt2', 'ip'):
+                vPrint( 'Info', debuggingThisModule, f"  addNestingMarkersX: ignoring {marker}='{text}'" )
 
             newLines.append( dataLine )
             if BibleOrgSysGlobals.debugFlag and len(openMarkers) > 7: # Should only be 7: e.g., chapters c s1 p v list li1

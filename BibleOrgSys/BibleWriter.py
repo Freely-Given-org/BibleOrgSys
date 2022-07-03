@@ -115,7 +115,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-06-08' # by RJH
+LAST_MODIFIED_DATE = '2022-07-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -794,7 +794,7 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )
         #assert controlDict and isinstance( controlDict, dict )
 
-        ignoredMarkers = set()
+        # ignoredMarkers = set()
         addedUSFMversionField = False
 
         # Adjust the extracted outputs
@@ -840,7 +840,7 @@ class BibleWriter( InternalBible ):
                 if '¬' in pseudoMarker or pseudoMarker in BOS_ADDED_NESTING_MARKERS or pseudoMarker=='v=':
                     continue # Just ignore added markers — not needed here
                 if pseudoMarker in ('c#','vp#',):
-                    ignoredMarkers.add( pseudoMarker )
+                    # ignoredMarkers.add( pseudoMarker )
                     continue
                 if pseudoMarker == 'usfm': # It was already in the file
                     addedUSFMversionField = True # Well, actually it will be added further down!
@@ -915,9 +915,9 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt', newline='\r\n', encoding='utf-8' ) as myFile: # Use Windows newline endings for bookUSFM
                 myFile.write( bookUSFM )
 
-        if ignoredMarkers:
-            logger.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toUSFM3 markers were {}").format( ignoredMarkers ) )
+        # if ignoredMarkers:
+        #     logger.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
+        #     vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toUSFM3 markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
         vPrint( 'Info', debuggingThisModule, "  Zipping USFM3 files…" )
@@ -1991,32 +1991,41 @@ class BibleWriter( InternalBible ):
         # Semantic stuff
         text = text.replace( '\\ior ', '<span class="outlineReferenceRange">' ).replace( '\\ior*', '</span>' )
         text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
+        text = text.replace( '\\+bk ', '<span class="bookName">' ).replace( '\\+bk*', '</span>' )
         text = text.replace( '\\iqt ', '<span class="introductionQuotedText">' ).replace( '\\iqt*', '</span>' )
 
         text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
+        text = text.replace( '\\+add ', '<span class="addedText">' ).replace( '\\+add*', '</span>' )
         text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
         text = text.replace( '\\+nd ', '<span class="divineName">' ).replace( '\\+nd*', '</span>' )
         text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
         text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
+        text = text.replace( '\\+sig ', '<span class="signature">' ).replace( '\\+sig*', '</span>' )
         if BBB in ('GLS',): # it's a glossary keyword entry
             text = text.replace( '\\k ', '<span class="glossaryKeyword">' ).replace( '\\k*', '</span>' )
         else: # it's a keyword in context
             text = text.replace( '\\k ', '<span class="keyword">' ).replace( '\\k*', '</span>' )
         text = text.replace( '\\w ', '<span class="wordlistEntry">' ).replace( '\\w*', '</span>' )
+        text = text.replace( '\\+w ', '<span class="wordlistEntry">' ).replace( '\\+w*', '</span>' )
         text = text.replace( '\\rq ', '<span class="quotationReference">' ).replace( '\\rq*', '</span>' )
         text = text.replace( '\\qs ', '<span class="Selah">' ).replace( '\\qs*', '</span>' )
+        text = text.replace( '\\+qs ', '<span class="Selah">' ).replace( '\\+qs*', '</span>' )
         text = text.replace( '\\ca ', '<span class="alternativeChapterNumber">(' ).replace( '\\ca*', ')</span>' )
         text = text.replace( '\\va ', '<span class="alternativeVerseNumber">(' ).replace( '\\va*', ')</span>' )
 
         # Direct formatting
         text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
+        text = text.replace( '\\+bdit ', '<span class="boldItalic">' ).replace( '\\+bdit*', '</span>' )
         text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
+        text = text.replace( '\\+it ', '<span class="italic">' ).replace( '\\+it*', '</span>' )
         text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
+        text = text.replace( '\\+bd ', '<span class="bold">' ).replace( '\\+bd*', '</span>' )
         text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
+        text = text.replace( '\\+sc ', '<span class="smallCaps">' ).replace( '\\+sc*', '</span>' )
 
         if '\\' in text:
             logger.error( "formatHTMLVerseText programming error: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
-            vPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText: unprocessed code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
+            vPrint( 'Quiet', debuggingThisModule, "formatHTMLVerseText: unprocessed backslash code in {!r} from {!r} at {} {}:{}".format( text, givenText, BBB, C, V ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         return text
     # end of __formatHTMLVerseText
@@ -2537,7 +2546,7 @@ class BibleWriter( InternalBible ):
 
     def _toBibleDoorText( self, outputFolderpath:Optional[Path]=None ) -> bool:
         """
-        Adjust the pseudo USFM and write the text and index files (by book) to be used by the BibleDoor app.
+        Adjust the pseudo USFM and write the text and index files (by book) to be used by the Bible Door app.
             (This is a newer format than the older CHTML format used by the MS-Bible app.
 
         Text is chunked into sections if possible, else chapters.
@@ -2613,7 +2622,7 @@ class BibleWriter( InternalBible ):
                 assert len(currentText) > 50 or 'ms1=' in currentText # Can be as short as one verse at Neh 1:1
             if self.doExtraChecking: assert sectionCV not in bookIndexDict
             elif sectionCV in bookIndexDict:
-                logger.critical( f"toBibleDoorText at {BBB} {savedC}:{savedV}—{lastC}:{lastV} is overwriting a section: {sectionCV} currentCV={C}:{V}" )
+                logger.critical( f"_toBibleDoorText at {BBB} {savedC}:{savedV}—{lastC}:{lastV} is overwriting a section: {sectionCV} currentCV={C}:{V}" )
                 logger.critical( f"  savedText={savedText!r}" )
                 logger.critical( f"  currentText={currentText!r}" )
             bookIndexDict[sectionCV] = len(bookText)
@@ -2691,7 +2700,7 @@ class BibleWriter( InternalBible ):
                             #if savedV == '0': savedV = '1' # Assume no intro so get a more likely verse number
                         savePreviousSection()
                     else:
-                        logger.critical( f"toBibleDoorText {self.abbreviation} skipped making an index entry for blank text around {BBB} {C}:{V}" )
+                        logger.critical( f"_toBibleDoorText {self.abbreviation} skipped making an index entry for blank text around {BBB} {C}:{V}" )
 
                 if pseudoMarker == 'c':
                     assert cleanText.isdigit() # Chapter number only
@@ -2703,7 +2712,7 @@ class BibleWriter( InternalBible ):
                         sectionCV = f'{C}v{V}'
                 elif pseudoMarker == 'c#':
                     if currentParagraphMarker in ('','s1','r'):
-                        logger.critical( f"toBibleDoorText {self.abbreviation} {BBB} encountered a paragraph error"
+                        logger.critical( f"_toBibleDoorText {self.abbreviation} {BBB} encountered a paragraph error"
                                          f" with a verse following {currentParagraphMarker!r} around {C}:{V}" )
                         currentText += 'm{}'.format( paragraphDelimiter ) # Put in a margin paragraph
                     currentText += f'{{c{cleanText}}}'
@@ -2958,7 +2967,7 @@ class BibleWriter( InternalBible ):
             """
             vPrint( 'Normal', debuggingThisModule, "  Writing compression entries…" )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', debuggingThisModule, "    toBibleDoor " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    _toBibleDoorJSONCHTML " +  _("Exporting index to {}…").format( compressionDictFilepath ) )
             outputBytes = json.dumps( BDCompressions, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressionDictFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -2986,7 +2995,7 @@ class BibleWriter( InternalBible ):
                 usageCount['~~'] += 1
             if '^' in result:
                 dPrint( 'Quiet', debuggingThisModule, 'have^', entry )
-                halt # BibleDoor compression will fail!
+                halt # Bible Door compression will fail!
             for longString, shortString in reversedCompressions:
                 if longString in result:
                     result = result.replace( longString, shortString )
@@ -3105,7 +3114,7 @@ class BibleWriter( InternalBible ):
                         numChapters = dataLine.getCleanText()
                 try: intNumChapters = int( numChapters )
                 except ValueError:
-                    logger.error( "toBibleDoor: no chapters in {}".format( BBB ) )
+                    logger.error( "_toBibleDoorJSONCHTML: no chapters in {}".format( BBB ) )
                     intNumChapters = 0
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
                 if BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR(BBB) or BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR(BBB):
@@ -3190,7 +3199,7 @@ class BibleWriter( InternalBible ):
                 XXXReturns the number of bytes written.
                 """
                 nonlocal numBDSections, BDHash, uncompressedFileOffset, compressedFileOffset
-                #dPrint( 'Quiet', debuggingThisModule, "  toBibleDoor.handleBDSection() {} haveAnySectionHeadings={}".format( BBB, haveAnySectionHeadings ) )
+                #dPrint( 'Quiet', debuggingThisModule, "  _toBibleDoorJSONCHTML.handleBDSection() {} haveAnySectionHeadings={}".format( BBB, haveAnySectionHeadings ) )
                 assert BCV
                 assert sectionHTML
 
@@ -3200,8 +3209,8 @@ class BibleWriter( InternalBible ):
                 if '\\' in sectionHTML: # shouldn't happen
                     ix = sectionHTML.index( '\\' )
                     segment = sectionHTML[ix-10 if ix>10 else 0 : ix+30]
-                    logger.error( "toBibleDoor programming error: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
-                    vPrint( 'Quiet', debuggingThisModule, "toBibleDoor: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
+                    logger.error( "_toBibleDoorJSONCHTML programming error: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
+                    vPrint( 'Quiet', debuggingThisModule, "_toBibleDoorJSONCHTML: unprocessed backslash code in {} {}:{} section: …{!r}…".format( sectionBBB, sectionC, sectionV, segment ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                 HTMLSections.append( sectionHTML )
                 indexEntry1 = sectionBCV[0],sectionBCV[1],sectionBCV[2],lastC,lastV,uncompressedFileOffset,len(sectionHTML)
@@ -3269,7 +3278,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if pOpen:
-                        logger.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3280,7 +3289,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<h1 class="{}{}">{}</h1>'.format( tClass, marker[2], text )
                 elif marker in ('is1','is2','is3','is4',):
                     if pOpen:
-                        logger.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if BBB == 'FRT' and marker == 'is1':
@@ -3302,7 +3311,7 @@ class BibleWriter( InternalBible ):
                     for lx in ('4','3','2','1'): # Close any open lists
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
                     if pOpen:
-                        logger.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3314,7 +3323,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<p class="{}">{}</p>'.format( ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, BDGlobals ) )
                 elif marker == 'iot':
                     if pOpen:
-                        logger.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3324,7 +3333,7 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<h3 class="outlineTitle">{}</h3>'.format( text )
                 elif marker in ('io1','io2','io3','io4',):
                     if pOpen:
-                        logger.warning( "toBibleDoor: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         thisHTML += '</p>'; pOpen = False
                         if BibleOrgSysGlobals.debugFlag: thisHTML += '\n'
                     if not sOpen:
@@ -3454,7 +3463,7 @@ class BibleWriter( InternalBible ):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
-                        logger.warning( "toBibleDoor: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
+                        logger.warning( "_toBibleDoorJSONCHTML: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
                         thisHTML += '<section class="regularSection">'
                         sOpen = sJustOpened = True
                         sectionBCV = (BBB,C,V)
@@ -3541,14 +3550,14 @@ class BibleWriter( InternalBible ):
                         assert not text and not extras
                 else:
                     if text:
-                        logger.critical( f"toBibleDoor: {self.abbreviation} lost text in '{marker}' field in {BBB} {C}:{V} '{text}'" )
+                        logger.critical( f"_toBibleDoorJSONCHTML: {self.abbreviation} lost text in '{marker}' field in {BBB} {C}:{V} '{text}'" )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     if extras:
-                        logger.critical( "toBibleDoor: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
+                        logger.critical( "_toBibleDoorJSONCHTML: {} lost extras in {} field in {} {}:{}".format( self.abbreviation, marker, BBB, C, V ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
-                    logger.critical( "toBibleDoor: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    logger.critical( "_toBibleDoorJSONCHTML: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                 sectionHTML += lastHTML
@@ -3632,9 +3641,9 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
-            #dPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "    _toBibleDoorJSONCHTML: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    _toBibleDoorJSONCHTML: " +  _("Exporting uncompressed index to {}…").format( uncompressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( uncompressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3660,9 +3669,9 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #compressedHTMLIndex = sorted(compressedHTMLIndex)
-            #dPrint( 'Quiet', debuggingThisModule, "    toBibleDoor: {} index entries created.".format( len(newHTMLIndex) ) )
+            #dPrint( 'Quiet', debuggingThisModule, "    _toBibleDoorJSONCHTML: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolderpath, 'BDHeader.json' )
-            vPrint( 'Info', debuggingThisModule, "    toBibleDoor: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
+            vPrint( 'Info', debuggingThisModule, "    _toBibleDoorJSONCHTML: " +  _("Exporting compressed index to {}…").format( compressedIndexFilepath ) )
             outputBytes = json.dumps( newHTMLIndex, ensure_ascii=False, indent=jsonIndent ).encode( 'utf-8' )
             with open( compressedIndexFilepath, 'wb' ) as jsonFile:
                 jsonFile.write( outputBytes )
@@ -3672,11 +3681,11 @@ class BibleWriter( InternalBible ):
         writeChecksums()
 
         if ignoredMarkers:
-            logger.info( "toBibleDoor: Ignored markers were {}".format( ignoredMarkers ) )
-            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored toBibleDoor markers were {}").format( ignoredMarkers ) )
+            logger.info( "_toBibleDoorJSONCHTML: Ignored markers were {}".format( ignoredMarkers ) )
+            vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored _toBibleDoorJSONCHTML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
-            logger.warning( "toBibleDoor: Unhandled markers were {}".format( unhandledMarkers ) )
-            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toBibleDoor markers were {}").format( unhandledMarkers ) )
+            logger.warning( "_toBibleDoorJSONCHTML: Unhandled markers were {}".format( unhandledMarkers ) )
+            vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled _toBibleDoorJSONCHTML markers were {}").format( unhandledMarkers ) )
 
         # Display compression info
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:

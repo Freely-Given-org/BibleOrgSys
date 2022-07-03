@@ -24,6 +24,9 @@
 
 """
 Module for defining and manipulating USFM Bible books.
+
+CHANGELOG:
+    2022-06-10 Make uw alignment loading more robust to handle formatting errors
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Any, Optional
@@ -42,10 +45,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-06-14' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.57'
+PROGRAM_VERSION = '0.58'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -165,14 +168,17 @@ class USFMBibleBook( BibleBook ):
                 if variables['words'].endswith( '"\\w**' ):
                     vPrint( 'Quiet', debuggingThisFunction, "Drop final double asterisk!!!! (for Hindi IRV ???)")
                     variables['words'] = variables['words'][:-1]
-                assert ( variables['words'].endswith( '"\\w*' )
+                if not ( variables['words'].endswith( '"\\w*' )
                 or variables['words'].endswith( '\\w*{' ) # UST Act 1:18 (or should this have been handled earlier)
                 or ((variables['words'][-1] in '-\u200c' # Zero-width non-joiner (for Kannada IEV)
                     or variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS)
                         and variables['words'][-5:-1] == '"\\w*' ) \
                 or (variables['words'][-1] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
                     and variables['words'][-2] in BibleOrgSysGlobals.TRAILING_WORD_PUNCT_CHARS
-                    and variables['words'][-6:-2] == '"\\w*' ) )
+                    and variables['words'][-6:-2] == '"\\w*' ) ):
+                        logging.critical( f"handleUWEncoding({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at {self.BBB} {C}:{V} with {variables['words']=}" )
+                        # ['words']=' \\w the|x-occurrence="2" x-occurrences="3"\\w* {\\w head|x-occurrence="2" x-occurrences="2"\\w*|'
+                        halt
                 assert 'zaln' not in variables['words']
             if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
 
@@ -271,7 +277,7 @@ class USFMBibleBook( BibleBook ):
                                         .format( self.BBB, C, V, marker ) )
                         logging.warning( _("Unclosed '\\{}' Door43 custom alignment marker after {} {}:{} at beginning of line (with no text)") \
                                         .format( marker, self.BBB, C, V ) )
-                        dPrint( 'Quiet', debuggingThisFunction, "These error messages need fixing!")
+                        dPrint( 'Info', debuggingThisFunction, "The above warnings and error messages need fixing!")
                         if debuggingThisFunction or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt # Error messages need fixing
                     else: # self-closing was ok
                         variables['level'] += 1
@@ -572,6 +578,8 @@ class USFMBibleBook( BibleBook ):
                     elif marker == 'p~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB} {C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
                         marker = 'p'
+                    elif marker == 'qs*' and not text: # selah character ending marker on its own line
+                        pass
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB} {C}:{V} text after '{lastMarker}': {marker}='{text}'" )

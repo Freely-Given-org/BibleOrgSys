@@ -58,7 +58,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-06-20' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
 PROGRAM_VERSION = '0.22'
@@ -229,7 +229,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 ### eBIBLE.org
     if PROCESS_EBIBLE_FLAG or PROCESS_ALL_FLAG: # eBible.org versions
         # The downloads for these eBible files are updated every month by a boss script
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'ASV', 'American Standard Version (1901)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-asv_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -656,7 +656,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if 0 and 1 or PROCESS_ALL_FLAG:
             abbreviation, name = 'Wycliffe', 'Wycliffe Bible'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engWycliffe_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )

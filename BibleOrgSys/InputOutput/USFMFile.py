@@ -5,7 +5,7 @@
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -46,10 +46,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+LAST_MODIFIED_DATE = '2022-06-30' # by RJH
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.87'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -59,7 +59,7 @@ DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a li
 
 
 
-def splitMarkerFromText( line:str ) -> Tuple[Optional[str],str]:
+def splitUSFMMarkerFromText( line:str ) -> Tuple[Optional[str],str]:
     """
     Given a line of text (may be empty),
         returns a backslash marker and the text.
@@ -102,7 +102,7 @@ def splitMarkerFromText( line:str ) -> Tuple[Optional[str],str]:
             marker = lineAfterLeadingBackslash[:ixSP]
             text = lineAfterLeadingBackslash[ixSP+1:] # We drop the space completely
     return marker, text
-# end if splitMarkerFromText
+# end if splitUSFMMarkerFromText
 
 
 
@@ -181,7 +181,7 @@ class USFMFile:
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
 
-                    marker, text = splitMarkerFromText( line )
+                    marker, text = splitUSFMMarkerFromText( line )
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
 

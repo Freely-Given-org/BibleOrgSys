@@ -5,7 +5,7 @@
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,19 +44,16 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.InputOutput.USFMFile import splitMarkerFromText
+from BibleOrgSys.InputOutput.USFMFile import splitUSFMMarkerFromText
 
 
-LAST_MODIFIED_DATE = '2020-02-24' # by RJH
+LAST_MODIFIED_DATE = '2022-06-30' # by RJH
 SHORT_PROGRAM_NAME = "ESFMFile"
 PROGRAM_NAME = "ESFM File loader"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
-
-
-DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
 
 
 
@@ -133,7 +130,7 @@ class ESFMFile:
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
 
-                    marker, text = splitMarkerFromText( line )
+                    marker, text = splitUSFMMarkerFromText( line )
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
 
