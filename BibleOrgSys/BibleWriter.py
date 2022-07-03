@@ -115,7 +115,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-07-03' # by RJH
+LAST_MODIFIED_DATE = '2022-07-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -3031,6 +3031,7 @@ class BibleWriter( InternalBible ):
             workAbbreviation = self.getSetting( 'WorkAbbreviation' )
             headerDict['Version abbreviation'] = workAbbreviation if workAbbreviation else self.abbreviation
             headerDict['Has section headings'] = haveAnySectionHeadings
+            headerDict['Shareable'] = True
             #dPrint( 'Quiet', debuggingThisModule, headerDict )
 
             vPrint( 'Info', debuggingThisModule, "  " +  _("Exporting BD header to {}…").format( headerFilepath ) )
