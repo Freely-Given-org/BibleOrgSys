@@ -5,7 +5,7 @@
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -94,10 +94,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2021-05-30' # by RJH
+LAST_MODIFIED_DATE = '2022-07-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
-PROGRAM_VERSION = '0.34'
+PROGRAM_VERSION = '0.35'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -1775,7 +1775,7 @@ class BibleAnchorReference:
             for entry in singleVerseSet:
                 if totalVerseList.count(entry) > 1:
                     #dPrint( 'Quiet', debuggingThisModule, entry )
-                    logging.warning( _("Have duplicate or overlapping range at {} in Bible references {!r}{}").format( self.makeReferenceString(entry), anchorString, '' if location is None else " at {}".format(location) ) )
+                    logging.warning( _("Have duplicate or overlapping range at {} in Bible references {!r}{}").format( self, anchorString, '' if location is None else " at {}".format(location) ) )
             haveWarnings = True
         return status==6 and not haveErrors, haveWarnings, self.referenceList
     # end of BibleAnchorReference:parseAnchorString
