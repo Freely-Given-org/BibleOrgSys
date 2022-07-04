@@ -1259,7 +1259,8 @@ class InternalBibleBook:
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
         if '|' in adjText: # this will become a problem
             logging.critical( "\nprocessLineFix: Why do we still have a vertical pipe in {!r}\n  from {!r}?".format( adjText, text ) )
-            if 1 or BibleOrgSysGlobals.debugFlag: halt
+            if 'Brenton' not in self.workName:
+                if BibleOrgSysGlobals.debugFlag: halt
 
         # Check trailing spaces again now
         if adjText and adjText[-1].isspace():
