@@ -109,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-07-03' # by RJH
+LAST_MODIFIED_DATE = '2022-07-17' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.89'
@@ -125,7 +125,7 @@ haltOnXMLWarning = False # Used for XML debugging
 # Online settings
 # TODO: Should be https as soon as supported by the site
 SUPPORT_SITE_NAME = 'Freely-Given.org'
-SUPPORT_SITE_URL = f'http://{SUPPORT_SITE_NAME}/'
+SUPPORT_SITE_URL = f'https://{SUPPORT_SITE_NAME}/'
 DISTRIBUTABLE_RESOURCES_URL = f'{SUPPORT_SITE_URL}Software/BibleOrganisationalSystem/DistributableResources/'
 
 PICKLED_BIBLE_VERSION = '1' # Must be incremented if Bible internals get changed
@@ -196,6 +196,7 @@ BOS_TESTS_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.joinpath( 'Tests/' )
 BOS_TEST_DATA_FOLDERPATH = BOS_TESTS_FOLDERPATH.joinpath( 'DataFilesForTests/' )
 
 # Resources like original language lexicons should be based from this folder
+# TODO: We have to fix this!!!
 BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH = BOS_LIBRARY_BASE_FOLDERPATH.parent # Two folders above the one containing this file
 
 
@@ -215,12 +216,19 @@ def vPrint( requestedLevel:Union[int,str], increaseLevel:Union[bool,int], *args,
 
     Only print the given string, if the verbosity level is correct.
     """
+    # try:
+    #     if 'FN:' not in args[0] and 'makeBookCVIndex' not in args[0]:
+    #         print(f"vPrint( {requestedLevel=!r} {increaseLevel=!r} {args=} {kwargs=}")
+    # except TypeError:
+    #         print(f"vPrint( {requestedLevel=!r} {increaseLevel=!r} {args=} {kwargs=}")
     if isinstance( requestedLevel, str ):
         try: requestedLevel = LEVEL_NAME_DICT[requestedLevel]
         except KeyError: requestedLevel = 4 # default to verbose
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( requestedLevel, int )
     if increaseLevel is True: # (could also be an int)
         increaseLevel = 1 # Should always be an int now
+    elif increaseLevel is False: # (could also be an int)
+        increaseLevel = 0 # Should always be an int now
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )
     # Make one or more levels more verbose if increaseLevel is set
     if increaseLevel: requestedLevel -= increaseLevel # Doesn't matter if it goes negative
@@ -250,6 +258,9 @@ def fnPrint( increaseLevel:Union[bool,int], *args, **kwargs ) -> None:
 
     Only print the given string, if the verbosity level is correct.
     """
+    if isinstance( increaseLevel, str ):
+        logging.warning( f"Bad call to fnPrint: {increaseLevel} {args=} {kwargs=}" )
+        return
     if increaseLevel is True: # (could also be an int)
         increaseLevel = 1 # Should always be an int now
     if debugFlag or strictCheckingFlag or debuggingThisModule: assert isinstance( increaseLevel, int )

@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganisationalSystems
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -74,7 +74,7 @@ from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystem
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
 PROGRAM_NAME = "Bible Organisation Systems handler"
 PROGRAM_VERSION = '0.35'
@@ -520,7 +520,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert len(BBB) == 3
-        if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+        if C and not C.isdigit() and C!='-1': # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             vPrint( 'Quiet', debuggingThisModule, "BibleOrganisationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
@@ -618,8 +618,7 @@ def briefDemo() -> None:
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
             vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', debuggingThisModule, '' )
         for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
             vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of BibleOrganisationalSystem.briefDemo
@@ -657,8 +656,7 @@ def fullDemo() -> None:
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
             vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', debuggingThisModule, '' )
         for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
             vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of BibleOrganisationalSystem.fullDemo

@@ -5,7 +5,7 @@
 #
 # Module handling unfoldingWord Open Bible Stories stored in markdown files.
 #
-# Copyright (C) 2020 Robert Hunt
+# Copyright (C) 2020-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,7 +52,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Formats.uWNotesBible import loadYAML
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "uWOBSBible"
 PROGRAM_NAME = "unfoldingWord Open Bible Stories handler"
 PROGRAM_VERSION = '0.01'
@@ -382,7 +382,7 @@ class uWOBSBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            vPrint( 'Never', debuggingThisModule, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            fnPrint( debuggingThisModule, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
             self.addLine( originalMarker, originalText ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
             # marker, text = originalMarker, originalText.replace( '~', ' ' )
             # if '\\' in text: # Check markers inside the lines

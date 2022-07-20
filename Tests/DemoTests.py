@@ -1758,7 +1758,7 @@ def main():
     """
     BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
 
-    with open( resultFilepath, 'wt' ) as myFile: myFile.write( programNameVersion + '\n' )
+    with open( resultFilepath, 'wt', encoding='utf-8' ) as myFile: myFile.write( programNameVersion + '\n' )
 
     if 1 or 'win' in sys.platform or BibleOrgSysGlobals.debugFlag:
         publishResultLine( f"  Platform is {sys.platform}" ) # e.g., 'linux, or 'win32' for my Windows-10 (64-bit)

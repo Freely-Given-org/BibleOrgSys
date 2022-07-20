@@ -6,7 +6,7 @@
 # Module handling online resources from the unfoldingWord/Door43 catalog
 #   (accessible through api.door43.org)
 #
-# Copyright (C) 2019-2020 Robert Hunt
+# Copyright (C) 2019-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ More details are available from https://api-info.readthedocs.io/en/latest/index.
 from gettext import gettext as _
 import os
 import logging
-import urllib.request
+import requests
 import json
 import tempfile
 import zipfile
@@ -58,10 +58,10 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
-LAST_MODIFIED_DATE = '2020-06-10' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "Door43OnlineCatalog"
 PROGRAM_NAME = "Door43 Online Catalog online handler"
-PROGRAM_VERSION = '0.09'
+PROGRAM_VERSION = '0.10'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -105,23 +105,23 @@ class Door43CatalogResources:
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
         vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
-        try: HTTPResponseObject = urllib.request.urlopen( requestString )
-        except urllib.error.URLError as err:
+        responseObject = requests.get( requestString )
+        if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
             #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "Door43 URLError '{}' from {}".format( err, requestString ) )
+            logging.error( f"Door43 {responseObject.status_code} URLError from {requestString}" )
             return None
         #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
-        contentType = HTTPResponseObject.info().get( 'content-type' )
+        contentType = responseObject.headers['Content-Type']
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
-            responseJSON = HTTPResponseObject.read()
-            vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
-            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
-            responseSTR = responseJSON.decode( responseJSONencoding )
-            vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
-            return json.loads( responseSTR )
+            # responseJSON = HTTPResponseObject.read()
+            # vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
+            # responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
+            # vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
+            # responseSTR = responseJSON.decode( responseJSONencoding )
+            # vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
+            return responseObject.json()
         else:
             if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
                 vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
@@ -417,14 +417,14 @@ class Door43CatalogBible( USFMBible ):
             vPrint( 'Normal', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
         else: # Download the zip file (containing all the USFM files, LICENSE.md, manifest.yaml, etc.)
             vPrint( 'Normal', debuggingThisModule, "Downloading {:,} bytes from '{}'…".format( size, zipURL ) )
-            try: HTTPResponseObject = urllib.request.urlopen( zipURL )
-            except urllib.error.URLError as err:
+            responseObject = requests.get( zipURL )
+            if responseObject.status_code != 200:
                 #errorClass, exceptionInstance, traceback = sys.exc_info()
                 #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-                logging.critical( "Door43 URLError '{}' from {}".format( err, zipURL ) )
+                logging.critical( f"Door43 {responseObject.status_code} URLError from {zipURL}" )
                 return None
             #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
-            contentType = HTTPResponseObject.info().get( 'content-type' )
+            contentType = responseObject.headers['Content-Type']
             vPrint( 'Quiet', debuggingThisModule, "    contentType", contentType )
             if contentType == 'application/zip':
                 try: os.makedirs( unzippedFolderpath )
@@ -432,7 +432,7 @@ class Door43CatalogBible( USFMBible ):
                 # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
                 # myTempFile = tempfile.SpooledTemporaryFile()
                 myTempFile = tempfile.TemporaryFile()
-                myTempFile.write( HTTPResponseObject.read() )
+                myTempFile.write( responseObject.content )
                 with zipfile.ZipFile( myTempFile ) as myzip:
                     # NOTE: Could be a security risk here
                     myzip.extractall( unzippedFolderpath )
@@ -469,9 +469,7 @@ def briefDemo() -> None:
     #dPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
 
     door43CatalogResources.fetchCatalog()
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        vPrint( 'Quiet', debuggingThisModule, '' )
-        vPrint( 'Quiet', debuggingThisModule, door43CatalogResources )
+    vPrint( 'Quiet', debuggingThisModule, f"\n{door43CatalogResources}" )
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         vPrint( 'Info', debuggingThisModule, f"\nLanguage list ({len(door43CatalogResources.languageDict)}):" )
@@ -589,9 +587,7 @@ def fullDemo() -> None:
     #dPrint( 'Quiet', debuggingThisModule, Door43CatalogResources )
 
     door43CatalogResources.fetchCatalog()
-    if BibleOrgSysGlobals.verbosityLevel > 0:
-        vPrint( 'Quiet', debuggingThisModule, '' )
-        vPrint( 'Quiet', debuggingThisModule, door43CatalogResources )
+    vPrint( 'Quiet', debuggingThisModule, f"\n{door43CatalogResources}" )
 
     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
         vPrint( 'Info', debuggingThisModule, f"\nLanguage list ({len(door43CatalogResources.languageDict)}):" )

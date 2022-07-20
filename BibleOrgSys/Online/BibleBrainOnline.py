@@ -64,7 +64,7 @@ More details are available from https://www.faithcomesbyhearing.com/bible-brain/
 from gettext import gettext as _
 import os
 import logging
-import urllib.request
+import requests
 import json
 from pathlib import Path
 
@@ -79,10 +79,10 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Online.GenericOnlineBible import GenericOnlineBible
 
 
-LAST_MODIFIED_DATE = '2020-04-14' # by RJH
+LAST_MODIFIED_DATE = '2020-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleBrainPlatform"
 PROGRAM_NAME = "FCBH Bible Brain Platform online handler"
-PROGRAM_VERSION = '0.23'
+PROGRAM_VERSION = '0.24'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -113,7 +113,7 @@ def getSecurityKey():
         keyFilepath = folderpath.joinpath( BIBLE_BRAIN_KEY_FILENAME )
         if keyFilepath.is_file():
             vPrint( 'Info', debuggingThisModule, f"getSecurityKey: found key file in {keyFilepath}" )
-            with open( keyFilepath, 'rt' ) as keyFile:
+            with open( keyFilepath, 'rt', encoding='utf-8' ) as keyFile:
                 return keyFile.read() # Our personal key
     raise FileNotFoundError( f"Cannot find key file {BIBLE_BRAIN_KEY_FILENAME}" )
 # end of getSecurityKey
@@ -160,23 +160,23 @@ class BibleBrainBibles:
 
         requestString = '{}{}{}{}'.format( BIBLE_BRAIN_URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
-        try: HTTPResponseObject = urllib.request.urlopen( requestString )
-        except urllib.error.URLError as err:
+        responseObject = requests.get( requestString )
+        if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
             #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "BibleBrain URLError '{}' from {}".format( err, requestString ) )
+            logging.error( f"BibleBrain URLError {responseObject.status_code} from {requestString}" )
             return None
         #dPrint( 'Quiet', debuggingThisModule, "HTTPResponseObject", HTTPResponseObject )
-        contentType = HTTPResponseObject.info().get( 'content-type' )
+        contentType = responseObject.headers['Content-Type']
         #dPrint( 'Quiet', debuggingThisModule, f"    contentType='{contentType}'" )
         if contentType == 'application/json':
-            responseJSON = HTTPResponseObject.read()
+            # responseJSON = HTTPResponseObject.read()
             #dPrint( 'Quiet', debuggingThisModule, "responseJSON", len(responseJSON), responseJSON )
-            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
+            # responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
             #dPrint( 'Quiet', debuggingThisModule, "responseJSONencoding", responseJSONencoding )
-            responseSTR = responseJSON.decode( responseJSONencoding )
+            # responseSTR = responseJSON.decode( responseJSONencoding )
             #dPrint( 'Quiet', debuggingThisModule, "responseSTR", len(responseSTR), repr(responseSTR) )
-            return json.loads( responseSTR )
+            return responseObject.json()
         else:
             vPrint( 'Quiet', debuggingThisModule, 'contentType', contentType )
             halt # Haven't had this contentType before
@@ -564,12 +564,11 @@ class BibleBrainBible( GenericOnlineBible ):
         vPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( BIBLE_BRAIN_URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( BIBLE_BRAIN_URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
-        try: responseJSON = urllib.request.urlopen( requestString )
-        except urllib.error.URLError:
-            if BibleOrgSysGlobals.debugFlag: logging.critical( "BibleBrainBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
+        responseObject = requests.get( requestString )
+        if responseObject.status_code != 200:
+            if BibleOrgSysGlobals.debugFlag: logging.critical( f"BibleBrainBible.getOnlineData: {responseObject.status_code} error fetching {fieldREST=} {additionalParameters=}" )
             return None
-        responseSTR = responseJSON.read().decode('utf-8')
-        return json.loads( responseSTR )
+        return responseObject.json()
     # end of BibleBrainBible.getOnlineData
 
 

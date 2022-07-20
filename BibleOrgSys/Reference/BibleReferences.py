@@ -94,7 +94,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2022-07-04' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferences"
 PROGRAM_NAME = "Bible References handler"
 PROGRAM_VERSION = '0.35'
@@ -1353,7 +1353,8 @@ class BibleReferenceList( BibleReferenceBase ):
         #dPrint( 'Verbose', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert BBB and len(BBB)==3
         assert C
-        if not C.isdigit(): vPrint( 'Quiet', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
+        if not C.isdigit() and C!='-1':
+            vPrint( 'Quiet', debuggingThisModule, "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
         assert V # May contain a list or range here
 
         # First find out what we were given

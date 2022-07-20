@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-06-14' # by RJH
+LAST_MODIFIED_DATE = '2022-07-20' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.58'
@@ -178,9 +178,9 @@ class USFMBibleBook( BibleBook ):
                     and variables['words'][-6:-2] == '"\\w*' ) ):
                         logging.critical( f"handleUWEncoding({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at {self.BBB} {C}:{V} with {variables['words']=}" )
                         # ['words']=' \\w the|x-occurrence="2" x-occurrences="3"\\w* {\\w head|x-occurrence="2" x-occurrences="2"\\w*|'
-                        halt
                 assert 'zaln' not in variables['words']
-            if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
+            if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
+                logging.critical( f"handleUWEncoding: exceeded maximum nesting levels ({givenMarker=} {givenText=} {variables['level']=} {variables['maxLevel']=}) got a problem at {self.BBB} {C}:{V} with {variables['words']=}" )
 
 
             def saveAlignment( C:str, V:str, textStr:str, wordsStr:str ) -> None:

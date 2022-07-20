@@ -80,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2022-05-30' # by RJH
+LAST_MODIFIED_DATE = '2022-07-18' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.85'
@@ -401,8 +401,7 @@ class InternalBible:
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
-            dPrint( 'Verbose', debuggingThisModule, 'NOLOAD1', BBB in self.books, BBB in self.triedLoadingBook )
-            dPrint( 'Verbose', debuggingThisModule, 'NOLOAD2', BBB in self.bookNeedsReloading, self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE' )
+            dPrint( 'Verbose', debuggingThisModule, f"NOLOAD: {BBB in self.books=} {BBB in self.triedLoadingBook=} {BBB in self.bookNeedsReloading=} {self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE'}" )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -2777,7 +2776,7 @@ class InternalBible:
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
-                with open( originalsAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as exportFile:
+                with open( originalsAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt', encoding='utf-8' ) as exportFile:
                     json.dump( dataObject, exportFile, ensure_ascii=False, indent=JSON_INDENT )
 
         # Save the original text without \w fields for easier reading
@@ -2881,7 +2880,7 @@ class InternalBible:
                     thisDict[BCVref].append( (originalWordsList,translatedWordsString,translatedWordsList) )
 
                 # Write out the alignment data for each book (in JSON)
-                with open( alignmentsOutputFolderpath.joinpath( f'{BBB}_alignments.json' ), 'wt' ) as exportFile:
+                with open( alignmentsOutputFolderpath.joinpath( f'{BBB}_alignments.json' ), 'wt', encoding='utf-8' ) as exportFile:
                     json.dump( bookAlignmentsDict, exportFile, ensure_ascii=False, indent=JSON_INDENT )
 
 
@@ -3208,11 +3207,11 @@ class InternalBible:
                 ):
             assert isinstance( dataObject, (dict,list) )
             if dataObject: # Don't write blank files
-                with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt' ) as exportFile:
+                with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_{objectName}.json' ), 'wt', encoding='utf-8' ) as exportFile:
                     json.dump( dataObject, exportFile, ensure_ascii=False, indent=JSON_INDENT )
 
         # Save some text files for manually looking through
-        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt' ) as exportFile:
+        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byForm.txt' ), 'wt', encoding='utf-8' ) as exportFile:
             for originalWord in sorted(originalFormToTransOccurrencesDict, key=lambda theWord: theWord.lower()):
                 assert isinstance( originalWord, str )
                 assert originalWord
@@ -3239,7 +3238,7 @@ class InternalBible:
         #dPrint( 'Quiet', debuggingThisFunction, "keys", originalLemmaToTransOccurrencesDict.keys() )
         #dPrint( 'Quiet', debuggingThisFunction, "\n", sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()) )
         #dPrint( 'Quiet', debuggingThisFunction, "blank", originalLemmaToTransOccurrencesDict[''] )
-        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt' ) as exportFile:
+        with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_TransOccurrences.byLemma.txt' ), 'wt', encoding='utf-8' ) as exportFile:
             for originalLemma in sorted(originalLemmaToTransOccurrencesDict, key=lambda theLemma: theLemma.lower()):
                 assert isinstance( originalLemma, str )
                 #assert originalLemma # NO, THESE CAN BE BLANK
@@ -3267,7 +3266,7 @@ class InternalBible:
 
         # Best to make these decisions in the analysis -- not here
         # if self.abbreviation == 'ULT':
-        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt' ) as exportFile:
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byBCV.txt' ), 'wt', encoding='utf-8' ) as exportFile:
         #         fromList, toList = [], []
         #         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
         #             if len(originalWordsList) == 1:
@@ -3286,10 +3285,10 @@ class InternalBible:
         #             if len(originalWordsList) > OK_ORIGINAL_WORDS_COUNT \
         #             or len(translatedWordsList) > OK_TRANSLATED_WORDS_COUNT:
         #                 exportFile.write( outputString )
-        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt' ) as exportFile:
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byOriginalCount.txt' ), 'wt', encoding='utf-8' ) as exportFile:
         #         for count,outputString in sorted( fromList, reverse=True ):
         #             exportFile.write( outputString )
-        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt' ) as exportFile:
+        #     with open( alignedAnalysisOutputFolderpath.joinpath( f'{self.abbreviation}_LargeAggregates.byTranslatedCount.txt' ), 'wt', encoding='utf-8' ) as exportFile:
         #         for count,outputString in sorted( toList, reverse=True ):
         #             exportFile.write( outputString )
 

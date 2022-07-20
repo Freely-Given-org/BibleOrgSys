@@ -5,7 +5,7 @@
 #
 # Module handling Open Scriptures Hebrew WLC.
 #
-# Copyright (C) 2011-2021 Robert Hunt
+# Copyright (C) 2011-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,7 +45,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 
-LAST_MODIFIED_DATE = '2021-02-07' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
 PROGRAM_VERSION = '0.26'
@@ -140,7 +140,7 @@ class HebrewWLCBibleAddon():
             If so, returns wwDict with word attributes.
             Otherwise, returns None.
             """
-            vPrint( 'Never', debuggingThisModule, "handleExtra", thisExtra )
+            fnPrint( debuggingThisModule, f"handleExtra( {thisExtra} )" )
 
             if thisExtra.getType() == 'ww':
                 wwField = thisExtra.getText()
@@ -521,7 +521,7 @@ class HebrewWLCBibleAddon():
             os.mkdir( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH )
 
         BibleOrgSysGlobals.backupAnyExistingFile( glossingDictExportFilepath, numBackups=5 )
-        with open( glossingDictExportFilepath, 'wt' ) as exportFile:
+        with open( glossingDictExportFilepath, 'wt', encoding='utf-8' ) as exportFile:
             for word,(genericGloss,genericReferencesList,specificReferencesDict) in self.glossingDict.items():
                 if ' ' in word or '/' in word:
                     logging.error( _("Word {!r} has illegal characters").format( word ) )
@@ -537,7 +537,7 @@ class HebrewWLCBibleAddon():
             vPrint( 'Normal', debuggingThisModule, _("Exporting reverse glossing dictionary ({:,} entries) to '{}'…").format( len(self.glossingDict), DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH ) )
             BibleOrgSysGlobals.backupAnyExistingFile( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 5 )
             doneGlosses = []
-            with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt' ) as exportFile:
+            with open( DEFAULT_GENERIC_GLOSSING_REVERSE_EXPORT_FILEPATH, 'wt', encoding='utf-8' ) as exportFile:
                 for word,(genericGloss,genericReferencesList,specificReferencesDict) in sorted( self.glossingDict.items(), key=lambda theTuple: theTuple[1][0].lower() ):
                     if genericGloss in doneGlosses:
                         logging.warning( _("Generic gloss {!r} has already appeared: currently for word {!r}").format( genericGloss, word ) )

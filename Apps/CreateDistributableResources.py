@@ -58,10 +58,10 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2022-06-20' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
-PROGRAM_VERSION = '0.22'
+PROGRAM_VERSION = '0.30'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -75,19 +75,24 @@ WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH = BibleOrgSysGlobals.BOS_DEFAULT_WR
 TEST_OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_DistributableResources/' )
 DEFAULT_DATA_LEVEL = 1 # We use level 1 of PickledBible which saves minimal data used for displaying the resource
 HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM test versions/' )
+DOOR43_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Door43CatalogVersions/' )
+OPEN_BIBLE_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Biblica_Open.Bible_Versions/' )
 
 
 # NOTE: Use --export (-x) to also do BibleDropBox submissions
 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
-PROCESS_ALL_FLAG = False or __name__ != '__main__'
-PROCESS_WLC_FLAG = False
-PROCESS_EBIBLE_FLAG = True
-PROCESS_DOOR43_FLAG = False
-PROCESS_OTHERS_FLAG = False
+PROCESS_ONE = 'FOB' # Will disable all others if set to an abbreviation, e.g., 'WLC'
+PROCESS_ALL_FLAG = (False or __name__ != '__main__') and not PROCESS_ONE
+PROCESS_WLC_FLAG = False and not PROCESS_ONE
+PROCESS_EBIBLE_FLAG = False and not PROCESS_ONE
+PROCESS_UNFOLDING_WORD_FLAG = False and not PROCESS_ONE
+PROCESS_DOOR43_FLAG = False and not PROCESS_ONE
+PROCESS_OPEN_BIBLE_FLAG = False and not PROCESS_ONE
+PROCESS_OTHERS_FLAG = False and not PROCESS_ONE
 
-PROCESS_CHANGES_ONLY = False
+PROCESS_CHANGES_ONLY = False and not PROCESS_ONE
 
 
 
@@ -208,7 +213,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 
 
 ### OPEN SCRIPTURES HEBREW WLC
-    if PROCESS_WLC_FLAG or PROCESS_ALL_FLAG: # Open Scriptures Hebrew WLC
+    if PROCESS_WLC_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE=='WLC': # Open Scriptures Hebrew WLC
         abbreviation, name = 'WLC', 'Westminster Leningrad Codex'
         vPrint( 'Quiet', debuggingThisModule, f"\nUpdating Hebrew {abbreviation} from internet…" )
         repo_changed = runGitPull( OPEN_SCRIPTURES_INPUT_RESOURCES_FOLDERPATH.joinpath( 'morphhb/' ) ) # Make sure we have the latest version
@@ -227,9 +232,9 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 
 
 ### eBIBLE.org
-    if PROCESS_EBIBLE_FLAG or PROCESS_ALL_FLAG: # eBible.org versions
+    if PROCESS_EBIBLE_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE: # eBible.org versions
         # The downloads for these eBible files are updated every month by a boss script
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='ASV'):
             abbreviation, name = 'ASV', 'American Standard Version (1901)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-asv_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -237,13 +242,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The American Standard Version of the Holy Bible, first published in 1901.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-asv&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-asv',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='BBE'):
             abbreviation, name = 'BBE', 'The Bible in Basic English'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engBBE_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -251,13 +256,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Bible In Basic English (translated by Samuel Henry Hooke) was printed in 1965 by Cambridge Press in England.',
-                            'Source':'https://eBible.org/find/details.php?id=engBBE&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engBBE',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='Brenton'):
             abbreviation, name = 'Brenton', 'Brenton Septuagint Translation (1844)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-Brenton_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -265,13 +270,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'Translation of the Greek Septuagint into English by Sir Lancelot Charles Lee Brenton.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-Brenton&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-Brenton',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='DBY'):
             abbreviation, name = 'DBY', 'Darby Translation (1890)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engDBY_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -279,13 +284,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Scriptures, a New Translation from the Original Languages by J. N. Darby.',
-                            'Source':'https://eBible.org/find/details.php?id=engDBY&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engDBY',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='DRV'):
             abbreviation, name = 'DRV', 'Douay-Rheims (1899)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engDRA_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -293,7 +298,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Bible in English, Douay-Rheims American Edition of 1899, translated from the Latin Vulgate.',
-                            'Source':'https://eBible.org/find/details.php?id=engDRA&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engDRA',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
@@ -307,13 +312,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             #'Abbreviation':abbreviation,
                             #'WorkName':name,
                             #'About':'The Holy Bible, Easy-to-Read Version. Translation by: World Bible Translation Center.',
-                            #'Source':'https://eBible.org/find/details.php?id=engerv&all=1',
+                            #'Source':'https://eBible.org/find/details.php?id=engerv',
                             #'CopyrightNotice':'Copyright © 1987, 1999, 2006 Bible League International',
                            #'LanguageName':'',
                            #'ISOLanguageCode':'',
                             #}
             #makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='GNV'):
             abbreviation, name = 'GNV', 'Geneva Bible (1599)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'enggnv_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -321,13 +326,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Geneva Bible in Old English of 1599.',
-                            'Source':'https://eBible.org/find/details.php?id=enggnv&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=enggnv',
                             'Licence':'Public Domain',
                             'LanguageName':'Old English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='GLW'):
             abbreviation, name = 'GLW', 'God\'s Living Word (1996)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-glw_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -335,14 +340,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'God\'s Living Word—a translation of John and John\'s Letters into modern English by Michael Paul Johnson.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-glw&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-glw',
                             'CopyrightNotice':'Copyright © 1996 Michael Paul Johnson.',
                             'Licence':'This translation is made available to you under the terms of the Creative Commons Attribution-No Derivatives license 4.0.',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='KJV'):
             abbreviation, name = 'KJV', 'King James (Authorized) Version (1769)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-kjv2006_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -350,13 +355,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The King James Version or Authorized Version of the Holy Bible, using the standardized text of 1769, with Strong\'s numbers added.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-kjv2006&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-kjv2006',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='KJVD'):
             abbreviation, name = 'KJVD', 'King James (Authorized) Version with Apocrypha (1769)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-kjv_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -364,13 +369,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The King James Version or Authorized Version of the Holy Bible, using the standardized text of 1769, with Strong\'s numbers added, with Apocrypha/Deuterocanon.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-kjv&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-kjv',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='LXX2012'):
             abbreviation, name = 'LXX2012', 'Septuagint in American English (2012)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-lxx2012_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -378,13 +383,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Septuagint with Apocrypha, translated from Greek to English by Sir Lancelot C. L. Brenton and published in 1885, with some language updates (American English).',
-                            'Source':'https://eBible.org/find/details.php?id=eng-lxx2012&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-lxx2012',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='LXX2012UK'):
             abbreviation, name = 'LXX2012UK', 'Septuagint in British/International English (2012)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-uk-lxx2012_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -392,13 +397,27 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Septuagint with Apocrypha, translated from Greek to English by Sir Lancelot C. L. Brenton and published in 1885, with some language updates (British/International English).',
-                            'Source':'https://eBible.org/find/details.php?id=eng-uk-lxx2012&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-uk-lxx2012',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='NOY'):
+            abbreviation, name = 'NOY', 'George Noyes Bible (1869)'
+            thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engnoy_usfm/' ),
+                            givenName=name, givenAbbreviation=abbreviation )
+            metadataDict = {
+                            'Abbreviation':abbreviation,
+                            'WorkName':name,
+                            'About':'The Holy Bible, translated into English by George Noyes (1869).',
+                            'Source':'https://eBible.org/Scriptures/details.php?id=engnoy',
+                            'Licence':'Public Domain',
+                            'LanguageName':'English',
+                            'ISOLanguageCode':'eng',
+                            }
+            makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='OEB'):
             abbreviation, name = 'OEB', 'Open English Bible (U.S. spelling)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engoebus_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -406,13 +425,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Bible, Open English Bible translation, U. S. spelling edition.',
-                            'Source':'https://eBible.org/find/details.php?id=engoebusw&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engoebusw',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='OEBCW'):
             abbreviation, name = 'OEBCW', 'Open English Bible (Commonwealth spelling)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engoebcw_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -420,13 +439,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Bible, Open English Bible translation, Commonwealth spelling edition.',
-                            'Source':'https://eBible.org/find/details.php?id=engoebcww&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engoebcww',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='OURB'):
             abbreviation, name = 'OURB', 'One Unity Resource Bible (2016)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engourb_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -434,13 +453,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The One Unity Resource Bible translation of the Holy Bible into American English with some transliterated Hebrew notations.',
-                            'Source':'https://eBible.org/find/details.php?id=engourb&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engourb',
                             'Licence':'Creative Commons Attribution Share-Alike license 4.0.',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='RV'):
             abbreviation, name = 'RV', 'Revised Version with Apocrypha (1895)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-rv_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -448,13 +467,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Revised Version of the Holy Bible (1895) with Apocrypha.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-rv&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-rv',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='T4T'):
             abbreviation, name = 'T4T', 'Translation for Translators'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-t4t_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -462,14 +481,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'A Bible Translation for Bible Translators which makes implied information explicit in the text as an aid to the translator who may need that information to correctly translate into a particular language.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-t4t&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-t4t',
                             'CopyrightNotice':'Copyright © 2008-2017 Ellis W. Deibler, Jr.',
                             'Licence':'Creative Commons Attribution Share-Alike license 4.0.',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='FLS'):
             abbreviation, name = 'FLS', 'Louis Segond Bible (1910)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'fraLSG_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -477,14 +496,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'French Louis Segond 1910 Bible.',
-                            'Source':'https://eBible.org/find/details.php?id=fraLSG&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=fraLSG',
                             'CopyrightNotice':'Cette Bible est dans le domaine public. Il n\'est pas protégé par copyright. This Bible is in the Public Domain. It is not copyrighted.',
                             'Licence':'Public Domain',
                             'LanguageName':'Français (French)',
                             'ISOLanguageCode':'fre',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='FOB'):
             abbreviation, name = 'FOB', 'La Sainte Bible'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'fra_fob_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -492,14 +511,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Bible in French, by Ostervald.',
-                            'Source':'https://eBible.org/find/details.php?id=fra_fob&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=fra_fob',
                             #'CopyrightNotice':'',
                             'Licence':'Public Domain',
                             'LanguageName':'Français (French)',
                             'ISOLanguageCode':'fre',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='LB'):
             abbreviation, name = 'LB', 'Luther Bibel (1912)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'deu1912_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -507,14 +526,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The Holy Bible in German, by Martin Luther.',
-                            'Source':'https://eBible.org/find/details.php?id=deu1912&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=deu1912',
                             #'CopyrightNotice':'',
                             'Licence':'Public Domain',
                             'LanguageName':'Deutsch (German, Standard)',
                             'ISOLanguageCode':'deu',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='VBL'):
             abbreviation, name = 'VBL', 'Versión Biblia Libre, Nuevo Testamento (2018)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'spavbl_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -522,14 +541,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The New Testament in Spanish, Free Bible Version.',
-                            'Source':'https://eBible.org/find/details.php?id=spavbl&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=spavbl',
                             'CopyrightNotice':'Copyright © 2018 Jonathan Gallagher y Shelly Barrios de Avila',
                             'Licence':'Creative Commons Attribution-No Derivatives license 4.0',
                             'LanguageName':'Español (Spanish)',
                             'ISOLanguageCode':'spa',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='RUSSYN'):
             abbreviation, name = 'RUSSYN', 'Синодальный перевод'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'russyn_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -537,14 +556,14 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'Synodal Translation of the Holy Bible in Russian by Orthodox theological academies of Moscow, Saint Petersburg, Kazan, and Kiev.',
-                            'Source':'https://eBible.org/find/details.php?id=russyn&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=russyn',
                             #'CopyrightNotice':'',
                             'Licence':'Public Domain',
                             'LanguageName':'Deutsch (German, Standard)',
                             'ISOLanguageCode':'rus',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='VULC'):
             abbreviation, name = 'VULC', 'Clementine Vulgate (1598)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'latVUC_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -552,13 +571,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'Clementine Vulgate of 1598 with Glossa Ordinaria Migne edition 1880 in Latin.',
-                            'Source':'https://eBible.org/find/details.php?id=latVUC&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=latVUC',
                             'Licence':'Public Domain',
                             'LanguageName':'Latin',
                             'ISOLanguageCode':'lat',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WEB'):
             abbreviation, name = 'WEB', 'World English Bible with Deuterocanon'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-web_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -566,13 +585,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World English Bible is a Public Domain translation of the Holy Bible into modern English. Includes Apocrypha/Deuterocanon.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-web&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-web',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WEBP'):
             abbreviation, name = 'WEBP', 'World English Bible (Protestant)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engwebp_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -580,13 +599,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World English Bible is a Public Domain translation of the Holy Bible into modern English.',
-                            'Source':'https://eBible.org/find/details.php?id=engwebp&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engwebp',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WEBC'):
             abbreviation, name = 'WEBC', 'World English Bible (Catholic)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-web-c_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -594,13 +613,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World English Bible is a Public Domain translation of the Holy Bible into modern English with Catholic book order.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-web-c&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-web-c',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WEBBE'):
             abbreviation, name = 'WEBBE', 'World English Bible (British edition)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'eng-webbe_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -608,13 +627,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World English Bible British Edition is a Public Domain translation of the Holy Bible into contemporary British/International English. Includes Apocrypha/Deuterocanon.',
-                            'Source':'https://eBible.org/find/details.php?id=eng-webbe&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=eng-webbe',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WEBPB'):
             abbreviation, name = 'WEBPB', 'World English Bible (British, Protestant)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engwebpb_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -622,13 +641,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World English Bible British Edition is a Public Domain translation of the Holy Bible into contemporary British/International English. Protestant edition.',
-                            'Source':'https://eBible.org/find/details.php?id=engwebpb&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engwebpb',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WMB'):
             abbreviation, name = 'WMB', 'World Messianic Bible'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engwmb_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -636,13 +655,13 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World Messianic Bible is a Public Domain translation of the Holy Bible into modern English as spoken among Messianic Jews. It has also been called the World English Bible: Messianic Edition and the Hebrew Names Version.',
-                            'Source':'https://eBible.org/find/details.php?id=engwmb&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engwmb',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 0 and 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='WMBB'):
             abbreviation, name = 'WMBB', 'World Messianic Bible (British edition)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engwmbb_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -650,21 +669,21 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'The World Messianic Bible British Edition is a Public Domain translation of the Holy Bible into modern English as spoken among Messianic Jews outside of the United States of America. This translation is also known as the World English Bible: British Messianic Edition.',
-                            'Source':'https://eBible.org/find/details.php?id=engwmbb&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engwmbb',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'Wycliffe', 'Wycliffe Bible'
+        if (1 or PROCESS_ALL_FLAG or PROCESS_EBIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='Wycliffe'):
+            abbreviation, name = 'Wycliffe', 'Wycliffe Bible (portions)'
             thisBible = USFMBible( HAIOLA_SOURCE_FOLDERPATH.joinpath( 'engWycliffe_usfm/' ),
                             givenName=name, givenAbbreviation=abbreviation )
             metadataDict = {
                             'Abbreviation':abbreviation,
                             'WorkName':name,
                             'About':'This is the Pentateuch and Gospels from The Holy Bible, containing the Old and New Testaments, with the apocryphal books, in the earliest English version made from the Latin Vulgate by John Wycliffe and his followers. c.1395.',
-                            'Source':'https://eBible.org/find/details.php?id=engWycliffe&all=1',
+                            'Source':'https://eBible.org/find/details.php?id=engWycliffe',
                             'Licence':'Public Domain',
                             'LanguageName':'English',
                             'ISOLanguageCode':'eng',
@@ -673,8 +692,8 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
 
 
 ### UNFOLDING WORD / DOOR43
-    if PROCESS_DOOR43_FLAG or PROCESS_ALL_FLAG: # UnfoldingWord/Door43 versions
-        if 1 or PROCESS_ALL_FLAG:
+    if PROCESS_UNFOLDING_WORD_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE: # UnfoldingWord/Door43 versions
+        if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UHB'):
             abbreviation, name = 'UHB', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UHB/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -692,7 +711,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'heb',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UGNT'):
             abbreviation, name = 'UGNT', 'unfoldingWord® Hebrew Bible'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'Original languages/UGNT/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -710,7 +729,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'grk',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='ULT'):
             abbreviation, name = 'ULT', 'unfoldingWord® Literal Text'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ult/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -728,7 +747,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'eng',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_UNFOLDING_WORD_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='UST'):
             abbreviation, name = 'UST', 'unfoldingWord® Simplified Text'
             uwFolderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/unfoldingWordVersions/en_ust/' )
             vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
@@ -746,13 +765,54 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                                 'ISOLanguageCode':'eng',
                                 }
                 makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+
+### DOOR43 (but NOT unfoldingWord's own resources)
+    if PROCESS_DOOR43_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE: # Door43 (non-unfoldingWord) versions
+        if (1 or PROCESS_ALL_FLAG or PROCESS_DOOR43_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='HI-IRV'):
+            abbreviation, name = 'HI-IRV', 'हिन्दी (Hindi)'
+            door43Folderpath = DOOR43_SOURCE_FOLDERPATH.joinpath( 'hi_irv/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
+            if repo_changed or not PROCESS_CHANGES_ONLY:
+                thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
+                thisBible.uWencoded = True # TODO: Shouldn't be required ???
+                metadataDict = {
+                                'Abbreviation':abbreviation,
+                                'WorkName':name,
+                                'About':' Hindi: Indian Revised Version (IRV) Hindi - 2020',
+                                'Source':'https://git.door43.org/Door43-Catalog/hi_irv',
+                                'CopyrightNotice':'Copyright © 2020 by Bridge Connectivity Solutions Pvt. Ltd.',
+                                'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+                                'LanguageName':'Hindi',
+                                'ISOLanguageCode':'hi',
+                                }
+                makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+        if (1 or PROCESS_ALL_FLAG or PROCESS_DOOR43_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='TA-IRV'):
+            abbreviation, name = 'TA-IRV', 'இண்டியன் ரிவைஸ்டு வெர்ஸன் (IRV) - தமிழ்'
+            door43Folderpath = DOOR43_SOURCE_FOLDERPATH.joinpath( 'ta_irv/' )
+            vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
+            repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
+            if repo_changed or not PROCESS_CHANGES_ONLY:
+                thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
+                thisBible.uWencoded = True # TODO: Shouldn't be required ???
+                metadataDict = {
+                                'Abbreviation':abbreviation,
+                                'WorkName':name,
+                                'About':' Tamil: Indian Revised Version (IRV) Tamil - 2019',
+                                'Source':'https://git.door43.org/Door43-Catalog/ta_irv',
+                                'CopyrightNotice':'Copyright © 2019 by Bridge Connectivity Solutions Pvt. Ltd.',
+                                'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+                                'LanguageName':'Tamil',
+                                'ISOLanguageCode':'ta',
+                                }
+                makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         # if 1 or PROCESS_ALL_FLAG:
         #     abbreviation, name = 'UEB', 'Unlocked English Bible'
-        #     d43Folder = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UEB/en_ueb/' )
+        #     door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UEB/en_ueb/' )
         #     vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
-        #     repo_changed = runGitPull( d43Folder ) # Make sure we have the latest version
+        #     repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
         #     if repo_changed or not PROCESS_CHANGES_ONLY:
-        #         thisBible = USFMBible( d43Folder, givenName=name, givenAbbreviation=abbreviation )
+        #         thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
         #         metadataDict = {
         #                         'Abbreviation':abbreviation,
         #                         'WorkName':name,
@@ -765,11 +825,11 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         #         makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         #if 1 or PROCESS_ALL_FLAG:
             #abbreviation, name = 'UDB', 'Unlocked Dynamic Bible (obsolete)'
-            #d43Folder = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UDB/en_udb/' )
+            #door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/UDB/en_udb/' )
             #vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
-            #repo_changed = runGitPull( d43Folder ) # Make sure we have the latest version
+            #repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             #if repo_changed or not PROCESS_CHANGES_ONLY:
-                #thisBible = USFMBible( d43Folder, givenName=name, givenAbbreviation=abbreviation )
+                #thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
                 #metadataDict = {
                                 #'Abbreviation':abbreviation,
                                 #'WorkName':name,
@@ -782,11 +842,11 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                 #makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
         #if 1 or PROCESS_ALL_FLAG:
             #abbreviation, name = 'ULB', 'Unlocked Literal Bible (obsolete)'
-            #d43Folder = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/ULB/en_ulb/' )
+            #door43Folderpath = BIBLES_FOLDERPATH.joinpath( 'English translations/Door43Versions/ULB/en_ulb/' )
             #vPrint( 'Quiet', debuggingThisModule, "\nUpdating Door43 {} from internet…".format( abbreviation ) )
-            #repo_changed = runGitPull( d43Folder ) # Make sure we have the latest version
+            #repo_changed = runGitPull( door43Folderpath ) # Make sure we have the latest version
             #if repo_changed or not PROCESS_CHANGES_ONLY:
-                #thisBible = USFMBible( d43Folder, givenName=name, givenAbbreviation=abbreviation )
+                #thisBible = USFMBible( door43Folderpath, givenName=name, givenAbbreviation=abbreviation )
                 #metadataDict = {
                                 #'Abbreviation':abbreviation,
                                 #'WorkName':name,
@@ -799,9 +859,70 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                 #makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
 
 
+### Open.Bible / Biblica
+    if PROCESS_OPEN_BIBLE_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE: # Open.Bible versions
+        if (1 or PROCESS_ALL_FLAG or PROCESS_OPEN_BIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='ELBBK'):
+            abbreviation, name = 'ELBBK', 'Elberfelder Übersetzung (Version von bibelkommentare.de)'
+            obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'Elberfelder/f492a38d0e52db0f-rev4/release/USX_1/' )
+            # vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
+            repo_changed = False
+            if repo_changed or not PROCESS_CHANGES_ONLY:
+                thisBible = USFMBible( obFolderpath, givenName=name, givenAbbreviation=abbreviation )
+                metadataDict = {
+                                'Abbreviation':abbreviation,
+                                'WorkName':name,
+                                'About':'Linguistically revised text of the Unrevised Elberfelder Translation with footnotes',
+                                'Source':'https://open.bible/resources/german_standard-verbreitung-text-bible/',
+                                'CopyrightNotice':'© 2019 by Verbreitung des christlichen Glaubens e.V.',
+                                'Licence':'Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)',
+                                'LanguageName':'German',
+                                'ISOLanguageCode':'ge',
+                                }
+                makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+        # if 0 or PROCESS_ALL_FLAG:
+        #     abbreviation, name = 'TAM-IRV', 'இண்டியன் ரிவைஸ்டு வெர்ஸன் (IRV) - தமிழ்'
+        #     obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'IRV/03a021185023710b-rev3/release/USX_1/' )
+        #     # vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+        #     # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
+        #     repo_changed = False
+        #     if repo_changed or not PROCESS_CHANGES_ONLY:
+        #         thisBible = USFMBible( obFolderpath, givenName=name, givenAbbreviation=abbreviation )
+        #         metadataDict = {
+        #                         'Abbreviation':abbreviation,
+        #                         'WorkName':name,
+        #                         'About':' Tamil: Indian Revised Version (IRV) Tamil - 2019',
+        #                         'Source':'https://open.bible/resources/tamil-bridge-text-bible/',
+        #                         'CopyrightNotice':'Copyright © 2019 by Bridge Connectivity Solutions Pvt. Ltd.',
+        #                         'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+        #                         'LanguageName':'Tamil',
+        #                         'ISOLanguageCode':'tam',
+        #                         }
+        #         makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+        if (1 or PROCESS_ALL_FLAG or PROCESS_OPEN_BIBLE_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='KCV'):
+            abbreviation, name = 'KCV', 'Biblica® Open Kiswahili Contemporary Version'
+            obFolderpath = OPEN_BIBLE_SOURCE_FOLDERPATH.joinpath( 'swONEN14_USFM/' )
+            # vPrint( 'Quiet', debuggingThisModule, "\nUpdating unfoldingWord® {} from internet…".format( abbreviation ) )
+            # repo_changed = runGitPull( obFolderpath ) # Make sure we have the latest version
+            repo_changed = False
+            if repo_changed or not PROCESS_CHANGES_ONLY:
+                thisBible = USFMBible( obFolderpath, givenName=name, givenAbbreviation=abbreviation )
+                metadataDict = {
+                                'Abbreviation':abbreviation,
+                                'WorkName':name,
+                                'About':'Swahili: Biblica® Toleo Wazi la Neno: Biblia Takatifu™ (Bible) 2015',
+                                'Source':'https://open.bible/resources/swahili-biblica-text-bible/',
+                                'CopyrightNotice':'Copyright © 1984, 1989, 2009, 2015 by Biblica, Inc.',
+                                'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
+                                'LanguageName':'Kiswahili',
+                                'ISOLanguageCode':'sw',
+                                }
+                makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+
+
 ### OTHER / VARIOUS
-    if PROCESS_OTHERS_FLAG or PROCESS_ALL_FLAG: # Other various versions
-        if 1 or PROCESS_ALL_FLAG:
+    if PROCESS_OTHERS_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE: # Other various versions
+        if (1 or PROCESS_ALL_FLAG or PROCESS_OTHERS_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='FBV'):
             abbreviation, name = 'FBV', 'Free Bible Version (NT) 2.1.1'
             thisBible = USFMBible( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/USFM/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -816,7 +937,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'ISOLanguageCode':'eng',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
+        if (1 or PROCESS_ALL_FLAG or PROCESS_OTHERS_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='SpaRV'):
             abbreviation, name = 'SpaRV', 'Reina-Valera 1865 Spanish translation'
             thisBible = USFMBible( BIBLES_FOLDERPATH.joinpath( 'Spanish translations/RV1865 USFM/' ),
                             givenName=name, givenAbbreviation=abbreviation )
@@ -830,16 +951,17 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
                             'ISOLanguageCode':'spa',
                             }
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
-        if 1 or PROCESS_ALL_FLAG:
-            abbreviation, name = 'MBTV', 'Matigsalug Bible (draft)'
+        if (1 or PROCESS_ALL_FLAG or PROCESS_OTHERS_FLAG) and (not PROCESS_ONE or PROCESS_ONE=='MBTV'):
+            abbreviation, name = 'MBTV', 'Matigsalug Bible (2021)'
             thisBible = PTX8Bible( Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/MBTV/' ),
                             givenName=name, givenAbbreviation=abbreviation )
             metadataDict = {
                             'Abbreviation':abbreviation,
                             'WorkName':name,
-                            'About':'A draft of the almost completed Matigsalug Bible from the southern Philippines.',
-                            'Source':'http://SUMALCA.info/Resources/Pages/Bible/index.htm',
-                            'CopyrightNotice':'Copyright © 2010-2018 Sinuda United Matigsalug Christian Association (SUMALCA), Inc.',
+                            'About':'The complete Matigsalug Bible from the southern Philippines.',
+                            'Source':'https://SUMALCA.info/Resources/Pages/Bible/index.htm',
+                            'CopyrightNotice':'Copyright © 2010-2021 Sinuda United Matigsalug Christian Association (SUMALCA), Inc.',
+                            'Licence':'Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)',
                             'LanguageName':'Matigsalug',
                             'ISOLanguageCode':'mbt',
                             }
@@ -859,9 +981,10 @@ def briefDemo() -> None:
         vPrint( 'Quiet', debuggingThisModule, _("Creating folder {}…").format( TEST_OUTPUT_FOLDERPATH ) )
         os.makedirs( TEST_OUTPUT_FOLDERPATH )
 
-    global PROCESS_ALL_FLAG, PROCESS_WLC_FLAG, PROCESS_DOOR43_FLAG, PROCESS_EBIBLE_FLAG, PROCESS_OTHERS_FLAG
+    global PROCESS_ALL_FLAG, PROCESS_WLC_FLAG, PROCESS_UNFOLDING_WORD_FLAG, PROCESS_DOOR43_FLAG, PROCESS_OPEN_BIBLE_FLAG, PROCESS_EBIBLE_FLAG, PROCESS_OTHERS_FLAG
     vPrint( 'Normal', debuggingThisModule, "Setting only PROCESS_DOOR43_FLAG to True")
-    PROCESS_ALL_FLAG = PROCESS_WLC_FLAG = PROCESS_OTHERS_FLAG = PROCESS_EBIBLE_FLAG = False
+    PROCESS_ALL_FLAG = PROCESS_WLC_FLAG = PROCESS_OTHERS_FLAG = PROCESS_EBIBLE_FLAG = PROCESS_OPEN_BIBLE_FLAG = False
+    PROCESS_UNFOLDING_WORD_FLAG = False
     PROCESS_DOOR43_FLAG = True
 
     runCreateAll( TEST_OUTPUT_FOLDERPATH, submit2BDB=False )

@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-07-04' # by RJH
+LAST_MODIFIED_DATE = '2022-07-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -176,7 +176,7 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         assert not translatedWordsString.endswith( ' ' )
 
         # Remove (unnecessary here) USFM paragraph markers
-        while True: # Keep looping as long as there's changes
+        for _safetyCount in range(9999): # Keep looping as long as there's changes
             changedSomething = False
             for paragraphMarker in ('q','q1','q2','q3', 'p','m','pi','pi1',):
                 if translatedWordsString.startswith( f'\\{paragraphMarker} ' ):
@@ -767,7 +767,7 @@ class InternalBibleBook:
         # However, if the \w fields contains a strongs field, the \w field markers are removed completely.
         if '|' in adjText: # Only if it has a pipe somewhere in the line
             #dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
-            while True: # loop thru \w fields
+            for _safetyCount in range(9999): # loop thru \w fields
                 ixW = adjText.find( '\\w ' )
                 if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                     if ixW == -1:
@@ -792,7 +792,7 @@ class InternalBibleBook:
                     adjText = f'{adjText[:ixW]}{adjText[ixW+3:ixPipe]}\\ww {word}{adjText[ixPipe:ixWend+2]}w{adjText[ixWend+2:]}'
                     # dPrint( 'Quiet', debuggingThisModule, "  now adjText = {}".format( adjText ) )
 
-            while True: # loop thru \+w fields
+            for _safetyCount in range(9999): # loop thru \+w fields
                 ixW = adjText.find( '\\+w ' )
                 if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                     if ixW == -1:
@@ -823,7 +823,7 @@ class InternalBibleBook:
 
         #dPrint( 'Quiet', debuggingThisModule, "QQQ MOVE OUT NOTES" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-        while True:
+        for _safetyCount in range(9999):
             ixFN = adjText.find( '\\f ' )
             if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                 if ixFN == -1:
@@ -1258,7 +1258,7 @@ class InternalBibleBook:
             #dPrint( 'Quiet', debuggingThisModule, "exp", extras )
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
         if '|' in adjText: # this will become a problem
-            logging.critical( "\nprocessLineFix: Why do we still have a vertical pipe in {!r}\n  from {!r}?".format( adjText, text ) )
+            logging.critical( "processLineFix: Why do we still have a vertical pipe in {!r}\n  from {!r}?".format( adjText, text ) )
             if 'Brenton' not in self.workName:
                 if BibleOrgSysGlobals.debugFlag: halt
 
@@ -1403,7 +1403,7 @@ class InternalBibleBook:
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
         fnPrint( debuggingThisModule, f"addNestingMarkers() for {self.BBB}" )
-        vPrint( 'Info', debuggingThisModule, f"  addNestingMarkers started with {len(self._rawLines)=} {len(self._processedLines)=} for {self.BBB}" )
+        vPrint( 'Info', debuggingThisModule, f"    addNestingMarkers for {self.BBB} started with {len(self._rawLines)=:,} {len(self._processedLines)=:,}" )
         newLines:List[InternalBibleEntry] = InternalBibleEntryList()
         openMarkers:List[str] = []
 
@@ -1665,7 +1665,7 @@ class InternalBibleBook:
                 elif 'v' in openMarkers: # we're not starting the first verse
                     closeOpenMarker( 'v', V )
             elif marker == 'v':
-                while True:
+                for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = getLastOpenMarker()
                     if lastOpenMarker=='v': closeLastOpenMarker( withText=V ); madeChange = True
@@ -1696,7 +1696,7 @@ class InternalBibleBook:
                 #haveIntro = True
             elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_ALL_INTRODUCTION_MARKERS because they overlap
                 #if marker=='is' or marker=='is1': vPrint( 'Quiet', debuggingThisModule, "XX", marker, openMarkers, lastPMarker )
-                while True:
+                for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = getLastOpenMarker()
                     if lastOpenMarker=='v' and verseHasEnded( j ):
@@ -1724,7 +1724,7 @@ class InternalBibleBook:
                 #haveIntro = True
             elif marker in ourMainListMarkers: # li# markers
                 assert not text
-                while True:
+                for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = getLastOpenMarker()
                     if lastOpenMarker=='v' and verseHasEnded( j ):
@@ -1744,7 +1744,7 @@ class InternalBibleBook:
             elif marker in USFM_BIBLE_PARAGRAPH_MARKERS: # e.g., p, q1, m, etc.
                 assert not text
                 #dPrint( 'Quiet', debuggingThisModule, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
-                while True:
+                for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = getLastOpenMarker()
                     if lastOpenMarker=='v' and verseHasEnded( j ):
@@ -1761,7 +1761,7 @@ class InternalBibleBook:
             elif markerContentType == 'N': # N = never, e.g., b, nb
                 assert not text
                 #dPrint( 'Quiet', debuggingThisModule, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
-                while True:
+                for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = getLastOpenMarker()
                     if lastOpenMarker=='v' and verseHasEnded( j ):
@@ -1881,9 +1881,9 @@ class InternalBibleBook:
                 #if self.BBB=='GEN': halt
 
         if (len(newLines) != len(self._processedLines)):
-            vPrint( 'Info', debuggingThisModule, "  addNestingMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
+            vPrint( 'Info', debuggingThisModule, f"    addNestingMarkers adjusted {self.BBB} from {len(self._processedLines):,} lines to {len(newLines):,} lines" )
         self._processedLines = newLines # replace the old set
-        vPrint( 'Info', debuggingThisModule, f"  addNestingMarkers finishing with {len(self._rawLines)=} {len(self._processedLines)=}")
+        vPrint( 'Info', debuggingThisModule, f"    addNestingMarkers for {self.BBB} finishing with {len(self._rawLines)=:,} {len(self._processedLines)=:,}")
     # end of InternalBibleBook.processLines.addNestingMarkers
 
 

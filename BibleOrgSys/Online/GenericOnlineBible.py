@@ -5,7 +5,7 @@
 #
 # Base module handling generic online websites
 #
-# Copyright (C) 2019-2020 Robert Hunt
+# Copyright (C) 2019-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@
 from gettext import gettext as _
 import os
 import logging
-import urllib.request
+import requests
 import json
 from collections import OrderedDict
 
@@ -39,7 +39,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Misc.singleton import singleton
 
 
-LAST_MODIFIED_DATE = '2020-05-02' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "GenericOnlineBible"
 PROGRAM_NAME = "Generic online Bible handler"
 PROGRAM_VERSION = '0.02'
@@ -132,8 +132,8 @@ class GenericOnlineBible:
         #dPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         ##dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
-        #try: responseJSON = urllib.request.urlopen( requestString )
-        #except urllib.error.URLError:
+        #try: responseJSON = url lib.request.urlopen( requestString )
+        #except url ib.error.URLError:
             #if BibleOrgSysGlobals.debugFlag: logging.critical( "GenericOnlineBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
             #return None
         #responseSTR = responseJSON.read().decode('utf-8')

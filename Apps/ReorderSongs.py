@@ -100,7 +100,7 @@ def main() -> None:
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
     vPrint( 'Quiet', debuggingThisModule, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
-    with open( songsOutputFilepath, 'wt' ) as outputFile:
+    with open( songsOutputFilepath, 'wt', encoding='utf-8' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
             vPrint( 'Never', debuggingThisModule, "keyPair", keyPair )
             outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record

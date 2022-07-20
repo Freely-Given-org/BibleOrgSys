@@ -5,7 +5,7 @@
 #
 # Module handling Larry Pierce's "Online Bible" files
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,7 +51,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-30' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "PierceOnlineBible"
 PROGRAM_NAME = "Pierce Online Bible format handler"
 PROGRAM_VERSION = '0.22'
@@ -980,7 +980,7 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            vPrint( 'Quiet', debuggingThisModule, "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
+            fnPrint( debuggingThisModule, "getVerseBytes( {} {} ) = {}".format( self.abbreviation, absoluteVerseNumber, BOS.convertAbsoluteVerseNumber( absoluteVerseNumber+1 ) ) )
                 #assert 0 <= absoluteVerseNumber < len(self.textIndex)
             startAt = 0 if absoluteVerseNumber==0 else self.textIndex[absoluteVerseNumber-1]
             endAt = self.textIndex[absoluteVerseNumber]
@@ -1034,7 +1034,7 @@ class PierceOnlineBible( Bible ):
             """
             Given a verse number from 0..31,101, return the encoded bytes
             """
-            vPrint( 'Quiet', debuggingThisModule, "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
+            fnPrint( debuggingThisModule, "getBibleText( {} ) {} {}".format( hexlify(verseBytes), self.abbreviation, reference ) )
             resultString = ''
             capsFlag = footnoteFlag = headingFlag = False
             saved = None

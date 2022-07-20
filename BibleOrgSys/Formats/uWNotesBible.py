@@ -5,7 +5,7 @@
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020-2021 Robert Hunt
+# Copyright (C) 2020-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,7 +56,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2021-01-01' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
 PROGRAM_VERSION = '0.03'
@@ -88,7 +88,7 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
     dataDict = {}
     key1 = key2 = None
     if YAMLFilepath and os.path.isfile( YAMLFilepath ) and os.access( YAMLFilepath, os.R_OK ):
-        with open( YAMLFilepath, 'rt' ) as yamlFile:
+        with open( YAMLFilepath, 'rt', encoding='utf-8' ) as yamlFile:
             state = None
             indent = 2 # TODO: Really should deduce this number from the file
             for j, line in enumerate( yamlFile, start=1 ):
@@ -566,7 +566,7 @@ class uWNotesBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            vPrint( 'Never', debuggingThisModule, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            fnPrint( debuggingThisModule, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
             self.addLine( originalMarker, originalText ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
             # marker, text = originalMarker, originalText.replace( '~', ' ' )
             # if '\\' in text: # Check markers inside the lines

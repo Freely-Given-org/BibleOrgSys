@@ -86,7 +86,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.78'
@@ -551,7 +551,7 @@ class InternalBibleBookCVIndex:
         Just run a quick internal check on the index.
         """
         vPrint( 'Info', debuggingThisModule, "  " + _("Checking {} {} {} CV index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
-        vPrint( 'Verbose', debuggingThisModule, self )
+        dPrint( 'Verbose', debuggingThisModule, self )
 
         # Check that all C,V entries (the index to the index) are digits
         for ixKey in self.__indexData:

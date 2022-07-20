@@ -5,7 +5,7 @@
 #
 # Module handling online DCS resources
 #
-# Copyright (C) 2019-2020 Robert Hunt
+# Copyright (C) 2019-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ More details are available from https://api-info.readthedocs.io/en/latest/dcs.ht
 from gettext import gettext as _
 import os
 import logging
-import urllib.request
+import requests
 import json
 import tempfile
 import zipfile
@@ -54,10 +54,10 @@ from BibleOrgSys.Misc.singleton import singleton
 from BibleOrgSys.Formats.USFMBible import USFMBible
 
 
-LAST_MODIFIED_DATE = '2020-05-06' # by RJH
+LAST_MODIFIED_DATE = '2022-07-20' # by RJH
 SHORT_PROGRAM_NAME = "Door43ContentService"
 PROGRAM_NAME = "Door43 Content Service online handler"
-PROGRAM_VERSION = '0.04'
+PROGRAM_VERSION = '0.05'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -109,23 +109,23 @@ class DCSBibles:
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
         vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
-        try: HTTPResponseObject = urllib.request.urlopen( requestString )
-        except urllib.error.URLError as err:
+        responseObject = requests.get( requestString )
+        if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
             #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-            logging.error( "DCS URLError '{}' from {}".format( err, requestString ) )
+            logging.error( f"DCS {responseObject.status_code} URLError from {requestString}" )
             return None
         #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
-        contentType = HTTPResponseObject.info().get( 'content-type' )
+        contentType = responseObject.headers['Content-Type']
         vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
         if 'application/json' in contentType:
-            responseJSON = HTTPResponseObject.read()
-            vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
-            responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
-            responseSTR = responseJSON.decode( responseJSONencoding )
-            vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
-            return json.loads( responseSTR )
+            # responseJSON = HTTPResponseObject.read()
+            # vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
+            # responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
+            # vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
+            # responseSTR = responseJSON.decode( responseJSONencoding )
+            # vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
+            return responseObject.json()
         else:
             vPrint( 'Verbose', debuggingThisModule, "    contentType", contentType )
             halt # Haven't had this contentType before
@@ -144,8 +144,8 @@ class DCSBibles:
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
         vPrint( 'Normal', debuggingThisModule, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
 
+        self.BibleList = []
         if self.onlineVersion: # Get a list of available data sets
-            self.BibleList = []
             # Does a case-insensitive search
             for searchText in ('ULT', 'UST', 'Bible', 'ULB', 'UDB'): # 7,227 if these are all included!!!
                 pageNumber = 1
@@ -346,20 +346,20 @@ class DCSBible( USFMBible ):
                 zipURL = self.baseURL + '/archive/master.zip' # '/archive/master.tar.gz'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     vPrint( 'Quiet', debuggingThisModule, "Downloading entire repo from '{}'…".format( zipURL ) )
-                try: HTTPResponseObject = urllib.request.urlopen( zipURL )
-                except urllib.error.URLError as err:
+                responseObject = requests.get( zipURL )
+                if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
                     #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-                    logging.critical( "DCS URLError '{}' from {}".format( err, zipURL ) )
+                    logging.critical( f"DCS {responseObject.status_code} URLError from {zipURL}" )
                     return
                 #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
-                contentType = HTTPResponseObject.info().get( 'content-type' )
+                contentType = responseObject.headers['Content-Type']
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
                 if contentType == 'application/octet-stream':
                     try: os.makedirs( unzippedFolderpath )
                     except FileExistsError: pass
-                    downloadedData = HTTPResponseObject.read()
+                    downloadedData = responseObject.content
                     if BibleOrgSysGlobals.verbosityLevel > 0:
                         vPrint( 'Quiet', debuggingThisModule, f"  Downloaded {len(downloadedData):,} bytes from '{zipURL}'" )
                     # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
@@ -415,27 +415,22 @@ class DCSBible( USFMBible ):
                 zipURL = f'{self.baseURL}/raw/branch/master/{USFMfilename}'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     vPrint( 'Quiet', debuggingThisModule, "Downloading {} file from '{}'…".format( BBB, zipURL ) )
-                try: HTTPResponseObject = urllib.request.urlopen( zipURL )
-                except urllib.error.HTTPError as err:
+                responseObject = requests.get( zipURL )
+                if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
                     #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-                    logging.critical( "DCS HTTPError '{}' from {}".format( err, zipURL ) )
-                    return
-                except urllib.error.URLError as err:
-                    #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
-                    logging.critical( "DCS URLError '{}' from {}".format( err, zipURL ) )
+                    logging.critical( f"DCS {responseObject.status_code} HTTPError from {zipURL}" )
                     return
                 #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
-                contentType = HTTPResponseObject.info().get( 'content-type' )
+                contentType = responseObject.headers['Content-Type']
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
                 if contentType == 'text/plain; charset=utf-8':
-                    downloadedData = HTTPResponseObject.read()
+                    downloadedData = responseObject.text
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, f"  Downloaded {len(downloadedData):,} bytes from '{zipURL}'" )
-                    with open( os.path.join( self.sourceFolder, USFMfilename ), 'wt' ) as ourUSFMfile:
-                        ourUSFMfile.write( downloadedData.decode( 'utf-8' ) )
+                        vPrint( 'Quiet', debuggingThisModule, f"  Downloaded {len(downloadedData):,} chars from '{zipURL}'" )
+                    with open( os.path.join( self.sourceFolder, USFMfilename ), 'wt', encoding='utf-8' ) as ourUSFMfile:
+                        ourUSFMfile.write( downloadedData )
                 else:
                     vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
                     halt # unknown content type

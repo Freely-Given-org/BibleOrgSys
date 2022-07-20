@@ -5,7 +5,7 @@
 #
 # Module handling downloading and installing of Sword resources
 #
-# Copyright (C) 2016-2020 Robert Hunt
+# Copyright (C) 2016-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,6 @@ import os
 import logging
 from pathlib import Path
 import ftplib
-#import urllib.request
 import tempfile
 import tarfile
 import shutil
@@ -51,7 +50,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-07' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "SwordInstallManager"
 PROGRAM_NAME = "Sword download handler"
 PROGRAM_VERSION = '0.12'
@@ -274,7 +273,7 @@ class SwordInstallManager():
             assert repoType in ( 'FTP', )
 
         self.downloadSources[repoName] = (repoType,repoSite,repoFolderpath)
-        if setAsDefault: source.currentRepoName = repoName
+        if setAsDefault: self.currentRepoName = repoName
     # end of SwordInstallManager.addSource
 
 
@@ -400,7 +399,7 @@ class SwordInstallManager():
         # Tried to do this all in memory using streams but couldn't make it work :(
         #repoPath = repoSite + repoFolderpath + repoCompressedFilename
         #dPrint( 'Quiet', debuggingThisModule, _("Getting {!r} module list from {}…").format( repoName, repoPath ) )
-        #ftpstream = urllib.request.urlopen( 'ftp://' + repoPath )
+        #ftpstream = url lib.request.urlopen( 'ftp://' + repoPath )
         #allConfigsTar = tarfile.open( fileobj=ftpstream, mode='r|gz')
         ##allConfigsTar.extractall()
         #for member in allConfigsTar:

@@ -48,7 +48,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-07-18' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.79'
@@ -203,10 +203,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                     if line.lower().startswith('\\usfm 3') or line.lower().startswith('\\usfm3'):
                         goodIndexList.append(n); break # Can't delete it yet
             except TypeError: pass # If file is empty peekIntoFile returns None
-        if BibleOrgSysGlobals.verbosityLevel > 2 and filenameTuples and goodIndexList:
-            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM3 files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 1 and filenameTuples and goodIndexList and debuggingThisModule:
-            vPrint( 'Quiet', debuggingThisModule, "  Found {} USFM3 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
+        vPrint( 'Info', debuggingThisModule, "  Found {} USFM3 file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples and goodIndexList:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:

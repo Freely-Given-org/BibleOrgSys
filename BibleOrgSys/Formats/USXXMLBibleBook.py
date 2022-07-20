@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2020 Robert Hunt
+# Copyright (C) 2012-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-05-05' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
 PROGRAM_VERSION = '0.27'
@@ -212,7 +212,7 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            vPrint( 'Never', debuggingThisModule, "loadCharField( {}, {} @ {} {}:{} )".format( charElement.tag, charLocation, self.BBB, C, V ) )
+            fnPrint( debuggingThisModule, "loadCharField( {}, {} @ {} {}:{} )".format( charElement.tag, charLocation, self.BBB, C, V ) )
             assert charElement.tag == 'char'
 
             # Process the attributes first
@@ -297,8 +297,8 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            vPrint( 'Never', debuggingThisModule, "loadNoteField( {}, {} @ {} {} {}:{} )".format( noteElement.tag, noteLocation, self.workName, self.BBB, C, V ) )
-            vPrint( 'Never', debuggingThisModule, "  {}".format( BibleOrgSysGlobals.elementStr( noteElement ) ) )
+            fnPrint( debuggingThisModule, "loadNoteField( {}, {} @ {} {} {}:{} )".format( noteElement.tag, noteLocation, self.workName, self.BBB, C, V ) )
+            dPrint( 'Never', debuggingThisModule, "  {}".format( BibleOrgSysGlobals.elementStr( noteElement ) ) )
             assert noteElement.tag == 'note'
 
             # Process the attributes first

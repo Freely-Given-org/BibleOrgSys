@@ -5,7 +5,7 @@
 #
 # Module handling simple XML files
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,7 +29,7 @@ import logging
 import os, sys, subprocess
 from pathlib import Path
 from xml.etree.ElementTree import ElementTree, ParseError
-import urllib.request
+import requests
 
 if __name__ == '__main__':
     import sys
@@ -40,7 +40,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "XMLFile"
 PROGRAM_NAME = "XML file handler"
 PROGRAM_VERSION = '0.04'
@@ -76,20 +76,15 @@ class XMLFile():
         self.validatedByLoading = self.validatedWithLint = None
         self.XMLTree = None # Will hold the XML data
 
-        # Do a preliminary check on the readability of our file
+        # Do a preliminary check on the readability of our schema file
         if not os.access( self.sourceFilepath, os.R_OK ):
             vPrint( 'Quiet', debuggingThisModule, "XMLFile: File {!r} is unreadable".format( self.sourceFilepath ) )
         if self.schemaFilepath and not os.access( self.schemaFilepath, os.R_OK ):
             vPrint( 'Quiet', debuggingThisModule, "XMLFile: Schema file {!r} is unreadable".format( self.schemaFilepath ) )
         if self.schemaURL:
-            try:
-                resp = urllib.request.urlopen( self.schemaURL )
-            except urllib.error.URLError:
+            responseObject = requests.get( self.schemaURL )
+            if responseObject.status_code != 200:
                 logging.error( "XMLFile: Schema file {!r} is not downloadable".format( self.schemaURL ) )
-                resp = None
-            if resp is not None:
-                data = resp.read() # a bytes object
-                text = data.decode('utf-8') # a string
     # end of XMLFile.__init__
 
 

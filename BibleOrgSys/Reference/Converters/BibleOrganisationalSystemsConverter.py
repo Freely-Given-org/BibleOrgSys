@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganisationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -47,7 +47,7 @@ from BibleOrgSys.Reference.BibleVersificationSystems import BibleVersificationSy
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
 
 
-LAST_MODIFIED_DATE = '2021-01-19' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystemsConverter"
 PROGRAM_NAME = "Bible Organisation Systems converter"
 PROGRAM_VERSION = '0.27'
@@ -381,8 +381,7 @@ class BibleOrganisationalSystemsConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
-        if BibleOrgSysGlobals.verbosityLevel > 1:
-            vPrint( 'Quiet', debuggingThisModule, f"Exporting BibleOrganisationalSystems to {filepath}…" )
+        vPrint( 'Quiet', debuggingThisModule, f"Exporting BibleOrganisationalSystems to {filepath}…" )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__dataDicts, myFile )
     # end of pickle

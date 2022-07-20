@@ -5,7 +5,7 @@
 #
 # Module handling the XML Greek lexicon
 #
-# Copyright (C) 2014-2020 Robert Hunt
+# Copyright (C) 2014-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -43,7 +43,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-04' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexiconConverter"
 PROGRAM_NAME = "Greek Lexicon XML format handler"
 PROGRAM_VERSION = '0.17'
@@ -53,7 +53,10 @@ debuggingThisModule = False
 
 
 # Greek lexicon folder
-DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
+# TODO: Fix temporary solution
+# DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
+from pathlib import Path
+DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' )
 
 
 
@@ -83,8 +86,8 @@ class GreekStrongsFileConverter:
         </entry>
         </entries></strongsdictionary>
     """
-    databaseFilename = "strongsgreek.xml"
-    treeTag = "strongsdictionary"
+    databaseFilename = 'strongsgreek.xml'
+    treeTag = 'strongsdictionary'
 
 
     def __init__( self ) -> None:
@@ -123,7 +126,7 @@ class GreekStrongsFileConverter:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        vPrint( 'Normal', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', debuggingThisModule, _("Loading Greek lexicon from {}…").format( XMLFileOrFilepath ) )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( _("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )

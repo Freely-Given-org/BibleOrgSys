@@ -6,7 +6,7 @@
 # Interface module handling Sword resources
 #   using either the Sword engine (if available) or else our own software
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,10 +50,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2020-05-18' # by RJH
+LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "SwordResources"
 PROGRAM_NAME = "Sword resource handler"
-PROGRAM_VERSION = '0.30'
+PROGRAM_VERSION = '0.31'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -1135,7 +1135,7 @@ class SwordInterface():
     def __init__( self ) -> None:
         """
         """
-        vPrint( 'Normal', debuggingThisModule, f"SwordResources.SwordInterface is using '{SwordType}'." )
+        dPrint( 'Info', debuggingThisModule, f"SwordResources.SwordInterface is using '{SwordType}'." )
         if SwordType == 'CrosswireLibrary':
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -1531,14 +1531,15 @@ class SwordInterface():
         if SwordType == 'CrosswireLibrary':
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 mm = module.getMarkup()
-                vPrint( 'Quiet', debuggingThisModule, "  module markup", repr(mm), SWORD_MARKUPS[ord(mm)] )
-            try: verseText = module.stripText( key )
+                dPrint( 'Quiet', debuggingThisModule, "  module markup", repr(mm), SWORD_MARKUPS[ord(mm)] )
+            try: SWBuf = module.stripText( key )
             except UnicodeDecodeError:
-                vPrint( 'Quiet', debuggingThisModule, "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                dPrint( 'Quiet', debuggingThisModule, "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
+            verseText = SWBuf.getRawData() # TODO: Is this the correct way to get the verse text out of a SWBuf???
             if '\n' in verseText or '\r' in verseText: # Why!!!
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, _("getContextVerseData: Why does it have CR or LF in {} {} {}") \
+                    dPrint( 'Quiet', debuggingThisModule, _("getContextVerseData: Why does it have CR or LF in {} {} {}") \
                             .format( module.getName(), key.getShortText(), repr(verseText) ) )
                 verseText = verseText.replace( '\n', '' ).replace( '\r', '' )
             verseText = verseText.rstrip()

@@ -47,7 +47,7 @@ from BibleOrgSys.Formats.USFM2BibleBook import USFM2BibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-07-18' # by RJH
 SHORT_PROGRAM_NAME = "USFM2Bible"
 PROGRAM_NAME = "USFM2 Bible handler"
 PROGRAM_VERSION = '0.79'
