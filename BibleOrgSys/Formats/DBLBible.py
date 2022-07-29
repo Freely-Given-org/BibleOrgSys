@@ -1400,7 +1400,7 @@ class DBLBible( Bible ):
         #with open( versificationFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             #for line in vFile:
                 #lineCount += 1
-                #if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                #if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -1481,7 +1481,7 @@ class DBLBible( Bible ):
         #with open( languageFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             #for line in vFile:
                 #lineCount += 1
-                #if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                #if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character

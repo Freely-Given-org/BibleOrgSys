@@ -204,7 +204,7 @@ def loadWordCompares( folder, filename ):
     with open( filepath, 'rt', encoding='utf-8' ) as inputFile:
         for line in inputFile:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF or \ufeff
+            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                 logging.info( "loadWordCompares: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character

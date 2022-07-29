@@ -246,7 +246,7 @@ class BCVBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1:
-                    if line[0]==chr(65279): #U+FEFF
+                    if line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "loadMetadata1: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                     elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
@@ -417,7 +417,7 @@ class BCVBibleBook( BibleBook ):
         with open( metadataFilepath ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadBookMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
@@ -524,7 +524,7 @@ class BCVBibleBook( BibleBook ):
             with open( os.path.join( self.sourceFolder, filename ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "loadBCVBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character

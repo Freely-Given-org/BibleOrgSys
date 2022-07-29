@@ -471,7 +471,7 @@ class HebrewWLCBibleAddon():
             with open( glossingDictImportFilepath, 'r' ) as importFile:
                 for line in importFile:
                     lineCount += 1
-                    if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "importGlossingDictionary: Detected UTF-16 Byte Order Marker in {}".format( glossingDictImportFilepath ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character

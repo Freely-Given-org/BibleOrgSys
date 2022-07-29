@@ -146,7 +146,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
                 ##dPrint( 'Quiet', debuggingThisModule, 'E1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
-                #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "ESFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                     #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if not firstLine: continue # don't allow a blank first line
@@ -206,7 +206,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
                     #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
                     ##dPrint( 'Quiet', debuggingThisModule, 'E2', repr(firstLine) )
                     #if firstLine is None: continue # seems we couldn't decode the file
-                    #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                    #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                         #logging.info( "ESFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                         #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                     #if not firstLine: continue # don't allow a blank first line
@@ -341,7 +341,7 @@ class ESFMBible( Bible ):
         #with open( ssfFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
             #for line in myFile:
                 #lineCount += 1
-                #if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                #if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "ESFMBible.loadMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( ssfFilepath ) )
                     #line = line[1:] # Remove the Byte Order Marker (BOM)
                 #if line and line[-1]=='\n': line = line[:-1] # Remove trailing newline character
@@ -634,7 +634,7 @@ def briefDemo() -> None:
                 title, nameDict = None, {}
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "ESFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character
@@ -745,7 +745,7 @@ def fullDemo() -> None:
                 title, nameDict = None, {}
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "ESFMBible: Detected Unicode Byte Order Marker (BOM) in copyright.htm file" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character

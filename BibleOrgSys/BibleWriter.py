@@ -74,8 +74,12 @@ Note that not all exports export all books.
     Some formats only handle subsets of books (or markers/fields),
         e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
 
+TODO: Move most of these exports out of this 11,000 line file into their own places.
+
+
 CHANGELOG:
     2022-06-05 Prevent unnecessary warning display for Zefania character styles
+    2022-07-29 Added BOMs to some file writes
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Any
@@ -115,7 +119,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-07-04' # by RJH
+LAST_MODIFIED_DATE = '2022-07-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -404,6 +408,8 @@ class BibleWriter( InternalBible ):
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
                  open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
                  open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt', encoding='utf-8' ) as htmlFile:
+                    if BibleOrgSysGlobals.prependBOMFlag:
+                        txtFile.write( BibleOrgSysGlobals.BOM )
                     xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                     xmlFile.write( '<entries>\n' ) # root element
                     htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
@@ -426,6 +432,8 @@ class BibleWriter( InternalBible ):
                  open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt', encoding='utf-8' ) as csvFile, \
                  open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt', encoding='utf-8' ) as xmlFile, \
                  open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt', encoding='utf-8' ) as htmlFile:
+                    if BibleOrgSysGlobals.prependBOMFlag:
+                        txtFile.write( BibleOrgSysGlobals.BOM )
                     xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                     xmlFile.write( '<entries>\n' ) # root element
                     htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
@@ -553,6 +561,8 @@ class BibleWriter( InternalBible ):
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
                 vPrint( 'Info', debuggingThisModule, '  toPseudoUSFM: ' + _("Writing {!r}…").format( filepath ) )
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+                    if BibleOrgSysGlobals.prependBOMFlag:
+                        myFile.write( BibleOrgSysGlobals.BOM )
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: {!r}\n".format( marker, text ) )
 
@@ -567,6 +577,8 @@ class BibleWriter( InternalBible ):
             indentLevel = 0
             C, V = '-1', '-1' # So first/id line starts at -1:0
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+                if BibleOrgSysGlobals.prependBOMFlag:
+                    myFile.write( BibleOrgSysGlobals.BOM )
                 for entry in internalBibleBookData:
                     marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
                     #dPrint( 'Quiet', debuggingThisModule, repr(marker), repr(cleanText), repr(adjText) )
@@ -984,6 +996,8 @@ class BibleWriter( InternalBible ):
             #dPrint( 'Quiet', debuggingThisModule, BBB, initialMarkers )
             vPrint( 'Info', debuggingThisModule, "  " + _("Adjusting ESFM output…" ) )
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
+                if BibleOrgSysGlobals.prependBOMFlag:
+                    myFile.write( BibleOrgSysGlobals.BOM )
                 if 'id' not in initialMarkers:
                     #dPrint( 'Quiet', debuggingThisModule, "Write ID" )
                     myFile.write( '\\id {} — BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), PROGRAM_VERSION ) )
@@ -1114,8 +1128,8 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolderpath: outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PlainText_Export/' )
         if not os.access( outputFolderpath, os.F_OK ): os.makedirs( outputFolderpath ) # Make the empty folder if there wasn't already one there
-        outputFolder2 = os.path.join( outputFolderpath, 'Without_ByteOrderMarker' )
-        if not os.access( outputFolder2, os.F_OK ): os.makedirs( outputFolder2 ) # Make the empty folder if there wasn't already one there
+        outputFolderpath2 = os.path.join( outputFolderpath, 'Without_ByteOrderMarker' )
+        if not os.access( outputFolderpath2, os.F_OK ): os.makedirs( outputFolderpath2 ) # Make the empty folder if there wasn't already one there
 
         ignoredMarkers = set()
 
@@ -1134,7 +1148,7 @@ class BibleWriter( InternalBible ):
             textBuffer = ''
             with open( filepath, 'wt', encoding='utf-8' ) as myFile:
                 if withBOMFlag:
-                    try: myFile.write('\ufeff')
+                    try: myFile.write(BibleOrgSysGlobals.BOM)
                     except UnicodeEncodeError: # why does this fail on Windows???
                         logger.critical( "toText.writeTextFile: Unable to write BOM to file" )
                 gotVP = None
@@ -1194,7 +1208,7 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             # NOTE: We currently write ALL books, even though some books (e.g., FRT,GLS,XXA,… may end up blank)
             writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolderpath, withBOMFlag=True )
-            writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolder2, withBOMFlag=False )
+            writeTextFile( BBB, bookObject._processedLines, columnWidth, outputFolderpath2, withBOMFlag=False )
 
         if ignoredMarkers:
             logger.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
@@ -1242,7 +1256,7 @@ class BibleWriter( InternalBible ):
                 vPrint( 'Info', debuggingThisModule, '  toVPL: ' + _("Writing {!r}…").format( filepath ) )
                 textBuffer = ''
                 with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-                    #try: myFile.write('\ufeff') # VPL needs the BOM
+                    #try: myFile.write(BibleOrgSysGlobals.BOM) # VPL needs the BOM
                     #except UnicodeEncodeError: # why does this fail on Windows???
                         #logger.critical( "toVPL: Unable to write BOM to file" )
 
@@ -7273,7 +7287,7 @@ class BibleWriter( InternalBible ):
         filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         vPrint( 'Info', debuggingThisModule, '  toSwordSearcher: ' + _("Writing {!r}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-            try: myFile.write('\ufeff') # Forge for SwordSearcher needs the BOM
+            try: myFile.write(BibleOrgSysGlobals.BOM) # Forge for SwordSearcher needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
                 logger.critical( "toForgeForSwordSearcher: Unable to write BOM to file" )
             writeSSHeader( myFile )

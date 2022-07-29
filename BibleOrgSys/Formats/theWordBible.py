@@ -285,7 +285,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -296,7 +296,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -872,7 +872,7 @@ class theWordBible( Bible ):
                     for sourceLine in myFile:
                         originalLine = sourceLine
                         lineCount += 1
-                        if lineCount==1 and self.encoding.lower()=='utf-8' and originalLine[0]==chr(65279): #U+FEFF
+                        if lineCount==1 and self.encoding.lower()=='utf-8' and originalLine[0]==BibleOrgSysGlobals.BOM:
                             logging.info( "      theWordBible.load: Detected Unicode Byte Order Marker (BOM)" )
                             originalLine = originalLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                         if originalLine and originalLine[-1]=='\n': originalLine=originalLine[:-1] # Removing trailing newline character
@@ -1248,7 +1248,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
     vPrint( 'Info', debuggingThisModule, '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
     with open( filepath, 'wt', encoding='utf-8' ) as myFile:
-        try: myFile.write('\ufeff') # theWord needs the BOM
+        try: myFile.write(BibleOrgSysGlobals.BOM) # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
             logging.critical( _("totheWord: Unable to write BOM to file") )
         BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0

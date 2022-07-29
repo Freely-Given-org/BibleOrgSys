@@ -100,7 +100,7 @@ class SFMLines:
             try:
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
+                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "SFMLines: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -224,7 +224,7 @@ class SFMRecords:
             try:
                 for line in myFile:
                     lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "SFMRecords: Detected Unicode Byte Order Marker (BOM) in {}".format( SFMFilepath ) )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     if line and line[-1]=='\n': line = line[:-1] # Removing trailing newline character

@@ -399,7 +399,7 @@ def loadPTX8Versifications( BibleObject ):
         with open( versificationFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTX8Versifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -698,7 +698,7 @@ class PTX8Bible( Bible ):
         with open( autocorrectFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTX8Autocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -1408,7 +1408,7 @@ class PTX8Bible( Bible ):
         with open( licenceFilepath, 'rt', encoding='utf-8' ) as lFile: # Automatically closes the file when done
             licenceString = lFile.read()
         #dPrint( 'Quiet', debuggingThisModule, "licenceString", licenceString )
-        if licenceString[0]==chr(65279): #U+FEFF
+        if licenceString[0]==BibleOrgSysGlobals.BOM:
             logging.info( "loadPTX8Licence: Detected Unicode Byte Order Marker (BOM) in {}".format( licenceFilename ) )
             licenceString = licenceString[1:] # Remove the Unicode Byte Order Marker (BOM)
         jsonData = json.loads( licenceString )
@@ -2095,7 +2095,7 @@ class PTX8Bible( Bible ):
         with open( projectProgressCSVFilepath, 'rt', encoding='utf-8' ) as projectProgressCSVFile:
             for line in projectProgressCSVFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTX8ProjectProgressCSV: Detected Unicode Byte Order Marker (BOM) in {}".format( projectProgressCSVFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -2347,7 +2347,7 @@ class PTX8Bible( Bible ):
         with open( autocorrectFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTX8PrintDraftChanges: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -2481,7 +2481,7 @@ class PTX8Bible( Bible ):
                         for line in vFile:
                             lineCount += 1
                             #dPrint( 'Quiet', debuggingThisModule, lineCount, "line1", repr(line) )
-                            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                                 logging.info( "loadPTX8Styles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             #dPrint( 'Quiet', debuggingThisModule, lineCount, "line2", repr(line) )
@@ -2664,7 +2664,7 @@ class PTX8Bible( Bible ):
         with open( uniqueIdFilepath, 'rt', encoding='utf-8' ) as uniqueIdFile:
             uniqueId = uniqueIdFile.read() # This is a Windows GUID
 
-        if uniqueId[0] == chr(65279): #U+FEFF
+        if uniqueId[0] == BibleOrgSysGlobals.BOM:
             logging.info( "loadUniqueId: Detected Unicode Byte Order Marker (BOM) in {}".format( uniqueIdFilename ) )
             uniqueId = uniqueId[1:] # Delete the BOM
 

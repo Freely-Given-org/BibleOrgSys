@@ -517,7 +517,7 @@ class USFMFilenames:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
                 #dPrint( 'Quiet', debuggingThisModule, 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
-                if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
                     firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if not firstLine or firstLine[0] != '\\': # don't allow a blank first line and must start with a backslash

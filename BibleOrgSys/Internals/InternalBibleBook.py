@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-07-14' # by RJH
+LAST_MODIFIED_DATE = '2022-07-29' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.97'
@@ -120,8 +120,8 @@ def hasClosingPunctuation( text:str ) -> bool:
 # end of hasClosingPunctuation
 
 
-def cleanUWalignments( abbreviation:str, BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
-                        -> List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]:
+def cleanUWalignments( workAbbreviation:str, BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
+                        -> List[Tuple[str,str,List[Tuple[str,str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]:
     """
     Cleans up the unfoldingWord alignment info for the given book
 
@@ -144,9 +144,9 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         and wordsList contains 3-tuples: (transWord, occurrence,occurrences).
     """
     debuggingThisFunction = debuggingThisModule or False #(99 if BBB=='TI1' else False)
-    fnPrint( debuggingThisFunction, f"cleanUWalignments( {abbreviation}, {BBB}, … )" )
+    fnPrint( debuggingThisFunction, f"cleanUWalignments( {workAbbreviation}, {BBB}, … )" )
 
-    vPrint( 'Verbose', debuggingThisFunction, f"Cleaning {len(originalAlignments):,} {abbreviation} alignments…" )
+    vPrint( 'Verbose', debuggingThisFunction, f"Cleaning {len(originalAlignments):,} {workAbbreviation} alignments…" )
     assert originalAlignments
     assert isinstance( originalAlignments, list )
 
@@ -160,7 +160,7 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         assert isinstance( V, str ) and V
 
         assert isinstance( originalLanguageTextString, str ) and originalLanguageTextString
-        assert originalLanguageTextString.startswith( 'x-strong="' )
+        assert originalLanguageTextString.startswith( 'x-strong="' ), f"cleanUWalignmentsL {j} {BBB} {C}:{V} expected {originalLanguageTextString=} to start with x-strong="
         assert '\\w' not in originalLanguageTextString
         assert 'x-strong="' in originalLanguageTextString
         assert 'x-lemma="' in originalLanguageTextString
@@ -217,23 +217,22 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         #if textCount > 1 and debuggingThisFunction:
             #dPrint( 'Quiet', debuggingThisFunction, f"  This one has {textCount} original language words" )
         # Allow for x-strong, x-lemma and x-morph to be empty (originally it was just x-lemma)
-        textRE = re.compile( r'x-strong="(.*?)" x-lemma="(.*?)" x-morph="(.*?)" x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})" x-content="(.+?)"' )
+        #   x-strong may or may not contain digits, e.g., 'b', 'G12345', 'H1234', 'H1234e', 'c:d:H1234'
+        # When a translation has a verse bridge, x-ref tells which verse the particular source word is from
+        textRE = re.compile( r'x-strong="(.*?)" x-lemma="(.*?)" x-morph="(.*?)" x-occurrence="(\d{1,3})" x-occurrences="(\d{1,3})" x-content="(.+?)"(?: x-ref="(\d{1,3}[:]\d{1,3})")?' )
         textList = []
         match =  textRE.search( originalLanguageTextString )
         while match:
             # Convert occurrence and occurrences to ints (from digit strings) as we go
             # Note that we change the order, e.g., move the word from the end to the beginning and then the lemma
-            textList.append( (match.group(6), match.group(2), match.group(1),match.group(3),int(match.group(4)),int(match.group(5))) )
-            for xx in range(1,7):
+            textList.append( (match.group(6), match.group(2), match.group(1),match.group(3),int(match.group(4)),int(match.group(5)),match.group(7)) )
+            for xx in range(1,7): # 1..6 are expected fields (0 is entire match, 7 (x-ref) only occurs sometimes)
                 if not match.group(xx):
-                    logging.warning( f"Got an empty uW {abbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
-                    # assert xx == 2 # It's the lemma field that's empty
-            #index = match.end()
+                    logging.warning( f"Got an empty uW {workAbbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
             originalLanguageTextString = f'{originalLanguageTextString[:match.start()]}{originalLanguageTextString[match.end():]}'
             match =  textRE.search( originalLanguageTextString )
-        #dPrint( 'Quiet', debuggingThisFunction, f"{abbreviation} {BBB} {C}:{V} originalLanguageTextString={originalLanguageTextString!r}" )
         if originalLanguageTextString.replace( '|', '' ):
-            logging.critical( f"Got an unexpected uW {abbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
+            logging.critical( f"Got an unexpected uW {workAbbreviation} alignment field at {BBB} {C}:{V} in {originalLanguageTextString}" )
         else: assert len(textList) == textCount
 
         wordsCount = translatedWordsString.count( '\\w ' )
@@ -258,9 +257,9 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         cleanedAlignmentList.append( (C,V, textList, translatedWordsString,wordsList) )
 
     vPrint( 'Info', debuggingThisFunction,
-f'''\nInternalBibleBook cleanUWalignments: Have {len(cleanedAlignmentList):,} alignment entries for {abbreviation} {BBB}
-  Maximum of {maxOriginalWords} original language words in one {abbreviation} {BBB} entry
-  Maximum of {maxTranslatedWords} translated words in one {abbreviation} {BBB} entry''' )
+f'''\nInternalBibleBook cleanUWalignments: Have {len(cleanedAlignmentList):,} alignment entries for {workAbbreviation} {BBB}
+  Maximum of {maxOriginalWords} original language words in one {workAbbreviation} {BBB} entry
+  Maximum of {maxTranslatedWords} translated words in one {workAbbreviation} {BBB} entry''' )
     if debuggingThisModule:
         for j, (C,V, textList, translatedWordsString,wordsList) in enumerate( cleanedAlignmentList, start=1 ):
             vPrint( 'Quiet', debuggingThisModule, f"{j} {BBB} {C}:{V} {textList} '{translatedWordsString}' {wordsList}" )
@@ -766,9 +765,10 @@ class InternalBibleBook:
         #       since the contents of it need to be included in the regular text.)
         # However, if the \w fields contains a strongs field, the \w field markers are removed completely.
         if '|' in adjText: # Only if it has a pipe somewhere in the line
-            #dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
+            # dPrint( 'Quiet', debuggingThisModule, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
+            ixW = -3
             for _safetyCount in range(9999): # loop thru \w fields
-                ixW = adjText.find( '\\w ' )
+                ixW = adjText.find( '\\w ', ixW+3 )
                 if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                     if ixW == -1:
                         ixW = adjText.find( '\\W ' )
@@ -778,22 +778,25 @@ class InternalBibleBook:
                             self.addPriorityError( 9, C, V, _("Word marker is UPPERCASE") )
                 if ixW == -1: break # No more \w's left
 
-                #dPrint( 'Quiet', debuggingThisModule, "  ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
+                # dPrint( 'Quiet', debuggingThisModule, "  ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
                 ixWend = adjText.find( '\\w*', ixW+3 )
                 if ixWend == -1: ixWend = adjText.find( '\\W*', ixW+3 )
                 if ixWend == -1: ixWend = LARGE_DUMMY_VALUE
                 ixPipe = adjText.find( '|', ixW+3 )
                 if ixPipe == -1: break # No pipe -- this one is just a plain \w word\w* field
-                #dPrint( 'Quiet', debuggingThisModule, "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
+                # dPrint( 'Quiet', debuggingThisModule, "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
                 if ixPipe < ixWend: # There is a pipe inside this particular \w field
                     # Convert attributes into a \ww note field (that will then be removed below)
                     word = adjText[ixW+3:ixPipe] # We also copy the word into the \ww field
                     # adjText = f'{adjText[:ixPipe]}\\w*\\ww {word}{adjText[ixPipe:ixWend+2]}w{adjText[ixWend+2:]}'
                     adjText = f'{adjText[:ixW]}{adjText[ixW+3:ixPipe]}\\ww {word}{adjText[ixPipe:ixWend+2]}w{adjText[ixWend+2:]}'
                     # dPrint( 'Quiet', debuggingThisModule, "  now adjText = {}".format( adjText ) )
+                # else:
+                #     dPrint( 'Quiet', debuggingThisModule, f"No | pipe in field '{adjText[ixW:ixWend+2]}' from '{adjText}'")
 
+            ixW = -4
             for _safetyCount in range(9999): # loop thru \+w fields
-                ixW = adjText.find( '\\+w ' )
+                ixW = adjText.find( '\\+w ', ixW+4 )
                 if not BibleOrgSysGlobals.strictCheckingFlag: # Allow capitalised marker for non-strict modes
                     if ixW == -1:
                         ixW = adjText.find( '\\+W ' )
@@ -803,25 +806,25 @@ class InternalBibleBook:
                             self.addPriorityError( 9, C, V, _("Embedded word marker is UPPERCASE") )
                 if ixW == -1: break # No more \+w's left
 
-                #dPrint( 'Quiet', debuggingThisModule, "  ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
+                # dPrint( 'Quiet', debuggingThisModule, "  +ixW={} {!r}".format( ixW, adjText[ixW:ixW+5] ) )
                 ixWend = adjText.find( '\\+w*', ixW+4 )
                 if ixWend == -1: ixWend = adjText.find( '\\+W*', ixW+4 )
                 if ixWend == -1: ixWend = LARGE_DUMMY_VALUE
                 ixPipe = adjText.find( '|', ixW+4 )
                 if ixPipe == -1: break # No pipe -- this one is just a plain \w word\w* field
-                #dPrint( 'Quiet', debuggingThisModule, "  ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
+                # dPrint( 'Quiet', debuggingThisModule, "  +ixPipe={} {!r} ixWend={} {!r}".format( ixPipe, adjText[ixPipe:ixPipe+3], ixWend, adjText[ixWend:ixWend+6] ) )
                 if ixPipe < ixWend: # There is a pipe inside this particular \w field
                     # Convert attributes into a \ww note field (that will then be removed below)
                     word = adjText[ixW+4:ixPipe] # We also copy the word into the \ww field
                     # adjText = f'{adjText[:ixPipe]}\\+w*\\ww {word}{adjText[ixPipe:ixWend+1]}ww{adjText[ixWend+3:]}'
                     adjText = f'{adjText[:ixW]}{adjText[ixW+4:ixPipe]}\\ww {word}{adjText[ixPipe:ixWend+1]}ww{adjText[ixWend+3:]}'
-                    # dPrint( 'Quiet', debuggingThisModule, f"  now {adjText=}" )
+                    # dPrint( 'Quiet', debuggingThisModule, f"  +now {adjText=}" )
 
         # Move all footnotes and cross-references, etc. from the main text out to extras
         #  (This includes our \ww fields which contain the atttributes from \w fields)
         extras = InternalBibleExtraList() # Prepare for extras
 
-        #dPrint( 'Quiet', debuggingThisModule, "QQQ MOVE OUT NOTES" )
+        # dPrint( 'Quiet', debuggingThisModule, f"QQQ MOVE OUT NOTES from {adjText=}" )
         # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
         for _safetyCount in range(9999):
             ixFN = adjText.find( '\\f ' )
@@ -5088,17 +5091,23 @@ class InternalBibleBook:
                 if introLines:
                     # Double underline in filename for better dir sorting/display
                     with open( os.path.join( bookFolderpath, self.BBB+'__Intro.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                        if BibleOrgSysGlobals.prependBOMFlag:
+                            myFile.write( BibleOrgSysGlobals.BOM )
                         myFile.write( introLines )
                     introLines = None # Will now cause an error if we try to do more introduction bits -- should only be one intro
                     CVList.append( ('-1',) )
                 elif verseLines:
                     with open( os.path.join( bookFolderpath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                        if BibleOrgSysGlobals.prependBOMFlag:
+                            myFile.write( BibleOrgSysGlobals.BOM )
                         myFile.write( verseLines )
                     verseLines = '' # Empty ready for the next verse
                     CVList.append( CVKey )
         if introLines: # handle left-overs for books without chapters
             assert not CVList
             with open( os.path.join( bookFolderpath, self.BBB+'_C0.txt' ), 'wt', encoding='utf-8' ) as myFile:
+                if BibleOrgSysGlobals.prependBOMFlag:
+                    myFile.write( BibleOrgSysGlobals.BOM )
                 myFile.write( introLines )
             CVList.append( ('-1',) )
         if verseLines: vPrint( 'Quiet', debuggingThisModule, f"verseLines = {verseLines}" )
@@ -5110,6 +5119,8 @@ class InternalBibleBook:
         metadataLines += 'CVList = {}\n'.format( CVList )
          # Double underline in filename for better dir sorting/display
         with open( os.path.join( bookFolderpath, self.BBB+'__BookMetadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
+            if BibleOrgSysGlobals.prependBOMFlag:
+                metadataFile.write( BibleOrgSysGlobals.BOM )
             metadataFile.write( metadataLines )
     # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook

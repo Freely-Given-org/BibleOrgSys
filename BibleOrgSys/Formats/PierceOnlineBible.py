@@ -207,7 +207,7 @@ class PierceOnlineBible( Bible ):
                     with open( filepath, 'rt', encoding=encoding ) as myFile: # Automatically closes the file when done
                         for line in myFile:
                             lineCount += 1
-                            if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                            if lineCount==1 and encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
                                 logging.info( "loadPierceOnlineBibleMetadata: Detected Unicode Byte Order Marker (BOM) in {}".format( filepath ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character

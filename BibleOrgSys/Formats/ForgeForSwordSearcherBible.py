@@ -140,7 +140,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 #dPrint( 'Quiet', debuggingThisModule, '1', repr(firstLine) )
                 if firstLine is None: continue # seems we couldn't decode the file
-                if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "ForgeForSwordSearcherBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
                     firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 match = re.search( '^; TITLE:\\s', firstLine )
@@ -193,7 +193,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #dPrint( 'Quiet', debuggingThisModule, '2', repr(firstLine) )
                     if firstLine is None: continue # seems we couldn't decode the file
-                    if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                    if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "ForgeForSwordSearcherBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
                         firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                     match = re.search( '^; TITLE:\\s', firstLine )
@@ -271,7 +271,7 @@ class ForgeForSwordSearcherBible( Bible ):
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 if lineCount==1:
-                    if self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF or \ufeff
+                    if self.encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "      ForgeForSwordSearcherBible.load: Detected Unicode Byte Order Marker (BOM)" )
                         line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                     match = re.search( '^; TITLE:\\s', line )

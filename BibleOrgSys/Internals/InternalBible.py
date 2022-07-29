@@ -80,10 +80,10 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2022-07-18' # by RJH
+LAST_MODIFIED_DATE = '2022-07-29' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.85'
+PROGRAM_VERSION = '0.86'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -1252,8 +1252,8 @@ class InternalBible:
             self.discoverPTX8()
 
         self.__aggregateDiscoveryResults()
-        if 'uWencoded' in self.__dict__ and self.uWencoded:
-            self.__aggregateAlignmentResults()
+        # if 'uWencoded' in self.__dict__ and self.uWencoded:
+        #     self.__aggregateAlignmentResults_noSuchFunction() # What should it have done???
     # end of InternalBible.discover
 
 
@@ -2556,6 +2556,8 @@ class InternalBible:
         if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
         metadataLines += 'BookList = {}\n'.format( BBBList )
         with open( os.path.join( outputFolderpath, 'Metadata.txt' ), 'wt', encoding='utf-8' ) as metadataFile:
+            if BibleOrgSysGlobals.prependBOMFlag:
+                metadataFile.write( BibleOrgSysGlobals.BOM )
             metadataFile.write( metadataLines )
     # end of InternalBible.writeBOSBCVFiles
 
@@ -2814,8 +2816,8 @@ class InternalBible:
 
         debuggingThisFunction = debuggingThisModule or False
         fnPrint( debuggingThisFunction, f"analyseAndExportUWalignments() for {self.abbreviation}" )
-        if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.verbosityLevel > 2:
-            assert self.uWencoded
+        # if BibleOrgSysGlobals.debugFlag or debuggingThisFunction or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+        #     assert self.uWencoded
         vPrint( 'Quiet', debuggingThisFunction, f"Analysing unfoldingWord {self.abbreviation} alignments…" )
 
         # Firstly, aggregate the alignment data from all of the separate books
@@ -2973,7 +2975,11 @@ class InternalBible:
 
             if len(originalWordsList) == 1:
                 thisOrigEntry = originalWordsList[0]
-                thisOriginalWord, thisOriginalLemma, thisOrigStrongs, thisOrigMorph, thisOrigOccurrence, thisOrigOccurrences = thisOrigEntry
+                # TODO: Properly use thisOrigVRef (from uW x-ref field)
+                # When a translation has a verse bridge, it tells which verse the particular source word is from
+                thisOriginalWord, thisOriginalLemma, thisOrigStrongs, thisOrigMorph, thisOrigOccurrence, thisOrigOccurrences, thisOrigVRef = thisOrigEntry
+                if thisOrigVRef:
+                    logging.warning( f"{self.abbreviation} {BBB} {C}:{V} thisOrigVRef (x-ref) of '{thisOrigVRef}' is not yet being used" )
                 if isOT:
                     hWord = Hebrew( thisOriginalWord )
                     if thisOriginalWord != hWord.removeCantillationMarks():

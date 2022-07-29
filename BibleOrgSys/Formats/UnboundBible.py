@@ -276,7 +276,7 @@ class UnboundBible( Bible ):
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "      UnboundBible.load: Detected Unicode Byte Order Marker (BOM)" )
                     #line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character

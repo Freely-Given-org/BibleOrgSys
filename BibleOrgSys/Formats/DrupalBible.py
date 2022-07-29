@@ -251,7 +251,7 @@ class DrupalBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1:
-                    if line[0]==chr(65279): #U+FEFF
+                    if line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "DrupalBible.load1: Detected Unicode Byte Order Marker (BOM) in {}".format( self.sourceFilepath ) )
                         line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                     elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF

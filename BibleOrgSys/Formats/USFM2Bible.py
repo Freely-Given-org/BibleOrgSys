@@ -173,7 +173,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
                 ##dPrint( 'Quiet', debuggingThisModule, 'U1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
-                #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "USFM2BibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                     #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if not firstLine: continue # don't allow a blank first line
@@ -204,7 +204,7 @@ def USFM2BibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, auto
                         #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
                         ##dPrint( 'Quiet', debuggingThisModule, 'U2', repr(firstLine) )
                         #if firstLine is None: continue # seems we couldn't decode the file
-                        #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                        #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                             #logging.info( "USFM2BibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                             #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                         #if not firstLine: continue # don't allow a blank first line
@@ -818,7 +818,7 @@ def briefDemo() -> None:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1:
-                        if line[0]==chr(65279): #U+FEFF
+                        if line[0]==BibleOrgSysGlobals.BOM:
                             logging.info( "USFM2Bible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
                             line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                         elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
@@ -983,7 +983,7 @@ def fullDemo() -> None:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1:
-                        if line[0]==chr(65279): #U+FEFF
+                        if line[0]==BibleOrgSysGlobals.BOM:
                             logging.info( "USFM2Bible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
                             line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                         elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF

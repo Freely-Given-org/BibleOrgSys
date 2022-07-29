@@ -249,7 +249,7 @@ def loadPTX7ProjectData( BibleObject, ssfFilepath, encoding='utf-8' ):
     for line in ssfData.split( '\n' ):
         #dPrint( 'Quiet', debuggingThisModule, "ssfData line", repr(line) )
         lineCount += 1
-        if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+        if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
             logging.info( _("loadPTX7ProjectData: Detected Unicode Byte Order Marker (BOM) in {}").format( ssfFilepath ) )
             line = line[1:] # Remove the Byte Order Marker (BOM)
         #if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
@@ -371,7 +371,7 @@ def loadPTX7Languages( BibleObject ):
         with open( languageFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTX7Languages: Detected Unicode Byte Order Marker (BOM) in {}".format( languageFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -437,7 +437,7 @@ def loadPTXVersifications( BibleObject ):
         with open( versificationFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTXVersifications: Detected Unicode Byte Order Marker (BOM) in {}".format( versificationFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -1591,7 +1591,7 @@ class PTX7Bible( Bible ):
         with open( autocorrectFilepath, 'rt', encoding='utf-8' ) as vFile: # Automatically closes the file when done
             for line in vFile:
                 lineCount += 1
-                if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loadPTXAutocorrects: Detected Unicode Byte Order Marker (BOM) in {}".format( autocorrectFilename ) )
                     line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -1652,7 +1652,7 @@ class PTX7Bible( Bible ):
                     with open( styleFilepath, 'rt', encoding=encoding ) as vFile: # Automatically closes the file when done
                         for line in vFile:
                             lineCount += 1
-                            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                            if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                                 logging.info( "loadPTXStyles: Detected Unicode Byte Order Marker (BOM) in {}".format( styleFilename ) )
                                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
                             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character

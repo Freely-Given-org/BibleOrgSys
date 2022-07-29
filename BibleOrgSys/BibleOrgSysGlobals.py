@@ -109,10 +109,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-07-17' # by RJH
+LAST_MODIFIED_DATE = '2022-07-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.89'
+PROGRAM_VERSION = '0.90'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -123,7 +123,6 @@ haltOnXMLWarning = False # Used for XML debugging
 #=================
 
 # Online settings
-# TODO: Should be https as soon as supported by the site
 SUPPORT_SITE_NAME = 'Freely-Given.org'
 SUPPORT_SITE_URL = f'https://{SUPPORT_SITE_NAME}/'
 DISTRIBUTABLE_RESOURCES_URL = f'{SUPPORT_SITE_URL}Software/BibleOrganisationalSystem/DistributableResources/'
@@ -135,6 +134,7 @@ programStartTime = datetime.now()
 commandLineArguments = Namespace()
 
 strictCheckingFlag = debugFlag = False
+prependBOMFlag = True
 maxProcesses = 1
 alreadyMultiprocessing = False # Not used in this module, but set to prevent multiple levels of multiprocessing (illegal)
 verbosityLevel = 2
@@ -150,6 +150,8 @@ if debuggingThisModule:
 
 
 LARGE_DUMMY_VALUE = 999_999 # Some number bigger than the number of characters in a line
+NL = '\n' # Can't use backslash inside f-strings
+BOM = '\ufeff' # = chr(65279) -- Unicode Byte Order Marker
 
 
 # Some language independant punctuation help
@@ -794,7 +796,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BOM:
                 if printFlag and verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -805,7 +807,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BOM:
                 if printFlag and verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -863,7 +865,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     with open( filepath1, 'rt', encoding='utf-8' ) as file1:
         for line in file1:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BOM:
                 if printFlag and verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -874,7 +876,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
     with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
-            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+            if lineCount==1 and line[0]==BOM:
                 if printFlag and verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
@@ -1379,11 +1381,23 @@ def setup( shortProgName:str, progVersion:str, lastModDate:str='', loggingFolder
 
 
 ########################## ################################################################################
+
+def setBOMFlag( prependBOMs:bool=True ) -> None:
+    """
+    Turn flag on or off for prepending the Unicode Byte Order Marker (BOM)
+        to files being written.
+    """
+    global prependBOMFlag
+    prependBOMFlag = prependBOMs
+# end of BibleOrgSysGlobals.setBOMFlag
+
+
+########################## ################################################################################
 #
 # Verbosity and debug settings
 #
 
-def setVerbosity( verbosityLevelParameter ):
+def setVerbosity( verbosityLevelParameter: str | int ) -> None:
     """
     Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control.
     """

@@ -600,7 +600,7 @@ class uWNotesBibleBook( BibleBook ):
             for line in myFile:
                 line = line.rstrip( '\n\r' )
                 lineCount += 1
-                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "loaduWNotesBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 #dPrint( 'Quiet', debuggingThisModule, CV, "line", line )

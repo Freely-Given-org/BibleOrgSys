@@ -48,7 +48,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2022-07-18' # by RJH
+LAST_MODIFIED_DATE = '2022-07-20' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.79'
@@ -114,7 +114,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
                 ##dPrint( 'Quiet', debuggingThisModule, 'U1', repr(firstLine) )
                 #if firstLine is None: continue # seems we couldn't decode the file
-                #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                     #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                 #if not firstLine: continue # don't allow a blank first line
@@ -183,7 +183,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
                         #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
                         ##dPrint( 'Quiet', debuggingThisModule, 'U2', repr(firstLine) )
                         #if firstLine is None: continue # seems we couldn't decode the file
-                        #if firstLine and firstLine[0]==chr(65279): #U+FEFF or \ufeff
+                        #if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                             #logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( something ) )
                             #firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
                         #if not firstLine: continue # don't allow a blank first line
@@ -755,7 +755,6 @@ def briefDemo() -> None:
             vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
             vPrint( 'Quiet', debuggingThisModule, UsfmB )
-            # UsfmB.analyseAndExportUWalignments() # Not for briefDemo()
             if BibleOrgSysGlobals.strictCheckingFlag:
                 UsfmB.check()
                 #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
@@ -810,7 +809,7 @@ def briefDemo() -> None:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1:
-                        if line[0]==chr(65279): #U+FEFF
+                        if line[0]==BibleOrgSysGlobals.BOM:
                             logging.info( "USFMBible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
                             line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                         elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
@@ -927,7 +926,6 @@ def fullDemo() -> None:
                 vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 vPrint( 'Quiet', debuggingThisModule, UsfmB )
-                # if UsfmB.uWencoded: UsfmB.analyseAndExportUWalignments()
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     UsfmB.check()
                     #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
@@ -981,7 +979,7 @@ def fullDemo() -> None:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1:
-                        if line[0]==chr(65279): #U+FEFF
+                        if line[0]==BibleOrgSysGlobals.BOM:
                             logging.info( "USFMBible.findInfo1: Detected Unicode Byte Order Marker (BOM) in {}".format( "copyright.htm" ) )
                             line = line[1:] # Remove the UTF-16 Unicode Byte Order Marker (BOM)
                         elif line[:3] == 'ï»¿': # 0xEF,0xBB,0xBF
