@@ -1545,7 +1545,7 @@ class SwordInterface():
             verseText = verseText.rstrip()
             #dPrint( 'Quiet', debuggingThisModule, 'verseText', repr(verseText) )
             verseData = InternalBibleEntryList()
-            #c, v = key.getChapterNumberStr(), key.getVerseNumberStr()
+            #c, v = key.getChapterNumStr(), key.getVerseNumStr()
             cv = key.getShortText().split( ' ', 1 )[1]
             c, v = cv.split( ':', 1 )
             #dPrint( 'Quiet', debuggingThisModule, 'c,v', repr(c), repr(v) )
@@ -1559,7 +1559,7 @@ class SwordInterface():
             try: contextVerseData = module.getContextVerseData( key ) # a call to InternalBible.py
             except KeyError: # Just create a blank verse entry
                 verseData = InternalBibleEntryList()
-                c, v = key.getChapterNumberStr(), key.getVerseNumberStr()
+                c, v = key.getChapterNumStr(), key.getVerseNumStr()
                 if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
                 verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
                 contextVerseData = verseData, [] # No context

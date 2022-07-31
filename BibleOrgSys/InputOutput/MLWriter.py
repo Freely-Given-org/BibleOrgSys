@@ -47,12 +47,13 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleExtraList
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "MLWriter"
-PROGRAM_NAME = "ML Writer"
-PROGRAM_VERSION = '0.38'
+PROGRAM_NAME = "XML/HTML Writer"
+PROGRAM_VERSION = '0.40'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -69,6 +70,9 @@ HTML_PREDEFINED_CHARACTER_ENTITIES = (
                 'laquo','not','shy','reg','macr','deg','plusmn','sup2','sup3','acute',
                 'micro','para','middot','cedil','sup1','ordm','raquo',
                 'frac14','frac12','frac34', 'iquest' ) # plus about 200 more
+ESCAPE_PAIRS = (('&','&amp;'),('"','&quot;'),('<','&lt;'),('>','&gt;'))
+ESCAPE_MAP = { k:v for k,v in ESCAPE_PAIRS}
+assert len(ESCAPE_MAP) == len(ESCAPE_PAIRS)
 
 
 class MLWriter:
@@ -284,15 +288,55 @@ class MLWriter:
             i.e., the user is responsible for calling it appropriately
         """
         if checkFirst:
-            for char,escaped_chars in (('&','&amp;'),('"','&quot;'),('<','&lt;'),('>','&gt;')):
+            for char,escaped_chars in ESCAPE_PAIRS:
                 if escaped_chars in rawTextString:
                     pass
                 rawTextString = rawTextString.replace( char, escaped_chars )
             return rawTextString
 
         # else no checkfirst
-        return rawTextString.replace('&','&amp;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
+        for char,escaped_chars in ESCAPE_PAIRS:
+            rawTextString = rawTextString.replace( char, escaped_chars )
+        return rawTextString
     # end of MLWriter.escape_characters static function
+
+    @staticmethod
+    def escape_characters_with_extras( rawTextString:str, extras:InternalBibleExtraList, checkFirst:bool=False ) -> Tuple[str,InternalBibleExtraList]:
+        """
+        Does XML escapes, e.g., & -> &amp;
+
+        Extras contain an index number into the text string,
+            so any expansion of the text string must also update those numbers.
+
+        If checkFirst is set, prechecks that escapes haven't already been done and gives a warning
+
+        This function is not called anywhere in this module,
+            i.e., the user is responsible for calling it appropriately
+        """
+        if checkFirst:
+            for _char,escaped_chars in ESCAPE_PAIRS:
+                if escaped_chars in rawTextString:
+                    logging.error( f"""MLWriter.escape_characters_with_extras found already escaped '{escaped_chars}' in string '{rawTextString}'{" -- they'll now be wrongly escaped twice!!!" if extras else ''}""" )
+
+        if not extras: # We can use the simpler function
+            return MLWriter.escape_characters( rawTextString, checkFirst ), extras
+
+        # Ok, we've got extras so we need to check more carefully
+        # Precounting might speed things up ??? (not profile tested yet)
+        escape_count = sum([rawTextString.count(c) for c in ESCAPE_MAP])
+        if escape_count == 0:
+            return MLWriter.escape_characters( rawTextString, checkFirst ), extras
+        else: dPrint( 'Quiet', debuggingThisModule, f"{escape_count=} {[rawTextString.count(c) for c in ESCAPE_MAP]} {rawTextString=}")
+
+        # Ok, we've got chars needing to be escaped and we have extras so need to work through char by char
+        char_strings, adjExtras = [], InternalBibleExtraList()
+        for ix,char in enumerate(rawTextString):
+            if char in ESCAPE_MAP:
+                print(f"{ix=} {char=}")
+        print(f"{rawTextString=} {char_strings=} {extras=} {adjExtras=}")
+        MLWriter_escape_characters_with_extras_NOT_WRITTEN_YET
+        return ''.join(char_strings), adjExtras
+    # end of MLWriter.escape_characters_with_extras static function
 
     def start( self, lineEndings:str='l', noAutoXML:bool=False, writeBOM:bool=False ) -> None:
         """

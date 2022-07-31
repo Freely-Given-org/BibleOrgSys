@@ -119,7 +119,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-07-29' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -555,7 +555,7 @@ class BibleWriter( InternalBible ):
             if rawUSFMData:
                 #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
                 #USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-                #USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                #USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
 
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -569,7 +569,7 @@ class BibleWriter( InternalBible ):
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
 
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolderpath, BibleOrgSysGlobals.makeSafeFilename( filename ) )
@@ -648,7 +648,7 @@ class BibleWriter( InternalBible ):
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -814,7 +814,7 @@ class BibleWriter( InternalBible ):
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
 
             if includeEmptyVersesFlag:
                 try:
@@ -983,7 +983,7 @@ class BibleWriter( InternalBible ):
             internalBibleBookData = bookObject._processedLines
             #dPrint( 'Quiet', debuggingThisModule, "\ninternalBibleBookData", internalBibleBookData[:50] ); halt
             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
 
             filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
@@ -1009,7 +1009,7 @@ class BibleWriter( InternalBible ):
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, processedBibleEntry in enumerate( internalBibleBookData ):
                     pseudoMarker, value = processedBibleEntry.getMarker(), processedBibleEntry.getFullText()
-                    vPrint( 'Never', debuggingThisModule, "writeESFM", indentLevel, "now", BBB, j, pseudoMarker, repr(value) )
+                    dPrint( 'Never', debuggingThisModule, f"writeESFM {indentLevel=} now {BBB} {j} {pseudoMarker=} {value}" )
                     if j==1 and pseudoMarker=='ide':
                         #dPrint( 'Quiet', debuggingThisModule, "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
@@ -1019,11 +1019,11 @@ class BibleWriter( InternalBible ):
                         ESFMLine = ''
                     elif j==2 and pseudoMarker=='rem':
                         #dPrint( 'Quiet', debuggingThisModule, "Write REM 3" )
-                        if value != 'ESFM v0.5 {}'.format( BBB ):
+                        if value != f'ESFM v0.5 {BBB}':
                             logger.info( "Updating {} ESFM rem line from {!r} to v0.5".format( BBB, value ) )
-                        ESFMLine = '\\rem ESFM v0.5 {}'.format( BBB )
+                        ESFMLine = f'\\rem ESFM v0.5 {BBB}'
                     else:
-                        if '¬' in pseudoMarker:
+                        if '¬' in pseudoMarker and pseudoMarker[1:] not in ('ms','ms1','ms2','ms3','ms4'): # We don't indent for them
                             if indentLevel > 0:
                                 indentLevel -= 1
                             else:
@@ -1090,7 +1090,7 @@ class BibleWriter( InternalBible ):
                     #dPrint( 'Quiet', debuggingThisModule, BBB, pseudoMarker, repr(ESFMLine) )
                     #if BBB=='GEN' and j > 20: halt
                     if ESFMLine: myFile.write( '{}\n'.format( ESFMLine ) )
-                    if pseudoMarker in BOS_NESTING_MARKERS:
+                    if pseudoMarker in BOS_NESTING_MARKERS: # or pseudoMarker in ('ms','ms1','ms2','ms3','ms4'):
                         indentLevel += 1
                         #dPrint( 'Quiet', debuggingThisModule, pseudoMarker, indentLevel )
             if indentLevel !=  0:
@@ -4124,7 +4124,7 @@ class BibleWriter( InternalBible ):
             # end of toUSX2XML.handleNotes
 
             USXAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
-            USXNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumber( BBB )
+            USXNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSXNumStr( BBB )
             if not USXAbbrev:
                 logger.error( "toUSX2XML: Can't write {} USX book because no USFM code available".format( BBB ) )
                 unhandledBooks.append( BBB )
@@ -4322,6 +4322,8 @@ class BibleWriter( InternalBible ):
         See https://ubsicap.github.io/usx/ for more information.
 
         If a schema is given (either a path or URL), the XML output files are validated.
+            If the validationSchema parameter is set to False, the output files are not validated.
+            If the validationSchema parameter is set to None or '', the default schema is used for validation.
         """
         from BibleOrgSys.Formats.USXXMLBible import createUSXXMLBible
 
@@ -4337,8 +4339,8 @@ class BibleWriter( InternalBible ):
             except FileNotFoundError:
                 logger.warning( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolderpath ) )
         self.__adjustControlDict( controlDict )
-        if not validationSchema: # We'll use our copy
-            rncFilepath = 'ExternalSchemas/DerivedFiles/usx_3.0.rng'
+        if validationSchema != False and not validationSchema: # We'll use our copy
+            rncFilepath = 'ExternalSchemas/DerivedFiles/usx_3.0.7.rng'
             if os.path.exists( rncFilepath ): validationSchema = rncFilepath
 
         return createUSXXMLBible( self, outputFolderpath, controlDict, validationSchema )
@@ -4651,7 +4653,7 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getOriginalMarker(), processedBibleEntry.getAdjustedText(), processedBibleEntry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=' or marker=='c#':
                     continue # Just ignore added markers — not needed here
                 if marker in USFM_PRECHAPTER_MARKERS:
                     if self.doExtraChecking:
@@ -4691,8 +4693,6 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the text — not sure how USFX handles them yet
                     xw.removeFinalNewline( suppressFollowingIndent=True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                elif marker == 'c#': # Chapter number added for printing
-                    ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker == 'vp#': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
                 elif marker == 'v':
@@ -10242,7 +10242,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10289,7 +10289,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10338,7 +10338,7 @@ def briefDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10470,7 +10470,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10537,7 +10537,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:
@@ -10601,7 +10601,7 @@ def fullDemo() -> None:
                         vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported USFM files…" )
                         for jj, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1 )
-                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            UUU, nn = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             #dPrint( 'Quiet', debuggingThisModule, jj, BBB, filename1, UUU )
                             filename2 = None
                             for fn in folderContents2:

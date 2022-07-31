@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2020-03-08 by RJH (also update PROGRAM_VERSION below)
 #
 # Module testing BibleBooksCodes.py
 #
-# Copyright (C) 2011-2014 Robert Hunt
+# Copyright (C) 2011-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,9 +26,9 @@
 Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 PROGRAM_NAME = "Bible Books Codes tests"
-PROGRAM_VERSION = '0.72'
+PROGRAM_VERSION = '0.73'
 programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
@@ -281,40 +280,40 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbc.getUSFMAbbreviation, 'Gen' )
     # end of test_2120_getUSFMAbbreviation
 
-    def test_2130_getUSFMNumber( self ):
-        """ Test the getUSFMNumber function. """
+    def test_2130_getUSFMNumStr( self ):
+        """ Test the getUSFMNumStr function. """
         for BBB in self.bbc.getAllReferenceAbbreviations():
-            USFMN = self.bbc.getUSFMNumber( BBB )
+            USFMN = self.bbc.getUSFMNumStr( BBB )
             if USFMN is not None:
                 self.assertTrue( ' ' not in USFMN )
                 self.assertEqual( len(USFMN), 2 )
-        self.assertEqual( self.bbc.getUSFMNumber('GEN'), '01' )
-        self.assertEqual( self.bbc.getUSFMNumber('MAL'), '39' )
-        self.assertEqual( self.bbc.getUSFMNumber('MAT'), '41' )
-        self.assertEqual( self.bbc.getUSFMNumber('CO1'), '47' )
-        self.assertEqual( self.bbc.getUSFMNumber('REV'), '67' )
-        self.assertRaises( KeyError, self.bbc.getUSFMNumber, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getUSFMNumber, 'Gen' )
-    # end of test_2130_getUSFMNumber
+        self.assertEqual( self.bbc.getUSFMNumStr('GEN'), '01' )
+        self.assertEqual( self.bbc.getUSFMNumStr('MAL'), '39' )
+        self.assertEqual( self.bbc.getUSFMNumStr('MAT'), '41' )
+        self.assertEqual( self.bbc.getUSFMNumStr('CO1'), '47' )
+        self.assertEqual( self.bbc.getUSFMNumStr('REV'), '67' )
+        self.assertRaises( KeyError, self.bbc.getUSFMNumStr, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getUSFMNumStr, 'Gen' )
+    # end of test_2130_getUSFMNumStr
 
-    def test_2140_getUSXNumber( self ):
-        """ Test the getUSXNumber function. """
+    def test_2140_getUSXNumStr( self ):
+        """ Test the getUSXNumStr function. """
         for BBB in self.bbc.getAllReferenceAbbreviations():
-            USXN = self.bbc.getUSXNumber( BBB )
+            USXN = self.bbc.getUSXNumStr( BBB )
             if USXN is not None:
                 self.assertTrue( ' ' not in USXN )
                 self.assertEqual( len(USXN), 3 )
                 USXNint = int( USXN )
                 self.assertTrue( 1 <= USXNint <= 123 )
-        self.assertEqual( self.bbc.getUSXNumber('GEN'), '001' )
-        self.assertEqual( self.bbc.getUSXNumber('MAL'), '039' )
-        self.assertEqual( self.bbc.getUSXNumber('MAT'), '040' )
-        self.assertEqual( self.bbc.getUSXNumber('CO1'), '046' )
-        self.assertEqual( self.bbc.getUSXNumber('REV'), '066' )
-        self.assertEqual( self.bbc.getUSXNumber('LBA'), '115' )
-        self.assertRaises( KeyError, self.bbc.getUSXNumber, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getUSXNumber, 'Gen' )
-    # end of test_2140_getUSXNumber
+        self.assertEqual( self.bbc.getUSXNumStr('GEN'), '001' )
+        self.assertEqual( self.bbc.getUSXNumStr('MAL'), '039' )
+        self.assertEqual( self.bbc.getUSXNumStr('MAT'), '040' )
+        self.assertEqual( self.bbc.getUSXNumStr('CO1'), '046' )
+        self.assertEqual( self.bbc.getUSXNumStr('REV'), '066' )
+        self.assertEqual( self.bbc.getUSXNumStr('LBA'), '115' )
+        self.assertRaises( KeyError, self.bbc.getUSXNumStr, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getUSXNumStr, 'Gen' )
+    # end of test_2140_getUSXNumStr
 
     def test_2145_getUnboundBibleCode( self ):
         """ Test the getUnboundBibleCode function. """
@@ -338,25 +337,25 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbc.getUnboundBibleCode, 'Gen' )
     # end of test_2145_getUnboundBibleCode
 
-    def test_2150_getBibleditNumber( self ):
-        """ Test the getBibleditNumber function. """
+    def test_2150_getBibleditNumStr( self ):
+        """ Test the getBibleditNumStr function. """
         for BBB in self.bbc.getAllReferenceAbbreviations():
-            BEN = self.bbc.getBibleditNumber( BBB )
+            BEN = self.bbc.getBibleditNumStr( BBB )
             if BEN is not None:
                 self.assertTrue( ' ' not in BEN )
                 self.assertTrue( 1 <= len(BEN) <= 2 )
                 BENint = int( BEN )
                 self.assertTrue( 1 <= BENint <= 88 )
-        self.assertEqual( self.bbc.getBibleditNumber('GEN'), '1' )
-        self.assertEqual( self.bbc.getBibleditNumber('SA1'), '9' )
-        self.assertEqual( self.bbc.getBibleditNumber('MAL'), '39' )
-        self.assertEqual( self.bbc.getBibleditNumber('MAT'), '40' )
-        self.assertEqual( self.bbc.getBibleditNumber('CO1'), '46' )
-        self.assertEqual( self.bbc.getBibleditNumber('REV'), '66' )
-        self.assertEqual( self.bbc.getBibleditNumber('MA1'), '80' )
-        self.assertRaises( KeyError, self.bbc.getBibleditNumber, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getBibleditNumber, 'Gen' )
-    # end of test_2150_getBibleditNumber
+        self.assertEqual( self.bbc.getBibleditNumStr('GEN'), '1' )
+        self.assertEqual( self.bbc.getBibleditNumStr('SA1'), '9' )
+        self.assertEqual( self.bbc.getBibleditNumStr('MAL'), '39' )
+        self.assertEqual( self.bbc.getBibleditNumStr('MAT'), '40' )
+        self.assertEqual( self.bbc.getBibleditNumStr('CO1'), '46' )
+        self.assertEqual( self.bbc.getBibleditNumStr('REV'), '66' )
+        self.assertEqual( self.bbc.getBibleditNumStr('MA1'), '80' )
+        self.assertRaises( KeyError, self.bbc.getBibleditNumStr, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getBibleditNumStr, 'Gen' )
+    # end of test_2150_getBibleditNumStr
 
     def test_2160_getNETBibleAbbreviation( self ):
         """ Test the getNETBibleAbbreviation function. """

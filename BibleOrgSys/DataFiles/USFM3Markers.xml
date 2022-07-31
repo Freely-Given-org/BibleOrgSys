@@ -10,7 +10,7 @@ This file gives a table of USFM3 markers:
         Newline is called 'paragraph' type in USFM3
         Internal is callled 'character' type in USFM3
     highestNumberSuffix: None or 3/4/5/6
-    nests: Yes or No
+    nests: Yes or No means for character markers which can occur with + inside other char markers
     hasContent (on the same line after a space): Sometimes, Always or Never
     closed (for character fields only): Always or Optional
     occursIn: a brief description of the context where this SFM can be used

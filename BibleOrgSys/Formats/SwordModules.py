@@ -797,9 +797,9 @@ class SwordModule():
                                 try: self.swordIndex[adjKey].append( entry )
                                 except AttributeError: self.swordIndex[adjKey] = [self.swordIndex[adjKey], entry ]
                             else: self.swordIndex[adjKey] = entry # Most keys only occur once
-                        elif BibleOrgSysGlobals.verbosityLevel > 0:
-                            vPrint( 'Quiet', debuggingThisModule, "What does num4==0 mean here?" )
-                    vPrint( 'Info', debuggingThisModule, "    {} genbook index entries loaded".format( len(self.swordIndex) ) )
+                        else:
+                            dPrint( 'Quiet', debuggingThisModule, "What does num4==0 mean here?" )
+                    dPrint( 'Info', debuggingThisModule, "    {} genbook index entries loaded".format( len(self.swordIndex) ) )
     # end of SwordModule.loadRawGenBook
 
 

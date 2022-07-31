@@ -273,9 +273,9 @@ class SimpleVerseKey():
 
     def getBBB( self ): return self.BBB
     def getChapterNumber( self ): return self.C
-    def getChapterNumberStr( self ): return self.C
+    def getChapterNumStr( self ): return self.C
     def getVerseNumber( self ): return self.V
-    def getVerseNumberStr( self ): return self.V
+    def getVerseNumStr( self ): return self.V
     def getVerseSuffix( self ): return self.S
     def getVerseIndex( self ): return self.I
 
@@ -454,7 +454,7 @@ class SimpleVersesKey():
         for j,svk in enumerate(self.verseKeysList):
             if j == 0:
                 resultStr += svk.getVerseKeyText()
-                lastBBB, lastC = svk.getBBB(), svk.getChapterNumberStr()
+                lastBBB, lastC = svk.getBBB(), svk.getChapterNumStr()
             else:
                 BBB, C, V, S = svk.getBCVS()
                 if BBB == lastBBB:
@@ -839,7 +839,7 @@ class VerseRangeKey():
         resultStr = self.rangeStart.getVerseKeyText()
         BBB, C, V, S = self.rangeEnd.getBCVS()
         if BBB == self.rangeStart.getBBB():
-            if C == self.rangeStart.getChapterNumberStr(): resultStr += '-{}{}{}'.format( V, '!' if S else '', S )
+            if C == self.rangeStart.getChapterNumStr(): resultStr += '-{}{}{}'.format( V, '!' if S else '', S )
             else: resultStr += '–{}:{}{}{}'.format( C,V, '!' if S else '', S )
         else: resultStr += '–{}_{}:{}{}{}'.format( BBB, C,V, '!' if S else '', S )
         return resultStr

@@ -48,10 +48,10 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2022-07-20' # by RJH
+LAST_MODIFIED_DATE = '2022-07-30' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
-PROGRAM_VERSION = '0.79'
+PROGRAM_VERSION = '0.80'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -650,14 +650,16 @@ class USFMBible( Bible ):
 
         if self.maximumPossibleFilenameTuples:
             if BibleOrgSysGlobals.maxProcesses > 1 \
+            and len(self.maximumPossibleFilenameTuples) > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
                 # Load all the books as quickly as possible
+                numProcesses = min( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses )
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} USFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} USFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), numProcesses ) )
                     vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
-                with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+                with multiprocessing.Pool( processes=numProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert len(results) == len(self.maximumPossibleFilenameTuples)
                     for bBook in results:
@@ -792,7 +794,7 @@ def briefDemo() -> None:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                             if originalText and originalText!=cleanText:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
@@ -856,7 +858,7 @@ def briefDemo() -> None:
                     else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: vPrint( 'Quiet', debuggingThisModule, f"\n{count} total USFM (partial) Bibles processed." )
             if totalBooks: vPrint( 'Quiet', debuggingThisModule, f"{totalBooks} total books ({round(totalBooks/count)} average per folder)" )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 #end of USFMBible.briefDemo
 
@@ -962,7 +964,7 @@ def fullDemo() -> None:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), f"fullText=({len(fullText)}) {fullText}" )
                             if originalText and originalText!=cleanText:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), f"originalText=({len(originalText)}) {originalText}" )
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
@@ -1026,7 +1028,7 @@ def fullDemo() -> None:
                     else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: vPrint( 'Quiet', debuggingThisModule, f"\n{count} total USFM (partial) Bibles processed." )
             if totalBooks: vPrint( 'Quiet', debuggingThisModule, f"{totalBooks} total books ({round(totalBooks/count)} average per folder)" )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 # end of USFMBible.fullDemo
 

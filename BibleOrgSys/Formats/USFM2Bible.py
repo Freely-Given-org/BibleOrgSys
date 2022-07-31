@@ -801,7 +801,7 @@ def briefDemo() -> None:
                                 if originalText and originalText!=cleanText:
                                     vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
                 break
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
@@ -865,7 +865,7 @@ def briefDemo() -> None:
                     else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total USFM2 (partial) Bibles processed.".format( count ) )
             if totalBooks: vPrint( 'Quiet', debuggingThisModule, "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 #end of USFM2Bible.briefDemo
 
@@ -966,7 +966,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                                 if originalText and originalText!=cleanText:
                                     vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 
 
@@ -1030,7 +1030,7 @@ def fullDemo() -> None:
                     else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
             if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total USFM2 (partial) Bibles processed.".format( count ) )
             if totalBooks: vPrint( 'Quiet', debuggingThisModule, "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
 # end of USFM2Bible.fullDemo
 

@@ -109,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-07-29' # by RJH
+LAST_MODIFIED_DATE = '2022-08-01' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.90'
@@ -807,6 +807,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     with open( filepath2, 'rt', encoding='utf-8' ) as file2:
         for line in file2:
             lineCount += 1
+            line = line.replace(' <verse eid','<verse eid') # TEMP .................................................................
             if lineCount==1 and line[0]==BOM:
                 if printFlag and verbosityLevel > 2:
                     vPrint( 'Quiet', debuggingThisModule, "      fileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
@@ -923,16 +924,17 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 # end of BibleOrgSysGlobals.fileCompareUSFM
 
 
-def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount:int=10, ignoreWhitespace=True ):
+def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=None, printFlag:bool=True, exitCount:int=10, ignoreWhitespace:bool=True ) -> bool:
     """
     Compare the two files.
     """
+    fnPrint( debuggingThisModule, f"BibleOrgSysGlobals.fileCompareXML( {filename1=} {filename2=} {folder1=}, {folder2=} {printFlag=} {exitCount=} {ignoreWhitespace=} )" )
     filepath1 = Path( folder1, filename1 ) if folder1 else filename1
     filepath2 = Path( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
         if filename1==filename2:
-            vPrint( 'Quiet', debuggingThisModule, "Comparing XML {!r} files in folders {!r} and {!r}…".format( filename1, folder1, folder2 ) )
-        else: vPrint( 'Quiet', debuggingThisModule, "Comparing XML files {!r} and {!r}…".format( filename1, filename2 ) )
+            vPrint( 'Quiet', debuggingThisModule, "Comparing XML '{}' files in folders '{}' and '{}'…".format( filename1, folder1, folder2 ) )
+        else: vPrint( 'Quiet', debuggingThisModule, "Comparing XML files '{}' and '{}'…".format( filename1, filename2 ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -943,9 +945,15 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         return None
 
     # Load the files
-    from xml.etree.ElementTree import ElementTree
-    tree1 = ElementTree().parse( filepath1 )
-    tree2 = ElementTree().parse( filepath2 )
+    from xml.etree.ElementTree import ElementTree, ParseError
+    try: tree1 = ElementTree().parse( filepath1 )
+    except ParseError as err:
+        logging.critical( f"Unable to parse {filepath1}: {err}" )
+        return None
+    try: tree2 = ElementTree().parse( filepath2 )
+    except ParseError as err:
+        logging.critical( f"Unable to parse {filepath2}: {err}" )
+        return None
 
     def compareElements( element1, element2 ):
         """
@@ -962,7 +970,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         attribs1, attribs2 = element1.items(), element2.items()
         if len(attribs1) != len(attribs2):
             if printFlag:
-                vPrint( 'Quiet', debuggingThisModule, "Number of attributes differ ({} and {})".format( len(attribs1), len(attribs2) ) )
+                vPrint( 'Quiet', debuggingThisModule, "Number of {} attributes differ ({} and {})".format( element1.tag, len(attribs1), len(attribs2) ) )
                 vPrint( 'Info', debuggingThisModule, "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
@@ -1511,7 +1519,8 @@ def preloadCommonData() -> None:
     assert len(loadedUSFMMarkers) >= 220
     USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
-    assert len(USFMParagraphMarkers) >= 33
+    USFMParagraphMarkers.remove( 'qc' ) # Treat this like a heading marker also
+    assert len(USFMParagraphMarkers) >= 32
     USFMCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList()
     assert len(USFMCharacterMarkers) >= 40
     USFMAllExpandedCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )

@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-05-06' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.88'
+PROGRAM_VERSION = '0.89'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -254,12 +254,12 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
-    def getUSFMNumber( self, BBB:str ) -> str:
+    def getUSFMNumStr( self, BBB:str ) -> str:
         """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMNumberString']
 
 
-    def getUSXNumber( self, BBB:str ) -> str:
+    def getUSXNumStr( self, BBB:str ) -> str:
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USXNumberString']
 
@@ -272,7 +272,7 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['UnboundCodeString']
 
 
-    def getBibleditNumber( self, BBB:str ) -> str:
+    def getBibleditNumStr( self, BBB:str ) -> str:
         """
         Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation).
         """

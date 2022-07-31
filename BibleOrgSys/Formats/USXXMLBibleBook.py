@@ -578,7 +578,7 @@ class USXXMLBibleBook( BibleBook ):
                 elif element.tag == 'verse': # milestone (not a container in USX)
                     loadVerseNumberField( element, location ) # Not in a paragraph!
                 elif element.tag == 'para':
-                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0
+                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be -1:0
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( USFMMarker ):
@@ -631,7 +631,7 @@ class USXXMLBibleBook( BibleBook ):
                             loadErrors.append( _("{} {}:{} Ignoring '\\{}' unknown USFM Marker at beginning of line (with no text)").format( self.BBB, C, V, USFMMarker ) )
                             logging.critical( _("Ignoring '\\{}' unknown USFM Marker after {} {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.workName, self.BBB, C, V ) )
                 elif element.tag == 'table':
-                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be 0:0
+                    if C == '-1': V = str( int(V) + 1 ) # first/id line will be -1:0
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'TT33' )
                     BibleOrgSysGlobals.checkXMLNoText( element, location, 'TT42' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, 'TT88' )

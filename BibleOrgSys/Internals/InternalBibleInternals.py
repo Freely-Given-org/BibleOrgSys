@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.81'
+PROGRAM_VERSION = '0.82'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -112,7 +112,8 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 # NOTE: Don't use any of the following symbols here: = ¬ or backslashes.
 BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
 
-BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' )
+# BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
+BOS_REGULAR_NESTING_MARKERS = ('c','v' )
 
 BOS_ADDED_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
 """
@@ -395,6 +396,8 @@ class InternalBibleExtra:
     def __ne__(self, other): return not self.__eq__(other)
 
 
+    def __repr__( self ) -> str:
+        return self.__str__()
     def __str__( self ) -> str:
         """
         Just display a very abbreviated form of the entry.
@@ -443,6 +446,8 @@ class InternalBibleExtraList:
     # end of InternalBibleExtraList.__init__
 
 
+    def __repr__( self ) -> str:
+        return self.__str__()
     def __str__( self ) -> str:
         """
         Just display a simplified view of the list of entries.
@@ -602,8 +607,8 @@ class InternalBibleEntry:
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule \
         and self.originalText is not None and self.getFullText() != self.originalText.strip():
-            vPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
-            vPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
+            dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
+            dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
             #halt # When does this happen?
     # end of InternalBibleEntry.__init__
 
@@ -683,49 +688,48 @@ class InternalBibleEntry:
             the space before the close of the footnote is not restored!
         Otherwise it should be identical to the original text.
         """
-        if 1:
-            return self.originalText
-        else: # re-create it
-            result = self.adjustedText # Can be None for our inserted end markers, e.g., ¬v
-            vPrint( 'Quiet', debuggingThisModule, "getFullText() got adjustedText: {!r}".format( self.adjustedText ) )
-            vPrint( 'Quiet', debuggingThisModule, "  (Clean text is {!r})".format( self.cleanText ) )
-            offset = 0
-            if self.extras:
-                for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-                    vPrint( 'Quiet', debuggingThisModule, "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-                    vPrint( 'Quiet', debuggingThisModule, "getFullText:  was {!r}".format( result ) )
-                    ix = extraIndex + offset
-                    if extraType == 'fn': USFM, lenUSFM = 'f', 1
-                    elif extraType == 'en': USFM, lenUSFM = 'fe', 2
-                    elif extraType == 'xr': USFM, lenUSFM = 'x', 1
-                    elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
-                    elif extraType == 'str': USFM, lenUSFM = 'str', 3
-                    elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
-                    elif extraType == 'ww': USFM, lenUSFM = 'ww', 2
-                    elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
-                    elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
-                    if USFM:
-                        result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-                    vPrint( 'Quiet', debuggingThisModule, "getFullText:  now {!r}".format( result ) )
-                    offset += len(extraText ) + 2*lenUSFM + 4
-                # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
-                #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
-                result = re.sub( '\\\\w (.+?)\\\\w\\*', '', result ) # Remove all \w …\w* fields
-                result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
+        return self.originalText
+        # else: # re-create it
+        #     result = self.adjustedText # Can be None for our inserted end markers, e.g., ¬v
+        #     dPrint( 'Quiet', debuggingThisModule, "getFullText() got adjustedText: {!r}".format( self.adjustedText ) )
+        #     dPrint( 'Quiet', debuggingThisModule, "  (Clean text is {!r})".format( self.cleanText ) )
+        #     offset = 0
+        #     if self.extras:
+        #         for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
+        #             dPrint( 'Quiet', debuggingThisModule, "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+        #             dPrint( 'Quiet', debuggingThisModule, "getFullText:  was {!r}".format( result ) )
+        #             ix = extraIndex + offset
+        #             if extraType == 'fn': USFM, lenUSFM = 'f', 1
+        #             elif extraType == 'en': USFM, lenUSFM = 'fe', 2
+        #             elif extraType == 'xr': USFM, lenUSFM = 'x', 1
+        #             elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
+        #             elif extraType == 'str': USFM, lenUSFM = 'str', 3
+        #             elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
+        #             elif extraType == 'ww': USFM, lenUSFM = 'ww', 2
+        #             elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
+        #             elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
+        #             if USFM:
+        #                 result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
+        #             dPrint( 'Quiet', debuggingThisModule, "getFullText:  now {!r}".format( result ) )
+        #             offset += len(extraText ) + 2*lenUSFM + 4
+        #         # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
+        #         #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
+        #         result = re.sub( '\\\\w (.+?)\\\\w\\*', '', result ) # Remove all \w …\w* fields
+        #         result = result.replace( '\\ww ', '\\w ' ).replace( '\\ww*', '\\w*' ) # Convert full \ww fields back to \w fields now
 
-            if result != self.adjustedText:
-                if len(self.extras) > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "\nWas {!r}".format( self.cleanText ) )
-                    vPrint( 'Quiet', debuggingThisModule, "And {!r}".format( self.adjustedText ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Orig{!r}".format( self.originalText ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Now {!r}".format( result ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Extras are {}".format( self.extras ) )
-            if result is not None and result != self.originalText.strip():
-                vPrint( 'Quiet', debuggingThisModule, "\nWe're giving {!r}".format( result ) )
-                vPrint( 'Quiet', debuggingThisModule, "   Should be {!r}".format( self.originalText.strip() ) )
-                vPrint( 'Quiet', debuggingThisModule, "        From {!r}".format( self.originalText ) )
-            if BibleOrgSysGlobals.debugFlag and self.originalText is not None: assert result == self.originalText.strip()
-            return result
+        #     if result != self.adjustedText:
+        #         if len(self.extras) > 1:
+        #             dPrint( 'Quiet', debuggingThisModule, "\nWas {!r}".format( self.cleanText ) )
+        #             dPrint( 'Quiet', debuggingThisModule, "And {!r}".format( self.adjustedText ) )
+        #             dPrint( 'Quiet', debuggingThisModule, "Orig{!r}".format( self.originalText ) )
+        #             dPrint( 'Quiet', debuggingThisModule, "Now {!r}".format( result ) )
+        #             dPrint( 'Quiet', debuggingThisModule, "Extras are {}".format( self.extras ) )
+        #     if result is not None and result != self.originalText.strip():
+        #         dPrint( 'Quiet', debuggingThisModule, "\nWe're giving {!r}".format( result ) )
+        #         dPrint( 'Quiet', debuggingThisModule, "   Should be {!r}".format( self.originalText.strip() ) )
+        #         dPrint( 'Quiet', debuggingThisModule, "        From {!r}".format( self.originalText ) )
+        #     if BibleOrgSysGlobals.debugFlag and self.originalText is not None: assert result == self.originalText.strip()
+        #     return result
     # end of InternalBibleEntry.getFullText
 
 
@@ -772,6 +776,8 @@ class InternalBibleEntryList:
     #def __ne__(self, other): return not self.__eq__(other)
 
 
+    def __repr__( self ) -> str:
+        return self.__str__()
     def __str__( self ) -> str:
         """
         Just display a simplified view of the list of entries.

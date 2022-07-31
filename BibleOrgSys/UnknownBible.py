@@ -694,14 +694,14 @@ class UnknownBible:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
                                                         .format( totalBibleCount, typesFound[0], self.givenFolderName ) )
-                elif BibleOrgSysGlobals.verbosityLevel > 0:
+                else:
                     vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
                 self.foundType = "Multiple found: {} Bibles".format( typesFound[0] )
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
                                                         .format( totalBibleCount, typesFound, self.givenFolderName ) )
-                elif BibleOrgSysGlobals.verbosityLevel > 0:
+                else:
                     vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many types found'
                 if not strictCheck:

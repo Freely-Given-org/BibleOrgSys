@@ -31,6 +31,9 @@ Contains functions:
     replaceUSFMCharacterFields( replacements, originalText )
 
 Contains the singleton class: USFM3Markers
+
+CHANGELOG:
+    2022-07-31 moved 'qc' marker from paragraphs to headings
 """
 from gettext import gettext as _
 from typing import List, Optional
@@ -47,10 +50,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.10'
+PROGRAM_VERSION = '0.11'
 programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 debuggingThisModule = False
@@ -67,10 +70,10 @@ USFM_INTRODUCTION_PARAGRAPH_MARKERS = ( 'ip','ipi', 'im','imi', 'ipq','imq','ipr
                            'iex','iqt' ) # Doesn't include ie
 USFM_ALL_INTRODUCTION_MARKERS = ( 'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4',
                             'is','is1','is2','is3','is4', ) + USFM_INTRODUCTION_PARAGRAPH_MARKERS
-USFM_ALL_SECTION_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', 'qa' )
+USFM_ALL_SECTION_HEADING_MARKERS = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', 'qa', 'qc' )
 USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
                             'pi','pi1','pi2','pi3','pi4', 'ph','ph1','ph2','ph3','ph4',
-                            'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
+                            'q','q1','q2','q3','q4', 'qr', 'qm','qm1','qm2','qm3','qm4',
                             'li','li1','li2','li3','li4' ) # (37) Doesn't include nb and qa and sp -- WHY NOT???
                                                             #   but does include q, qm, li, pi, and ph
 USFM_ALL_BIBLE_PARAGRAPH_MARKERS = USFM_INTRODUCTION_PARAGRAPH_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS

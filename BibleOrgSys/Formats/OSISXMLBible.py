@@ -2411,7 +2411,7 @@ class OSISXMLBible( Bible ):
                             BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
                             #dPrint( 'Quiet', debuggingThisModule, "23f4 BBB is", BBB )
                             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-                            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                            USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                             vPrint( 'Info', debuggingThisModule, f"  It seems we have {BBB}…" )
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'OSIS XML Bible Book object'
@@ -2926,7 +2926,7 @@ class OSISXMLBible( Bible ):
                     BBB = BBB[0]
                 vPrint( 'Info', debuggingThisModule, _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
                 USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-                USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'OSIS XML Bible Book object'
                 thisBook.objectTypeString = 'OSIS'
@@ -3283,7 +3283,7 @@ class OSISXMLBible( Bible ):
                     if newBBB != BBB:
                         BBB = newBBB
                         USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
-                        USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumber( BBB )
+                        USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
                         vPrint( 'Normal', debuggingThisModule, _("  Loading {}{}…").format( self.abbreviation+' ' if self.abbreviation else '', BBB ) )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix

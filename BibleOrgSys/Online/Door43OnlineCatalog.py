@@ -568,7 +568,7 @@ def briefDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, verseKey )
                     vPrint( 'Quiet', debuggingThisModule, " ", Door43CatalogBible1.getVerseDataList( verseKey ) )
             vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"{lgCode} '{desiredTitle}' was not found!" )
 # end of Door43OnlineCatalog.briefDemo
 
@@ -686,7 +686,7 @@ def fullDemo() -> None:
                         vPrint( 'Quiet', debuggingThisModule, verseKey )
                         vPrint( 'Quiet', debuggingThisModule, " ", Door43CatalogBible1.getVerseDataList( verseKey ) )
                 vPrint( 'Quiet', debuggingThisModule, Door43CatalogBible1 )
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, f"{lgCode} '{desiredTitle}' was not found!" )
 # end of Door43OnlineCatalog.fullDemo
 

@@ -487,7 +487,7 @@ def briefDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, verseKey )
                     vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
                 break
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
 
@@ -566,7 +566,7 @@ def fullDemo() -> None:
                 if BibleOrgSysGlobals.verbosityLevel > 0:
                     vPrint( 'Quiet', debuggingThisModule, verseKey )
                     vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
 

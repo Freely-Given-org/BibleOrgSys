@@ -83,8 +83,8 @@ OPEN_BIBLE_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Biblica_Open.Bible_V
 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
-PROCESS_ONE = 'SBL' # Will disable all others if set to an abbreviation, e.g., 'WLC'
-PROCESS_ALL_FLAG = (False or __name__ != '__main__') and not PROCESS_ONE
+PROCESS_ONE = '' # Will disable all others if set to an abbreviation, e.g., 'ASV' or 'WLC'
+PROCESS_ALL_FLAG = (True or __name__ != '__main__') and not PROCESS_ONE
 PROCESS_WLC_FLAG = False and not PROCESS_ONE
 PROCESS_EBIBLE_FLAG = False and not PROCESS_ONE
 PROCESS_UNFOLDING_WORD_FLAG = False and not PROCESS_ONE

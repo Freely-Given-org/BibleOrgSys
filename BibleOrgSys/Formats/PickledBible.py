@@ -5,7 +5,7 @@
 #
 # Module handling a set of pickled Bible books (intended for fast loading)
 #
-# Copyright (C) 2018-2020 Robert Hunt
+# Copyright (C) 2018-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,7 +66,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
-LAST_MODIFIED_DATE = '2020-05-24' # by RJH
+LAST_MODIFIED_DATE = '2020-07-29' # by RJH
 SHORT_PROGRAM_NAME = "PickledBible"
 PROGRAM_NAME = "Pickle Bible handler"
 PROGRAM_VERSION = '0.17'
@@ -868,7 +868,7 @@ def briefDemo() -> None:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                             if originalText and originalText!=cleanText:
                                 vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -880,7 +880,7 @@ def briefDemo() -> None:
             pBible.load()
             vPrint( 'Quiet', debuggingThisModule, "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
 
 
@@ -905,7 +905,7 @@ def briefDemo() -> None:
                     j += 1
                     break
                 break
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -930,7 +930,7 @@ def briefDemo() -> None:
                     j += 1
                     break
                 break
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -948,14 +948,14 @@ def briefDemo() -> None:
         pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
         if pbdDictList and BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', debuggingThisModule, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
         pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
         if pbdExtendedDictList and BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', debuggingThisModule, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
@@ -1076,7 +1076,7 @@ def fullDemo() -> None:
                                     vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                                 if originalText and originalText!=cleanText:
                                     vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -1088,7 +1088,7 @@ def fullDemo() -> None:
             pBible.load()
             vPrint( 'Quiet', debuggingThisModule, "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
 
 
@@ -1111,7 +1111,7 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, "E{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -1134,7 +1134,7 @@ def fullDemo() -> None:
                     vPrint( 'Quiet', debuggingThisModule, "F{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
-            elif BibleOrgSysGlobals.verbosityLevel > 0:
+            else:
                 vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
@@ -1151,14 +1151,14 @@ def fullDemo() -> None:
         pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
         if pbdDictList and BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', debuggingThisModule, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
         pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             vPrint( 'Quiet', debuggingThisModule, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
-        elif BibleOrgSysGlobals.verbosityLevel > 0:
+        else:
             vPrint( 'Quiet', debuggingThisModule, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
         if pbdExtendedDictList and BibleOrgSysGlobals.verbosityLevel > 0:
             vPrint( 'Quiet', debuggingThisModule, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
