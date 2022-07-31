@@ -724,13 +724,13 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                         fTextOpen = False
                     elif lcToken.startswith('xt '): # xref text follows
                         if xtOpen: # Multiple xt's in a row
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
+                            # if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not xoOpen
                             USXfootnoteXML += f' closed="false">{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         adjToken = token[3:]
                         USXfootnoteXML += '<char style="xt"'
                         xtOpen = True
                     elif lcToken.startswith('xt*'):
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
+                        # if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert xtOpen and not xoOpen
                         USXfootnoteXML += f'>{makeRefs( BBB, C,V, self.genericBRL, adjToken )}</char>'
                         xtOpen = False
                     elif lcToken.startswith('z'):
@@ -802,7 +802,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                                 else:
                                     logger.critical( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C,V, USXfootnote ) )
                                     vPrint( 'Quiet', debuggingThisModule, "toUSXXML USFMAllExpandedCharacterMarkers", USFMAllExpandedCharacterMarkers )
-                                    if self.doExtraChecking: halt
+                                    if self.doExtraChecking: _processFootnote_failed
                 #dPrint( 'Quiet', debuggingThisModule, "  ", frOpen, fCharOpen, fTextOpen )
                 if frOpen:
                     logger.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C,V, USXfootnote) )
@@ -1159,7 +1159,7 @@ def testMakeRefs() -> None:
         if result != string2:
             logging.critical( f"{j}/ Got bad  '{result}' from makeRefs()" )
             logging.critical( f"{j}/ Expected '{string2}' from '{string1}'" )
-            if self.doExtraChecking: halt
+            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: testMakeRefs_failed
 # end of testMakeRefs()
 
 
