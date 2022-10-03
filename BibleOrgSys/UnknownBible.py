@@ -86,9 +86,9 @@ LAST_MODIFIED_DATE = '2022-04-22' # by RJH
 SHORT_PROGRAM_NAME = "UnknownBible"
 PROGRAM_NAME = "Unknown Bible object handler"
 PROGRAM_VERSION = '0.38'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 logger = logging.getLogger(SHORT_PROGRAM_NAME)
@@ -110,7 +110,7 @@ class UnknownBible:
         # Check that the given folder is readable
         if not os.access( givenPathname, os.R_OK ):
             logger.critical( _("Given {!r} pathname is unreadable").format( givenPathname ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
             self.folderReadable = False
         else: self.folderReadable = True
 
@@ -149,7 +149,7 @@ class UnknownBible:
         or
             a loaded Bible
         """
-        fnPrint( debuggingThisModule, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "UnknownBible.search( {}, {}, {}, {} )".format( strictCheck, autoLoad, autoLoadAlways, autoLoadBooks ) )
 
         if not self.folderReadable: return None
         if autoLoadAlways or autoLoadBooks: autoLoad = True
@@ -162,8 +162,8 @@ class UnknownBible:
 
             Returns the three counters.
             """
-            if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                vPrint( 'Quiet', debuggingThisModule, "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
+            if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict( {}, {} )".format( folderName, oppositeStrictFlag ) )
 
             totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = 0, 0, []
 
@@ -173,7 +173,7 @@ class UnknownBible:
                 totalBibleStrictCount += PickledBibleStrictCount
                 totalBibleStrictTypes += 1
                 typesStrictlyFound.append( 'Pickled:' + str(PickledBibleStrictCount) )
-                vPrint( 'Info', debuggingThisModule, "PickledBible.recheckStrict: PickledBibleStrictCount", PickledBibleStrictCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "PickledBible.recheckStrict: PickledBibleStrictCount", PickledBibleStrictCount )
 
             if os.path.isdir( self.givenFolderName ):
                 # Search for theWord Bibles
@@ -182,7 +182,7 @@ class UnknownBible:
                     totalBibleStrictCount += theWordBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'theWord:' + str(theWordBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBible.recheckStrict: theWordBibleStrictCount", theWordBibleStrictCount )
 
                 # Search for MySword Bibles
                 MySwordBibleStrictCount = MySwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -190,7 +190,7 @@ class UnknownBible:
                     totalBibleStrictCount += MySwordBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'MySword:' + str(MySwordBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "MySwordBible.recheckStrict: MySwordBibleStrictCount", MySwordBibleStrictCount )
 
                 # Search for e-Sword Bibles and commentaries
                 ESwordBibleStrictCount = ESwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -198,13 +198,13 @@ class UnknownBible:
                     totalBibleStrictCount += ESwordBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'e-Sword-Bible:' + str(ESwordBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordBible.recheckStrict: ESwordBibleStrictCount", ESwordBibleStrictCount )
                 ESwordCommentaryStrictCount = ESwordCommentaryFileCheck( folderName, strictCheck=oppositeStrictFlag )
                 if ESwordCommentaryStrictCount:
                     totalBibleStrictCount += ESwordCommentaryStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentary.recheckStrict: ESwordCommentaryStrictCount", ESwordCommentaryStrictCount )
 
                 # Search for MyBible Bibles
                 MyBibleBibleStrictCount = MyBibleBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -212,7 +212,7 @@ class UnknownBible:
                     totalBibleStrictCount += MyBibleBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'MyBible:' + str(MyBibleBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBible.recheckStrict: MyBibleBibleStrictCount", MyBibleBibleStrictCount )
 
                 # Search for PalmDB Bibles
                 PDBBibleStrictCount = PalmDBBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -220,7 +220,7 @@ class UnknownBible:
                     totalBibleStrictCount += PDBBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'PalmDB:' + str(PDBBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PDBBibleStrictCount", PDBBibleStrictCount )
 
                 # Search for GoBibles
                 GoBibleStrictCount = GoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -228,7 +228,7 @@ class UnknownBible:
                     totalBibleStrictCount += GoBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'GoBible:' + str(GoBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: GoBibleStrictCount", GoBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: GoBibleStrictCount", GoBibleStrictCount )
 
                 # Search for Online Bibles
                 PierceOnlineBibleStrictCount = PierceOnlineBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -236,7 +236,7 @@ class UnknownBible:
                     totalBibleStrictCount += PierceOnlineBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'PierceOnline:' + str(PierceOnlineBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: PierceOnlineBibleStrictCount", PierceOnlineBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PierceOnlineBibleStrictCount", PierceOnlineBibleStrictCount )
 
                 # Search for EasyWorship Bibles
                 EasyWorshipBibleStrictCount = EasyWorshipBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -244,7 +244,7 @@ class UnknownBible:
                     totalBibleStrictCount += EasyWorshipBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'EasyWorship:' + str(EasyWorshipBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: EasyWorshipBibleStrictCount", EasyWorshipBibleStrictCount )
 
                 # Search for Sword Bibles
                 SwordBibleStrictCount = SwordBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -252,7 +252,7 @@ class UnknownBible:
                     totalBibleStrictCount += SwordBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Sword:' + str(SwordBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: SwordBibleStrictCount", SwordBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: SwordBibleStrictCount", SwordBibleStrictCount )
 
                 # Search for Unbound Bibles
                 UnboundBibleStrictCount = UnboundBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -260,7 +260,7 @@ class UnknownBible:
                     totalBibleStrictCount += UnboundBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Unbound:' + str(UnboundBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: UnboundBibleStrictCount", UnboundBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: UnboundBibleStrictCount", UnboundBibleStrictCount )
 
                 # Search for Drupal Bibles
                 DrupalBibleStrictCount = DrupalBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -268,7 +268,7 @@ class UnknownBible:
                     totalBibleStrictCount += DrupalBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Drupal:' + str(DrupalBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: DrupalBibleStrictCount", DrupalBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: DrupalBibleStrictCount", DrupalBibleStrictCount )
 
                 # Search for YET Bibles
                 YETBibleStrictCount = YETBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -276,7 +276,7 @@ class UnknownBible:
                     totalBibleStrictCount += YETBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'YET:' + str(YETBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: YETBibleStrictCount", YETBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: YETBibleStrictCount", YETBibleStrictCount )
 
                 # Search for ESFM Bibles -- put BEFORE USFM
                 ESFMBibleStrictCount = ESFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -284,7 +284,7 @@ class UnknownBible:
                     totalBibleStrictCount += ESFMBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'ESFM:' + str(ESFMBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: ESFMBibleStrictCount", ESFMBibleStrictCount )
 
                 # Search for Paratext (PTX) Bibles -- put BEFORE USFM
                 PTX8BibleStrictCount = PTX8BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -292,13 +292,13 @@ class UnknownBible:
                     totalBibleStrictCount += PTX8BibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'PTX8:' + str(PTX8BibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PTX8BibleStrictCount", PTX8BibleStrictCount )
                 PTX7BibleStrictCount = PTX7BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
                 if PTX7BibleStrictCount:
                     totalBibleStrictCount += PTX7BibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'PTX7:' + str(PTX7BibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: PTX7BibleStrictCount", PTX7BibleStrictCount )
 
                 # Search for SB Bibles -- put BEFORE USFM and USX
                 SBBibleStrictCount = ScriptureBurritoBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -306,7 +306,7 @@ class UnknownBible:
                     totalBibleStrictCount += SBBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'SB:' + str(SBBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: SBBibleStrictCount", SBBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: SBBibleStrictCount", SBBibleStrictCount )
 
                 # Search for USFM Bibles
                 USFM2BibleStrictCount = USFM2BibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -314,13 +314,13 @@ class UnknownBible:
                     totalBibleStrictCount += USFM2BibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'USFM:' + str(USFM2BibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: USFM2BibleStrictCount", USFM2BibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFM2BibleStrictCount", USFM2BibleStrictCount )
                 USFMBibleStrictCount = USFMBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
                 if USFMBibleStrictCount:
                     totalBibleStrictCount += USFMBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'USFM:' + str(USFMBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: USFMBibleStrictCount", USFMBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFMBibleStrictCount", USFMBibleStrictCount )
 
                 # Search for DBL Bibles -- put BEFORE USX
                 DBLBibleStrictCount = DBLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -328,7 +328,7 @@ class UnknownBible:
                     totalBibleStrictCount += DBLBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'DBL:' + str(DBLBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: DBLBibleStrictCount", DBLBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: DBLBibleStrictCount", DBLBibleStrictCount )
 
                 # Search for USX XML Bibles
                 USXBibleStrictCount = USXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -336,7 +336,7 @@ class UnknownBible:
                     totalBibleStrictCount += USXBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'USX:' + str(USXBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: USXBibleStrictCount", USXBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USXBibleStrictCount", USXBibleStrictCount )
 
                 # Search for USFX XML Bibles
                 USFXBibleStrictCount = USFXXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -344,7 +344,7 @@ class UnknownBible:
                     totalBibleStrictCount += USFXBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'USFX:' + str(USFXBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: USFXBibleStrictCount", USFXBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: USFXBibleStrictCount", USFXBibleStrictCount )
 
                 # Search for OSIS XML Bibles
                 OSISBibleStrictCount = OSISXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -352,7 +352,7 @@ class UnknownBible:
                     totalBibleStrictCount += OSISBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'OSIS:' + str(OSISBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: OSISBibleStrictCount", OSISBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: OSISBibleStrictCount", OSISBibleStrictCount )
 
                 # Search for OpenSong XML Bibles
                 OpenSongBibleStrictCount = OpenSongXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -360,7 +360,7 @@ class UnknownBible:
                     totalBibleStrictCount += OpenSongBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'OpenSong:' + str(OpenSongBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: OpenSongBibleStrictCount", OpenSongBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: OpenSongBibleStrictCount", OpenSongBibleStrictCount )
 
                 # Search for Zefania XML Bibles
                 ZefaniaBibleStrictCount = ZefaniaXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -368,7 +368,7 @@ class UnknownBible:
                     totalBibleStrictCount += ZefaniaBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Zefania:' + str(ZefaniaBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: ZefaniaBibleStrictCount", ZefaniaBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: ZefaniaBibleStrictCount", ZefaniaBibleStrictCount )
 
                 # Search for Haggai XML Bibles
                 HaggaiBibleStrictCount = HaggaiXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -376,7 +376,7 @@ class UnknownBible:
                     totalBibleStrictCount += HaggaiBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Haggai:' + str(HaggaiBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: HaggaiBibleStrictCount", HaggaiBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: HaggaiBibleStrictCount", HaggaiBibleStrictCount )
 
                 # Search for VerseView XML Bibles
                 VerseViewBibleStrictCount = VerseViewXMLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -384,7 +384,7 @@ class UnknownBible:
                     totalBibleStrictCount += VerseViewBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'VerseView:' + str(VerseViewBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: VerseViewBibleStrictCount", VerseViewBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: VerseViewBibleStrictCount", VerseViewBibleStrictCount )
 
                 # Search for CSV text Bibles
                 CSVBibleStrictCount = CSVBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -392,7 +392,7 @@ class UnknownBible:
                     totalBibleStrictCount += CSVBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'CSV:' + str(CSVBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: CSVBibleStrictCount", CSVBibleStrictCount )
 
                 # Search for Forge for SwordSearcher VPL text Bibles
                 F4SSBibleStrictCount = ForgeForSwordSearcherBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -400,7 +400,7 @@ class UnknownBible:
                     totalBibleStrictCount += F4SSBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'Forge:' + str(F4SSBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: F4SSBibleStrictCount", F4SSBibleStrictCount )
 
                 # Search for VPL text Bibles
                 VPLBibleStrictCount = VPLBibleFileCheck( folderName, strictCheck=oppositeStrictFlag )
@@ -408,7 +408,7 @@ class UnknownBible:
                     totalBibleStrictCount += VPLBibleStrictCount
                     totalBibleStrictTypes += 1
                     typesStrictlyFound.append( 'VPL:' + str(VPLBibleStrictCount) )
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.recheckStrict: VPLBibleStrictCount", VPLBibleStrictCount )
             else:
                 theWordBibleStrictCount = MySwordBibleStrictCount = ESwordBibleStrictCount = ESwordCommentaryStrictCount = 0
                 MyBibleBibleStrictCount = PDBBibleStrictCount = PierceOnlineBibleStrictCount = EasyWorshipBibleStrictCount = 0
@@ -432,7 +432,7 @@ class UnknownBible:
             totalBibleCount += PickledBibleCount
             totalBibleTypes += 1
             typesFound.append( 'Pickled:' + str(PickledBibleCount) )
-            vPrint( 'Info', debuggingThisModule, "PickledBible.search: PickledBibleCount", PickledBibleCount )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "PickledBible.search: PickledBibleCount", PickledBibleCount )
 
         if os.path.isdir( self.givenFolderName ):
             # Search for theWord Bibles
@@ -441,7 +441,7 @@ class UnknownBible:
                 totalBibleCount += theWordBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'theWord:' + str(theWordBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "theWordBible.search: theWordBibleCount", theWordBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBible.search: theWordBibleCount", theWordBibleCount )
 
             # Search for MySword Bibles
             MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -449,7 +449,7 @@ class UnknownBible:
                 totalBibleCount += MySwordBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'MySword:' + str(MySwordBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
 
             # Search for e-Sword Bibles and Commentaries
             ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -457,13 +457,13 @@ class UnknownBible:
                 totalBibleCount += ESwordBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'e-Sword-Bible:' + str(ESwordBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
             ESwordCommentaryCount = ESwordCommentaryFileCheck( self.givenFolderName, strictCheck=strictCheck )
             if ESwordCommentaryCount:
                 totalBibleCount += ESwordCommentaryCount
                 totalBibleTypes += 1
                 typesFound.append( 'e-Sword-Commentary:' + str(ESwordCommentaryCount) )
-                vPrint( 'Info', debuggingThisModule, "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "ESwordCommentary.search: ESwordCommentaryCount", ESwordCommentaryCount )
 
             # Search for MyBible Bibles
             MyBibleBibleCount = MyBibleBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -471,7 +471,7 @@ class UnknownBible:
                 totalBibleCount += MyBibleBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'MyBible:' + str(MyBibleBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "MyBibleBible.search: MyBibleBibleCount", MyBibleBibleCount )
 
             # Search for PalmDB Bibles
             PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -479,7 +479,7 @@ class UnknownBible:
                 totalBibleCount += PDBBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PDBBibleCount", PDBBibleCount )
 
             # Search for GoBibles
             GoBibleCount = GoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -487,7 +487,7 @@ class UnknownBible:
                 totalBibleCount += GoBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'GoBible:' + str(GoBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: GoBibleCount", GoBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: GoBibleCount", GoBibleCount )
 
             # Search for Online Bibles
             PierceOnlineBibleCount = PierceOnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -495,7 +495,7 @@ class UnknownBible:
                 totalBibleCount += PierceOnlineBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'PierceOnline:' + str(PierceOnlineBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: PierceOnlineBibleCount", PierceOnlineBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PierceOnlineBibleCount", PierceOnlineBibleCount )
 
             # Search for EasyWorship Bibles
             EasyWorshipBibleCount = EasyWorshipBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -503,7 +503,7 @@ class UnknownBible:
                 totalBibleCount += EasyWorshipBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'EasyWorship:' + str(EasyWorshipBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: EasyWorshipBibleCount", EasyWorshipBibleCount )
 
             # Search for Sword Bibles
             SwordBibleCount = SwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -511,7 +511,7 @@ class UnknownBible:
                 totalBibleCount += SwordBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Sword:' + str(SwordBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: SwordBibleCount", SwordBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: SwordBibleCount", SwordBibleCount )
 
             # Search for Unbound Bibles
             UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -519,7 +519,7 @@ class UnknownBible:
                 totalBibleCount += UnboundBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Unbound:' + str(UnboundBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
 
             # Search for Drupal Bibles
             DrupalBibleCount = DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -527,7 +527,7 @@ class UnknownBible:
                 totalBibleCount += DrupalBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Drupal:' + str(DrupalBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
 
             # Search for YET Bibles
             YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -535,7 +535,7 @@ class UnknownBible:
                 totalBibleCount += YETBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'YET:' + str(YETBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: YETBibleCount", YETBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: YETBibleCount", YETBibleCount )
 
             # Search for ESFM Bibles -- put BEFORE USFM
             ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -543,7 +543,7 @@ class UnknownBible:
                 totalBibleCount += ESFMBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
 
             # Search for Paratext (PTX) Bibles -- put BEFORE USFM
             PTX8BibleCount = PTX8BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -551,13 +551,13 @@ class UnknownBible:
                 totalBibleCount += PTX8BibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'PTX8:' + str(PTX8BibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PTX8BibleCount", PTX8BibleCount )
             PTX7BibleCount = PTX7BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
             if PTX7BibleCount:
                 totalBibleCount += PTX7BibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'PTX7:' + str(PTX7BibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: PTX7BibleCount", PTX7BibleCount )
 
             # Search for SB Bibles -- put BEFORE USFM and USX
             SBBibleCount = ScriptureBurritoBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -565,7 +565,7 @@ class UnknownBible:
                 totalBibleCount += SBBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'SB:' + str(SBBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: SBBibleCount", SBBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: SBBibleCount", SBBibleCount )
 
             # Search for USFM Bibles
             USFM2BibleCount = USFM2BibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -573,13 +573,13 @@ class UnknownBible:
                 totalBibleCount += USFM2BibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'USFM2:' + str(USFM2BibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: USFM2BibleCount", USFM2BibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFM2BibleCount", USFM2BibleCount )
             USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
             if USFMBibleCount:
                 totalBibleCount += USFMBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'USFM:' + str(USFMBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: USFMBibleCount", USFMBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFMBibleCount", USFMBibleCount )
 
             # Search for DBL Bibles -- put BEFORE USX
             DBLBibleCount = DBLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -587,7 +587,7 @@ class UnknownBible:
                 totalBibleCount += DBLBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'DBL:' + str(DBLBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: DBLBibleCount", DBLBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: DBLBibleCount", DBLBibleCount )
 
             # Search for USX XML Bibles
             USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -595,7 +595,7 @@ class UnknownBible:
                 totalBibleCount += USXBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'USX:' + str(USXBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: USXBibleCount", USXBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USXBibleCount", USXBibleCount )
 
             # Search for USFX XML Bibles
             USFXBibleCount = USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -603,7 +603,7 @@ class UnknownBible:
                 totalBibleCount += USFXBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'USFX:' + str(USFXBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: USFXBibleCount", USFXBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: USFXBibleCount", USFXBibleCount )
 
             # Search for OSIS XML Bibles
             OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -611,7 +611,7 @@ class UnknownBible:
                 totalBibleCount += OSISBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'OSIS:' + str(OSISBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: OSISBibleCount", OSISBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: OSISBibleCount", OSISBibleCount )
 
             # Search for OpenSong XML Bibles
             OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -619,7 +619,7 @@ class UnknownBible:
                 totalBibleCount += OpenSongBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'OpenSong:' + str(OpenSongBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
 
             # Search for Zefania XML Bibles
             ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -627,7 +627,7 @@ class UnknownBible:
                 totalBibleCount += ZefaniaBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Zefania:' + str(ZefaniaBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
 
             # Search for Haggai XML Bibles
             HaggaiBibleCount = HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -635,7 +635,7 @@ class UnknownBible:
                 totalBibleCount += HaggaiBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
             # Search for VerseView XML Bibles
             VerseViewBibleCount = VerseViewXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -643,7 +643,7 @@ class UnknownBible:
                 totalBibleCount += VerseViewBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'VerseView:' + str(VerseViewBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: VerseViewBibleCount", VerseViewBibleCount )
 
             # Search for CSV text Bibles
             CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -651,7 +651,7 @@ class UnknownBible:
                 totalBibleCount += CSVBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'CSV:' + str(CSVBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: CSVBibleCount", CSVBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: CSVBibleCount", CSVBibleCount )
 
             # Search for Forge for SwordSearcher text Bibles
             F4SSBibleCount = ForgeForSwordSearcherBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -659,7 +659,7 @@ class UnknownBible:
                 totalBibleCount += F4SSBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'Forge:' + str(F4SSBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: F4SSBibleCount", F4SSBibleCount )
 
             # Search for VPL text Bibles
             VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -667,7 +667,7 @@ class UnknownBible:
                 totalBibleCount += VPLBibleCount
                 totalBibleTypes += 1
                 typesFound.append( 'VPL:' + str(VPLBibleCount) )
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: VPLBibleCount", VPLBibleCount )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: VPLBibleCount", VPLBibleCount )
         else: # we weren't given a folder to look in
             theWordBibleCount = MySwordBibleCount = ESwordBibleCount = ESwordCommentaryCount = 0
             MyBibleBibleCount = PDBBibleCount = PierceOnlineBibleCount = EasyWorshipBibleCount = 0
@@ -679,37 +679,37 @@ class UnknownBible:
 
         assert len(typesFound) == totalBibleTypes
         if totalBibleCount == 0:
-            vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: No Bibles found" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: No Bibles found" )
             self.foundType = 'None found'
             if strictCheck and not BibleOrgSysGlobals.strictCheckingFlag:
                 # We did a strict check the first time, but strict checking wasn't specified on the command line
                 #   so let's try again without the strict check
-                vPrint( 'Info', debuggingThisModule, "UnknownBible.search: retrying without strict checking criteria" )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying without strict checking criteria" )
                 totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=False )
-                vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: Found {} {} {}".format( totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound ) )
                 totalBibleCount, totalBibleTypes, typesFound = totalBibleUnstrictCount, totalBibleStrictTypes, typesUnstrictlyFound
         elif totalBibleCount > 1:
             if totalBibleTypes == 1:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) {} Bibles found in {}" \
                                                         .format( totalBibleCount, typesFound[0], self.givenFolderName ) )
                 else:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
                 self.foundType = "Multiple found: {} Bibles".format( typesFound[0] )
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) Bibles found: {} in {}" \
                                                         .format( totalBibleCount, typesFound, self.givenFolderName ) )
                 else:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many types found'
                 if not strictCheck:
                     # We didn't do a strict check the first time, so let's try that to try to reduce our found Bibles
-                    vPrint( 'Info', debuggingThisModule, "UnknownBible.search: retrying with strict checking criteria" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnknownBible.search: retrying with strict checking criteria" )
                     totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound = recheckStrict( self.givenFolderName, oppositeStrictFlag=True )
-                    vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
-                    vPrint( 'Verbose', debuggingThisModule, "UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: After {} {} {}".format( totalBibleCount, totalBibleTypes, typesFound ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnknownBible.recheck: Found {} {} {}".format( totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound ) )
                     totalBibleCount, totalBibleTypes, typesFound = totalBibleStrictCount, totalBibleStrictTypes, typesStrictlyFound
             if autoLoadAlways and BibleOrgSysGlobals.verbosityLevel > 0:
                 # If there's only one of a particular type, we'll go for that one
@@ -717,25 +717,25 @@ class UnknownBible:
                 for entry in typesFound:
                     if entry.endswith( ':1' ): haveSingle = True; break
                 if haveSingle and BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "UnknownBible.search: Will try to find one Bible to autoload anyway!" )
 
-        #if 1 or debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+        #if 1 or DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleCount, theWordBibleCount, MySwordBibleCount, ESwordBibleCount, ESwordCommentaryCount, MyBibleBibleCount, PDBBibleCount, PierceOnlineBibleCount, EasyWorshipBibleCount, SwordBibleCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleCount, DrupalBibleCount, YETBibleCount, ESFMBibleCount, PTX8BibleCount, PTX7BibleCount, SBBibleCount, DBLBibleCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleCount, CSVBibleCount, F4SSBibleCount, VPLBibleCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleCount, USFXBibleCount, OSISBibleCount, OpenSongBibleCount, ZefaniaBibleCount, HaggaiBibleCount, VerseViewBibleCount ) )
-        #if 0 and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
+        #if 0 and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'pB={} tW={} MSw={} ESw={} EswC={} MyB={} PDB={} Onl={} EW={} Sw={}' \
                 #.format( PickledBibleStrictCount, theWordBibleStrictCount, MySwordBibleStrictCount, ESwordBibleStrictCount, ESwordCommentaryStrictCount, MyBibleBibleStrictCount, PDBBibleStrictCount, PierceOnlineBibleStrictCount, EasyWorshipBibleStrictCount, SwordBibleStrictCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Unb={} Dr={} YET={} ESFM={} PTX8={} PTX7={} USFM2={} USFM={}' \
                 #.format( UnboundBibleStrictCount, DrupalBibleStrictCount, YETBibleStrictCount, ESFMBibleStrictCount, PTX8BibleStrictCount, PTX7BibleStrictCount, SBBibleStrictCount, DBLBibleStrictCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  GB={} CSV={} F4SS={} VPL={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  GB={} CSV={} F4SS={} VPL={}' \
                 #.format( GoBibleStrictCount, CSVBibleStrictCount, F4SSBibleStrictCount, VPLBibleStrictCount ) )
-            #dPrint( 'Quiet', debuggingThisModule, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  USX={} USFX={} OSIS={} OSng={} Zef={} Hag={} VsVw={}' \
                 #.format( USXBibleStrictCount, USFXBibleStrictCount, OSISBibleStrictCount, OpenSongBibleStrictCount, ZefaniaBibleStrictCount, HaggaiBibleStrictCount, VerseViewBibleStrictCount ) )
 
         if autoLoadAlways or totalBibleCount == 1:
@@ -878,53 +878,53 @@ def briefDemo() -> None:
     """
     import random
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Now demo the class
     if 0: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
-        vPrint( 'Quiet', debuggingThisModule, uB )
-        vPrint( 'Info', debuggingThisModule, "  A1 result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A1 result2 is: {}".format( result2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A1 result1 is: {}".format( result1 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A1 result2 is: {}".format( result2 ) )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A1 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A1 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result4 is: {}".format( result4 ) )
 
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', debuggingThisModule, "  A2 strict result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A2 strict result2 is: {}".format( result2 ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result1 is: {}".format( result1 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result2 is: {}".format( result2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A2 strict result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A2 strict result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result4 is: {}".format( result4 ) )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
-        #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
-        #dPrint( 'Quiet', debuggingThisModule, uB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A3 result1 is: {}".format( result1 ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
             #thisBible.check()
@@ -985,109 +985,109 @@ def briefDemo() -> None:
                     )
     if 1: # Just find the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible B/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible B/ Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=False )
         #result2 = uB.search( autoLoad=True ) if result1 else None
-        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible C/ Single loading (but not books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible C/ Single loading (but not books) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible D/ Single loading (incl. books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible D/ Single loading (incl. books) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadBooks=True )
-        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible E/ Always loading (but not books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible E/ Always loading (but not books) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True )
-        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible F/ Always loading (incl. books) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible F/ Always loading (incl. books) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-        vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         testFolder = random.choice( testFolders )
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible G/ Processing {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible G/ Processing {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result = uB.search( autoLoad=True )
-        #dPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {} and {}".format( result1, result2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result:
             result.check()
             results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-            vPrint( 'Info', debuggingThisModule, "  Results are: {}".format( results ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {}".format( results ) )
 # end of UnknownBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Now demo the class
     if 1: # Just test one folder
         testFolder = 'Put your folder here/'
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A1/ Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( autoLoad=False )
         result2 = uB.search( autoLoadBooks=True ) if result1 else None
-        vPrint( 'Quiet', debuggingThisModule, uB )
-        vPrint( 'Info', debuggingThisModule, f"  A1 result1 is: {result1}" )
-        vPrint( 'Info', debuggingThisModule, f"  A1 result2 is: {result2}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result1 is: {result1}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  A1 result2 is: {result2}" )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( autoLoadAlways=False )
             result4 = uB.search( autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A1 result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A1 result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A1 result4 is: {}".format( result4 ) )
 
-        vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A2/ (Strict as per BDB). Trying (but not loading) {}…".format( testFolder ) )
         uB = UnknownBible( testFolder )
         result1 = uB.search( strictCheck=True, autoLoad=False )
         result2 = uB.search( strictCheck=True, autoLoadBooks=True ) if result1 else None
-        vPrint( 'Info', debuggingThisModule, "  A2 strict result1 is: {}".format( result1 ) )
-        vPrint( 'Info', debuggingThisModule, "  A2 strict result2 is: {}".format( result2 ) )
-        vPrint( 'Quiet', debuggingThisModule, uB )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result1 is: {}".format( result1 ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  A2 strict result2 is: {}".format( result2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         if result1 == 'Many types found':
             uB = UnknownBible( testFolder )
             result3 = uB.search( strictCheck=True, autoLoadAlways=False )
             result4 = uB.search( strictCheck=True, autoLoadAlways=True ) if result3 else None
-            vPrint( 'Normal', debuggingThisModule, "  A2 strict result3 is: {}".format( result3 ) )
-            vPrint( 'Normal', debuggingThisModule, "  A2 strict result4 is: {}".format( result4 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result3 is: {}".format( result3 ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  A2 strict result4 is: {}".format( result4 ) )
             if result3 == 'Many types found':
                 uB = UnknownBible( testFolder )
                 result5 = uB.search( strictCheck=True, autoLoadAlways=False, autoLoadBooks=True )
                 result6 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True ) if result5 else None
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result5 is: {}".format( result5 ) )
-                    vPrint( 'Quiet', debuggingThisModule, "  A2 strict result6 is: {}".format( result6 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result5 is: {}".format( result5 ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A2 strict result6 is: {}".format( result6 ) )
 
         #from BibleOrgSys.Bible import Bible
-        #dPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible A3/ (Strict as per BDB). Trying {}…".format( testFolder ) )
         #uB = UnknownBible( testFolder )
         #result1 = uB.search( strictCheck=True, autoLoadAlways=True, autoLoadBooks=True )
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', debuggingThisModule, "  A3 result1 is: {}".format( result1 ) )
-        #dPrint( 'Quiet', debuggingThisModule, uB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  A3 result1 is: {}".format( result1 ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
         #if isinstance( result1, Bible ):
             #thisBible = result1
             #thisBible.check()
@@ -1148,56 +1148,56 @@ def fullDemo() -> None:
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible B{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible B{}/ Trying (but not loading) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=False )
             #result2 = uB.search( autoLoad=True ) if result1 else None
-            vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Just load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible C{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible C{}/ Single loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Fully load the Bible objects (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible D{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible D{}/ Single loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadBooks=True )
-            vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible E{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible E{}/ Always loading (but not books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True )
-            vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 1: # Always fully load the Bible objects
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible F{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible F{}/ Always loading (incl. books) {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoadAlways=True, autoLoadBooks=True )
-            vPrint( 'Info', debuggingThisModule, "  Result is: {}".format( result ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result is: {}".format( result ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nUnknownBible G{}/ Processing {}…".format( j+1, testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nUnknownBible G{}/ Processing {}…".format( j+1, testFolder ) )
             uB = UnknownBible( testFolder )
             result = uB.search( autoLoad=True )
-            #dPrint( 'Info', debuggingThisModule, "  Results are: {} and {}".format( result1, result2 ) )
-            vPrint( 'Quiet', debuggingThisModule, uB )
+            #dPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {} and {}".format( result1, result2 ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uB )
             if result:
                 result.check()
                 results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                vPrint( 'Info', debuggingThisModule, "  Results are: {}".format( results ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Results are: {}".format( results ) )
 # end of UnknownBible.fullDemo
 
 if __name__ == '__main__':

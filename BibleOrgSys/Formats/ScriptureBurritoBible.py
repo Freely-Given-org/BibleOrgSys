@@ -58,9 +58,9 @@ LAST_MODIFIED_DATE = '2022-04-12' # by RJH
 SHORT_PROGRAM_NAME = "ScriptureBurrito"
 PROGRAM_NAME = "Scripture Burrito (SB) Bible handler"
 PROGRAM_VERSION = '0.01'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 COMPULSORY_FILENAMES = ( 'metadata.json', )
@@ -80,7 +80,7 @@ def ScriptureBurritoBibleFileCheck( givenFolderName, strictCheck:bool=True, auto
     if autoLoad is true and exactly one SB Bible bundle is found,
         returns the loaded ScriptureBurritoBible object.
     """
-    fnPrint( debuggingThisModule, "ScriptureBurritoBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "ScriptureBurritoBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -93,7 +93,7 @@ def ScriptureBurritoBibleFileCheck( givenFolderName, strictCheck:bool=True, auto
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " ScriptureBurritoBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " ScriptureBurritoBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -112,7 +112,7 @@ def ScriptureBurritoBibleFileCheck( givenFolderName, strictCheck:bool=True, auto
     if numFilesFound==len(COMPULSORY_FILENAMES) and numFoldersFound==len(COMPULSORY_FOLDERS): numFound += 1
 
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "ScriptureBurritoBibleFileCheck got", numFound, givenFolderName )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ScriptureBurritoBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             dB = ScriptureBurritoBible( givenFolderName )
             if autoLoad or autoLoadBooks:
@@ -129,7 +129,7 @@ def ScriptureBurritoBibleFileCheck( givenFolderName, strictCheck:bool=True, auto
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("ScriptureBurritoBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    ScriptureBurritoBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    ScriptureBurritoBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -149,7 +149,7 @@ def ScriptureBurritoBibleFileCheck( givenFolderName, strictCheck:bool=True, auto
             numFound += 1
 
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "ScriptureBurritoBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ScriptureBurritoBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             sB = ScriptureBurritoBible( foundProjects[0] )
             if autoLoad or autoLoadBooks:
@@ -169,8 +169,8 @@ class ScriptureBurritoBible( Bible ):
         """
         Create the internal SB Bible object.
         """
-        fnPrint( debuggingThisModule, "ScriptureBurritoBible.__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        fnPrint( DEBUGGING_THIS_MODULE, "ScriptureBurritoBible.__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
+        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             assert isinstance( givenFolderName, (str,Path) )
             assert isinstance( givenName, str )
             assert isinstance( encoding, str )
@@ -204,8 +204,8 @@ class ScriptureBurritoBible( Bible ):
         """
         Load the JSON metadata file.
         """
-        fnPrint( debuggingThisModule, "preload() from {}".format( self.sourceFolder ) )
-        vPrint( 'Normal', debuggingThisModule, _("ScriptureBurritoBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "preload() from {}".format( self.sourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("ScriptureBurritoBible: Loading {} from {}…").format( self.name, self.sourceFilepath ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -213,9 +213,9 @@ class ScriptureBurritoBible( Bible ):
             somepath = os.path.join( self.sourceFilepath, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: vPrint( 'Quiet', debuggingThisModule, "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFilepath ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, "ScriptureBurritoBible.preload: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ScriptureBurritoBible.preload: Couldn't find any files in '{}'".format( self.sourceFilepath ) )
             return # No use continuing
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
@@ -231,11 +231,11 @@ class ScriptureBurritoBible( Bible ):
         """
         Load the metadata.json file and parse it into the ordered dictionary self.suppliedMetadata.
         """
-        fnPrint( debuggingThisModule, "loadSBMetadata()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "loadSBMetadata()" )
 
         loadErrors:List[str] = []
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.json' )
-        vPrint( 'Info', debuggingThisModule, "ScriptureBurritoBible.loading supplied SB metadata from {}…".format( mdFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ScriptureBurritoBible.loading supplied SB metadata from {}…".format( mdFilepath ) )
         with open(mdFilepath, 'rt', encoding='utf-8') as jsonFile:
             loadedJson = json.load(jsonFile)
         #print(loadedJson.keys()) # dict_keys(['meta', 'idAuthorities', 'identification', 'confidential', 'languages', 'type', 'copyright', 'localizedNames', 'ingredients'])
@@ -254,7 +254,7 @@ class ScriptureBurritoBible( Bible ):
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['SB'] = loadedJson # Put it all straight in
-        vPrint( 'Info', debuggingThisModule, "  Loaded {} supplied top-level SB metadata elements.".format( len(self.suppliedMetadata['SB']) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {} supplied top-level SB metadata elements.".format( len(self.suppliedMetadata['SB']) ) )
 
         if 'ingredients' in self.suppliedMetadata['SB']: # Find available books
             self.possibleFilenameDict = {}
@@ -287,8 +287,8 @@ class ScriptureBurritoBible( Bible ):
         else:
             logging.warning("No ingredients list in Scripture Burrito")
             loadErrors.append("WARNING: No ingredients list in Scripture Burrito")
-            
-        vPrint( 'Quiet', debuggingThisModule, f"Found {len(self.availableBBBs)} book ingredients in Scripture Burrito for {self.suppliedMetadata['SB']['identification']['name']}")
+
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(self.availableBBBs)} book ingredients in Scripture Burrito for {self.suppliedMetadata['SB']['identification']['name']}")
     # end of ScriptureBurritoBible.loadSBMetadata
 
 
@@ -299,7 +299,7 @@ class ScriptureBurritoBible( Bible ):
             and try to standardise it at the same time.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "applySuppliedMetadata( {} )".format( applyMetadataType ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "applySuppliedMetadata( {} )".format( applyMetadataType ) )
         assert applyMetadataType in ( 'SB', 'Project', )
 
         if applyMetadataType == 'Project': # This is different stuff
@@ -317,7 +317,7 @@ class ScriptureBurritoBible( Bible ):
         # Now we'll flatten the supplied metadata and remove empty values
         flattenedMetadata = {}
         for mainKey,value in self.suppliedMetadata['SB'].items():
-            # dPrint( 'Quiet', debuggingThisModule, "Got {} = {}".format( mainKey, value ) )
+            # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Got {} = {}".format( mainKey, value ) )
             if not value: pass # ignore empty ones
             elif isinstance( value, str ): flattenedMetadata[mainKey] = value # Straight copy
             elif isinstance( value, list ):
@@ -327,16 +327,16 @@ class ScriptureBurritoBible( Bible ):
                             if not subValue:  pass # ignore empty ones
                             elif isinstance( subValue, (str,bool,int) ):
                                 flattenedMetadata[mainKey+'--entry'+str(n)+'--'+subKey] = subValue # Straight copy
-                    else: vPrint( 'Quiet', debuggingThisModule, "Programming error5 in applySuppliedMetadata", mainKey, value, someListEntry, repr(someListEntry) ); halt
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error5 in applySuppliedMetadata", mainKey, value, someListEntry, repr(someListEntry) ); halt
             elif isinstance( value, dict ): # flatten this
                 for subKey,subValue in value.items():
-                    #dPrint( 'Quiet', debuggingThisModule, "  Got2 {}--{} = {}".format( mainKey, subKey, subValue ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got2 {}--{} = {}".format( mainKey, subKey, subValue ) )
                     if not subValue: pass # ignore empty ones
                     elif isinstance( subValue, (str,bool,int) ):
                         flattenedMetadata[mainKey+'--'+subKey] = subValue # Straight copy
                     elif isinstance( subValue, dict ): # flatten this
                         for sub2Key,sub2Value in subValue.items():
-                            #dPrint( 'Quiet', debuggingThisModule, "    Got3 {}--{}--{} = {}".format( mainKey, subKey, sub2Key, sub2Value ) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Got3 {}--{}--{} = {}".format( mainKey, subKey, sub2Key, sub2Value ) )
                             if not sub2Value:  pass # ignore empty ones
                             elif isinstance( sub2Value, (str,bool,int) ):
                                 flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key] = sub2Value # Straight copy
@@ -360,25 +360,25 @@ class ScriptureBurritoBible( Bible ):
                                             #     assert sub3Value in ('books','CanonicalContent',)
                                             #     flattenedMetadata[mainKey+'--'+subKey+'--'+sub2Key+'--'+sub3Key+'--'+sub4Key] = sub4Value # Straight copy
                                             # elif isinstance( sub4Value, dict ):
-                                            #     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                            #         vPrint( 'Quiet', debuggingThisModule, "How do we handle a dict here???", sub3Key, sub4Value )
+                                            #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
+                                            #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a dict here???", sub3Key, sub4Value )
                                             # elif isinstance( sub4Value, tuple ):
-                                            #     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                            #         vPrint( 'Quiet', debuggingThisModule, "How do we handle a tuple here???" )
-                                            else: vPrint( 'Quiet', debuggingThisModule, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                                            #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
+                                            #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
+                                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
                                     # elif isinstance( sub3Value, tuple ):
-                                    #     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                                    #         vPrint( 'Quiet', debuggingThisModule, "How do we handle a tuple here???" )
-                                    else: vPrint( 'Quiet', debuggingThisModule, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                                    #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
+                                    #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
+                                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error4 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
                             # elif isinstance( sub2Value, tuple ):
-                            #     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-                            #         vPrint( 'Quiet', debuggingThisModule, "How do we handle a tuple here???" )
-                            else: vPrint( 'Quiet', debuggingThisModule, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
+                            #     if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
+                            #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "How do we handle a tuple here???" )
+                            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error3 in applySuppliedMetadata", mainKey, subKey, sub2Key, repr(sub2Value) ); halt
                     elif isinstance( subValue, list ): # flatten this
                         flattenedMetadata[mainKey+'--'+subKey] = '--'.join( subValue )
-                    else: vPrint( 'Quiet', debuggingThisModule, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
-            else: vPrint( 'Quiet', debuggingThisModule, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
-        # dPrint( 'Quiet', debuggingThisModule, "\nflattenedMetadata", flattenedMetadata )
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error2 in applySuppliedMetadata", mainKey, subKey, repr(subValue) ); halt
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Programming error in applySuppliedMetadata", mainKey, repr(value) ); halt
+        # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nflattenedMetadata", flattenedMetadata )
 
         # The following does nothing useful for SB
         # nameChangeDict = {} #{'License':'Licence'}
@@ -403,8 +403,8 @@ class ScriptureBurritoBible( Bible ):
         """
         Load the USFM or USX (XML) Bible text files.
         """
-        fnPrint( debuggingThisModule, "loadBooks()" )
-        vPrint( 'Info', debuggingThisModule, _("ScriptureBurritoBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "loadBooks()" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("ScriptureBurritoBible: Loading {} books from {}…").format( self.name, self.sourceFilepath ) )
 
         if not self.preloadDone: self.preload()
         if not self.preloadDone: return # coz it must have failed
@@ -424,8 +424,8 @@ class ScriptureBurritoBible( Bible ):
         """
         Load the USFM or USX (XML) Bible text file.
         """
-        fnPrint( debuggingThisModule, "loadBook()" )
-        vPrint( 'Info', debuggingThisModule, _("ScriptureBurritoBible: Loading {} from {} {}…").format( BBB, self.name, self.sourceFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "loadBook()" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("ScriptureBurritoBible: Loading {} from {} {}…").format( BBB, self.name, self.sourceFilepath ) )
 
         if self.suppliedMetadata['SB']['Filetype'] == 'USFM':
             USFMBible.loadBook( self, BBB, filename )
@@ -436,8 +436,8 @@ class ScriptureBurritoBible( Bible ):
         """
         Load the USFM or USX (XML) Bible text file (for multiprocessing).
         """
-        fnPrint( debuggingThisModule, "_loadBookMP()" )
-        vPrint( 'Info', debuggingThisModule, _("ScriptureBurritoBible: Loading {} from {} {}…").format( BBB_Filename_duple, self.name, self.sourceFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "_loadBookMP()" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("ScriptureBurritoBible: Loading {} from {} {}…").format( BBB_Filename_duple, self.name, self.sourceFilepath ) )
 
         if self.suppliedMetadata['SB']['Filetype'] == 'USFM':
             return USFMBible._loadBookMP( self, BBB_Filename_duple )
@@ -452,15 +452,15 @@ def __processScriptureBurritoBible( parametersTuple ): # for demo
     Special shim function used below for multiprocessing.
     """
     codeLetter, mainFolderName, subFolderName = parametersTuple
-    vPrint( 'Normal', debuggingThisModule, "\nSB {} Trying {}".format( codeLetter, subFolderName ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB {} Trying {}".format( codeLetter, subFolderName ) )
     SB_Bible = ScriptureBurritoBible( mainFolderName, subFolderName )
     SB_Bible.load()
-    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
         BBB = 'JN1'
         if BBB in SB_Bible:
             SB_Bible.books[BBB].debugPrint()
             for entryKey in SB_Bible.books[BBB]._CVIndex:
-                vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 # end of __processScriptureBurritoBible
 
 
@@ -468,18 +468,18 @@ def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'SBTest/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = ScriptureBurritoBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA1", result1 )
         result2 = ScriptureBurritoBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA2", result2 )
         result3 = ScriptureBurritoBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA3", result3 )
 
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
@@ -492,9 +492,9 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -504,16 +504,16 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB F{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB F{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( sampleFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 0: # Older versions of bundles from Haiola
@@ -525,9 +525,9 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('G'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -537,16 +537,16 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB G{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB G{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( sampleFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 0: # all discovered modules in the test folder
@@ -557,9 +557,9 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -569,16 +569,16 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB H{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB H{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( testFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     if 00:
         testFolders = (
@@ -590,20 +590,20 @@ def briefDemo() -> None:
                 DB = ScriptureBurritoBible( testFolder )
                 DB.loadSBMetadata()
                 DB.preload()
-                vPrint( 'Quiet', debuggingThisModule, DB )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, DB )
                 if BibleOrgSysGlobals.strictCheckingFlag: DB.check()
                 DB.loadBooks()
                 #DBErrors = DB.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, DBErrors )
-                #dPrint( 'Quiet', debuggingThisModule, DB.getVersification() )
-                #dPrint( 'Quiet', debuggingThisModule, DB.getAddedUnits() )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, DBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, DB.getVersification() )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, DB.getAddedUnits() )
                 #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                    ##dPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
-                    #dPrint( 'Quiet', debuggingThisModule, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-            else: vPrint( 'Quiet', debuggingThisModule, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                    ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
 # end of ScriptureBurritoBible.briefDemo
 
@@ -611,18 +611,18 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'SBTest/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = ScriptureBurritoBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA1", result1 )
         result2 = ScriptureBurritoBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA2", result2 )
         result3 = ScriptureBurritoBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "SB TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA3", result3 )
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     if 1: # Open access Bibles from SB
@@ -634,9 +634,9 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if 0 and BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('F'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -646,16 +646,16 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB F{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB F{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( sampleFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 0: # Older versions of bundles from Haiola
@@ -667,9 +667,9 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('G'+str(j+1),os.path.join(sampleFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -679,16 +679,16 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB G{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB G{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( sampleFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
 
     if 0: # all discovered modules in the test folder
@@ -699,9 +699,9 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            #dPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-            vPrint( 'Normal', debuggingThisModule, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} SB modules using {} processes…").format( len(foundFolders), BibleOrgSysGlobals.maxProcesses ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various modules may be interspersed.") )
             parameters = [('H'+str(j+1),os.path.join(testFolder, folderName+'/'),folderName) \
                                                 for j,folderName in enumerate(sorted(foundFolders))]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
@@ -711,19 +711,19 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, folderName in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nSB H{}/ Trying '{}/'…".format( j+1, folderName ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSB H{}/ Trying '{}/'…".format( j+1, folderName ) )
                 myTestFolder = os.path.join( testFolder, folderName+'/' )
                 SB_Bible = ScriptureBurritoBible( myTestFolder, folderName )
                 SB_Bible.load()
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Print the index of a small book
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Print the index of a small book
                     BBB = 'JN1'
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', debuggingThisModule, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
-    #    vPrint( 'Quiet', debuggingThisModule, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
+    #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )
     #       pass
 # end of ScriptureBurritoBible.fullDemo
 

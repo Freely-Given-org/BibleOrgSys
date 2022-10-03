@@ -46,9 +46,9 @@ LAST_MODIFIED_DATE = '2020-05-04' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon format handler"
 PROGRAM_VERSION = '0.20'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # Hebrew lexicon folder
@@ -83,7 +83,7 @@ class AugmentedStrongsIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        fnPrint( debuggingThisModule, "AugmentedStrongsIndexFileConverter.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "AugmentedStrongsIndexFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries1 = self.entries2 = None
     # end of AugmentedStrongsIndexFileConverter.__init__
@@ -100,7 +100,7 @@ class AugmentedStrongsIndexFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries1) == len(self.entries2)
         result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.entries1) )
         #result += ('\n' if result else '') + "  " + _("Number of entries = {:,}").format( len(self.entries2) )
@@ -113,12 +113,12 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( _("AugmentedStrongsIndexFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
@@ -126,7 +126,7 @@ class AugmentedStrongsIndexFileConverter:
         except ParseError as err:
             logging.critical( _("Loader parse error in xml file {}: {} {}").format( AugmentedStrongsIndexFileConverter.indexFilename, sys.exc_info()[0], err ) )
             raise ParseError
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
         self.entries1, self.entries2 = {}, {}
@@ -142,7 +142,7 @@ class AugmentedStrongsIndexFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert entry.tag == AugmentedStrongsIndexFileConverter.HebLexNameSpace+"w"
             assert entry.text
         BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "hjg8" )
@@ -154,7 +154,7 @@ class AugmentedStrongsIndexFileConverter:
             if attrib=="aug":
                 aug = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert aug is not None
 
         self.entries1[aug] = entry.text
@@ -167,7 +167,7 @@ class AugmentedStrongsIndexFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree
             assert self.entries1 and self.entries2
         return self.entries1, self.entries2 # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
@@ -180,7 +180,7 @@ class AugmentedStrongsIndexFileConverter:
         """
         import pickle
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.entries1
             assert self.entries2
@@ -189,7 +189,7 @@ class AugmentedStrongsIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_AugStrongsIndex_Tables.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries1, myFile )
             pickle.dump( self.entries2, myFile )
@@ -233,7 +233,7 @@ class LexicalIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        fnPrint( debuggingThisModule, "LexicalIndexFileConverter.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "LexicalIndexFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of LexicalIndexFileConverter.__init__
@@ -250,7 +250,7 @@ class LexicalIndexFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries) ==  2
         result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {:,}").format( len(self.entries['heb']) )
         result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {:,}").format( len(self.entries['arc']) )
@@ -263,14 +263,14 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )…" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
         self.entries = {}
@@ -286,7 +286,7 @@ class LexicalIndexFileConverter:
         """
         Check/validate the given lexical index part.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert part.tag == LexicalIndexFileConverter.HebLexNameSpace+"part"
         BibleOrgSysGlobals.checkXMLNoText( part, part.tag, "hjg8" )
         BibleOrgSysGlobals.checkXMLNoTail( part, part.tag, "jk95" )
@@ -297,7 +297,7 @@ class LexicalIndexFileConverter:
             if attrib==LexicalIndexFileConverter.XMLNameSpace+'lang':
                 lang = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert lang in ('heb','arc',)
         self.entries[lang] = {}
         for entry in part:
@@ -309,7 +309,7 @@ class LexicalIndexFileConverter:
         """
         Check/validate the given lexical index record.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert entry.tag == LexicalIndexFileConverter.HebLexNameSpace+"entry"
         BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "hjg8" )
         BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "hjg8" )
@@ -324,7 +324,7 @@ class LexicalIndexFileConverter:
             if attrib=='id':
                 ID = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert ID is not None
 
         # Now process the subelements
@@ -333,7 +333,7 @@ class LexicalIndexFileConverter:
             BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d52d" )
             if element.tag == LexicalIndexFileConverter.HebLexNameSpace+"w":
                 location = "w of " + ID
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
                 word = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "fca4" )
@@ -344,14 +344,14 @@ class LexicalIndexFileConverter:
                     if attrib=="xlit": xlit = value
                     else: logging.warning( "svd6 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"pos":
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
                 pos = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "dcs2" )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "d4hg" )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+'def':
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
                 definition = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "dcf2" )
@@ -392,7 +392,7 @@ class LexicalIndexFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
@@ -405,7 +405,7 @@ class LexicalIndexFileConverter:
         """
         import pickle
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.entries
 
@@ -413,7 +413,7 @@ class LexicalIndexFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Index_Table.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -462,7 +462,7 @@ class HebrewStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        fnPrint( debuggingThisModule, "HebrewStrongsFileConverter.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewStrongsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of HebrewStrongsFileConverter.__init__
@@ -489,14 +489,14 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
         self.entries = {}
@@ -512,7 +512,7 @@ class HebrewStrongsFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert entry.tag == HebrewStrongsFileConverter.HebLexNameSpace+"entry"
         BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "na19" )
         BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
@@ -522,13 +522,13 @@ class HebrewStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib=='id':
                 entryID = value
-                #dPrint( 'Info', debuggingThisModule, "Validating {} entry…".format( entryID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {} entry…".format( entryID ) )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
         for element in entry:
             if element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"w":
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
                 word = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "d4hg" )
@@ -560,26 +560,26 @@ class HebrewStrongsFileConverter:
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'source':
                 source = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #dPrint( 'Quiet', debuggingThisModule, entryID, 'source', repr(source) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, 'source', repr(source) )
                 if BibleOrgSysGlobals.debugFlag and entryID!='H5223':
                     assert source and '\t' not in source and '\n' not in source
                 entryResults['source'] = source
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'meaning':
                 meaning = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #dPrint( 'Quiet', debuggingThisModule, entryID, 'meaning', repr(meaning) )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, 'meaning', repr(meaning) )
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert meaning and '\t' not in meaning and '\n' not in meaning
                 entryResults['meaning'] = meaning
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'usage':
                 usage = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #dPrint( 'Quiet', debuggingThisModule, 'usage', repr(usage) )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'usage', repr(usage) )
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert usage and '\t' not in usage and '\n' not in usage
                 entryResults['usage'] = usage
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+'note':
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert element.text
                 note = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "f3g7" )
@@ -591,7 +591,7 @@ class HebrewStrongsFileConverter:
                 if BibleOrgSysGlobals.debugFlag: halt
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
 
-        #dPrint( 'Quiet', debuggingThisModule, entryID, entryResults )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, entryResults )
         assert entryID and entryID[0]=='H' and entryID[1:].isdigit()
         self.entries[entryID[1:]] = entryResults # leave off the H
     # end of HebrewStrongsFileConverter.validateEntry
@@ -602,7 +602,7 @@ class HebrewStrongsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
@@ -615,7 +615,7 @@ class HebrewStrongsFileConverter:
         """
         import pickle
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.entries
 
@@ -623,7 +623,7 @@ class HebrewStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Strongs_Table.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -669,7 +669,7 @@ class BrownDriverBriggsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        fnPrint( debuggingThisModule, "BrownDriverBriggsFileConverter.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "BrownDriverBriggsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.entries = None
     # end of BrownDriverBriggsFileConverter.__init__
@@ -686,7 +686,7 @@ class BrownDriverBriggsFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.entries) ==  2
         result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {:,}").format( len(self.entries['heb']) )
         result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {:,}").format( len(self.entries['arc']) )
@@ -699,14 +699,14 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Hebrew lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
-        vPrint( 'Info', debuggingThisModule, _("Loading from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading from {}…").format( XMLFileOrFilepath ) )
         self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree # Fail here if we didn't load anything at all
 
         self.entries = {}
@@ -722,7 +722,7 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given lexical index part.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert part.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"part"
         BibleOrgSysGlobals.checkXMLNoText( part, part.tag, "vgb4" )
         BibleOrgSysGlobals.checkXMLNoTail( part, part.tag, "scd1" )
@@ -732,13 +732,13 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in part.items():
             if attrib == 'id':
                 partID = value
-                #dPrint( 'Info', debuggingThisModule, "Validating {!r} part…".format( partID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} part…".format( partID ) )
             elif attrib == 'title':
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+'lang':
                 lang = value
             else: logging.warning( "scd2 Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert lang in ('heb','arc',)
         if lang not in self.entries: self.entries[lang] = {}
 
@@ -751,7 +751,7 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given lexical index section.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert section.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"section"
         BibleOrgSysGlobals.checkXMLNoText( section, section.tag, "na19" )
         BibleOrgSysGlobals.checkXMLNoTail( section, section.tag, "kaq9" )
@@ -761,7 +761,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in section.items():
             if attrib == 'id':
                 sectionID = value
-                #dPrint( 'Info', debuggingThisModule, "Validating {!r} section…".format( sectionID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} section…".format( sectionID ) )
             else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+'page':
@@ -777,7 +777,7 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"entry"
         #BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "na19" )
         BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
@@ -787,7 +787,7 @@ class BrownDriverBriggsFileConverter:
         for attrib,value in entry.items():
             if attrib == 'id':
                 entryID = value
-                #dPrint( 'Info', debuggingThisModule, "Validating {!r} entry…".format( entryID ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Validating {!r} entry…".format( entryID ) )
             elif attrib == 'type': entryType = value
             elif attrib == 'mod': entryMod = value
             elif attrib == 'cite': entryCite = value
@@ -798,22 +798,22 @@ class BrownDriverBriggsFileConverter:
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
                             .replace( '\t', '' ).replace( '\n', '' )
         if entryID == "m.ba.ab": flattenedXML = flattenedXML.rstrip() # Seems to have a space at the start of the XML line
-        #dPrint( 'Quiet', debuggingThisModule, entryID, repr(flattenedXML) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, repr(flattenedXML) )
         match = re.search( '<status p="(\d{1,4})">(.+?)</status>', flattenedXML )
         if match:
             #logging.warning( "Removed {} status field {} from {}" \
                 #.format( entryID, repr(flattenedXML[match.start():match.end()]), repr(flattenedXML) ) )
             resultXML = flattenedXML[:match.start()] + flattenedXML[match.end():]
             statusP, status = match.group(1), match.group(2)
-            #dPrint( 'Quiet', debuggingThisModule, "statusP", repr(statusP), "st", repr(status) )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "statusP", repr(statusP), "st", repr(status) )
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                 assert status in ('new','made','base','ref','added','done',)
         else:
             logging.warning( "Missing status in {} BrDrBr entry: {!r}".format( entryID, flattenedXML ) )
             resultXML = flattenedXML
 
-        #dPrint( 'Quiet', debuggingThisModule, repr(partID), repr(sectionID), repr(title), repr(lang) )
-        #dPrint( 'Quiet', debuggingThisModule, entryID, status, repr(resultXML) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(partID), repr(sectionID), repr(title), repr(lang) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, status, repr(resultXML) )
         self.entries[lang][entryID] = (resultXML,statusP,status,)
     # end of BrownDriverBriggsFileConverter.validateEntry
 
@@ -823,7 +823,7 @@ class BrownDriverBriggsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.XMLTree
             assert self.entries
         return self.entries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
@@ -836,7 +836,7 @@ class BrownDriverBriggsFileConverter:
         """
         import pickle
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.entries
 
@@ -844,7 +844,7 @@ class BrownDriverBriggsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_BDB_Table.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.entries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -856,33 +856,33 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon converter classes
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         asixfc = AugmentedStrongsIndexFileConverter()
         asixfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, asixfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, asixfc ) # Just print a summary
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         lixfc = LexicalIndexFileConverter()
         lixfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, lixfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, lixfc ) # Just print a summary
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         hsfc = HebrewStrongsFileConverter()
         hsfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, hsfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hsfc ) # Just print a summary
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         bdb = BrownDriverBriggsFileConverter()
         bdb.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, bdb ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bdb ) # Just print a summary
 
         if BibleOrgSysGlobals.commandLineArguments.export:
-            vPrint( 'Quiet', debuggingThisModule, "Exports aren't written yet!" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Exports aren't written yet!" )
             #hsfc.exportDataToPython() # Produce the .py tables
             #hsfc.exportDataToC() # Produce the .h tables
 # end of HebrewLexiconConverter.briefDemo
@@ -891,36 +891,36 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon converter classes
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         asixfc = AugmentedStrongsIndexFileConverter()
         asixfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, asixfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, asixfc ) # Just print a summary
         if BibleOrgSysGlobals.commandLineArguments.export:
             asixfc.pickle() # Produce a pickle output file
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         lixfc = LexicalIndexFileConverter()
         lixfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, lixfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, lixfc ) # Just print a summary
         if BibleOrgSysGlobals.commandLineArguments.export:
             lixfc.pickle() # Produce a pickle output file
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         hsfc = HebrewStrongsFileConverter()
         hsfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, hsfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hsfc ) # Just print a summary
         if BibleOrgSysGlobals.commandLineArguments.export:
             hsfc.pickle() # Produce a pickle output file
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         bdbfc = BrownDriverBriggsFileConverter()
         bdbfc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, bdbfc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bdbfc ) # Just print a summary
         if BibleOrgSysGlobals.commandLineArguments.export:
             bdbfc.pickle() # Produce a pickle output file
 
@@ -929,14 +929,14 @@ def fullDemo() -> None:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'HebrewLexicon_Tables.1.pickle' )
-            vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
             with open( filepath, 'wb' ) as myFile:
                 pickle.dump( asixfc.entries1, myFile )
                 pickle.dump( asixfc.entries2, myFile )
                 pickle.dump( lixfc.entries, myFile )
                 pickle.dump( hsfc.entries, myFile )
                 pickle.dump( bdbfc.entries, myFile )
-            vPrint( 'Quiet', debuggingThisModule, "Other exports aren't written yet!" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Other exports aren't written yet!" )
             #hsfc.exportDataToPython() # Produce the .py tables
             #hsfc.exportDataToC() # Produce the .h tables
 # end of HebrewLexiconConverter.fullDemo

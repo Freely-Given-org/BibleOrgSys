@@ -50,9 +50,9 @@ LAST_MODIFIED_DATE = '2022-07-03' # by RJH
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
 PROGRAM_VERSION = '0.87'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -141,7 +141,7 @@ class USFMFile:
 
         Puts the result into self.lines
         """
-        #dPrint( 'Quiet', debuggingThisModule, "USFMFile.read( {!r}, {!r}, {!r} )".format( USFMFilepath, ignoreSFMs, encoding ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile.read( {!r}, {!r}, {!r} )".format( USFMFilepath, ignoreSFMs, encoding ) )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
@@ -158,7 +158,7 @@ class USFMFile:
                     if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #dPrint( 'Quiet', debuggingThisModule, 'USFM file line is "' + line + '"' )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'USFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
 
@@ -166,15 +166,15 @@ class USFMFile:
                         if len(result)==0: # We don't have any SFM data lines yet
                             if BibleOrgSysGlobals.verbosityLevel > 2:
                                 logging.error( "Non-USFM line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
-                            #dPrint( 'Quiet', debuggingThisModule, "SFMFile.py: XXZXResult is", result, len(line) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
-                                #dPrint( 'Quiet', debuggingThisModule, x, "'" + str(ord(line[x])) + "'" )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, x, "'" + str(ord(line[x])) + "'" )
                             #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
                         else: # Append this continuation line
                             if marker not in ignoreSFMs:
                                 oldmarker, oldtext = result.pop()
-                                #dPrint( 'Quiet', debuggingThisModule, "Popped",oldmarker,oldtext)
-                                #dPrint( 'Quiet', debuggingThisModule, "Adding", line, "to", oldmarker, oldtext)
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Popped",oldmarker,oldtext)
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Adding", line, "to", oldmarker, oldtext)
                                 result.append( (oldmarker, oldtext+' '+line) )
                             continue
 
@@ -183,10 +183,10 @@ class USFMFile:
                         result.append( (marker, text) )
 
             except UnicodeError as err:
-                vPrint( 'Quiet', debuggingThisModule, "USFMFile Unicode error:", sys.exc_info()[0], err )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + USFMFilepath + " -- line ignored at #" + str(lineCount) )
-                if lineCount > 1: vPrint( 'Quiet', debuggingThisModule, 'Previous line was: ', lastLine )
-                #dPrint( 'Quiet', debuggingThisModule, line )
+                if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, line )
                 #raise
 
             self.lines = result
@@ -199,19 +199,19 @@ def briefDemo() -> None:
     """
     Demonstrate reading and processing some UTF-8 USFM files.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     import os.path
     filepath = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'MatigsalugDictionaryA.sfm' )
-    vPrint( 'Info', debuggingThisModule, "Using {} as test file…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Using {} as test file…".format( filepath ) )
 
     linesDB = USFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
-    vPrint( 'Quiet', debuggingThisModule, len(linesDB.lines), 'lines read from file', filepath )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
-        vPrint( 'Quiet', debuggingThisModule, i, r)
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, r)
         if i>9: break
-    vPrint( 'Quiet', debuggingThisModule, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '…\n',len(linesDB.lines)-1, linesDB.lines[-1], '\n') # Display the last record
 # end of fullDemo
 
 def fullDemo() -> None:

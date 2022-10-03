@@ -76,9 +76,9 @@ LAST_MODIFIED_DATE = '2020-04-18' # by RJH
 SHORT_PROGRAM_NAME = "HaggaiBible"
 PROGRAM_NAME = "Haggai XML Bible format handler"
 PROGRAM_VERSION = '0.33'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -100,7 +100,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
     if autoLoad is true and exactly one Haggai Bible is found,
         returns the loaded HaggaiXMLBible object.
     """
-    fnPrint( debuggingThisModule, "HaggaiXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "HaggaiXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -113,7 +113,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -130,7 +130,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #dPrint( 'Quiet', debuggingThisModule, 'ff', foundFiles )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ff', foundFiles )
 
     # See if there's an Haggai project here in this folder
     numFound = 0
@@ -142,26 +142,26 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', debuggingThisModule, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if 'haggai_' not in firstLines[1]: continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = HaggaiXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', debuggingThisModule, "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -177,7 +177,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
                     if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
-        #dPrint( 'Quiet', debuggingThisModule, 'fsf', foundSubfiles )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'fsf', foundSubfiles )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -186,14 +186,14 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bo
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', debuggingThisModule, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "HB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             ub = HaggaiXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -242,7 +242,7 @@ class HaggaiXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', debuggingThisModule, "HaggaiXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -254,7 +254,7 @@ class HaggaiXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
         try: self.XMLTree = ElementTree().parse( self.sourceFilepath )
         except ParseError as err:
             logging.critical( "Loader parse error in xml file {}: {} {}".format( self.givenName, sys.exc_info()[0], err ) )
@@ -342,7 +342,7 @@ class HaggaiXMLBible( Bible ):
 
         # TODO: We probably need to rationalise some of the self.xxx stores
         for element in self.header:
-            #dPrint( 'Quiet', debuggingThisModule, 'header', element.tag )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'header', element.tag )
             if element.tag == 'title':
                 sublocation = "title in {}".format( location )
                 BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -452,7 +452,7 @@ class HaggaiXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating XML book…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML book…") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -473,7 +473,7 @@ class HaggaiXMLBible( Bible ):
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            vPrint( 'Info', debuggingThisModule, _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Validating {} {}…").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Haggai XML Bible Book object'
             thisBook.objectTypeString = 'Haggai'
@@ -491,7 +491,7 @@ class HaggaiXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.chapterTag, element.tag ) )
-            vPrint( 'Info', debuggingThisModule, "  Saving {} into results…".format( BBB ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Saving {} into results…".format( BBB ) )
             self.stashBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
@@ -503,7 +503,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating XML chapter…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML chapter…") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -512,7 +512,7 @@ class HaggaiXMLBible( Bible ):
                 chapterNumber = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
-            #dPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
 
@@ -539,7 +539,7 @@ class HaggaiXMLBible( Bible ):
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
-                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
             else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.verseTag, element.tag ) )
     # end of HaggaiXMLBible.__validateAndExtractChapter
@@ -552,7 +552,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating XML paragraph…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML paragraph…") )
 
         location = "paragraph in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
@@ -581,7 +581,7 @@ class HaggaiXMLBible( Bible ):
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
-                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
             else: logging.error( "Expected to find {!r} but got {!r}".format( HaggaiXMLBible.verseTag, element.tag ) )
     # end of HaggaiXMLBible.__validateAndExtractParagraph
@@ -593,7 +593,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating XML verse…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML verse…") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
@@ -623,11 +623,11 @@ class HaggaiXMLBible( Bible ):
                 if noteType and noteType not in ('variant',):
                     logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
                 nText, nTail = subelement.text, subelement.tail
-                #dPrint( 'Quiet', debuggingThisModule, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
                 vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
                 if nTail:
                     if '\n' in nTail:
-                        vPrint( 'Quiet', debuggingThisModule, "HaggaiXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
                     vText += nTail
                 for sub2element in subelement:
@@ -645,13 +645,13 @@ class HaggaiXMLBible( Bible ):
                         if fs == 'italic': SFM = '\\it'
                         elif fs == 'super': SFM = '\\bdit'
                         elif fs == 'emphasis': SFM = '\\em'
-                        else: vPrint( 'Quiet', debuggingThisModule, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
                         #if css == "font-style:italic": SFM = '\\it'
                         #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                         #elif css == "color:#FF0000": SFM = '\\em'
                         #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                         #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                        #else: vPrint( 'Quiet', debuggingThisModule, "css is", css, "idStyle is", idStyle ); halt
+                        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); halt
                         sText, sTail = sub2element.text.strip(), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
@@ -672,16 +672,16 @@ class HaggaiXMLBible( Bible ):
                 SFM = None
                 if fs == 'super': SFM = '\\bdit'
                 elif fs == 'emphasis': SFM = '\\em'
-                else: vPrint( 'Quiet', debuggingThisModule, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
                 #if css == "font-style:italic": SFM = '\\it'
                 #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
                 #elif css == "color:#FF0000": SFM = '\\em'
                 #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
                 #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                #else: vPrint( 'Quiet', debuggingThisModule, "css is", css, "idStyle is", idStyle ); halt
+                #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "css is", css, "idStyle is", idStyle ); halt
                 sText, sTail = subelement.text.strip(), subelement.tail
                 if BibleOrgSysGlobals.debugFlag: assert sText
-                #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, sublocation )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, sublocation )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                 if sTail: vText += sTail.strip()
@@ -696,7 +696,7 @@ class HaggaiXMLBible( Bible ):
                         art = value
                     else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert art == 'x-nl'
-                #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber )
                 #assert vText
                 if vText:
                     thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
@@ -708,7 +708,7 @@ class HaggaiXMLBible( Bible ):
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                vPrint( 'Quiet', debuggingThisModule, "HaggaiXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HaggaiXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
     # end of HaggaiXMLBible.__validateAndExtractVerse
@@ -719,13 +719,13 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'HaggaiTest/' )
-        vPrint( 'Quiet', debuggingThisModule, "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
-        vPrint( 'Quiet', debuggingThisModule, "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vPrint( 'Quiet', debuggingThisModule, "TestA3", HaggaiXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", HaggaiXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:
@@ -736,19 +736,19 @@ def briefDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', debuggingThisModule, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
                     hB = HaggaiXMLBible( testFolder, something )
                     hB.load()
-                    vPrint( 'Quiet', debuggingThisModule, hB )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         hB.check()
                         #UBErrors = UB.getCheckResults()
-                        #dPrint( 'Quiet', debuggingThisModule, UBErrors )
-                    #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
-                    #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getVersification() )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ##dPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
-                        #dPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -760,30 +760,30 @@ def briefDemo() -> None:
                             if t=='NT' and len(hB)==39: continue # Don't bother with NT references if it's only a OT
                             if t=='DC' and len(hB)<=66: continue # Don't bother with DC references if it's too small
                             svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
-                            try: vPrint( 'Quiet', debuggingThisModule, reference, svk.getShortText(), hB.getVerseText( svk ) )
-                            except KeyError: vPrint( 'Quiet', debuggingThisModule, something, reference, "doesn't exist" )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
+                            try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), hB.getVerseText( svk ) )
+                            except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, something, reference, "doesn't exist" )
                     if BibleOrgSysGlobals.commandLineArguments.export:
                         hB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         hB.toHaggaiXML()
                     break
-                else: vPrint( 'Quiet', debuggingThisModule, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total Haggai Bibles processed.".format( count ) )
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total Haggai Bibles processed.".format( count ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of HaggaiXMLBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'HaggaiTest/' )
-        vPrint( 'Quiet', debuggingThisModule, "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
-        vPrint( 'Quiet', debuggingThisModule, "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        vPrint( 'Quiet', debuggingThisModule, "TestA3", HaggaiXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", HaggaiXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
 
     if 1:
@@ -794,19 +794,19 @@ def fullDemo() -> None:
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    vPrint( 'Quiet', debuggingThisModule, "\nH B{}/ {}".format( count, something ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH B{}/ {}".format( count, something ) )
                     hB = HaggaiXMLBible( testFolder, something )
                     hB.load()
-                    vPrint( 'Quiet', debuggingThisModule, hB )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hB )
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         hB.check()
                         #UBErrors = UB.getCheckResults()
-                        #dPrint( 'Quiet', debuggingThisModule, UBErrors )
-                    #dPrint( 'Quiet', debuggingThisModule, UB.getVersification() )
-                    #dPrint( 'Quiet', debuggingThisModule, UB.getAddedUnits() )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getVersification() )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB.getAddedUnits() )
                     #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ##dPrint( 'Quiet', debuggingThisModule, "Looking for", ref )
-                        #dPrint( 'Quiet', debuggingThisModule, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Looking for", ref )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     if 1: # Test verse lookup
                         from BibleOrgSys.Reference import VerseReferences
                         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -818,16 +818,16 @@ def fullDemo() -> None:
                             if t=='NT' and len(hB)==39: continue # Don't bother with NT references if it's only a OT
                             if t=='DC' and len(hB)<=66: continue # Don't bother with DC references if it's too small
                             svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
-                            try: vPrint( 'Quiet', debuggingThisModule, reference, svk.getShortText(), hB.getVerseText( svk ) )
-                            except KeyError: vPrint( 'Quiet', debuggingThisModule, something, reference, "doesn't exist" )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
+                            try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), hB.getVerseText( svk ) )
+                            except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, something, reference, "doesn't exist" )
                     if BibleOrgSysGlobals.commandLineArguments.export:
                         hB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         hB.toHaggaiXML()
-                else: vPrint( 'Quiet', debuggingThisModule, "Sorry, skipping {}.".format( something ) )
-            if count: vPrint( 'Quiet', debuggingThisModule, "\n{} total Haggai Bibles processed.".format( count ) )
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, skipping {}.".format( something ) )
+            if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total Haggai Bibles processed.".format( count ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of HaggaiXMLBible.fullDemo
 
 if __name__ == '__main__':

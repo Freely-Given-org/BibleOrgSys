@@ -48,9 +48,9 @@ LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystemsConverter"
 PROGRAM_NAME = "Bible Versification Systems converter"
 PROGRAM_VERSION = '0.51'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -92,13 +92,13 @@ class BibleVersificationSystemsConverter:
         if not self.__XMLSystems: # Only ever do this once
             if XMLFolder is None: XMLFolder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "VersificationSystems" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            vPrint( 'Info', debuggingThisModule, _("Loading versification systems from {}…").format( XMLFolder ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading versification systems from {}…").format( XMLFolder ) )
             filenamePrefix = "BIBLEVERSIFICATIONSYSTEM_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     versificationSystemCode = filepart[len(filenamePrefix):]
-                    vPrint( 'Verbose', debuggingThisModule, _("Loading{} versification system from {}…").format( versificationSystemCode, filename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Loading{} versification system from {}…").format( versificationSystemCode, filename ) )
                     self.__XMLSystems[versificationSystemCode] = {}
                     self.__XMLSystems[versificationSystemCode]['tree'] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert self.__XMLSystems[versificationSystemCode]['tree'] # Fail here if we didn't load anything at all
@@ -128,7 +128,7 @@ class BibleVersificationSystemsConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[versificationSystemCode]['tree']:
                         bookCount += 1
-                    vPrint( 'Info', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -270,12 +270,12 @@ class BibleVersificationSystemsConverter:
         # We'll create a number of dictionaries
         self.__DataDict = {}
         for versificationSystemCode in self.__XMLSystems.keys():
-            #dPrint( 'Quiet', debuggingThisModule, versificationSystemCode )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, versificationSystemCode )
             # Make the data dictionary for this versification system
             chapterDataDict, omittedVersesDict, combinedVersesDict, reorderedVersesDict = {}, {}, {}, {}
             for bookElement in self.__XMLSystems[versificationSystemCode]['tree']:
                 BBB = bookElement.find("referenceAbbreviation").text
-                #dPrint( 'Quiet', debuggingThisModule, BBB )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
                 if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
                     logging.error( _("Unrecognized {!r} book abbreviation in {!r} versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
@@ -361,11 +361,11 @@ class BibleVersificationSystemsConverter:
         referenceVersificationSystem = self.__DataDict[referenceCode]
 
         for versificationSystemCode in self.__DataDict:
-            vPrint( 'Quiet', debuggingThisModule, "Validating {}…".format( versificationSystemCode ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Validating {}…".format( versificationSystemCode ) )
             thisSystem = self.__DataDict[versificationSystemCode]
             for versificationSystemCode2 in self.__DataDict:
                 if versificationSystemCode2 != versificationSystemCode:
-                    #dPrint( 'Quiet', debuggingThisModule, "  Comparing with", versificationSystemCode2 )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Comparing with", versificationSystemCode2 )
                     secondSystem = self.__DataDict[versificationSystemCode2]
                     if thisSystem == secondSystem: logging.warning( _("The {} and {} systems are identical.").format( versificationSystemCode, versificationSystemCode2 ) )
 
@@ -375,15 +375,15 @@ class BibleVersificationSystemsConverter:
                 assert not thisSystem['reordered']
             else:
                 for BBB in thisSystem['CV']:
-                    #dPrint( 'Quiet', debuggingThisModule, BBB )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
                     if BBB not in referenceVersificationSystem['CV']:
                         logging.warning( _("The {} system contains book {} which is not in {}").format( versificationSystemCode, BBB, referenceCode ) )
                     elif int(thisSystem['CV'][BBB]['numChapters']) > int(referenceVersificationSystem['CV'][BBB]['numChapters']):
-                        #dPrint( 'Quiet', debuggingThisModule, '2', thisSystem['CV'][BBB]['numChapters'], referenceVersificationSystem['CV'][BBB]['numChapters'] )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '2', thisSystem['CV'][BBB]['numChapters'], referenceVersificationSystem['CV'][BBB]['numChapters'] )
                         logging.warning( _("The {} system contains {} chapters for {} while only {} in {}").format( versificationSystemCode, thisSystem['CV'][BBB]['numChapters'], BBB, referenceVersificationSystem['CV'][BBB]['numChapters'], referenceCode ) )
                     else:
                         for ch in range( 1, int(thisSystem['CV'][BBB]['numChapters']) + 1 ):
-                            #dPrint( 'Quiet', debuggingThisModule, ch )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ch )
                             ok = True
                             try: v = int( thisSystem['CV'][BBB][str(ch)] )
                             except KeyError:
@@ -411,7 +411,7 @@ class BibleVersificationSystemsConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDict, pickleFile )
     # end of BibleVersificationSystemsConverter.pickle
@@ -435,7 +435,7 @@ class BibleVersificationSystemsConverter:
         assert self.__DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         versificationSystemDict = self.importDataToPython()
         # Split into two dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
@@ -478,7 +478,7 @@ class BibleVersificationSystemsConverter:
         assert self.__DataDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             #myFile.write( "#{}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleVersificationSystems.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
@@ -549,7 +549,7 @@ class BibleVersificationSystemsConverter:
                 """Convert special characters in an entry…"""
                 result = ""
                 for field in entry if isinstance( entry, list) else entry.items():
-                    #dPrint( 'Quiet', debuggingThisModule, field )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, field )
                     if result: result += ", " # Separate the fields
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
@@ -557,7 +557,7 @@ class BibleVersificationSystemsConverter:
                     elif isinstance( field, tuple):
                         tupleResult = ""
                         for tupleField in field:
-                            #dPrint( 'Quiet', debuggingThisModule, field, tupleField )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, field, tupleField )
                             if tupleResult: tupleResult += "," # Separate the fields (without a space)
                             if tupleField is None: tupleResult += '""'
                             elif isinstance( tupleField, str): tupleResult += '"' + str(tupleField).replace('"','\\"') + '"'
@@ -570,7 +570,7 @@ class BibleVersificationSystemsConverter:
             theFile.write( "static struct{}{}[{}] = {\n  // Fields are{}\n".format( structName, dictName, len(theDict), fieldsComment ) )
             for dictKey in sorted(theDict.keys()):
                 if isinstance( dictKey, str ):
-                    #dPrint( 'Quiet', debuggingThisModule, dictKey, theDict[dictKey] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dictKey, theDict[dictKey] )
                     theFile.write( "  {\"{}\",{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
                 elif isinstance( dictKey, int ):
                     theFile.write( "  {{},{}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
@@ -587,7 +587,7 @@ class BibleVersificationSystemsConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
@@ -634,11 +634,11 @@ class BibleVersificationSystemsConverter:
 
                 break # Just do one for now
 #            for systemName in self.__DataDict: # Now write out the actual data into the .c file
-#                vPrint( 'Quiet', debuggingThisModule, systemName )
+#                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, systemName )
 #                myCFile.write( '  { "{}",{}_versificationSystem,{}_omittedVerses },\n'.format( systemName, systemName, systemName ) )
 #            myCFile.write( "}; // versificationSystemNames ({} entries)\n\n".format( len(self.__DataDict) ) )
 #            for systemName in self.__DataDict:
-#                vPrint( 'Quiet', debuggingThisModule, systemName )
+#                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, systemName )
 #                myCFile.write( "#\n#{}\n".format( systemName ) )
 #                exportPythonDict( myCFile, self.__DataDict[systemName][0], systemName+"_versificationSystem", "{struct char* stuff[]}", "tables containing referenceAbbreviation, (\"numChapters\", numChapters) then pairs of chapterNumber,numVerses" )
 #                exportPythonDict( myCFile, self.__DataDict[systemName][1], systemName+"_omittedVerses", "{struct char* stuff[]}", "tables containing referenceAbbreviation then pairs of chapterNumber,omittedVerseNumber" )
@@ -659,7 +659,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     bvsc = BibleVersificationSystemsConverter().loadSystems() # Load the XML
     if BibleOrgSysGlobals.commandLineArguments.export:
@@ -669,7 +669,7 @@ def briefDemo() -> None:
         # bvsc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
-        vPrint( 'Quiet', debuggingThisModule, bvsc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bvsc ) # Just print a summary
 # end of fullDemo
 
 

@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2020-05-02' # by RJH
 SHORT_PROGRAM_NAME = "BiblePunctuationSystems"
 PROGRAM_NAME = "Bible Punctuation Systems handler"
 PROGRAM_VERSION = '0.45'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -81,26 +81,26 @@ class BiblePunctuationSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "BiblePunctuationSystems pickle file can't be loaded!" )
+                elif DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BiblePunctuationSystems pickle file can't be loaded!" )
                 standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BiblePunctuationSystems_Tables.json' )
                 if os.access( standardJsonFilepath, os.R_OK ) \
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    vPrint( 'Info', debuggingThisModule, f"Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDict = json.load( JsonFile )
                     # # NOTE: We have to convert str referenceNumber keys back to ints
                     # self.__DataDict['referenceNumberDict'] = { int(key):value \
                     #             for key,value in self.__DataDict['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "BiblePunctuationSystems JSON file can't be loaded!" )
+                elif DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BiblePunctuationSystems JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
             if XMLFolder is not None:
@@ -125,7 +125,7 @@ class BiblePunctuationSystems:
         #                     picklesGood = False; break
         #     if picklesGood:
         #         import pickle
-        #         vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+        #         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
         #         with open( standardPickleFilepath, 'rb') as pickleFile:
         #             self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         #     else: # We have to load the XML (much slower)
@@ -192,14 +192,14 @@ class BiblePunctuationSystems:
         assert systemName
         assert punctuationSchemeToCheck
         assert self.Lists
-        #dPrint( 'Quiet', debuggingThisModule, systemName, punctuationSchemeToCheck )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, systemName, punctuationSchemeToCheck )
 
         matchedPunctuationSystemCodes = []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #dPrint( 'Quiet', debuggingThisModule, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
@@ -215,19 +215,19 @@ class BiblePunctuationSystems:
 
         if systemMatchCount:
             if systemMatchCount == 1: # What we hope for
-                vPrint( 'Quiet', debuggingThisModule, "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
-                if debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
+                if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
             else:
-                vPrint( 'Quiet', debuggingThisModule, "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
-                if debugFlag: vPrint( 'Quiet', debuggingThisModule, errorSummary )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
+                if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
-            if debugFlag: vPrint( 'Quiet', debuggingThisModule, allErrors )
-            else: vPrint( 'Quiet', debuggingThisModule, errorSummary)
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
+            if debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'ScrapedFiles/', 'BiblePunctuation_'+systemName + '.xml' )
-            vPrint( 'Normal', debuggingThisModule, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Writing {} books to {}…").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -251,7 +251,7 @@ class BiblePunctuationSystem:
         self.__systemName = systemName
         self.__bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
         self.__punctuationDict = self.__bpss.getPunctuationSystem( self.__systemName )
-        #dPrint( 'Quiet', debuggingThisModule, "xxx", self.__punctuationDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xxx", self.__punctuationDict )
     # end of __init__
 
     def __str__( self ) -> str:
@@ -300,7 +300,7 @@ class BiblePunctuationSystem:
         """ Returns the value for the name. """
         assert name
         return self.__punctuationDict[name]
-        ##dPrint( 'Quiet', debuggingThisModule, "yyy", self.__punctuationDict )
+        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
         #logging.error( _("No {!r} value in {} punctuation system").format(name,self.__systemName) )
         #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
@@ -312,38 +312,38 @@ def briefDemo() -> None:
     """
     Brief demo to check class is working -- must be fast
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bpss ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bps ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', debuggingThisModule, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
 # end of BiblePunctuationSystem.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bpss ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bpss ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format(bpss.getAvailablePunctuationSystemNames()) )
 
     # Demo the BiblePunctuationSystem object
     bps = BiblePunctuationSystem( "English" ) # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bps ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bps ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
     name = 'chapterVerseSeparator'
-    vPrint( 'Quiet', debuggingThisModule, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
 # end of BiblePunctuationSystem.fullDemo
 
 if __name__ == '__main__':

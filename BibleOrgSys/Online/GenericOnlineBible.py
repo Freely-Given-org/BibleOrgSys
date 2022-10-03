@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "GenericOnlineBible"
 PROGRAM_NAME = "Generic online Bible handler"
 PROGRAM_VERSION = '0.02'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 MAX_CACHED_VERSES = 100 # Per Bible version in use
@@ -66,7 +66,7 @@ class GenericOnlineBible:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        fnPrint( debuggingThisModule, "GenericOnlineBible.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "GenericOnlineBible.__init__()" )
 
         self.bookList = None
         self.books = {}
@@ -110,7 +110,7 @@ class GenericOnlineBible:
         """
         Given an index, return the book object (or raise an IndexError)
         """
-        fnPrint( debuggingThisModule, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.__getitem__( {keyIndex} )…" )
 
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of GenericOnlineBible.__getitem__
@@ -126,12 +126,12 @@ class GenericOnlineBible:
             #Returns the dictionary.
         #Returns None if the data cannot be fetched.
         #"""
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
+        #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("GenericOnlineBible.getOnlineData( {!r} {!r} )").format( fieldREST, additionalParameters ) )
 
-        #dPrint( 'Info', debuggingThisModule, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "Requesting data from {} for {}…".format( URL_BASE, self.damRoot ) )
         #requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        ##dPrint( 'Quiet', debuggingThisModule, "Request string is", repr(requestString) )
+        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         #try: responseJSON = url lib.request.urlopen( requestString )
         #except url ib.error.URLError:
             #if BibleOrgSysGlobals.debugFlag: logging.critical( "GenericOnlineBible.getOnlineData: error fetching {!r} {!r}".format( fieldREST, additionalParameters ) )
@@ -145,10 +145,10 @@ class GenericOnlineBible:
         """
         Given a BCV key, add the data to the cache.
         """
-        fnPrint( debuggingThisModule, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.cacheVerse( {key}, {verseData} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             cachedVerseData = self.cache[str(key)]
             if cachedVerseData != verseData:
@@ -165,10 +165,10 @@ class GenericOnlineBible:
 
         Return None if not.
         """
-        fnPrint( debuggingThisModule, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getCachedVerseDataList( {key} )…" )
 
         if str(key) in self.cache:
-            vPrint( 'Never', debuggingThisModule, "  " + _("Retrieved from cache") )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  " + _("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
 
@@ -183,7 +183,7 @@ class GenericOnlineBible:
 
         (Most platforms don't provide the context so an empty list is returned.)
         """
-        fnPrint( debuggingThisModule, f"GenericOnlineBible.getContextVerseData( {key} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GenericOnlineBible.getContextVerseData( {key} )…" )
 
         return self.getVerseDataList( key ), [] # No context
     # end of GenericOnlineBible.getContextVerseData
@@ -197,26 +197,26 @@ def briefDemo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the GenericOnlineBible class
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         dbpBible1 = GenericOnlineBible()
-        vPrint( 'Quiet', debuggingThisModule, dbpBible1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', debuggingThisModule, verseKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
             dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
-            vPrint( 'Quiet', debuggingThisModule, f"  Cache length: {len(dbpBible1.cache)}" )
-            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
          # Now test the GenericOnlineBible class caching
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
-            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
 # end of GenericOnlineBible.briefDemo
 
 def fullDemo() -> None:
@@ -225,26 +225,26 @@ def fullDemo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testRefs = ( ('GEN','1','1'), ('JER','33','3'), ('MAL','4','6'), ('MAT','1','1'), ('JHN','3','16'), ('JDE','1','14'), ('REV','22','21'), )
 
     if 1: # Test the GenericOnlineBible class
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         dbpBible1 = GenericOnlineBible()
-        vPrint( 'Quiet', debuggingThisModule, dbpBible1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dbpBible1 )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', debuggingThisModule, verseKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
             dbpBible1.cacheVerse( verseKey, [f"Verse text for {verseKey}"] )
-            vPrint( 'Quiet', debuggingThisModule, f"  Cache length: {len(dbpBible1.cache)}" )
-            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Cache length: {len(dbpBible1.cache)}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
          # Now test the GenericOnlineBible class caching
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for testRef in testRefs:
             verseKey = SimpleVerseKey( *testRef )
-            vPrint( 'Quiet', debuggingThisModule, verseKey, "cached" )
-            vPrint( 'Quiet', debuggingThisModule, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey, "cached" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dbpBible1.getCachedVerseDataList( verseKey ) )
 # end of GenericOnlineBible.fullDemo
 
 if __name__ == '__main__':

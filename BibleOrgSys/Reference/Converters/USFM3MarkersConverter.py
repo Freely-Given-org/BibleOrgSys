@@ -46,9 +46,9 @@ LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "USFM3MarkersConverter"
 PROGRAM_NAME = "USFM3 Markers converter"
 PROGRAM_VERSION = '0.06'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -115,7 +115,7 @@ class USFM3MarkersConverter:
         self.__XMLFileOrFilepath = XMLFileOrFilepath
         assert self._XMLTree is None or len(self._XMLTree)==0 # Make sure we're not doing this twice
 
-        vPrint( 'Info', debuggingThisModule, _("Loading USFM3Markers XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading USFM3Markers XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
         assert self._XMLTree # Fail here if we didn't load anything at all
 
@@ -271,7 +271,7 @@ class USFM3MarkersConverter:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
-            #dPrint( 'Quiet', debuggingThisModule, "Processing", nameEnglish )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing", nameEnglish )
             marker = element.find('marker').text
             if marker.lower() != marker:
                 logging.error( _("Marker {!r} should be lower case").format( marker ) )
@@ -331,7 +331,7 @@ class USFM3MarkersConverter:
                     if marker.endswith('-s') or marker.endswith('-e'):
                         # Numberical suffix can't just be appended to the end of these
                         numberedMarker = f'{marker[:-2]}{suffix}{marker[-2:]}'
-                        #dPrint( 'Quiet', debuggingThisModule, f"Marker '{marker}' led to '{numberedMarker}'" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Marker '{marker}' led to '{numberedMarker}'" )
                     else: # not a milestone start/end marker
                         numberedMarker = marker + str(suffix)
                     backConversionDict[numberedMarker] = marker
@@ -351,12 +351,12 @@ class USFM3MarkersConverter:
                 else: numberedInternalMarkersList.append( marker )
                 if deprecatedFlag: deprecatedMarkersList.append( marker )
 
-        #dPrint( 'Quiet', debuggingThisModule, conversionDict ); vPrint( 'Quiet', debuggingThisModule, backConversionDict )
-        #dPrint( 'Quiet', debuggingThisModule, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
-        #dPrint( 'Quiet', debuggingThisModule, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
-        #dPrint( 'Quiet', debuggingThisModule, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
-        #dPrint( 'Quiet', debuggingThisModule, "internalMarkersList", len(internalMarkersList), internalMarkersList )
-        #dPrint( 'Quiet', debuggingThisModule, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, conversionDict ); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, backConversionDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
@@ -379,7 +379,7 @@ class USFM3MarkersConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -427,7 +427,7 @@ class USFM3MarkersConverter:
         assert self.__DataDicts
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by USFM3Markers.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
@@ -468,7 +468,7 @@ class USFM3MarkersConverter:
         assert self.__DataDicts
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             json.dump( self.__DataDicts, myFile, ensure_ascii=False, indent=2 )
     # end of exportDataToJSON
@@ -534,7 +534,7 @@ class USFM3MarkersConverter:
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt', encoding='utf-8' ) as myHFile, \
@@ -584,7 +584,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if BibleOrgSysGlobals.commandLineArguments.export:
         umc = USFM3MarkersConverter().loadAndValidate() # Load the XML
@@ -596,7 +596,7 @@ def briefDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         umc = USFM3MarkersConverter().loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, umc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, umc ) # Just print a summary
 # end of fullDemo
 
 def fullDemo() -> None:

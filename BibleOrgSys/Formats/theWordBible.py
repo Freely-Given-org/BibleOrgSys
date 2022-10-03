@@ -73,9 +73,9 @@ LAST_MODIFIED_DATE = '2020-04-18' # by RJH
 SHORT_PROGRAM_NAME = "theWordBible"
 PROGRAM_NAME = "theWord Bible format handler"
 PROGRAM_VERSION = '0.55'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 BOS = None
@@ -129,7 +129,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one theWord Bible is found,
         returns the loaded theWordBible object.
     """
-    fnPrint( debuggingThisModule, "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "theWordBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -142,7 +142,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " theWordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " theWordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -169,13 +169,13 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "theWordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             twB = theWordBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -185,7 +185,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("theWordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    theWordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    theWordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -209,7 +209,7 @@ def theWordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "theWordBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "theWordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             twB = theWordBible( foundProjects[0][0], foundProjects[0][1] )
@@ -269,8 +269,8 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if BibleOrgSysGlobals.verbosityLevel > 1:
         if filename1==filename2:
-            vPrint( 'Quiet', debuggingThisModule, "Comparing {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
-        else: vPrint( 'Quiet', debuggingThisModule, "Comparing files {} and {}…".format( repr(filename1), repr(filename2) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing {} files in folders {} and {}…".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Comparing files {} and {}…".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
@@ -287,7 +287,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file1" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
@@ -298,7 +298,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             lineCount += 1
             if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
-                    vPrint( 'Quiet', debuggingThisModule, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      theWordFileCompare: Detected Unicode Byte Order Marker (BOM) in file2" )
                 line = line[1:] # Remove the Unicode Byte Order Marker (BOM)
             if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             #if not line: continue # Just discard blank lines
@@ -308,7 +308,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
     len1, len2 = len(lines1), len(lines2 )
     equalFlag = True
     if len1 != len2:
-        if printFlag: vPrint( 'Quiet', debuggingThisModule, "Count of lines differ: file1={}, file2={}".format( len1, len2 ) )
+        if printFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Count of lines differ: file1={}, file2={}".format( len1, len2 ) )
         equalFlag = False
 
     testament = 'BOTH'
@@ -319,19 +319,19 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
         if lines1[k] != lines2[k]:
             if printFlag:
                 BBB, C, V = theWordGetBBBCV( k, testament )
-                vPrint( 'Quiet', debuggingThisModule, "  {} {}:{} {}:{} ({} chars)\n  {} {}:{} {}:{} ({} chars)" \
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} {}:{} {}:{} ({} chars)\n  {} {}:{} {}:{} ({} chars)" \
                         .format( BBB, C, V, k+1, repr(lines1[k]), len(lines1[k]), \
                                 BBB, C, V, k+1, repr(lines2[k]), len(lines2[k]) ) )
             if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                 for x in range( min( len(lines1[k]), len(lines2[k]) ) ):
                     if lines1[k][x] != lines2[k][x]:
-                        vPrint( 'Quiet', debuggingThisModule, "      Differ at position {} {!r} vs {!r}".format( x+1, lines1[k][x], lines2[k][x] ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      Differ at position {} {!r} vs {!r}".format( x+1, lines1[k][x], lines2[k][x] ) )
                         break
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:
                 if printFlag and BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "theWordfileCompare: stopped comparing after {} mismatches".format( exitCount ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordfileCompare: stopped comparing after {} mismatches".format( exitCount ) )
                 break
 
     return equalFlag
@@ -357,11 +357,11 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
     intC, intV = -1, 0
     composedLine = ''
     while True:
-        #dPrint( 'Quiet', debuggingThisModule, "theWordHandleIntroduction", BBB, intC, intV )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordHandleIntroduction", BBB, intC, intV )
         try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
-        if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
         if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
@@ -374,8 +374,8 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
             elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             else:
                 logging.warning( "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
         intV += 1 # Step to the next introductory section "verse"
@@ -383,8 +383,8 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-        vPrint( 'Never', debuggingThisModule, "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return composedLine
 # end of theWordHandleIntroduction
@@ -410,8 +410,8 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
             line = removeUSFMCharacterField( marker, line, closedFlag=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
             while '\\'+marker+' ' in line:
-                #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, marker, line.count('\\'+marker+' '), line )
-                #dPrint( 'Quiet', debuggingThisModule, "was", "'"+line+"'" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", "'"+line+"'" )
                 ix = line.find( '\\'+marker+' ' )
                 assert ix != -1
                 ixEnd = line.find( '\\', ix+len(marker)+2 )
@@ -427,8 +427,8 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
         line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
         line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
         #if '\\f' in originalLine:
-            #dPrint( 'Quiet', debuggingThisModule, "o", originalLine )
-            #dPrint( 'Quiet', debuggingThisModule, "n", line )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "o", originalLine )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "n", line )
             #halt
 
     if '\\' in line: # Handle character formatting fields
@@ -467,8 +467,8 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
     # Check what's left at the end
     if '\\' in line:
         logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        vPrint( 'Never', debuggingThisModule, "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return line
 # end of theWordAdjustLine
@@ -486,7 +486,7 @@ def resettheWordMargins( ourGlobals, setKey=None ) -> None:
     ourGlobals['title'] = False # not sure yet if we need this one
     if setKey: ourGlobals[setKey] = True
     #if was and not ourGlobals['pi1']:
-        #dPrint( 'Quiet', debuggingThisModule, "Went off at", BBB, C, V, marker, text )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went off at", BBB, C, V, marker, text )
         #if BBB=='MAT' and C==4 and V==17: halt
 # end of resettheWordMargins
 
@@ -505,7 +505,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
     """
     if BibleOrgSysGlobals.debugFlag:
-        vPrint( 'Quiet', debuggingThisModule, "theWordBible.handleRTFLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordBible.handleRTFLine( {} {} {}:{} {} … {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
         if originalLine: assert '\n' not in originalLine and '\r' not in originalLine
     line = originalLine
 
@@ -516,8 +516,8 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     if line is None: # We don't have an entry for this C:V
         return
 
-    if line.startswith( '<CM>' ) and debuggingThisModule:
-        vPrint( 'Quiet', debuggingThisModule, "Why does theWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
+    if line.startswith( '<CM>' ) and DEBUGGING_THIS_MODULE:
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why does theWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
 
     # Fix apparent encoding errors in particular modules
     line = line.replace( ' >', '>' ) # fpr1933
@@ -539,7 +539,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = line.replace( '</<sup>>', '</sup>' ) # aleppo
     if line.endswith( '<CI><PI2>' ): line = line[:-5] # remove <PI2> from Tanakh1917
     line = line.replace( '<26-Ezekiel.21:3>', '' ) # Tanakh1917
-    #if '\xa0' in line: vPrint( 'Quiet', debuggingThisModule, myName, BBB, C, V, repr(originalLine) ); halt
+    #if '\xa0' in line: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myName, BBB, C, V, repr(originalLine) ); halt
     line = line.replace( '\xa0', ' ' ) # NBSpace? Not sure what this is (in aleppo and arm1967 and others?)
     if line.endswith( ' <CM>\t' ): line = line.replace( ' <CM>\t', '<CM>' ) # asv
     line = re.sub( '<V (\d{1,3}):(\d{1,3})>', '', line ) # cpdv for some verses
@@ -560,7 +560,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
     line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
     #if '<A' in line:
-        #dPrint( 'Quiet', debuggingThisModule, "line3", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line3", repr(originalLine), '\n', repr(line) )
         #if BibleOrgSysGlobals.debugFlag: halt
     line = re.sub( '<22-Song of Songs\.(\d{1,2})\.(\d{1,2})>', '', line ) # Tanakh1917
     line = line.replace( '<z1>', '' ).replace( '<z2>', '' ) # footnote referent text in leb
@@ -630,17 +630,17 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     #Now the more complex ones that need regexs
     #line = line.replace('<RF q=*>','\\f * \\ft ').replace('<Rf>','\\f*')
     #if '<RF' in line:
-        #dPrint( 'Quiet', debuggingThisModule, "line1", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line1", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
-        #dPrint( 'Quiet', debuggingThisModule, "line2", repr(originalLine), '\n', repr(line) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line2", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<WH(\d{1,4})>', '', line )
     line = line.replace( '<wh>','' )
     if '<WH' in line or '<wh' in line:
-        vPrint( 'Quiet', debuggingThisModule, "line4", repr(originalLine), '\n', repr(line) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line4", repr(originalLine), '\n', repr(line) )
         #halt
     line = re.sub( '<l=(.+?)>', '', line )
     if '<l=' in line:
-        vPrint( 'Quiet', debuggingThisModule, "line5", repr(originalLine), '\n', repr(line) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line5", repr(originalLine), '\n', repr(line) )
         #halt
 
     # Simple HTML tags (with no semantic info)
@@ -720,7 +720,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
             logging.error( "theWordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
             if 1: # Unhandled stuff -- not done properly yet……
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
 
     line = line.replace( '\\NL*\\NL*', '\\NL*' ) # Don't need double-ups
@@ -732,15 +732,15 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     if line.endswith( '\\q4 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
     if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl at end of line
     if '\\NL*' in line: # We need to break the original line into different USFM markers
-        #dPrint( 'Quiet', debuggingThisModule, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '\\NL*' )
         assert len(segments) >= 2
-        #dPrint( 'Quiet', debuggingThisModule, " segments (split by backslash):", segments )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
             if segment and segment[0] == '\\':
                 bits = segment.split( None, 1 )
-                #dPrint( 'Quiet', debuggingThisModule, " bits", bits )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " bits", bits )
                 marker = bits[0][1:]
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
@@ -752,14 +752,14 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                         #halt
                 else:
                     assert len(bits) == 2
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        vPrint( 'Quiet', debuggingThisModule, "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
-                        vPrint( 'Quiet', debuggingThisModule, "line", repr(line) )
-                        vPrint( 'Quiet', debuggingThisModule, "seg", repr(segment) )
-                        vPrint( 'Quiet', debuggingThisModule, "segments:", segments )
-                        vPrint( 'Quiet', debuggingThisModule, "bits", bits )
-                        vPrint( 'Quiet', debuggingThisModule, "marker", marker )
-                        vPrint( 'Quiet', debuggingThisModule, "leftovers", repr(leftovers) )
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line", repr(line) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "seg", repr(segment) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "segments:", segments )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", bits )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker", marker )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "leftovers", repr(leftovers) )
                         assert marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r')
                     if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                         bookObject.addLine( marker, bits[1] )
@@ -779,7 +779,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
                     #bookObject.addLine( 'p', '' )
                     #myGlobals['haveParagraph'] = False
         if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert not leftovers
+        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert not leftovers
         #halt
     else: # no newlines in the middle
         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
@@ -826,7 +826,7 @@ class theWordBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS
         if BOS is None: BOS = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -880,7 +880,7 @@ class theWordBible( Bible ):
                         #lastLine = line
 
                         if lineCount <= textLineCountExpected: # assume it's verse text
-                            #dPrint( 'Quiet', debuggingThisModule, lineCount, BBB, C, V, 'tW file line is "' + line + '"' )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, BBB, C, V, 'tW file line is "' + line + '"' )
                             if line:
                                 hadText = True
                                 consecutiveBlankLineCount = 0
@@ -897,7 +897,7 @@ class theWordBible( Bible ):
                                 C += 1
                                 if C > numC: # Save this book now
                                     if hadText:
-                                        vPrint( 'Verbose', debuggingThisModule, "Saving", BBB, bookCount+1 )
+                                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Saving", BBB, bookCount+1 )
                                         self.stashBook( thisBook )
                                     else: logging.warning( "theWordBible.load: Didn't save {} because it was blank".format( BBB ) )
 
@@ -925,7 +925,7 @@ class theWordBible( Bible ):
                                 #ourGlobals['haveParagraph'] = False
 
                         else: # Should be module info at end of file (after all of the verse lines)
-                            #dPrint( 'Quiet', debuggingThisModule, lineCount, 'tW file line is "' + line + '"' )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, 'tW file line is "' + line + '"' )
                             if not line: continue # Just discard additional blank lines
                             if line[0] == '#': continue # Just discard comment lines
                             if not continued:
@@ -954,7 +954,7 @@ class theWordBible( Bible ):
             except UnicodeDecodeError:
                 logging.critical( _("theWord Bible module file fails with encoding: {} {}").format( self.sourceFilename, self.encoding ) )
 
-        #dPrint( 'Quiet', debuggingThisModule, self.suppliedMetadata['theWord'] ); halt
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.suppliedMetadata['theWord'] ); halt
         #if 'description' in self.suppliedMetadata['theWord'] and len(self.suppliedMetadata['theWord']['description'])<40: self.name = self.suppliedMetadata['theWord']['description']
         #if 'short.title' in self.suppliedMetadata['theWord']: self.shortName = self.suppliedMetadata['theWord']['short.title']
 
@@ -978,17 +978,17 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
 
     Returns the composed line.
     """
-    #dPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
     composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
     ourGlobals['line'] = '' # We've used them so we don't need them any more
     #marker = text = None
 
     vCount = 0
     lastMarker = None
-    #if BBB=='MAT' and C==4 and 14<V<18: vPrint( 'Quiet', debuggingThisModule, BBB, C, V, ourGlobals, verseData )
+    #if BBB=='MAT' and C==4 and 14<V<18: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
         if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
@@ -998,16 +998,16 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
                 if text != str(V):
                     composedLine += ' <sup>({})</sup> '.format( text ) # Put the additional verse number into the text in parenthesis
             elif vCount > 1: # We have an additional verse number
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert text != str(V)
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert text != str(V)
                 composedLine += ' <sup>({})</sup>'.format( text ) # Put the additional verse number into the text in parenthesis
             lastMarker = marker
             continue
 
-        #dPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, text )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine:", BBB, C, V, marker, text )
         if marker in theWordIgnoredIntroMarkers:
             logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-            vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert marker not in theWordIgnoredIntroMarkers # these markers shouldn't occur in verses
 
         if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
@@ -1031,7 +1031,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CL>' # append the new paragraph marker to the previous line
             #if text:
-                #dPrint( 'Quiet', debuggingThisModule, 'm', repr(text), verseData )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'm', repr(text), verseData )
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
                 #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
                     #composedLine += '<CL>'
@@ -1039,7 +1039,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
             #else: # there is text
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ):
-            #dPrint( 'Quiet', debuggingThisModule, marker, text )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, text )
             assert not text
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
@@ -1105,14 +1105,14 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
         elif marker == 'li4': resettheWordMargins( ourGlobals, 'pi4' ); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
         elif marker in ( 'v~', 'p~', ):
-            #dPrint( 'Quiet', debuggingThisModule, lastMarker )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v':
                 composedLine += theWordAdjustLine(BBB,C,V, text )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
                     halt # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
@@ -1126,7 +1126,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
             pass
         else:
             logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
-            vPrint( 'Verbose', debuggingThisModule, f"theWordComposeVerseLine: doesn't handle '{marker}' yet" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"theWordComposeVerseLine: doesn't handle '{marker}' yet" )
             ourGlobals['unhandledMarkers'].add( marker )
         lastMarker = marker
 
@@ -1138,8 +1138,8 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-        vPrint( 'Never', debuggingThisModule, "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             halt
     return composedLine.rstrip()
 # end of theWordComposeVerseLine
@@ -1162,7 +1162,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
         """
         nonlocal lineCount
         bkData = self.books[BBB] if BBB in self.books else None
-        #dPrint( 'Quiet', debuggingThisModule, bkData._processedLines )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bkData._processedLines )
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
 
@@ -1197,7 +1197,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
                     except KeyError: pass #  just ignore it
             if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
             assert '\n' not in composedLine # This would mess everything up
-            #dPrint( 'Quiet', debuggingThisModule, BBB, C, V, repr(composedLine) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, repr(composedLine) )
             if C!=1 or V!=1: # Stay one line behind (because paragraph indicators get appended to the previous line)
                 assert '\n' not in ourGlobals['lastLine'] # This would mess everything up
                 writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
@@ -1233,7 +1233,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
         testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
         booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
 
-    vPrint( 'Info', debuggingThisModule, _("  Exporting to theWord format…") )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Exporting to theWord format…") )
     mySettings = {}
     mySettings['unhandledMarkers'] = set()
     handledBooks = []
@@ -1246,7 +1246,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
     else: filename = 'export'
     if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
     filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-    vPrint( 'Info', debuggingThisModule, '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, '  writetWBook: ' + _("Writing {!r}…").format( filepath ) )
     with open( filepath, 'wt', encoding='utf-8' ) as myFile:
         try: myFile.write(BibleOrgSysGlobals.BOM) # theWord needs the BOM
         except UnicodeEncodeError: # why does this fail on Windows???
@@ -1273,7 +1273,7 @@ def createTheWordModule( self, outputFolder, controlDict ):
             if field: # Copy non-blank matches
                 myFile.write( "{}={}\n".format( keyName, field ) )
                 written.append( keyName )
-            else: vPrint( 'Info', debuggingThisModule, "BibleWriter.totheWord: ignored {!r} setting ({})".format( keyName, field ) )
+            else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "BibleWriter.totheWord: ignored {!r} setting ({})".format( keyName, field ) )
         # Now do some adaptions
         keyName = 'short.title'
         if self.abbreviation and keyName not in written:
@@ -1295,22 +1295,22 @@ def createTheWordModule( self, outputFolder, controlDict ):
 
     if mySettings['unhandledMarkers']:
         logging.warning( "BibleWriter.totheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
-        vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled totheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
     unhandledBooks = []
     for BBB in self.getBookList():
         if BBB not in handledBooks: unhandledBooks.append( BBB )
     if unhandledBooks:
         logging.warning( "totheWord: Unhandled books were {}".format( unhandledBooks ) )
-        vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled totheWord books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
-    vPrint( 'Info', debuggingThisModule, "  Zipping {} theWord file…".format( filename ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping {} theWord file…".format( filename ) )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        vPrint( 'Quiet', debuggingThisModule, "  BibleWriter.totheWord finished successfully." )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleWriter.totheWord finished successfully." )
     return True
 # end of createTheWordModule
 
@@ -1324,11 +1324,11 @@ def testtWB( indexString, twBfolder, twBfilename ):
     #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
-    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the theWord Bible class {}…").format( indexString) )
-    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( twBfolder, twBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the theWord Bible class {}…").format( indexString) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( twBfolder, twBfilename ) )
     tWb = theWordBible( twBfolder, twBfilename )
     tWb.load() # Load and process the file
-    vPrint( 'Normal', debuggingThisModule, tWb ) # Just print a summary
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, tWb ) # Just print a summary
     if tWb is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: tWb.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -1340,19 +1340,19 @@ def testtWB( indexString, twBfolder, twBfilename ):
             if t=='NT' and len(tWb)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(tWb)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
             try:
                 shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
-                vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
             except KeyError:
-                vPrint( 'Normal', debuggingThisModule, reference, "not found!!!" )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, "not found!!!" )
 
         # Now export the Bible and compare the round trip
         tWb.totheWord()
         #doaResults = tWb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "BOSOutputFiles/BOS_theWord_Reexport/"
-            vPrint( 'Normal', debuggingThisModule, "\nComparing original and re-exported theWord files…" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nComparing original and re-exported theWord files…" )
             result = BibleOrgSysGlobals.fileCompare( twBfilename, twBfilename, twBfolder, outputFolder )
             if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
@@ -1363,10 +1363,10 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the functions
-        #dPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, theWordGetBBBCV( 1532 ) )
         assert theWordGetBBBCV( 0 ) == ('GEN', 1, 1)
         assert theWordGetBBBCV( 1532 ) == ('GEN', 50, 26)
         assert theWordGetBBBCV( 1533 ) == ('EXO', 1, 1)
@@ -1377,11 +1377,11 @@ def briefDemo() -> None:
         #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = theWordBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = theWordBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # all discovered modules in the round-trip folder
@@ -1396,7 +1396,7 @@ def briefDemo() -> None:
                         foundFiles.append( something ); break
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1406,11 +1406,11 @@ def briefDemo() -> None:
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'C{}'.format( j+1 )
-                    vPrint( 'Normal', debuggingThisModule, "\ntW C{}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\ntW C{}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one……temp
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1: # all discovered modules in the test folder
         testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
@@ -1422,7 +1422,7 @@ def briefDemo() -> None:
                 elif os.path.isfile( somepath ): foundFiles.append( something ); break
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1433,21 +1433,21 @@ def briefDemo() -> None:
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'D{}'.format( j+1 )
                     #if 'web' not in someFile: continue # Just try this module
-                    vPrint( 'Normal', debuggingThisModule, "\ntW {}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one…temp
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of theWordBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the functions
-        #dPrint( 'Quiet', debuggingThisModule, theWordGetBBBCV( 1532 ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, theWordGetBBBCV( 1532 ) )
         assert theWordGetBBBCV( 0 ) == ('GEN', 1, 1)
         assert theWordGetBBBCV( 1532 ) == ('GEN', 50, 26)
         assert theWordGetBBBCV( 1533 ) == ('EXO', 1, 1)
@@ -1458,11 +1458,11 @@ def fullDemo() -> None:
         #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
         result2 = theWordBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA2", result2 )
         result3 = theWordBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA3", result3 )
 
 
     if 1: # all discovered modules in the round-trip folder
@@ -1477,7 +1477,7 @@ def fullDemo() -> None:
                         foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('C'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1487,11 +1487,11 @@ def fullDemo() -> None:
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'C{}'.format( j+1 )
-                    vPrint( 'Normal', debuggingThisModule, "\ntW C{}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\ntW C{}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one……temp
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1: # all discovered modules in the test folder
         testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
@@ -1503,7 +1503,7 @@ def fullDemo() -> None:
                 elif os.path.isfile( somepath ): foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
                 parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -1514,11 +1514,11 @@ def fullDemo() -> None:
                 for j, someFile in enumerate( sorted( foundFiles ) ):
                     indexString = 'D{}'.format( j+1 )
                     #if 'web' not in someFile: continue # Just try this module
-                    vPrint( 'Normal', debuggingThisModule, "\ntW {}/ Trying {}".format( indexString, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testtWB( indexString, testFolder, someFile )
                     #break # only do the first one…temp
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of theWordBible.fullDemo
 
 if __name__ == '__main__':

@@ -69,7 +69,7 @@ LAST_MODIFIED_DATE = '2018-12-12' # by RJH
 SHORT_PROGRAM_NAME = "GetKJVVerseNumber"
 PROGRAM_NAME = "Get KJV Verse Number"
 PROGRAM_VERSION = '0.10'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 
@@ -86,13 +86,13 @@ def main() -> None:
         -i (information) is 3
         -v (verbose) is 4.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     ourBibleOrganisationalSystem = BibleOrganisationalSystem( "GENERIC-KJV-66-ENG" )
     ourVersificationSystem = ourBibleOrganisationalSystem.getVersificationSystemName()
     ourBibleSingleReference = BibleSingleReference( ourBibleOrganisationalSystem )
 
-    vPrint( 'Quiet', debuggingThisModule, _("Use QUIT or EXIT to finish.") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Use QUIT or EXIT to finish.") )
 
     while True: # Loop until they stop it
         userInput = input( '\n' + _("Enter a verse number 1..31102 or a single Bible verse reference (or QUIT): ") )
@@ -105,9 +105,9 @@ def main() -> None:
         if userInt:
             if 1 <= userInt <= 31102:
                 BBB, C, V = ourBibleOrganisationalSystem.convertAbsoluteVerseNumber( userInt )
-                vPrint( 'Quiet', debuggingThisModule, _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{} verse number {} is {} {}:{}").format( ourVersificationSystem, userInt, BBB, C, V ) )
             else:
-                vPrint( 'Quiet', debuggingThisModule, _("Absolute verse numbers must be in range 1..31,102.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Absolute verse numbers must be in range 1..31,102.") )
 
         else: # assume it's a Bible reference
             adjustedUserInput = userInput
@@ -117,16 +117,16 @@ def main() -> None:
                         adjustedUserInput = adjustedUserInput.replace( alternative, ':', 1 )
                         break
             results = ourBibleSingleReference.parseReferenceString( adjustedUserInput )
-            #dPrint( 'Quiet', debuggingThisModule, results )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, results )
             successFlag, haveWarnings, BBB, C, V, S = results
             if successFlag:
-                vPrint( 'Quiet', debuggingThisModule, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{!r} converted to {} {}:{} in our internal system.").format( userInput, BBB, C, V ) )
                 absoluteVerseNumber = ourBibleOrganisationalSystem.getAbsoluteVerseNumber( BBB, C, V )
-                vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  {} {}:{} is verse number {:,} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
                 if BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', debuggingThisModule, _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  {} {}:{} is verse number 0x{:04x} in the {} versification system.").format( BBB, C, V, absoluteVerseNumber, ourVersificationSystem ) )
             else:
-                vPrint( 'Quiet', debuggingThisModule, _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Unable to find a valid single verse reference in your input: {!r}").format( userInput ) )
 # end of main
 
 def fullDemo() -> None:

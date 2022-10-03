@@ -70,9 +70,9 @@ LAST_MODIFIED_DATE = '2020-07-29' # by RJH
 SHORT_PROGRAM_NAME = "PickledBible"
 PROGRAM_NAME = "Pickle Bible handler"
 PROGRAM_VERSION = '0.17'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -98,8 +98,8 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
     if autoLoad is true and exactly one Pickle Bible is found,
         returns the loaded PickledBible object.
     """
-    fnPrint( debuggingThisModule, f"PickledBibleFileCheck( {givenPathname}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+    fnPrint( DEBUGGING_THIS_MODULE, f"PickledBibleFileCheck( {givenPathname}, {strictCheck}, {autoLoad}, {autoLoadBooks} )" )
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
         assert givenPathname and isinstance( givenPathname, (str,Path) )
         assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
@@ -123,7 +123,7 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " PickledBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " PickledBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -139,7 +139,7 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
     # See if there's an PickledBible project here in this given folder
     numFound = len( foundFiles )
     if numFound:
-        vPrint( 'Info', debuggingThisModule, _("PickledBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("PickledBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             pB = PickledBible( givenFolderName )
             if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
@@ -155,7 +155,7 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("PickledBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    PickledBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    PickledBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -170,7 +170,7 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
 
     # See if there's an Pickle Bible here in this folder
     if numFound:
-        vPrint( 'Info', debuggingThisModule, _("PickledBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("PickledBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             pB = PickledBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: pB.preload() # Load the BibleInfo file
@@ -199,14 +199,14 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     """
     from datetime import datetime
 
-    fnPrint( debuggingThisModule, f"createPickledBible( {outputFolder}, {metadataDict}, {dataLevel}, {zipOnly} )" )
-    #dPrint( 'Normal', debuggingThisModule, "Running createPickledBible" )
+    fnPrint( DEBUGGING_THIS_MODULE, f"createPickledBible( {outputFolder}, {metadataDict}, {dataLevel}, {zipOnly} )" )
+    #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running createPickledBible" )
     #if not outputFolder: outputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/' )
     #if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
     if metadataDict is None: metadataDict = {}
 
-    if BibleOrgSysGlobals.debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
         assert BibleObject.abbreviation
         assert BibleObject.books
         assert dataLevel
@@ -217,21 +217,21 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
         filename = BOOK_FILENAME.format( BBB )
         createdFilenames.append( filename )
         filepath = os.path.join( outputFolder, filename )
-        vPrint( 'Never', debuggingThisModule, "Book size", BBB, BibleOrgSysGlobals.totalSize( bookObject ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "Book size", BBB, BibleOrgSysGlobals.totalSize( bookObject ) )
         with open( filepath, 'wb' ) as pickleOutputFile:
             try:
                 if 0: # dump whole book
                     pickle.dump( bookObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                 else: # be selective about fields
                     for attributeName in dir( bookObject ):
-                        #dPrint( 'Quiet', debuggingThisModule, "here1: attributeName =", repr(attributeName) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here1: attributeName =", repr(attributeName) )
                         attributeValue = bookObject.__getattribute__( attributeName )
-                        #dPrint( 'Quiet', debuggingThisModule, "here2", repr(attributeValue) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here2", repr(attributeValue) )
                         attributeType = type( attributeValue )
-                        #dPrint( 'Quiet', debuggingThisModule, "here3: attributeType =", repr(attributeType) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here3: attributeType =", repr(attributeType) )
                         typeAsString = str(attributeType)
-                        #dPrint( 'Quiet', debuggingThisModule, "here4: typeAsString =", repr(typeAsString) )
-                        #dPrint( 'Quiet', debuggingThisModule, 'attrib', attributeName, typeAsString )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here4: typeAsString =", repr(typeAsString) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'attrib', attributeName, typeAsString )
                         if '__' not in attributeName and 'method' not in typeAsString:
                             if (dataLevel==1 and attributeName in ('sourceFolder','sourceFilename','sourceFilepath',
                                                         '_processedFlag','_processedLines',
@@ -239,13 +239,13 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
                             or (dataLevel==2 and attributeName not in ('errorDictionary','containerBibleObject',
                                                         'checkUSFMSequencesFlag')) \
                             or dataLevel not in (1,2):
-                                if debuggingThisModule:
-                                    vPrint( 'Quiet', debuggingThisModule, "  Book attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
-                                #dPrint( 'Quiet', debuggingThisModule, "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
+                                if DEBUGGING_THIS_MODULE:
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Book attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
                                 pickle.dump( attributeName, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                                 pickle.dump( attributeValue, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
-                            elif debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "  Skipped book attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
+                            elif DEBUGGING_THIS_MODULE:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Skipped book attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
             except pickle.PicklingError as err:
                 logging.error( "BibleOrgSysGlobals: Unexpected error in pickleBook: {0} {1}".format( sys.exc_info()[0], err ) )
                 logging.critical( "BibleOrgSysGlobals.pickleObject: Unable to pickle book into {}".format( filename ) )
@@ -254,18 +254,18 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     # Now pickle the main Bible object attributes (less the books)
     filepath = os.path.join( outputFolder, INFO_FILENAME )
     createdFilenames.append( INFO_FILENAME )
-    vPrint( 'Never', debuggingThisModule, "Bible size", BibleOrgSysGlobals.totalSize( BibleObject ) )
+    vPrint( 'Never', DEBUGGING_THIS_MODULE, "Bible size", BibleOrgSysGlobals.totalSize( BibleObject ) )
     with open( filepath, 'wb' ) as pickleOutputFile:
         try:
             for attributeName in dir( BibleObject ):
-                #dPrint( 'Quiet', debuggingThisModule, "here1: attributeName =", repr(attributeName) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here1: attributeName =", repr(attributeName) )
                 attributeValue = BibleObject.__getattribute__( attributeName )
-                #dPrint( 'Quiet', debuggingThisModule, "here2", repr(attributeValue) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here2", repr(attributeValue) )
                 attributeType = type( attributeValue )
-                #dPrint( 'Quiet', debuggingThisModule, "here3: attributeType =", repr(attributeType) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here3: attributeType =", repr(attributeType) )
                 typeAsString = str(attributeType)
-                #dPrint( 'Quiet', debuggingThisModule, "here4: typeAsString =", repr(typeAsString) )
-                #dPrint( 'Quiet', debuggingThisModule, 'attrib', attributeName, typeAsString )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here4: typeAsString =", repr(typeAsString) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'attrib', attributeName, typeAsString )
                 if '__' not in attributeName and 'method' not in typeAsString:
                     if attributeName == 'genericBOS': # Just save the name, not the BOS
                         attributeValue = BibleObject.genericBOS.getOrganisationalSystemName()
@@ -278,13 +278,13 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
                                                 'errorDictionary','genericBRL',
                                                 'USFMFilenamesObject','ssfFilepath')) \
                     or dataLevel not in (1,2):
-                        if debuggingThisModule:
-                            vPrint( 'Quiet', debuggingThisModule, "  Bible attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
-                        #dPrint( 'Quiet', debuggingThisModule, "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
+                        if DEBUGGING_THIS_MODULE:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Bible attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  pickling", typeAsString, attributeName, attributeValue if attributeName!='discoveryResults' else '…' )
                         pickle.dump( attributeName, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
                         pickle.dump( attributeValue, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
-                    elif debuggingThisModule:
-                        vPrint( 'Quiet', debuggingThisModule, "  Skipped Bible attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
+                    elif DEBUGGING_THIS_MODULE:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Skipped Bible attribute size", attributeName, BibleOrgSysGlobals.totalSize( attributeValue ) )
         except pickle.PicklingError as err:
             logging.error( "BibleOrgSysGlobals: Unexpected error in pickleBible: {0} {1}".format( sys.exc_info()[0], err ) )
             logging.critical( "BibleOrgSysGlobals.pickleObject: Unable to pickle Bible into {}".format( filename ) )
@@ -292,26 +292,26 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
 
     # Now pickle the version object
     from BibleOrgSys.Internals.InternalBible import LAST_MODIFIED_DATE as IBModifiedDate
-    from BibleOrgSys.Internals.InternalBible import programNameVersion as IBprogramNameVersion
+    from BibleOrgSys.Internals.InternalBible import PROGRAM_NAME_VERSION as IBPROGRAM_NAME_VERSION
     from BibleOrgSys.Internals.InternalBibleBook import LAST_MODIFIED_DATE as IBBModifiedDate
-    from BibleOrgSys.Internals.InternalBibleBook import programNameVersion as IBBprogramNameVersion
+    from BibleOrgSys.Internals.InternalBibleBook import PROGRAM_NAME_VERSION as IBBPROGRAM_NAME_VERSION
     from BibleOrgSys.Internals.InternalBibleInternals import LAST_MODIFIED_DATE as IBIModifiedDate
-    from BibleOrgSys.Internals.InternalBibleInternals import programNameVersion as IBIprogramNameVersion
+    from BibleOrgSys.Internals.InternalBibleInternals import PROGRAM_NAME_VERSION as IBIPROGRAM_NAME_VERSION
     filepath = os.path.join( outputFolder, VERSION_FILENAME )
     createdFilenames.append( VERSION_FILENAME )
     with open( filepath, 'wb' ) as pickleOutputFile:
         for something in ( BibleOrgSysGlobals.PICKLED_BIBLE_VERSION,
-                        f'{programNameVersion} {"last modified"} {LAST_MODIFIED_DATE}',
+                        f'{PROGRAM_NAME_VERSION} {"last modified"} {LAST_MODIFIED_DATE}',
                         dataLevel,
                         datetime.now().isoformat(' '),
-                        f'{IBprogramNameVersion} {"last modified"} {IBModifiedDate}',
-                        f'{IBBprogramNameVersion} {"last modified"} {IBBModifiedDate}',
-                        f'{IBIprogramNameVersion} {"last modified"} {IBIModifiedDate}',
+                        f'{IBPROGRAM_NAME_VERSION} {"last modified"} {IBModifiedDate}',
+                        f'{IBBPROGRAM_NAME_VERSION} {"last modified"} {IBBModifiedDate}',
+                        f'{IBIPROGRAM_NAME_VERSION} {"last modified"} {IBIModifiedDate}',
                         BibleObject.getAName(), BibleObject.getBookList(),
                         metadataDict ):
-            #dPrint( 'Quiet', debuggingThisModule, "String size", something, BibleOrgSysGlobals.totalSize( something ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "String size", something, BibleOrgSysGlobals.totalSize( something ) )
             try:
-                #dPrint( 'Quiet', debuggingThisModule, "Pickling", repr(something) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Pickling", repr(something) )
                 pickle.dump( something, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
             except pickle.PicklingError as err:
                 logging.error( "BibleOrgSysGlobals: Unexpected error in pickleBible: {0} {1}".format( sys.exc_info()[0], err ) )
@@ -323,7 +323,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     if BibleOrgSysGlobals.debugFlag: assert zipFilename
     zipFilename = BibleOrgSysGlobals.makeSafeFilename( zipFilename+ZIPPED_PICKLE_FILENAME_END )
     zipFilepath = os.path.join( outputFolder, zipFilename )
-    vPrint( 'Info', debuggingThisModule, "  Zipping {} pickle files…".format( len(createdFilenames) ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping {} pickle files…".format( len(createdFilenames) ) )
     zf = zipfile.ZipFile( zipFilepath, 'w', compression=zipfile.ZIP_DEFLATED )
     for filename in createdFilenames:
         filepath = os.path.join( outputFolder, filename )
@@ -332,7 +332,7 @@ def createPickledBible( BibleObject, outputFolder=None, metadataDict=None, dataL
     zf.close()
 
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        vPrint( 'Quiet', debuggingThisModule, "  PickledBible.createPickledBible finished successfully." )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  PickledBible.createPickledBible finished successfully." )
     return True
 # end of PickledBible.createPickledBible
 
@@ -344,21 +344,21 @@ def _loadObjectAttributes( pickleFileObject, BibleObject ):
 
     Returns the number of attributes loaded.
     """
-    #fnPrint( debuggingThisModule, "_loadObjectAttributes( {}, {} )".format( pickleFileObject, BibleObject ) )
+    #fnPrint( DEBUGGING_THIS_MODULE, "_loadObjectAttributes( {}, {} )".format( pickleFileObject, BibleObject ) )
     loadedCount = 0
     while True: # Load name/value pairs for Bible attributes
         try: attributeName = pickle.load( pickleFileObject )
         except EOFError: break
-        #dPrint( 'Quiet', debuggingThisModule, f"_loadObjectAttributes got attributeName: {attributeName!r}" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"_loadObjectAttributes got attributeName: {attributeName!r}" )
         assert isinstance( attributeName, str ) # Leave these asserts enabled for security
         assert '__' not in attributeName # Leave these asserts enabled for security
         attributeValue = pickle.load( pickleFileObject )
-        #dPrint( 'Quiet', debuggingThisModule, f"Attribute {attributeName}='{attributeValue}' {type(attributeValue)}" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Attribute {attributeName}='{attributeValue}' {type(attributeValue)}" )
         assert attributeValue is None \
             or isinstance( attributeValue, (str,bool,Path,InternalBibleBookCVIndex,InternalBibleBookSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
-        #dPrint( 'Quiet', debuggingThisModule, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
         setattr( BibleObject, attributeName, attributeValue )
         loadedCount += 1
     return loadedCount
@@ -372,7 +372,7 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
 
     Returns the dictionary.
     """
-    #fnPrint( debuggingThisModule, "_getObjectAttributesDict( {}, {} )".format( pickleFileObject, selected ) )
+    #fnPrint( DEBUGGING_THIS_MODULE, "_getObjectAttributesDict( {}, {} )".format( pickleFileObject, selected ) )
     resultDict = {}
     while True: # Load name/value pairs for Bible attributes
         try: attributeName = pickle.load( pickleFileObject )
@@ -380,14 +380,14 @@ def _getObjectAttributesDict( pickleFileObject, selected=None ):
         assert isinstance( attributeName, str ) # Leave these asserts enabled for security
         assert '__' not in attributeName # Leave these asserts enabled for security
         attributeValue = pickle.load( pickleFileObject )
-        #dPrint( 'Quiet', debuggingThisModule, "Attribute {}={}".format( attributeName, attributeValue ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Attribute {}={}".format( attributeName, attributeValue ) )
         assert attributeValue is None \
             or isinstance( attributeValue, (str,bool,Path,InternalBibleBookCVIndex,InternalBibleBookSectionIndex,InternalBibleEntryList) ) # Leave these asserts enabled for security
         if attributeName == 'objectNameString': attributeName = 'originalObjectNameString'
         elif attributeName == 'objectTypeString': attributeName = 'originalObjectTypeString'
-        #dPrint( 'Quiet', debuggingThisModule, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "attribute: {} = {}".format( attributeName, attributeValue if attributeName!='discoveryResults' else '…' ) )
         if not selected or (attributeName in selected):
-            vPrint( 'Never', debuggingThisModule, "Adding {}={}".format( attributeName, attributeValue ) )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "Adding {}={}".format( attributeName, attributeValue ) )
             resultDict[attributeName] = attributeValue
     return resultDict
 # end of PickledBible._getObjectAttributesDict
@@ -401,22 +401,22 @@ def getZippedPickledBibleDetails( zipFilepath, extended=False ):
 
     If extended, also includes the original BibleObject attributes that were saved.
     """
-    fnPrint( debuggingThisModule, _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+    fnPrint( DEBUGGING_THIS_MODULE, _("getZippedPickledBibleDetails( {}, {} )").format( zipFilepath, extended ) )
+    if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
         assert zipFilepath.endswith( ZIPPED_PICKLE_FILENAME_END )
 
     pB = PickledBible( zipFilepath )
     if extended:
         with zipfile.ZipFile( zipFilepath ) as thisZip:
             with thisZip.open( INFO_FILENAME ) as pickleInputFile:
-                if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
                     BibleAttributeDict = _getObjectAttributesDict( pickleInputFile )
                     for attributeName in BibleAttributeDict:
                         assert attributeName not in pB.pickleVersionData # This would get overwritten
                     pB.pickleVersionData.update( BibleAttributeDict )
                 else:
                     pB.pickleVersionData.update( _getObjectAttributesDict( pickleInputFile ) )
-    #dPrint( 'Quiet', debuggingThisModule, "getZippedPickledBibleDetails returning", pB.pickleVersionData ); halt
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getZippedPickledBibleDetails returning", pB.pickleVersionData ); halt
     return pB.pickleVersionData
 # end of getZippedPickledBibleDetails
 
@@ -427,13 +427,13 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
 
     Guarantees a non-empty 'abbreviation' entry in each dictionary if the extended flag is set.
     """
-    fnPrint( debuggingThisModule, _("getZippedPickledBiblesDetails( {}, {} )").format( zipFolderpath, extended ) )
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+    fnPrint( DEBUGGING_THIS_MODULE, _("getZippedPickledBiblesDetails( {}, {} )").format( zipFolderpath, extended ) )
+    if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
         assert os.path.isdir( zipFolderpath )
 
     resultList = []
     for something in sorted( os.listdir( zipFolderpath ) ):
-        #dPrint( 'Quiet', debuggingThisModule, "getZippedPickledBiblesDetails something", something )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getZippedPickledBiblesDetails something", something )
         somepath = os.path.join( zipFolderpath, something )
         if os.path.isfile( somepath ):
             if something.endswith( ZIPPED_PICKLE_FILENAME_END ):
@@ -442,14 +442,14 @@ def getZippedPickledBiblesDetails( zipFolderpath, extended=False ):
                 detailDict['zipFilename'] = something
                 assert 'zipFolderpath' not in detailDict
                 detailDict['zipFolderpath'] = zipFolderpath
-                #dPrint( 'Quiet', debuggingThisModule, something, detailDict )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, something, detailDict )
                 if extended:
                     assert 'abbreviation' in detailDict
                     assert detailDict['abbreviation']
                 resultList.append( detailDict )
-            elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+            elif BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
                 logging.warning( "Unexpected {} file in {}".format( something, zipFolderpath ) )
-        elif BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag:
+        elif BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             logging.warning( "Unexpected {} folder in {}".format( something, zipFolderpath ) )
     return resultList
 # end of getZippedPickledBiblesDetails
@@ -491,7 +491,7 @@ class PickledBible( Bible ):
             myDict['WriterVersionDate'] = pickle.load( pickleFileObject )
             assert isinstance( myDict['WriterVersionDate'], str ) # Security check
             myDict['DataLevel'] = pickle.load( pickleFileObject )
-            #dPrint( 'Quiet', debuggingThisModule, "myDict", myDict )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "myDict", myDict )
             assert isinstance( myDict['DataLevel'], int ) # Security check
             myDict['WrittenDateTime'] = pickle.load( pickleFileObject )
             assert isinstance( myDict['WrittenDateTime'], str ) # Security check
@@ -506,7 +506,7 @@ class PickledBible( Bible ):
             myDict['bookList'] = pickle.load( pickleFileObject )
             assert isinstance( myDict['bookList'], list ) # Security check
             myDict.update( pickle.load( pickleFileObject ) ) # metadataDict
-            vPrint( 'Never', debuggingThisModule, "myDict", myDict )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "myDict", myDict )
             return myDict
         # end of PickledBible.__init_ loadVersionStuff
 
@@ -528,12 +528,12 @@ class PickledBible( Bible ):
             self.pickleIsZipped = False
             filepath = os.path.join( self.pickleSourceFolder, VERSION_FILENAME )
             if os.path.exists( filepath ):
-                vPrint( 'Info', debuggingThisModule, _("Loading pickle version info from pickle file {}…").format( filepath ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle version info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     self.pickleVersionData = loadVersionStuff( pickleInputFile )
             else: logging.critical( "PickledBible: "+_("Unable to find {!r}").format( VERSION_FILENAME ) )
 
-        vPrint( 'Never', debuggingThisModule, "pickleVersionData", self.pickleVersionData )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "pickleVersionData", self.pickleVersionData )
     # end of PickledBible.__init_
 
 
@@ -579,7 +579,7 @@ class PickledBible( Bible ):
                 fieldContents = self.getSetting( fieldName )
                 if fieldContents:
                     result += ('\n' if result else '') + ' '*indent + _("{}: {!r}").format( fieldName, fieldContents )
-        if (BibleOrgSysGlobals.debugFlag or debuggingThisModule) and BibleOrgSysGlobals.verbosityLevel > 3 \
+        if (BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE) and BibleOrgSysGlobals.verbosityLevel > 3 \
         and self.suppliedMetadata and self.objectTypeString not in ('PTX7','PTX8'): # There's too much potential Paratext metadata
             for metadataType in self.suppliedMetadata:
                 for fieldName in self.suppliedMetadata[metadataType]:
@@ -599,11 +599,11 @@ class PickledBible( Bible ):
         """
         Loads the BibleInfo file if it can be found.
         """
-        fnPrint( debuggingThisModule, f"preload() from {self.pickleSourceFolder}" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.pickleSourceFolder}" )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert not self.preloadDone
             assert self.pickleIsZipped or self.pickleSourceFolder is not None
-            #dPrint( 'Quiet', debuggingThisModule, "preload1", len(dir(self)), dir(self) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "preload1", len(dir(self)), dir(self) )
 
         loadedCount = 0
         if self.pickleIsZipped:
@@ -613,21 +613,21 @@ class PickledBible( Bible ):
         else: # it's not zipped
             filepath = os.path.join( self.pickleSourceFolder, INFO_FILENAME )
             if os.path.exists( filepath ):
-                vPrint( 'Info', debuggingThisModule, _("Loading PickledBible info from pickle file {}…").format( filepath ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading PickledBible info from pickle file {}…").format( filepath ) )
                 with open( filepath, 'rb') as pickleInputFile:
                     loadedCount = _loadObjectAttributes( pickleInputFile, self )
             else: logging.critical( _("PickledBible: unable to find {!r}").format( INFO_FILENAME ) )
 
         if loadedCount:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-                vPrint( 'Quiet', debuggingThisModule, _("  Loaded {} PickledBible attributes").format( loadedCount ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  Loaded {} PickledBible attributes").format( loadedCount ) )
 
             for BBB in self.pickleVersionData['bookList']:
                 if BBB in self.triedLoadingBook:
                     del self.triedLoadingBook[BBB] # So we can load them (again) from the pickle files
 
-            #dPrint( 'Quiet', debuggingThisModule, "preload2", len(dir(self)), dir(self) )
-            #dPrint( 'Quiet', debuggingThisModule, self )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "preload2", len(dir(self)), dir(self) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self )
             self.preloadDone = True
         else:
             logging.critical( "PickledBible.preload() failed!" )
@@ -640,12 +640,12 @@ class PickledBible( Bible ):
 
         This function is multiprocessing safe.
         """
-        fnPrint( debuggingThisModule, f"PickledBible._loadBookEssentials( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"PickledBible._loadBookEssentials( {BBB} )" )
 
         self.triedLoadingBook[BBB] = True
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', debuggingThisModule, _("  PickledBible: Loading {} from {} from {}…").format( BBB, self.name, self.pickleSourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  PickledBible: Loading {} from {} from {}…").format( BBB, self.name, self.pickleSourceFolder ) )
         #if 0: # whole book object
             #if self.pickleIsZipped:
                 #with zipfile.ZipFile( self.pickleFilepath ) as thisZip:
@@ -664,7 +664,7 @@ class PickledBible( Bible ):
         else: # not zipped
             with open( os.path.join( self.pickleSourceFolder, BOOK_FILENAME.format( BBB ) ), 'rb' ) as pickleInputFile:
                 loadedCount = _loadObjectAttributes( pickleInputFile, bookObject )
-        vPrint( 'Info', debuggingThisModule, _("  Loaded {} {} PickledBible book attributes").format( loadedCount, BBB ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loaded {} {} PickledBible book attributes").format( loadedCount, BBB ) )
 
         self.bookNeedsReloading[BBB] = False
         return bookObject
@@ -677,13 +677,13 @@ class PickledBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( debuggingThisModule, f"PickledBible.loadBook( {BBB} )" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"PickledBible.loadBook( {BBB} )" )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.preloadDone
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
             if BBB in self.books:
-                dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
                 return # Already loaded
             if BBB in self.triedLoadingBook:
                 logging.warning( "We had already tried loading Pickle {} for {}".format( BBB, self.name ) )
@@ -700,10 +700,10 @@ class PickledBible( Bible ):
 
         Returns the book info.
         """
-        fnPrint( debuggingThisModule, _("loadBookMP( {} )").format( BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, _("loadBookMP( {} )").format( BBB ) )
 
         if BBB in self.books:
-            dPrint( 'Quiet', debuggingThisModule, "  {} is already loaded -- returning".format( BBB ) )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is already loaded -- returning".format( BBB ) )
             return self.books[BBB] # Already loaded
         #if BBB in self.triedLoadingBook:
             #logging.warning( "We had already tried loading Pickle {} for {}".format( BBB, self.name ) )
@@ -717,7 +717,7 @@ class PickledBible( Bible ):
         """
         Load all the Bible books.
         """
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.getAName(), self.pickleSourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}…").format( self.getAName(), self.pickleSourceFolder ) )
 
         if not self.preloadDone: self.preload()
         if not self.preloadDone: # still -- i.e., it failed
@@ -730,8 +730,8 @@ class PickledBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.pickleVersionData['bookList']] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} {} books using {} processes…").format( len(self.pickleVersionData['bookList']), 'Pickle', BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {} {} books using {} processes…").format( len(self.pickleVersionData['bookList']), 'Pickle', BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.pickleVersionData['bookList'] ) # have the pool do our loads
@@ -744,11 +744,11 @@ class PickledBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.pickleVersionData['bookList']:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', debuggingThisModule, _("  PickledBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  PickledBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "PickledBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         self.doPostLoadProcessing()
     # end of PickledBible.loadBooks
 
@@ -764,26 +764,26 @@ def briefDemo() -> None:
     """
     import random
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolders = (
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/' ),
                     )
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j,testFolder in enumerate( testFolders, start=1 ):
-            vPrint( 'Quiet', debuggingThisModule, f"\nPickle Bible A{j} testfolder is: {testFolder}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nPickle Bible A{j} testfolder is: {testFolder}" )
             result1 = PickledBibleFileCheck( testFolder )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAa", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAa", result1 )
             result2 = PickledBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAb", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAb", result2 )
             result3 = PickledBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAc", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAc", result3 )
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -794,19 +794,19 @@ def briefDemo() -> None:
     if 1: # demo the file checking code with zip files
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
-            vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
             result1 = PickledBibleFileCheck( testFilepath )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBa", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBa", result1 )
             result2 = PickledBibleFileCheck( testFilepath, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBb", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBb", result2 )
             result3 = PickledBibleFileCheck( testFilepath, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBc", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBc", result3 )
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -823,26 +823,26 @@ def briefDemo() -> None:
                         ) )
         if os.access( testFolder, os.R_OK ) \
         and os.path.isfile( os.path.join( testFolder, 'BibleInfo.pickle' ) ):
-            vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible C/" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible C/" )
             pBible = PickledBible( testFolder )
             pBible.load()
             if BibleOrgSysGlobals.verbosityLevel > 1:
-                vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( pBible.getAssumedBookName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( pBible.getLongTOCName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( pBible.getShortTOCName( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( pBible.getBooknameAbbreviation( 'GEN' ) ) )
-            vPrint( 'Quiet', debuggingThisModule, pBible )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen assumed book name:", repr( pBible.getAssumedBookName( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen long TOC book name:", repr( pBible.getLongTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen short TOC book name:", repr( pBible.getShortTOCName( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen book abbreviation:", repr( pBible.getBooknameAbbreviation( 'GEN' ) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, pBible )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 pBible.check()
-                #dPrint( 'Quiet', debuggingThisModule, pBible.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pBible.books['GEN']._processedLines[0:40] )
                 pBibleErrors = pBible.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 pBible.pickle()
                 ##pBible.toDrupalBible()
                 pBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
-                vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
             if 1:
                 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
                 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
@@ -851,7 +851,7 @@ def briefDemo() -> None:
                     shortText = svk.getShortText()
                     verseDataList = pBible.getVerseDataList( svk )
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, "\n{}\n{}".format( shortText, verseDataList ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}\n{}".format( shortText, verseDataList ) )
                     if verseDataList is None: continue
                     for verseDataEntry in verseDataList:
                         # This loop is used for several types of data
@@ -860,28 +860,28 @@ def briefDemo() -> None:
                         adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                         fullText = verseDataEntry.getFullText()
                         if BibleOrgSysGlobals.verbosityLevel > 0:
-                            vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
                                                     " extras={}".format( extras ) if extras else '' ) )
                             if adjustedText and adjustedText!=cleanText:
-                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
                             if fullText and fullText!=cleanText:
-                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                             if originalText and originalText!=cleanText:
-                                vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
         else:
-            vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Load a zipped version
         pFilepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/', 'MBTV'+ZIPPED_PICKLE_FILENAME_END )
         if os.access( pFilepath, os.R_OK ):
             pBible = PickledBible( pFilepath )
-            vPrint( 'Quiet', debuggingThisModule, "D1:", pBible )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "D1:", pBible )
             pBible.load()
-            vPrint( 'Quiet', debuggingThisModule, "D2:", pBible )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
         else:
-            vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
 
 
     if 1: # demo the file checking code with zip files
@@ -898,15 +898,15 @@ def briefDemo() -> None:
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
-                    vPrint( 'Quiet', debuggingThisModule, "\nE{}a: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nE{}a: {}".format( j, abbrev ), pBible )
                     pBible.load()
-                    vPrint( 'Quiet', debuggingThisModule, "E{}b: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "E{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
                     break
                 break
             else:
-                vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # demo the file checking code with zip files
@@ -923,50 +923,50 @@ def briefDemo() -> None:
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
-                    vPrint( 'Quiet', debuggingThisModule, "\nF{}a: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nF{}a: {}".format( j, abbrev ), pBible )
                     pBible.load()
-                    vPrint( 'Quiet', debuggingThisModule, "F{}b: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "F{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
                     break
                 break
             else:
-                vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Test other functions
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
-            vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible G{} testFilepath is: {}".format( j+1, testFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible G{} testFilepath is: {}".format( j+1, testFilepath ) )
             if os.path.isfile( testFilepath ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
             else:
                 logging.error( f"testFilepath '{testFilepath}' is not available on this computer!" )
                 continue
             break
         pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
         if pbdDictList and BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
         pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
         if pbdExtendedDictList and BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
-            #for a,v in pbdExtendedDictList[0].items(): vPrint( 'Quiet', debuggingThisModule, "  {}={}".format( a, v ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
+            #for a,v in pbdExtendedDictList[0].items(): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}={}".format( a, v ) )
 #end of PickledBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolders = (
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PickledBibleTest1/' ),
@@ -979,19 +979,19 @@ def fullDemo() -> None:
                     )
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for j,testFolder in enumerate( testFolders, start=1 ):
-            vPrint( 'Quiet', debuggingThisModule, f"\nPickle Bible A{j} testfolder is: {testFolder}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nPickle Bible A{j} testfolder is: {testFolder}" )
             result1 = PickledBibleFileCheck( testFolder )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAa", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAa", result1 )
             result2 = PickledBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAb", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAb", result2 )
             result3 = PickledBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestAc", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestAc", result3 )
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -1002,19 +1002,19 @@ def fullDemo() -> None:
     if 1: # demo the file checking code with zip files
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
-            vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible B{} testFilepath is: {}".format( j+1, testFilepath ) )
             result1 = PickledBibleFileCheck( testFilepath )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBa", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBa", result1 )
             result2 = PickledBibleFileCheck( testFilepath, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBb", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBb", result2 )
             result3 = PickledBibleFileCheck( testFilepath, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "Pickle Bible TestBc", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Pickle Bible TestBc", result3 )
             if isinstance( result3, Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #dPrint( 'Quiet', debuggingThisModule, result3.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, result3.books['GEN']._processedLines[0:40] )
                     pBibleErrors = result3.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     result3.pickle()
                     ##result3.toDrupalBible()
@@ -1030,27 +1030,27 @@ def fullDemo() -> None:
                         ) ):
             if os.access( testFolder, os.R_OK ) \
             and os.path.isfile( os.path.join( testFolder, 'BibleInfo.pickle' ) ):
-                vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible C{}/".format( j+1 ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible C{}/".format( j+1 ) )
                 pBible = PickledBible( testFolder )
                 pBible.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( pBible.getAssumedBookName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( pBible.getLongTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( pBible.getShortTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( pBible.getBooknameAbbreviation( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen assumed book name:", repr( pBible.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen long TOC book name:", repr( pBible.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen short TOC book name:", repr( pBible.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen book abbreviation:", repr( pBible.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, pBible )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     pBible.check()
-                    #dPrint( 'Quiet', debuggingThisModule, pBible.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pBible.books['GEN']._processedLines[0:40] )
                     pBibleErrors = pBible.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     pBible.pickle( name )
                     ##pBible.toDrupalBible()
                     pBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     # newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH )
-                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
                 if 1:
                     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
                     from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
@@ -1059,7 +1059,7 @@ def fullDemo() -> None:
                         shortText = svk.getShortText()
                         verseDataList = pBible.getVerseDataList( svk )
                         if BibleOrgSysGlobals.verbosityLevel > 0:
-                            vPrint( 'Quiet', debuggingThisModule, "\n{}\n{}".format( shortText, verseDataList ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}\n{}".format( shortText, verseDataList ) )
                         if verseDataList is None: continue
                         for verseDataEntry in verseDataList:
                             # This loop is used for several types of data
@@ -1068,28 +1068,28 @@ def fullDemo() -> None:
                             adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
                             fullText = verseDataEntry.getFullText()
                             if BibleOrgSysGlobals.verbosityLevel > 0:
-                                vPrint( 'Quiet', debuggingThisModule, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
                                                         " extras={}".format( extras ) if extras else '' ) )
                                 if adjustedText and adjustedText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
                                 if fullText and fullText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
                                 if originalText and originalText!=cleanText:
-                                    vPrint( 'Quiet', debuggingThisModule, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
             else:
-                vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Load a zipped version
         pFilepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_PickledBible_Export/', 'MBTV'+ZIPPED_PICKLE_FILENAME_END )
         if os.access( pFilepath, os.R_OK ):
             pBible = PickledBible( pFilepath )
-            vPrint( 'Quiet', debuggingThisModule, "D1:", pBible )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "D1:", pBible )
             pBible.load()
-            vPrint( 'Quiet', debuggingThisModule, "D2:", pBible )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "D2:", pBible )
             assert pBible.pickleIsZipped # That's what we were supposedly testing
         else:
-            vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test file {!r} is not readable on this computer.").format( pFilepath ) )
 
 
     if 1: # demo the file checking code with zip files
@@ -1106,13 +1106,13 @@ def fullDemo() -> None:
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
-                    vPrint( 'Quiet', debuggingThisModule, "\nE{}a: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nE{}a: {}".format( j, abbrev ), pBible )
                     pBible.load()
-                    vPrint( 'Quiet', debuggingThisModule, "E{}b: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "E{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
             else:
-                vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # demo the file checking code with zip files
@@ -1129,40 +1129,40 @@ def fullDemo() -> None:
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
-                    vPrint( 'Quiet', debuggingThisModule, "\nF{}a: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nF{}a: {}".format( j, abbrev ), pBible )
                     pBible.load()
-                    vPrint( 'Quiet', debuggingThisModule, "F{}b: {}".format( j, abbrev ), pBible )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "F{}b: {}".format( j, abbrev ), pBible )
                     assert pBible.pickleIsZipped # That's what we were supposedly testing
                     j += 1
             else:
-                vPrint( 'Quiet', debuggingThisModule, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + _("Sorry, test folder {!r} is not readable on this computer.").format( testFolder ) )
 
 
     if 1: # Test other functions
         for j,testAbbreviation in enumerate( ('ASV', 'RV', 'WEB' ) ):
             testFilepath = os.path.join( resourcesFolder, testAbbreviation+ZIPPED_PICKLE_FILENAME_END )
-            vPrint( 'Quiet', debuggingThisModule, "\nPickle Bible G{} testFilepath is: {}".format( j+1, testFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPickle Bible G{} testFilepath is: {}".format( j+1, testFilepath ) )
             if os.path.isfile( testFilepath ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  getZippedPickledBibleDetails()", getZippedPickledBibleDetails( testFilepath ) )
             else:
                 logging.error( f"testFilepath '{testFilepath}' is not available on this computer!" )
                 continue
         pbdDictList = getZippedPickledBiblesDetails( resourcesFolder )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH1: getZippedPickledBiblesDetails()", len(pbdDictList), pbdDictList )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH2: getZippedPickledBiblesDetails()", len(pbdDictList) )
         if pbdDictList and BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nH3: getZippedPickledBiblesDetails()", len(pbdDictList[0]), pbdDictList[0] )
         pbdExtendedDictList = getZippedPickledBiblesDetails( resourcesFolder, extended=True )
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI1: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList), pbdExtendedDictList )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI2: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList) )
         if pbdExtendedDictList and BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
-            #for a,v in pbdExtendedDictList[0].items(): vPrint( 'Quiet', debuggingThisModule, "  {}={}".format( a, v ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nI3: getZippedPickledBiblesDetails( extended )", len(pbdExtendedDictList[0]), pbdExtendedDictList[0] )
+            #for a,v in pbdExtendedDictList[0].items(): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {}={}".format( a, v ) )
 # end of PickledBible.fullDemo
 
 if __name__ == '__main__':

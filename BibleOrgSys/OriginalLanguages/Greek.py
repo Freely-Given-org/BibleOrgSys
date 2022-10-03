@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2021-02-19' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
 PROGRAM_VERSION = '0.03'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # Lower-case letters
@@ -121,11 +121,11 @@ ALL_FINAL_CONSONANTS = ( BETA, GAMMA, DELTA, ZETA, THETA, KAPPA, LAMBDA, MU, NU,
 
 if BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
-        #dPrint( 'Quiet', debuggingThisModule, j, letter )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, letter )
         assert normalConsonants.count(letter)==1
         assert letter not in vowels
     for j,letter in enumerate( vowels ):
-        #dPrint( 'Quiet', debuggingThisModule, j, letter )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, letter )
         assert vowels.count(letter)==1
         assert letter not in normalConsonants
 
@@ -217,11 +217,11 @@ class Greek():
 
     def printUnicodeData( self, text=None ):
         if text is None: text = self.currentText
-        vPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
-            #dPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:".format( description ) )
             #for j,char in enumerate(text):
-                #dPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of printUnicodeData
 
@@ -241,7 +241,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demonstrate the Greek class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
@@ -250,14 +250,14 @@ def briefDemo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Greek( string )
-        vPrint( 'Quiet', debuggingThisModule, h )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeOtherMarks()
-        vPrint( 'Quiet', debuggingThisModule, "Removed other marks" )
-        vPrint( 'Quiet', debuggingThisModule, h )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
 # end of fullDemo
 
 def fullDemo() -> None:

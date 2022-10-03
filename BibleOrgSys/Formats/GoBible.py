@@ -54,9 +54,9 @@ LAST_MODIFIED_DATE = '2020-04-29' # by RJH
 SHORT_PROGRAM_NAME = "GoBible"
 PROGRAM_NAME = "Go Bible format handler"
 PROGRAM_VERSION = '0.04'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 GOBIBLE_FILENAME_END = '.jar'
@@ -75,7 +75,7 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
     if autoLoad is true and exactly one GoBible is found,
         returns the loaded GoBible object.
     """
-    fnPrint( debuggingThisModule, "GoBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "GoBibleFileCheck( {}, {}, {}, {} )".format( givenPathname, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenPathname and isinstance( givenPathname, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
@@ -99,7 +99,7 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " GoBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " GoBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -115,7 +115,7 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
     # See if there's an GoBible project here in this given folder
     numFound = len( foundFiles )
     if numFound:
-        vPrint( 'Info', debuggingThisModule, _("GoBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("GoBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             foundFilename = foundFiles[0]
             gB = GoBible( os.path.join( givenFolderName, foundFilename ), foundFilename[:-4] )
@@ -132,7 +132,7 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("GoBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    GoBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    GoBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -148,7 +148,7 @@ def GoBibleFileCheck( givenPathname, strictCheck=True, autoLoad=False, autoLoadB
 
     # See if there's an GoBible here in this folder
     if numFound:
-        vPrint( 'Info', debuggingThisModule, _("GoBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("GoBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             gB = GoBible( foundProjects[0] )
             if autoLoad or autoLoadBooks: gB.preload() # Load the file
@@ -167,7 +167,7 @@ class GoBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( debuggingThisModule, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GoBible.__init__( '{sourceFileOrFolder}', {givenName!r} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -199,10 +199,10 @@ class GoBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        fnPrint( debuggingThisModule, "preload() from {}".format( self.sourceFilepath ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "preload() from {}".format( self.sourceFilepath ) )
 
         self.unzippedFolderpath = tempfile.mkdtemp( suffix='_GoBible', prefix='BOS_' )
-        vPrint( 'Info', debuggingThisModule, "Extracting files into {}…".format( self.unzippedFolderpath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Extracting files into {}…".format( self.unzippedFolderpath ) )
         with zipfile.ZipFile( self.sourceFilepath ) as myzip:
             # NOTE: Could be a security risk here
             myzip.extractall( self.unzippedFolderpath )
@@ -227,10 +227,10 @@ class GoBible( Bible ):
             if unexpectedFolders:
                 logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.unzippedFolderpath, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.unzippedFolderpath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "GoBible.preload: Couldn't find any files in {!r}".format( self.unzippedFolderpath ) )
             raise FileNotFoundError # No use continuing
         if not numVitalFolders:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any vital folders in {!r}".format( self.unzippedFolderpath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "GoBible.preload: Couldn't find any vital folders in {!r}".format( self.unzippedFolderpath ) )
             raise FileNotFoundError # No use continuing
 
         self.dataFolderpath = os.path.join( self.unzippedFolderpath, 'Bible Data/' )
@@ -263,12 +263,12 @@ class GoBible( Bible ):
             if unexpectedFolders:
                 logging.info( _("GoBible.preload: Surprised to see subfolders in {!r}: {}").format( self.dataFolderpath, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any files in {!r}".format( self.dataFolderpath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "GoBible.preload: Couldn't find any files in {!r}".format( self.dataFolderpath ) )
             raise FileNotFoundError # No use continuing
         if not numBookFolders:
-            vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: Couldn't find any book folders in {!r}".format( self.dataFolderpath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "GoBible.preload: Couldn't find any book folders in {!r}".format( self.dataFolderpath ) )
             raise FileNotFoundError # No use continuing
-        #dPrint( 'Never', debuggingThisModule, "GoBible.preload: Discovered", self.discoveredBookList )
+        #dPrint( 'Never', DEBUGGING_THIS_MODULE, "GoBible.preload: Discovered", self.discoveredBookList )
 
         def readInString( fileBytes, fileIndex ):
             """
@@ -288,31 +288,31 @@ class GoBible( Bible ):
             mainIndexContents = main_index_file.read()
         index = 0
         numBooks, = struct.unpack( "<H", mainIndexContents[index:index+2] ); index += 2
-        vPrint( 'Never', debuggingThisModule, "numBooks", numBooks )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "numBooks", numBooks )
 
         self.bookNames, self.filenameBases, self.startChapters, self.numChaptersList, self.numVersesList = [], [], [], [], []
         for bookIndex in range( numBooks ):
-            #dPrint( 'Quiet', debuggingThisModule, "\nbookIndex", bookIndex )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nbookIndex", bookIndex )
 
             # Read in the name of the book
             bookName, consumedBytes = readInString( mainIndexContents, index )
-            vPrint( 'Never', debuggingThisModule, "bookName", repr(bookName) )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "bookName", repr(bookName) )
             self.bookNames.append( bookName )
             index += consumedBytes
 
             # Read in the short book name
             filenameBase, consumedBytes = readInString( mainIndexContents, index )
-            vPrint( 'Never', debuggingThisModule, "filenameBase", repr(filenameBase) )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "filenameBase", repr(filenameBase) )
             self.filenameBases.append( filenameBase )
             index += consumedBytes
 
             startChapter, = struct.unpack( "<H", mainIndexContents[index:index+2] ); index += 2
-            vPrint( 'Never', debuggingThisModule, "startChapter", startChapter )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "startChapter", startChapter )
             self.startChapters.append( startChapter )
 
             # Read in the number of chapters in this book
             numChapters, = struct.unpack( "<H", mainIndexContents[index:index+2] ); index += 2
-            vPrint( 'Never', debuggingThisModule, "numChapters", numChapters )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "numChapters", numChapters )
             self.numChaptersList.append( numChapters )
 
             # Read in the file number, verse offset, and number of verses for each chapter
@@ -321,7 +321,7 @@ class GoBible( Bible ):
             verseDataOffset = 0
             for chapterIndex in range( numChapters ):
                 # Seems that each entry is six bytes
-                vPrint( 'Never', debuggingThisModule, chapterIndex, mainIndexContents[index:index+6] )
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, chapterIndex, mainIndexContents[index:index+6] )
                 if 1:
                     allVersesLength, = struct.unpack( ">I", mainIndexContents[index:index+4] ); index += 4
                     numVerses = mainIndexContents[index]; index += 1
@@ -331,7 +331,7 @@ class GoBible( Bible ):
 
                     # Why do we need this ???
                     if fileNumber == 0 and previousFileNumber > 0:
-                        vPrint( 'Never', debuggingThisModule, "Don't know why but: Adjusting file number from 0 to", previousFileNumber )
+                        vPrint( 'Never', DEBUGGING_THIS_MODULE, "Don't know why but: Adjusting file number from 0 to", previousFileNumber )
                         fileNumber = previousFileNumber
 
                     if fileNumber != previousFileNumber:
@@ -349,8 +349,8 @@ class GoBible( Bible ):
                         previousFileNumber = fileNumber
 
                 versesPerChapter.append( (numVerses, fileNumber, verseDataOffset, allVersesLength) )
-                if debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, f"Book #{bookIndex+1}   chapter {chapterIndex+1:3}: {fileNumber}, {verseDataOffset:,}, {allVersesLength:,}, {numVerses}" )
+                if DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Book #{bookIndex+1}   chapter {chapterIndex+1:3}: {fileNumber}, {verseDataOffset:,}, {allVersesLength:,}, {numVerses}" )
 
                 verseDataOffset += allVersesLength
             self.numVersesList.append( versesPerChapter )
@@ -365,10 +365,10 @@ class GoBible( Bible ):
             logging.warning( f"GoBible.preload found {numBooks} books -- trying to figure out book codes" )
             self.bookList = []
             for n in range( numBooks ):
-                #dPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
                 BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.bookNames[n] )
                 BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.filenameBases[n] )
-                #dPrint( 'Quiet', debuggingThisModule, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
                 if BBB1 and (BBB2==BBB1 or BBB2 is None): BBB = BBB1
                 elif BBB2 and BBB1 is None: BBB = BBB2
                 elif BBB1 and BBB2:
@@ -378,7 +378,7 @@ class GoBible( Bible ):
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber(n)
                     logging.error( f"GoBible.preload unable to discover book code from '{self.bookNames[n]}'->{BBB1} or '{self.filenameBases[n]}'->{BBB2}: assuming {BBB}" )
                 self.bookList.append( BBB )
-        vPrint( 'Quiet', debuggingThisModule, "GoBible.preload: {} book details preloaded".format( numBooks ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "GoBible.preload: {} book details preloaded".format( numBooks ) )
         if len(self.bookList) != numBooks:
             logging.critical( f"GoBible.preload could only discover book codes for {len(self.bookList)}/{numBooks} books" )
 
@@ -392,14 +392,14 @@ class GoBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( debuggingThisModule, f"GoBible.loadBook( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GoBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading GoBible {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BBB in self.bookList:
-            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
             GoBibleBk = GoBibleBook( self, BBB )
             GoBibleBk.load( self.bookList.index( BBB ) )
             GoBibleBk.validateMarkers()
@@ -416,17 +416,17 @@ class GoBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        fnPrint( debuggingThisModule, f"loadBookMP( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadBookMP( {BBB} )" )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.bookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
             GoBibleBk = GoBibleBook( self, BBB )
             GoBibleBk.load( self.bookList.index( BBB ) )
             GoBibleBk.validateMarkers()
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, _("    Finishing loading GoBible book {}.").format( BBB ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("    Finishing loading GoBible book {}.").format( BBB ) )
             return GoBibleBk
         else: logging.info( "GoBible book {} is not listed as being available".format( BBB ) )
     # end of GoBible.loadBookMP
@@ -436,7 +436,7 @@ class GoBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}…").format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -444,8 +444,8 @@ class GoBible( Bible ):
             if BibleOrgSysGlobals.maxProcesses > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} GoBible books using {} processes…").format( len(self.bookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {} GoBible books using {} processes…").format( len(self.bookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.bookList ) # have the pool do our loads
@@ -458,11 +458,11 @@ class GoBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.bookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', debuggingThisModule, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  GoBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "GoBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
 
         # Delete the temporary folder (where .jar was unzipped)
         rmtree( self.unzippedFolderpath )
@@ -505,14 +505,14 @@ class GoBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
-        fnPrint( debuggingThisModule, f"GoBibleBook.load( {indexToBook} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
         folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
         loadErrors:List[str] = []
 
         # Load the book index first
         indexPath = os.path.join( folderpath, 'Index' )
-        vPrint( 'Info', debuggingThisModule, "  " + _("Loading book index {}…").format( indexPath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading book index {}…").format( indexPath ) )
         with open( indexPath, 'rb' ) as bookIndexFile:
             bookIndexContents = bookIndexFile.read()
         numChapters = self.containerBibleObject.numChaptersList[indexToBook]
@@ -520,13 +520,13 @@ class GoBibleBook( BibleBook ):
         chapterLengths = []
         for chapterNumberIndex in range( numChapters ):
             numVerses = self.containerBibleObject.numVersesList[indexToBook][chapterNumberIndex][0]
-            #if debuggingThisModule:
-                #dPrint( 'Quiet', debuggingThisModule, f"Book #{indexToBook+1} Chapter #{chapterNumberIndex+1} has {numVerses} verses" )
+            #if DEBUGGING_THIS_MODULE:
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Book #{indexToBook+1} Chapter #{chapterNumberIndex+1} has {numVerses} verses" )
             offset = 0
             verseLengths = []
             for verseNumberIndex in range( numVerses ):
                 verseLength, = struct.unpack( ">H", bookIndexContents[index:index+2] ); index += 2
-                vPrint( 'Never', debuggingThisModule, f"{verseNumberIndex+1} Offset={offset:,} VerseLength={verseLength:,}" )
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{verseNumberIndex+1} Offset={offset:,} VerseLength={verseLength:,}" )
                 verseLengths.append( (offset,verseLength) )
                 offset += verseLength
             chapterLengths.append( verseLengths )
@@ -546,36 +546,36 @@ class GoBibleBook( BibleBook ):
                 if fileIndexNumber == 0:
                     chapterText = ""
                 else:
-                    #dPrint( 'Quiet', debuggingThisModule, "co", chapterOffset, "dl", dataLength )
-                    #dPrint( 'Quiet', debuggingThisModule, chapterText[chapterOffset:] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "co", chapterOffset, "dl", dataLength )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, chapterText[chapterOffset:] )
                     #assert chapterOffset == dataLength # Check we used all of the last one
                     chapterText = chapterText[chapterOffset:]
                 textFilepath = os.path.join( folderpath, f'{filenameBase} {fileIndexNumber}' )
-                vPrint( 'Info', debuggingThisModule, f"At book {indexToBook+1} chapter {chapterNumberIndex+1}: loading Bible text from '{textFilepath}'…" )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"At book {indexToBook+1} chapter {chapterNumberIndex+1}: loading Bible text from '{textFilepath}'…" )
                 with open( textFilepath, 'rb' ) as chapterFile:
                     chapterDataFull = chapterFile.read()
                 lastFileIndexNumber = fileIndexNumber
-                #dPrint( 'Quiet', debuggingThisModule, chapterDataFull[:200], '…' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, chapterDataFull[:200], '…' )
                 dataLength, = struct.unpack( ">I", chapterDataFull[:4] )
-                #dPrint( 'Quiet', debuggingThisModule, f"dataLength={dataLength:,}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"dataLength={dataLength:,}" )
                 assert dataLength + 4 == len(chapterDataFull)
 
                 chapterData = chapterDataFull[4:]
                 assert dataLength == len(chapterData)
-                #dPrint( 'Quiet', debuggingThisModule, chapterData[:500] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, chapterData[:500] )
                 chapterText += chapterData.decode()
                 chapterOffset = 0
             for verseNumberIndex in range( numVerses ):
                 offset, verseLength = chapterLengths[chapterNumberIndex][verseNumberIndex]
-                #dPrint( 'Quiet', debuggingThisModule, f"At {chapterNumberIndex+1}:{verseNumberIndex+1} Offset={offset:,} verseLength={verseLength:,}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"At {chapterNumberIndex+1}:{verseNumberIndex+1} Offset={offset:,} verseLength={verseLength:,}" )
                 verseText = chapterText[chapterOffset+offset:chapterOffset+offset+verseLength].strip()
-                vPrint( 'Never', debuggingThisModule, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
                 if verseText.count( '\x01' ) == 2:
                     ix1 = verseText.find( '\x01' )
                     ix2 = verseText.find( '\x01', ix1+1 )
                     haveBrackets = verseText[ix1+1]=='[' and verseText[ix2-1]==']'
                     extract = verseText[ix1+2:ix2-1] if haveBrackets else verseText[ix1+1:ix2]
-                    #dPrint( 'Quiet', debuggingThisModule, "extract", repr(extract) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "extract", repr(extract) )
                     verseTextPrevious = verseText[:ix1].strip()
                     if verseTextPrevious:
                         if needAPee:
@@ -590,8 +590,8 @@ class GoBibleBook( BibleBook ):
                         self.addLine( 'p', '' )
                         self.addLine( 'v', f'{verseNumberIndex+1} {verseText}' )
                     needAPee = False
-                    #dPrint( 'Quiet', debuggingThisModule, "new verseText", repr(verseText) )
-                    #dPrint( 'Never', debuggingThisModule, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "new verseText", repr(verseText) )
+                    #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{chapterNumberIndex+1}:{verseNumberIndex+1}: {verseText!r}" )
                 else:
                     if needAPee:
                         self.addLine( 'p', '' )
@@ -601,7 +601,7 @@ class GoBibleBook( BibleBook ):
         assert chapterOffset == len(chapterText) # Check we used all of the last one
 
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-        vPrint( 'Never', debuggingThisModule, self._rawLines )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, self._rawLines )
     # end of GoBibleBook.load
 # end of class GoBibleBook
 
@@ -611,16 +611,16 @@ def testGoBible( GoBibleFile ):
     # Crudely demonstrate the Go Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the Go Bible class…") )
-    vPrint( 'Quiet', debuggingThisModule, "  Test file is {!r}".format( GoBibleFile ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the Go Bible class…") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test file is {!r}".format( GoBibleFile ) )
     vb = GoBible( GoBibleFile )
     vb.loadBooks() # Load and process the file
-    vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, GoBibleB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -633,13 +633,13 @@ def testGoBible( GoBibleFile ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testGoBible
 
 
@@ -649,7 +649,7 @@ def briefDemo() -> None:
     """
     import random
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     testFolders =  (
@@ -661,21 +661,21 @@ def briefDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = random.choice( testFolders )
         result1 = GoBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "GoBible TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA1", result1 )
 
         result2 = GoBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "GoBible TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA2", result2 )
         if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderpath )
 
         result3 = GoBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "GoBible TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA3", result3 )
         #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
 
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, GoBibleB.books['GEN']._processedLines[0:40] )
             vBErrors = result3.getCheckResults()
-            #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             if isinstance( result2, GoBible ):
@@ -691,7 +691,7 @@ def briefDemo() -> None:
                 elif os.path.isfile( somepath ) and somepath.endswith('.jar'): foundFiles.append( something ); break
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFiles) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFiles) ) )
                 parameters = [os.path.join(testFolder, filename) for filename in sorted(foundFiles)]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -700,7 +700,7 @@ def briefDemo() -> None:
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
-                    vPrint( 'Normal', debuggingThisModule, "\nGoBible D{}/ Trying {}".format( j+1, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nGoBible D{}/ Trying {}".format( j+1, someFile ) )
                     testGoBible( os.path.join( testFolder, someFile ) )
 # end of GoBible.briefDemo
 
@@ -708,7 +708,7 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
     testFolders =  (
@@ -720,21 +720,21 @@ def fullDemo() -> None:
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in testFolders:
             result1 = GoBibleFileCheck( testFolder )
-            vPrint( 'Normal', debuggingThisModule, "GoBible TestA1", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA1", result1 )
 
             result2 = GoBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "GoBible TestA2", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA2", result2 )
             if isinstance( result2, GoBible ): rmtree( result2.unzippedFolderpath )
 
             result3 = GoBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "GoBible TestA3", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "GoBible TestA3", result3 )
             #result3.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
 
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
-                #dPrint( 'Quiet', debuggingThisModule, GoBibleB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, GoBibleB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 if isinstance( result2, GoBible ):
@@ -750,7 +750,7 @@ def fullDemo() -> None:
                 elif os.path.isfile( somepath ) and somepath.endswith('.jar'): foundFiles.append( something )
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-                vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFiles) ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFiles) ) )
                 parameters = [os.path.join(testFolder, filename) for filename in sorted(foundFiles)]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -759,7 +759,7 @@ def fullDemo() -> None:
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
-                    vPrint( 'Normal', debuggingThisModule, "\nGoBible D{}/ Trying {}".format( j+1, someFile ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nGoBible D{}/ Trying {}".format( j+1, someFile ) )
                     testGoBible( os.path.join( testFolder, someFile ) )
 # end of GoBible.fullDemo
 

@@ -85,7 +85,7 @@ LAST_MODIFIED_DATE = '2019-01-29' # by RJH
 SHORT_PROGRAM_NAME = "MakePhotoBible"
 PROGRAM_NAME = "Make PhotoBible"
 PROGRAM_VERSION = '0.23'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 
@@ -102,19 +102,19 @@ def main() -> None:
         -i (information) is 3
         -v (verbose) is 4.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
-    vPrint( 'Quiet', debuggingThisModule, "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: processing input folder {!r} …".format( SHORT_PROGRAM_NAME, inputFolder ) )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
-    vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
-        vPrint( 'Quiet', debuggingThisModule, "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: starting export (may take up to 60 minutes)…".format( SHORT_PROGRAM_NAME ) )
 
         # We only want to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
@@ -122,8 +122,8 @@ def main() -> None:
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        vPrint( 'Info', debuggingThisModule, "  Result was: {}".format( result ) )
-        vPrint( 'Quiet', debuggingThisModule, f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Result was: {}".format( result ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Output should be in {os.path.join(os.getcwd(), BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH)} folder.")
 # end of main
 
 def fullDemo() -> None:

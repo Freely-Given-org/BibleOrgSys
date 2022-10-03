@@ -54,9 +54,9 @@ LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
 PROGRAM_VERSION = '0.11'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # STATIC USFM TABLES
@@ -95,7 +95,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
     If closedFlag=False, goes to the next marker or end of line.
     If closedFlag=None (unknown), stops at the first of closing marker, next marker, or end of line.
     """
-    #dPrint( 'Quiet', debuggingThisModule, "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
     assert '\\' not in marker and ' ' not in marker and '*' not in marker
     text = originalText
     mLen = len( marker )
@@ -110,7 +110,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
                 text = text[:ix] + text[ixEnd+mLen+2:]
             else: # leave the next marker in place
                 text = text[:ix] + text[ixEnd:]
-            #dPrint( 'Quiet', debuggingThisModule, "                         ", text ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "                         ", text ); halt
         elif closedFlag == True:
             ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
             if ixEnd == -1:
@@ -122,9 +122,9 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
             if ixEnd == -1: # remove until end of line
                 text = text[:ix]
             elif ixEnd<tLen-1 and text[ixEnd+1]=='+': # We've hit an embedded marker
-                logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                 logger( "removeUSFMCharacterField: doesn't handle embedded markers yet with {!r} in {!r}".format( marker, originalText ) )
-                if debuggingThisModule and BibleOrgSysGlobals.debugFlag: halt
+                if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: halt
             else:
                 text = text[:ix] + text[ixEnd:]
         ix = text.find( '\\'+marker+' ' )
@@ -310,12 +310,12 @@ class USFM3Markers:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "USFM3Markers pickle file can't be loaded!" )
+                elif DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM3Markers pickle file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.USFM3MarkersConverter import USFM3MarkersConverter
             if XMLFileOrFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
@@ -425,7 +425,7 @@ class USFM3Markers:
         if closed == "Always": return 'A'
         if closed == "Optional": return 'O'
         if closed == "Self": return 'S'
-        vPrint( 'Quiet', debuggingThisModule, 'msbc {}'.format( closed ))
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
     # end of USFM3Markers.getMarkerClosureType
 
@@ -442,7 +442,7 @@ class USFM3Markers:
         if hasContent == "Never": return "N"
         if hasContent == "Always": return "A"
         if hasContent == "Sometimes": return "S"
-        vPrint( 'Quiet', debuggingThisModule, 'mshc {}'.format( hasContent ))
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'mshc {}'.format( hasContent ))
         raise KeyError # Should be something better here
     # end of USFM3Markers.getMarkerContentType
 
@@ -520,10 +520,10 @@ class USFM3Markers:
         These are fields that need to be displayed inline with the text, albeit with special formatting.
         This excludes footnote and xref markers.
         """
-        fnPrint( debuggingThisModule, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "getCharacterMarkersList( {}, {}, {}, {} )".format( includeBackslash, includeEndMarkers, includeNestedMarkers, expandNumberableMarkers ) )
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
-            #dPrint( 'Quiet', debuggingThisModule, marker, self.markerOccursIn(marker) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, self.markerOccursIn(marker) )
             if self.markerOccursIn(marker) in ('Text','Canonical Text','Poetry','Table row','Introduction','Numbering'):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
@@ -586,14 +586,14 @@ class USFM3Markers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        fnPrint( debuggingThisModule, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"USFM3Markers.getMarkerListFromText( '{text}', {verifyMarkers} )" )
         if not text: return []
 
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )
         ixBS = text.find( '\\' )
         while ixBS != -1: # Find backslashes
-            #dPrint( 'Quiet', debuggingThisModule, ixBS, firstResult )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ixBS, firstResult )
             marker = ''
             iy = ixBS + 1
             if iy<textLength:
@@ -645,43 +645,43 @@ class USFM3Markers:
         for j, (m, ix, x, mx) in enumerate(firstResult):
             if self.isNewlineMarker( m ):
                 if cx:
-                    logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT1 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
-                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         assert not cx
-                cx = [] #; vPrint( 'Quiet', debuggingThisModule, "rst", cx )
+                cx = [] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "rst", cx )
             elif x==' ' or x=='': # Open marker in line or at end of line
                 if cx \
                 and cx[0] not in ('f','fr','fq') and m not in ('fr','fq','ft'):
                     # TODO: Investigate why we get this for fqa, xo, etc.
-                    logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT2 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
-                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         assert not cx or ( cx[0] in ('f','fr','fq') and m in ('fr','fq','ft') )
-                cx = [m] #; vPrint( 'Quiet', debuggingThisModule, "set", cx )
-            elif x=='+': cx.append( m ) #; vPrint( 'Quiet', debuggingThisModule, "add", m, cx )
+                cx = [m] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "set", cx )
+            elif x=='+': cx.append( m ) #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "add", m, cx )
             elif x=='-':
-                if cx: cx.pop() #; vPrint( 'Quiet', debuggingThisModule, "del", m, cx )
+                if cx: cx.pop() #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "del", m, cx )
                 else:
-                    logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: WHY IS CX EMPTY WHEN ABOUT TO POP {cx} after {j} {m} {ix} {x} {mx}???" )
-                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         assert cx
             elif x=='*':
                 if len(cx) != 1 \
                 or (cx[0]!=m and m!='ff' and cx[0] not in ('ft',) ):
-                    logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT3 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
-                    if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         assert len(cx)==1 and cx[0]==m and m=='ff' and cx[0] in ('ft',)
-                cx = [] #; vPrint( 'Quiet', debuggingThisModule, "clr", cx )
+                cx = [] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "clr", cx )
             else:
-                vPrint( 'Quiet', debuggingThisModule, "USFM3Markers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM3Markers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
                       '\n', j, repr(m), ix, repr(x), mx, cx )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: halt
             if j>= rLen-1: tx = text[ix+len(mx):]
             else: tx=text[ix+len(mx):firstResult[j+1][1]]
-            #dPrint( 'Quiet', debuggingThisModule, 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
             secondResult.append( (m, ix, x, mx, cx[:], tx,) )
 
         # And now find where they are closed (the index to the result array, not to the text string)
@@ -695,7 +695,7 @@ class USFM3Markers:
                 for k in range( j+1, rLen ):
                     m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
                     if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
-            #dPrint( 'Quiet', debuggingThisModule, 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
             thirdResult.append( (m, ix, x, mx, cx[:], ixEnd, tx,) )
 
         finalResult = thirdResult # The final list of 7-tuples
@@ -707,10 +707,10 @@ class USFM3Markers:
                 for m, ix, x, mx, cx[:], ixEnd, tx in thirdResult: # Shift the end index (#6) by one
                     finalResult.append( (m, ix, x, mx, cx[:], None if ixEnd is None else ixEnd+1, tx,) )
 
-        #if finalResult: vPrint( 'Quiet', debuggingThisModule, finalResult )
+        #if finalResult: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, finalResult )
         if verifyMarkers:
             for j, (m, ix, x, mx, cx, ixEnd, tx,) in enumerate(finalResult):
-                #dPrint( 'Quiet', debuggingThisModule, 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
                 assert ix < textLength
                 assert x in (' ','+','-','*','',) or ( includeInitialText and j==0 and x is None )
                 if m is None:
@@ -753,7 +753,7 @@ class USFM3Markers:
         myDict = {}
         for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in myList:
             if marker in myDict:
-                logger = logging.critical if debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                 logger( "USFM3Markers.getMarkerDictFromText is losing (overwriting) information for repeated {} fields in {}".format( marker, repr(text) ) )
             myDict[marker] = (ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt.strip())
         return myDict
@@ -766,40 +766,40 @@ def briefDemo() -> None:
     """
     Demonstration program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the USFM3Markers object
     um = USFM3Markers().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, um ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, 'c' in um, 'p' in um, 'tr' in um )
-    vPrint( 'Quiet', debuggingThisModule, "\nMarkers can occur in", um.getOccursInList() )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, um ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'c' in um, 'p' in um, 'tr' in um )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMarkers can occur in", um.getOccursInList() )
     pm = um.getNewlineMarkersList( 'Raw' )
-    vPrint( 'Quiet', debuggingThisModule, "\nRaw New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRaw New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'Numbered' )
-    vPrint( 'Quiet', debuggingThisModule, "\nNumbered New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNumbered New line markers are", len(pm), pm )
     for m in pm:
-        vPrint( 'Quiet', debuggingThisModule, m, um.markerOccursIn( m ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, m, um.markerOccursIn( m ) )
     pm = um.getNewlineMarkersList( 'Combined' )
-    vPrint( 'Quiet', debuggingThisModule, "\nCombined New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCombined New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'CanonicalText' )
-    vPrint( 'Quiet', debuggingThisModule, "\nCanonical text New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCanonical text New line markers are", len(pm), pm )
     im = um.getInternalMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nInternal (character) markers are", len(im), im )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nInternal (character) markers are", len(im), im )
 
     cm = um.getCharacterMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (standard) are", len(cm), cm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCharacter markers (standard) are", len(cm), cm )
     cm = um.getCharacterMarkersList( includeNestedMarkers=True )
-    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (incl. nested) are", len(cm), cm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCharacter markers (incl. nested) are", len(cm), cm )
 
     nm = um.getNoteMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nNote markers are", len(nm), nm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNote markers are", len(nm), nm )
     for m in ('ab', 'h', 'toc1', 'toc4', 'toc5', 'q', 'q1', 'q2', 'q3', 'q4', 'q5', 'p', 'p1', 'P', 'f', 'f1', 'f*' ):
-        vPrint( 'Quiet', debuggingThisModule, _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
-            vPrint( 'Quiet', debuggingThisModule, '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
     for text in ('This is a bit of plain text',
                  '\\v 1 This is some \\it italicised\\it* text.',
                  '\\v 2 This \\it is\\it* \\bd more\\bd* complicated.\\f + \\fr 2 \\ft footnote.\\f*',
@@ -810,68 +810,68 @@ def briefDemo() -> None:
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
                  '\\v 7 \\wj \+nd Jesus said \+add this \+em nested\+em*\+add*\+nd* \+bd 3 levels\+bd*.\wj* maybe.'
                  ):
-        vPrint( 'Quiet', debuggingThisModule, "\nFor text {!r} got markers:".format( text ) )
-        vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text {!r} got markers:".format( text ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
-    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
 
-    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
     replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
-    vPrint( 'Quiet', debuggingThisModule, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
 # end of USFM3Markers.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the USFM3Markers object
     um = USFM3Markers().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, um ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, 'c' in um, 'p' in um, 'tr' in um )
-    vPrint( 'Quiet', debuggingThisModule, "\nMarkers can occur in", um.getOccursInList() )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, um ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'c' in um, 'p' in um, 'tr' in um )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMarkers can occur in", um.getOccursInList() )
     pm = um.getNewlineMarkersList( 'Raw' )
-    vPrint( 'Quiet', debuggingThisModule, "\nRaw New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRaw New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'Numbered' )
-    vPrint( 'Quiet', debuggingThisModule, "\nNumbered New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNumbered New line markers are", len(pm), pm )
     for m in pm:
-        vPrint( 'Quiet', debuggingThisModule, m, um.markerOccursIn( m ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, m, um.markerOccursIn( m ) )
     pm = um.getNewlineMarkersList( 'Combined' )
-    vPrint( 'Quiet', debuggingThisModule, "\nCombined New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCombined New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'CanonicalText' )
-    vPrint( 'Quiet', debuggingThisModule, "\nCanonical text New line markers are", len(pm), pm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCanonical text New line markers are", len(pm), pm )
     im = um.getInternalMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nInternal (character) markers are", len(im), im )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nInternal (character) markers are", len(im), im )
 
     cm = um.getCharacterMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (standard) are", len(cm), cm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCharacter markers (standard) are", len(cm), cm )
     cm = um.getCharacterMarkersList( includeNestedMarkers=True )
-    vPrint( 'Quiet', debuggingThisModule, "\nCharacter markers (incl. nested) are", len(cm), cm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nCharacter markers (incl. nested) are", len(cm), cm )
 
     nm = um.getNoteMarkersList()
-    vPrint( 'Quiet', debuggingThisModule, "\nNote markers are", len(nm), nm )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nNote markers are", len(nm), nm )
     for m in ('ab', 'h', 'toc1', 'toc4', 'toc5', 'q', 'q1', 'q2', 'q3', 'q4', 'q5', 'p', 'p1', 'P', 'f', 'f1', 'f*' ):
-        vPrint( 'Quiet', debuggingThisModule, _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
-            vPrint( 'Quiet', debuggingThisModule, '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
-            vPrint( 'Info', debuggingThisModule, '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
     for text in ('This is a bit of plain text',
                  '\\v 1 This is some \\it italicised\\it* text.',
                  '\\v 2 This \\it is\\it* \\bd more\\bd* complicated.\\f + \\fr 2 \\ft footnote.\\f*',
@@ -882,28 +882,28 @@ def fullDemo() -> None:
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
                  '\\v 7 \\wj \+nd Jesus said \+add this \+em nested\+em*\+add*\+nd* \+bd 3 levels\+bd*.\wj* maybe.'
                  ):
-        vPrint( 'Quiet', debuggingThisModule, "\nFor text {!r} got markers:".format( text ) )
-        vPrint( 'Quiet', debuggingThisModule, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
-        vPrint( 'Quiet', debuggingThisModule, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text {!r} got markers:".format( text ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
-    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
-    vPrint( 'Quiet', debuggingThisModule, "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
 
-    vPrint( 'Quiet', debuggingThisModule, "\nFor text: {!r}".format( text ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
     replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
-    vPrint( 'Quiet', debuggingThisModule, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
 # end of USFM3Markers.fullDemo
 
 if __name__ == '__main__':

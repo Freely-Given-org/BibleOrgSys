@@ -47,9 +47,9 @@ LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexiconConverter"
 PROGRAM_NAME = "Greek Lexicon XML format handler"
 PROGRAM_VERSION = '0.17'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # Greek lexicon folder
@@ -94,7 +94,7 @@ class GreekStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        fnPrint( debuggingThisModule, "GreekStrongsFileConverter.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "GreekStrongsFileConverter.__init__()" )
         self.title = self.version = self.date = None
         self.XMLTree = self.header = self.StrongsEntries = None
     # end of GreekStrongsFileConverter.__init__
@@ -121,12 +121,12 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        fnPrint( debuggingThisModule, f"loadAndValidate( {XMLFolder} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadAndValidate( {XMLFolder} )" )
         if XMLFolder is None:
             XMLFolder = DEFAULT_LEXICON_FOLDERPATH # Greek lexicon folder
         self.XMLFolder = XMLFolder
         XMLFileOrFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        vPrint( 'Info', debuggingThisModule, _("Loading Greek lexicon from {}…").format( XMLFileOrFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading Greek lexicon from {}…").format( XMLFileOrFilepath ) )
         try: self.XMLTree = ElementTree().parse( XMLFileOrFilepath )
         except FileNotFoundError:
             logging.critical( _("GreekStrongsFileConverter could not find database at {}").format( XMLFileOrFilepath ) )
@@ -138,7 +138,7 @@ class GreekStrongsFileConverter:
 
         if self.XMLTree.tag == GreekStrongsFileConverter.treeTag:
             for segment in self.XMLTree:
-                #dPrint( 'Quiet', debuggingThisModule, segment.tag )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, segment.tag )
                 if segment.tag == "prologue":
                     pass
                 elif segment.tag == "entries":
@@ -180,7 +180,7 @@ class GreekStrongsFileConverter:
         for attrib,value in entry.items():
             if attrib ==  'strongs':
                 strongs5 = value
-                #dPrint( 'Never', debuggingThisModule, f"Validating {strongs5} entry…" )
+                #dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Validating {strongs5} entry…" )
             else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert len(strongs5)==5 and strongs5.isdigit()
 
@@ -188,7 +188,7 @@ class GreekStrongsFileConverter:
         entryString = ""
         gettingEssentials = True
         for j, element in enumerate( entry ):
-            #dPrint( 'Quiet', debuggingThisModule, strongs5, j, element.tag, repr(entryString) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, j, element.tag, repr(entryString) )
             if element.tag == "strongs":
                 if BibleOrgSysGlobals.debugFlag: assert gettingEssentials and j==0 and element.text
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
@@ -216,7 +216,7 @@ class GreekStrongsFileConverter:
                     BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                     entryResults['word'] = (greek, translit, beta)
                 else:
-                    #dPrint( 'Quiet', debuggingThisModule, "Have multiple greek entries in " + strongs5 )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have multiple greek entries in " + strongs5 )
                     if BibleOrgSysGlobals.debugFlag: assert j > 2
                     gettingEssentials = False
                     entryString += ' ' + BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ) #.replace( '\n', '' )
@@ -244,7 +244,7 @@ class GreekStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                 derivation = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #dPrint( 'Quiet', debuggingThisModule, strongs5, "derivation", repr(derivation) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "derivation", repr(derivation) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert derivation and '\t' not in derivation and '\n' not in derivation
                 entryString +=  derivation
@@ -253,7 +253,7 @@ class GreekStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, "jd28" )
                 definition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #dPrint( 'Quiet', debuggingThisModule, strongs5, "definition", repr(definition) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "definition", repr(definition) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert definition and '\t' not in definition and '\n' not in definition
                 entryString += definition
@@ -263,7 +263,7 @@ class GreekStrongsFileConverter:
                 #BibleOrgSysGlobals.checkXMLNoTail( element, location, "8s2s" )
                 #BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "dvb2" )
                 KJVdefinition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                #dPrint( 'Quiet', debuggingThisModule, strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
                 if BibleOrgSysGlobals.debugFlag: assert KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition
                 entryString += KJVdefinition
             elif element.tag == "strongsref":
@@ -277,7 +277,7 @@ class GreekStrongsFileConverter:
                 strongsRef = re.sub( '<strongs="(\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
                 #strongsRef = re.sub( '<language="HEBREW" strongs="(\d{1,5})">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
                 #strongsRef = re.sub( '<strongs="(\d{1,5})" language="HEBREW">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
-                #dPrint( 'Quiet', debuggingThisModule, strongs5, "strongsRef", repr(strongsRef) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "strongsRef", repr(strongsRef) )
                 entryString += ' ' + strongsRef
             elif element.tag == "see":
                 location = "see in Strongs " + strongs5
@@ -298,7 +298,7 @@ class GreekStrongsFileConverter:
             else: logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
 
         if entryString:
-            #dPrint( 'Quiet', debuggingThisModule, strongs5, "entryString", repr(entryString) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "entryString", repr(entryString) )
             if BibleOrgSysGlobals.debugFlag:
                 assert '\t' not in entryString and '\n' not in entryString
             entryString = re.sub( '<strongsref language="GREEK" strongs="(\d{1,5})"></strongsref>',
@@ -312,7 +312,7 @@ class GreekStrongsFileConverter:
             if BibleOrgSysGlobals.debugFlag:
                 assert 'strongsref' not in entryString
             entryResults['Entry'] = entryString
-        #dPrint( 'Quiet', debuggingThisModule, "entryResults", entryResults )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "entryResults", entryResults )
         self.StrongsEntries[strongs] = entryResults
     # end of GreekStrongsFileConverter.validateEntry
 
@@ -322,7 +322,7 @@ class GreekStrongsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.XMLTree if you prefer.)
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.StrongsEntries
         return self.StrongsEntries # temp…… XXXXXXXXXXXXXXXXXXXXXXXXXXXXX…
@@ -335,7 +335,7 @@ class GreekStrongsFileConverter:
         """
         import pickle
 
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self.XMLTree
             assert self.StrongsEntries
 
@@ -343,7 +343,7 @@ class GreekStrongsFileConverter:
             folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not folderpath.exists(): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, 'GreekLexicon_Strongs_Table.1.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.StrongsEntries, myFile )
     # end of GreekStrongsFileConverter.pickle
@@ -355,18 +355,18 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         gsc = GreekStrongsFileConverter()
         gsc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, gsc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
 
         if BibleOrgSysGlobals.commandLineArguments.export:
-            vPrint( 'Quiet', debuggingThisModule, "Exports aren't written yet!" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Exports aren't written yet!" )
             #gsc.exportDataToPython() # Produce the .py tables
             #gsc.exportDataToC() # Produce the .h tables
 # end of GreekLexiconConverter.briefDemo
@@ -375,19 +375,19 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the converter classes…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the converter classes…" )
 
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         gsc = GreekStrongsFileConverter()
         gsc.loadAndValidate() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, gsc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, gsc ) # Just print a summary
 
         if BibleOrgSysGlobals.commandLineArguments.export:
             gsc.pickle() # Produce a pickle output file
-            vPrint( 'Quiet', debuggingThisModule, "Other exports aren't written yet!" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Other exports aren't written yet!" )
             # gsc.exportDataToPython() # Produce the .py tables
             #gsc.exportDataToC() # Produce the .h tables
 # end of GreekLexiconConverter.fullDemo

@@ -30,7 +30,7 @@ Module testing USFMFilenames.py.
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "USFM Filenames tests"
 PROGRAM_VERSION = '0.56'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os
@@ -55,7 +55,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -235,7 +235,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USFMTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -420,7 +420,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    vPrint( 'Normal', debuggingThisModule, programNameVersion )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

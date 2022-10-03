@@ -48,9 +48,9 @@ LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
 PROGRAM_VERSION = '0.20'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -65,7 +65,7 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconIndex.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
     # end of HebrewLexiconIndex.__init__
 
@@ -76,19 +76,19 @@ class HebrewLexiconIndex:
         """
         from BibleOrgSys.OriginalLanguages.Converters.HebrewLexiconConverter import AugmentedStrongsIndexFileConverter, LexicalIndexFileConverter
 
-        vPrint( 'Verbose', debuggingThisModule, _("HebrewLexiconIndex.load()") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("HebrewLexiconIndex.load()") )
         if self.XMLFolder is None:
             self.XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
 
         hASIndex = AugmentedStrongsIndexFileConverter() # Create the empty object
         hASIndex.loadAndValidate( self.XMLFolder ) # Load the XML
         self.indexEntries1, self.indexEntries2 = hASIndex.importDataToPython()
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.indexEntries1) == len(self.indexEntries2)
         hLexIndex = LexicalIndexFileConverter() # Create the empty object
         hLexIndex.loadAndValidate( self.XMLFolder ) # Load the XML
         self.indexEntries = hLexIndex.importDataToPython()
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(self.indexEntries) == 2
     # end of HebrewLexiconIndex.load()
 
@@ -180,7 +180,7 @@ class HebrewLexiconIndex:
 
         Returns a lexicon internal code like 'acd'.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {} )".format( key ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexiconIndex.getBrDrBrCodeFromStrongsNumber( {} )".format( key ) )
 
         if key and key[0]=='H': key = key[1:] # Remove any leading 'H'
         #keyDigits = key[1:]
@@ -215,7 +215,7 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = self.BrownDriverBriggsEntries = None
         if preload: self.load()
@@ -270,8 +270,8 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getStrongsEntryData( {!r} )".format( key ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getStrongsEntryData( {!r} )".format( key ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
 
@@ -288,8 +288,8 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getStrongsEntryField( {!r}, {!r} )".format( key, fieldName ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getStrongsEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
 
@@ -319,19 +319,19 @@ class HebrewLexiconSimple:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        fnPrint( debuggingThisModule, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexiconSimple.getStrongsEntryHTML( {key} )…" )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key[0]=='H' and key[1:].isdigit()
         if self.StrongsEntries is None: self.load()
 
         #if key == 'H1':
-            #dPrint( 'Quiet', debuggingThisModule, "Should be:" )
-            #dPrint( 'Quiet', debuggingThisModule, 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Should be:" )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
         keyDigits = key[1:].lstrip( '0' ) # Remove leading zeroes
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
             for j, (subentry,article) in enumerate( entry.items() ):
-                vPrint( 'Verbose', debuggingThisModule, f"    {j} {subentry}={article}" )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    {j} {subentry}={article}" )
             wordEntry = entry['word']
             wordHTML = '<span class="HebrewWord" xml:lang="hbo">{}</span> ({}) {} ({})'.format( wordEntry[0], wordEntry[3], wordEntry[1], wordEntry[2] )
             sourceHTML = '<span class="Source"><b>Source:</b> {}</span>'.format( entry['source'].replace('<w>','<span class="Word">').replace('</w>','</span>') \
@@ -348,7 +348,7 @@ class HebrewLexiconSimple:
             match = re.search( '<w src="(.+?)">', sourceHTML )
             if match:
                 src = match.group(1)
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert src[0] == 'H'
                 sourceHTML = sourceHTML[:match.start()] + '<span class="Strongs" ref="{}">H'.format( src ) + sourceHTML[match.end():]
             meaningHTML = '<span class="Meaning"><b>Meaning:</b> {}</span>'.format( entry['meaning'] \
@@ -360,7 +360,7 @@ class HebrewLexiconSimple:
                 #.format( keyDigits, keyDigits, entry['word'][2], entry['word'][0], sourceHTML, meaningHTML, usageHTML )
             html = f'{wordHTML}<br>{sourceHTML}<br>{meaningHTML}<br>{usageHTML}' \
                             .replace( ' ,', ',' ).replace( ' ;', ';' ) # clean it up
-            vPrint( 'Verbose', debuggingThisModule, f"  HebrewLexiconSimple.getStrongsEntryHTML about to return: {html}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getStrongsEntryHTML about to return: {html}" )
             return html
     # end of HebrewLexiconSimple.getStrongsEntryHTML
 
@@ -374,8 +374,8 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryData( {!r} )".format( key ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryData( {!r} )".format( key ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
@@ -392,13 +392,13 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
         entry =  self.getBrDrBrEntryData( key )
-        #dPrint( 'Quiet', debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryField entry: {}".format( entry ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryField entry: {}".format( entry ) )
         if entry:
             if fieldName == 'status': return entry[2]
             return entry[0] # What are these fields?
@@ -412,13 +412,13 @@ class HebrewLexiconSimple:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexiconSimple.getBrDrBrEntryHTML( {!r} )".format( key ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexiconSimple.getBrDrBrEntryHTML( {!r} )".format( key ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert key and key.count('.')==2
         if self.BrownDriverBriggsEntries is None: self.load()
 
         entry =  self.getBrDrBrEntryData( key )
-        vPrint( 'Verbose', debuggingThisModule, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML got entry: {entry}" )
         if entry:
             mainEntry = entry[0] \
                 .replace( '<sense>', '<span class="Sense">' ).replace( '</sense>', '</span>' ) \
@@ -439,7 +439,7 @@ class HebrewLexiconSimple:
                 hId, hType = match.group(1), match.group(2)
                 mainEntry = mainEntry[:match.start()] + '<b>Type:</b> {}<br>'.format( hType) + mainEntry[match.end():]
             html = f'{mainEntry} <span class="Status">{{{entry[1]}}}</span>'
-            vPrint( 'Verbose', debuggingThisModule, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexiconSimple.getBrDrBrEntryHTML about to return: {html}" )
             return html
     # end of HebrewLexiconSimple.getBrDrBrEntryHTML
 # end of HebrewLexiconSimple class
@@ -462,7 +462,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( debuggingThisModule, "HebrewLexicon.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.__init__( {} )".format( XMLFolder ) )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.XMLFolder = XMLFolder
         self.hlix = None
@@ -476,12 +476,12 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Otherwise lLoad the actual XML lexicon (slow).
         """
-        fnPrint( debuggingThisModule, "HebrewLexicon.load()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.load()" )
         standardPickleFilepath = BibleOrgSysGlobals.BOS_DISTRIBUTED_FILES_FOLDERPATH.joinpath( 'HebrewLexicon_Tables.1.pickle' )
         if standardPickleFilepath.is_file():
             import pickle
             self.hlix = HebrewLexiconIndex()
-            vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
             with open( standardPickleFilepath, 'rb') as pickleFile: # The protocol version used is detected automatically, so we do not have to specify it
                 self.hlix.indexEntries1 = pickle.load( pickleFile ) # Augmented Strongs
                 self.hlix.indexEntries2 = pickle.load( pickleFile ) # Augmented Strongs
@@ -530,7 +530,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexicon.getBrDrBrEntryData( {!r} )".format( key ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryData( {!r} )".format( key ) )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
@@ -548,12 +548,12 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        fnPrint( debuggingThisModule, "HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
 
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
-            #dPrint( 'Quiet', debuggingThisModule, "HebrewLexicon.getBrDrBrEntryField got key: {}".format( key ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryField got key: {}".format( key ) )
         if key:
             return HebrewLexiconSimple.getBrDrBrEntryField( self, key, fieldName ) # Recursive call
     # end of HebrewLexicon.getBrDrBrEntryField
@@ -567,13 +567,13 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        fnPrint( debuggingThisModule, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"HebrewLexicon.getBrDrBrEntryHTML( {key} )…" )
         if '.' not in key: # assume it's a Strongs code then
             if self.hlix is None: self.load()
             key = self.hlix.getBrDrBrCodeFromStrongsNumber( key )
         if key:
             html = HebrewLexiconSimple.getBrDrBrEntryHTML( self, key )
-            vPrint( 'Verbose', debuggingThisModule, f"  HebrewLexicon.getBrDrBrEntryHTML about to return: {html}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  HebrewLexicon.getBrDrBrEntryHTML about to return: {html}" )
             return html
     # end of HebrewLexicon.getBrDrBrEntryHTML
 # end of HebrewLexicon class
@@ -584,114 +584,114 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Hebrew Lexicon Index class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
         hlix = HebrewLexiconIndex() # Load and process the XML
         hlix.load()
-        vPrint( 'Quiet', debuggingThisModule, hlix ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
-        vPrint( 'Quiet', debuggingThisModule, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the simple Hebrew Lexicon class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
         hls = HebrewLexiconSimple() # Load and process the XML
         hls.load()
-        vPrint( 'Quiet', debuggingThisModule, hls ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hls.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Hebrew Lexicon class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon() # Load and process the XML
-        vPrint( 'Quiet', debuggingThisModule, hl ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of HebrewLexicon.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Hebrew Lexicon Index class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon Index class…" )
         hlix = HebrewLexiconIndex() # Load and process the XML
         hlix.load()
-        vPrint( 'Quiet', debuggingThisModule, hlix ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
-        vPrint( 'Quiet', debuggingThisModule, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
-        vPrint( 'Quiet', debuggingThisModule, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdd are", hlix.getStrongsNumberFromLexiconCode('pdd'), hlix.getBrDrBrCodeFromLexiconCode('pdd'), hlix.getTWOTCodeFromLexiconCode('pdd') )
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the simple Hebrew Lexicon class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the simple Hebrew Lexicon class…" )
         hls = HebrewLexiconSimple() # Load and process the XML
         hls.load()
-        vPrint( 'Quiet', debuggingThisModule, hls ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hls ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hls.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getStrongsEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hls.getStrongsEntryField( strongsKey, 'usage' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getStrongsEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hls.getBrDrBrEntryData( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hls.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hls.getBrDrBrEntryHTML( BrDrBrKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Hebrew Lexicon class…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Hebrew Lexicon class…" )
         hl = HebrewLexicon() # Load and process the XML
-        vPrint( 'Quiet', debuggingThisModule, hl ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for strongsKey in ('H1','H123','H165','H1732','H1979','H2011','H8674','H8675',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getStrongsEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Usage:", hl.getStrongsEntryField( strongsKey, 'usage' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( strongsKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( strongsKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( strongsKey ) )
         for BrDrBrKey in ('a.ab.ac','a.gq.ab','b.aa.aa','xw.ah.ah','xy.zz.zz',): # Last one is invalid
-            vPrint( 'Quiet', debuggingThisModule, '\n' + BrDrBrKey )
-            vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
-            vPrint( 'Quiet', debuggingThisModule, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
-            vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + BrDrBrKey )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getBrDrBrEntryData( BrDrBrKey ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Status:", hl.getBrDrBrEntryField( BrDrBrKey, 'status' ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getBrDrBrEntryHTML( BrDrBrKey ) )
 # end of HebrewLexicon.fullDemo
 
 if __name__ == '__main__':

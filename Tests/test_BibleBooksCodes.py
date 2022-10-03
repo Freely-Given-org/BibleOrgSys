@@ -29,7 +29,7 @@ Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 PROGRAM_NAME = "Bible Books Codes tests"
 PROGRAM_VERSION = '0.73'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
@@ -543,7 +543,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
     #def test_2365_getAllUnboundBibleBooksCodePairs( self ):
         #""" Test the getAllUnboundBibleBooksCodePairs function. """
         #results = self.bbc.getAllUnboundBibleBooksCodePairs()
-        #dPrint( 'Quiet', debuggingThisModule, results)
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, results)
         #self.assertTrue( isinstance( results, list ) )
         #self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
         #self.assertLess( len(results), 120 )
@@ -680,7 +680,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    vPrint( 'Normal', debuggingThisModule, programNameVersion )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksCodesTests.py

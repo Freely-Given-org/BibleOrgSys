@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2016-12-28' # by RJH
 SHORT_PROGRAM_NAME = "TextFile"
 PROGRAM_NAME = "Text File"
 PROGRAM_VERSION = '0.03'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -53,8 +53,8 @@ class TextFile:
     """
     """
     def __init__( self, filepath=None, folderpath=None, filename=None, encoding=None, autoLoad=True ) -> None:
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding, autoLoad ) )
+        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.__init__( {!r}, {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding, autoLoad ) )
 
         self.encoding = encoding if encoding else 'utf-8'
         if folderpath and filename:
@@ -82,8 +82,8 @@ class TextFile:
 
 
     def replace( self, findString, replaceString, replaceCount=None ):
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
+        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.replace( {!r}, {!r}, {} )".format( findString, replaceString, replaceCount ) )
         assert self.fileText is not None
 
         self.originalText = self.fileText
@@ -94,8 +94,8 @@ class TextFile:
 
 
     def save( self ):
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.save()" )
+        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>2:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.save()" )
         assert self.fileText is not None
 
         if self.changed:
@@ -106,8 +106,8 @@ class TextFile:
 
 
     def saveAs( self, filepath=None, folderpath=None, filename=None, encoding=None ):
-        if BibleOrgSysGlobals.debugFlag or debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>1:
-            vPrint( 'Quiet', debuggingThisModule, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding ) )
+        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel>1:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TextFile.saveAs( {!r}, {!r}, {!r}, {} )".format( filepath, folderpath, filename, encoding ) )
         assert self.fileText is not None
 
         encoding = encoding if encoding else 'utf-8'
@@ -142,16 +142,16 @@ def briefDemo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     #tf = TextFile( 'TextFile.py' ) # Read myself!
     #tf.replace( "TextFile", "ABRACADABRA" )
-    #dPrint( 'Quiet', debuggingThisModule, tf.fileText )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, tf.fileText )
     ##tf.saveAs( "/tmp/fred.py" )
 
     tf = TextFile( folderpath=os.path.dirname(__file__), filename='TextFile.py' ) # Read myself!
     tf.replace( "TextFile", "ABRACADABRA" )
-    vPrint( 'Quiet', debuggingThisModule, tf.fileText )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, tf.fileText )
     #tf.saveAs( "/tmp/fred.py" )
 
     #with TextFile( 'TextFile.py' ) as tf:

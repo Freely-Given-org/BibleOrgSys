@@ -72,9 +72,9 @@ LAST_MODIFIED_DATE = '2020-04-30' # by RJH
 SHORT_PROGRAM_NAME = "Bible2USX"
 PROGRAM_NAME = "Bible to USX"
 PROGRAM_VERSION = '0.07'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -82,14 +82,14 @@ def briefDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 # end of Bible2USX.briefDemo()
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 # end of Bible2USX.fullDemo()
 
 
@@ -106,14 +106,14 @@ def main() -> None:
         -i (information) is 3
         -v (verbose) is 4.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
-    vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: processing input folder {BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder!r} …" )
 
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( BibleOrgSysGlobals.commandLineArguments.inputBibleFileOrFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadAlways=True, autoLoadBooks=True ) # Load all the books if we find any
-    vPrint( 'Info', debuggingThisModule, unknownBible ) # Display what Bible typed we found
-    vPrint( 'Normal', debuggingThisModule, loadedBible ) # Show how many books we loaded
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, unknownBible ) # Display what Bible typed we found
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, loadedBible ) # Show how many books we loaded
 
     # If we were successful at loading one (and only one) Bible, do the export
     if isinstance( loadedBible, Bible ):
@@ -121,10 +121,10 @@ def main() -> None:
 
         defaultOutputFolder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USX2_Export/' )
         if os.path.exists( defaultOutputFolder ):
-            vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: removing previous {defaultOutputFolder} folder…" )
             shutil.rmtree( defaultOutputFolder )
 
-        vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: starting export…" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: starting export…" )
 
         # We only want to do the USX export (from the BibleWriter.py module)
         result = loadedBible.toUSXXML() # Export as USX files (USFM inside XML)
@@ -132,8 +132,8 @@ def main() -> None:
         #result = loadedBible.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         # Or you could choose a different export, for example:
         #result = loadedBible.toOSISXML()
-        vPrint( 'Info', debuggingThisModule, f"  Result was: {result}" )
-        vPrint( 'Quiet', debuggingThisModule, f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Result was: {result}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{SHORT_PROGRAM_NAME}: output should be in {defaultOutputFolder}/ folder." )
 # end of Bible2USX.main()
 
 def run() -> None:

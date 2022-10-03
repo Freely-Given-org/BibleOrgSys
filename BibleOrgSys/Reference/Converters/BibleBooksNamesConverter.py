@@ -44,9 +44,9 @@ LAST_MODIFIED_DATE = '2021-01-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksNamesConverter"
 PROGRAM_NAME = "Bible Books Names Systems converter"
 PROGRAM_VERSION = '0.36'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -89,12 +89,12 @@ class BibleBooksNamesConverter:
         if not self.__XMLSystems: # Only ever do this once
             if folder is None: folder = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BookNames/' ) # Relative to module, not cwd
             self.__XMLFolder = folder
-            vPrint( 'Info', debuggingThisModule, _("Loading book names systems from {}…").format( folder ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading book names systems from {}…").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(self.__filenameBase.upper()+"_"):
                     booksNamesSystemCode = filepart[len(self.__filenameBase)+1:]
-                    vPrint( 'Verbose', debuggingThisModule, _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Loading {} books names system from {}…").format( booksNamesSystemCode, filename ) )
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.__XMLSystems[booksNamesSystemCode]['tree'] = ElementTree().parse( os.path.join( folder, filename ) )
@@ -131,7 +131,7 @@ class BibleBooksNamesConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[booksNamesSystemCode]['tree']:
                         bookCount += 1
-                    vPrint( 'Info', debuggingThisModule, _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
                     logging.info( _("    Loaded {} books for {}").format( bookCount, booksNamesSystemCode ) )
 
                     if BibleOrgSysGlobals.strictCheckingFlag:
@@ -285,9 +285,9 @@ class BibleBooksNamesConverter:
             for BBB in bookList: # Just check this list is valid
                 if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
 
-        vPrint( 'Normal', debuggingThisModule, _("Expanding input abbreviations…") )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Expanding input abbreviations…") )
         for systemName in self.__BookNamesSystemsDict:
-            vPrint( 'Info', debuggingThisModule, _("  Expanding {}…").format( systemName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Expanding {}…").format( systemName ) )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
             self.__expandedInputSystems[systemName] = self.expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
@@ -305,10 +305,10 @@ class BibleBooksNamesConverter:
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
         # We'll create a number of dictionaries
-        vPrint( 'Verbose', debuggingThisModule, _("Importing data into Python dictionary…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Importing data into Python dictionary…") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
-            #dPrint( 'Quiet', debuggingThisModule, booksNamesSystemCode )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, booksNamesSystemCode )
             # Make the data dictionary for this booksNames system
             myDivisionsNamesDict, myBooknameLeadersDict, myBookNamesDict = {}, {}, {}
             for element in self.__XMLSystems[booksNamesSystemCode]['tree']:
@@ -384,7 +384,7 @@ class BibleBooksNamesConverter:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + '_Tables.pickle' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
             #pickle.dump( self.__expandedInputSystems, myFile )
@@ -437,7 +437,7 @@ class BibleBooksNamesConverter:
 
         raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -492,7 +492,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( PROGRAM_VERSION, datetime.now() ) )
@@ -539,7 +539,7 @@ class BibleBooksNamesConverter:
         assert self.__BookNamesSystemsDict
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.h' )
-        vPrint( 'Quiet', debuggingThisModule, _("Exporting to {}…").format( filepath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
@@ -561,7 +561,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
@@ -578,17 +578,17 @@ def briefDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnsc ) # Just print a summary
         #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
-        #    vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnsc ) # Just print a summary
 # end of BibleBooksNamesConverter.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
@@ -605,10 +605,10 @@ def fullDemo() -> None:
     else: # Must be demo mode
         # Demo the converter object
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
-        vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnsc ) # Just print a summary
         #if BibleOrgSysGlobals.commandLineArguments.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
-        #    vPrint( 'Quiet', debuggingThisModule, bbnsc ) # Just print a summary
+        #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbnsc ) # Just print a summary
 # end of BibleBooksNamesConverter.fullDemo
 
 if __name__ == '__main__':

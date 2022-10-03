@@ -31,9 +31,9 @@ LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrdersTests"
 PROGRAM_NAME = "Bible Book Orders tests"
 PROGRAM_VERSION = '0.85'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 import os.path
@@ -323,7 +323,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    vPrint( 'Normal', debuggingThisModule, programNameVersion )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBookOrdersTests.py

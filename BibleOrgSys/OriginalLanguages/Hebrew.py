@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2021-02-19' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
 PROGRAM_VERSION = '0.09'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # Consonants
@@ -259,27 +259,27 @@ transliterationSchemes = { 'Default':BOS_HEBREW_TRANSLITERATION, 'Standard':STAN
 
 
 
-if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
+if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: # Check that our tables have no obvious errors
     for j,letter in enumerate( consonants ):
-        #dPrint( 'Quiet', debuggingThisModule, j, letter )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, letter )
         assert consonants.count(letter)==1
         assert letter not in vowelPoints
         assert letter not in otherMarks
         assert letter not in cantillationMarks
     for j,mark in enumerate( vowelPoints ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, mark )
         assert vowelPoints.count(mark)==1
         assert mark not in consonants
         assert mark not in otherMarks
         assert mark not in cantillationMarks
     for j,mark in enumerate( otherMarks ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, mark )
         assert otherMarks.count(mark)==1
         assert mark not in consonants
         assert mark not in vowelPoints
         assert mark not in cantillationMarks
     for j,mark in enumerate( cantillationMarks ):
-        #dPrint( 'Quiet', debuggingThisModule, j, mark )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, mark )
         assert cantillationMarks.count(mark)==1
         assert mark not in consonants
         assert mark not in vowelPoints
@@ -320,14 +320,14 @@ class Hebrew():
     def printUnicodeData( self, text:Optional[str]=None ) -> None:
         """
         """
-        #dPrint( 'Quiet', debuggingThisModule, "unicodedata", unicodedata.unidata_version )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
 
         if text is None: text = self.currentText
 
         #def printUnicodeInfo( text, description ):
-            #dPrint( 'Quiet', debuggingThisModule, "{}:".format( description ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:".format( description ) )
         for j,char in enumerate(text):
-            vPrint( 'Quiet', debuggingThisModule, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                 .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of Hebrew.printUnicodeData
 
@@ -342,12 +342,12 @@ class Hebrew():
         this = ( ' ', '־', )
         for j,letter in enumerate(text):
             if letter not in consonants and letter not in this:
-                vPrint( 'Quiet', debuggingThisModule, "Found unexpected {!r} ({}) non-consonant at index {} in {!r}".format( letter, unicodedata.name(letter), j, text ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Found unexpected {!r} ({}) non-consonant at index {} in {!r}".format( letter, unicodedata.name(letter), j, text ) )
                 haveError = True
             if letter in finalConsonants and j<textLength-1:
                 nextLetter = text[j+1]
                 if nextLetter not in this:
-                    vPrint( 'Quiet', debuggingThisModule, "Found unexpected {!r} ({}) final consonant before {!r} ({}) at index {} in {!r}".format( letter, unicodedata.name(letter), nextLetter, unicodedata.name(nextLetter), j, text ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Found unexpected {!r} ({}) final consonant before {!r} ({}) at index {} in {!r}".format( letter, unicodedata.name(letter), nextLetter, unicodedata.name(nextLetter), j, text ) )
                     haveError = True
         return haveError
     # end of Hebrew.verifyConsonantsOnly
@@ -356,7 +356,7 @@ class Hebrew():
     def removeAllMetegOrSiluq( self, text:Optional[str]=None ) -> str:
         """
         """
-        #dPrint( 'Quiet', debuggingThisModule, "removeAllMetegOrSiluq( {!r} )".format( text ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeAllMetegOrSiluq( {!r} )".format( text ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeAllMetegOrSiluq( self.currentText ) # recursive call
@@ -371,7 +371,7 @@ class Hebrew():
         """
         It's actually often impossible to tell automatically which purpose this Unicode mark has.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "_removeMetegOrSiluq( {!r}, {} )".format( text, asVowel ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "_removeMetegOrSiluq( {!r}, {} )".format( text, asVowel ) )
 
         while text:
             textLength = len( text )
@@ -382,20 +382,20 @@ class Hebrew():
                 nextMark = text[j+1] if j<textLength-1 else ''
                 if previousMark in ( patah, segol ) or nextMark in (): # Assume it's a vowel point meteg
                     if asVowel:
-                        vPrint( 'Info', debuggingThisModule, f"Deleting (vowel point) meteg after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (vowel point) meteg after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
                     else:
-                        vPrint( 'Info', debuggingThisModule, f"Ignoring (vowel point) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (vowel point) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                 else: # it doesn't appear to be a vowel point meteg
                     if not asVowel:
-                        vPrint( 'Info', debuggingThisModule, f"Deleting (cantillation mark) siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Deleting (cantillation mark) siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
                     else:
-                        vPrint( 'Info', debuggingThisModule, f"Ignoring (cantillation mark) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Ignoring (cantillation mark) meteg/siluq after {previousMark!r} ({unicodedata.name(previousMark) if previousMark else ''}) and before {nextMark!r} ({unicodedata.name(nextMark) if nextMark else ''})" )
             if not madeChanges: break # Check for another meteg if we made any changes
         return text
     # end of Hebrew._removeMetegOrSiluq
@@ -405,7 +405,7 @@ class Hebrew():
         """
         Return the text with cantillation marks removed.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeCantillationMarks( self.currentText, removeMetegOrSiluq ) # recursive call
@@ -422,7 +422,7 @@ class Hebrew():
         """
         Return the text with cantillation marks removed.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeVowelPointing( self.currentText ) # recursive call
@@ -438,7 +438,7 @@ class Hebrew():
         """
         Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "removeOtherMarks( {!r} )".format( text ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeOtherMarks( {!r} )".format( text ) )
 
         if text is None: # Use our own text
             self.currentText = self.removeOtherMarks( self.currentText ) # recursive call
@@ -470,7 +470,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demonstrate the Hebrew class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
@@ -479,40 +479,40 @@ def briefDemo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Hebrew( string )
-        vPrint( 'Quiet', debuggingThisModule, h )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeCantillationMarks()
-        vPrint( 'Quiet', debuggingThisModule, "Removed cantillation marks" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeVowelPointing()
-        vPrint( 'Quiet', debuggingThisModule, "Removed vowel pointing" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeOtherMarks()
-        vPrint( 'Quiet', debuggingThisModule, "Removed other marks" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.verifyConsonantsOnly()
         h = Hebrew( string )
         h.removeCantillationMarks()
         #h.printUnicodeData()
-        vPrint( 'Quiet', debuggingThisModule, "Transliterated: {}".format( h.transliterate() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Transliterated: {}".format( h.transliterate() ) )
 # end of Hebrew.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demonstrate the Hebrew class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
@@ -521,33 +521,33 @@ def fullDemo() -> None:
     dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
     dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
     for string in ( dan11, dan12, dan13, dan14, dan15 ):
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Hebrew( string )
-        vPrint( 'Quiet', debuggingThisModule, h )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeCantillationMarks()
-        vPrint( 'Quiet', debuggingThisModule, "Removed cantillation marks" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed cantillation marks" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeVowelPointing()
-        vPrint( 'Quiet', debuggingThisModule, "Removed vowel pointing" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed vowel pointing" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.removeOtherMarks()
-        vPrint( 'Quiet', debuggingThisModule, "Removed other marks" )
-        vPrint( 'Quiet', debuggingThisModule, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         msCount = h.currentText.count(metegOrSiluq)
-        if msCount: vPrint( 'Quiet', debuggingThisModule, "{} meteg or siluq marks remaining".format( msCount ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+        if msCount: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} meteg or siluq marks remaining".format( msCount ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h.verifyConsonantsOnly()
         h = Hebrew( string )
         h.removeCantillationMarks()
         #h.printUnicodeData()
-        vPrint( 'Quiet', debuggingThisModule, "Transliterated: {}".format( h.transliterate() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Transliterated: {}".format( h.transliterate() ) )
 # end of Hebrew.fullDemo
 
 if __name__ == '__main__':

@@ -44,9 +44,9 @@ LAST_MODIFIED_DATE = '2020-04-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleReferencesLinks"
 PROGRAM_NAME = "Bible References Links handler"
 PROGRAM_VERSION = '0.40'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -75,7 +75,7 @@ class BibleReferencesLinks:
             # See if we can load from the pickle file (faster than loading from the XML)
             standardIndexPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.index.pickle' )
             self.dataPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleReferencesLinks_Tables.data.pickle' )
-            vPrint( 'Info', debuggingThisModule, _("Loading pickle index file {}…").format( standardIndexPickleFilepath ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle index file {}…").format( standardIndexPickleFilepath ) )
             with open( standardIndexPickleFilepath, 'rb') as pickleFile:
                 self.__Index = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         return self # So this command can be chained after the object creation
@@ -122,9 +122,9 @@ class BibleReferencesLinks:
         with open( self.dataPickleFilepath, 'rb') as pickleFile:
             pickleFile.seek( filePosition )
             pickleEntry = pickleFile.read( segmentLength )
-            #dPrint( 'Quiet', debuggingThisModule, "pe", pickleEntry )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "pe", pickleEntry )
             entry = pickle.loads( pickleEntry )
-            #dPrint( 'Quiet', debuggingThisModule, "e", entry )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "e", entry )
             return entry
     # end of BibleReferencesLinks.__getEntry
 
@@ -155,13 +155,13 @@ class BibleReferencesLinks:
             if relatedPassageList:
                 resultList = []
                 for relatedPassage in relatedPassageList:
-                    #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                     sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                    #dPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                     for actualLink in actualLinksList:
-                        #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                         targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                        #dPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
                         resultList.append( (linkType,parsedTargetReference) )
                 return resultList
     # end of BibleReferencesLinks.getRelatedPassagesList
@@ -193,17 +193,17 @@ class BibleReferencesLinks:
             ## See if we can load from the pickle file (faster than loading from the XML)
             #standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( "BibleReferencesLinks.xml" )
             #standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( "BibleReferencesLinks_Tables.pickle" )
-            ##dPrint( 'Quiet', debuggingThisModule, os.access( standardPickleFilepath, os.R_OK ) )
-            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
-            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime )
-            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardXMLFileOrFilepath).st_ctime )
-            ##dPrint( 'Quiet', debuggingThisModule, os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime )
+            ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, os.access( standardPickleFilepath, os.R_OK ) )
+            ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime )
+            ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, os.stat(standardPickleFilepath).st_ctime )
+            ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, os.stat(standardXMLFileOrFilepath).st_ctime )
+            ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime )
             #if XMLFileOrFilepath is None \
             #and os.access( standardPickleFilepath, os.R_OK ) \
             #and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
             #and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 #import pickle
-                #dPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+                #dPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                 #with open( standardPickleFilepath, 'rb') as pickleFile:
                     #self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -278,13 +278,13 @@ class BibleReferencesLinks:
             #if relatedPassageList:
                 #resultList = []
                 #for relatedPassage in relatedPassageList:
-                    ##dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                    ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                     #sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                    ##dPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                    ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                     #for actualLink in actualLinksList:
-                        ##dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                         #targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                        ##dPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
                         #resultList.append( (linkType,parsedTargetReference) )
                 #return resultList
     ## end of BibleReferencesLinks.getRelatedPassagesList
@@ -296,35 +296,35 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, brl ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
 
     testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
-    vPrint( 'Quiet', debuggingThisModule, "\nTest full passage list…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', debuggingThisModule, svk.getShortText() )
-        #dPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
-                #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                 for actualLink in actualLinksList:
-                    #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                    vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
         break
 
-    vPrint( 'Quiet', debuggingThisModule, "\nTest passage list…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', debuggingThisModule, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
         break
 # end of BibleReferencesLinks.briefDemo
 
@@ -332,34 +332,34 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, brl ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, brl ) # Just print a summary
 
     testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
-    vPrint( 'Quiet', debuggingThisModule, "\nTest full passage list…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest full passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', debuggingThisModule, svk.getShortText() )
-        #dPrint( 'Quiet', debuggingThisModule, svk, brl.getFullRelatedPassagesList( svk ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getShortText() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, brl.getFullRelatedPassagesList( svk ) )
         relatedPassageList = brl.getFullRelatedPassagesList( svk )
         if relatedPassageList:
             for relatedPassage in relatedPassageList:
-                #dPrint( 'Quiet', debuggingThisModule, ' ', relatedPassage )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', relatedPassage )
                 sourceReference,sourceComponent,parsedSourceReference,actualLinksList = relatedPassage
-                vPrint( 'Quiet', debuggingThisModule, ' ', sourceReference )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', sourceReference )
                 for actualLink in actualLinksList:
-                    #dPrint( 'Quiet', debuggingThisModule, '    ', actualLink )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', actualLink )
                     targetReference,targetComponent,parsedTargetReference,linkType = actualLink
-                    vPrint( 'Quiet', debuggingThisModule, '    ', linkType, targetReference )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    ', linkType, targetReference )
 
-    vPrint( 'Quiet', debuggingThisModule, "\nTest passage list…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest passage list…" )
     for verseReferenceString in testKeys:
         svk = SimpleVerseKey( verseReferenceString )
-        vPrint( 'Quiet', debuggingThisModule, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk.getVerseKeyText(), brl.getRelatedPassagesList( svk ) )
 # end of BibleReferencesLinks.fullDemo
 
 if __name__ == '__main__':

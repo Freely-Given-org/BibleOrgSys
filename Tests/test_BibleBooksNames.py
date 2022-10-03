@@ -29,7 +29,7 @@ Module testing BibleBooksNamesConverter.py and BibleBooksNames.py.
 LAST_MODIFIED_DATE = '2017-03-29' # by RJH
 PROGRAM_NAME = "Bible Books Names tests"
 PROGRAM_VERSION = '0.32'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
@@ -91,7 +91,7 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
 
     def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
-        vPrint( 'Quiet', debuggingThisModule, "Sorry, no C export yet :(" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no C export yet :(" )
         #self.assertEqual( self.bbnsc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleBooksNamesConverterTests class
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    vPrint( 'Normal', debuggingThisModule, programNameVersion )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksNamesTests.py

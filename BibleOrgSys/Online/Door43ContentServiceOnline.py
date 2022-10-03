@@ -58,9 +58,9 @@ LAST_MODIFIED_DATE = '2022-07-20' # by RJH
 SHORT_PROGRAM_NAME = "Door43ContentService"
 PROGRAM_NAME = "Door43 Content Service online handler"
 PROGRAM_VERSION = '0.05'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 URL_BASE = 'https://git.door43.org/api/' # API endpoint
@@ -80,16 +80,16 @@ class DCSBibles:
         """
         Create the internal Bibles object.
         """
-        fnPrint( debuggingThisModule, "DCSBibles.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "DCSBibles.__init__()" )
 
         # See if the site is online by making a small call to get the API version
         self.onlineVersion = None
         result = self.getOnlineData( 'version' )
-        #dPrint( 'Quiet', debuggingThisModule, "version result", result )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "version result", result )
         if result and isinstance( result, dict) and 'version' in result:
             self.onlineVersion = result['version']
-            if debuggingThisModule and BibleOrgSysGlobals.verbosityLevel > 3:
-                vPrint( 'Quiet', debuggingThisModule, f"DCS API version {self.onlineVersion} is online." )
+            if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.verbosityLevel > 3:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"DCS API version {self.onlineVersion} is online." )
         self.languageList = self.versionList = self.volumeList = self.volumeNameDict = self.EnglishVolumeNameDict = None
     # end of DCSBibles.__init__
 
@@ -105,29 +105,29 @@ class DCSBibles:
 
         Returns None if the data cannot be fetched.
         """
-        fnPrint( debuggingThisModule, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DCSBibles.getOnlineData( '{fieldREST}', '{additionalParameters}' )…" )
 
         requestString = f'{URL_FULL_BASE}{fieldREST}'
-        vPrint( 'Never', debuggingThisModule, "Request string is", repr(requestString) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "Request string is", repr(requestString) )
         responseObject = requests.get( requestString )
         if responseObject.status_code != 200:
             #errorClass, exceptionInstance, traceback = sys.exc_info()
-            #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
             logging.error( f"DCS {responseObject.status_code} URLError from {requestString}" )
             return None
-        #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
         contentType = responseObject.headers['Content-Type']
-        vPrint( 'Never', debuggingThisModule, f"    contentType='{contentType}'" )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"    contentType='{contentType}'" )
         if 'application/json' in contentType:
             # responseJSON = HTTPResponseObject.read()
-            # vPrint( 'Quiet', debuggingThisModule, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
+            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      responseJSON", len(responseJSON), responseJSON[:100], '…' )
             # responseJSONencoding = HTTPResponseObject.info().get_content_charset( 'utf-8' )
-            # vPrint( 'Quiet', debuggingThisModule, "      responseJSONencoding", responseJSONencoding )
+            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      responseJSONencoding", responseJSONencoding )
             # responseSTR = responseJSON.decode( responseJSONencoding )
-            # vPrint( 'Quiet', debuggingThisModule, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
+            # vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      responseSTR", len(responseSTR), responseSTR[:100], '…' )
             return responseObject.json()
         else:
-            vPrint( 'Verbose', debuggingThisModule, "    contentType", contentType )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    contentType", contentType )
             halt # Haven't had this contentType before
     # end of DCSBibles.getOnlineData
 
@@ -139,10 +139,10 @@ class DCSBibles:
         This can be quite slow.
 
         """
-        fnPrint( debuggingThisModule, "DCSBibles.fetchAllBibles()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "DCSBibles.fetchAllBibles()" )
 
         limit = 500 # Documentation says 50, but larger numbers seem to work ok
-        vPrint( 'Normal', debuggingThisModule, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Downloading list of available Bibles from DCS ({limit} at a time)…" )
 
         self.BibleList = []
         if self.onlineVersion: # Get a list of available data sets
@@ -151,21 +151,21 @@ class DCSBibles:
                 pageNumber = 1
                 while True:
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, f"  Getting '{searchText}' page {pageNumber}…" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Getting '{searchText}' page {pageNumber}…" )
                     resultDict = self.getOnlineData( f'repos/search?q={searchText}&page={pageNumber}&limit={limit}' )
-                    #dPrint( 'Quiet', debuggingThisModule, f"  Result {type(resultDict)} {len(resultDict)} = {resultDict}" )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Result {type(resultDict)} {len(resultDict)} = {resultDict}" )
                     # resultDict should be a dict of length 2 with keys 'ok'(=True) and 'data'
                     assert resultDict and isinstance( resultDict, dict) and  len(resultDict) == 2 \
                                     and resultDict['ok']==True
                     if not resultDict['data']: break # no more data
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', debuggingThisModule, f"    Got {len(resultDict['data'])} entries" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"    Got {len(resultDict['data'])} entries" )
                     self.BibleList.extend( resultDict['data'] )
                     if pageNumber > 1 \
                     and len(resultDict['data']) < limit: # must be finished
                         break
                     pageNumber += 1
-            dPrint( 'Quiet', debuggingThisModule, "  BibleList", len(self.BibleList) , self.BibleList )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  BibleList", len(self.BibleList) , self.BibleList )
         return self.BibleList
     # end of DCSBibles.fetchAllBibles
 
@@ -191,15 +191,15 @@ class DCSBibles:
             #{'version_name': 'Yessan-Mayo Yawu', 'version_code': 'YWV', 'english_name': 'Yessan-Mayo Yawu'}
             #{'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         #"""
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, _("DCSBibles.fetchAllVersions()…") )
+        #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DCSBibles.fetchAllVersions()…") )
 
         #if BibleOrgSysGlobals.verbosityLevel > 2:
-            #dPrint( 'Quiet', debuggingThisModule, _("Downloading list of available versions from unfoldingWord…") )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Downloading list of available versions from unfoldingWord…") )
 
         #if self.onlineVersion: # Get a list of available data sets
             #self.versionList = self.getOnlineData( 'library/version' ) # Get an alphabetically ordered list of dictionaries -- one for each version
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  versionList", len(self.versionList) )#, self.versionList )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  versionList", len(self.versionList) )#, self.versionList )
         #return self.versionList
     ## end of DCSBibles.fetchAllVersions
 
@@ -222,8 +222,8 @@ class DCSBibles:
     #def searchNames( self, searchText ):
         #"""
         #"""
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, _("DCSBibles.searchNames( {!r} )").format( searchText ) )
+        #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DCSBibles.searchNames( {!r} )").format( searchText ) )
 
         #searchTextUC = searchText.upper()
         #resultsList = []
@@ -232,7 +232,7 @@ class DCSBibles:
                 #for refNumber in self.volumeNameDict[name]:
                     #DAM = self.getDAM(refNumber)
                     #if BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', debuggingThisModule, _("DAM: {}").format( DAM ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("DAM: {}").format( DAM ) )
                         #if BibleOrgSysGlobals.debugFlag:
                             #assert DAM.endswith('2ET') or DAM.endswith('1ET') # O2 (OT) or N2 (NT), plus ET for text
                     #resultsList.append( (refNumber,DAM,) )
@@ -248,11 +248,11 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        fnPrint( debuggingThisModule, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DCSBibles.searchReposExact( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
-            #dPrint( 'Quiet', debuggingThisModule, 'entryDict', type(entryDict), len(entryDict), repr(entryDict), '\n' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'entryDict', type(entryDict), len(entryDict), repr(entryDict), '\n' )
             assert entryDict and isinstance( entryDict, dict) and len(entryDict)>=23
             ownerName = entryDict['owner']['full_name']
             if not ownerName: ownerName = entryDict['owner']['username']
@@ -272,11 +272,11 @@ class DCSBibles:
         Returns the dictionary for the resource
             (or a list of dictionaries if there's multiple matches)
         """
-        fnPrint( debuggingThisModule, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DCSBibles.searchReposFuzzy( {wantedRepoOwner!r}, {wantedRepoTitle!r} )…" )
 
         resultsList = []
         for entryDict in self.BibleList:
-            #dPrint( 'Quiet', debuggingThisModule, 'entryDict', type(entryDict), len(entryDict), repr(entryDict), '\n' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'entryDict', type(entryDict), len(entryDict), repr(entryDict), '\n' )
             assert entryDict and isinstance( entryDict, dict) and len(entryDict)>=23
             ownerName = entryDict['owner']['full_name']
             if not ownerName: ownerName = entryDict['owner']['username']
@@ -305,7 +305,7 @@ class DCSBible( USFMBible ):
         or
             an index into the BibleList in the resourcesObject passed as the second parameter
         """
-        fnPrint( debuggingThisModule, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DCSBible.__init__( {parameterOne}, {resourcesObject}, {downloadAllBooks} )…" )
 
         if isinstance( parameterOne, dict ):
             assert resourcesObject is None
@@ -315,13 +315,13 @@ class DCSBible( USFMBible ):
             assert resourcesObject # why ??? and isinstance( resourcesObject, Door43CatalogResources )
             resourceDict = resourcesObject.getBibleResourceDict( parameterOne )
         assert resourceDict and isinstance( resourceDict, dict )
-        #dPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict )
-        #dPrint( 'Quiet', debuggingThisModule, 'resourceDict', resourceDict.keys() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'resourceDict', resourceDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'resourceDict', resourceDict.keys() )
 
         self.baseURL = resourceDict['html_url']
-        #dPrint( 'Quiet', debuggingThisModule, 'self.baseURL', self.baseURL )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'self.baseURL', self.baseURL )
         adjustedRepoName = resourceDict['full_name'].replace( '/', '--' )
-        #dPrint( 'Quiet', debuggingThisModule, 'adjustedRepoName', adjustedRepoName )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'adjustedRepoName', adjustedRepoName )
         desiredFolderName = BibleOrgSysGlobals.makeSafeFilename( adjustedRepoName )
         unzippedFolderpath = DEFAULT_DOWNLOAD_FOLDERPATH.joinpath( f'{adjustedRepoName}/' )
 
@@ -329,39 +329,39 @@ class DCSBible( USFMBible ):
             # See if files already exist and are current (so don't download again)
             alreadyDownloadedFlag = False
             if os.path.isdir( unzippedFolderpath ):
-                #dPrint( 'Quiet', debuggingThisModule, f"Issued: {resourceDict['issued']}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Issued: {resourceDict['issued']}" )
                 updatedDatetime = datetime.strptime( resourceDict['updated_at'], '%Y-%m-%dT%H:%M:%SZ' )
-                #dPrint( 'Quiet', debuggingThisModule, f"updatedDatetime: {updatedDatetime}" )
-                #dPrint( 'Quiet', debuggingThisModule, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"updatedDatetime: {updatedDatetime}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"folder: {os.stat(unzippedFolderpath).st_mtime}" )
                 folderModifiedDatetime = datetime.fromtimestamp(os.stat(unzippedFolderpath).st_mtime)
-                #dPrint( 'Quiet', debuggingThisModule, f"folderModifiedDatetime: {folderModifiedDatetime}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"folderModifiedDatetime: {folderModifiedDatetime}" )
                 alreadyDownloadedFlag = folderModifiedDatetime > updatedDatetime
-                #dPrint( 'Quiet', debuggingThisModule, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"alreadyDownloadedFlag: {alreadyDownloadedFlag}" )
 
             if alreadyDownloadedFlag:
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Skipping download because folder '{}' already exists.".format( unzippedFolderpath ) )
             else: # Download the zip file (containing all the USFM files, README.md, LICENSE.md, manifest.yaml, etc.)
                 # TODO: Change to .tar.gz instead of zip
                 zipURL = self.baseURL + '/archive/master.zip' # '/archive/master.tar.gz'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Downloading entire repo from '{}'…".format( zipURL ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Downloading entire repo from '{}'…".format( zipURL ) )
                 responseObject = requests.get( zipURL )
                 if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                     logging.critical( f"DCS {responseObject.status_code} URLError from {zipURL}" )
                     return
-                #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
                 contentType = responseObject.headers['Content-Type']
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
                 if contentType == 'application/octet-stream':
                     try: os.makedirs( unzippedFolderpath )
                     except FileExistsError: pass
                     downloadedData = responseObject.content
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, f"  Downloaded {len(downloadedData):,} bytes from '{zipURL}'" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Downloaded {len(downloadedData):,} bytes from '{zipURL}'" )
                     # Bug in Python up to 3.7 makes this not work for large aligned Bibles (3+ MB)
                     # myTempFile = tempfile.SpooledTemporaryFile()
                     myTempFile = tempfile.TemporaryFile()
@@ -371,16 +371,16 @@ class DCSBible( USFMBible ):
                         myzip.extractall( unzippedFolderpath )
                     myTempFile.close() # Automatically deletes the file
                 else:
-                    vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
                     halt # unknown content type
             self.downloadedAllBooks = True
 
             # There's probably a folder inside this folder
             folders = os.listdir( unzippedFolderpath )
-            #dPrint( 'Quiet', debuggingThisModule, 'folders', folders )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'folders', folders )
             assert len(folders) == 1 # else maybe a previous download failed -- just manually delete the folder
             desiredFolderName = folders[0] + '/'
-            #dPrint( 'Quiet', debuggingThisModule, 'desiredFolderName', desiredFolderName )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'desiredFolderName', desiredFolderName )
             USFMBible.__init__( self, os.path.join( unzippedFolderpath, desiredFolderName ),
                                                             givenName=resourceDict['name'] )
         else: # didn't request all books to be downloaded at once
@@ -401,7 +401,7 @@ class DCSBible( USFMBible ):
         TODO: This function doesn't check if the USFM book was downloaded by a previous run
                 (and is still up-to-date)
         """
-        fnPrint( debuggingThisModule, f"DCSBible.loadBookIfNecessary( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"DCSBible.loadBookIfNecessary( {BBB} )" )
 
         if not self.downloadedAllBooks:
             if BBB not in self.attemptedDownload or not self.attemptedDownload[BBB]:
@@ -414,31 +414,31 @@ class DCSBible( USFMBible ):
                 USFMfilename = f'{nn:02}-{uBBB}.usfm'
                 zipURL = f'{self.baseURL}/raw/branch/master/{USFMfilename}'
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Downloading {} file from '{}'…".format( BBB, zipURL ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Downloading {} file from '{}'…".format( BBB, zipURL ) )
                 responseObject = requests.get( zipURL )
                 if responseObject.status_code != 200:
                     #errorClass, exceptionInstance, traceback = sys.exc_info()
-                    #dPrint( 'Quiet', debuggingThisModule, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
                     logging.critical( f"DCS {responseObject.status_code} HTTPError from {zipURL}" )
                     return
-                #dPrint( 'Quiet', debuggingThisModule, "  HTTPResponseObject", HTTPResponseObject )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  HTTPResponseObject", HTTPResponseObject )
                 contentType = responseObject.headers['Content-Type']
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
                 if contentType == 'text/plain; charset=utf-8':
                     downloadedData = responseObject.text
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        vPrint( 'Quiet', debuggingThisModule, f"  Downloaded {len(downloadedData):,} chars from '{zipURL}'" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Downloaded {len(downloadedData):,} chars from '{zipURL}'" )
                     with open( os.path.join( self.sourceFolder, USFMfilename ), 'wt', encoding='utf-8' ) as ourUSFMfile:
                         ourUSFMfile.write( downloadedData )
                 else:
-                    vPrint( 'Quiet', debuggingThisModule, "    contentType", repr(contentType) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    contentType", repr(contentType) )
                     halt # unknown content type
                 if not self.preloadDone:
                     self.preload()
             else:
-                if BibleOrgSysGlobals.verbosityLevel > 2 or debuggingThisModule or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', debuggingThisModule, f"{BBB} was already downloaded (or attempted)" )
+                if BibleOrgSysGlobals.verbosityLevel > 2 or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} was already downloaded (or attempted)" )
                 return
 
         USFMBible.loadBookIfNecessary( self, BBB )
@@ -454,22 +454,22 @@ def briefDemo() -> None:
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
     import random
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Test the DCSBibles class (also used later)
-    if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nA/ DCSBibles class test…")
+    if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nA/ DCSBibles class test…")
     dcsBibles = DCSBibles()
-    vPrint( 'Quiet', debuggingThisModule, dcsBibles, end='\n\n' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dcsBibles, end='\n\n' )
     #dcsBibles.load() # takes a minute
-    #dPrint( 'Quiet', debuggingThisModule, dcsBibles )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dcsBibles )
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vPrint( 'Quiet', debuggingThisModule, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']
-            vPrint( 'Normal', debuggingThisModule, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
 
 
     testRefs = ( ('GEN','1','1'), ('GEN','2','2'), ('JER','33','3'), ('MAL','4','6'),
@@ -480,27 +480,27 @@ def briefDemo() -> None:
             dcsBible1 = DCSBible( searchResult, downloadAllBooks=downloadAllBooks )
             try: dcsBible1.preload()
             except FileNotFoundError: assert downloadAllBooks == False
-            vPrint( 'Normal', debuggingThisModule, dcsBible1, end='\n\n' )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, dcsBible1, end='\n\n' )
             for testRef in testRefs:
                 verseKey = SimpleVerseKey( *testRef )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, verseKey )
-                    vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dcsBible1.getVerseDataList( verseKey ) )
                 break
         else:
-            vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
 
     if random.random() > 0.5: # Test the DCSBible class with the ULT
-        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nB/ ULT test")
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nB/ ULT test")
         downloadAllBooks = True
         searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ult' )
         if searchResult:
-            #dPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'searchResult', type(searchResult), len(searchResult), searchResult )
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ult' repos!" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(searchResult)} 'en_ult' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )
@@ -510,15 +510,15 @@ def briefDemo() -> None:
             logging.critical( f"Empty search result: {searchResult}" )
 
     else: # Test the DCSBible class with the UST
-        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nC/ UST test")
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nC/ UST test")
         downloadAllBooks = False
         searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ust' )
         if searchResult:
-            #dPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'searchResult', type(searchResult), len(searchResult), searchResult )
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ust' repos!" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(searchResult)} 'en_ust' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )
@@ -534,22 +534,22 @@ def fullDemo() -> None:
     """
     from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Test the DCSBibles class (also used later)
-    if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nA/ DCSBibles class test…")
+    if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nA/ DCSBibles class test…")
     dcsBibles = DCSBibles()
-    vPrint( 'Quiet', debuggingThisModule, dcsBibles, end='\n\n' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, dcsBibles, end='\n\n' )
     #dcsBibles.load() # takes a minute
-    #dPrint( 'Quiet', debuggingThisModule, dcsBibles )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, dcsBibles )
     dcsBibles.fetchAllBibles()
 
     if 0: # print the list
-        vPrint( 'Quiet', debuggingThisModule, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bible list ({}):".format( len(dcsBibles.BibleList) ) )
         for j, BibleDict in enumerate( dcsBibles.BibleList, start=1 ):
             ownerName = BibleDict['owner']['full_name']
             if not ownerName: ownerName = BibleDict['owner']['username']
-            vPrint( 'Normal', debuggingThisModule, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Entry {j:3} '{BibleDict['name']}'  '{ownerName}'" )
 
 
     testRefs = ( ('GEN','1','1'), ('GEN','2','2'), ('JER','33','3'), ('MAL','4','6'),
@@ -560,26 +560,26 @@ def fullDemo() -> None:
             dcsBible1 = DCSBible( searchResult, downloadAllBooks=downloadAllBooks )
             try: dcsBible1.preload()
             except FileNotFoundError: assert downloadAllBooks == False
-            vPrint( 'Normal', debuggingThisModule, dcsBible1, end='\n\n' )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, dcsBible1, end='\n\n' )
             for testRef in testRefs:
                 verseKey = SimpleVerseKey( *testRef )
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, verseKey )
-                    vPrint( 'Quiet', debuggingThisModule, " ", dcsBible1.getVerseDataList( verseKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseKey )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", dcsBible1.getVerseDataList( verseKey ) )
         else:
-            vPrint( 'Quiet', debuggingThisModule, f"Unexpected search result: {searchResult}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Unexpected search result: {searchResult}" )
     # end of processSearchResult function
 
     if 1: # Test the DCSBible class with the ULT
-        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nB/ ULT test")
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nB/ ULT test")
         downloadAllBooks = True
         searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ult' )
         if searchResult:
-            #dPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'searchResult', type(searchResult), len(searchResult), searchResult )
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ult' repos!" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(searchResult)} 'en_ult' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )
@@ -589,15 +589,15 @@ def fullDemo() -> None:
             logging.critical( f"Empty search result: {searchResult}" )
 
     if 1: # Test the DCSBible class with the UST
-        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', debuggingThisModule, "\n\nC/ UST test")
+        if BibleOrgSysGlobals.verbosityLevel > 0:  vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nC/ UST test")
         downloadAllBooks = False
         searchResult = dcsBibles.searchReposExact( 'unfoldingWord', 'en_ust' )
         if searchResult:
-            #dPrint( 'Quiet', debuggingThisModule, 'searchResult', type(searchResult), len(searchResult), searchResult )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'searchResult', type(searchResult), len(searchResult), searchResult )
             if isinstance(searchResult, dict):
                 processSearchResult( searchResult, downloadAllBooks )
             elif isinstance(searchResult, list):
-                vPrint( 'Quiet', debuggingThisModule, f"Found {len(searchResult)} 'en_ust' repos!" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found {len(searchResult)} 'en_ust' repos!" )
                 searchResults = searchResult
                 for searchResult in searchResults:
                     processSearchResult( searchResult, downloadAllBooks )

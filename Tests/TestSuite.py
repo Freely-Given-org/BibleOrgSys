@@ -30,7 +30,7 @@ Suite testing BibleOrgSys.
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "Bible Organisational System test suite"
 PROGRAM_VERSION = '0.13'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
@@ -58,7 +58,7 @@ import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
 BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-vPrint( 'Normal', debuggingThisModule, programNameVersion )
+vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
 
 # Create the test suite

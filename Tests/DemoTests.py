@@ -56,17 +56,17 @@ from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in Tes
 
 # Some Misc and Apps modules imported below are up a level
 sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
-#dPrint( 'Info', debuggingThisModule, sys.path )
+#dPrint( 'Info', DEBUGGING_THIS_MODULE, sys.path )
 
 LAST_MODIFIED_DATE = '2022-06-07' # by RJH
 SHORT_PROGRAM_NAME = "DemoTests"
 PROGRAM_NAME = "BOS+ Demo tests"
 PROGRAM_VERSION = '0.69'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
 
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 ##################################################################################################
@@ -138,7 +138,7 @@ def formatAndPublish( timeList ):
     """
     result = "TimeList: "
     for name,seconds in sorted( timeList, key=lambda s: -s[1] ):
-        #dPrint( 'Info', debuggingThisModule, name, seconds )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, name, seconds )
         if seconds > 0: result += f" {name}={seconds}"
     publishResultLine( result, printFlag=BibleOrgSysGlobals.commandLineArguments.times or BibleOrgSysGlobals.verbosityLevel > 2 )
 # end of formatAndPublish
@@ -157,14 +157,14 @@ def formatFailureDetails( exceptionObject:Exception ) -> Tuple[str,Exception,str
     #linecache.checkcache( filename )
     #line = linecache.getline( filename, lineNum, frame.f_globals )
 
-    #dPrint( 'Info', debuggingThisModule, exc_type, exc_obj, traceback_obj )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, exc_type, exc_obj, traceback_obj )
     #tbs = traceback.extract_tb( traceback_obj )
     #for j,tbj in enumerate( tbs ):
-        #dPrint( 'Info', debuggingThisModule, "tb{} {}".format( j, tbj ) )
-    #dPrint( 'Info', debuggingThisModule, "tbs", tbs[1:] )
-    #dPrint( 'Info', debuggingThisModule, "tb1", tbs[1] )
-    #dPrint( 'Info', debuggingThisModule, "format", traceback.format_exc() )
-    #dPrint( 'Info', debuggingThisModule, "stack", traceback.extract_stack( tbs[1] ) )
+        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tb{} {}".format( j, tbj ) )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tbs", tbs[1:] )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, "tb1", tbs[1] )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, "format", traceback.format_exc() )
+    #dPrint( 'Info', DEBUGGING_THIS_MODULE, "stack", traceback.extract_stack( tbs[1] ) )
 
     return exc_type, exceptionObject, traceback.format_exc()
 # end of formatFailureDetails
@@ -185,7 +185,7 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
         Run either fullDemo() or briefDemo() for the given module as required.
         """
         global interrupted
-        vPrint( 'Quiet', debuggingThisModule, f"\n\nTesting: {moduleName}…" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nTesting: {moduleName}…" )
         goTime = datetime.now()
         if testDemos:
             try:
@@ -1126,7 +1126,7 @@ def doAll( testType:str, failures:List[str], failureDetails:List[str],
     for swIndex,thisSwordType in enumerate( swordTypes ): # We'll do all these tests twice if possible
         if swIndex == 1: # Now do them all again for the other type
             newSwordType = thisSwordType if originalSwordType==swordTypes[0] else swordTypes[0]
-            vPrint( 'Quiet', debuggingThisModule, f"\n\nNow switching from '{originalSwordType}' to '{newSwordType}' …" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n\nNow switching from '{originalSwordType}' to '{newSwordType}' …" )
             SwordResources.setSwordType( newSwordType )
         try:
             doTest( f'SwordResources {SwordResources.SwordType}', SwordResources )
@@ -1756,9 +1756,9 @@ def main():
 
     Note that the debug flag, etc. can also be set externally, but that's their problem.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    with open( resultFilepath, 'wt', encoding='utf-8' ) as myFile: myFile.write( programNameVersion + '\n' )
+    with open( resultFilepath, 'wt', encoding='utf-8' ) as myFile: myFile.write( PROGRAM_NAME_VERSION + '\n' )
 
     if 1 or 'win' in sys.platform or BibleOrgSysGlobals.debugFlag:
         publishResultLine( f"  Platform is {sys.platform}" ) # e.g., 'linux, or 'win32' for my Windows-10 (64-bit)

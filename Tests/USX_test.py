@@ -61,10 +61,10 @@ LAST_MODIFIED_DATE = '2022-08-01' # by RJH
 SHORT_PROGRAM_NAME = "USX_test"
 PROGRAM_NAME = "Test USX exports vs Paratext"
 PROGRAM_VERSION = '0.50'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
-programNameVersionDate = f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 SCHEMA_FILEPATH = os.path.abspath( os.path.join( os.path.dirname(__file__), '../ExternalSchemas/DerivedFiles/usx_3.0.7.rng' ) )
@@ -80,7 +80,7 @@ def validateXML( usx_filepath: Path | str ) -> Tuple:
         a result code (0=success)
         and two strings containing the program output and error output.
     """
-    vPrint( 'Info', debuggingThisModule, f"Running validateXML() on USX file {usx_filepath}…" )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Running validateXML() on USX file {usx_filepath}…" )
 
     # Not sure if this will work on most Linux systems -- certainly won't work on other operating systems
     schemaFilepath = str(SCHEMA_FILEPATH) # In case it's a Path object
@@ -100,11 +100,11 @@ def validateXML( usx_filepath: Path | str ) -> Tuple:
             checkProgramErrorOutputString = '{}:\n{}'.format( usx_filepath, tempString )
     xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
     if returnCode != 0:
-        vPrint( 'Info', debuggingThisModule, f"  WARNING: xmllint gave an error on the created {usx_filepath} file: {returnCode} = {xmllintError[returnCode]}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  WARNING: xmllint gave an error on the created {usx_filepath} file: {returnCode} = {xmllintError[returnCode]}" )
         if returnCode == 5: # schema error
             logging.critical( "MLWriter.validateXML couldn't read/parse the schema at {}".format( schemaFilepath ) )
-            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): schema_fault
-    else: vPrint( 'Verbose', debuggingThisModule, f"  xmllint validated the xml file {usx_filepath}." )
+            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): schema_fault
+    else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  xmllint validated the xml file {usx_filepath}." )
     return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
 # end of USX_test.validateXML
 
@@ -114,7 +114,7 @@ def briefDemo() -> None:
     Create freely-licenced resources which can be distributed with the BOS
         but don't save them in the normal output folder.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
 
 # end of USX_test.briefDemo
@@ -124,7 +124,7 @@ def fullDemo() -> None:
     Create freely-licenced resources which can be distributed with the BOS
         but don't save them in the normal output folder.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
 # end of USX_test.fullDemo
 
@@ -133,7 +133,7 @@ def main() -> None:
     """
     Create freely-licenced resources which can be distributed with the BOS.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     for j,(abbrev, USFMInputFolderpath, theirUSXInputFolderpath) in enumerate( (
                 ('ASV', Path( '/home/robert/Paratext8Projects/ASV/' ),
@@ -147,16 +147,16 @@ def main() -> None:
                          Path( '/srv/Documents/Paratext9_stuff/PT9_USX_Exports/engWEB14/' ) ),
                 ) ):
         if os.access( USFMInputFolderpath, os.R_OK ):
-            vPrint( 'Quiet', debuggingThisModule, f"\nUSFM {j+1}/ {abbrev}" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUSFM {j+1}/ {abbrev}" )
             thisUsfmBible = USFMBible( USFMInputFolderpath, abbrev, encoding='utf-8' )
             thisUsfmBible.abbreviation = abbrev
             if abbrev in ('ULT','UST'): thisUsfmBible.uWencoded = True
             thisUsfmBible.load()
-            vPrint( 'Normal', debuggingThisModule, "Gen assumed book name:", repr( thisUsfmBible.getAssumedBookName( 'GEN' ) ) )
-            vPrint( 'Normal', debuggingThisModule, "Gen long TOC book name:", repr( thisUsfmBible.getLongTOCName( 'GEN' ) ) )
-            vPrint( 'Normal', debuggingThisModule, "Gen short TOC book name:", repr( thisUsfmBible.getShortTOCName( 'GEN' ) ) )
-            vPrint( 'Normal', debuggingThisModule, "Gen book abbreviation:", repr( thisUsfmBible.getBooknameAbbreviation( 'GEN' ) ) )
-            vPrint( 'Quiet', debuggingThisModule, thisUsfmBible )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Gen assumed book name:", repr( thisUsfmBible.getAssumedBookName( 'GEN' ) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Gen long TOC book name:", repr( thisUsfmBible.getLongTOCName( 'GEN' ) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Gen short TOC book name:", repr( thisUsfmBible.getShortTOCName( 'GEN' ) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Gen book abbreviation:", repr( thisUsfmBible.getBooknameAbbreviation( 'GEN' ) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisUsfmBible )
 
             # print( f"\n{type(thisUsfmBible)} {dir(thisUsfmBible)=}" )
             # print( f"\n{type(thisUsfmBible.books['RUT'])=} {dir(thisUsfmBible.books['RUT'])=}" )
@@ -195,15 +195,15 @@ def main() -> None:
 
             if BibleOrgSysGlobals.strictCheckingFlag:
                 thisUsfmBible.check()
-                #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                 UsfmBErrors = thisUsfmBible.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, UBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBErrors )
             thisUsfmBible.toPseudoUSFM()
             thisUsfmBible.toESFM()
             thisUsfmBible.toUSXXML()
 
             # Now validate and compare them
-            vPrint( 'Quiet', debuggingThisModule, f"Now validating and comparing the reference and our exported {abbrev} USX (XML) files…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Now validating and comparing the reference and our exported {abbrev} USX (XML) files…" )
             for BBB in thisUsfmBible.books:
                 Uuu = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
                 UUU = Uuu.upper()
@@ -216,34 +216,34 @@ def main() -> None:
                 ParatextFilepath = theirUSXInputFolderpath.joinpath( usx_filename )
                 returnCode1, checkProgramOutputString1, checkProgramErrorOutputString1 = validateXML( ParatextFilepath )
                 if returnCode1 == 0:
-                    dPrint( 'Verbose', debuggingThisModule, f"validateXML for PT file returned 'success' {checkProgramOutputString1} {checkProgramErrorOutputString1}" )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validateXML for PT file returned 'success' {checkProgramOutputString1} {checkProgramErrorOutputString1}" )
                 else:
-                    dPrint( 'Quiet', debuggingThisModule, f"validateXML for PT file returned bad {returnCode1} {checkProgramOutputString1=} {checkProgramErrorOutputString1=}" )
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"validateXML for PT file returned bad {returnCode1} {checkProgramOutputString1=} {checkProgramErrorOutputString1=}" )
 
                 # Now, validate our export (to make sure that we're not chasing rabbits)
                 exportFilepath = BOS_USX3_EXPORT_FOLDERPATH.joinpath( usx_filename )
                 returnCode2, checkProgramOutputString2, checkProgramErrorOutputString2 = validateXML( exportFilepath )
                 if returnCode2 == 0:
-                    dPrint( 'Verbose', debuggingThisModule, f"validateXML for our file returned 'success' {checkProgramOutputString2} {checkProgramErrorOutputString2}" )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validateXML for our file returned 'success' {checkProgramOutputString2} {checkProgramErrorOutputString2}" )
                 else:
                     logging.critical( f"validateXML for our USX export file returned bad {returnCode2} {checkProgramOutputString2=} {checkProgramErrorOutputString2=}" )
 
                 if 1 or returnCode1==0 and returnCode2==0: # Now try a line-by-line compare
-                    vPrint( 'Info', debuggingThisModule, f"Comparing {BBB} USX files…" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Comparing {BBB} USX files…" )
                     result = BibleOrgSysGlobals.fileCompareXML( usx_filename, usx_filename, BOS_USX3_EXPORT_FOLDERPATH, theirUSXInputFolderpath )
                     if result:
-                        vPrint( 'Verbose', debuggingThisModule, f"  CompareA result for {BBB} was good {result}" )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  CompareA result for {BBB} was good {result}" )
                     else:
-                        vPrint( 'Quiet', debuggingThisModule, f"  CompareA result for {BBB} was bad {result}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  CompareA result for {BBB} was bad {result}" )
                 if result is False:
-                    vPrint( 'Quiet', debuggingThisModule, f"Comparing {BBB} (USX) files…" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Comparing {BBB} (USX) files…" )
                     result = BibleOrgSysGlobals.fileCompare( usx_filename, usx_filename, BOS_USX3_EXPORT_FOLDERPATH, theirUSXInputFolderpath, exitCount=1 )
                     if result:
-                        vPrint( 'Verbose', debuggingThisModule, f"  CompareB result for {BBB} was good {result}" )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  CompareB result for {BBB} was good {result}" )
                     else:
-                        vPrint( 'Quiet', debuggingThisModule, f"  CompareB result for {BBB} was bad {result}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  CompareB result for {BBB} was bad {result}" )
         else:
-            vPrint( 'Quiet', debuggingThisModule, f"\nSorry, USFM input folder '{USFMInputFolderpath}' is not readable on this computer." )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, USFM input folder '{USFMInputFolderpath}' is not readable on this computer." )
 
 
 # end of USX_test.main

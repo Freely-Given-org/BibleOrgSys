@@ -85,9 +85,9 @@ LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.82'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 
@@ -137,9 +137,9 @@ BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKER
 
 #BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
-#dPrint( 'Quiet', debuggingThisModule, len(BOS_END_MARKERS), BOS_END_MARKERS )
+#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS )
 BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
-#dPrint( 'Quiet', debuggingThisModule, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
+#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
 
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
@@ -167,8 +167,8 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
 
     TODO: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
-    fnPrint( debuggingThisModule, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )…" )
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+    fnPrint( DEBUGGING_THIS_MODULE, f"parseWordAttributes( {workName}, {BBB} {C}:{V}, {wordAttributeString!r}, {errorList} )…" )
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
         assert isinstance( wordAttributeString, str )
@@ -198,10 +198,10 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
     word, attributeString = wordAttributeString.split( '|', 1 )
     resultDict = { 'word':word }
     if '=' not in attributeString: # Assume it's a single (unnamed) lemma
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
             assert '"' not in attributeString and "'" not in attributeString
         resultDict['lemma'] = attributeString
-        #dPrint( 'Quiet', debuggingThisModule, "Returning1: {}".format( resultDict ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Returning1: {}".format( resultDict ) )
         return resultDict
 
     # Else most likely have named attributes
@@ -209,7 +209,7 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
     state = 0
     name = value = quote = ''
     for j, char in enumerate( attributeString ):
-        #dPrint( 'Quiet', debuggingThisModule, f"{j} char={char!r} state={state} name='{name}' value={value!r} quote={quote!r}" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j} char={char!r} state={state} name='{name}' value={value!r} quote={quote!r}" )
         if state == 0: # Ready to get attribute name
             if not char.isspace():
                 if name:
@@ -222,7 +222,7 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
             if char.isalpha() or char in '-':
                 name += char
             elif char == '=':
-                #dPrint( 'Quiet', debuggingThisModule, "name", name )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "name", name )
                 if name not in ('lemma','strong') \
                 and not name.startswith( 'x-' ):
                     logging.error( f"{BBB} {C}:{V} unexpected '{name}' attribute for '{word}'" )
@@ -253,10 +253,10 @@ def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, e
         assert value
         resultDict[name] = value
         state = 0
-    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
         assert state == 0
 
-    #dPrint( 'Quiet', debuggingThisModule, f"parseWordAttributes() returning: {resultDict}" )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"parseWordAttributes() returning: {resultDict}" )
     return resultDict
 # end of parseWordAttributes
 
@@ -284,8 +284,8 @@ def parseFigureAttributes( workName, BBB:str, C:str, V:str, figureAttributeStrin
 
     NOTE: No error messages added yet ………………. XXXXXXXXXXXXXXXXXXXXXXX
     """
-    fnPrint( debuggingThisModule, "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
-    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or debuggingThisModule:
+    fnPrint( DEBUGGING_THIS_MODULE, "parseFigureAttributes( {}, {} {}:{}, {!r}, {} )".format( workName, BBB, C, V, figureAttributeString, errorList ) )
+    if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
         assert isinstance( workName, str )
         assert isinstance( BBB, str )
         assert isinstance( figureAttributeString, str )
@@ -301,7 +301,7 @@ def parseFigureAttributes( workName, BBB:str, C:str, V:str, figureAttributeStrin
         state = 0
         name = value = quote = ''
         for j, char in enumerate( attributeString ):
-            #dPrint( 'Quiet', debuggingThisModule, "{} char={!r} state={} name={!r} value={!r} quote={!r}".format( j, char, state, name, value, quote ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} char={!r} state={} name={!r} value={!r} quote={!r}".format( j, char, state, name, value, quote ) )
             if state == 0: # Ready to get attribute name
                 if not char.isspace():
                     if name:
@@ -348,7 +348,7 @@ def parseFigureAttributes( workName, BBB:str, C:str, V:str, figureAttributeStrin
         for j, bit in enumerate( bits ):
             resultDict[figureAttributeNames2[j]] = bit
 
-    #dPrint( 'Quiet', debuggingThisModule, "Returning: {}".format( resultDict ) )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Returning: {}".format( resultDict ) )
     return resultDict
 # end of parseFigureAttributes
 
@@ -373,8 +373,8 @@ class InternalBibleExtra:
 
         location parameter is just for better error messages and is not currently stored.
         """
-        fnPrint( debuggingThisModule, "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, indexToAdjText, noteText, cleanNoteText, location ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleExtra.__init__( {}, {}, {!r}, {!r}, {} )".format( myType, indexToAdjText, noteText, cleanNoteText, location ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES # Mustn't be blank
             assert '\\' not in myType and ' ' not in myType and '*' not in myType
             assert isinstance( indexToAdjText, int ) and indexToAdjText >= 0
@@ -384,7 +384,7 @@ class InternalBibleExtra:
                 assert '\\'+letters+' ' not in noteText
                 assert '\\'+letters+'*' not in noteText
             assert isinstance( cleanNoteText, str )
-            if debuggingThisModule: assert cleanNoteText # Mustn't be blank
+            if DEBUGGING_THIS_MODULE: assert cleanNoteText # Mustn't be blank
             assert '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText
         self.myType, self.index, self.noteText, self.cleanNoteText = myType, indexToAdjText, noteText, cleanNoteText
     # end of InternalBibleExtra.__init__
@@ -476,9 +476,9 @@ class InternalBibleExtraList:
 
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
-            #dPrint( 'Quiet', debuggingThisModule, "ki2", keyIndex )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ki2", keyIndex )
             #assert keyIndex.step is None
-            #dPrint( 'Quiet', debuggingThisModule, "param", *keyIndex.indices(len(self)) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "param", *keyIndex.indices(len(self)) )
             return InternalBibleExtraList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
         return self.data[keyIndex]
@@ -541,7 +541,7 @@ class InternalBibleExtraList:
         resultList = []
         for extra in self.data:
             if extra.getIndex() == stringIndex: resultList.append( extra )
-        #dPrint( 'Quiet', debuggingThisModule, "checkForIndex( {} ) resultList = {}".format( stringIndex, resultList ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "checkForIndex( {} ) resultList = {}".format( stringIndex, resultList ) )
         if resultList:
             if len(resultList) == 1: return resultList[0]
             return resultList
@@ -573,16 +573,16 @@ class InternalBibleEntry:
         if cleanText is not None and '\\' in cleanText:
             logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
         #if 'it*' in originalText and 'it*' not in adjustedText:
-            #dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
             #halt
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            #dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.__init__( {}, {}, {!r}, {!r}, {}, {!r} )" \
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleEntry.__init__( {}, {}, {!r}, {!r}, {}, {!r} )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('…' if len(adjustedText)>35 else ''), \
                         #cleanText[:35]+('…' if len(cleanText)>35 else ''), extras, \
                         #originalText[:35]+('…' if len(originalText)>35 else '') ) )
             assert marker and isinstance( marker, str ) # Mustn't be blank
             assert '\\' not in marker and ' ' not in marker and '*' not in marker
-            #dPrint( 'Quiet', debuggingThisModule, marker, "cleanText", repr(cleanText) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, "cleanText", repr(cleanText) )
             assert isinstance( cleanText, str )
             assert '\n' not in cleanText and '\r' not in cleanText
 
@@ -605,23 +605,23 @@ class InternalBibleEntry:
                     logging.warning( "InternalBibleEntry doesn't handle {!r} marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule \
+        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE \
         and self.originalText is not None and self.getFullText() != self.originalText.strip():
-            dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
-            dPrint( 'Quiet', debuggingThisModule, "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
             #halt # When does this happen?
     # end of InternalBibleEntry.__init__
 
 
     def __eq__( self, other ): # If we don't have this defined, a==b does a is b.
-        #dPrint( 'Quiet', debuggingThisModule, repr(self) )
-        #dPrint( 'Quiet', debuggingThisModule, repr(other) )
-        #dPrint( 'Quiet', debuggingThisModule, isinstance( other, self.__class__ ) )
-        #dPrint( 'Quiet', debuggingThisModule, self.__dict__ == other.__dict__ )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(self) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(other) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, isinstance( other, self.__class__ ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.__dict__ == other.__dict__ )
         #for someKey, someItem in sorted( self.__dict__.items() ):
-            #dPrint( 'Quiet', debuggingThisModule, 'self', someKey, repr(someItem) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'self', someKey, repr(someItem) )
         #for someKey, someItem in sorted( other.__dict__.items() ):
-            #dPrint( 'Quiet', debuggingThisModule, 'other', someKey, repr(someItem) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'other', someKey, repr(someItem) )
         #halt
         return isinstance( other, self.__class__ ) and self.__dict__ == other.__dict__
     def __ne__( self, other ):
@@ -691,13 +691,13 @@ class InternalBibleEntry:
         return self.originalText
         # else: # re-create it
         #     result = self.adjustedText # Can be None for our inserted end markers, e.g., ¬v
-        #     dPrint( 'Quiet', debuggingThisModule, "getFullText() got adjustedText: {!r}".format( self.adjustedText ) )
-        #     dPrint( 'Quiet', debuggingThisModule, "  (Clean text is {!r})".format( self.cleanText ) )
+        #     dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getFullText() got adjustedText: {!r}".format( self.adjustedText ) )
+        #     dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  (Clean text is {!r})".format( self.cleanText ) )
         #     offset = 0
         #     if self.extras:
         #         for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-        #             dPrint( 'Quiet', debuggingThisModule, "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-        #             dPrint( 'Quiet', debuggingThisModule, "getFullText:  was {!r}".format( result ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getFullText:  was {!r}".format( result ) )
         #             ix = extraIndex + offset
         #             if extraType == 'fn': USFM, lenUSFM = 'f', 1
         #             elif extraType == 'en': USFM, lenUSFM = 'fe', 2
@@ -710,7 +710,7 @@ class InternalBibleEntry:
         #             elif BibleOrgSysGlobals.debugFlag: halt # Unknown extra field type!!!
         #             if USFM:
         #                 result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-        #             dPrint( 'Quiet', debuggingThisModule, "getFullText:  now {!r}".format( result ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getFullText:  now {!r}".format( result ) )
         #             offset += len(extraText ) + 2*lenUSFM + 4
         #         # The following code is WRONG coz the word ends up getting reduplicated (coz it's also repeated inside the \ww field)
         #         #result = result.replace( '\\w*\\ww ', '' ).replace( '\\ww*', '\\w*' ) # Put attributes back inside \w field
@@ -719,15 +719,15 @@ class InternalBibleEntry:
 
         #     if result != self.adjustedText:
         #         if len(self.extras) > 1:
-        #             dPrint( 'Quiet', debuggingThisModule, "\nWas {!r}".format( self.cleanText ) )
-        #             dPrint( 'Quiet', debuggingThisModule, "And {!r}".format( self.adjustedText ) )
-        #             dPrint( 'Quiet', debuggingThisModule, "Orig{!r}".format( self.originalText ) )
-        #             dPrint( 'Quiet', debuggingThisModule, "Now {!r}".format( result ) )
-        #             dPrint( 'Quiet', debuggingThisModule, "Extras are {}".format( self.extras ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nWas {!r}".format( self.cleanText ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "And {!r}".format( self.adjustedText ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Orig{!r}".format( self.originalText ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now {!r}".format( result ) )
+        #             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Extras are {}".format( self.extras ) )
         #     if result is not None and result != self.originalText.strip():
-        #         dPrint( 'Quiet', debuggingThisModule, "\nWe're giving {!r}".format( result ) )
-        #         dPrint( 'Quiet', debuggingThisModule, "   Should be {!r}".format( self.originalText.strip() ) )
-        #         dPrint( 'Quiet', debuggingThisModule, "        From {!r}".format( self.originalText ) )
+        #         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nWe're giving {!r}".format( result ) )
+        #         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   Should be {!r}".format( self.originalText.strip() ) )
+        #         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "        From {!r}".format( self.originalText ) )
         #     if BibleOrgSysGlobals.debugFlag and self.originalText is not None: assert result == self.originalText.strip()
         #     return result
     # end of InternalBibleEntry.getFullText
@@ -738,7 +738,7 @@ class InternalBibleEntry:
         Allows the entry to be changed
             if it has no extras
         """
-        fnPrint( debuggingThisModule, f"InternalBibleEntry.setCleanText( {newValue} ) for {self.marker}" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleEntry.setCleanText( {newValue} ) for {self.marker}" )
         assert not self.extras
         self.cleanText = self.adjustedText = self.originalText = newValue
     # end of InternalBibleEntry.setCleanText
@@ -784,7 +784,7 @@ class InternalBibleEntryList:
 
         Only prints the first maxPrinted lines.
         """
-        maxPrinted = 50 if debuggingThisModule else 20
+        maxPrinted = 50 if DEBUGGING_THIS_MODULE else 20
         result = "InternalBibleEntryList object:"
         if not self.data: result += "\n  Empty."
         else:
@@ -795,7 +795,7 @@ class InternalBibleEntryList:
                                                     else (entry.cleanText[:50]+'…'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}" \
                             .format( ' ' if j<9 and dataLen>=10 else '',
-                                    j if debuggingThisModule else j+1,
+                                    j if DEBUGGING_THIS_MODULE else j+1,
                                     entry.marker,
                                     repr(cleanAbbreviation),
                                     " + extras" if entry.extras else '' )
@@ -809,9 +809,9 @@ class InternalBibleEntryList:
     def __len__( self ): return len( self.data )
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
-            #dPrint( 'Quiet', debuggingThisModule, "ki2", keyIndex )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ki2", keyIndex )
             #assert keyIndex.step is None
-            #dPrint( 'Quiet', debuggingThisModule, "param", *keyIndex.indices(len(self)) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "param", *keyIndex.indices(len(self)) )
             return InternalBibleEntryList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
         return self.data[keyIndex]
@@ -822,7 +822,7 @@ class InternalBibleEntryList:
         """
         Append the newBibleEntry to the InternalBibleEntryList.
         """
-        fnPrint( debuggingThisModule, f"InternalBibleEntryList.append( {newBibleEntry} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleEntryList.append( {newBibleEntry} )" )
         assert isinstance( newBibleEntry, InternalBibleEntry )
         self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append
@@ -868,19 +868,19 @@ def briefDemo() -> None:
     Demonstrate reading and processing some Bible databases.
     """
     # from pathlib import Path
-    global debuggingThisModule
+    global DEBUGGING_THIS_MODULE
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', debuggingThisModule, "Since these are only helper classes, they can't actually do much at all." )
-    vPrint( 'Quiet', debuggingThisModule, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since these are only helper classes, they can't actually do much at all." )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
 
     #IBB = InternalBibleInternals( 'GEN' )
     ## The following fields would normally be filled in a by "load" routine in the derived class
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #dPrint( 'Quiet', debuggingThisModule, IBB )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
 
     # if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
     #     import os
@@ -891,14 +891,14 @@ def briefDemo() -> None:
     #             ) # You can put your USFM test folder here
 
     #     for j, (name, abbrev, testFolder) in enumerate( testData ):
-    #         vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+    #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
     #         if os.access( testFolder, os.R_OK ):
     #             UB = USFMBible( testFolder, name, abbrev )
     #             UB.load()
     #             UB.discover() # Why does this only help if -1 flag is enabled???
-    #             vPrint( 'Quiet', debuggingThisModule, ' ', UB )
+    #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
     #             if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-    #             #debuggingThisModule = False
+    #             #DEBUGGING_THIS_MODULE = False
     #             for BBB,bookObject in UB.books.items():
     #                 bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
     #                 bookObject._SectionIndex.makeBookSectionIndex()
@@ -911,12 +911,12 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    global debuggingThisModule
+    global DEBUGGING_THIS_MODULE
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', debuggingThisModule, "Since these are only helper classes, they can't actually do much at all." )
-    vPrint( 'Quiet', debuggingThisModule, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Since these are only helper classes, they can't actually do much at all." )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
 
     resultDict = parseWordAttributes('testWork', 'GEN','1','2', 'word|x=pos="noun"')
     print( f"resultDict = {resultDict}" )
@@ -927,7 +927,7 @@ def fullDemo() -> None:
     #IBB.objectNameString = 'Dummy test Internal Bible Book object'
     #IBB.objectTypeString = 'DUMMY'
     #IBB.sourceFilepath = 'Nowhere'
-    #dPrint( 'Quiet', debuggingThisModule, IBB )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, IBB )
 
     # if 0: # Test reading and writing a USFM Bible (with MOST exports -- unless debugging)
     #     import os
@@ -938,14 +938,14 @@ def fullDemo() -> None:
     #             ) # You can put your USFM test folder here
 
     #     for j, (name, abbrev, testFolder) in enumerate( testData ):
-    #         vPrint( 'Quiet', debuggingThisModule, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
+    #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nInternalBibleInternals B{j+1}/ {abbrev} from {testFolder}…" )
     #         if os.access( testFolder, os.R_OK ):
     #             UB = USFMBible( testFolder, name, abbrev )
     #             UB.load()
     #             UB.discover() # Why does this only help if -1 flag is enabled???
-    #             vPrint( 'Quiet', debuggingThisModule, ' ', UB )
+    #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' ', UB )
     #             if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-    #             #debuggingThisModule = False
+    #             #DEBUGGING_THIS_MODULE = False
     #             for BBB,bookObject in UB.books.items():
     #                 bookObject._SectionIndex = InternalBibleBookSectionIndex( bookObject )
     #                 bookObject._SectionIndex.makeBookSectionIndex()

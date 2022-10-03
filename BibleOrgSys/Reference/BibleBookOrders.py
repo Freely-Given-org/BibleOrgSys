@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2020-04-16' # by RJH
 SHORT_PROGRAM_NAME = "BibleBookOrders"
 PROGRAM_NAME = "Bible Book Order Systems handler"
 PROGRAM_VERSION = '0.91'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -63,7 +63,7 @@ class BibleBookOrderSystems:
         """
         Constructor:
         """
-        fnPrint( debuggingThisModule, "BibleBookOrderSystems:__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of BibleBookOrderSystems.__init__
 
@@ -85,19 +85,19 @@ class BibleBookOrderSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                         self.__DataLists = pickle.load( pickleFile )
                     return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "BibleBookOrders pickle file can't be loaded!" )
+                elif DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBookOrders pickle file can't be loaded!" )
                 standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleBookOrders_Tables.json' )
                 if os.access( standardJsonFilepath, os.R_OK ) \
                 and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
                 and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                     import json
-                    vPrint( 'Info', debuggingThisModule, f"NOT TESTED -- CODE MAY NEED ADJUSTING -- Loading json file {standardJsonFilepath}…" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"NOT TESTED -- CODE MAY NEED ADJUSTING -- Loading json file {standardJsonFilepath}…" )
                     with open( standardJsonFilepath, 'rb') as JsonFile:
                         self.__DataDicts = json.load( JsonFile )
                         self.__DataLists = json.load( JsonFile )
@@ -105,8 +105,8 @@ class BibleBookOrderSystems:
                     # self.__DataDicts['referenceNumberDict'] = { int(key):value \
                     #             for key,value in self.__DataDicts['referenceNumberDict'].items() }
                     return self # So this command can be chained after the object creation
-                elif debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "BibleBookOrders JSON file can't be loaded!" )
+                elif DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBookOrders JSON file can't be loaded!" )
             # else: # We have to load the XML (much slower)
             from BibleOrgSys.Reference.Converters.BibleBookOrdersConverter import BibleBookOrdersConverter
             if XMLFolder is not None:
@@ -115,8 +115,8 @@ class BibleBookOrderSystems:
             bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
             self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
             assert len(self.__DataDicts) == len(self.__DataLists)
-            if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:
-                vPrint( 'Quiet', debuggingThisModule, "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
+            if (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE) or BibleOrgSysGlobals.verbosityLevel > 3:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self # So this command can be chained after the object creation
     # end of BibleBookOrderSystems.loadData
 
@@ -190,7 +190,7 @@ class BibleBookOrderSystems:
         assert thisSystemName
         assert bookOrderSchemeToCheck
         assert self.__DataLists
-        #dPrint( 'Quiet', debuggingThisModule, thisSystemName, bookOrderSchemeToCheck )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
             if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
                 logging.error( f"Invalid '{BBB}' book code" )
@@ -199,7 +199,7 @@ class BibleBookOrderSystems:
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
         for bookOrderSystemCode in self.__DataLists: # Step through the various reference schemes
             if self.__DataLists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #dPrint( 'Quiet', debuggingThisModule, "  {} exactly matches {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} exactly matches {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                 exactMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             else: # it's not an exact match
@@ -221,7 +221,7 @@ class BibleBookOrderSystems:
                         isSubset=False
                         break
                     index = self.__DataLists[bookOrderSystemCode].index( BBB )
-                    #dPrint( 'Quiet', debuggingThisModule, BBB, index, lastIndex )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, index, lastIndex )
                     if index < lastIndex: # they must be in a different order
                         thisError = "    " + _("Can't match '{0}' system ({0} has {1} in a different place)").format( bookOrderSystemCode, BBB )
                         allErrors += ("\n" if allErrors else "") + thisError
@@ -229,25 +229,25 @@ class BibleBookOrderSystems:
                         break
                     lastIndex = index
                 if isSubset:
-                    #dPrint( 'Quiet', debuggingThisModule, "  {} is a subset of {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} is a subset of {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                     subsetMatchCount += 1
                     matchedBookOrderSystemCodes.append( bookOrderSystemCode )
 
         systemMatchCount = exactMatchCount + subsetMatchCount # seems like we could improve this whole section of code
         systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
-            vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-            dPrint( 'Quiet', debuggingThisModule, errorSummary )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
         elif systemMatchCount == 0: # No matches
-            vPrint( 'Quiet', debuggingThisModule, "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            vPrint( 'Quiet', debuggingThisModule, allErrors if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, allErrors if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
         else: # Multiple matches
-            vPrint( 'Quiet', debuggingThisModule, "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-        dPrint( 'Quiet', debuggingThisModule, errorSummary )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, errorSummary )
 
         if BibleOrgSysGlobals.commandLineArguments.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/', "BibleBookOrder_"+thisSystemName + '.xml' )
-            vPrint( 'Quiet', debuggingThisModule, _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Writing {} {} books to {}…").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
             with open( outputFilepath, 'wt', encoding='utf-8' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -272,12 +272,12 @@ class BibleBookOrderSystem:
         """
         Constructor:
         """
-        fnPrint( debuggingThisModule, "BibleBookOrderSystem:__init__({})".format( systemName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         results = self.__bbos.getBookOrderSystem( self.__systemName )
         if results is None:
-            vPrint( 'Quiet', debuggingThisModule, "BibleBookOrderSystem:__init__({}) failed!".format( systemName ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleBookOrderSystem:__init__({}) failed!".format( systemName ) )
             self.__BookOrderBookDict = self.__BookOrderNumberDict = self.__BookOrderList = None
         else: self.__BookOrderBookDict, self.__BookOrderNumberDict, self.__BookOrderList = results
     # end of BibleBookOrderSystem.__init__
@@ -381,37 +381,37 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BibleBookOrders object
     bboss = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bboss ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, _("Number of loaded systems: {}").format( len(bboss) ) )
-    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format( bboss.getAvailableBookOrderSystemNames() ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bboss ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Number of loaded systems: {}").format( len(bboss) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( bboss.getAvailableBookOrderSystemNames() ) )
     systemName = "VulgateBible"
-    vPrint( 'Quiet', debuggingThisModule, "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
     systemName = "Septuagint"; BBB="ROM"
-    vPrint( 'Quiet', debuggingThisModule, "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
     for systemName in ("ModernJewish", "EuropeanBible", ):
-        vPrint( 'Quiet', debuggingThisModule, "Booklist for {} is {}".format( systemName, bboss.getBookOrderList(systemName) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Booklist for {} is {}".format( systemName, bboss.getBookOrderList(systemName) ) )
     bboss.checkBookOrderSystem( "myTest1", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT'] )
     bboss.checkBookOrderSystem( "myTest2", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] )
 
     # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
     bbos = BibleBookOrderSystem( "EuropeanBible" )
     if bbos is not None:
-        vPrint( 'Quiet', debuggingThisModule, bbos ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
-        vPrint( 'Quiet', debuggingThisModule, "The 3rd book is {}".format( bbos.getBookAtOrderPosition(3) ) )
-        vPrint( 'Quiet', debuggingThisModule, "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Contains Judith: {}".format( bbos.containsBook("JDT") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Luke is book #{}".format( bbos.getBookOrderPosition("LUK") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Book order list is: {}".format( bbos.getBookOrderList() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbos ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "The 3rd book is {}".format( bbos.getBookAtOrderPosition(3) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains Judith: {}".format( bbos.containsBook("JDT") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Luke is book #{}".format( bbos.getBookOrderPosition("LUK") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Book order list is: {}".format( bbos.getBookOrderList() ) )
         BBB = "TI1"
         while True: # Step through the next books until the end of the publication
             BBB2 = bbos.getNextBookCode( BBB )
             if BBB2 is None: break
-            vPrint( 'Quiet', debuggingThisModule, " Next book after {} is {}".format(BBB,BBB2) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Next book after {} is {}".format(BBB,BBB2) )
             BBB = BBB2
             break
 # end of BibleBookOrders.briefDemo
@@ -420,37 +420,37 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the BibleBookOrders object
     bboss = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, bboss ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, _("Number of loaded systems: {}").format( len(bboss) ) )
-    vPrint( 'Quiet', debuggingThisModule, _("Available system names are: {}").format( bboss.getAvailableBookOrderSystemNames() ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bboss ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Number of loaded systems: {}").format( len(bboss) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( bboss.getAvailableBookOrderSystemNames() ) )
     systemName = "VulgateBible"
-    vPrint( 'Quiet', debuggingThisModule, "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
     systemName = "Septuagint"; BBB="ROM"
-    vPrint( 'Quiet', debuggingThisModule, "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
     for systemName in ("ModernJewish", "EuropeanBible", ):
-        vPrint( 'Quiet', debuggingThisModule, "Booklist for {} is {}".format( systemName, bboss.getBookOrderList(systemName) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Booklist for {} is {}".format( systemName, bboss.getBookOrderList(systemName) ) )
     bboss.checkBookOrderSystem( "myTest1", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT'] )
     bboss.checkBookOrderSystem( "myTest2", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] )
 
     # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
     bbos = BibleBookOrderSystem( "EuropeanBible" )
     if bbos is not None:
-        vPrint( 'Quiet', debuggingThisModule, bbos ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
-        vPrint( 'Quiet', debuggingThisModule, "The 3rd book is {}".format( bbos.getBookAtOrderPosition(3) ) )
-        vPrint( 'Quiet', debuggingThisModule, "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Contains Judith: {}".format( bbos.containsBook("JDT") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Luke is book #{}".format( bbos.getBookOrderPosition("LUK") ) )
-        vPrint( 'Quiet', debuggingThisModule, "Book order list is: {}".format( bbos.getBookOrderList() ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbos ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "The 3rd book is {}".format( bbos.getBookAtOrderPosition(3) ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains Judith: {}".format( bbos.containsBook("JDT") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Luke is book #{}".format( bbos.getBookOrderPosition("LUK") ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Book order list is: {}".format( bbos.getBookOrderList() ) )
         BBB = "TI1"
         while True: # Step through the next books until the end of the publication
             BBB2 = bbos.getNextBookCode( BBB )
             if BBB2 is None: break
-            vPrint( 'Quiet', debuggingThisModule, " Next book after {} is {}".format(BBB,BBB2) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Next book after {} is {}".format(BBB,BBB2) )
             BBB = BBB2
 # end of BibleBookOrders.fullDemo
 

@@ -54,9 +54,9 @@ LAST_MODIFIED_DATE = '2022-07-31' # by RJH
 SHORT_PROGRAM_NAME = "MLWriter"
 PROGRAM_NAME = "XML/HTML Writer"
 PROGRAM_VERSION = '0.40'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 allowedOutputTypes = 'XML','HTML' # Use XML for xHTML
@@ -177,12 +177,12 @@ class MLWriter:
         """ Writes the buffer to the file. """
         assert self.__outputFile is not None
         if self._buffer:
-            #dPrint( 'Quiet', debuggingThisModule, "Writing buffer of {} characters".format( len(self._buffer) ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Writing buffer of {} characters".format( len(self._buffer) ) )
             if writeAll: # Write it all
                 self._writeToFile( self._buffer )
                 self._buffer = ''
             elif len(self._buffer) > self._bufferSaveSize: # Write most of it (in case we need to retrack)
-                #dPrint( 'Quiet', debuggingThisModule, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
                 self._writeToFile( self._buffer[:-self._bufferSaveSize] )
                 self._buffer = self._buffer[-self._bufferSaveSize:]
             #else: pass # Write none
@@ -326,7 +326,7 @@ class MLWriter:
         escape_count = sum([rawTextString.count(c) for c in ESCAPE_MAP])
         if escape_count == 0:
             return MLWriter.escape_characters( rawTextString, checkFirst ), extras
-        else: dPrint( 'Quiet', debuggingThisModule, f"{escape_count=} {[rawTextString.count(c) for c in ESCAPE_MAP]} {rawTextString=}")
+        else: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{escape_count=} {[rawTextString.count(c) for c in ESCAPE_MAP]} {rawTextString=}")
 
         # Ok, we've got chars needing to be escaped and we have extras so need to work through char by char
         char_strings, adjExtras = [], InternalBibleExtraList()
@@ -350,7 +350,7 @@ class MLWriter:
         else:
             logging.error( "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings ) )
             if self.doExtraChecking: halt
-        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
@@ -373,7 +373,7 @@ class MLWriter:
         """
         Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine.
         """
-        #dPrint( 'Quiet', debuggingThisModule, "tagString: {!r}", tagString )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "tagString: {!r}", tagString )
         assert tagString # It can't be blank
         assert '<' not in tagString and '>' not in tagString and '"' not in tagString
         return tagString
@@ -387,7 +387,7 @@ class MLWriter:
         assert textString # It can't be blank
         if '<' in textString or '>' in textString or '"' in textString:
             logging.error( "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString ) )
-            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
+            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
         ix = textString.find( '&' )
         while ix != -1:
             ix2 = textString.find( ';', ix+1 )
@@ -478,7 +478,7 @@ class MLWriter:
         """
         Writes raw text onto a line.
         """
-        #dPrint( 'Quiet', debuggingThisModule, 'writeLineText', text, self._openStack )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeLineText', text, self._openStack )
         if noNL is None:
             noNL = self._outputType=='HTML' and self._openStack and self._openStack[-1] in HTMLCombinedTags
         return self._autoWrite( text if noTextCheck else self.checkText(text), noNL=noNL )
@@ -505,7 +505,7 @@ class MLWriter:
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
         """
-        #dPrint( 'Quiet', debuggingThisModule, "text: {!r}".format(text )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "text: {!r}".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
             self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
@@ -519,15 +519,15 @@ class MLWriter:
         """
         Writes a closing tag on a line.
         """
-        #dPrint( 'Quiet', debuggingThisModule, 'writeLineClose', self._openStack )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeLineClose', self._openStack )
         if not self._openStack:
             logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
-            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
+            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
                 logging.error( "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
-                if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
+                if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -566,7 +566,7 @@ class MLWriter:
         assert self.__outputFile is not None
         if self._openStack:
             logging.error( "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack) )
-            if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
+            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
         if writeFinalNL: self.writeNewLine()
         if self._buffer: self._writeBuffer()
         if self._status != 'Buffered': pass
@@ -581,7 +581,7 @@ class MLWriter:
         """
         assert self.__outputFile is not None
         assert self._status == 'Open'
-        dPrint( 'Quiet', debuggingThisModule, "autoClose stack: {}", self._openStack )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "autoClose stack: {}", self._openStack )
         for index in range( len(self._openStack)-1, -1, -1 ): # Have to step through this backwards
             self.writeLineClose( self._openStack[index] )
         self._sectionName = 'None'
@@ -597,7 +597,7 @@ class MLWriter:
             a result code (0=success)
             and two strings containing the program output and error output.
         """
-        vPrint( 'Info', debuggingThisModule, "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Running MLWriter.validate( {} ) on {} file {}…".format( schemaFilepath, self._outputType, self._outputFilePath ) )
 
         assert self._status == 'Closed'
 
@@ -622,11 +622,11 @@ class MLWriter:
                     checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                vPrint( 'Info', debuggingThisModule, "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
                 if returnCode == 5: # schema error
                     logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
-                    if BibleOrgSysGlobals.debugFlag and (debuggingThisModule or BibleOrgSysGlobals.strictCheckingFlag): halt
-            else: vPrint( 'Verbose', debuggingThisModule, "  xmllint validated the xml file {}.".format( self._filename ) )
+                    if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+            else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
 # end of MLWriter class
@@ -637,7 +637,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Demo the writer object with XML
         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
@@ -658,8 +658,8 @@ def briefDemo() -> None:
         mlWr.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
         mlWr.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
         mlWr.autoClose()
-        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr.validate( schema ) )
 
         from BibleOrgSys.InputOutput.XMLFile import XMLFile
         xf = XMLFile( outputFilename, outputFolderpath )
@@ -668,8 +668,8 @@ def briefDemo() -> None:
             xf.validateWithLint()
         except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
-        #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
-        vPrint( 'Quiet', debuggingThisModule, xf )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf.validateAll() )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf )
 
     if 1: # Demo the writer object with HTML5
         import datetime
@@ -710,15 +710,15 @@ def briefDemo() -> None:
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
         mlWr.autoClose()
-        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr.validate( schema ) )
 # end of MLWriter.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Demo the writer object with XML
         outputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
@@ -739,8 +739,8 @@ def fullDemo() -> None:
         mlWr.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
         mlWr.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
         mlWr.autoClose()
-        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr.validate( schema ) )
 
         from BibleOrgSys.InputOutput.XMLFile import XMLFile
         xf = XMLFile( outputFilename, outputFolderpath )
@@ -749,8 +749,8 @@ def fullDemo() -> None:
             xf.validateWithLint()
         except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
-        #dPrint( 'Quiet', debuggingThisModule, xf.validateAll() )
-        vPrint( 'Quiet', debuggingThisModule, xf )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf.validateAll() )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xf )
 
     if 1: # Demo the writer object with HTML5
         import datetime
@@ -791,8 +791,8 @@ def fullDemo() -> None:
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
         mlWr.autoClose()
-        vPrint( 'Quiet', debuggingThisModule, mlWr ) # Just print a summary
-        vPrint( 'Quiet', debuggingThisModule, mlWr.validate( schema ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr ) # Just print a summary
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, mlWr.validate( schema ) )
 # end of MLWriter.fullDemo
 
 if __name__ == '__main__':

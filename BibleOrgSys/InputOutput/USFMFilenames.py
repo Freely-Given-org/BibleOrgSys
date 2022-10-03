@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2022-06-05' # by RJH
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
 PROGRAM_VERSION = '0.69'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -98,7 +98,7 @@ class USFMFilenames:
             bbb = book code (lower case) or BBB = book code (UPPER CASE)
             dd = digits
         """
-        fnPrint( debuggingThisModule, f"USFMFilenames.__init__( {givenFolderName} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"USFMFilenames.__init__( {givenFolderName} )" )
         self.givenFolderName = givenFolderName
         self.pattern, self.fileExtension = '', ''
         self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
@@ -130,7 +130,7 @@ class USFMFilenames:
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
-        #dPrint( 'Quiet', debuggingThisModule, "fL", self.fileList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fL", self.fileList )
         #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 
         # See if we can find a pattern for these filenames
@@ -138,7 +138,7 @@ class USFMFilenames:
         for foundFilename in self.fileList:
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
-            #dPrint( 'Quiet', debuggingThisModule, foundFileBit, foundExtBit )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundFileBit, foundExtBit )
             matched = False
             if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
                 for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
@@ -180,9 +180,9 @@ class USFMFilenames:
                         digitsIndex = foundFileBit.index( USFMDigits )
                         USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
                         USFMBookCode = foundFileBit[USFMBookCodeIndex:USFMBookCodeIndex+3]
-                        vPrint( 'Verbose', debuggingThisModule, f"USFMFilenames dI={digitsIndex} UBCI={USFMBookCodeIndex} UBC={USFMBookCode}" )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"USFMFilenames dI={digitsIndex} UBCI={USFMBookCodeIndex} UBC={USFMBookCode}" )
                         if foundLength>=8 and digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
-                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying1…" )
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying1…" )
                             self.languageIndex = 5
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
@@ -190,7 +190,7 @@ class USFMFilenames:
                             self.pattern = 'ddbbb' + 'l'*(foundLength-5)
                             matched = True
                         elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
-                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying2…" )
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying2…" )
                             self.languageIndex = 0
                             self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                             self.digitsIndex = digitsIndex
@@ -198,7 +198,7 @@ class USFMFilenames:
                             self.pattern = 'lllddbbb'
                             matched = True
                         else: # we'll try to be more generic
-                            vPrint( 'Verbose', debuggingThisModule, "USFMFilenames: Trying generic…" )
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: Trying generic…" )
                             self.languageIndex = None
                             self.languageCode = None
                             self.digitsIndex = digitsIndex
@@ -209,7 +209,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            vPrint( 'Verbose', debuggingThisModule, "Pattern is {!r}".format( self.pattern ) )
+                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Pattern is {!r}".format( self.pattern ) )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -217,7 +217,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                vPrint( 'Verbose', debuggingThisModule, "More generic pattern is {!r}".format( self.pattern ) )
+                                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "More generic pattern is {!r}".format( self.pattern ) )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -227,11 +227,11 @@ class USFMFilenames:
                 if matched: break
             if matched: break
         #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
-        #dPrint( 'Verbose', debuggingThisModule, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
+        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
         self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
-        #dPrint( 'Verbose', debuggingThisModule, "fD", self._fileDictionary )
+        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "fD", self._fileDictionary )
     # end of USFMFilenames.__init__
 
 
@@ -268,7 +268,7 @@ class USFMFilenames:
         """
         Try to intelligently get the USFMId from the first line in the file (which should be the \\id line).
         """
-        #dPrint( 'Quiet', debuggingThisModule, "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getUSFMIDFromFile( {} {} {} {} )".format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
         if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
@@ -277,12 +277,12 @@ class USFMFilenames:
                 for line in possibleUSFMFile:
                     lineNumber += 1
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #dPrint( 'Quiet', debuggingThisModule, thisFilename, lineNumber, line )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
                         if len(line)<5: logging.warning( "id line {!r} in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
                         tokens = idContent.split()
-                        #dPrint( 'Quiet', debuggingThisModule, "Have id tokens: {}".format( tokens ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Have id tokens: {}".format( tokens ) )
                         UCToken0 = tokens[0].upper()
                         if UCToken0=='I': UCToken0 = '1'
                         if UCToken0=='II': UCToken0 = '2'
@@ -294,7 +294,7 @@ class USFMFilenames:
                         if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
                         if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
                         elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
-                        else: vPrint( 'Quiet', debuggingThisModule, "But {!r} wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
+                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "But {!r} wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
                         break
                     elif lineNumber == 1:
                         if line.startswith ( '\\' ):
@@ -315,7 +315,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found.
         """
-        fnPrint( debuggingThisModule, f"getUSFMIDsFromFiles( {givenFolder} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"getUSFMIDsFromFiles( {givenFolder} )" )
 
         # Empty the two dictionaries
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
@@ -342,7 +342,7 @@ class USFMFilenames:
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
-        #dPrint( 'Quiet', debuggingThisModule, "fD2", self._fileDictionary )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fD2", self._fileDictionary )
         return len(self._fileDictionary)
     # end of USFMFilenames.getUSFMIDsFromFiles
 
@@ -432,7 +432,7 @@ class USFMFilenames:
         resultList = []
         for BBB,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
-            vPrint( 'Never', debuggingThisModule, '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if strictCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
@@ -487,7 +487,7 @@ class USFMFilenames:
         else:
             for folder,filename in self._fileDictionary.keys():
                 assert folder == self.givenFolderName
-                #dPrint( 'Quiet', debuggingThisModule, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
         return BibleOrgSysGlobals.loadedBibleBooksCodes.getSequenceList( resultList )
@@ -500,7 +500,7 @@ class USFMFilenames:
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "getMaximumPossibleFilenameTuples( {} )".format( strictCheck ) )
+        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples( {} )".format( strictCheck ) )
 
         resultString, resultList = 'Confirmed', self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
@@ -509,13 +509,13 @@ class USFMFilenames:
         resultListInt = self.getPossibleFilenameTuplesInt()
         if len(resultListInt) > len(resultList):
             resultString, resultList = 'Internal', resultListInt
-        vPrint( 'Info', debuggingThisModule, f"getMaximumPossibleFilenameTuples: using {resultString} ({len(resultList)})" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getMaximumPossibleFilenameTuples: using {resultString} ({len(resultList)})" )
 
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "  getMaximumPossibleFilenameTuples doing strictCheck…" )
+            #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  getMaximumPossibleFilenameTuples doing strictCheck…" )
             for BBB,filename in resultList.copy():
                 firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
-                #dPrint( 'Quiet', debuggingThisModule, 'UFN', repr(firstLine) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "USFMBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( filename ) )
@@ -524,7 +524,7 @@ class USFMFilenames:
                     resultList.remove( (BBB,filename) )
 
         self.lastTupleList = resultList
-        #dPrint( 'Quiet', debuggingThisModule, "getMaximumPossibleFilenameTuples is returning", resultList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
@@ -536,11 +536,11 @@ class USFMFilenames:
             The order of the filenames in the list has no meaning.
         """
         folderFilenames = os.listdir( self.givenFolderName )
-        #dPrint( 'Quiet', debuggingThisModule, len(folderFilenames), folderFilenames )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(folderFilenames), folderFilenames )
         if self.lastTupleList is None: return None # Not sure what list they're after here
-        #dPrint( 'Quiet', debuggingThisModule, len(self.lastTupleList), self.lastTupleList )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.lastTupleList), self.lastTupleList )
         for BBB,actualFilename in self.lastTupleList:
-            #dPrint( 'Quiet', debuggingThisModule, BBB, actualFilename )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, actualFilename )
             if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
         return folderFilenames
     # end of USFMFilenames.getUnusedFilenames
@@ -575,12 +575,12 @@ class USFMFilenames:
                 for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
                     foundPathBit, foundExtBit = os.path.splitext( filepath )
                     foundPathBit, foundFileBit = os.path.split( foundPathBit )
-                    #dPrint( 'Quiet', debuggingThisModule, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
                     if foundFileBit in str(self.givenFolderName):
                         index = j; count += 1 # Take a guess that this might be the right one
-                #dPrint( 'Quiet', debuggingThisModule, count, index )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, count, index )
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
-        vPrint( 'Info', debuggingThisModule, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"getSSFFilenames: returning filelist ({len(filelist)})={filelist}" )
         return filelist
     # end of USFMFilenames.getSSFFilenames
 # end of class USFMFilenames
@@ -588,7 +588,7 @@ class USFMFilenames:
 
 def briefDemo() -> None:
     """ Demonstrate finding files in some USFM Bible folders. """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = (BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
@@ -599,25 +599,25 @@ def briefDemo() -> None:
                    Path( '/srv/AutoProcesses/Processed/Test/' ),
                    )
     for j, testFolder in enumerate( testFolders ):
-        vPrint( 'Quiet', debuggingThisModule, '\n{}'.format( j+1 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n{}'.format( j+1 ) )
         if os.access( testFolder, os.R_OK ):
             UFns = USFMFilenames( testFolder )
-            vPrint( 'Quiet', debuggingThisModule, UFns )
-            result = UFns.getAllFilenames(); vPrint( 'Quiet', debuggingThisModule, "\nAll:", len(result), result )
-            result = UFns.getDerivedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "Unused:", len(result), result )
-            result = UFns.getConfirmedFilenameTuples( strictCheck=True ); vPrint( 'Quiet', debuggingThisModule, "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "Unused:", len(result), result )
-            result = UFns.getPossibleFilenameTuplesExt(); vPrint( 'Quiet', debuggingThisModule, "\nPossibleExt:", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "Unused:", len(result), result )
-            result = UFns.getPossibleFilenameTuplesInt(); vPrint( 'Quiet', debuggingThisModule, "\nPossibleInt:", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "Unused:", len(result), result )
-            result = UFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', debuggingThisModule, "\nMaxPoss:", len(result), result )
-            result = UFns.getMaximumPossibleFilenameTuples( strictCheck=True ); vPrint( 'Quiet', debuggingThisModule, "\nMaxPoss (strict):", len(result), result )
-            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', debuggingThisModule, "Unused:", len(result), result )
-            result = UFns.getSSFFilenames(); vPrint( 'Quiet', debuggingThisModule, "\nSSF:", len(result), result )
-        else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UFns )
+            result = UFns.getAllFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nAll:", len(result), result )
+            result = UFns.getDerivedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getConfirmedFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
+            result = UFns.getConfirmedFilenameTuples( strictCheck=True ); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
+            result = UFns.getPossibleFilenameTuplesExt(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPossibleExt:", len(result), result )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
+            result = UFns.getPossibleFilenameTuplesInt(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nPossibleInt:", len(result), result )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
+            result = UFns.getMaximumPossibleFilenameTuples(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMaxPoss:", len(result), result )
+            result = UFns.getMaximumPossibleFilenameTuples( strictCheck=True ); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nMaxPoss (strict):", len(result), result )
+            result = UFns.getUnusedFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unused:", len(result), result )
+            result = UFns.getSSFFilenames(); vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSSF:", len(result), result )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
 def fullDemo() -> None:
     """

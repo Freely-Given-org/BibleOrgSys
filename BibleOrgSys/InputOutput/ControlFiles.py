@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2017-03-08' # by RJH
 SHORT_PROGRAM_NAME = "ControlFiles"
 PROGRAM_NAME = "Control Files"
 PROGRAM_VERSION = '0.06'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -57,7 +57,7 @@ def readListFile( folder, filename, outputList, debug=False ):
         if not isinstance( outputList, list): raise ValueError('List expected here')
         oldlen = len( outputList )
 
-    if Controls['VerbosityLevel'] > 1: vPrint( 'Quiet', debuggingThisModule, '    Loading list file', filename + '…' )
+    if Controls['VerbosityLevel'] > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    Loading list file', filename + '…' )
     lines = []
     with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done
         for line in myFile:
@@ -69,7 +69,7 @@ def readListFile( folder, filename, outputList, debug=False ):
                 continue
             lines.append( line )
             outputList.append( line )
-    if debug: vPrint( 'Quiet', debuggingThisModule, '      Had', oldlen, 'values, added', len(outputList)-oldlen, 'new list values, now have', len(outputList) )
+    if debug: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '      Had', oldlen, 'values, added', len(outputList)-oldlen, 'new list values, now have', len(outputList) )
 # end of readListFile
 
 
@@ -81,7 +81,7 @@ def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
     displayFolder = folder
     if not displayFolder:
         displayFolder = 'current folder (' + os.getcwd() + ')'
-    #if 'VerbosityLevel' in GlobalControls and GlobalControls['VerbosityLevel'] > 1: vPrint( 'Quiet', debuggingThisModule, '  Loading control file ' + filename + ' from ' + displayFolder + '…' )
+    #if 'VerbosityLevel' in GlobalControls and GlobalControls['VerbosityLevel'] > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  Loading control file ' + filename + ' from ' + displayFolder + '…' )
     if debug: oldlen = len(controls)
 
     with open( os.path.join( folder, filename ), encoding='utf-8' ) as myFile: # Automatically closes the file when done
@@ -91,30 +91,30 @@ def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
             if line[0]=='#': continue # Just discard comment lines
             if '=' not in line:
                 if haveLog: logging.error( 'LINE IGNORED: Unknown format for control line: ' + line )
-                else: vPrint( 'Quiet', debuggingThisModule, 'LINE IGNORED: Unknown format for control line: ' + line )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LINE IGNORED: Unknown format for control line: ' + line )
                 continue
             si = line.index( '=' )
             name = line[:si].strip() #Marker is from after backslash and before the equals sign
             value = line[si+1:].strip() # All the rest is the text field
             if not name:
                 if haveLog: logging.error( 'LINE IGNORED: Missing control name: ' + line )
-                else: vPrint( 'Quiet', debuggingThisModule, 'LINE IGNORED: Missing control name: ' + line )
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LINE IGNORED: Missing control name: ' + line )
                 continue
             if not value:
                 value = ''
                 #if haveLog: logging.error( 'LINE IGNORED: Missing control value: ' + line )
-                #else: vPrint( 'Quiet', debuggingThisModule, 'LINE IGNORED: Missing control value: ' + line )
+                #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LINE IGNORED: Missing control value: ' + line )
                 #continue
             if name in controls:
                 if value != controls[name]:
                     if haveLog: logging.error( 'LINE IGNORED: Duplicate control name: ' + line + ", current value is '" + str(controls[name]) + "'" )
-                    else: vPrint( 'Quiet', debuggingThisModule, 'LINE IGNORED: Duplicate control name: ' + line + ", current value is '" + str(controls[name]) + "'" )
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LINE IGNORED: Duplicate control name: ' + line + ", current value is '" + str(controls[name]) + "'" )
                 else: # New value is same as old one
                     if haveLog: logging.info( 'LINE IGNORED: Duplicate control name: ' + line )
-                    else: vPrint( 'Quiet', debuggingThisModule, 'LINE IGNORED: Duplicate control name: ' + line )
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LINE IGNORED: Duplicate control name: ' + line )
                 continue
             controls[name] = value
-    if debug: vPrint( 'Quiet', debuggingThisModule, '    Added', len(controls)-oldlen, 'new control values.' )
+    if debug: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '    Added', len(controls)-oldlen, 'new control values.' )
 # end of readControlFile
 
 
@@ -152,7 +152,7 @@ def briefDemo() -> None:
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 # end of fullDemo
 
 def fullDemo() -> None:

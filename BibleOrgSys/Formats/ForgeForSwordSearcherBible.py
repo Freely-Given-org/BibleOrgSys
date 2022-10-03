@@ -74,9 +74,9 @@ LAST_MODIFIED_DATE = '2022-06-04' # by RJH
 SHORT_PROGRAM_NAME = "ForgeForSwordSearcherBible"
 PROGRAM_NAME = "Forge for SwordSearcher Bible format handler"
 PROGRAM_VERSION = '0.38'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 BOS66 = BOS81 = BOSx = None
@@ -98,7 +98,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
     if autoLoad is true and exactly one ForgeForSwordSearcher Bible is found,
         returns the loaded ForgeForSwordSearcherBible object.
     """
-    fnPrint( debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -111,7 +111,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " ForgeForSwordSearcherBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " ForgeForSwordSearcherBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -138,7 +138,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
-                #dPrint( 'Quiet', debuggingThisModule, '1', repr(firstLine) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '1', repr(firstLine) )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                     logging.info( "ForgeForSwordSearcherBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
@@ -146,20 +146,20 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                 match = re.search( '^; TITLE:\\s', firstLine )
                 if match:
                     if BibleOrgSysGlobals.debugFlag:
-                        vPrint( 'Quiet', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck First line got {!r} match from {!r}".format( match.group(0), firstLine ) )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck First line got {!r} match from {!r}".format( match.group(0), firstLine ) )
                 else:
-                    vPrint( 'Verbose', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = ForgeForSwordSearcherBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -169,7 +169,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("ForgeForSwordSearcherBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    ForgeForSwordSearcherBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    ForgeForSwordSearcherBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -191,7 +191,7 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
-                    #dPrint( 'Quiet', debuggingThisModule, '2', repr(firstLine) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '2', repr(firstLine) )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "ForgeForSwordSearcherBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
@@ -199,16 +199,16 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                     match = re.search( '^; TITLE:\\s', firstLine )
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            vPrint( 'Quiet', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck First line got type {!r} match from {!r}".format( match.group(0), firstLine ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck First line got type {!r} match from {!r}".format( match.group(0), firstLine ) )
                     else:
-                        vPrint( 'Verbose', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "ForgeForSwordSearcherBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = ForgeForSwordSearcherBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
@@ -250,7 +250,7 @@ class ForgeForSwordSearcherBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
 
         global BOS66, BOS81, BOSx
         if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
@@ -277,13 +277,13 @@ class ForgeForSwordSearcherBible( Bible ):
                     match = re.search( '^; TITLE:\\s', line )
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            vPrint( 'Quiet', debuggingThisModule, "First line got type {!r} match from {!r}".format( match.group(0), line ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First line got type {!r} match from {!r}".format( match.group(0), line ) )
                     else:
-                        vPrint( 'Verbose', debuggingThisModule, "ForgeForSwordSearcherBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcherBible.load: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         continue
 
-                #dPrint( 'Quiet', debuggingThisModule, 'ForgeForSwordSearcher file line is "' + line + '"' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ForgeForSwordSearcher file line is "' + line + '"' )
                 lastLine = line
 
                 # Process header stuff
@@ -321,11 +321,11 @@ class ForgeForSwordSearcherBible( Bible ):
                         settingsDict[metadataName] = metadataContents
                         metadataName = None
                     pointer = line[3:]
-                    #dPrint( 'Quiet', debuggingThisModule, "pointer", repr(pointer) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "pointer", repr(pointer) )
                     if pointer and pointer[0]=='{' and pointer[-1]=='}':
                         metadataName = pointer[1:-1]
                         if metadataName:
-                            #dPrint( 'Quiet', debuggingThisModule, "metadataName", repr(metadataName) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "metadataName", repr(metadataName) )
                             metadataContents = ''
                     else: # let's assume it's a BCV reference
                         pointer = pointer.replace( '1 K','1K' ).replace( '2 K','2K' ) \
@@ -351,17 +351,17 @@ class ForgeForSwordSearcherBible( Bible ):
                                 #elif bookCode in ('La',): BBB = 'LAM'
                                 #elif bookCode in ('Jude',): BBB = 'JDE'
                                 else:
-                                    #dPrint( 'Quiet', debuggingThisModule, "4BookCode =", repr(bookCode) )
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "4BookCode =", repr(bookCode) )
                                     #BBB = BOS.getBBBFromText( bookCode )  # Try to guess
                                     BBB = BOS66.getBBBFromText( bookCode )  # Try to guess
                                     if not BBB: BBB = BOS81.getBBBFromText( bookCode )  # Try to guess
                                     if not BBB: BBB = BOSx.getBBBFromText( bookCode )  # Try to guess
-                                    #dPrint( 'Quiet', debuggingThisModule, "4BBB =", repr(BBB) )
-                        else: vPrint( 'Quiet', debuggingThisModule, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "4BBB =", repr(BBB) )
+                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
                     continue # Just save the pointer information which refers to the text on the next line
                 else: # it's not a $$ line
                     text = line
-                    #dPrint( 'Quiet', debuggingThisModule, "text", repr(text) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "text", repr(text) )
                     if metadataName:
                         metadataContents += ('\n' if metadataContents else '') + text
                         continue
@@ -370,28 +370,28 @@ class ForgeForSwordSearcherBible( Bible ):
                         # Handle bits like (<scripref>Pr 2:7</scripref>)
                         vText = vText.replace( '(<scripref>', '\\x - \\xt ' ).replace( '</scripref>)', '\\x*' )
                         vText = vText.replace( '<scripref>', '\\x - \\xt ' ).replace( '</scripref>', '\\x*' )
-                        #if '\\' in vText: vPrint( 'Quiet', debuggingThisModule, 'ForgeForSwordSearcher vText', repr(vText) )
-                        #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
+                        #if '\\' in vText: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ForgeForSwordSearcher vText', repr(vText) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber, repr(vText) )
                         # Convert {stuff} to footnotes
                         match = re.search( '\\{(.+?)\\}', vText )
                         while match:
                             footnoteText = '\\f + \\fr {}:{} \\ft {}\\f*'.format( chapterNumber, verseNumber, match.group(1) )
                             vText = vText[:match.start()] + footnoteText + vText[match.end():] # Replace this footnote
-                            #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber, repr(vText) )
                             match = re.search( '\\{(.+?)\\}', vText )
                         # Convert [stuff] to added fields
                         match = re.search( '\\[(.+?)\\]', vText )
                         while match:
                             addText = '\\add {}\\add*'.format( match.group(1) )
                             vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                            #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber, repr(vText) )
                             match = re.search( '\\[(.+?)\\]', vText )
                         # Convert +r/This text is red-letter-r/ to wj fields
                         match = re.search( '\\+r/(.+?)-r/', vText )
                         while match:
                             addText = '\\wj {}\\wj*'.format( match.group(1) )
                             vText = vText[:match.start()] + addText + vText[match.end():] # Replace this chunk
-                            #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumber, verseNumber, repr(vText) )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumber, verseNumber, repr(vText) )
                             match = re.search( '\\+r/(.+?)-r/', vText )
                         # Final check for unexpected remaining formatting
                         for badChar in '{}[]/':
@@ -447,7 +447,7 @@ class ForgeForSwordSearcherBible( Bible ):
                             thisBook.addLine( 'p', '' )
                             vText = vText[1:].lstrip()
 
-                        #dPrint( 'Quiet', debuggingThisModule, '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{} {}:{} = {!r}'.format( BBB, chapterNumberString, verseNumberString, vText ) )
                         thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                         lastVText = vText
                         lastVerseNumber = verseNumber
@@ -460,7 +460,7 @@ class ForgeForSwordSearcherBible( Bible ):
 
         # Clean up
         if settingsDict:
-            #dPrint( 'Quiet', debuggingThisModule, "ForgeForSwordSearcher settingsDict", settingsDict )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher settingsDict", settingsDict )
             if self.suppliedMetadata is None: self.suppliedMetadata = {}
             self.suppliedMetadata['Forge4SS'] = settingsDict
             self.applySuppliedMetadata( 'Forge4SS' ) # Copy some to self.settingsDict
@@ -475,16 +475,16 @@ def testForge4SS( F4SSFolder ):
     # Crudely demonstrate the Forge for SwordSearcher Bible class
     from BibleOrgSys.Reference import VerseReferences
 
-    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the Forge for SwordSearcher Bible class…") )
-    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r}".format( F4SSFolder ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the Forge for SwordSearcher Bible class…") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r}".format( F4SSFolder ) )
     vb = ForgeForSwordSearcherBible( F4SSFolder, "demo" )
     vb.load() # Load and process the file
-    vPrint( 'Normal', debuggingThisModule, vb ) # Just print a summary
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, vb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         vb.check()
-        #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
         vBErrors = vb.getCheckResults()
-        #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##vb.toDrupalBible()
         vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -497,13 +497,13 @@ def testForge4SS( F4SSFolder ):
         if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testForge4SS
 
 
@@ -513,7 +513,7 @@ def briefDemo() -> None:
     """
     import random
 
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder  = random.choice( (
@@ -522,32 +522,32 @@ def briefDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ) )
         result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "\nForgeForSwordSearcher TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
 
         result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
         if isinstance( result2, Bible):
             try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result2.check()
-                #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result2.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result2.toDrupalBible()
                 result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
         result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
         if isinstance( result3, Bible):
             try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
             except FileNotFoundError: pass # it's not compulsory
             if BibleOrgSysGlobals.strictCheckingFlag:
                 result3.check()
-                #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                 vBErrors = result3.getCheckResults()
-                #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
             if BibleOrgSysGlobals.commandLineArguments.export:
                 ##result3.toDrupalBible()
                 result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -561,7 +561,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -570,7 +570,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testForge4SS( someFolder )
 # end of ForgeForSwordSearcherBible.briefDemo
@@ -579,7 +579,7 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         for testFolder in (
@@ -588,32 +588,32 @@ def fullDemo() -> None:
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VPLTest2/' ),
                     ):
             result1 = ForgeForSwordSearcherBibleFileCheck( testFolder )
-            vPrint( 'Normal', debuggingThisModule, "\nForgeForSwordSearcher TestA1", result1 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher TestA1", result1 )
 
             result2 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoad=True )
-            vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA2", result2 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA2", result2 )
             if isinstance( result2, Bible):
                 try: result2.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result2.check()
-                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                     vBErrors = result2.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result2.toDrupalBible()
                     result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
             result3 = ForgeForSwordSearcherBibleFileCheck( testFolder, autoLoadBooks=True )
-            vPrint( 'Normal', debuggingThisModule, "ForgeForSwordSearcher TestA3", result3 )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "ForgeForSwordSearcher TestA3", result3 )
             if isinstance( result3, Bible):
                 try: result3.loadMetadataTextFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
                 except FileNotFoundError: pass # it's not compulsory
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     result3.check()
-                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                     vBErrors = result3.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, vBErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vBErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##result3.toDrupalBible()
                     result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -627,7 +627,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -636,7 +636,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nForgeForSwordSearcher D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testForge4SS( someFolder )
 # end of ForgeForSwordSearcherBible.fullDemo

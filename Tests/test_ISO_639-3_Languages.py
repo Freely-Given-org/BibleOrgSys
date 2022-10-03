@@ -30,7 +30,7 @@ Module testing ISO_639_3_Languages.py.
 LAST_MODIFIED_DATE = '2020-04-06' # by RJH
 PROGRAM_NAME = "ISO-639-3 language code tests"
 PROGRAM_VERSION = '0.85'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
 import os.path
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    vPrint( 'Normal', debuggingThisModule, programNameVersion )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, PROGRAM_NAME_VERSION )
 
     unittest.main() # Automatically runs all of the above tests
 # end of ISO_639_3_LanguagesTests.py

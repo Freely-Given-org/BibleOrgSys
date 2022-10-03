@@ -46,9 +46,9 @@ LAST_MODIFIED_DATE = '2020-08-20' # by RJH
 SHORT_PROGRAM_NAME = "USFM2BibleBook"
 PROGRAM_NAME = "USFM2 Bible book handler"
 PROGRAM_VERSION = '0.53'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 USFM2Markers = USFM2Markers().loadData()
@@ -94,7 +94,7 @@ class USFM2BibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            #dPrint( 'Quiet', debuggingThisModule, "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "doaddLine( {!r}, {!r} )".format( originalMarker, originalText ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = USFM2Markers.getMarkerListFromText( text )
@@ -112,7 +112,7 @@ class USFM2BibleBook( BibleBook ):
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
@@ -127,7 +127,7 @@ class USFM2BibleBook( BibleBook ):
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         loadErrors:List[str] = []
 
-        vPrint( 'Info', debuggingThisModule, "  " + _("Preloading {}…").format( filename ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Preloading {}…").format( filename ) )
         with open( self.sourceFilepath, 'rt', encoding=encoding) as f:
             try: completeText = f.read()
             except Exception: completeText = ''
@@ -139,7 +139,7 @@ class USFM2BibleBook( BibleBook ):
                 self.addPriorityError( 88, 0, 0, _("Found {} USFM3 '\\{}' markers in file").format( count, marker ) )
         del completeText # Not required any more
 
-        vPrint( 'Info', debuggingThisModule, "  " + _("Loading {}…").format( filename ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {}…").format( filename ) )
         #self.BBB = BBB
         #self.isSingleChapterBook = BibleOrgSysGlobals.loadedBibleBooksCodes.isSingleChapterBook( BBB )
         originalBook = USFMFile()
@@ -150,11 +150,11 @@ class USFM2BibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors:List[str] = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #dPrint( 'Quiet', debuggingThisModule, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
-                #dPrint( 'Quiet', debuggingThisModule, "bits", text.split() )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bits", text.split() )
                 try: C = text.split()[0]
                 except IndexError: # Seems we had a \c field that's just whitespace
                     loadErrors.append( _("{} {}:{} Found {!r} invalid chapter field") \
@@ -191,7 +191,7 @@ class USFM2BibleBook( BibleBook ):
                 self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             elif USFM2Markers.isNoteMarker( marker ) \
             or marker.endswith('*') and USFM2Markers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -203,7 +203,7 @@ class USFM2BibleBook( BibleBook ):
                 self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                vPrint( 'Verbose', debuggingThisModule, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 if marker == 's5' and not text: # it's a Door43 translatable section marker
                     loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with no text)") \
@@ -260,7 +260,7 @@ class USFM2BibleBook( BibleBook ):
             lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-        #if debugging: vPrint( 'Quiet', debuggingThisModule, self._rawLines ); halt
+        #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
     # end of USFM2BibleBook.load
 # end of class USFM2BibleBook
 
@@ -270,26 +270,26 @@ def briefDemo() -> None:
     """
     Demonstrate reading and processing some USFM2 Bible databases.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFM2BibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, UBB )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', debuggingThisModule, UBBVersification )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
-        vPrint( 'Info', debuggingThisModule, UBErrors )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
     # end of fullDemoFile
 
 
@@ -305,43 +305,43 @@ def briefDemo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 1: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', debuggingThisModule, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 # end of USFM2BibleBook.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     def demoFile( name, filename, folder, BBB ):
-        vPrint( 'Normal', debuggingThisModule, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFM2BibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
-        vPrint( 'Normal', debuggingThisModule, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
-        vPrint( 'Normal', debuggingThisModule, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
-        vPrint( 'Normal', debuggingThisModule, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #dPrint( 'Quiet', debuggingThisModule, UBB )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UBB )
         UBB.validateMarkers()
         UBBVersification = UBB.getVersification()
-        vPrint( 'Info', debuggingThisModule, UBBVersification )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits()
-        vPrint( 'Info', debuggingThisModule, UBBAddedUnits )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBBAddedUnits )
         discoveryDict = UBB._discover()
-        #dPrint( 'Quiet', debuggingThisModule, "discoveryDict", discoveryDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "discoveryDict", discoveryDict )
         UBB.checkBook()
         UBErrors = UBB.getCheckResults()
-        vPrint( 'Info', debuggingThisModule, UBErrors )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, UBErrors )
     # end of fullDemoFile
 
 
@@ -357,17 +357,17 @@ def fullDemo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
         name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            vPrint( 'Normal', debuggingThisModule, _("Scanning {} from {}…").format( name, testFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: vPrint( 'Quiet', debuggingThisModule, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 # end of USFM2BibleBook.fullDemo
 
 if __name__ == '__main__':

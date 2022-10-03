@@ -104,9 +104,9 @@ LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "UnboundBible"
 PROGRAM_NAME = "Unbound Bible format handler"
 PROGRAM_VERSION = '0.29'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -127,7 +127,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
     if autoLoad is true and exactly one Unbound Bible is found,
         returns the loaded UnboundBible object.
     """
-    fnPrint( debuggingThisModule, "UnboundBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "UnboundBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
@@ -140,7 +140,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -169,18 +169,18 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                    vPrint( 'Verbose', debuggingThisModule, "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -190,7 +190,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("UnboundBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -214,13 +214,13 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        vPrint( 'Verbose', debuggingThisModule, "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "UnB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
@@ -262,7 +262,7 @@ class UnboundBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['Unbound'] = {}
@@ -282,7 +282,7 @@ class UnboundBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #dPrint( 'Quiet', debuggingThisModule, 'UB file line is "' + line + '"' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'UB file line is "' + line + '"' )
                 if line[0]=='#':
                     hashBits = line[1:].split( '\t' )
                     if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
@@ -298,7 +298,7 @@ class UnboundBible( Bible ):
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
-                #dPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.givenName, BBB, bits )
                 if len(bits) == 4:
                     bookCode, chapterNumberString, verseNumberString, vText = bits
                 elif len(bits) == 6:
@@ -308,14 +308,14 @@ class UnboundBible( Bible ):
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
                     logging.warning( _("Skipping bad {!r} line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                else: vPrint( 'Quiet', debuggingThisModule, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
                 if NRSVA_bookCode: assert len(NRSVA_bookCode) == 3
                 if NRSVA_chapterNumberString: assert NRSVA_chapterNumberString.isdigit()
                 if NRSVA_verseNumberString: assert NRSVA_verseNumberString.isdigit()
 
                 if not bookCode and not chapterNumberString and not verseNumberString:
-                    vPrint( 'Quiet', debuggingThisModule, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 if BibleOrgSysGlobals.debugFlag: assert len(bookCode) == 3
                 if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
@@ -388,16 +388,16 @@ def testUB( TUBfilename ):
     testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../mnt/SSDs/Bibles/Biola Unbound modules/' ) # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
-    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the Unbound Bible class…") )
-    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the Unbound Bible class…") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     ub = UnboundBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
-    vPrint( 'Normal', debuggingThisModule, ub ) # Just print a summary
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, ub ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag:
         ub.check()
-        #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
         uBErrors = ub.getCheckResults()
-        #dPrint( 'Quiet', debuggingThisModule, uBErrors )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uBErrors )
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ub.toDrupalBible()
         ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -410,13 +410,13 @@ def testUB( TUBfilename ):
         if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = ub.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testUB
 
 
@@ -424,7 +424,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     BiblesPath = Path( '/mnt/SSDs/Bibles/' )
     testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
@@ -432,19 +432,19 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         resultA1 = UnboundBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA1", resultA1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA1", resultA1 )
         resultA2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA2", resultA2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA2", resultA2 )
         resultA3 = UnboundBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA3", resultA3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA3", resultA3 )
 
         testSubfolder = os.path.join( testFolder, 'asv/' )
         resultB1 = UnboundBibleFileCheck( testSubfolder )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB1", resultB1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB1", resultB1 )
         resultB2 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB2", resultB2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB2", resultB2 )
         resultB3 = UnboundBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB3", resultB3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB3", resultB3 )
 
 
     if 1: # specified modules
@@ -454,7 +454,7 @@ def briefDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', debuggingThisModule, "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( testFilename )
@@ -469,7 +469,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -478,7 +478,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
 # end of UnboundBible.briefDemo
@@ -488,7 +488,7 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     BiblesPath = Path( '/mnt/SSDs/Bibles/' )
     testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
@@ -496,19 +496,19 @@ def fullDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         resultA1 = UnboundBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA1", resultA1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA1", resultA1 )
         resultA2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA2", resultA2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA2", resultA2 )
         resultA3 = UnboundBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestA3", resultA3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestA3", resultA3 )
 
         testSubfolder = os.path.join( testFolder, 'asv/' )
         resultB1 = UnboundBibleFileCheck( testSubfolder )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB1", resultB1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB1", resultB1 )
         resultB2 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB2", resultB2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB2", resultB2 )
         resultB3 = UnboundBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "Unbound TestB3", resultB3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Unbound TestB3", resultB3 )
 
 
     if 1: # specified modules
@@ -520,7 +520,7 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', debuggingThisModule, "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( testFilename )
@@ -534,7 +534,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -543,7 +543,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
 # end of UnboundBible.fullDemo

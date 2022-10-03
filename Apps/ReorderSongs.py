@@ -62,9 +62,9 @@ LAST_MODIFIED_DATE = '2017-09-27' # by RJH
 SHORT_PROGRAM_NAME = "ReorderSongs"
 PROGRAM_NAME = "Reorder Songs"
 PROGRAM_VERSION = '0.03'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 testFolder = 'Tests/DataFilesForTests/'
@@ -76,42 +76,42 @@ def main() -> None:
     """
     Reorder songs by title (\s line in song record -- assumed to always be the second line in the record).
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Read our sample data
     songsInputFilepath = os.path.join( testFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', debuggingThisModule, _("Loading songs from {}…").format( songsInputFilepath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading songs from {}…").format( songsInputFilepath ) )
     songs = SFMFile.SFMRecords()
     # Left the four default parameters at the end of the next line so you can see what's available
     songs.read( songsInputFilepath, key='c', ignoreSFMs=None, ignoreEntries=None, changePairs=None, encoding='utf-8' )
-    vPrint( 'Normal', debuggingThisModule, _("  {} songs loaded").format( len(songs.records) ) )
-    vPrint( 'Never', debuggingThisModule, songs )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  {} songs loaded").format( len(songs.records) ) )
+    vPrint( 'Never', DEBUGGING_THIS_MODULE, songs )
 
     # Extract the information out of the file that we want to use for sorting
     #   (We get the \s field, plus keep track of the index of each record)
     keyPairs = []
     for j,songRecord in enumerate(songs.records):
-        dPrint( 'Never', debuggingThisModule, "songRecord", songRecord )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, "songRecord", songRecord )
         sFieldData = songRecord[1] # Get the second line of the song record (assumed to be the \s or title line )
         assert sFieldData[0] == 's' # This is a 2-tuple of marker (without backslash) and marker contents
         keyPairs.append( (sFieldData[1],j) ) # Store the contents of the \s field, along with the index of this record
-    dPrint( 'Never', debuggingThisModule, "keyPairs", keyPairs )
+    dPrint( 'Never', DEBUGGING_THIS_MODULE, "keyPairs", keyPairs )
 
     # Now we sort the records by the \s field and write them out to a new file in the new, sorted order
     songsOutputFilepath = os.path.join( outputFolder, testFile ) # Relative to module call, not cwd
-    vPrint( 'Quiet', debuggingThisModule, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Writing reordered songs to {}…".format( songsOutputFilepath ) )
     with open( songsOutputFilepath, 'wt', encoding='utf-8' ) as outputFile:
         for k,keyPair in enumerate( sorted(keyPairs) ):
-            vPrint( 'Never', debuggingThisModule, "keyPair", keyPair )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "keyPair", keyPair )
             outputFile.write( '\n\\c {}\n'.format( k+1 ) ) # Output our new (numbered) c line at the start of the record
             songRecord = songs.records[ keyPair[1] ] # Get the record (song) that we need
             for s,songLine in enumerate( songRecord ):
-                vPrint( 'Never', debuggingThisModule, "songLine", s, songLine )
+                vPrint( 'Never', DEBUGGING_THIS_MODULE, "songLine", s, songLine )
                 if s == 0: continue # skip old c line
                 outputFile.write( '\\{} {}\n'.format( *songLine ) )
-    vPrint( 'Normal', debuggingThisModule, "  {} songs written".format( k+1 ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  {} songs written".format( k+1 ) )
 
-    vPrint( 'Quiet', debuggingThisModule, "{} finished.".format( programNameVersion ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} finished.".format( PROGRAM_NAME_VERSION ) )
 #end of main
 
 def fullDemo() -> None:

@@ -78,9 +78,9 @@ LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrganisationalSystems"
 PROGRAM_NAME = "Bible Organisation Systems handler"
 PROGRAM_VERSION = '0.35'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -117,7 +117,7 @@ class BibleOrganisationalSystems:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
@@ -158,9 +158,9 @@ class BibleOrganisationalSystems:
         """
         Return the number of loaded systems.
         """
-        #dPrint( 'Quiet', debuggingThisModule, '1', len(self.__dataDict) )
-        #dPrint( 'Quiet', debuggingThisModule, '2', len(self.__indexDict) )
-        #dPrint( 'Quiet', debuggingThisModule, '3', len(self.__combinedIndexDict) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '1', len(self.__dataDict) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '2', len(self.__indexDict) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '3', len(self.__combinedIndexDict) )
         return len( self.__dataDict )
     # end of BibleOrganisationalSystems.__len__
 
@@ -172,7 +172,7 @@ class BibleOrganisationalSystems:
         if extended:
             result = []
             for x in self.__indexDict:
-                vPrint( 'Quiet', debuggingThisModule, "sdf", x, self.__indexDict[x], self.__dataDict[self.__indexDict[x][0]] )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "sdf", x, self.__indexDict[x], self.__dataDict[self.__indexDict[x][0]] )
                 result.append( "{} ({})".format(x, self.__dataDict[self.__indexDict[x][0]]['type'] ) )
             return result
         # else:
@@ -186,24 +186,24 @@ class BibleOrganisationalSystems:
 
         Returns the system dictionary.
         """
-        fnPrint( debuggingThisModule, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "getOrganisationalSystem( {} )".format( repr(systemName) ) )
         assert systemName
         assert isinstance( systemName, str )
 
-        #for x in sorted(self.__dataDict): vPrint( 'Quiet', debuggingThisModule, "dD", repr(x) )
+        #for x in sorted(self.__dataDict): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "dD", repr(x) )
         if systemName in self.__dataDict: # we found the combined name
             return self.__dataDict[systemName]
         # else
-        #for x in sorted(self.__indexDict): vPrint( 'Quiet', debuggingThisModule, "iD", repr(x) )
+        #for x in sorted(self.__indexDict): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "iD", repr(x) )
         if systemName in self.__indexDict:
             index = self.__indexDict[systemName]
-            #dPrint( 'Quiet', debuggingThisModule, 'systemName', systemName, index )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'systemName', systemName, index )
             if len(index) == 1: # Must only be one (unique) entry
                 return self.__dataDict[ index[0] ]
             # else it's an ambiguous name that has multiple matches
-            #dPrint( 'Quiet', debuggingThisModule, 'here' )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'here' )
             for possibleType in BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES: # Steps through in priority order
-                #dPrint( 'Quiet', debuggingThisModule, possibleType )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, possibleType )
                 x = systemName + '_' + possibleType
                 if x in self.__dataDict: return self.__dataDict[x]
         # else
@@ -217,30 +217,30 @@ class BibleOrganisationalSystems:
         """
         Gets a value for the system.
         """
-        fnPrint( debuggingThisModule, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "getOrganisationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
         assert systemName and isinstance( systemName, str )
         assert valueName and isinstance( valueName, str )
         thisSystem = self.getOrganisationalSystem( systemName, suppressErrors )
-        #if systemName=='KJV-1611': vPrint( 'Quiet', debuggingThisModule, thisSystem ); halt
+        #if systemName=='KJV-1611': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystem ); halt
         if thisSystem is not None:
             assert thisSystem
             if valueName in thisSystem: return thisSystem[valueName]
             # else maybe we can find the value in a derived text
             if 'usesText' in thisSystem:
                 trySystemNames = thisSystem['usesText']
-                #dPrint( 'Quiet', debuggingThisModule, "trySystemNames is {}".format( repr(trySystemNames) ) )
-                #dPrint( 'Quiet', debuggingThisModule, "w1", "{} is trying usesText of {}".format(systemName,trySystemName) )
-                #dPrint( 'Quiet', debuggingThisModule, "\nKeys:", self.__dataDict.keys() )
-                #dPrint( 'Quiet', debuggingThisModule, "\nindexDict", self.__indexDict )
-                #dPrint( 'Quiet', debuggingThisModule, "\ncombinedIndexDict", self.__combinedIndexDict )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemNames is {}".format( repr(trySystemNames) ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "w1", "{} is trying usesText of {}".format(systemName,trySystemName) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nKeys:", self.__dataDict.keys() )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nindexDict", self.__indexDict )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ncombinedIndexDict", self.__combinedIndexDict )
                 assert isinstance( trySystemNames, list ) # Maybe this can also be a string???
                 for possibleType in reversed( BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES ):
-                    #dPrint( 'Quiet', debuggingThisModule, 'possibleType', possibleType )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'possibleType', possibleType )
                     for trySystemName in trySystemNames:
                         if trySystemName == systemName: # Avoid infinite recursion
                             trySystemName += '_' + possibleType
                         result = self.getOrganisationalSystemValue( trySystemName, valueName, suppressErrors=True )
-                        #dPrint( 'Quiet', debuggingThisModule, "trySystemName result is {}".format( repr(result) ) ); halt
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName result is {}".format( repr(result) ) ); halt
                         if result is not None: return result
             # else we couldn't find it anywhere
             logging.error( _("{} Bible Organisational System has no {} specified (a)").format( systemName, valueName ) )
@@ -270,33 +270,33 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 return BibleOrgSysGlobals.ALLOWED_ORGANISATIONAL_TYPES[ix+1:]
             # end of getMoreBasicTypes
 
-            #dPrint( 'Quiet', debuggingThisModule, "q0", valueName )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q0", valueName )
             if valueName in self.__dataDict: return self.__dataDict[valueName]
             # else maybe we can find the value in a derived text
-            #dPrint( 'Quiet', debuggingThisModule, "q1", self.getOrganisationalSystemName() )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q1", self.getOrganisationalSystemName() )
             for tryType in getMoreBasicTypes():
                 if 'usesText' in self.__dataDict:
                     for trySystemName in self.__dataDict['usesText']:
-                        #dPrint( 'Quiet', debuggingThisModule, "q2", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q2", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
                         result = self.__boss.getOrganisationalSystemValue( trySystemName, valueName )
-                        #dPrint( 'Quiet', debuggingThisModule, "  result is", result )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result is", result )
                         if result is not None: return result
                 if 'derivedFrom' in self.__dataDict:
                     trySystemName = self.__dataDict['derivedFrom']
                     if isinstance( trySystemName, str ):
-                        dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
-                    #dPrint( 'Quiet', debuggingThisModule, "q3", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q3", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganisationalSystemValue( trySystemName, valueName )
-                    #dPrint( 'Quiet', debuggingThisModule, "  result is", result )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  result is", result )
                     if result is not None: return result
             # else we couldn't find it anywhere
             logging.error( _("{} Bible Organisational System has no {} specified (b)").format(self.__systemName,valueName) )
         # end of getOrganisationalSystemValue
 
-        vPrint( 'Info', debuggingThisModule, _("Loading {!r} system").format( systemName ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {!r} system").format( systemName ) )
         assert systemName and isinstance( systemName, str )
         self.__boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganisationalSystem( systemName )
@@ -309,25 +309,25 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         # else:
         self.__dataDict = result
         self.__systemName = systemName
-        #dPrint( 'Quiet', debuggingThisModule, self.__dataDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.__dataDict )
 
         # Now initialize the inherited classes
         bookOrderSystemName = self.getOrganisationalSystemValue( 'bookOrderSystem' )
         versificationSystemName = self.getOrganisationalSystemValue( 'versificationSystem' )
         punctuationSystemName = self.getOrganisationalSystemValue( 'punctuationSystem' )
         booksNamesSystemName = self.getOrganisationalSystemValue( 'booksNamesSystem' )
-        dPrint( 'Never', debuggingThisModule, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
         if bookOrderSystemName and bookOrderSystemName!='None' and bookOrderSystemName!='Unknown':
-            vPrint( 'Info', debuggingThisModule, "Uses {!r} book order system".format( bookOrderSystemName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Uses {!r} book order system".format( bookOrderSystemName ) )
             BibleBookOrderSystem.__init__( self, bookOrderSystemName )
         if versificationSystemName and versificationSystemName!='None' and versificationSystemName!='Unknown':
-            vPrint( 'Info', debuggingThisModule, "Uses {!r} versification system".format( versificationSystemName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Uses {!r} versification system".format( versificationSystemName ) )
             BibleVersificationSystem.__init__( self, versificationSystemName )
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown':
-            vPrint( 'Info', debuggingThisModule, "Uses {!r} punctuation system".format( punctuationSystemName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Uses {!r} punctuation system".format( punctuationSystemName ) )
             BiblePunctuationSystem.__init__( self, punctuationSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown':
-            vPrint( 'Info', debuggingThisModule, "Uses {!r} books name system".format( booksNamesSystemName ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Uses {!r} books name system".format( booksNamesSystemName ) )
             BibleBooksNamesSystem.__init__( self, booksNamesSystemName, getOrganisationalSystemValue( 'includesBooks' ) ) # Does one extra step To create the input abbreviations
 
         # Do some cross-checking
@@ -380,32 +380,32 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
     def getOrganisationalSystemValue( self, valueName ):
         """ Gets a value for the system. """
-        #dPrint( 'Quiet', debuggingThisModule, "getOrganisationalSystemValue( {} )".format( repr(valueName) ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getOrganisationalSystemValue( {} )".format( repr(valueName) ) )
         assert self.__dataDict
         assert valueName and isinstance( valueName, str )
 
         if valueName in self.__dataDict: return self.__dataDict[valueName]
         # else maybe we can find the value in a derived text
-        #dPrint( 'Quiet', debuggingThisModule, "q0", self.getOrganisationalSystemName() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q0", self.getOrganisationalSystemName() )
         for tryType in self.getMoreBasicTypes():
             if 'usesText' in self.__dataDict:
                 for trySystemName in self.__dataDict['usesText']:
                     if isinstance( trySystemName, str ):
-                        dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'usesText' is a string: {!r}".format( trySystemName ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'usesText' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'usesText' is a list: {!r}".format( trySystemName ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'usesText' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
-                    #dPrint( 'Quiet', debuggingThisModule, "q1", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q1", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganisationalSystemValue( trySystemName, valueName )
                     if result is not None: return result
             if 'derivedFrom' in self.__dataDict:
                 trySystemName = self.__dataDict['derivedFrom']
                 if isinstance( trySystemName, str ):
-                    dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
-                    #dPrint( 'Quiet', debuggingThisModule, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list
-                #dPrint( 'Quiet', debuggingThisModule, "q2", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "q2", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                 result = self.__boss.getOrganisationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
         # else we couldn't find it anywhere
@@ -487,8 +487,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
         The length of the list is the number of chapters in the book.
         """
-        fnPrint( debuggingThisModule, f"getNumVersesList( {BBB} )" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"getNumVersesList( {BBB} )" )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(BBB) == 3
 
         if not allowAlternatives: return BibleVersificationSystem.getNumVersesList( self, BBB )
@@ -502,7 +502,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 try: bookVersesList = BibleVersificationSystem.getNumVersesList( self, altBBB ); break
                 except KeyError: continue # BBB doesn't exist in this BOS -- try an alternative
             if bookVersesList is not None:
-                vPrint( 'Quiet', debuggingThisModule, "Changed {} to {} in {!r} versification scheme".format( BBB, altBBB, BibleVersificationSystem.getVersificationSystemName( self ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Changed {} to {} in {!r} versification scheme".format( BBB, altBBB, BibleVersificationSystem.getVersificationSystemName( self ) ) )
         return bookVersesList
     # end of BibleOrganisationalSystem.getNumVersesList
 
@@ -512,8 +512,8 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        fnPrint( debuggingThisModule, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "isValidBCVRef( {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey )
         if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
 
@@ -521,7 +521,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if BBB is None or not BBB: return False
         assert len(BBB) == 3
         if C and not C.isdigit() and C!='-1': # Should be no suffix on C (although it can be blank if the reference is for a whole book)
-            vPrint( 'Quiet', debuggingThisModule, "BibleOrganisationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleOrganisationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert not V or V.isdigit() # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert not S or len(S)==1 and S.isalpha() # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
@@ -539,12 +539,12 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """
         accumulatedCount = 0
         for BBB in self.getBookList():
-            #dPrint( 'Quiet', debuggingThisModule, BBB, BibleVersificationSystem.getNumVersesList( self, BBB ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, BibleVersificationSystem.getNumVersesList( self, BBB ) )
             for j,numVerses in enumerate( BibleVersificationSystem.getNumVersesList( self, BBB ) ):
-                #dPrint( 'Quiet', debuggingThisModule, BBB, j, numVerses )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, j, numVerses )
                 BibleOrganisationalSystem.__absoluteVerseDict[(BBB,j+1)] = (accumulatedCount+1,accumulatedCount+numVerses)
                 accumulatedCount += numVerses
-        #dPrint( 'Quiet', debuggingThisModule, BibleOrganisationalSystem.__absoluteVerseDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BibleOrganisationalSystem.__absoluteVerseDict )
     # end of BibleOrganisationalSystem.__makeAbsoluteVerseList
 
 
@@ -577,7 +577,7 @@ class BibleOrganisationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: assert 1 <= avNumber <= 99999
         if not BibleOrganisationalSystem.__absoluteVerseDict: self.__makeAbsoluteVerseList()
         for (BBB,C),(rangeStart, rangeEnd) in BibleOrganisationalSystem.__absoluteVerseDict.items():
-            #dPrint( 'Quiet', debuggingThisModule, BBB, C, rangeStart, rangeEnd )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, rangeStart, rangeEnd )
             if rangeStart <= avNumber <= rangeEnd:
                 return BBB, str(C), str(avNumber - rangeStart + 1)
     # end of BibleOrganisationalSystem.convertAbsoluteVerseNumber
@@ -589,76 +589,76 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Demo the BibleOrganisationalSystems object
-        vPrint( 'Normal', debuggingThisModule, "\nTesting load of ALL Bible organisational systems…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting load of ALL Bible organisational systems…" )
         boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        vPrint( 'Normal', debuggingThisModule, boss ) # Just print a summary
-        vPrint( 'Normal', debuggingThisModule, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, boss ) # Just print a summary
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
 
     if 1: # Demo a BibleOrganisationalSystem object -- this is the one most likely to be wanted by a user
-        vPrint( 'Normal', debuggingThisModule, "\nTesting varying Bible organisational systems…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting varying Bible organisational systems…" )
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
-            vPrint( 'Normal', debuggingThisModule, "\nTrying: {!r}".format( testString ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganisationalSystem( testString )
-            vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
-            vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
-            #dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
-            #dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
-            vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, 'bos', bos ) # Just print a summary
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "First book", bos.getFirstBookCode() )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
-            #    vPrint( 'Quiet', debuggingThisModule, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
+            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
-            #    vPrint( 'Quiet', debuggingThisModule, "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
+            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
 
     if 1:
         version = 'KJV-1769_edition'
-        vPrint( 'Normal', debuggingThisModule, "\nTesting absolute verse numbers for", version )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting absolute verse numbers for", version )
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
-            vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
-            vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of BibleOrganisationalSystem.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 1: # Demo the BibleOrganisationalSystems object
-        vPrint( 'Normal', debuggingThisModule, "\nTesting load of ALL Bible organisational systems…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting load of ALL Bible organisational systems…" )
         boss = BibleOrganisationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        vPrint( 'Normal', debuggingThisModule, boss ) # Just print a summary
-        vPrint( 'Normal', debuggingThisModule, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, boss ) # Just print a summary
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Available system names are: {}").format( boss.getAvailableOrganisationalSystemNames() ) )
 
     if 1: # Demo a BibleOrganisationalSystem object -- this is the one most likely to be wanted by a user
-        vPrint( 'Normal', debuggingThisModule, "\nTesting varying Bible organisational systems…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting varying Bible organisational systems…" )
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
-            vPrint( 'Normal', debuggingThisModule, "\nTrying: {!r}".format( testString ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganisationalSystem( testString )
-            vPrint( 'Normal', debuggingThisModule, 'bos', bos ) # Just print a summary
-            vPrint( 'Normal', debuggingThisModule, "First book", bos.getFirstBookCode() )
-            #dPrint( 'Normal', debuggingThisModule, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
-            #dPrint( 'Normal', debuggingThisModule, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
-            vPrint( 'Normal', debuggingThisModule, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, 'bos', bos ) # Just print a summary
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "First book", bos.getFirstBookCode() )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
+            #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "This type is {}. More basic types are: {}".format(bos.getOrganisationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
-            #    vPrint( 'Quiet', debuggingThisModule, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
+            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
-            #    vPrint( 'Quiet', debuggingThisModule, "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
+            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{!r} gives {}".format(test,bos.getBBBFromText(test) ) )
 
     if 1:
         version = 'KJV-1769_edition'
-        vPrint( 'Normal', debuggingThisModule, "\nTesting absolute verse numbers for", version )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting absolute verse numbers for", version )
         bos = BibleOrganisationalSystem( version )
         for myRef in (('GEN','1','0'), ('GEN','1','1'), ('GEN','1','2'), ('GEN','2','1'), ('MAT','1','1'), ('CO1','2','3'), ('REV','22','21'), ('REV','22','32'), ):
-            vPrint( 'Normal', debuggingThisModule, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
-        vPrint( 'Quiet', debuggingThisModule, '' )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', myRef, '->', bos.getAbsoluteVerseNumber( myRef[0], myRef[1], myRef[2] ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         for myNum in ( 1, 2, 3, 123, 23145, 23146, 31101, 31102, 31103 ):
-            vPrint( 'Normal', debuggingThisModule, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, ' ', myNum, '->', bos.convertAbsoluteVerseNumber( myNum ) )
 # end of BibleOrganisationalSystem.fullDemo
 
 if __name__ == '__main__':

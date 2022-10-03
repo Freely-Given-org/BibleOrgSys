@@ -47,9 +47,9 @@ LAST_MODIFIED_DATE = '2020-05-03' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexicon"
 PROGRAM_NAME = "Greek Lexicon handler"
 PROGRAM_VERSION = '0.17'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -64,7 +64,7 @@ class GreekLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        fnPrint( debuggingThisModule, "GreekLexicon.__init__( {} )".format( XMLFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "GreekLexicon.__init__( {} )".format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         self.StrongsEntries = None
         if preload: self.load()
@@ -76,13 +76,13 @@ class GreekLexicon:
         Load the pickle file if it's there,
             Otherwise use the converter to load the XML (slower).
         """
-        fnPrint( debuggingThisModule, "GreekLexicon.load()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "GreekLexicon.load()" )
         assert self.StrongsEntries is None
 
         standardPickleFilepath = BibleOrgSysGlobals.BOS_DISTRIBUTED_FILES_FOLDERPATH.joinpath( 'GreekLexicon_Strongs_Table.1.pickle' )
         if standardPickleFilepath.is_file():
             import pickle
-            vPrint( 'Info', debuggingThisModule, f"Loading pickle file {standardPickleFilepath}…" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
             with open( standardPickleFilepath, 'rb') as pickleFile:
                 self.StrongsEntries = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         else: # Load the original XML
@@ -119,7 +119,7 @@ class GreekLexicon:
 
         Returns None if the key is not found.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert key and key[0]=='G' and key[1:].isdigit()
 
         keyDigits = key[1:]
@@ -137,7 +137,7 @@ class GreekLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert key and key[0]=='G' and key[1:].isdigit()
         keyDigits = key[1:]
         if self.StrongsEntries is None: self.load()
@@ -165,19 +165,19 @@ class GreekLexicon:
                 occasionally in the sense of union (as a contraction of <span class="StrongsRef">G260</span> ).
             </li>
         """
-        fnPrint( debuggingThisModule, f"GreekLexicon.getStrongsEntryHTML( {key} )" )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, f"GreekLexicon.getStrongsEntryHTML( {key} )" )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert key and key[0]=='G' and key[1:].isdigit()
         keyDigits = key[1:].lstrip( '0' ) # Remove leading zeroes
         if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
-            vPrint( 'Verbose', debuggingThisModule, f"  GreekLexicon.getStrongsEntryHTML got entry: {entry}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML got entry: {entry}" )
             wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
-            vPrint( 'Verbose', debuggingThisModule, f"  GreekLexicon.getStrongsEntryHTML created wordEntry: {wordEntry}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML created wordEntry: {wordEntry}" )
             html = f'<span class="GreekWord" title="{keyDigits}" xml:lang="grk">{entry["word"][0]} ({entry["word"][1]})</span> {wordEntry}'
-            vPrint( 'Verbose', debuggingThisModule, f"  GreekLexicon.getStrongsEntryHTML about to return: {html}" )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML about to return: {html}" )
             return html
     # end of GreekLexicon.getStrongsEntryHTML
 # end of GreekLexicon class
@@ -188,20 +188,20 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # Demonstrate the Greek Lexicon class
-    vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Greek Lexicon class…" )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )
     hl = GreekLexicon( testFolder ) # Load and process the XML
-    vPrint( 'Quiet', debuggingThisModule, hl ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, '' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
     for strongsKey in ('G1','G123','G165','G1732','G1979','G2011','G5624','G5625',): # Last one is invalid
-        vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-        vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getStrongsEntryData( strongsKey ) )
-        vPrint( 'Quiet', debuggingThisModule, " Pronunciation:", hl.getStrongsEntryField( strongsKey, 'pronunciation' ) )
-        vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Pronunciation:", hl.getStrongsEntryField( strongsKey, 'pronunciation' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
         break
 # end of GreekLexicon.briefDemo
 
@@ -209,20 +209,20 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # demonstrate the Greek Lexicon class
-    vPrint( 'Normal', debuggingThisModule, "\nDemonstrating the Greek Lexicon class…" )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )
     hl = GreekLexicon( testFolder ) # Load and process the XML
-    vPrint( 'Quiet', debuggingThisModule, hl ) # Just print a summary
-    vPrint( 'Quiet', debuggingThisModule, '' )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hl ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
     for strongsKey in ('G1','G123','G165','G1732','G1979','G2011','G5624','G5625',): # Last one is invalid
-        vPrint( 'Quiet', debuggingThisModule, '\n' + strongsKey )
-        vPrint( 'Quiet', debuggingThisModule, " Data:", hl.getStrongsEntryData( strongsKey ) )
-        vPrint( 'Quiet', debuggingThisModule, " Pronunciation:", hl.getStrongsEntryField( strongsKey, 'pronunciation' ) )
-        vPrint( 'Quiet', debuggingThisModule, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n' + strongsKey )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Data:", hl.getStrongsEntryData( strongsKey ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " Pronunciation:", hl.getStrongsEntryField( strongsKey, 'pronunciation' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " HTML:", hl.getStrongsEntryHTML( strongsKey ) )
 # end of GreekLexicon.fullDemo
 
 if __name__ == '__main__':

@@ -89,9 +89,9 @@ LAST_MODIFIED_DATE = '2022-04-24' # by RJH
 SHORT_PROGRAM_NAME = "YETBible"
 PROGRAM_NAME = "YET Bible format handler"
 PROGRAM_VERSION = '0.11'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 filenameEndingsToAccept = ( '.YET', ) # Must be UPPERCASE
@@ -110,9 +110,9 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     if autoLoad is true and exactly one YET Bible is found,
         returns the loaded YETBible object.
     """
-    fnPrint( debuggingThisModule, "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
-    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
-    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
+    fnPrint( DEBUGGING_THIS_MODULE, "YETBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
+    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -123,7 +123,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " YETBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " YETBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -145,12 +145,12 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
-                    vPrint( 'Verbose', debuggingThisModule, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "YETBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "YETBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = YETBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".yet"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -165,7 +165,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("YETBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -184,15 +184,15 @@ def YETBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        vPrint( 'Verbose', debuggingThisModule, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "YETBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "YETBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             uB = YETBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -232,7 +232,7 @@ class YETBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
 
         loadErrors:List[str] = []
         def decodeVerse( encodedVerseString ):
@@ -256,12 +256,12 @@ class YETBible( Bible ):
             verseString = verseString.replace( '@9', '\\add ' ).replace( '@7', '\\add*' ) # or \\i ???
             verseString = re.sub( r'@<f([0-9])@>@/', r'\\ff\1', verseString )
             verseString = re.sub( r'@<x([0-9])@>@/', r'\\xx\1', verseString )
-            #dPrint( 'Quiet', debuggingThisModule, repr( verseString ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr( verseString ) )
             if '@' in verseString: # still -- did we miss something or was there an error????
                 loadErrors.append( _("{} {}:{} Found unrecognised @ format fields in '{}'") \
                             .format( BBB, chapterNumberString, verseNumberString, verseString ) )
                 logging.error( f"Found unrecognised @ format fields in {BBB} {chapterNumberString}:{verseNumberString} '{verseString}'" )
-            if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert '@' not in verseString
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in verseString
             return verseString
         # end of decodeVerse
 
@@ -279,12 +279,12 @@ class YETBible( Bible ):
                 if line and line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #dPrint( 'Quiet', debuggingThisModule, 'YETBible file line is "' + line + '"' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'YETBible file line is "' + line + '"' )
 
                 bits = line.split( '\t' )
-                #dPrint( 'Quiet', debuggingThisModule, self.givenName, BBB, bits )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.givenName, BBB, bits )
                 if bits[0] == 'info':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 3
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 3
                     if bits[1] == 'shortName':
                         shortName = bits[2]
                         self.name = shortName
@@ -294,14 +294,14 @@ class YETBible( Bible ):
                         description = bits[2]
                     elif bits[1] == 'locale':
                         locale = bits[2]
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert 2 <= len(locale) <= 3
+                        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 2 <= len(locale) <= 3
                         if locale == 'in': locale = 'id' # Fix a quirk in the locale encoding
                     else:
                         logging.warning( _("YETBible: unknown {} info field in {} {} {}:{}") \
                             .format( repr(bits[1]), BBB, chapterNumberString, verseNumberString ) )
                     continue
                 elif bits[0] == 'book_name':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert 3 <= len(bits) <= 4
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 3 <= len(bits) <= 4
                     thisBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bits[1] )
                     if len(bits) == 3:
                         bookNameDict[thisBBB] = bits[2], ''
@@ -309,47 +309,47 @@ class YETBible( Bible ):
                         bookNameDict[thisBBB] = bits[2], bits[3]
                     continue
                 elif bits[0] == 'verse':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 5
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 5
                     bookNumberString, chapterNumberString, verseNumberString, encodedVerseString = bits[1:]
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
-                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} = {}".format( BBB, chapterNumberString, verseNumberString, repr(encodedVerseString) ) )
                     if BBB != lastBBB: # We have a new book
                         if lastBBB is not None: # We have a completed book to save
                             bookDict[lastBBB] = bookLines
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert BBB in bookNameDict
+                        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert BBB in bookNameDict
                         bookLines = {} # Keys are (C,V) strings
                     verseString = decodeVerse( encodedVerseString )
                     bookLines[(chapterNumberString,verseNumberString)] = verseString # Just store it for now
                     lastBBB = BBB
                     continue
                 elif bits[0] == 'pericope':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 5
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 5
                     bookNumberString, chapterNumberString, verseNumberString, encodedHeadingString = bits[1:]
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     headingString = encodedHeadingString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
-                    #dPrint( 'Quiet', debuggingThisModule, repr(encodedHeadingString), repr(headingString) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert '@' not in headingString
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(encodedHeadingString), repr(headingString) )
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in headingString
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = headingString, [] # Blank refList
                     continue
                 elif bits[0] == 'parallel': # These lines optionally follow pericope lines
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 2
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
                     refList.append( bits[1] )
-                    #dPrint( 'Quiet', debuggingThisModule, "parallel2", repr(heading), refList )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "parallel2", repr(heading), refList )
                     headingDict[(BBB,chapterNumberString,verseNumberString)] = heading, refList
                     continue
                 elif bits[0] == 'xref':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 6
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 6
                     bookNumberString, chapterNumberString, verseNumberString, indexNumberString, encodedNoteString = bits[1:]
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
@@ -359,30 +359,30 @@ class YETBible( Bible ):
                     noteString = re.sub( r'@<ta(.+?)@>', r'', noteString ) # Get rid of these encoded BCV references for now
                     noteString = re.sub( r'@<to(.+?)@>', r'', noteString ) # Get rid of these OSIS BCV references for now
                     noteString = noteString.replace( '@/', '' )
-                    #dPrint( 'Quiet', debuggingThisModule, repr(encodedNoteString), repr(noteString) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(encodedNoteString), repr(noteString) )
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
                     xrefDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
                 elif bits[0] == 'footnote':
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert len(bits) == 6
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(bits) == 6
                     bookNumberString, chapterNumberString, verseNumberString, indexNumberString, encodedNoteString = bits[1:]
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                         assert bookNumberString.isdigit()
                         assert chapterNumberString.isdigit()
                         assert verseNumberString.isdigit()
                         assert indexNumberString.isdigit()
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumberString )
                     noteString = encodedNoteString.replace( '@9', '\\it ' ).replace( '@7', '\\it*' )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert '@' not in noteString
                     footnoteDict[(BBB,chapterNumberString,verseNumberString,indexNumberString)] = noteString
                     continue
-                else: vPrint( 'Quiet', debuggingThisModule, "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "YETBible: Unknown line type", self.givenName, BBB, chapterNumberString, verseNumberString, len(bits), bits ); halt
             bookDict[lastBBB] = bookLines # Save the last book
 
 
         # Now process the books
         for BBB,bkData in bookDict.items():
-            #dPrint( 'Quiet', debuggingThisModule, "Processing", BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Processing", BBB )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'YET Bible Book object'
             thisBook.objectTypeString = 'YET'
@@ -391,57 +391,57 @@ class YETBible( Bible ):
                 # Insert headings (can only occur before verses)
                 if (BBB,chapterNumberString,verseNumberString) in headingDict:
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
-                    #dPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
                     thisBook.addLine( 's', heading )
                     if refList:
                         refString = ""
-                        #dPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
                         for ref in refList:
                             refString += ('; ' if refString else '') + ref
-                        #dPrint( 'Quiet', debuggingThisModule, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
                         thisBook.addLine( 'r', '('+refString+')' )
                 # Insert footnotes and cross-references
                 while '\\ff' in verseString:
-                    #dPrint( 'Quiet', debuggingThisModule, "footnote", repr(verseString) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "footnote", repr(verseString) )
                     fIx = verseString.index( '\\ff' )
                     caller = verseString[fIx+3]
-                    #dPrint( 'Quiet', debuggingThisModule, "fcaller", repr(caller) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert caller.isdigit()
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fcaller", repr(caller) )
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert caller.isdigit()
                     note = footnoteDict[(BBB,chapterNumberString,verseNumberString,caller)]
-                    #dPrint( 'Quiet', debuggingThisModule, "fnote", repr(note) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fnote", repr(note) )
                     verseString = verseString[:fIx] + '\\f + \\ft ' + note + '\\f*' + verseString[fIx+4:]
-                    #dPrint( 'Quiet', debuggingThisModule, "fvS", repr(verseString) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "fvS", repr(verseString) )
                 while '\\xx' in verseString:
-                    #dPrint( 'Quiet', debuggingThisModule, "xref", repr(verseString) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xref", repr(verseString) )
                     fIx = verseString.index( '\\xx' )
                     caller = verseString[fIx+3]
-                    #dPrint( 'Quiet', debuggingThisModule, "xcaller", repr(caller) )
-                    if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert caller.isdigit()
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xcaller", repr(caller) )
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert caller.isdigit()
                     note = xrefDict[(BBB,chapterNumberString,verseNumberString,caller)]
-                    #dPrint( 'Quiet', debuggingThisModule, "xnote", repr(note) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xnote", repr(note) )
                     verseString = verseString[:fIx] + '\\x - \\xt ' + note + '\\x*' + verseString[fIx+4:]
-                    #dPrint( 'Quiet', debuggingThisModule, "xvS", repr(verseString) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "xvS", repr(verseString) )
                 # Save the Bible data fields
                 if chapterNumberString != lastChapterNumberString:
                     thisBook.addLine( 'c', chapterNumberString )
                     lastChapterNumberString = chapterNumberString
-                #dPrint( 'Quiet', debuggingThisModule, BBB, chapterNumberString, verseNumberString, repr(verseString) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, chapterNumberString, verseNumberString, repr(verseString) )
                 if verseString.startswith( '\\\\' ):  # It's an initial paragraph marker
                     if verseString[3]==' ': marker, verseString = verseString[2], verseString[4:]
                     elif verseString[4]==' ': marker, verseString = verseString[2:4], verseString[5:]
                     else: halt
-                    #dPrint( 'Quiet', debuggingThisModule, '', '\\'+marker )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '', '\\'+marker )
                     thisBook.addLine( marker, '' )
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag: assert not verseString.startswith( '\\\\' )
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert not verseString.startswith( '\\\\' )
                 bits = verseString.split( '\\\\' ) # Split on paragraph markers (but not character markers)
                 for j,bit in enumerate(bits):
-                    #dPrint( 'Quiet', debuggingThisModule, "loop", j, repr(bit), repr(verseString) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "loop", j, repr(bit), repr(verseString) )
                     if j==0: thisBook.addLine( 'v', verseNumberString + ' ' + verseString.rstrip() )
                     else:
                         if bit[1]==' ': marker, bit = bit[0], bit[2:]
                         elif bit[2]==' ': marker, bit = bit[0:2], bit[3:]
                         else: halt
-                        #dPrint( 'Quiet', debuggingThisModule, "mV", marker, repr(bit), repr(verseString) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "mV", marker, repr(bit), repr(verseString) )
                         thisBook.addLine( marker, bit.rstrip() )
             self.stashBook( thisBook )
         if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
@@ -456,11 +456,11 @@ def testYB( TUBfilename ):
     from BibleOrgSys.Reference import VerseReferences
     TUBfolder = Path( '/mnt/SSDs/Bibles/YET modules/' ) # Must be the same as below
 
-    vPrint( 'Normal', debuggingThisModule, _("Demonstrating the YET Bible class…") )
-    vPrint( 'Quiet', debuggingThisModule, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the YET Bible class…") )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     yb = YETBible( TUBfolder, TUBfilename )
     yb.load() # Load and process the file
-    vPrint( 'Normal', debuggingThisModule, yb ) # Just print a summary
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, yb ) # Just print a summary
     if BibleOrgSysGlobals.strictCheckingFlag: yb.check()
     if BibleOrgSysGlobals.commandLineArguments.export: yb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -472,13 +472,13 @@ def testYB( TUBfilename ):
         if t=='NT' and len(yb)==39: continue # Don't bother with NT references if it's only a OT
         if t=='DC' and len(yb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
             verseText = yb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        vPrint( 'Normal', debuggingThisModule, reference, shortText, verseText )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, shortText, verseText )
 # end of testYB
 
 
@@ -486,24 +486,24 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = Path( '/mnt/SSDs/Bibles/YET modules/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = YETBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA1", result1 )
         result2 = YETBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA2", result2 )
         result3 = YETBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA3", result3 )
 
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = YETBibleFileCheck( testSubfolder )
-        #dPrint( 'Normal', debuggingThisModule, "YET TestB1", result3 )
+        #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestB1", result3 )
         #result4 = YETBibleFileCheck( testSubfolder, autoLoad=True )
-        #dPrint( 'Normal', debuggingThisModule, "YET TestB2", result4 )
+        #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestB2", result4 )
 
 
     if 1: # specified modules
@@ -512,7 +512,7 @@ def briefDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', debuggingThisModule, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testYB( testFilename )
@@ -527,17 +527,17 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testYB, parameters ) # have the pool do our loads
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
 # end of YETBible.briefDemo
@@ -546,24 +546,24 @@ def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolder = Path( '/mnt/SSDs/Bibles/YET modules/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = YETBibleFileCheck( testFolder )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA1", result1 )
         result2 = YETBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA2", result2 )
         result3 = YETBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "YET TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestA3", result3 )
 
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = YETBibleFileCheck( testSubfolder )
-        #dPrint( 'Normal', debuggingThisModule, "YET TestB1", result3 )
+        #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestB1", result3 )
         #result4 = YETBibleFileCheck( testSubfolder, autoLoad=True )
-        #dPrint( 'Normal', debuggingThisModule, "YET TestB2", result4 )
+        #dPrint( 'Normal', DEBUGGING_THIS_MODULE, "YET TestB2", result4 )
 
 
     if 1: # specified modules
@@ -572,7 +572,7 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            vPrint( 'Normal', debuggingThisModule, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testYB( testFilename )
@@ -586,17 +586,17 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testYB, parameters ) # have the pool do our loads
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                     assert len(results) == len(parameters) # Results (all None) are actually irrelevant to us here
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nYET D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testYB( someFolder )
 # end of YETBible.fullDemo

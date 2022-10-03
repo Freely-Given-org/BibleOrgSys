@@ -71,10 +71,10 @@ LAST_MODIFIED_DATE = '2020-06-10' # by RJH
 SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
 PROGRAM_NAME = "Check Literal NT vs Greek"
 PROGRAM_VERSION = '0.03'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -88,31 +88,31 @@ def main() -> None:
         -i (information) is 3
         -v (verbose) is 4.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Download the online Door43 Resource Catalog
     door43CatalogResources = Door43CatalogResources()
-    vPrint( 'Info', debuggingThisModule, door43CatalogResources )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, door43CatalogResources )
     door43CatalogResources.fetchCatalog()
-    vPrint( 'Info', debuggingThisModule, '\n{door43CatalogResources}\n\n' )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, '\n{door43CatalogResources}\n\n' )
 
     # Download and load all books from the UGNT = unfoldingWord® Greek New Testament
     UGNTDict = door43CatalogResources.searchBibles( 'el-x-koine', 'unfoldingWord® Greek New Testament' )
     if UGNTDict:
         Door43CatalogUGNTBible = Door43CatalogBible( UGNTDict )
-        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.preload()
-        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
-        vPrint( 'Quiet', debuggingThisModule, Door43CatalogUGNTBible, end='\n\n' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible, end='\n\n' )
 
     # Download the ULT = unfoldingWord® Literal Text
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord® Literal Text' )
     if ULTDict:
         Door43CatalogULTBible = Door43CatalogBible( ULTDict )
-        #dPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
-        vPrint( 'Quiet', debuggingThisModule, Door43CatalogULTBible, end='\n\n' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible, end='\n\n' )
 
     # Go through the UGNT verse by verse
     #   and do some comparisions with the matching ULT verses
@@ -140,29 +140,29 @@ def main() -> None:
                 J2 = 'Jesus' in text2
                 if J1 and not J2:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
-                        vPrint( 'Quiet', debuggingThisModule, f"                              {text2}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text2}" )
                     count1 += 1
                 if J2 and not J1:
                     if BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', debuggingThisModule, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
-                        vPrint( 'Quiet', debuggingThisModule, f"                              {text1}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text1}" )
                     count2 += 1
-    vPrint( 'Quiet', debuggingThisModule, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
 
 def briefDemo() -> None:
     """
     Fast demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 # end of briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 # end of fullDemo
 
 if __name__ == '__main__':

@@ -47,9 +47,9 @@ LAST_MODIFIED_DATE = '2018-12-02' # by RJH
 SHORT_PROGRAM_NAME = "FreeBibleConverter"
 PROGRAM_NAME = "FreeBible Converter"
 PROGRAM_VERSION = '0.09'
-programNameVersion = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 ID_LINE = "Free Bible Version New Testament Version 2.1.1"
@@ -77,11 +77,11 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
     writtenCount = 0
     splitOnString = '\\id '
     for splitText in entireBibleText.split( splitOnString ):
-        #dPrint( 'Quiet', debuggingThisModule, "here", writtenCount, repr(splitText[:40]) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here", writtenCount, repr(splitText[:40]) )
         if not splitText: continue # coz it gets a blank one right at the beginning
         assert splitText[3] == ' '
         bookID = splitText[:3]
-        #dPrint( 'Quiet', debuggingThisModule, "  Got book id", repr(bookID) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got book id", repr(bookID) )
         assert bookID in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True )
         splitText = splitOnString + splitText
 
@@ -90,12 +90,12 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         # if bookID == 'FRT':
 
         filepath = os.path.join( folderpath, 'FBV_{}.usfm'.format( bookID ) )
-    vPrint( 'Info', debuggingThisModule, "Writing {}…".format( filepath ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Writing {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
             bookFile.write( splitText )
-    vPrint( 'Verbose', debuggingThisModule, "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
         writtenCount += 1
-    vPrint( 'Quiet', debuggingThisModule, "{} books written to {}".format( writtenCount, folderpath ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} books written to {}".format( writtenCount, folderpath ) )
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
@@ -103,14 +103,14 @@ def briefDemo() -> None:
     """
     Demo program to handle command line parameters and run a few functions.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     sampleText = "This is a lot of nonsense"
     sampleText = noisyReplaceAll( sampleText, ' lot ', ' great, pig pile ' )
     sampleText = noisyRegExReplaceAll( sampleText, ' p(\S)', ' b\\1' ) # pig to big hopefully
     noisyFind( sampleText, 'bile', logging.critical )
 
-    if BibleOrgSysGlobals.verbosityLevel>0: vPrint( 'Quiet', debuggingThisModule, sampleText )
+    if BibleOrgSysGlobals.verbosityLevel>0: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, sampleText )
 # end of FreeBibleConvert.main
 
 
@@ -119,16 +119,16 @@ def main() -> None:
     Main program to handle command line parameters
         and then convert the FBV text file.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    vPrint( 'Quiet', debuggingThisModule, _("Loading {}…").format( INPUT_FILEPATH ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {}…").format( INPUT_FILEPATH ) )
     with open( INPUT_FILEPATH, 'rt', encoding='utf-8' ) as textFile:
         originalText = textFile.read()
-    vPrint( 'Normal', debuggingThisModule, _("  Loaded {:,} characters ({:,} lines)").format( len(originalText), originalText.count('\n') ) )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  Loaded {:,} characters ({:,} lines)").format( len(originalText), originalText.count('\n') ) )
 
     # Preparation by inserting some lines at the beginning
     entireText = '\\id FRT -- {}\n'.format( ID_LINE )
-    entireText += '\\rem Converted by {!r}\n'.format( f'{programNameVersion} {_("last modified")} {LAST_MODIFIED_DATE}' )
+    entireText += '\\rem Converted by {!r}\n'.format( f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}' )
     entireText += '\\rem Converted from \'{}\'\n'.format( INPUT_FILEPATH )
     entireText += '\\rem Converted {}\n'.format( datetime.now() )
     entireText += originalText
@@ -216,7 +216,7 @@ def main() -> None:
     entireText = noisyReplaceAll( entireText, ' \n', '\n', loop=True )
 
     # Adjust book IDs, and insert h,toc1,toc2,toc3,mt1
-    vPrint( 'Info', debuggingThisModule, "Adjusting book names and IDs…" )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Adjusting book names and IDs…" )
     for name,abbrev,bookID in ( ('Matthew','Mat','MAT'), ('Mark','Mrk','MRK'), ('Luke','Luk','LUK'), ('John','Jhn','JHN'), ('Acts','Act','ACT'),
                         ('Romans','Rom','ROM'), ('First Corinthians','1 Cor','1CO'), ('Second Corinthians','2 Cor','2CO'),
                         ('Galatians','Gal','GAL'), ('Ephesians','Eph','EPH'), ('Philippians','Php','PHP'), ('Colossians','Col','COL'),
@@ -236,7 +236,7 @@ def main() -> None:
                                 )
 
     # Check again
-    vPrint( 'Normal', debuggingThisModule, "Final checks before writing files…" )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Final checks before writing files…" )
     noisyFind( entireText, '<', logging.critical ); noisyFind( entireText, '>', logging.critical )
     noisyFind( entireText, "'''", logging.critical )
     noisyFind( entireText, "''", logging.critical )
@@ -246,12 +246,12 @@ def main() -> None:
     noisyRegExFind( entireText, '\n[^\\\\]', logging.critical ) # Line that doesn't begin with backslash
 
     # Write the temp output (for debugging)
-    if debuggingThisModule or BibleOrgSysGlobals.debugFlag:
+    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
         # Write out entire file for checking
         if not os.path.exists( OUTPUT_FOLDERPATH):
             os.makedirs( OUTPUT_FOLDERPATH )
         filepath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
-        vPrint( 'Normal', debuggingThisModule, "Writing temp file {}…".format( filepath ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 

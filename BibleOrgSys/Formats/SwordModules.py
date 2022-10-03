@@ -81,9 +81,9 @@ LAST_MODIFIED_DATE = '2020-04-16' # by RJH
 SHORT_PROGRAM_NAME = "SwordModules"
 PROGRAM_NAME = "Sword module handler"
 PROGRAM_VERSION = '0.49'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 # Folders where to try looking for modules
@@ -116,7 +116,7 @@ class SwordModuleConfiguration:
         Looks in loadFolder (should be the sword folder that contains the mods.d and modules folders)
             and attempts to load moduleAbbreviation.conf.
         """
-        fnPrint( debuggingThisModule, "SwordModuleConfiguration.__init__( {!r}, {} )".format( moduleAbbreviation, swordFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModuleConfiguration.__init__( {!r}, {} )".format( moduleAbbreviation, swordFolder ) )
 
         # Set our defaults
         self.abbreviation = moduleAbbreviation # a string like 'ylt'
@@ -140,9 +140,9 @@ class SwordModuleConfiguration:
             self.encoding (from Encoding entry)
             self.locked (from CipherKey)
         """
-        fnPrint( debuggingThisModule, "SwordModuleConfiguration.loadConf()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModuleConfiguration.loadConf()" )
 
-        vPrint( 'Info', debuggingThisModule, "  Loading Sword config file for {}…".format( self.abbreviation ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loading Sword config file for {}…".format( self.abbreviation ) )
         filename = self.abbreviation + '.conf'
         self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename )
         self.confDict = {}
@@ -152,7 +152,7 @@ class SwordModuleConfiguration:
             self.confPath = os.path.join( self.swordFolder, 'mods.d/', filename.lower() )
         with open( self.confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as myFile: # Automatically closes the file when done
             processConfLines( self.abbreviation, myFile, self.confDict )
-        #dPrint( 'Quiet', debuggingThisModule, self.confDict )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.confDict )
 
         # Fix known module bugs or inconsistencies
         if 'BlockType' in self.confDict and self.confDict['BlockType'] == 'Book': # Fix an inconsistency (in at least the Clarke commentary)
@@ -178,7 +178,7 @@ class SwordModuleConfiguration:
         else:
             logging.critical( _("Missing 'ModDrv=' line in {} conf file").format( self.abbreviation ) )
         if 'Encoding' in self.confDict:
-            #dPrint( 'Quiet', debuggingThisModule, self.confDict['Encoding']); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.confDict['Encoding']); halt
             assert self.confDict['Encoding'] in ('UTF-8',)
             #self.encoding = 'utf-8' # override the default
             if self.abbreviation in ('ab','barnes','navelinked','dandettebiblen',): self.encoding = 'iso-8859-15' # Not sure how/why they got this wrong!
@@ -187,9 +187,9 @@ class SwordModuleConfiguration:
         for key in self.confDict:
             if key not in ALL_SWORD_CONF_FIELD_NAMES:
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    vPrint( 'Quiet', debuggingThisModule, "SwordModuleConfiguration.loadConf: Unexpected {} {!r} Sword conf key ({})" \
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModuleConfiguration.loadConf: Unexpected {} {!r} Sword conf key ({})" \
                                             .format( self.abbreviation, key, self.confDict[key] ) )
-                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
         # See if we have to inform the user about anything
         if 'Font' in self.confDict and BibleOrgSysGlobals.debugFlag: logging.warning( "This program does not load {!r} font yet.".format( self.confDict['Font'] ) )
@@ -197,10 +197,10 @@ class SwordModuleConfiguration:
         # Checked for locked modules
         if 'CipherKey' in self.confDict:
             if self.confDict['CipherKey']:
-                vPrint( 'Info', debuggingThisModule, "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "SwordModuleConfiguration: {} {} module is unlocked!".format( self.name, self.modCategory ) )
                 self.locked = False
             else:
-                vPrint( 'Info', debuggingThisModule, "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "SwordModuleConfiguration: {} {} module is locked!".format( self.name, self.modCategory ) )
                 self.locked = True
 
         # Check we got everything we should have
@@ -225,7 +225,7 @@ class SwordModuleConfiguration:
             adjKey = "LCSH (Library of Congress Subject Headings)" if key=="LCSH" else key
             if key == "History":
                 result += ('\n' if result else '') + "      " + _("History:")
-                #dPrint( 'Quiet', debuggingThisModule, "value", repr(value) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "value", repr(value) )
                 if not isinstance( value, list ): value = [value]
                 for something in value:
                     if isinstance( something, tuple ):
@@ -233,7 +233,7 @@ class SwordModuleConfiguration:
                         result += ('\n' if result else '') + "        {}: {}".format( version, historyDescription )
                     else:
                         logging.error( "SwordModuleConfiguration: Got a malformed History string: {!r}".format( something ) )
-                        if debuggingThisModule and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
+                        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
             elif key not in TECHNICAL_SWORD_CONF_FIELD_NAMES or BibleOrgSysGlobals.verbosityLevel > 2: # Don't bother printing some of the technical keys
                 result += ('\n' if result else '') + "      {}: {}".format( adjKey, value )
         return result
@@ -244,7 +244,7 @@ class SwordModuleConfiguration:
         """
         Return the value for fieldname (str) if it's in the configDict (loading from the Sword module .conf file).
         """
-        # fnPrint( debuggingThisModule, "SwordModuleConfiguration.get( {} )".format( fieldName ) )
+        # fnPrint( DEBUGGING_THIS_MODULE, "SwordModuleConfiguration.get( {} )".format( fieldName ) )
 
         if fieldName in self.confDict: return self.confDict[fieldName]
     # end of SwordModuleConfiguration.get
@@ -264,7 +264,7 @@ class SwordModule():
         # Stored the preloading configuration stuff
         self.SwordModuleConfiguration = loadedSwordModuleConfiguration
         #if BibleOrgSysGlobals.debugFlag:
-            #dPrint( 'Quiet', debuggingThisModule, self.SwordModuleConfiguration.modCategory )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.SwordModuleConfiguration.modCategory )
             #assert self.SwordModuleConfiguration.modCategory not in ('Bible','Commentary' ) # Fails for calls from subclass
         self.name = self.SwordModuleConfiguration.name
 
@@ -287,9 +287,9 @@ class SwordModule():
                 installSize = int( self.SwordModuleConfiguration.confDict['InstallSize'] )
                 if installSize <= self.autoMemoryMaxSize:
                     self.inMemoryFlag = True
-                    vPrint( 'Normal', debuggingThisModule, "    Autoloading small ({}) module into memory".format( installSize ) )
-                else: vPrint( 'Verbose', debuggingThisModule, "    Module is too large ({}) for autoloading into memory (>{})".format( installSize, self.autoMemoryMaxSize ) )
-            else: vPrint( 'Verbose', debuggingThisModule, "    " + _("Module not autoloaded into memory because no InstallSize specified") )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    Autoloading small ({}) module into memory".format( installSize ) )
+                else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    Module is too large ({}) for autoloading into memory (>{})".format( installSize, self.autoMemoryMaxSize ) )
+            else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    " + _("Module not autoloaded into memory because no InstallSize specified") )
     # end of SwordModule.__init__
 
 
@@ -301,9 +301,9 @@ class SwordModule():
         """
         Load an uncompressed lexicon / dictionary type module.
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadRawLD()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadRawLD()" )
 
-        vPrint( 'Normal', debuggingThisModule, "  Loading {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',)
         assert self.SwordModuleConfiguration.modCategory in ('Dictionary',)
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
@@ -316,13 +316,13 @@ class SwordModule():
                 if not binaryBlock: break # at the end of the file
                 offset, length = struct.unpack( 'ii' if self.SwordModuleConfiguration.modType=='RawLD4' else 'ih', binaryBlock )
                 ldData.append( (offset, length) )
-        vPrint( 'Info', debuggingThisModule, "    {:,} {} index entries read".format( len(ldData), 'map' if 'Category' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Category']=='Maps' else 'dictionary' ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} index entries read".format( len(ldData), 'map' if 'Category' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Category']=='Maps' else 'dictionary' ) )
         # Load the data file
         self.dataFilepath = os.path.join( self.dataFolder, self.filename+'.dat' )
         with open( self.dataFilepath, 'rt', encoding=self.SwordModuleConfiguration.encoding ) as textFile:
             for j, (offset, length) in enumerate(ldData):
                 if length:
-                    #dPrint( 'Quiet', debuggingThisModule, j, offset, length )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, offset, length )
                     textFile.seek( offset )
                     chunk = textFile.read( length )
                     chunks = chunk.split( '\n', 1 )
@@ -331,19 +331,19 @@ class SwordModule():
                     if key and key[-1]=='\\': key = key[:-1]
                     if self.SwordModuleConfiguration.abbreviation in ('greekhebrew','hebrewgreek','strongsgreek','strongsrealgreek','strongshebrew','strongsrealhebrew',):
                         if len(key)==5 and key.isdigit():
-                            #dPrint( 'Quiet', debuggingThisModule, "adjusting", key )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "adjusting", key )
                             if self.SwordModuleConfiguration.abbreviation in ('greekhebrew','strongsgreek','strongsrealgreek',): key = 'G' + key
                             elif self.SwordModuleConfiguration.abbreviation in ('hebrewgreek','strongshebrew','strongsrealhebrew',): key = 'H' + key
-                        elif BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, "not adjusting", key )
+                        elif BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "not adjusting", key )
                     if not self.inMemoryFlag: entry = (offset+chunk.index(entry),len(entry),) # Store the reference, not the actual information
                     if key in self.store: # we've encountered a duplicate
-                        vPrint( 'Info', debuggingThisModule, "      Found duplicate {!r} key in {}".format( key, self.SwordModuleConfiguration.name ) )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, "      Found duplicate {!r} key in {}".format( key, self.SwordModuleConfiguration.name ) )
                         try: self.store[key].append( entry )
                         except AttributeError: self.store[key] = [self.store[key], entry ]
                     else: self.store[key] = entry # Most keys only occur once
-        vPrint( 'Info', debuggingThisModule, "    {} {} entries read".format( len(self.store), 'map' if 'Category' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Category']=='Maps' else 'dictionary' ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} entries read".format( len(self.store), 'map' if 'Category' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Category']=='Maps' else 'dictionary' ) )
         if 'Category' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Category']=='Maps':
-            vPrint( 'Quiet', debuggingThisModule, "We should really be storing these {} maps somewhere else!".format( self.SwordModuleConfiguration.name ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "We should really be storing these {} maps somewhere else!".format( self.SwordModuleConfiguration.name ) )
         self.expandLD()
     # end of SwordModule.loadRawLD
 
@@ -352,8 +352,8 @@ class SwordModule():
         """
         Decrypt if necessary, and then decompress (using zlib) a chunk of a work.
         """
-        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, "SwordModule.decompressChunk( … )" )
+        #if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModule.decompressChunk( … )" )
 
 
         # The following decryption code is adapted from sapphire.cpp -- the Saphire II stream cipher class.
@@ -402,7 +402,7 @@ class SwordModule():
             # For random keys, lengths of from 4 to 16 bytes are recommended, depending on how secure you want this to be.
             if not key: hashInit(); return # If we have been given no key, assume the default hash setup
             cards = bytearray( range( 256 ) ) # Start with cards all in order -- one of each
-            #dPrint( 'Quiet', debuggingThisModule, len(cards), cards ); halt
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(cards), cards ); halt
             # Swap the card at each position with some other card
             keyPos = rsum = 0
             for j in range( 255, -1, -1 ):
@@ -452,9 +452,9 @@ class SwordModule():
         """
         Load a compressed lexicon / dictionary type module.
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadCompressedLD()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadCompressedLD()" )
 
-        vPrint( 'Normal', debuggingThisModule, "  Loading compressed {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading compressed {} from {}…".format( self.SwordModuleConfiguration.modCategory, self.dataFolder ) )
         assert self.SwordModuleConfiguration.modType in ('zLD',)
         assert self.SwordModuleConfiguration.modCategory in ('Dictionary',)
         assert 'CompressType' in self.SwordModuleConfiguration.confDict
@@ -467,12 +467,12 @@ class SwordModule():
                     binary8 = indexFile.read(8)
                     if not binary8: break # at the end of the file
                     offset, mixedEntryLength = struct.unpack( "II", binary8 )
-                    #dPrint( 'Quiet', debuggingThisModule, count, 'is', offset, mixedEntryLength )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, count, 'is', offset, mixedEntryLength )
                     idxData.append( (offset, mixedEntryLength) )
-            vPrint( 'Info', debuggingThisModule, "    {} {} index pointer entries read".format( len(idxData), self.SwordModuleConfiguration.modCategory ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} index pointer entries read".format( len(idxData), self.SwordModuleConfiguration.modCategory ) )
         else:
             logging.critical( "Oops, cannot find {} for {} module".format( filepath, self.SwordModuleConfiguration.name ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
             return
         if idxData:
             blankCount, LDIndex = 0, {}
@@ -484,16 +484,16 @@ class SwordModule():
                     if mixedEntryLength:
                         mixedIndexFile.seek( offset )
                         mixedChunk = mixedIndexFile.read( mixedEntryLength )
-                        #dPrint( 'Quiet', debuggingThisModule, j, offset, mixedEntryLength, mixedChunk )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, offset, mixedEntryLength, mixedChunk )
                         stringBit, binaryBit = mixedChunk[:-10], mixedChunk[-8:] # There's a variable length string, then a CRLF, then eight bytes of data
-                        #dPrint( 'Quiet', debuggingThisModule, stringBit, binaryBit )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, stringBit, binaryBit )
                         assert len(binaryBit) == 8
                         blockNumber, blockChunkNumber = struct.unpack( 'II', binaryBit )
                         indexString = stringBit.decode( self.SwordModuleConfiguration.encoding )
-                        #if indexString[0]=='N': vPrint( 'Quiet', debuggingThisModule, indexString )
-                        #dPrint( 'Quiet', debuggingThisModule, "'"+indexString+"'", blockNumber, blockChunkNumber )
-                        #dPrint( 'Quiet', debuggingThisModule, "chunk is", "'"+chunk+"'" )
-                        #if blockNumber==2: vPrint( 'Quiet', debuggingThisModule, blockNumber, blockChunkNumber )
+                        #if indexString[0]=='N': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, indexString )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "'"+indexString+"'", blockNumber, blockChunkNumber )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "chunk is", "'"+chunk+"'" )
+                        #if blockNumber==2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, blockNumber, blockChunkNumber )
                         #if j>50: halt
                         if indexString in LDIndex:
                             try: LDIndex[indexString].append( (blockNumber,blockChunkNumber,) ) # it's already a list
@@ -506,11 +506,11 @@ class SwordModule():
                     else:
                         blankCount += 1
                         chunk = ''
-            vPrint( 'Info', debuggingThisModule, "    {:,} {} index entries read{}".format( len(LDIndex), self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
-            #dPrint( 'Quiet', debuggingThisModule, "    ", min1, max1, min2, max2 )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} index entries read{}".format( len(LDIndex), self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    ", min1, max1, min2, max2 )
             assert blankCount == 0
             #for test in ("A","ABRAHAM","DAVID",):
-            #    vPrint( 'Quiet', debuggingThisModule, test, LDIndex[test] )
+            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, test, LDIndex[test] )
         if idxData and LDIndex:
             count, dataIndex = 0, []
             filepath = os.path.join( self.dataFolder, self.filename+'.zdx' )
@@ -520,9 +520,9 @@ class SwordModule():
                     binary8 = indexFile.read(8)
                     if not binary8: break # at the end of the file
                     offset, compressedLength = struct.unpack( "II", binary8 )
-                    #dPrint( 'Quiet', debuggingThisModule, count, 'is', offset, compressedLength )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, count, 'is', offset, compressedLength )
                     dataIndex.append( (offset, compressedLength) )
-            vPrint( 'Info', debuggingThisModule, "    {:,} {} block index entries read".format( len(dataIndex), self.SwordModuleConfiguration.modCategory ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} block index entries read".format( len(dataIndex), self.SwordModuleConfiguration.modCategory ) )
         if idxData and LDIndex and dataIndex:
             blankCount, LDStuffList = 0, []
             byteCount = 0
@@ -547,18 +547,18 @@ class SwordModule():
                                     for key, (blockNumber, blockChunkNumber) in LDIndex.items(): # By a slow loop, find the key which points to this entry
                                         if blockNumber==j and blockChunkNumber==c: thisKey = key; break
                                     logging.warning( "Unable to properly decode {} {} {} {} chunk for {}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, j, c, thisKey ) )
-                                    dPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
+                                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", thisUncompressedChunk[:40] )
                                     thisString = thisUncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                                 assert isinstance( thisString, str )
                                 strings.append( thisString )
                         else:
                             blankCount += 1
                         LDStuffList.append( strings )
-                vPrint( 'Normal', debuggingThisModule, "    {} compressed {} blocks read{}".format( len(LDStuffList), self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    {} compressed {} blocks read{}".format( len(LDStuffList), self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
                 assert blankCount == 0
                 # Now save the lexicon/dictionary data in an easily accessible format
                 for key, value in LDIndex.items():
-                    #dPrint( 'Quiet', debuggingThisModule, f"key='{key}' value={value}" )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"key='{key}' value={value}" )
                     if isinstance( value, list ): # This key has two entries
                         for j, (blockNumber, blockChunkNumber) in enumerate(value):
                             try:
@@ -569,57 +569,57 @@ class SwordModule():
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
                                 logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
-                                #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             assert isinstance( chunk, str )
                             self.swordData[adjKey] = chunk
-                            #dPrint( 'Quiet', debuggingThisModule, "   ", adjKey, "->", chunk )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   ", adjKey, "->", chunk )
                     else:
                         blockNumber, blockChunkNumber = value
-                        #if blockNumber==311: vPrint( 'Quiet', debuggingThisModule, "Converted blocknumber" ); blockNumber = 'what?' # Special code for isbe commentary
-                        #dPrint( 'Quiet', debuggingThisModule, key, blockNumber, blockChunkNumber )
-                        #if blockNumber>=len(LDStuffList): vPrint( 'Quiet', debuggingThisModule, "Why is blockNumber {} too big for {}".format( blockNumber, len(LDStuffList) ) )
-                        #elif blockChunkNumber>=len(LDStuffList[blockNumber]): vPrint( 'Quiet', debuggingThisModule, "Why is blockChunkNumber {} too big for {}".format( blockChunkNumber, len(LDStuffList[blockNumber]) ) )
+                        #if blockNumber==311: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Converted blocknumber" ); blockNumber = 'what?' # Special code for isbe commentary
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, key, blockNumber, blockChunkNumber )
+                        #if blockNumber>=len(LDStuffList): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why is blockNumber {} too big for {}".format( blockNumber, len(LDStuffList) ) )
+                        #elif blockChunkNumber>=len(LDStuffList[blockNumber]): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why is blockChunkNumber {} too big for {}".format( blockChunkNumber, len(LDStuffList[blockNumber]) ) )
                         try:
                             chunk = LDStuffList[blockNumber][blockChunkNumber]
                             assert isinstance( chunk, str )
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordData:
                                 logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
-                                #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             self.swordData[adjKey] = chunk.strip()
-                            #dPrint( 'Quiet', debuggingThisModule, "   ", adjKey, "->", chunk )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "   ", adjKey, "->", chunk )
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
             else: # we're just loading the index, not the data
                 self.dataFilepath = os.path.join( self.dataFolder, self.filename+'.zdt' )
-                #dPrint( 'Quiet', debuggingThisModule, "\nLDIndex", len(LDIndex), LDIndex )
-                #dPrint( 'Quiet', debuggingThisModule, "\ndataIndex", len(dataIndex), dataIndex )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLDIndex", len(LDIndex), LDIndex )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ndataIndex", len(dataIndex), dataIndex )
                 for j, (key, value) in enumerate(LDIndex.items()):
-                    #dPrint( 'Quiet', debuggingThisModule, "jkv", j, key, value )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "jkv", j, key, value )
                     if isinstance( value, list ): # This key has two entries
                         for k, (blockNumber, blockChunkNumber) in enumerate(value):
-                            #dPrint( 'Quiet', debuggingThisModule, "knc", k, blockNumber, blockChunkNumber )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "knc", k, blockNumber, blockChunkNumber )
                             try:
                                 stuff = dataIndex[blockNumber]
                                 entry = (stuff[0], stuff[1], blockNumber, blockChunkNumber,)
                                 #try:
                                 adjKey = "{} ({})".format( key, k+1 ) if key in self.swordIndex else key
                                 if adjKey in self.swordIndex:
-                                    vPrint( 'Quiet', debuggingThisModule, "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, key ) )
-                                    #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, key ) )
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                                 self.swordIndex[adjKey] = entry
                             except IndexError:
                                 logging.error( "YYCompressed {} {} skipped non-existing entry {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
                     else:
                         blockNumber, blockChunkNumber = value
-                        #if self.SwordModuleConfiguration.abbreviation == 'invstrongsrealgreek': vPrint( 'Quiet', debuggingThisModule, self.SwordModuleConfiguration.abbreviation, j, key, value, blockNumber, blockChunkNumber, len(dataIndex), len(LDIndex) )
+                        #if self.SwordModuleConfiguration.abbreviation == 'invstrongsrealgreek': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.SwordModuleConfiguration.abbreviation, j, key, value, blockNumber, blockChunkNumber, len(dataIndex), len(LDIndex) )
                         try:
                             stuff = dataIndex[blockNumber]
                             entry = (stuff[0], stuff[1], blockNumber, blockChunkNumber,)
                             adjKey = f'{key} ({j+1})' if key in self.swordData else key
                             if adjKey in self.swordIndex:
                                 logging.critical( "About to overwrite data in {} for {}".format( self.SwordModuleConfiguration.name, adjKey ) )
-                                #dPrint( 'Quiet', debuggingThisModule, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, key, adjKey, '\n', self.swordData[key] if key in self.swordData else None, '\n', self.swordData[adjKey], '\n', chunk ); halt
                             self.swordIndex[adjKey] = entry
                         except IndexError:
                             logging.error( "Compressed {} {} skipped non-existing chunk {} / {} for {!r}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, blockNumber, blockChunkNumber, key ) )
@@ -631,10 +631,10 @@ class SwordModule():
         """
         Expand a lexicon / dictionary.
         """
-        fnPrint( debuggingThisModule, "SwordModule.expandLD()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.expandLD()" )
 
         # Make cross-references
-        vPrint( 'Normal', debuggingThisModule, "  Auto-adding cross-references for {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Auto-adding cross-references for {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
         assert self.store
         newKeys = {}
         for key,data in self.store.items():
@@ -643,47 +643,47 @@ class SwordModule():
                 for bit in bits:
                     newKey = bit.strip()
                     if newKey in self.store:
-                        #dPrint( 'Quiet', debuggingThisModule, "Went to add {} (from {!r}) but it was already there".format( newKey, key ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went to add {} (from {!r}) but it was already there".format( newKey, key ) )
                         pass
                     elif newKey in newKeys:
-                        #dPrint( 'Quiet', debuggingThisModule, "Went to add {} (from {!r}) but already added it".format( newKey, key ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went to add {} (from {!r}) but already added it".format( newKey, key ) )
                         oldEntry = newKeys[newKey][:-13] # Remove the ' (auto-added)' bit from the end
-                        #dPrint( 'Quiet', debuggingThisModule, "'"+oldEntry+"'" )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "'"+oldEntry+"'" )
                         newEntry = "{} or '{!r}' (auto-added)".format( oldEntry, key ) # Use a double single-quote '' so looks not too terrible but can be parsed again later
                         newKeys[newKey] = newEntry
                     else:
                         newKeys[newKey] = "See '{!r}' (auto-added)".format( key )
-                        #dPrint( 'Quiet', debuggingThisModule, "Auto-added: {} -> {}".format( newKey, newKeys[newKey] ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Auto-added: {} -> {}".format( newKey, newKeys[newKey] ) )
             elif ' ' in key or ',' in key or '-' in key:
                 for j, char in enumerate(key):
                     if char in ( ' ,-' ): break
-                #if j==0 or j==len(key)-1: vPrint( 'Quiet', debuggingThisModule, "'"+key+"'", j )
+                #if j==0 or j==len(key)-1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "'"+key+"'", j )
                 newKey = key[:j]
                 if newKey in self.store:
-                    #dPrint( 'Quiet', debuggingThisModule, "Went to add {} (from {!r}) but it was already there".format( newKey, key ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went to add {} (from {!r}) but it was already there".format( newKey, key ) )
                     pass
                 elif newKey in newKeys:
-                    #dPrint( 'Quiet', debuggingThisModule, "Went to add {} (from {!r}) but already added it".format( newKey, key ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Went to add {} (from {!r}) but already added it".format( newKey, key ) )
                     oldEntry = newKeys[newKey][:-13] # Remove the ' (auto-added)' bit from the end
-                    #dPrint( 'Quiet', debuggingThisModule, "'"+oldEntry+"'" )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "'"+oldEntry+"'" )
                     newEntry = "{} or '{!r}' (auto-added)".format( oldEntry, key )
                     newKeys[newKey] = newEntry
                 else:
                     newKeys[newKey] = "See '{!r}' (auto-added)".format( key )
-                    #dPrint( 'Quiet', debuggingThisModule, "Auto-added: {} -> {}".format( newKey, newKeys[newKey] ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Auto-added: {} -> {}".format( newKey, newKeys[newKey] ) )
         for key in newKeys:
             assert key not in self.store
             self.store[key] = newKeys[key] # Add the new keys
-        vPrint( 'Normal', debuggingThisModule, "    {} new cross-reference keys added to lexicon / dictionary".format( len(newKeys) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "    {} new cross-reference keys added to lexicon / dictionary".format( len(newKeys) ) )
     # end of SwordModule.expandLD
 
 
     def loadRawGenBook( self ):
         """
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadRawGenBook()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadRawGenBook()" )
 
-        vPrint( 'Normal', debuggingThisModule, "  Loading raw general book from {}…".format( self.dataFolder ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading raw general book from {}…".format( self.dataFolder ) )
         assert 'CompressType' not in self.SwordModuleConfiguration.confDict
         count, gbIndexIndex = 0, []
         filepath = os.path.join( self.dataFolder, self.filename+'.idx' )
@@ -695,7 +695,7 @@ class SwordModule():
                     if not binary4: break # at the end of the file
                     indexOffset, = struct.unpack( "I", binary4 )
                     gbIndexIndex.append( indexOffset )
-            vPrint( 'Info', debuggingThisModule, "    {} {} genbook index pointer entries read".format( len(gbIndexIndex), self.SwordModuleConfiguration.name ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} genbook index pointer entries read".format( len(gbIndexIndex), self.SwordModuleConfiguration.name ) )
         else:
             logging.critical( "Oops, cannot find {} for {} module".format( filepath, self.SwordModuleConfiguration.name ) )
             return
@@ -703,12 +703,12 @@ class SwordModule():
             blankCount, gbIndex = 0, {}
             with open( os.path.join( self.dataFolder, self.filename+'.dat' ), 'rb') as dataFile:
                 for j, indexOffset in enumerate(gbIndexIndex):
-                    #dPrint( 'Quiet', debuggingThisModule, j, indexOffset )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, indexOffset )
                     dataFile.seek( indexOffset )
                     chunk = dataFile.read( 210 ) # 150 wasn't enough
-                    #dPrint( 'Quiet', debuggingThisModule, j, chunk )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, chunk )
                     num1, num2, num3 = struct.unpack( "iii", chunk[:12] )
-                    #dPrint( 'Quiet', debuggingThisModule, j, num1, num2, num3 )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, num1, num2, num3 )
                     if j == 0:
                         assert num1 == -1
                         assert num3 == 4 # Not sure what this means
@@ -727,14 +727,14 @@ class SwordModule():
                             indexString = something.decode( self.SwordModuleConfiguration.encoding )
                         except KeyError:
                             logging.warning( "Unable to properly decode {} {} {} chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, j, offset, length ) )
-                            dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", uncompressedChunk[:40] )
                             indexString = something.decode( self.SwordModuleConfiguration.encoding, 'replace' )
-                        #if len(indexString)>100: vPrint( 'Quiet', debuggingThisModule, j, "indexString = ", indexString )
+                        #if len(indexString)>100: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, "indexString = ", indexString )
                         endbit = chunk[12+ix+1:12+ix+10+1]
                         assert len(endbit) == 10 # Can occur if the buffer length above is too short
-                        #dPrint( 'Quiet', debuggingThisModule, "endbit", endbit )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "endbit", endbit )
                         num4, = struct.unpack( "h", endbit[:2] )
-                        #dPrint( 'Quiet', debuggingThisModule, j, "num4 =", num4 )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, "num4 =", num4 )
                         if num4 == 8:
                             offset, length = struct.unpack( "ii", endbit[2:] )
                             #num4, offseta, offsetb, lengtha, lengthb = struct.unpack( "h Hh Hh", endbit ) # To get over a Python bug
@@ -744,26 +744,26 @@ class SwordModule():
                             assert length >= 0
                         elif num4 == 0:
                             if BibleOrgSysGlobals.verbosityLevel > 0:
-                                vPrint( 'Quiet', debuggingThisModule, "What does num4==0 mean?" )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What does num4==0 mean?" )
                             offset = length = None
                         else:
-                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                        #dPrint( 'Quiet', debuggingThisModule, j, "num4 =", num4, "offset = ", offset, "length =", length )
+                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, "num4 =", num4, "offset = ", offset, "length =", length )
                     else: indexString = ''
-                    #dPrint( 'Quiet', debuggingThisModule, j, chunk, ix, endbit )
-                    #dPrint( 'Quiet', debuggingThisModule, j, "num1 =", num1, "num2 =", num2, "num3 =", num3, "'"+indexString+"'", "num4 =", num4, "offset =", offset, "length =", length ) # What do these other numbers mean?
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, chunk, ix, endbit )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, "num1 =", num1, "num2 =", num2, "num3 =", num3, "'"+indexString+"'", "num4 =", num4, "offset =", offset, "length =", length ) # What do these other numbers mean?
                     if indexString: gbIndex[indexString] = (num1, num2, num3, num4, offset, length,) # ignore the first one
-            vPrint( 'Info', debuggingThisModule, "    {:,} {} genbook index entries read".format( len(gbIndex), self.SwordModuleConfiguration.name ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} genbook index entries read".format( len(gbIndex), self.SwordModuleConfiguration.name ) )
             if gbIndex: # Load the data file
                 if self.inMemoryFlag:
                     with open( os.path.join( self.dataFolder, self.filename+'.bdt' ), 'rt', encoding=self.SwordModuleConfiguration.encoding ) as textFile:
                         for j, key in enumerate(gbIndex):
                             num1, num2, num3, num4, offset, length = gbIndex[key]
-                            #dPrint( 'Quiet', debuggingThisModule, key, num1, num2, num3, num4 ) # usually num1==0 for map, num1==1280 for others, num2 is div by 4, num3==-1 num4==8
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, key, num1, num2, num3, num4 ) # usually num1==0 for map, num1==1280 for others, num2 is div by 4, num3==-1 num4==8
                             if num4 == 8:
                                 textFile.seek( offset )
                                 entry = textFile.read( length ).strip()
-                                #dPrint( 'Quiet', debuggingThisModule, entry )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
                                 if 0: # Save this processing for later
                                     if entry.startswith( key ): entry = entry[len(key):] # Remove the key since we've already got that
                                     entry = entry.lstrip() # Remove spurious CRLFs
@@ -771,35 +771,35 @@ class SwordModule():
                                     entry = entry.strip() # Remove spurious CRLFs
                                     assert entry.startswith( '<img src="/' ) and entry.endswith( '"/>' )
                                     entry = entry[11:-3] # Should now be a relative filename
-                                    vPrint( 'Quiet', debuggingThisModule, entry )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
                                     filepath = os.path.join( self.dataFolder, entry )
-                                    vPrint( 'Quiet', debuggingThisModule, filepath )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, filepath )
                                     assert os.path.isfile( filepath )
                                 adjKey = key.upper()
                                 if adjKey in self.swordData: # This is a duplicate
-                                    vPrint( 'Normal', debuggingThisModule, "      Found duplicate genbook {!r} (from {!r}) key in {}".format( adjKey, key, self.SwordModuleConfiguration.name ) )
+                                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "      Found duplicate genbook {!r} (from {!r}) key in {}".format( adjKey, key, self.SwordModuleConfiguration.name ) )
                                     try: self.swordData[adjKey].append( entry )
                                     except KeyError: self.swordData[adjKey] = [self.swordData[adjKey], entry ]
                                 else: self.swordData[adjKey] = entry # Most keys only occur once
                             elif BibleOrgSysGlobals.verbosityLevel > 0:
-                                vPrint( 'Quiet', debuggingThisModule, "What does num4==0 mean here?" )
-                    vPrint( 'Info', debuggingThisModule, "    {} genbook entries loaded".format( len(self.swordData) ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What does num4==0 mean here?" )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} genbook entries loaded".format( len(self.swordData) ) )
                 else: # we just need to load the index
                     self.dataFilepath = os.path.join( self.dataFolder, self.filename+'.bdt' )
                     for j, key in enumerate(gbIndex):
                         num1, num2, num3, num4, offset, length = gbIndex[key]
-                        #dPrint( 'Quiet', debuggingThisModule, key, num1, num2, num3, num4 ) # usually num1==0 for map, num1==1280 for others, num2 is div by 4, num3==-1 num4==8
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, key, num1, num2, num3, num4 ) # usually num1==0 for map, num1==1280 for others, num2 is div by 4, num3==-1 num4==8
                         entry = offset, length
                         if num4 == 8:
                             adjKey = key.upper()
                             if adjKey in self.swordIndex: # This is a duplicate
-                                vPrint( 'Normal', debuggingThisModule, "      Found duplicate genbook {!r} (from {!r}) key in {}".format( adjKey, key, self.SwordModuleConfiguration.name ) )
+                                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "      Found duplicate genbook {!r} (from {!r}) key in {}".format( adjKey, key, self.SwordModuleConfiguration.name ) )
                                 try: self.swordIndex[adjKey].append( entry )
                                 except AttributeError: self.swordIndex[adjKey] = [self.swordIndex[adjKey], entry ]
                             else: self.swordIndex[adjKey] = entry # Most keys only occur once
                         else:
-                            dPrint( 'Quiet', debuggingThisModule, "What does num4==0 mean here?" )
-                    dPrint( 'Info', debuggingThisModule, "    {} genbook index entries loaded".format( len(self.swordIndex) ) )
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "What does num4==0 mean here?" )
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} genbook index entries loaded".format( len(self.swordIndex) ) )
     # end of SwordModule.loadRawGenBook
 
 
@@ -812,7 +812,7 @@ class SwordModule():
             1: OTOffset = offset if only 39 OT books included
             2: NTOffset = offset if only 27 NT books included
         """
-        fnPrint( debuggingThisModule, "SwordModule.createChapterOffsets( {} )".format( versificationString ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.createChapterOffsets( {} )".format( versificationString ) )
 
         # Now build an index for each book:
         #   0 is the work header
@@ -838,7 +838,7 @@ class SwordModule():
         elif versificationString == 'LXX': BOSname = 'LXX'
         else:
             logging.critical( _("Unknown {!r} versification scheme for {}").format( versificationString, self.SwordModuleConfiguration.abbreviation ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
         self.BibleOrgSystem = BibleOrganisationalSystem( BOSname )
 
         # Setup containers that we will fill
@@ -875,7 +875,7 @@ class SwordModule():
         self.OTIndex.append( ('FRT','0','0',) ); self.OTIndex.append( ('FRT','0','0',) )
 
         for BBB in self.OTList:
-            #dPrint( 'Quiet', debuggingThisModule, "BOSname", BOSname, "BBB", BBB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BOSname", BOSname, "BBB", BBB )
             bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True ) # Note: BBB might get substituted!!!
             OTOffset += 1 # Allow for heading of book
             #self.OTIndex.append( (BBB,'0','0',) )
@@ -896,7 +896,7 @@ class SwordModule():
             OTOffset += lastNumVerses
             self.chapterOffsets[BBB] = chapterOffsets
         #for j, (BBB,C,V,) in enumerate(self.OTIndex):
-        #    if BBB=='MAL': vPrint( 'Quiet', debuggingThisModule, j, BBB, C, V )
+        #    if BBB=='MAL': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, BBB, C, V )
 
         # Do the NT
         OTNTOffset = OTOffset + 1+1 # Allow for heading of work
@@ -926,8 +926,8 @@ class SwordModule():
             NTOffset += lastNumVerses
             self.chapterOffsets[BBB] = chapterOffsets
         #for j, (BBB,C,V,) in enumerate(self.NTIndex):
-        #    if BBB=='REV': vPrint( 'Quiet', debuggingThisModule, j, BBB, C, V )
-        #dPrint( 'Quiet', debuggingThisModule, "OTNTOffset", OTNTOffset, len(self.chapterOffsets) )
+        #    if BBB=='REV': vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, BBB, C, V )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OTNTOffset", OTNTOffset, len(self.chapterOffsets) )
     # end of SwordModule.createChapterOffsets
 
 
@@ -937,14 +937,14 @@ class SwordModule():
 
         Can load either one or all (if requestedBBB=None) books.
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadVersifiedBibleData( {} ) with {}".format( requestedBBB, self.inMemoryFlag ) )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadVersifiedBibleData( {} ) with {}".format( requestedBBB, self.inMemoryFlag ) )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
             assert self.SwordModuleConfiguration.modCategory in ('Bible','Commentary','General',)
 
         self.versifiedFlag = True
         #if 'Versification' in self.SwordModuleConfiguration.confDict and self.SwordModuleConfiguration.confDict['Versification']!='KJV':
-            #dPrint( 'Quiet', debuggingThisModule, "Versification:", self.SwordModuleConfiguration.confDict['Versification'] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Versification:", self.SwordModuleConfiguration.confDict['Versification'] )
         self.createChapterOffsets( self.SwordModuleConfiguration.confDict['Versification'] if 'Versification' in self.SwordModuleConfiguration.confDict else 'KJV' )
         processTestaments = (('ot','OT',),('nt','NT',),)
 
@@ -953,10 +953,10 @@ class SwordModule():
                 logging.critical( "No data available for {} book {}".format( self.SwordModuleConfiguration.name, requestedBBB ) )
                 return
             # Find the book offset
-            #dPrint( 'Quiet', debuggingThisModule, "cOs", len(self.chapterOffsets), self.chapterOffsets ) # A dictionary for each BBB containing a list of 3-tuples (length = numChapters + 1)
-            #dPrint( 'Quiet', debuggingThisModule, "book cOs", len(self.chapterOffsets[requestedBBB]), self.chapterOffsets[requestedBBB] ) # A 3-tuples (length = numChapters + 1)
-            #dPrint( 'Quiet', debuggingThisModule, "OTIndex", len(self.OTIndex), self.OTIndex ) # A list of 3-tuples of all possible BBB,C,V combinations
-            #dPrint( 'Quiet', debuggingThisModule, "NTIndex", len(self.NTIndex), self.NTIndex )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "cOs", len(self.chapterOffsets), self.chapterOffsets ) # A dictionary for each BBB containing a list of 3-tuples (length = numChapters + 1)
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "book cOs", len(self.chapterOffsets[requestedBBB]), self.chapterOffsets[requestedBBB] ) # A 3-tuples (length = numChapters + 1)
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OTIndex", len(self.OTIndex), self.OTIndex ) # A list of 3-tuples of all possible BBB,C,V combinations
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NTIndex", len(self.NTIndex), self.NTIndex )
             processTestaments = (('ot','OT',),) if requestedBBB in self.OTList else (('nt','NT',),)
 
         if 'CompressType' in self.SwordModuleConfiguration.confDict:
@@ -967,7 +967,7 @@ class SwordModule():
                 unit, letter = 'chapter', 'c'
                 if self.SwordModuleConfiguration.abbreviation in ('byz','tr','whnu',): letter = 'b' # Seems like a module bug
             else:
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
             totalIdxCount = 0
             for testament,Testament in processTestaments: # load OT then NT files
@@ -981,10 +981,10 @@ class SwordModule():
                             if not binary12: break # at the end of the file
                             blockOffset, compressedLength, uncompressedLength = struct.unpack( "III", binary12 )
                             #if count==1 and bookNum!=0:
-                            #    vPrint( 'Quiet', debuggingThisModule, "Seem to be lacking booknum zero for {}".format( self.SwordModuleConfiguration.name ) ) # This will mess up our indexing
+                            #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Seem to be lacking booknum zero for {}".format( self.SwordModuleConfiguration.name ) ) # This will mess up our indexing
                             #    vssData.append( (0, 0, 0) )
                             bookData.append( (blockOffset, compressedLength, uncompressedLength) )
-                    vPrint( 'Info', debuggingThisModule, "    {:,} {} {} book index entries read".format( len(bookData), Testament, self.SwordModuleConfiguration.modCategory ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} {} book index entries read".format( len(bookData), Testament, self.SwordModuleConfiguration.modCategory ) )
                     #assert len(bookData) == 1+39
                     totalIdxCount += idxCount
                 logging.info( "No {} data available for {} module".format( Testament, self.SwordModuleConfiguration.name ) )
@@ -1001,8 +1001,8 @@ class SwordModule():
                             if blockNumber < minBN: minBN = blockNumber
                             if blockNumber > maxBN: maxBN = blockNumber
                             vssData.append( (blockNumber, verseOffset, verseLength) )
-                    vPrint( 'Info', debuggingThisModule, "    {:,} {} {} verse index entries read".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
-                    #dPrint( 'Quiet', debuggingThisModule, self.SwordModuleConfiguration.abbreviation, testament, minBN, maxBN )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} {} verse index entries read".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.SwordModuleConfiguration.abbreviation, testament, minBN, maxBN )
                     #self.SwordModuleConfiguration.confDict['MinimumBlockNumber'] = minBN
                     #self.SwordModuleConfiguration.confDict['MaximumBlockNumber'] = maxBN
                     assert minBN == 0
@@ -1051,7 +1051,7 @@ class SwordModule():
                             byteCount = 0
                             with open( filepath, 'rb') as compressedTextFile: # This is the compressed verse data (in book size chunks)
                                 for j, (blockOffset, compressedLength, uncompressedLength) in enumerate(bookData):
-                                    #dPrint( 'Quiet', debuggingThisModule, Testament, j, blockOffset, compressedLength, uncompressedLength )
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Testament, j, blockOffset, compressedLength, uncompressedLength )
                                     if compressedLength:
                                         compressedTextFile.seek( blockOffset )
                                         compressedChunk = compressedTextFile.read( compressedLength )
@@ -1064,23 +1064,23 @@ class SwordModule():
                                         assert len(uncompressedChunk) == uncompressedLength
                                         try:
                                             chunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding )
-                                            #if testament=='nt' and j>250: vPrint( 'Quiet', debuggingThisModule, '\n', j, chunk )
+                                            #if testament=='nt' and j>250: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n', j, chunk )
                                         except KeyError:
                                             logging.warning( "Unable to properly decode {} {} {} {} {} chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, Testament, self.SwordModuleConfiguration.modCategory, unit, j, compressedLength, uncompressedLength ) )
-                                            dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
-                                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", uncompressedChunk[:40] )
+                                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                                             chunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
-                                            #dPrint( 'Quiet', debuggingThisModule, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.encoding, chunk )
+                                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.encoding, chunk )
                                     else:
                                         blankCount += 1
                                         chunk = ''
                                     blockStuff.append( chunk )
                             assert blankCount == 0
-                            vPrint( 'Info', debuggingThisModule, "    {} {} {} book entries read{}".format( len(blockStuff), Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} {} book entries read{}".format( len(blockStuff), Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
                             blankCount = 0
                             for k, (blockNumber,verseOffset,verseLength,) in enumerate(vssData):
                                 ref = self.convertOTIndexToReference( k ) if testament=='ot' else self.convertNTIndexToReference( k )
-                                #dPrint( 'Quiet', debuggingThisModule, k, verseOffset, verseLength, ref )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, k, verseOffset, verseLength, ref )
                                 assert ref is not None
                                 BBB, C, V = ref
                                 if BBB != lastBBB: # we're on to a new book
@@ -1095,18 +1095,18 @@ class SwordModule():
                                         logging.error( "Compressed {} {} {} skipped non-existing chunk {} / {} for {!r}" \
                                             .format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, unit, blockNumber, verseOffset, verseLength ) )
                                         chunk = ''
-                                    if len(chunk)!=verseLength: vPrint( 'Quiet', debuggingThisModule, "PROBLEM:", ref, len(chunk), verseLength )
+                                    if len(chunk)!=verseLength: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "PROBLEM:", ref, len(chunk), verseLength )
                                     #assert len(chunk) == verseLength
                                 else:
                                     blankCount += 1
                                     chunk = ''
                                 thisBookCVData[(C,V,)] = chunk.strip()
                             if thisBookCVData: self.swordData[BBB] = thisBookCVData # Save final entry
-                            vPrint( 'Info', debuggingThisModule, "    {} {} {} entries loaded{}".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} {} entries loaded{}".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
                         else: # we're just making an index
                             for k, (blockNumber,verseOffset,verseLength,) in enumerate(vssData):
                                 ref = self.convertOTIndexToReference( k ) if testament=='ot' else self.convertNTIndexToReference( k )
-                                #if k>8240: vPrint( 'Quiet', debuggingThisModule, k, verseOffset, verseLength, ref ) # Rev 22:21 is k=8245
+                                #if k>8240: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, k, verseOffset, verseLength, ref ) # Rev 22:21 is k=8245
                                 if ref is not None: # it's valid
                                     BBB, C, V = ref
                                     if BBB != lastBBB: # we're on to a new book
@@ -1123,7 +1123,7 @@ class SwordModule():
                                             .format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, Testament, BBB, C, V ) )
                                 else: logging.critical( "Ignored invalid vss info for {} {} {} {} {}:{}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, Testament, BBB, C, V ) )
                             if thisBookCVData: self.swordIndex[BBB] = (filepath,thisBookCVData,) # Save final entry
-                            vPrint( 'Info', debuggingThisModule, "    {} {} {} index entries loaded".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} {} index entries loaded".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
             if not totalIdxCount:
                 logging.critical( "No data available for compressed {} module".format( self.SwordModuleConfiguration.name ) )
 
@@ -1141,7 +1141,7 @@ class SwordModule():
                             if not binaryBlock: break # at the end of the file
                             verseOffset, verseLength = struct.unpack( 'Ii' if self.SwordModuleConfiguration.modType=='RawCom4' else 'Ih', binaryBlock )
                             vssData.append( (verseOffset, verseLength) )
-                    vPrint( 'Info', debuggingThisModule, "    {:,} {} {} index entries read".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {:,} {} {} index entries read".format( len(vssData), Testament, self.SwordModuleConfiguration.modCategory ) )
                     totalCount += vssCount
                 else:
                     logging.info( "No {} data available for {} module".format( Testament, self.SwordModuleConfiguration.name ) )
@@ -1161,7 +1161,7 @@ class SwordModule():
                                     chunk = ''
                                 ref = self.convertOTIndexToReference( j ) if testament=='ot' else self.convertNTIndexToReference( j )
                                 if ref is None:
-                                    vPrint( 'Quiet', debuggingThisModule, "ref is None:", self.SwordModuleConfiguration.abbreviation, testament, j, verseOffset, verseLength )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ref is None:", self.SwordModuleConfiguration.abbreviation, testament, j, verseOffset, verseLength )
                                     logging.error( "Ignoring {} entry".format( Testament ) )
                                 else:
                                     BBB, C, V = ref
@@ -1173,14 +1173,14 @@ class SwordModule():
                                     if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                     thisBookCVData[(C,V,)] = chunk.strip()
                             if thisBookCVData: self.swordData[lastBBB] = thisBookCVData
-                        vPrint( 'Info', debuggingThisModule, "    {} {} {} entries loaded{}".format( j+1-blankCount, Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} {} entries loaded{}".format( j+1-blankCount, Testament, self.SwordModuleConfiguration.modCategory, " ({} were blank)".format(blankCount) if blankCount else '' ) )
                     else: # we're just making an index
                         for j, (verseOffset, verseLength,) in enumerate(vssData):
-                            #dPrint( 'Quiet', debuggingThisModule, j, verseOffset, verseLength )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, verseOffset, verseLength )
                             ref = self.convertOTIndexToReference( j ) if testament=='ot' else self.convertNTIndexToReference( j )
-                            #dPrint( 'Quiet', debuggingThisModule, j, verseOffset, verseLength, ref )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, j, verseOffset, verseLength, ref )
                             if ref is None:
-                                vPrint( 'Quiet', debuggingThisModule, "ref is None:", self.SwordModuleConfiguration.abbreviation, testament, j, verseOffset, verseLength )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ref is None:", self.SwordModuleConfiguration.abbreviation, testament, j, verseOffset, verseLength )
                                 logging.error( "Ignoring {} entry".format( Testament ) )
                             else:
                                 BBB, C, V = ref
@@ -1192,7 +1192,7 @@ class SwordModule():
                                 if requestedBBB and BBB != requestedBBB: continue # Ignore other books
                                 thisBookCVData[(C,V,)] = (verseOffset,verseLength,)
                         if thisBookCVData: self.swordIndex[lastBBB] = (filepath,thisBookCVData,) # Save final entry
-                        vPrint( 'Info', debuggingThisModule, "    {} {} {} index entries loaded".format( j+1, Testament, self.SwordModuleConfiguration.modCategory ) )
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, "    {} {} {} index entries loaded".format( j+1, Testament, self.SwordModuleConfiguration.modCategory ) )
             if not totalCount:
                 logging.critical( "No data available for {} module".format( self.SwordModuleConfiguration.name ) )
     # end of SwordModule.loadVersifiedBibleData
@@ -1202,28 +1202,28 @@ class SwordModule():
         """
         Load the Sword module index into memory (and possibly also the data)
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadBooks( {} )".format( inMemoryFlag ) )
-            #dPrint( 'Quiet', debuggingThisModule, "\n\nSwIndex", self.swordIndex )
-            #dPrint( 'Quiet', debuggingThisModule, "\n\nSwData", self.swordData )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadBooks( {} )".format( inMemoryFlag ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSwIndex", self.swordIndex )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSwData", self.swordData )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
 
         self.inMemoryFlag = inMemoryFlag
 
-        vPrint( 'Quiet', debuggingThisModule, _("Loading {!r} module…").format( self.SwordModuleConfiguration.abbreviation ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {!r} module…").format( self.SwordModuleConfiguration.abbreviation ) )
         self.store = self.swordData if self.inMemoryFlag else self.swordIndex
         if self.SwordModuleConfiguration.locked:
             logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
             return
         if not self.SwordModuleConfiguration.modType: return # Assume an error of some sort is already given in loadConf()
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "    Module name is {}.".format( self.SwordModuleConfiguration.name ) )
-            vPrint( 'Quiet', debuggingThisModule, "    Module type is {}.".format( self.SwordModuleConfiguration.modType ) )
-            if 'Versification' in self.SwordModuleConfiguration.confDict: vPrint( 'Quiet', debuggingThisModule, "    Versification scheme is {}.".format( self.SwordModuleConfiguration.confDict['Versification'] ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module name is {}.".format( self.SwordModuleConfiguration.name ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module type is {}.".format( self.SwordModuleConfiguration.modType ) )
+            if 'Versification' in self.SwordModuleConfiguration.confDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Versification scheme is {}.".format( self.SwordModuleConfiguration.confDict['Versification'] ) )
             if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, "    Category is {}.".format( self.SwordModuleConfiguration.confDict['Category'] ) if 'Category' in self.SwordModuleConfiguration.confDict else "    " + _("No category.") )
-                vPrint( 'Quiet', debuggingThisModule, "    Feature is {}.".format( self.SwordModuleConfiguration.confDict['Feature'] ) if 'Feature' in self.SwordModuleConfiguration.confDict else "    " + _("No feature.") )
-                vPrint( 'Quiet', debuggingThisModule, "    Module encoding is {}.".format( self.SwordModuleConfiguration.encoding ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Category is {}.".format( self.SwordModuleConfiguration.confDict['Category'] ) if 'Category' in self.SwordModuleConfiguration.confDict else "    " + _("No category.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Feature is {}.".format( self.SwordModuleConfiguration.confDict['Feature'] ) if 'Feature' in self.SwordModuleConfiguration.confDict else "    " + _("No feature.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module encoding is {}.".format( self.SwordModuleConfiguration.encoding ) )
 
         self.dataFolder = os.path.normpath( os.path.join( self.SwordModuleConfiguration.swordFolder, self.SwordModuleConfiguration.confDict['DataPath'] ) )
         self.filename = ''
@@ -1234,7 +1234,7 @@ class SwordModule():
         if self.dataFolder[-1] not in ('/','\\',): self.dataFolder += os.sep # We like folder names to end with the separator character
 
         if self.SwordModuleConfiguration.modType == 'RawText' or self.SwordModuleConfiguration.modType=='RawFiles': # it's an uncompressed Bible
-            vPrint( 'Normal', debuggingThisModule, "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             if 'BlockType' in self.SwordModuleConfiguration.confDict: assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK',)
             if self.SwordModuleConfiguration.modType!='RawFiles':
@@ -1243,7 +1243,7 @@ class SwordModule():
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType == 'zText': # it's a compressed Bible
-            vPrint( 'Normal', debuggingThisModule, "  Loading compressed Bible from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading compressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             assert self.SwordModuleConfiguration.confDict['CompressType'] in ('ZIP',)
             assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK','CHAPTER',)
@@ -1251,17 +1251,17 @@ class SwordModule():
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType in ('RawCom','RawCom4',): # it's an uncompressed commentary
-            vPrint( 'Normal', debuggingThisModule, "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType == 'zCom': # it's a compressed commentary
-            vPrint( 'Normal', debuggingThisModule, "  Loading compressed commentary from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading compressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData()
 
         elif self.SwordModuleConfiguration.modType in ('RawLD','RawLD4',): # it's an uncompressed lexicon/dictionary
-            vPrint( 'Normal', debuggingThisModule, "  Loading uncompressed dictionary from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading uncompressed dictionary from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             self.loadRawLD()
 
@@ -1273,11 +1273,11 @@ class SwordModule():
 
         else:
             logging.critical( "Unknown {!r} module type".format( self.SwordModuleConfiguration.modType ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
-        vPrint( 'Never', debuggingThisModule, self )
-        vPrint( 'Never', debuggingThisModule, "      Index size: {}".format( BibleOrgSysGlobals.totalSize( self.swordIndex ) ) )
-        vPrint( 'Never', debuggingThisModule, "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, self )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "      Index size: {}".format( BibleOrgSysGlobals.totalSize( self.swordIndex ) ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
 
         if self.store: return True
     # end of SwordModule.loadBooks
@@ -1287,28 +1287,28 @@ class SwordModule():
         """
         Load the Sword module index into memory (and possibly also the data)
         """
-        fnPrint( debuggingThisModule, "SwordModule.loadBook( {}, {} )".format( BBB, inMemoryFlag ) )
-        #dPrint( 'Quiet', debuggingThisModule, "\n\nSwIndex", self.swordIndex )
-        #dPrint( 'Quiet', debuggingThisModule, "\n\nSwData", self.swordData )
-        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.loadBook( {}, {} )".format( BBB, inMemoryFlag ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSwIndex", self.swordIndex )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSwData", self.swordData )
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert not self.swordIndex and not self.swordData # Shouldn't be loaded already
 
         self.inMemoryFlag = inMemoryFlag
 
-        vPrint( 'Quiet', debuggingThisModule, _("Loading {!r} book {}…").format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {!r} book {}…").format( self.SwordModuleConfiguration.abbreviation, BBB ) )
         self.store = self.swordData if self.inMemoryFlag else self.swordIndex
         if self.SwordModuleConfiguration.locked:
             logging.critical( "Program doesn't handle locked modules yet: {}".format( self.SwordModuleConfiguration.abbreviation ) )
             return
         if not self.SwordModuleConfiguration.modType: return # Assume an error of some sort is already given in loadConf()
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', debuggingThisModule, "    Module name is {}.".format( self.SwordModuleConfiguration.name ) )
-            vPrint( 'Quiet', debuggingThisModule, "    Module type is {}.".format( self.SwordModuleConfiguration.modType ) )
-            if 'Versification' in self.SwordModuleConfiguration.confDict: vPrint( 'Quiet', debuggingThisModule, "    Versification scheme is {}.".format( self.SwordModuleConfiguration.confDict['Versification'] ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module name is {}.".format( self.SwordModuleConfiguration.name ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module type is {}.".format( self.SwordModuleConfiguration.modType ) )
+            if 'Versification' in self.SwordModuleConfiguration.confDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Versification scheme is {}.".format( self.SwordModuleConfiguration.confDict['Versification'] ) )
             if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, "    Category is {}.".format( self.SwordModuleConfiguration.confDict['Category'] ) if 'Category' in self.SwordModuleConfiguration.confDict else "    " + _("No category.") )
-                vPrint( 'Quiet', debuggingThisModule, "    Feature is {}.".format( self.SwordModuleConfiguration.confDict['Feature'] ) if 'Feature' in self.SwordModuleConfiguration.confDict else "    " + _("No feature.") )
-                vPrint( 'Quiet', debuggingThisModule, "    Module encoding is {}.".format( self.SwordModuleConfiguration.encoding ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Category is {}.".format( self.SwordModuleConfiguration.confDict['Category'] ) if 'Category' in self.SwordModuleConfiguration.confDict else "    " + _("No category.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Feature is {}.".format( self.SwordModuleConfiguration.confDict['Feature'] ) if 'Feature' in self.SwordModuleConfiguration.confDict else "    " + _("No feature.") )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Module encoding is {}.".format( self.SwordModuleConfiguration.encoding ) )
 
         self.dataFolder = os.path.normpath( os.path.join( self.SwordModuleConfiguration.swordFolder, self.SwordModuleConfiguration.confDict['DataPath'] ) )
         self.filename = ''
@@ -1319,7 +1319,7 @@ class SwordModule():
         if self.dataFolder[-1] not in ('/','\\',): self.dataFolder += os.sep # We like folder names to end with the separator character
 
         if self.SwordModuleConfiguration.modType == 'RawText' or self.SwordModuleConfiguration.modType=='RawFiles': # it's an uncompressed Bible
-            vPrint( 'Normal', debuggingThisModule, "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading uncompressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             if 'BlockType' in self.SwordModuleConfiguration.confDict: assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK',)
             if self.SwordModuleConfiguration.modType!='RawFiles':
@@ -1328,7 +1328,7 @@ class SwordModule():
             self.loadVersifiedBibleData( BBB )
 
         elif self.SwordModuleConfiguration.modType == 'zText': # it's a compressed Bible
-            vPrint( 'Normal', debuggingThisModule, "  Loading compressed Bible from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading compressed Bible from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             assert self.SwordModuleConfiguration.confDict['CompressType'] in ('ZIP',)
             assert self.SwordModuleConfiguration.confDict['BlockType'] in ('BOOK','CHAPTER',)
@@ -1336,12 +1336,12 @@ class SwordModule():
             self.loadVersifiedBibleData( BBB )
 
         elif self.SwordModuleConfiguration.modType in ('RawCom','RawCom4',): # it's an uncompressed commentary
-            vPrint( 'Normal', debuggingThisModule, "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading uncompressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' not in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData( BBB )
 
         elif self.SwordModuleConfiguration.modType == 'zCom': # it's a compressed commentary
-            vPrint( 'Normal', debuggingThisModule, "  Loading compressed commentary from {}…".format( self.dataFolder ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading compressed commentary from {}…".format( self.dataFolder ) )
             assert 'CompressType' in self.SwordModuleConfiguration.confDict
             self.loadVersifiedBibleData( BBB )
 
@@ -1353,11 +1353,11 @@ class SwordModule():
 
         else:
             logging.critical( "Unknown {!r} module type".format( self.SwordModuleConfiguration.modType ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
-        vPrint( 'Never', debuggingThisModule, self )
-        vPrint( 'Never', debuggingThisModule, "      Index size: {}".format( BibleOrgSysGlobals.totalSize( self.swordIndex ) ) )
-        vPrint( 'Never', debuggingThisModule, "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, self )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "      Index size: {}".format( BibleOrgSysGlobals.totalSize( self.swordIndex ) ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, "      Data size: {}".format( BibleOrgSysGlobals.totalSize( self.swordData ) ) )
 
         if self.store: return True
     # end of SwordModule.loadBook
@@ -1446,12 +1446,12 @@ class SwordModule():
         """
         Returns the raw data for the given Bible reference.
         """
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, "SwordModule.getRawVersifiedData( {} )".format( reference ) )
+        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModule.getRawVersifiedData( {} )".format( reference ) )
             assert self.versifiedFlag
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
 
-        #dPrint( 'Quiet', debuggingThisModule, "getRawVersifiedData:", reference )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getRawVersifiedData:", reference )
         if len(reference)==3: (BBB,c,v), s = reference, ''
         else: BBB,c,v, s = reference
         assert (BBB,c,v=='FRT','0','0') or self.BibleOrgSystem.isValidBCVRef( reference, "getRawVersifiedData", True )
@@ -1462,7 +1462,7 @@ class SwordModule():
             try: filepath,indexData = self.swordIndex[BBB]
             except KeyError:
                 logging.warning( "Book {} doesn't seem to be included in {} {}".format( BBB, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                 return None # if the book isn't included in this module
             try: indexInfo = indexData[(c,v,)]
             except KeyError:
@@ -1474,8 +1474,8 @@ class SwordModule():
                 elif self.SwordModuleConfiguration.confDict['BlockType'] == 'CHAPTER':
                     unit = "chapter"
                 else:
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
-                #dPrint( 'Quiet', debuggingThisModule, indexInfo )
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, indexInfo )
                 fileOffset, compressedLength, uncompressedLength, verseOffset, verseLength = indexInfo
                 if compressedLength and verseLength:
                     if (BBB,fileOffset) in self.cache:
@@ -1496,12 +1496,12 @@ class SwordModule():
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding )
                     except UnicodeDecodeError:
                         logging.warning( "Unable to properly decode {} {} {} {} book chunk #{} {}->{}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory, unit, fileOffset, compressedLength, uncompressedLength ) )
-                        dPrint( 'Quiet', debuggingThisModule, "  ", uncompressedChunk[:40] )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", uncompressedChunk[:40] )
+                        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         textChunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                     verseText = textChunk[verseOffset:verseOffset+verseLength]
                     if len(verseText)!=verseLength:
-                        vPrint( 'Quiet', debuggingThisModule, "WHY!", reference, len(verseText), verseLength )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "WHY!", reference, len(verseText), verseLength )
                     #assert len(verseText) == verseLength
                     return verseText
                 return ''
@@ -1519,7 +1519,7 @@ class SwordModule():
     def getRawDictData( self, word ):
         """
         """
-        fnPrint( debuggingThisModule, "SwordModule.getRawDictData( {} )".format( word ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.getRawDictData( {} )".format( word ) )
 
         if self.inMemoryFlag: # it's easy -- we already have all the data
             try: result = self.swordData[word]
@@ -1531,7 +1531,7 @@ class SwordModule():
             except KeyError: return None
             if isinstance( indexInfo, str ) and indexInfo.endswith( ' (auto-added)' ): return indexInfo # This extra cross-referencing was added by us
             if 'CompressType' in self.SwordModuleConfiguration.confDict:
-                #dPrint( 'Quiet', debuggingThisModule, indexInfo )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, indexInfo )
                 fileOffset, compressedLength, blockNumber, blockChunkNumber = indexInfo
                 if compressedLength:
                     if fileOffset in self.cache:
@@ -1541,7 +1541,7 @@ class SwordModule():
                             compressedTextFile.seek( fileOffset )
                             compressedChunk = compressedTextFile.read( compressedLength )
                         uncompressedChunk = self.decompressChunk( compressedChunk )
-                        #dPrint( 'Quiet', debuggingThisModule, uncompressedChunk )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, uncompressedChunk )
                         self.cache[fileOffset] = (uncompressedChunk,time.time(),)
                     thisCount, = struct.unpack( 'I', uncompressedChunk[0:4])
                     ix = 4
@@ -1555,16 +1555,16 @@ class SwordModule():
                             #for key, (fO, cL, blockNumber, blockChunkNumber) in self.swordIndex.items(): # By a slow loop, find the key which points to this entry
                             #    if blockNumber==j and blockChunkNumber==c: thisKey = key; break
                             logging.warning( "Unable to properly decode {} {} chunk for {}".format( self.SwordModuleConfiguration.encoding, self.SwordModuleConfiguration.name, word ) )
-                            dPrint( 'Quiet', debuggingThisModule, "  ", thisUncompressedChunk[:40] )
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", thisUncompressedChunk[:40] )
                             thisString = thisUncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
-                        #dPrint( 'Quiet', debuggingThisModule, c, ix, thisString )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, c, ix, thisString )
                         if c == blockChunkNumber: break
                         # Spurious??? chunk = uncompressedChunk.decode( self.SwordModuleConfiguration.encoding, 'replace' )
                     assert isinstance( thisString, str )
                     return thisString.strip()
                 return ''
             else: # it's not compressed
-                #dPrint( 'Quiet', debuggingThisModule, indexInfo )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, indexInfo )
                 if isinstance( indexInfo, list ):
                     chunks = []
                     for offset, length in indexInfo:
@@ -1587,7 +1587,7 @@ class SwordModule():
                             if self.SwordModuleConfiguration.abbreviation=='zhhanzi': # my bug here somewhere??? XXXX
                                 chunk = ''
                             else:
-                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         assert isinstance( chunk, str )
                         return chunk.strip()
                     else: return ''
@@ -1604,19 +1604,19 @@ class SwordModule():
             #entry = entry.strip() # Remove spurious CRLFs
             #if entry.startswith('<img src="/') and entry.endswith('"/>'):
                 #entry = entry[11:-3] # Should now be a relative filename
-                #dPrint( 'Quiet', debuggingThisModule, entry )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
                 #filepath = os.path.join( self.dataFolder, entry )
-                #dPrint( 'Quiet', debuggingThisModule, filepath )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, filepath )
                 #assert os.path.isfile( filepath )
             #else: filepath = None
             #if entry!=rawEntry or filepath is not None:
-                #dPrint( 'Quiet', debuggingThisModule, "\nRaw entry in {} for {}: {}".format( self.SwordModuleConfiguration.abbreviation, key, rawEntry ) )
-                #dPrint( 'Quiet', debuggingThisModule, filepath, entry )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRaw entry in {} for {}: {}".format( self.SwordModuleConfiguration.abbreviation, key, rawEntry ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, filepath, entry )
                 #halt
             #return entry, filepath
         ## end of SwordModule.preprocessRawGenBookEntryHelper
 
-        #dPrint( 'Quiet', debuggingThisModule, "\nRaw entry in {} for {}: {}".format( self.SwordModuleConfiguration.abbreviation, key, rawEntry ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nRaw entry in {} for {}: {}".format( self.SwordModuleConfiguration.abbreviation, key, rawEntry ) )
         #if isinstance( rawEntry, list ):
             #results = []
             #for entry in rawEntry:
@@ -1632,7 +1632,7 @@ class SwordModule():
 
         Note: not all module types have BCV references.
         """
-        fnPrint( debuggingThisModule, "SwordModule.filterToHTML( {} )".format( rawData ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModule.filterToHTML( {} )".format( rawData ) )
 
         #assert not self.versifiedFlag # for now
         if rawData is None: return None
@@ -1663,8 +1663,8 @@ class SwordModule():
             return data
 
         else:
-            vPrint( 'Quiet', debuggingThisModule, "filterToHTML rawData is ", rawData ) # unexpected data type
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterToHTML rawData is ", rawData ) # unexpected data type
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
     # end of SwordModule.filterToHTML
 
 
@@ -1674,8 +1674,8 @@ class SwordModule():
         """
         from BibleOrgSys.Formats.SwordResources import filterOSISVerseLine, filterGBFVerseLine, filterTHMLVerseLine
 
-        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            #dPrint( 'Quiet', debuggingThisModule, "SwordModule.filterToUSFM( {} )".format( rawData ) )
+        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModule.filterToUSFM( {} )".format( rawData ) )
             assert self.versifiedFlag # only makes sense for versified data
             assert self.SwordModuleConfiguration.modCategory == 'Bible' # USFM doesn't really make sense for commentaries
 
@@ -1697,11 +1697,11 @@ class SwordModule():
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'GBF':
                     #if data: data = data.replace('<FI>','\\add ').replace('<Fi>','\\add*')
                     #if data: data = data.replace('<CM>','') # What is this?
-                    ##if '<' in data: vPrint( 'Quiet', debuggingThisModule, "{!r} is now {!r}".format( rawData, data ) ); halt
+                    ##if '<' in data: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{!r} is now {!r}".format( rawData, data ) ); halt
                     #return data
                     return filterGBFVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
                 elif self.SwordModuleConfiguration.confDict['SourceType'] == 'ThML':
-                ##    #if data: vPrint( 'Quiet', debuggingThisModule, "ThML data is", data )
+                ##    #if data: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ThML data is", data )
                     ## What do we do here??? … XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxx
                     #return data
                     return filterTHMLVerseLine( data, self.SwordModuleConfiguration.abbreviation, BBB, C, V )
@@ -1717,8 +1717,8 @@ class SwordModule():
             return data
 
         else:
-            vPrint( 'Quiet', debuggingThisModule, "filterToUSFM rawData is ", rawData ) # unexpected data type
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "filterToUSFM rawData is ", rawData ) # unexpected data type
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
     # end of SwordModule.filterToUSFM
 
 
@@ -1735,7 +1735,7 @@ class SwordModule():
         if testArray is None: ourTestArray = {}
         if self.versifiedFlag:
             assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','zCom','RawFiles',)
-            vPrint( 'Normal', debuggingThisModule, "\nTest Results:" )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTest Results:" )
             shortTest = (('GEN','1','1',''),('GEN','1','2',''),('GEN','1','3',''),('MAT','1','1',''),('JHN','3','16',''),('REV','1','1','', ),('REV','22','20','', ),('REV','22','21','', ),)
             longTest  = (('GEN','1','1',''),('GEN','1','2',''),('GEN','1','3',''),('PSA','1','1',''),('PSA','150','2',''),('DAN','1','1',''),('MAL','4','5',''),('MAL','4','6',''), \
                         ('SIR','1','1',''),
@@ -1754,18 +1754,18 @@ class SwordModule():
                     assert not s
                     result = ourFilter( self.getRawVersifiedData( ref ), BBB, c, v )
                     if result: foundAny = True
-                    if (result and BibleOrgSysGlobals.verbosityLevel > 1) or BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "{}{} {} {}:{}={}".format( '\n' if result and len(result)>500 else '', self.SwordModuleConfiguration.name, BBB, c, v, result ) )
+                    if (result and BibleOrgSysGlobals.verbosityLevel > 1) or BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}{} {} {}:{}={}".format( '\n' if result and len(result)>500 else '', self.SwordModuleConfiguration.name, BBB, c, v, result ) )
                     if testArray is None: ourTestArray[ref] = result
                     elif result != testArray[ref]:
                         logging.error( "test gave different result for {}:\n  was {}\n  now {}".format( ref, testArray[ref], result ) )
                 else: logging.warning( "This BCV reference {} is not valid in the {} versification system." \
                             .format( ref, self.SwordModuleConfiguration.confDict['Versification'] if 'Versification' in self.SwordModuleConfiguration.confDict else 'KJV' ) )
             if not foundAny:
-                vPrint( 'Quiet', debuggingThisModule, len(self.store), sorted(self.store.keys()) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.store), sorted(self.store.keys()) )
                 logging.warning( "Couldn't find any relevant information in the {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
                 if self.SwordModuleConfiguration.abbreviation in ('personal',): pass # Personal module can be empty
                 else:
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
         elif self.SwordModuleConfiguration.modType in ('RawLD','RawLD4','zLD','RawGenBook',):
             EnglishTestWords = ('ADAM','BAPTISM','BETHLEHEM','CAMEL','CONSUL','DAY','FAITH','GARDEN OF EDEN','GOLD','INSPIRE', \
                                 'MAGGI','MOSES','NOAH','PALESTINE','REPENT','SABBATH','TARSHISH','UR','WOLF','ZUZIM', )
@@ -1805,27 +1805,27 @@ class SwordModule():
                 elif entry != testArray[word]:
                     logging.error( "{} test gave different result for {}:\n  was {}\n  now {}".format( self.SwordModuleConfiguration.name, word, testArray[word], entry ) )
                 if entry is None:
-                    if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, "Sorry, no entry in {} for {!r}".format( self.SwordModuleConfiguration.name, word ) )
+                    if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no entry in {} for {!r}".format( self.SwordModuleConfiguration.name, word ) )
                 else:
                     foundAny = True
-                    #dPrint( 'Quiet', debuggingThisModule, word, entry )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, entry )
                     if isinstance( entry, list ):
-                        #dPrint( 'Quiet', debuggingThisModule, word, stuff ); halt
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); halt
                         if BibleOrgSysGlobals.verbosityLevel > 1:
-                            vPrint( 'Quiet', debuggingThisModule, "\n{} {}:".format( self.SwordModuleConfiguration.name, word ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}:".format( self.SwordModuleConfiguration.name, word ) )
                             for j,string in enumerate( entry ):
-                                vPrint( 'Quiet', debuggingThisModule, "{}/ {}: {}".format( j+1, word, string ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ {}: {}".format( j+1, word, string ) )
                     elif entry.endswith( ' (auto-added)' ): # It goes something like "See 'ARCHY (2)' or 'ARCHY (1)' (auto-added)"
                         bits = entry.split( "''" )
-                        #dPrint( 'Quiet', debuggingThisModule, len(bits), bits )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(bits), bits )
                         if BibleOrgSysGlobals.verbosityLevel > 1:
-                            vPrint( 'Quiet', debuggingThisModule, "\n{}:".format( word ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}:".format( word ) )
                             count = 1
                             for i in range(1, len(bits), 2): # Display all the referred entries
-                                #dPrint( 'Quiet', debuggingThisModule, i, bits[i] )
-                                vPrint( 'Quiet', debuggingThisModule, "{}/ {}: {}".format( count, bits[i], self.store[bits[i]] ) )
+                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, bits[i] )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ {}: {}".format( count, bits[i], self.store[bits[i]] ) )
                                 count += 1
-                    else: vPrint( 'Normal', debuggingThisModule, "\n{}: {}".format( word, entry ) )
+                    else: vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n{}: {}".format( word, entry ) )
             if not foundAny:
                 for word in extraTestWords:
                     entry = self.filterToHTML( self.getRawDictData( word ) )
@@ -1833,30 +1833,30 @@ class SwordModule():
                     elif entry != testArray[word]:
                         logging.error( "{} test gave different result for {}:\n  was {}\n  now {}".format( self.SwordModuleConfiguration.name, word, testArray[word], entry ) )
                     if entry is None:
-                        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', debuggingThisModule, "Sorry, no entry in {} for {!r}".format( self.SwordModuleConfiguration.name, word ) )
+                        if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, no entry in {} for {!r}".format( self.SwordModuleConfiguration.name, word ) )
                     else:
                         foundAny = True
                         #if self.SwordModuleConfiguration.modType=='RawGenBook': entry = self.preprocessRawGenBookEntry( word, entry )
                         if isinstance( entry, list ):
-                            #dPrint( 'Quiet', debuggingThisModule, word, stuff ); halt
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, word, stuff ); halt
                             if BibleOrgSysGlobals.verbosityLevel > 1:
-                                vPrint( 'Quiet', debuggingThisModule, "\n{} {}:".format( self.SwordModuleConfiguration.name, word ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} {}:".format( self.SwordModuleConfiguration.name, word ) )
                                 for j,string in enumerate( entry ):
                                     #if self.SwordModuleConfiguration.modType=='RawGenBook': filename, string = string # unpack the tuple for this case
-                                    vPrint( 'Quiet', debuggingThisModule, "{}/ {}: {}".format( j+1, word, string ) )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ {}: {}".format( j+1, word, string ) )
                         elif isinstance( entry, str) and entry.endswith( ' (auto-added)' ): # It goes something like "See 'ARCHY (2)' or 'ARCHY (1)' (auto-added)"
                             bits = entry.split( "''" )
-                            #dPrint( 'Quiet', debuggingThisModule, len(bits), bits )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(bits), bits )
                             if BibleOrgSysGlobals.verbosityLevel > 1:
-                                vPrint( 'Quiet', debuggingThisModule, "\n{}:".format( word ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}:".format( word ) )
                                 count = 1
                                 for i in range(1, len(bits), 2): # Display all the referred entries
-                                    #dPrint( 'Quiet', debuggingThisModule, i, bits[i] )
-                                    vPrint( 'Quiet', debuggingThisModule, "{}/ {}: {}".format( count, bits[i], self.store[bits[i]] ) )
+                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, i, bits[i] )
+                                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ {}: {}".format( count, bits[i], self.store[bits[i]] ) )
                                     count += 1
-                        else: vPrint( 'Normal', debuggingThisModule, "\n{}: {}".format( word, entry ) )
+                        else: vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n{}: {}".format( word, entry ) )
             if not foundAny:
-                vPrint( 'Info', debuggingThisModule, len(self.store), sorted(self.store.keys()) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, len(self.store), sorted(self.store.keys()) )
                 logging.warning( "Couldn't find any relevant information in the {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
                 #halt
         else:
@@ -1898,8 +1898,8 @@ class SwordBibleModule( SwordModule, Bible ):
 
         TODO: This should be faster if both the above actions were done together.
         """
-        fnPrint( debuggingThisModule, "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
-        vPrint( 'Normal', debuggingThisModule, "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordBibleModule.loadBooks( ({}) )".format( inMemoryFlag ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading Sword Bible module {}…".format( self.SwordModuleConfiguration.abbreviation ) )
 
         SwordModule.loadBooks( self, inMemoryFlag=False ) # Load the Sword module index
         if self.store: # we loaded something
@@ -1907,7 +1907,7 @@ class SwordBibleModule( SwordModule, Bible ):
             # Now we have to iterate through each book, chapter and verse and load into our internal format
             for BBB in self.store:
                 if BBB=='FRT': # special case for the front matter
-                    #dPrint( 'Quiet', debuggingThisModule, self.swordIndex[BBB] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.swordIndex[BBB] )
                     result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
                     if result:
                         logging.warning( "Didn't process FRT: "+"'"+result+"'" )
@@ -1922,7 +1922,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
-                    #dPrint( 'Quiet', debuggingThisModule, BBB, bookVerseList )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bookVerseList )
                     intC = 0 # Get incremented so starts at chapter 1
                     for numVerses in bookVerseList:
                         intC += 1
@@ -1930,7 +1930,7 @@ class SwordBibleModule( SwordModule, Bible ):
                         thisBook.addLine( 'c', C )
                         for intV in range( numVerses+1 ):
                             V = str( intV )
-                            #dPrint( 'Quiet', debuggingThisModule, BBB, intC, intV )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, intC, intV )
                             #thisBook.addLine( 'v', str(intV) )
                             result = ourFilter( self.getRawVersifiedData( (BBB,C,V) ), BBB, C, V )
                             #if result: result = result.replace('<FI>','\\add ').replace('<Fi>','\\add*')
@@ -1941,14 +1941,14 @@ class SwordBibleModule( SwordModule, Bible ):
                                 #thisBook.addLine( 'v', "{} {}".format( intV, result ) )
                                 thisBook.addLine( 'v', "{}".format( intV ) )
                                 thisBook.addLine( 'v~', "{}".format( result.replace( '\n', '' ) ) )
-                            elif intV!=0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
+                            elif intV!=0 and BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
                     self.books[BBB] = thisBook
             del self.store # The original module information is no longer required
             self.cache = {}
-            vPrint( 'Info', debuggingThisModule, "  Loaded {}.".format( self.name ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {}.".format( self.name ) )
             return True
-        else: vPrint( 'Info', debuggingThisModule, "  Nothing loaded for {}.".format( self.name ) )
+        else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Nothing loaded for {}.".format( self.name ) )
     # end of SwordBibleModule.loadBooks
 
 
@@ -1959,8 +1959,8 @@ class SwordBibleModule( SwordModule, Bible ):
 
         TODO: This should be faster if both the above actions were done together.
         """
-        fnPrint( debuggingThisModule, "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
-        vPrint( 'Normal', debuggingThisModule, "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordBibleModule.loadBook( ({}) )".format( BBB ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loading Sword Bible book {} {}…".format( self.SwordModuleConfiguration.abbreviation, BBB ) )
 
         SwordModule.loadBook( self, BBB ) # Load the Sword module index
         if self.store: # we loaded something
@@ -1968,7 +1968,7 @@ class SwordBibleModule( SwordModule, Bible ):
             # Now we have to iterate through each book, chapter and verse and load into our internal format
             for BBB in self.store:
                 if BBB=='FRT': # special case for the front matter
-                    #dPrint( 'Quiet', debuggingThisModule, self.swordIndex[BBB] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.swordIndex[BBB] )
                     result = ourFilter( self.getRawVersifiedData( ('FRT','0','0') ), 'FRT', '0', '0' )
                     if result:
                         logging.warning( "Didn't process FRT: "+"'"+result+"'" )
@@ -1983,7 +1983,7 @@ class SwordBibleModule( SwordModule, Bible ):
                     #thisBook.replaceAngleBracketsFlag = self.SwordModuleConfiguration.modCategory == 'Bible'
                     thisBook.replaceAngleBracketsFlag = False
                     bookVerseList = self.BibleOrgSystem.getNumVersesList( BBB, allowAlternatives=True )
-                    #dPrint( 'Quiet', debuggingThisModule, BBB, bookVerseList )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, bookVerseList )
                     intC = 0 # Get incremented so starts at chapter 1
                     for numVerses in bookVerseList:
                         intC += 1
@@ -1991,7 +1991,7 @@ class SwordBibleModule( SwordModule, Bible ):
                         thisBook.addLine( 'c', C )
                         for intV in range( numVerses+1 ):
                             V = str( intV )
-                            #dPrint( 'Quiet', debuggingThisModule, BBB, intC, intV )
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, intC, intV )
                             #thisBook.addLine( 'v', str(intV) )
                             result = ourFilter( self.getRawVersifiedData( (BBB,C,V) ), BBB, C, V )
                             #if result: result = result.replace('<FI>','\\add ').replace('<Fi>','\\add*')
@@ -2002,14 +2002,14 @@ class SwordBibleModule( SwordModule, Bible ):
                                 #thisBook.addLine( 'v', "{} {}".format( intV, result ) )
                                 thisBook.addLine( 'v', "{}".format( intV ) )
                                 thisBook.addLine( 'v~', "{}".format( result.replace( '\n', '' ) ) )
-                            elif intV!=0 and BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                vPrint( 'Quiet', debuggingThisModule, "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
+                            elif intV!=0 and BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Why doesn't {} have any text for {} {}:{}".format( self.name, BBB, C, intV ) )
                     self.books[BBB] = thisBook
             del self.store # The original module information is no longer required
             self.cache = {}
-            vPrint( 'Info', debuggingThisModule, "  Loaded {}.".format( self.name ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Loaded {}.".format( self.name ) )
             return True
-        else: vPrint( 'Info', debuggingThisModule, "  Nothing loaded for {}.".format( self.name ) )
+        else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Nothing loaded for {}.".format( self.name ) )
     # end of SwordBibleModule.loadBook
 
 
@@ -2040,7 +2040,7 @@ class SwordBibleModule( SwordModule, Bible ):
         if testArray is None: ourTestArray = {}
         assert self.versifiedFlag
         assert self.SwordModuleConfiguration.modType in ('RawText','zText','RawCom','RawCom4','zCom','RawFiles',)
-        vPrint( 'Normal', debuggingThisModule, "\nTest Results:" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTest Results:" )
         shortTest = (('GEN','1','1',''),('GEN','1','2',''),('GEN','1','3',''),('MAT','1','1',''),('JHN','3','16',''),('REV','1','1','', ),('REV','22','20','', ),('REV','22','21','', ),)
         longTest  = (('GEN','1','1',''),('GEN','1','2',''),('GEN','1','3',''),('PSA','1','1',''),('DAN','1','1',''),('MAL','4','5',''),('MAL','4','6',''), \
                     ('SIR','1','1',''),
@@ -2059,10 +2059,10 @@ class SwordBibleModule( SwordModule, Bible ):
                 if results:
                     result, context = results
                     if result:
-                        #dPrint( 'Quiet', debuggingThisModule, vK, "result is ", result )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, vK, "result is ", result )
                         foundAny = True
                 else: result = context = None
-                if (result and BibleOrgSysGlobals.verbosityLevel > 2) or BibleOrgSysGlobals.verbosityLevel > 3: vPrint( 'Quiet', debuggingThisModule, "{} {} {}:{} {}".format( self.SwordModuleConfiguration.name, BBB, c, v, result ) )
+                if (result and BibleOrgSysGlobals.verbosityLevel > 2) or BibleOrgSysGlobals.verbosityLevel > 3: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} {}:{} {}".format( self.SwordModuleConfiguration.name, BBB, c, v, result ) )
                 if result and BibleOrgSysGlobals.verbosityLevel > 1:
                     formattedResult = ''
                     for entry in result:
@@ -2071,17 +2071,17 @@ class SwordBibleModule( SwordModule, Bible ):
                         if marker=='v~': formattedResult += cleanText.replace('<br />','\n')
                         else: formattedResult += "{}: {}".format( marker, cleanText )
                         if extras: formattedResult += str(extras)
-                    vPrint( 'Quiet', debuggingThisModule, "{} {}:{} {}".format( BBB, c, v, formattedResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {}".format( BBB, c, v, formattedResult ) )
                 if testArray is None: ourTestArray[ref] = result
                 elif result != testArray[ref]:
                     logging.error( "{} test gave different result for {}:\n  was {}\n  now {}".format( self.SwordModuleConfiguration.name, ref, testArray[ref], result ) )
             else: logging.warning( "This BCV reference {} is not valid in the {} versification system." \
                         .format( ref, self.SwordModuleConfiguration.confDict['Versification'] if 'Versification' in self.SwordModuleConfiguration.confDict else 'KJV' ) )
         if not foundAny:
-            #dPrint( 'Quiet', debuggingThisModule, len(self.store), sorted(self.store.keys()) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.store), sorted(self.store.keys()) )
             logging.warning( "Couldn't find any relevant information in the {} {}".format( self.SwordModuleConfiguration.name, self.SwordModuleConfiguration.modCategory ) )
             if self.SwordModuleConfiguration.abbreviation in ('personal',): pass # Personal module can be empty
-            elif BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # Why didn't we find any info in the module???
+            elif BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt # Why didn't we find any info in the module???
     # end of SwordBibleModule:test
 # end of SwordBibleModule
 
@@ -2100,7 +2100,7 @@ class SwordModules:
 
         Doesn't load the actual modules.
         """
-        fnPrint( debuggingThisModule, "SwordModules.__init__()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.__init__()" )
 
         self.searchFolders = SwordSearchFolders
         self.inMemoryFlag = True
@@ -2108,14 +2108,14 @@ class SwordModules:
         # Go find them and load them all!
         self.__loadAllConfs()
 
-        #dPrint( 'Quiet', debuggingThisModule, "\nindex", len(self.index), self.index )
-        #dPrint( 'Quiet', debuggingThisModule, "\ncategories", len(self.categories), self.categories.keys(), self.categories )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nindex", len(self.index), self.index )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\ncategories", len(self.categories), self.categories.keys(), self.categories )
         assert None not in self.categories
         assert len(self.categories) <= 4 # Expect Commentary, Dictionary, Bible, General
-        #dPrint( 'Quiet', debuggingThisModule, "\nmodTypes", len(self.modTypes), self.modTypes )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nmodTypes", len(self.modTypes), self.modTypes )
         assert len(self.modTypes) <= 10 # Expect RawText, zText, RawLD, RawLD4, zLD, RawCom, RawCom4, zCom, RawGenBook, RawFiles
-        #dPrint( 'Quiet', debuggingThisModule, "\nlanguages", len(self.languages), self.languages.keys(), self.languages )
-        #dPrint( 'Quiet', debuggingThisModule, "\nfeatures", len(self.features), self.features.keys(), self.features )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nlanguages", len(self.languages), self.languages.keys(), self.languages )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nfeatures", len(self.features), self.features.keys(), self.features )
     # end of SwordModules.__init__
 
 
@@ -2123,7 +2123,7 @@ class SwordModules:
         """
         Adds another path to search for modules in.
         """
-        fnPrint( debuggingThisModule, "SwordModules.augmentModules( {}, {} )".format( newPath, someFlag ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.augmentModules( {}, {} )".format( newPath, someFlag ) )
             #assert newPath not in self.searchFolders
 
         global SwordSearchFolders # Saved between object instances
@@ -2139,7 +2139,7 @@ class SwordModules:
         """
         Load all the conf files that we can find.
         """
-        fnPrint( debuggingThisModule, "SwordModules.__loadAllConfs()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.__loadAllConfs()" )
 
         # Things to fill later
         self.folders = [] # Folders where we actually found modules
@@ -2151,15 +2151,15 @@ class SwordModules:
         # Go find them and load them all!
         totalFolders = totalCount = 0
         for folder in self.searchFolders:
-            vPrint( 'Quiet', debuggingThisModule, '  ' + "__loadAllConfs: checking {}".format( folder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "__loadAllConfs: checking {}".format( folder ) )
             if os.path.isdir( folder ):
                 loadCount = self.__loadConfs( folder ) # Also updates self.confs, self.confKeys, self.index, etc.
                 if loadCount:
                     self.folders.append( (folder,loadCount,) )
                     totalCount += loadCount
                     totalFolders += 1
-        #dPrint( 'Quiet', debuggingThisModule, len(self.confs) ); halt
-        vPrint( 'Info', debuggingThisModule, "Loaded {} Sword .conf files from {} different folders".format( totalCount, totalFolders ) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(self.confs) ); halt
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Loaded {} Sword .conf files from {} different folders".format( totalCount, totalFolders ) )
     # end of SwordModules.__loadAllConfs
 
 
@@ -2169,12 +2169,12 @@ class SwordModules:
 
         Called automatically by the __init__ routine.
         """
-        fnPrint( debuggingThisModule, "SwordModules.__loadConfs( {} )".format( loadFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.__loadConfs( {} )".format( loadFolder ) )
 
         count = 0
         for moduleConfFilename in sorted( os.listdir( os.path.join( loadFolder, 'mods.d/' ) ) ):
-            #dPrint( 'Quiet', debuggingThisModule, 'moduleConfFilename', repr(moduleConfFilename), repr(loadFolder) )
-            if debuggingThisModule: assert moduleConfFilename.endswith( '.conf' ) # Should only be conf files in here
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'moduleConfFilename', repr(moduleConfFilename), repr(loadFolder) )
+            if DEBUGGING_THIS_MODULE: assert moduleConfFilename.endswith( '.conf' ) # Should only be conf files in here
             if not moduleConfFilename.endswith( '.conf' ):
                 #if BibleOrgSysGlobals.verbosityLevel > 1:
                 logging.warning( _("SwordModules found unexpected file in conf folder: {!r}").format( moduleConfFilename ) )
@@ -2183,10 +2183,10 @@ class SwordModules:
             if moduleRoughName == 'globals': continue # Not a real module, so not wanted here
             #if moduleRoughName not in ('gerhfa2002','oxfordtr','personal','tagalog','tr',): continue # Used for testing specific modules
             count += 1
-            vPrint( 'Info', debuggingThisModule, "#{}".format( count ), end='' )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "#{}".format( count ), end='' )
             swMC = SwordModuleConfiguration( moduleRoughName, loadFolder )
             swMC.loadConf()
-            vPrint( 'Info', debuggingThisModule, swMC )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, swMC )
             self.confs[moduleRoughName] = swMC
             self.confKeys[swMC.name] = moduleRoughName
 
@@ -2209,20 +2209,20 @@ class SwordModules:
                 except KeyError: self.languages[language] = [ moduleRoughName ] # Start a list
                 features = swMC.confDict['Feature'] if 'Feature' in swMC.confDict else None
                 if features is not None:
-                    #dPrint( 'Quiet', debuggingThisModule, "features", repr(features) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "features", repr(features) )
                     assert isinstance( features, str ) or isinstance( features, list )
                     if isinstance( features, str ): features = [features] # Make it a list of one
                     #or should we just have put the whole list in??? XXXXXXXXXXXXXXXXXXXXXX
                     assert isinstance( features, list )
                     for feature in features:
-                        #dPrint( 'Quiet', debuggingThisModule, "feature", repr(feature) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "feature", repr(feature) )
                         assert isinstance( feature, str )
                         try: self.features[feature].append( moduleRoughName ) # Append to the list
                         except KeyError: self.features[feature] = [ moduleRoughName ] # Start a list
 
         if count:
-            if BibleOrgSysGlobals.verbosityLevel > 2 : vPrint( 'Quiet', debuggingThisModule, "{} module configurations loaded from {}".format( count, loadFolder ) )
-        else: vPrint( 'Info', debuggingThisModule, "No module configurations found in {}".format( loadFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 : vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} module configurations loaded from {}".format( count, loadFolder ) )
+        else: vPrint( 'Info', DEBUGGING_THIS_MODULE, "No module configurations found in {}".format( loadFolder ) )
         return count
     # end of SwordModules.__loadConfs
 
@@ -2256,7 +2256,7 @@ class SwordModules:
         """
         For Sword compatibility
         """
-        fnPrint( debuggingThisModule, "SwordModules.getModules()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.getModules()" )
 
         if self.modules:
             halt # not written yet
@@ -2264,7 +2264,7 @@ class SwordModules:
             result = []
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):
                 swMC = self.confs[moduleRoughName]
-                #dPrint( 'Quiet', debuggingThisModule, repr(swMC.modType) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(swMC.modType) )
                 result.append( moduleRoughName )
             return result
     # end of SwordModules.getModules
@@ -2276,21 +2276,21 @@ class SwordModules:
 
         Returns a list of available module codes.
         """
-        fnPrint( debuggingThisModule, "SwordModules.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.getAvailableModuleCodes( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
-            vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodes: modules" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getAvailableModuleCodes: modules" )
             for j, (moduleRoughName,module) in enumerate( sorted(self.modules.items()) ):
-                vPrint( 'Quiet', debuggingThisModule, "  ", j, moduleRoughName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", j, moduleRoughName )
             return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
-            vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodes: confs" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getAvailableModuleCodes: confs" )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
-                #dPrint( 'Quiet', debuggingThisModule, "  ", j, moduleRoughName )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", j, moduleRoughName )
             result = []
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):
                 swMC = self.confs[moduleRoughName]
-                #dPrint( 'Quiet', debuggingThisModule, repr(swMC.modType) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(swMC.modType) )
                 if onlyModuleTypes is None or swMC.modType in onlyModuleTypes:
                     result.append( moduleRoughName )
             return result
@@ -2304,29 +2304,29 @@ class SwordModules:
 
         Returns a list of 2-tuples (duples) containing module abbreviation and type
         """
-        fnPrint( debuggingThisModule, "SwordModules.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.getAvailableModuleCodeDuples( {} )".format( onlyModuleTypes ) )
 
         if self.modules:
-            vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodeDuples--modules" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getAvailableModuleCodeDuples--modules" )
             for j, (moduleRoughName,module) in enumerate( sorted(self.modules.items()) ):
-                vPrint( 'Quiet', debuggingThisModule, "  ", j, moduleRoughName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", j, moduleRoughName )
             for moduleRoughName,module in sorted(self.modules.items()):
                 swMC = self.confs[moduleRoughName]
-                #dPrint( 'Quiet', debuggingThisModule, repr(swMC.modType) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(swMC.modType) )
                 if onlyModuleTypes is None or swMC.modType in onlyModuleTypes:
                     result.append( (moduleRoughName,swMC.modType) )
             return result
             #return [moduleRoughName for moduleRoughName,module in sorted(self.modules.items())]
         elif self.confs:
-            vPrint( 'Quiet', debuggingThisModule, "getAvailableModuleCodeDuples--confs" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getAvailableModuleCodeDuples--confs" )
             #for j, (moduleRoughName,module) in enumerate( sorted(self.confs.items()) ):
-                #dPrint( 'Quiet', debuggingThisModule, "  ", j, moduleRoughName )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", j, moduleRoughName )
             result = []
             for moduleRoughName in sorted(self.confs.keys(), key=str.lower):
                 swMC = self.confs[moduleRoughName]
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    vPrint( 'Quiet', debuggingThisModule, "  {} {}".format( moduleRoughName, swMC.modType ) )
-                #dPrint( 'Quiet', debuggingThisModule, repr(swMC.modType), repr(GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType]) )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} {}".format( moduleRoughName, swMC.modType ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, repr(swMC.modType), repr(GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType]) )
                 if onlyModuleTypes is None \
                 or swMC.modType in onlyModuleTypes or GENERIC_SWORD_MODULE_TYPE_NAMES[swMC.modType] in onlyModuleTypes:
                     result.append( (moduleRoughName,swMC.modType) )
@@ -2338,11 +2338,11 @@ class SwordModules:
         """
         For Sword compatibility
         """
-        fnPrint( debuggingThisModule, "SwordModules.getModule( {} )".format( moduleRoughName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.getModule( {} )".format( moduleRoughName ) )
 
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
         except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
-        #dPrint( 'Quiet', debuggingThisModule, "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
         swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
         return swM
     # end of SwordModules.getModules
@@ -2352,12 +2352,12 @@ class SwordModules:
         """
         Loads the requested module indexes or data into memory.
         """
-        fnPrint( debuggingThisModule, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "SwordModules.loadModule( {} )".format( moduleRoughName ) )
 
-        #dPrint( 'Quiet', debuggingThisModule, [key for key in self.confs.keys()] )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, [key for key in self.confs.keys()] )
         try: swMC = self.confs[moduleRoughName] # Get the correct conf object
         except KeyError: swMC = self.confs[moduleRoughName.lower()] # Get the correct conf object
-        #dPrint( 'Quiet', debuggingThisModule, "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModules.loadModule: modCategory", repr(swMC.modCategory) )
         swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
         result = swM.loadBooks( self.inMemoryFlag )
         return result, swM
@@ -2372,9 +2372,9 @@ class SwordModules:
         """
         MAX_MODULES = 0 # Set to around 300 with 32GB RAM, or set to zero to load all modules without storing them
 
-        vPrint( 'Info', debuggingThisModule, "SwordModules.loadModule( {} )".format( inMemoryFlag ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "SwordModules.loadModule( {} )".format( inMemoryFlag ) )
 
-        vPrint( 'Normal', debuggingThisModule, "\nSwordModules.loadAllModules()…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSwordModules.loadAllModules()…" )
         self.inMemoryFlag = inMemoryFlag
         displayCount = loadCount = 0
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
@@ -2382,42 +2382,42 @@ class SwordModules:
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadModule, parameters ) # have the pool do our loads
-                vPrint( 'Normal', debuggingThisModule, "SwordModules.loadAllModules: Have results from pool now" )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SwordModules.loadAllModules: Have results from pool now" )
                 assert len(results) == len(parameters)
                 for j, theseResults in enumerate( results ):
-                    vPrint( 'Quiet', debuggingThisModule, j )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, j )
                     moduleRoughName = parameters[j]
-                    vPrint( 'Quiet', debuggingThisModule, " SwordModules.loadAllModules:", j, moduleRoughName )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " SwordModules.loadAllModules:", j, moduleRoughName )
                     result, swM = theseResults
-                    vPrint( 'Quiet', debuggingThisModule, " ", " SwordModules.loadAllModules:", j, moduleRoughName, result )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", " SwordModules.loadAllModules:", j, moduleRoughName, result )
                     displayCount += 1
                     if result:
                         loadCount += 1
                         self.modules[moduleRoughName] = swM
-                vPrint( 'Quiet', debuggingThisModule, "SwordModules.loadAllModules: All done here1" )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModules.loadAllModules: All done here1" )
             BibleOrgSysGlobals.alreadyMultiprocessing = False
-            vPrint( 'Quiet', debuggingThisModule, "SwordModules.loadAllModules: All done here2" )
-            vPrint( 'Info', debuggingThisModule, "SwordModules.loadAllModules here", displayCount, loadCount )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModules.loadAllModules: All done here2" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "SwordModules.loadAllModules here", displayCount, loadCount )
         else: # Just single threaded
             for moduleRoughName, swMC in self.confs.items():
                 #if moduleRoughName < 'p': continue # Used for starting load part way through
                 #if moduleRoughName not in ('augustin',): continue # Used for testing specific modules
                 #if moduleRoughName in ('2tgreek',): continue # Used for avoiding testing specific modules
                 #if moduleRoughName > 'a': continue # Use for just testing the first few modules
-                vPrint( 'Quiet', debuggingThisModule, "SwordModules.loadAllModules", moduleRoughName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "SwordModules.loadAllModules", moduleRoughName )
                 displayCount += 1
-                vPrint( 'Normal', debuggingThisModule, "\nSwMod #{}".format( displayCount ) )
-                if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 1: vPrint( 'Quiet', debuggingThisModule, "#{} again".format( displayCount ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nSwMod #{}".format( displayCount ) )
+                if BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.verbosityLevel > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "#{} again".format( displayCount ) )
                 swM = SwordBibleModule( swMC ) if swMC.modCategory in ('Bible','Commentary',) else SwordModule( swMC )
                 if swM.loadBooks( self.inMemoryFlag ):
                     loadCount += 1
                     if MAX_MODULES == 0: # Don't bother saving it so memory doesn't fill up
                         self.modules[moduleRoughName] = swM
                 if MAX_MODULES > 0 and loadCount >= MAX_MODULES:
-                    vPrint( 'Quiet', debuggingThisModule, "Break in loading modules after reaching {} (to prevent machine overload)".format( loadCount ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Break in loading modules after reaching {} (to prevent machine overload)".format( loadCount ) )
                     break
 
-        if loadCount and BibleOrgSysGlobals.verbosityLevel > -1 : vPrint( 'Quiet', debuggingThisModule, "{} modules loaded".format( loadCount ) )
+        if loadCount and BibleOrgSysGlobals.verbosityLevel > -1 : vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} modules loaded".format( loadCount ) )
         return loadCount
     # end of SwordModules.loadAllModules
 
@@ -2426,9 +2426,9 @@ class SwordModules:
         """
         Runs the module test function on each module.
         """
-        vPrint( 'Normal', debuggingThisModule, "\nTesting {} Sword modules…".format( len(self.modules) ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTesting {} Sword modules…".format( len(self.modules) ) )
         for j, moduleRoughName in enumerate( self.modules ):
-            vPrint( 'Normal', debuggingThisModule, "\n#{} Testing {} Sword module…".format( j+1, moduleRoughName ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n#{} Testing {} Sword module…".format( j+1, moduleRoughName ) )
             swM = self.modules[moduleRoughName]
             if not swM.SwordModuleConfiguration.locked: swM.test()
     # end testAll
@@ -2440,7 +2440,7 @@ def briefDemo() -> None:
     """
     Sword Modules
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 0:
         startTime = time.time()
@@ -2451,16 +2451,16 @@ def briefDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
-        vPrint( 'Verbose', debuggingThisModule, swM )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=False )
-        vPrint( 'Info', debuggingThisModule, swM )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2474,16 +2474,16 @@ def briefDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
-        vPrint( 'Verbose', debuggingThisModule, swM )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=False )
-        vPrint( 'Info', debuggingThisModule, swM )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2494,18 +2494,18 @@ def briefDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         if 1:
             swM = SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=True )
-            vPrint( 'Normal', debuggingThisModule, swM )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
         if 1:
             swM = SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=False )
-            vPrint( 'Info', debuggingThisModule, swM )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2520,12 +2520,12 @@ def briefDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swBM = SwordBibleModule( swMC )
         if not swBM.SwordModuleConfiguration.locked:
             swBM.loadBooks()
-            vPrint( 'Normal', debuggingThisModule, swBM )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, swBM )
             #swBM.discover()
             #swBM.check()
             swBM.test()
@@ -2535,20 +2535,20 @@ def briefDemo() -> None:
     if 0: # test lots of modules
         swMs = SwordModules()
         swMs.loadAllModules( inMemoryFlag = False )
-        vPrint( 'Info', debuggingThisModule, '\n\n{}'.format( swMs ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, '\n\n{}'.format( swMs ) )
         if BibleOrgSysGlobals.strictCheckingFlag: swMs.testAll()
 
     if 0 and BibleOrgSysGlobals.verbosityLevel > 0:
         endTime = time.time()
         elapsedTime = endTime - startTime
-        vPrint( 'Quiet', debuggingThisModule, "Elapsed time was", elapsedTime )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Elapsed time was", elapsedTime )
 # end of SwordModules.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     if 0:
         startTime = time.time()
@@ -2559,16 +2559,16 @@ def fullDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
-        vPrint( 'Verbose', debuggingThisModule, swM )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=False )
-        vPrint( 'Info', debuggingThisModule, swM )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2582,16 +2582,16 @@ def fullDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=True )
-        vPrint( 'Verbose', debuggingThisModule, swM )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         swM = SwordModule( swMC )
         swM.loadBooks( inMemoryFlag=False )
-        vPrint( 'Info', debuggingThisModule, swM )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
         if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2602,18 +2602,18 @@ def fullDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         if 1:
             swM = SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=True )
-            vPrint( 'Normal', debuggingThisModule, swM )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
         if 1:
             swM = SwordModule( swMC )
             swM.loadBooks( inMemoryFlag=False )
-            vPrint( 'Info', debuggingThisModule, swM )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, swM )
             if not swM.SwordModuleConfiguration.locked: swM.test()
 
         del swM
@@ -2628,12 +2628,12 @@ def fullDemo() -> None:
 
         swMC = SwordModuleConfiguration( moduleCode, swordFolder )
         swMC.loadConf()
-        vPrint( 'Quiet', debuggingThisModule, swMC )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, swMC )
 
         swBM = SwordBibleModule( swMC )
         if not swBM.SwordModuleConfiguration.locked:
             swBM.loadBooks()
-            vPrint( 'Normal', debuggingThisModule, swBM )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, swBM )
             #swBM.discover()
             #swBM.check()
             swBM.test()
@@ -2643,13 +2643,13 @@ def fullDemo() -> None:
     if 0: # test lots of modules
         swMs = SwordModules()
         swMs.loadAllModules( inMemoryFlag = False )
-        vPrint( 'Info', debuggingThisModule, '\n\n{}'.format( swMs ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, '\n\n{}'.format( swMs ) )
         if BibleOrgSysGlobals.strictCheckingFlag: swMs.testAll()
 
     if 0 and BibleOrgSysGlobals.verbosityLevel > 0:
         endTime = time.time()
         elapsedTime = endTime - startTime
-        vPrint( 'Quiet', debuggingThisModule, "Elapsed time was", elapsedTime )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Elapsed time was", elapsedTime )
 # end of SwordModules.fullDemo
 
 if __name__ == '__main__':

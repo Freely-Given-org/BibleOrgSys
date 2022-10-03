@@ -56,9 +56,9 @@ LAST_MODIFIED_DATE = '2022-07-12' # by RJH
 SHORT_PROGRAM_NAME = "uWOBSBible"
 PROGRAM_NAME = "unfoldingWord Open Bible Stories handler"
 PROGRAM_VERSION = '0.01'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -81,7 +81,7 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
     if autoLoad is true and exactly one uW OBS Bible is found,
         returns the loaded uWOBSBible object.
     """
-    fnPrint( debuggingThisModule, "uWOBSBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,) and autoLoadBooks in (True,False,)
 
@@ -94,7 +94,7 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " uWOBSBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " uWOBSBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -118,9 +118,9 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                vPrint( 'Quiet', debuggingThisModule, "uWOBSBibleFileCheck: Suprised to find folder:", folderName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck: Suprised to find folder:", folderName )
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "uWOBSBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uWnB = uWOBSBible( givenFolderName )
             if autoLoad: uWnB.preload()
@@ -136,7 +136,7 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("uWOBSBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
-        vPrint( 'Verbose', debuggingThisModule, "    uWOBSBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    uWOBSBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -161,9 +161,9 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    vPrint( 'Quiet', debuggingThisModule, "uWOBSBibleFileCheckSuprised to find folder:", folderName )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheckSuprised to find folder:", folderName )
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "uWOBSBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uWnB = uWOBSBible( foundProjects[0] )
             if autoLoad: uWnB.preload()
@@ -199,7 +199,7 @@ class uWOBSBible( Bible ):
         """
         Loads the Metadata file if it can be found.
         """
-        fnPrint( debuggingThisModule, f"preload() from {self.sourceFolder}" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.sourceFolder}" )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -217,7 +217,7 @@ class uWOBSBible( Bible ):
             if unexpectedFolders:
                 logging.info( _("uWOBSBible.preload: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            vPrint( 'Quiet', debuggingThisModule, _("uWOBSBible.preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("uWOBSBible.preload: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         #if self.metadataFilepath is None: # it might have been loaded first
@@ -244,16 +244,16 @@ class uWOBSBible( Bible ):
 
         Sets some class variables and puts a dictionary into self.settingsDict.
         """
-        vPrint( 'Never', debuggingThisModule, _("Loading metadata from {!r}").format( metadataFilepath ) )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, _("Loading metadata from {!r}").format( metadataFilepath ) )
         self.metadataFilepath = metadataFilepath
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         if 'uW' not in self.suppliedMetadata: self.suppliedMetadata['uW'] = {}
         self.suppliedMetadata['uW']['Manifest'] = loadYAML( metadataFilepath )
-        vPrint( 'Never', debuggingThisModule, f"\ns.sM: {self.suppliedMetadata}" )
+        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"\ns.sM: {self.suppliedMetadata}" )
 
         if self.suppliedMetadata['uW']['Manifest']:
             self.applySuppliedMetadata( 'uW' ) # Copy some to self.settingsDict
-            vPrint( 'Never', debuggingThisModule, f"\ns.sD: {self.settingsDict}" )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"\ns.sD: {self.settingsDict}" )
     # end of uWOBSBible.loadMetadata
 
 
@@ -263,14 +263,14 @@ class uWOBSBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( debuggingThisModule, f"uWOBSBible.loadBook( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"uWOBSBible.loadBook( {BBB} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading uW OBS {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
-            vPrint( 'Verbose', debuggingThisModule, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
             bcvBB = uWOBSBibleBook( self, BBB )
             bcvBB.load()
             if bcvBB._rawLines:
@@ -289,16 +289,16 @@ class uWOBSBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        fnPrint( debuggingThisModule, f"loadBookMP( {BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadBookMP( {BBB} )" )
         assert BBB not in self.books
         self.triedLoadingBook[BBB] = True
         if BBB in self.givenBookList:
             if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-                vPrint( 'Quiet', debuggingThisModule, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '  ' + "Loading {} from {} from {}…".format( BBB, self.name, self.sourceFolder ) )
             bcvBB = uWOBSBibleBook( self, BBB )
             bcvBB.load()
             bcvBB.validateMarkers()
-            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', debuggingThisModule, _("    Finishing loading uW OBS book {}.").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("    Finishing loading uW OBS book {}.").format( BBB ) )
             return bcvBB
         else: logging.info( "uW OBS book {} is not listed as being available".format( BBB ) )
     # end of uWOBSBible.loadBookMP
@@ -308,15 +308,15 @@ class uWOBSBible( Bible ):
         """
         Load all the books.
         """
-        vPrint( 'Normal', debuggingThisModule, f"Loading '{self.name}' from {self.sourceFolder}…" )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading '{self.name}' from {self.sourceFolder}…" )
 
         if not self.preloadDone: self.preload()
 
         if self.givenBookList:
             if BibleOrgSysGlobals.maxProcesses > 1: # Load all the books as quickly as possible
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, _("Loading {} uW OBS books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
-                    vPrint( 'Quiet', debuggingThisModule, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Loading {} uW OBS books using {} processes…").format( len(self.givenBookList), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.givenBookList ) # have the pool do our loads
@@ -329,11 +329,11 @@ class uWOBSBible( Bible ):
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB in self.givenBookList:
                     #if BibleOrgSysGlobals.verbosityLevel>1 or BibleOrgSysGlobals.debugFlag:
-                        #dPrint( 'Quiet', debuggingThisModule, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  uWOBSBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB ) # also saves it
         else:
             logging.critical( "uWOBSBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
-        #dPrint( 'Quiet', debuggingThisModule, self.getBookList() )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         self.doPostLoadProcessing()
     # end of uWOBSBible.load
 # end of class uWOBSBible
@@ -368,7 +368,7 @@ class uWOBSBibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
         self.sourceFolder = self.containerBibleObject.sourceFolder
-        vPrint( 'Info', debuggingThisModule, "  " + _("Loading {} from {}…").format( self.BBB, self.sourceFolder ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {} from {}…").format( self.BBB, self.sourceFolder ) )
 
         assert self.BBB == 'OBS'
         assert self.containerBibleObject.suppliedMetadata['uW']['Manifest']['projects'][0]['path'] == './content'
@@ -382,7 +382,7 @@ class uWOBSBibleBook( BibleBook ):
 
             Also convert ~ to a proper non-break space.
             """
-            fnPrint( debuggingThisModule, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            fnPrint( DEBUGGING_THIS_MODULE, "doAddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
             self.addLine( originalMarker, originalText ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
             # marker, text = originalMarker, originalText.replace( '~', ' ' )
             # if '\\' in text: # Check markers inside the lines
@@ -401,7 +401,7 @@ class uWOBSBibleBook( BibleBook ):
             #             thisText = text[ix:iMIndex].rstrip()
             #             self.addLine( marker, thisText )
             #             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-            #             #dPrint( 'Quiet', debuggingThisModule, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+            #             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
             #             marker = insideMarker # setup for the next line
             #     if ix != 0: # We must have separated multiple lines
             #         text = text[ix:] # Get the final bit of the line
@@ -421,10 +421,10 @@ class uWOBSBibleBook( BibleBook ):
                     if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "loaduWOBSBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker (BOM)
-                    #dPrint( 'Quiet', debuggingThisModule, state, lineCount, "line", line )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, state, lineCount, "line", line )
                     if lineCount == 1: # Title line
                         assert state == 0
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                             assert line.startswith( '# ')
                         title = line[2:]
                         doAddLine( 'c', str(storyNumber) )
@@ -433,12 +433,12 @@ class uWOBSBibleBook( BibleBook ):
                         V = 0
                         state = 1
                     elif not line:
-                        if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                             assert state in (1,3,5,7)
                         state += 1
                     elif state == 2:
                         if line.startswith( '![OBS Image](' ):
-                            if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                                 assert line.endswith( '.jpg)' )
                             V += 1
                             doAddLine( 'v', f'{V} \\fig |src="{line[13:-1]}"\\fig*' )
@@ -453,7 +453,7 @@ class uWOBSBibleBook( BibleBook ):
                     else:
                         halt
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
-            #if debugging: vPrint( 'Quiet', debuggingThisModule, self._rawLines ); halt
+            #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
     # end of load
 # end of class uWOBSBibleBook
@@ -464,38 +464,38 @@ def briefDemo() -> None:
     """
     Demonstrate reading and checking some Bible databases.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_obs/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA1" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA1" )
         result1 = uWOBSBibleFileCheck( testFolderpath )
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA1", result1 )
 
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA2" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA2" )
         result2 = uWOBSBibleFileCheck( testFolderpath, autoLoad=True ) # But doesn't preload books
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA2", result2 )
         #result2.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA3" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA3" )
         result3 = uWOBSBibleFileCheck( testFolderpath, autoLoad=True, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA3", result3 )
         #result3.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -509,7 +509,7 @@ def briefDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -518,7 +518,7 @@ def briefDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nuW OBS D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nuW OBS D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolderpath, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -532,68 +532,68 @@ def briefDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', debuggingThisModule, "\nuW OBS A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS A{}/".format( count ) )
                 uWnB = uWOBSBible( testFolder, name, encoding=encoding )
                 uWnB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( uWnB.getAssumedBookName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( uWnB.getLongTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( uWnB.getShortTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( uWnB.getBooknameAbbreviation( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, uWnB )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen assumed book name:", repr( uWnB.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen long TOC book name:", repr( uWnB.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen short TOC book name:", repr( uWnB.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen book abbreviation:", repr( uWnB.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uWnB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     uWnB.check()
-                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
-                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-            else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 #end of uWOBSBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_obs/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA1" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA1" )
         result1 = uWOBSBibleFileCheck( testFolderpath )
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA1", result1 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA1", result1 )
 
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA2" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA2" )
         result2 = uWOBSBibleFileCheck( testFolderpath, autoLoad=True ) # But doesn't preload books
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA2", result2 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA2", result2 )
         #result2.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result2.check()
-            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result2.getCheckResults()
-            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bibleErrors )
         #if BibleOrgSysGlobals.commandLineArguments.export:
             ###result2.toDrupalBible()
             #result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
-        vPrint( 'Quiet', debuggingThisModule, "\nuW OBS TestA3" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS TestA3" )
         result3 = uWOBSBibleFileCheck( testFolderpath, autoLoad=True, autoLoadBooks=True )
-        vPrint( 'Normal', debuggingThisModule, "uW OBS TestA3", result3 )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "uW OBS TestA3", result3 )
         #result3.loadMetadataFile( os.path.join( testFolderpath, "BooknamesMetadata.txt" ) )
         for BBB in ('OBS','RUT','JN3'):
-            vPrint( 'Quiet', debuggingThisModule, f"OBS 1:1 gCVD", result3.getContextVerseData( ('OBS','1','1','') ) )
-            vPrint( 'Quiet', debuggingThisModule, f"OBS 1:1 gVDL", result3.getVerseDataList( ('OBS','1','1','') ) )
-            vPrint( 'Quiet', debuggingThisModule, f"OBS 1:1 gVT", result3.getVerseText( ('OBS','1','1','') ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OBS 1:1 gCVD", result3.getContextVerseData( ('OBS','1','1','') ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OBS 1:1 gVDL", result3.getVerseDataList( ('OBS','1','1','') ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"OBS 1:1 gVT", result3.getVerseText( ('OBS','1','1','') ) )
         if BibleOrgSysGlobals.strictCheckingFlag:
             result3.check()
-            #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
             bibleErrors = result3.getCheckResults()
-            #dPrint( 'Quiet', debuggingThisModule, bibleErrors )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bibleErrors )
         if BibleOrgSysGlobals.commandLineArguments.export:
             ##result3.toDrupalBible()
             result3.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
@@ -607,7 +607,7 @@ def fullDemo() -> None:
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            vPrint( 'Normal', debuggingThisModule, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             BibleOrgSysGlobals.alreadyMultiprocessing = True
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -616,7 +616,7 @@ def fullDemo() -> None:
             BibleOrgSysGlobals.alreadyMultiprocessing = False
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                vPrint( 'Normal', debuggingThisModule, "\nuW OBS D{}/ Trying {}".format( j+1, someFolder ) )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nuW OBS D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolderpath, someFolder+'/' )
                 testBCV( someFolder )
 
@@ -630,26 +630,26 @@ def fullDemo() -> None:
                                         ):
             count += 1
             if os.access( testFolder, os.R_OK ):
-                vPrint( 'Quiet', debuggingThisModule, "\nuW OBS A{}/".format( count ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nuW OBS A{}/".format( count ) )
                 uWnB = uWOBSBible( testFolder, name, encoding=encoding )
                 uWnB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', debuggingThisModule, "Gen assumed book name:", repr( uWnB.getAssumedBookName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen long TOC book name:", repr( uWnB.getLongTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen short TOC book name:", repr( uWnB.getShortTOCName( 'GEN' ) ) )
-                    vPrint( 'Quiet', debuggingThisModule, "Gen book abbreviation:", repr( uWnB.getBooknameAbbreviation( 'GEN' ) ) )
-                vPrint( 'Quiet', debuggingThisModule, uWnB )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen assumed book name:", repr( uWnB.getAssumedBookName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen long TOC book name:", repr( uWnB.getLongTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen short TOC book name:", repr( uWnB.getShortTOCName( 'GEN' ) ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Gen book abbreviation:", repr( uWnB.getBooknameAbbreviation( 'GEN' ) ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, uWnB )
                 if BibleOrgSysGlobals.strictCheckingFlag:
                     uWnB.check()
-                    #dPrint( 'Quiet', debuggingThisModule, UsfmB.books['GEN']._processedLines[0:40] )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UsfmB.books['GEN']._processedLines[0:40] )
                     bcbibleErrors = uWnB.getCheckResults()
-                    #dPrint( 'Quiet', debuggingThisModule, bcbibleErrors )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, bcbibleErrors )
                 if BibleOrgSysGlobals.commandLineArguments.export:
                     ##uWnB.toDrupalBible()
                     uWnB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "BOSOutputFiles/", "BOS_Bible_Object_Pickle/" ) )
-                    vPrint( 'Quiet', debuggingThisModule, "newObj is", newObj )
-            else: vPrint( 'Quiet', debuggingThisModule, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "newObj is", newObj )
+            else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, test folder '{testFolder}' is not readable on this computer." )
 # end of uWOBSBible.fullDemo
 
 if __name__ == '__main__':

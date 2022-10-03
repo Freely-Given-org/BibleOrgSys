@@ -91,9 +91,9 @@ LAST_MODIFIED_DATE = '2020-05-04' # by RJH
 SHORT_PROGRAM_NAME = "OpenSongBible"
 PROGRAM_NAME = "OpenSong XML Bible format handler"
 PROGRAM_VERSION = '0.39'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -116,7 +116,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     if autoLoad is true and exactly one OpenSong Bible is found,
         returns the loaded OpenSongXMLBible object.
     """
-    fnPrint( debuggingThisModule, "OpenSongXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "OpenSongXMLBibleFileCheck( {}, {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad, autoLoadBooks ) )
     if BibleOrgSysGlobals.debugFlag: assert givenFolderName and isinstance( givenFolderName, (str,Path) )
     if BibleOrgSysGlobals.debugFlag: assert autoLoad in (True,False,)
     if BibleOrgSysGlobals.debugFlag: assert autoLoadBooks in (True,False,)
@@ -130,7 +130,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
         return False
 
     # Find all the files and folders in this folder
-    vPrint( 'Verbose', debuggingThisModule, " OpenSongXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, " OpenSongXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -147,7 +147,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
             if ignore: continue
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
-    #dPrint( 'Quiet', debuggingThisModule, 'osx1', foundFiles )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'osx1', foundFiles )
 
     # See if there's an OpenSong project here in this folder
     numFound = 0
@@ -156,31 +156,31 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
     for thisFilename in sorted( foundFiles ):
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
-            #dPrint( 'Quiet', debuggingThisModule, 'osx1b', firstLines )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'osx1b', firstLines )
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                vPrint( 'Verbose', debuggingThisModule, "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<bible>' ):
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "OpenSongXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "OpenSongXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             osb = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: osb.load() # Load and process the file
             return osb
         return numFound
-    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', debuggingThisModule, "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        vPrint( 'Verbose', debuggingThisModule, "    OpenSongXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    OpenSongXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         try:
             for something in os.listdir( tryFolderName ):
@@ -196,7 +196,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
                     if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
-        #dPrint( 'Quiet', debuggingThisModule, 'osx2', foundSubfiles )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'osx2', foundSubfiles )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
@@ -205,7 +205,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
-                    vPrint( 'Verbose', debuggingThisModule, "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<bible>' ):
                     continue
@@ -213,7 +213,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        vPrint( 'Info', debuggingThisModule, "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert len(foundProjects) == 1
             osb = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
@@ -232,14 +232,14 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
     This format is roughly documented at http://de.wikipedia.org/wiki/OpenSong_XML
         but more fields can be discovered by looking at downloaded files.
     """
-    vPrint( 'Normal', debuggingThisModule, "Running createOpenSongXML…" )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Running createOpenSongXML…" )
     if BibleOrgSysGlobals.debugFlag: assert BibleObject.books
 
     ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
     def writeOpenSongBook( writerObject, BBB:str, bkData ):
         """Writes a book to the OpenSong XML writerObject."""
-        #dPrint( 'Quiet', debuggingThisModule, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'BIBLEBOOK', [('bnumber',BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber(BBB)), ('bname',BibleOrgSysGlobals.loadedBibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation(BBB))] )
         OSISAbbrev = BibleOrgSysGlobals.loadedBibleBooksCodes.getOSISAbbreviation( BBB )
         if not OSISAbbrev:
             logging.warning( "toOpenSong: Can't write {} OpenSong book because no OSIS code available".format( BBB ) )
@@ -250,11 +250,11 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for processedBibleEntry in bkData._processedLines: # Process internal Bible data lines
             marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
-            #dPrint( 'Quiet', debuggingThisModule, marker, repr(text) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(text) )
             #if text: assert text[0] != ' '
             if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             if marker in USFM_PRECHAPTER_MARKERS:
-                if debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert C=='-1' or marker=='rem' or marker.startswith('mte')
                 V = str( int(V) + 1 )
 
@@ -282,7 +282,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
                 if accumulator:
                     writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
                     accumulator = ''
-                #dPrint( 'Quiet', debuggingThisModule, "Text {!r}".format( text ) )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Text {!r}".format( text ) )
                 if not text: logging.warning( "createOpenSongXML: Missing text for v" ); continue
                 verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
@@ -326,7 +326,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
         BOS = BibleOrganisationalSystem( controlDict['PublicationCode'] )
         BRL = BibleReferenceList( BOS, BibleObject=None )
 
-    vPrint( 'Info', debuggingThisModule, _("  Exporting to OpenSong format…") )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Exporting to OpenSong format…") )
     try: osOFn = controlDict['OpenSongOutputFilename']
     except KeyError: osOFn = 'Bible.osong'
     filename = BibleOrgSysGlobals.makeSafeFilename( osOFn )
@@ -341,24 +341,24 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
 
     if ignoredMarkers:
         logging.info( "createOpenSongXML: Ignored markers were {}".format( ignoredMarkers ) )
-    vPrint( 'Info', debuggingThisModule, "  " + _("WARNING: Ignored createOpenSongXML markers were {}").format( ignoredMarkers ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Ignored createOpenSongXML markers were {}").format( ignoredMarkers ) )
     if unhandledMarkers:
         logging.warning( "createOpenSongXML: Unhandled markers were {}".format( unhandledMarkers ) )
-        vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled toOpenSong markers were {}").format( unhandledMarkers ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled toOpenSong markers were {}").format( unhandledMarkers ) )
     if unhandledBooks:
         logging.warning( "createOpenSongXML: Unhandled books were {}".format( unhandledBooks ) )
-        vPrint( 'Normal', debuggingThisModule, "  " + _("WARNING: Unhandled createOpenSongXML books were {}").format( unhandledBooks ) )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("WARNING: Unhandled createOpenSongXML books were {}").format( unhandledBooks ) )
 
     # Now create a zipped version
     filepath = os.path.join( outputFolder, filename )
-    vPrint( 'Info', debuggingThisModule, "  Zipping {} OpenSong file…".format( filename ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Zipping {} OpenSong file…".format( filename ) )
     zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
     zf.write( filepath, filename )
     zf.close()
 
     if validationSchema: return xw.validate( validationSchema )
     if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
-        vPrint( 'Quiet', debuggingThisModule, "  createOpenSongXML finished successfully." )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  createOpenSongXML finished successfully." )
     return True
 # end of createOpenSongXML
 
@@ -379,7 +379,7 @@ class OpenSongXMLBible( Bible ):
         Constructor: just sets up the XML Bible file converter object.
         """
         # Setup and initialise the base class first
-        dPrint( 'Quiet', debuggingThisModule, "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
         Bible.__init__( self )
         self.objectNameString = 'OpenSong XML Bible object'
         self.objectTypeString = 'OpenSong'
@@ -396,7 +396,7 @@ class OpenSongXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            vPrint( 'Quiet', debuggingThisModule, "OpenSongXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OpenSongXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -408,7 +408,7 @@ class OpenSongXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        vPrint( 'Info', debuggingThisModule, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if BibleOrgSysGlobals.debugFlag: assert self.XMLTree # Fail here if we didn't load anything at all
 
@@ -450,7 +450,7 @@ class OpenSongXMLBible( Bible ):
         """
         global BibleBooksNames
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating OpenSong XML book…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating OpenSong XML book…") )
 
         # Process the div attributes first
         BBB = bookName = None
@@ -464,9 +464,9 @@ class OpenSongXMLBible( Bible ):
                 if BibleBooksNames is None:
                     BibleBooksNames = BibleBooksNamesSystems().loadData()
                 BBB = BibleBooksNames.getBBBFromText( bookName ) # Try non-English booknames
-                #dPrint( 'Quiet', debuggingThisModule, "bookName", bookName, BBB )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bookName", bookName, BBB )
             if BBB:
-                vPrint( 'Info', debuggingThisModule, _("Validating {} {}…").format( BBB, bookName ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Validating {} {}…").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'OpenSong XML Bible Book object'
                 thisBook.objectTypeString = 'OpenSong'
@@ -476,7 +476,7 @@ class OpenSongXMLBible( Bible ):
                     logging.critical( f"Unable to find USFM abbreviation for '{BBB}'" )
                     if BibleOrgSysGlobals.strictCheckingFlag: halt
                     USFMAbbreviation = 'XXA'
-                thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), programNameVersion ) )
+                thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), PROGRAM_NAME_VERSION ) )
                 thisBook.addLine( 'h', bookName )
                 thisBook.addLine( 'mt1', bookName )
                 for element in book:
@@ -486,7 +486,7 @@ class OpenSongXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                         self.__validateAndExtractChapter( BBB, thisBook, element )
                     else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.chapterTag, element.tag ) )
-                vPrint( 'Info', debuggingThisModule, "  Saving {} into results…".format( BBB ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Saving {} into results…".format( BBB ) )
                 self.stashBook( thisBook )
             else: logging.error( _("OpenSong load doesn't recognize book name: {!r}").format( bookName ) ) # no BBB
         else: logging.error( _("OpenSong load can't find a book name") ) # no bookName
@@ -500,7 +500,7 @@ class OpenSongXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        vPrint( 'Verbose', debuggingThisModule, _("Validating XML chapter…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML chapter…") )
 
         # Process the div attributes first
         chapterNumber = numVerses = None
@@ -511,7 +511,7 @@ class OpenSongXMLBible( Bible ):
                 numVerses = value
             else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
-            #dPrint( 'Quiet', debuggingThisModule, BBB, 'c', chapterNumber )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, 'c', chapterNumber )
             chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
             thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for {}".format( BBB ) )
@@ -540,11 +540,11 @@ class OpenSongXMLBible( Bible ):
                 vText += element.tail if element.tail else ''
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
-                #dPrint( 'Quiet', debuggingThisModule, 'vText1', vText )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'vText1', vText )
                 if vText: # This is the main text of the verse (follows the verse milestone)
-                    #dPrint( 'Quiet', debuggingThisModule, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     if '\n' in vText: # This is how they represent poety
-                        #dPrint( 'Quiet', debuggingThisModule, "vText", repr(vText), repr(element.text) )
+                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "vText", repr(vText), repr(element.text) )
                         for j, textBit in enumerate( vText.split( '\n' ) ):
                             if j==0:
                                 thisBook.addLine( 'q1', '' )
@@ -552,7 +552,7 @@ class OpenSongXMLBible( Bible ):
                             else: thisBook.addLine( 'q1', textBit )
                     else: # Just one verse line
                         thisBook.addLine( 'v', verseNumber + ' ' + vText )
-                #dPrint( 'Quiet', debuggingThisModule, 'vText2', vText )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'vText2', vText )
             else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class
@@ -562,7 +562,7 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ) # These are very similar
     testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' )
@@ -579,33 +579,33 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         resultA1 = OpenSongXMLBibleFileCheck( testFolder )
-        vPrint( 'Quiet', debuggingThisModule, "TestA1", resultA1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", resultA1 )
         resultA2 = OpenSongXMLBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestA2", resultA2 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", resultA2 )
         resultA3 = OpenSongXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestA3", resultA3 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", resultA3 )
 
         testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         resultB1 = OpenSongXMLBibleFileCheck( testSubfolder )
-        vPrint( 'Quiet', debuggingThisModule, "TestB1", resultB1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB1", resultB1 )
         resultB2 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestB2", resultB2 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB2", resultB2 )
         resultB3 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestB3", resultB3 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB3", resultB3 )
 
 
     if 0:
         for j, testFilename in enumerate( allOfThem ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the OpenSong XML Bible class
-            vPrint( 'Normal', debuggingThisModule, "Demonstrating the OpenSong XML Bible class…" )
-            vPrint( 'Quiet', debuggingThisModule, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the OpenSong XML Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
-            vPrint( 'Quiet', debuggingThisModule, xb ) # Just print a summary
-            #dPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xb ) # Just print a summary
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -617,16 +617,16 @@ def briefDemo() -> None:
                     if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
-                    vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not xb: halt # if no books
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), xb.getVerseText( svk ) )
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: halt # if no books
 # end of OpenSongXMLBible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ) # These are very similar
     testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' )
@@ -643,33 +643,33 @@ def fullDemo() -> None:
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         resultA1 = OpenSongXMLBibleFileCheck( testFolder )
-        vPrint( 'Quiet', debuggingThisModule, "TestA1", resultA1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA1", resultA1 )
         resultA2 = OpenSongXMLBibleFileCheck( testFolder, autoLoad=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestA2", resultA2 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA2", resultA2 )
         resultA3 = OpenSongXMLBibleFileCheck( testFolder, autoLoadBooks=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestA3", resultA3 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestA3", resultA3 )
 
         testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         resultB1 = OpenSongXMLBibleFileCheck( testSubfolder )
-        vPrint( 'Quiet', debuggingThisModule, "TestB1", resultB1 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB1", resultB1 )
         resultB2 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestB2", resultB2 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB2", resultB2 )
         resultB3 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoadBooks=True )
-        vPrint( 'Quiet', debuggingThisModule, "TestB3", resultB3 )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB3", resultB3 )
 
 
     if 1:
         for j, testFilename in enumerate( allOfThem ):
-            vPrint( 'Quiet', debuggingThisModule, "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the OpenSong XML Bible class
-            vPrint( 'Normal', debuggingThisModule, "Demonstrating the OpenSong XML Bible class…" )
-            vPrint( 'Quiet', debuggingThisModule, "  Test filepath is {!r}".format( testFilepath ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Demonstrating the OpenSong XML Bible class…" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test filepath is {!r}".format( testFilepath ) )
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
-            vPrint( 'Quiet', debuggingThisModule, xb ) # Just print a summary
-            #dPrint( 'Quiet', debuggingThisModule, xb.books['JDE']._processedLines )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, xb ) # Just print a summary
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 from BibleOrgSys.Reference import VerseReferences
                 for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -681,12 +681,12 @@ def fullDemo() -> None:
                     if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #dPrint( 'Quiet', debuggingThisModule, svk, ob.getVerseDataList( reference ) )
+                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, ob.getVerseDataList( reference ) )
                     try:
-                        vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), xb.getVerseText( svk ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), xb.getVerseText( svk ) )
                     except KeyError:
-                        vPrint( 'Normal', debuggingThisModule, reference, svk.getShortText(), "KEY ERROR: Verse doesn't seem to exist!" )
-            if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not xb: halt # if no books
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), "KEY ERROR: Verse doesn't seem to exist!" )
+            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE and not xb: halt # if no books
 # end of OpenSongXMLBible.fullDemo
 
 if __name__ == '__main__':

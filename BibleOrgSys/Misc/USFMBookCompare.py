@@ -56,18 +56,18 @@ LAST_MODIFIED_DATE = '2020-04-12' # by RJH
 SHORT_PROGRAM_NAME = "USFMBookCompare"
 PROGRAM_NAME = "USFM book file comparator"
 PROGRAM_VERSION = '0.17'
-programNameVersion = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
+PROGRAM_NAME_VERSION = '{} v{}'.format( SHORT_PROGRAM_NAME, PROGRAM_VERSION )
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
 def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' ):
     """
     """
-    vPrint( 'Info', debuggingThisModule, "\nUSFMBookCompare() for USFM Bible books" )
-    vPrint( 'Verbose', debuggingThisModule, "  comparing {}".format( filepath1 ) )
-    vPrint( 'Verbose', debuggingThisModule, "        and {}".format( filepath2 ) )
+    vPrint( 'Info', DEBUGGING_THIS_MODULE, "\nUSFMBookCompare() for USFM Bible books" )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  comparing {}".format( filepath1 ) )
+    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "        and {}".format( filepath2 ) )
 
 
     # Set up empty results dictionaries
@@ -119,8 +119,8 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     uf1, uf2 = USFMFile(), USFMFile()
     uf1.read( filepath1 )
     uf2.read( filepath2 )
-    #dPrint( 'Quiet', debuggingThisModule, 'f1', uf1.lines )
-    #dPrint( 'Quiet', debuggingThisModule, 'f2', uf2.lines )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'f1', uf1.lines )
+    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'f2', uf2.lines )
 
 
     # Note line counts
@@ -140,7 +140,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf1.lines:
-        #dPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File1']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -175,7 +175,7 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     lastC = lastV = 0
     C, V = '-1', '-1' # So first/id line starts at -1:0
     for marker,line in uf2.lines:
-        #dPrint( 'Quiet', debuggingThisModule, '1', C, V, lastC, lastV, marker, line )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '1', C, V, lastC, lastV, marker, line )
         if marker=='c':
             resultDict['File2']['ChapterMarkerCount'] += 1
             C, V, lastV = line.strip(), '0', 0
@@ -256,20 +256,20 @@ def USFMBookCompare( filepath1, filepath2, file1Name='file1', file2Name='file2' 
     startedCVs1 = startedCVs2 = False
     while True:
         if lineIndex >= resultDict['File1']['LineCount']:
-            vPrint( 'Never', debuggingThisModule, "File1 done" )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "File1 done" )
             break
         if lineIndex >= resultDict['File2']['LineCount']:
-            vPrint( 'Never', debuggingThisModule, "File2 done" )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, "File2 done" )
             break
         (m1,l1), (m2,l2) = uf1.lines[lineIndex], uf2.lines[lineIndex+lineOffset]
-        #dPrint( 'Quiet', debuggingThisModule, lineIndex, lineOffset, m1, m2 )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineIndex, lineOffset, m1, m2 )
         if m1==m2: resultDict['Same']['SameMarkerCount'] += 1
         else:
-            dPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentMarkerCount'] += 1
         if m1==m2 and l1==l2: resultDict['Same']['SameLineCount'] += 1
         else:
-            dPrint( 'Quiet', debuggingThisModule, "Diff", m1, m2, l1, l2 )
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Diff", m1, m2, l1, l2 )
             resultDict['Different']['DifferentLineCount'] += 1
         lineIndex += 1
 
@@ -286,7 +286,7 @@ def briefDemo() -> None:
     """
     Brief demo to check class is working -- must be fast
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
     fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
@@ -294,12 +294,12 @@ def briefDemo() -> None:
     if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
     if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', debuggingThisModule, "\nFile1 is: {}".format( fp1 ) )
-        vPrint( 'Quiet', debuggingThisModule, "File2 is: {}".format( fp2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFile1 is: {}".format( fp1 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File2 is: {}".format( fp2 ) )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nResults:" )
             for division,dResults in result.items():
                 if not dResults: continue
                 if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
@@ -308,16 +308,16 @@ def briefDemo() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
 # end of USFMBookCompare.briefDemo
 
 def fullDemo() -> None:
     """
     Demonstration program to show off USFM Bible book comparison.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     fp1 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP' )
     fp2 = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/MBT01GEN.SCP.BAK' )
@@ -325,12 +325,12 @@ def fullDemo() -> None:
     if not os.path.exists( fp1 ): logging.critical( "Filepath1 {!r} is invalid -- aborting".format( fp1 ) ); allOkay = False
     if not os.path.exists( fp2 ): logging.critical( "Filepath2 {!r} is invalid -- aborting".format( fp2 ) ); allOkay = False
     if allOkay:
-        vPrint( 'Quiet', debuggingThisModule, "\nFile1 is: {}".format( fp1 ) )
-        vPrint( 'Quiet', debuggingThisModule, "File2 is: {}".format( fp2 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFile1 is: {}".format( fp1 ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "File2 is: {}".format( fp2 ) )
 
         result = USFMBookCompare( fp1, fp2, file1Name='SCP file', file2Name='BAK file' )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nResults:" )
             for division,dResults in result.items():
                 if not dResults: continue
                 if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
@@ -339,9 +339,9 @@ def fullDemo() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
 # end of USFMBookCompare.fullDemo
 
 
@@ -349,7 +349,7 @@ def main() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     fp1, fp2 = BibleOrgSysGlobals.commandLineArguments.file1, BibleOrgSysGlobals.commandLineArguments.file2
     allOkay = True
@@ -358,7 +358,7 @@ def main() -> None:
     if allOkay:
         result = USFMBookCompare( fp1, fp2 )
         if BibleOrgSysGlobals.verbosityLevel > 0:
-            vPrint( 'Quiet', debuggingThisModule, "\nResults:" )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nResults:" )
             for division,dResults in result.items():
                 if division in ('File1','File2') and BibleOrgSysGlobals.verbosityLevel < 4 \
                 and not BibleOrgSysGlobals.debugFlag:
@@ -366,9 +366,9 @@ def main() -> None:
                 if division in ('Same','Different') and BibleOrgSysGlobals.verbosityLevel < 3 \
                 and not BibleOrgSysGlobals.debugFlag:
                     continue
-                vPrint( 'Quiet', debuggingThisModule, "  {} results are:".format( division ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  {} results are:".format( division ) )
                 for field,fResult in dResults.items():
-                    vPrint( 'Quiet', debuggingThisModule, "    {}: {}".format( field,fResult ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {}: {}".format( field,fResult ) )
 # end of USFMBookCompare.main
 
 if __name__ == '__main__':

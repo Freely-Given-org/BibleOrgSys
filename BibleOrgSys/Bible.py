@@ -48,9 +48,9 @@ LAST_MODIFIED_DATE = '2022-06-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleObjects"
 PROGRAM_NAME = "Bible object handler"
 PROGRAM_VERSION = '0.15'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 logger = logging.getLogger(SHORT_PROGRAM_NAME)
@@ -131,7 +131,7 @@ class BibleBook ( InternalBibleBook ):
         """
         Constructor: creates an empty Bible book.
         """
-        self.doExtraChecking = debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
+        self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if self.doExtraChecking:
             if isinstance( containerBibleObject, str ):
                 logger.critical( "containerBibleObject is a string '{}' (not a Bible object): presumably this is a test???".format( containerBibleObject ) )
@@ -180,7 +180,7 @@ class BibleBook ( InternalBibleBook ):
             #elif code == 'Vrs':
                 #V = text
                 #self.index[ (C,V) ] = j, 0
-        ##dPrint( 'Quiet', debuggingThisModule, self.index )
+        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.index )
     ## end of createIndex
 # end of class BibleBook
 
@@ -199,7 +199,7 @@ class Bible( BibleWriter ):
         Constructor: creates an empty Bible object.
         """
         BibleWriter.__init__( self )
-        self.doExtraChecking = debuggingThisModule or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
+        self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         self.objectNameString = 'Bible object (generic/unknown type)'
         self.objectTypeString = 'Unknown'
 
@@ -218,38 +218,38 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    vPrint( 'Quiet', debuggingThisModule, "\nTest Bible…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
     B = Bible()
-    vPrint( 'Quiet', debuggingThisModule, B )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
 # end of Bible.briefDemo
 
 def fullDemo() -> None:
     """
     Full demo to check class is working
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    vPrint( 'Quiet', debuggingThisModule, "\nTest Bible…" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest Bible…" )
     B = Bible()
-    vPrint( 'Quiet', debuggingThisModule, B )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, B )
 
     #if 0: # No need for this here
         ## Test a single folder containing a USFM Bible
-        #dPrint( 'Quiet', debuggingThisModule, "\nTest USFM Bible…" )
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest USFM Bible…" )
         #from BibleOrgSys.Formats.USFMBible import USFMBible
         #name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()
-            #dPrint( 'Quiet', debuggingThisModule, UB )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, UB )
             #if BibleOrgSysGlobals.strictCheckingFlag:
                 #UB.check()
             #UB.doAllExports( "BOSOutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        #else: vPrint( 'Quiet', debuggingThisModule, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
+        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 # end of Bible.fullDemo
 
 if __name__ == '__main__':

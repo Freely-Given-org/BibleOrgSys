@@ -43,9 +43,9 @@ LAST_MODIFIED_DATE = '2020-04-05' # by RJH
 SHORT_PROGRAM_NAME = "ISOLanguages"
 PROGRAM_NAME = "ISO 639_3_Languages handler"
 PROGRAM_VERSION = '0.85'
-programNameVersion = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
+PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-debuggingThisModule = False
+DEBUGGING_THIS_MODULE = False
 
 
 
@@ -96,7 +96,7 @@ class ISO_639_3_Languages:
                 # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
                 if pickleIsNewer:
                     import pickle
-                    vPrint( 'Info', debuggingThisModule, _("Loading pickle file {}…").format( standardPickleFilepath ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading pickle file {}…").format( standardPickleFilepath ) )
                     with open( standardPickleFilepath, 'rb') as pickleFile:
                         self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     return self # So this command can be chained after the object creation
@@ -169,34 +169,34 @@ def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
     """
-    BibleOrgSysGlobals.introduceProgram( __name__, programNameVersion, LAST_MODIFIED_DATE )
+    BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
-    vPrint( 'Quiet', debuggingThisModule, lg ) # Just print a summary
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, lg ) # Just print a summary
     for testCode in ('qwq','mbt','MBT','abk',):
-        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testCode ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Testing {}…".format( testCode ) )
         if not lg.isValidLanguageCode( testCode ):
-            vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testCode ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} not found".format( testCode ) )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "    {} -> {}".format( testCode, lg.getLanguageName( testCode ) ) )
-            vPrint( 'Quiet', debuggingThisModule, "    Scope is {}, Type is {}".format( lg.getScope(testCode), lg.getType(testCode) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} -> {}".format( testCode, lg.getLanguageName( testCode ) ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Scope is {}, Type is {}".format( lg.getScope(testCode), lg.getType(testCode) ) )
             part1Code, part2Code = lg.getPart1Code(testCode), lg.getPart2Code(testCode)
-            if part1Code is not None: vPrint( 'Quiet', debuggingThisModule, "    Part1 code is {}".format(part1Code) )
-            if part2Code is not None: vPrint( 'Quiet', debuggingThisModule, "    Part2 code is {}".format(part2Code) )
+            if part1Code is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Part1 code is {}".format(part1Code) )
+            if part2Code is not None: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Part2 code is {}".format(part2Code) )
     for testName in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testName ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Testing {}…".format( testName ) )
         code = lg.getLanguageCode( testName )
         if code is None:
-            vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testName ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} not found".format( testName ) )
         else:
-            vPrint( 'Quiet', debuggingThisModule, "    {} -> {}".format( testName, code ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} -> {}".format( testName, code ) )
     for testNamePortion in ('English','German','Deutsch','French','Ayta, Abellen','Manobo, Matigsalug','Manobo','SomeName',):
-        vPrint( 'Quiet', debuggingThisModule, "  Testing {}…".format( testNamePortion ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Testing {}…".format( testNamePortion ) )
         matches = lg.getNameMatches( testNamePortion )
         for match in matches:
-            vPrint( 'Quiet', debuggingThisModule, "    Found {} = {}".format( lg.getLanguageCode(match), match ) )
-        else: vPrint( 'Quiet', debuggingThisModule, "    {} not found".format( testNamePortion ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    Found {} = {}".format( lg.getLanguageCode(match), match ) )
+        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    {} not found".format( testNamePortion ) )
 # end of fullDemo
 
 def fullDemo() -> None:
