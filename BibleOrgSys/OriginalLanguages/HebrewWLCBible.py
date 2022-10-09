@@ -45,7 +45,7 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2022-10-06' # by RJH
 SHORT_PROGRAM_NAME = "HebrewWLCBibleHandler"
 PROGRAM_NAME = "Hebrew WLC format handler"
 PROGRAM_VERSION = '0.26'
@@ -341,8 +341,7 @@ class HebrewWLCBibleAddon():
     def _checkLoadedDict( self ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "_checkLoadedDict()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "_checkLoadedDict()" )
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert self.glossingDict
 
@@ -377,7 +376,7 @@ class HebrewWLCBibleAddon():
             #self.glossingDict[word] = (genericGloss,genericReferencesList,{})
             #self.haveGlossingDictChanges = True; continue
             for reference,specificGloss in specificReferencesDict.items():
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{!r} {!r} {} {!r}".format( word, genericGloss, reference, specificGloss ) )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  specificReferencesDict '{word}' genGl='{genericGloss}' {reference} specGl='{specificGloss}'" )
                 assert isinstance( reference, tuple )
                 assert len(reference) == 4 # BBB,C,V,wordNumber (starting with 1)
                 for part in reference:
@@ -468,7 +467,7 @@ class HebrewWLCBibleAddon():
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Importing glossing dictionary from '{}'…".format( glossingDictImportFilepath ) )
             lineCount = 0
             newDict = {}
-            with open( glossingDictImportFilepath, 'r' ) as importFile:
+            with open( glossingDictImportFilepath, 'rt', encoding='utf=8' ) as importFile:
                 for line in importFile:
                     lineCount += 1
                     if lineCount==1 and line[0]==BibleOrgSysGlobals.BOM:

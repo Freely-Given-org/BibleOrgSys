@@ -109,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-08-01' # by RJH
+LAST_MODIFIED_DATE = '2022-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.90'
@@ -548,10 +548,10 @@ def getLatestPythonModificationDate() -> str:
 def printUnicodeInfo( text:str, description:str ) -> None:
     """
     """
-    fnPrint( DEBUGGING_THIS_MODULE, "{}:".format( description ) )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{description}:" )
     for j,char in enumerate(text):
-        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
-            .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
+        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:2} {ord(char):04x} {unicodedata.name(char)} {char!r}"
+            f"   (cat={unicodedata.category(char)} bid={unicodedata.bidirectional(char)} comb={unicodedata.combining(char)} mirr={unicodedata.mirrored(char)})" )
 
 ##########################################################################################################
 #

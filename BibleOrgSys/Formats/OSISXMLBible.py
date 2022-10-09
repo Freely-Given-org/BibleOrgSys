@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2021 Robert Hunt
+# Copyright (C) 2010-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -55,10 +55,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2021-06-19' # by RJH
+LAST_MODIFIED_DATE = '2022-10-06' # by RJH
 SHORT_PROGRAM_NAME = "OSISBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
-PROGRAM_VERSION = '0.65'
+PROGRAM_VERSION = '0.66'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -270,8 +270,7 @@ class OSISXMLBible( Bible ):
         sourceFilepath can be a folder (esp. if each book is in a separate file)
             or the path of a specific file (probably containing the whole Bible -- most common)
         """
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2 or DEBUGGING_THIS_MODULE:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "OSISXMLBible.__init__( {}, {!r}, {!r}, {} )".format( sourceFilepath, givenName, givenAbbreviation, encoding ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"OSISXMLBible.__init__( {sourceFilepath}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -420,7 +419,7 @@ class OSISXMLBible( Bible ):
             #assert self.preloadDone
 
         if not self.possibleFilenames: # then the whole Bible was probably in one file
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, "  Unable to load OSIS by book -- returning" )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Unable to load OSIS by individual book (only whole Bible?) -- returning" )
             return # nothing to do here
 
         if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
@@ -747,7 +746,7 @@ class OSISXMLBible( Bible ):
                 loadErrors.append( "Unprocessed {!r} attribute ({}) in {} at {} (2h6k)".format( attrib, value, sublocation, verseMilestone ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
         if wType and (BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE):
-            assert wType.startswith( 'x-split-' ) # Followed by a number 1-10 or more
+            assert wType.startswith( 'x-split-' ) or wType=='x-ketiv', f"{wType=}" # Followed by a number 1-10 or more
 
         attributeDict = {}
         if lemma \

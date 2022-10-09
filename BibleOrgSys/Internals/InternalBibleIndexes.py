@@ -86,7 +86,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+LAST_MODIFIED_DATE = '2022-10-06' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.79'
@@ -187,9 +187,9 @@ class InternalBibleBookCVIndex:
         Just display a simplified view of the list of entries.
         """
         result = "InternalBibleBookCVIndex object for {}:".format( self.BBB )
-        try: result += "\n  {} index entries".format( len( self.__indexData ) )
+        try: result += "\n  {:,} index entries".format( len( self.__indexData ) )
         except AttributeError: result += "\n  Index is empty"
-        try: result += " created from {} data entries".format( len( self.givenBibleEntries ) )
+        try: result += " created from {:,} data entries".format( len( self.givenBibleEntries ) )
         except AttributeError: pass # ignore it
         if BibleOrgSysGlobals.verbosityLevel > 2:
             try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.__indexData), 1 ) )
@@ -566,7 +566,7 @@ class InternalBibleBookCVIndex:
         """
         Just run a quick internal check on the index.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Checking {} {} {} CV index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Checking {:,} {} {} CV index entries…").format( len(self.__indexData), self.workName, self.BBB ) )
         dPrint( 'Verbose', DEBUGGING_THIS_MODULE, self )
 
         # Check that all C,V entries (the index to the index) are digits

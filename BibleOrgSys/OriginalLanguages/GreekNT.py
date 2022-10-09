@@ -5,7 +5,7 @@
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2021 Robert Hunt
+# Copyright (C) 2012-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -58,10 +58,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2021-06-06' # by RJH
+LAST_MODIFIED_DATE = '2022-10-06' # by RJH
 SHORT_PROGRAM_NAME = "GreekNTHandler"
 PROGRAM_NAME = "Greek NT format handler"
-PROGRAM_VERSION = '0.09'
+PROGRAM_VERSION = '0.10'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -250,7 +250,7 @@ class GreekNT( Bible ):
                 #if lineCount > 1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Previous line was: ', lastLine )
                 #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Possible encoding error -- expected', encoding )
         if self.thisBook:
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    {} words loaded from {}".format( len(self.thisBook), filename ) )
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    {:,} words loaded from {}".format( len(self.thisBook), filename ) )
             self.stashBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
@@ -272,8 +272,9 @@ class GreekNT( Bible ):
             wordCount = len(self.books[BBB])
             self.wordCounts[BBB] = wordCount
             self.wordCounts['Total'] += wordCount
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  analyzeWords: {} has {} Greek words".format( BBB, wordCount ) )
-            for reference,parsing,(punctuatedWord,actualWord,normalizedWord,lemma) in self.books[BBB]: # Stuff is: reference,parsing,words
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  analyzeWords: {BBB} has {wordCount:,} Greek words" )
+            for reference,parsing,words in self.books[BBB]: # Stuff is: reference,parsing,words
+                punctuatedWord,actualWord,normalizedWord,lemma = words
                 # File the actual words
                 if actualWord not in self.actualWordsToNormalized:
                     self.actualWordsToNormalized[actualWord] = [([reference],normalizedWord,)]
@@ -374,23 +375,23 @@ class GreekNT( Bible ):
                     if changed:
                         self.lemmasToNormalizedWords[lemma] = newList
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  now have", newList )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"analyzeWords: NT has {self.wordCounts['Total']:,} Greek words" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"analyzeWords: NT has {len(self.actualWordsToNormalized):,} actual Greek words" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,aW in enumerate( self.actualWordsToNormalized.keys() ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", aW, self.actualWordsToNormalized[aW] )
                 if j==6: break
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"analyzeWords: NT has {len(self.normalizedWordsToActual):,} normalized Greek words" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToActual.keys() ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", nW, self.normalizedWordsToActual[nW] )
                 if j==6: break
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"analyzeWords: NT has {len(self.normalizedWordsToParsing):,} normalized Greek words" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToParsing.keys() ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", nW, self.normalizedWordsToParsing[nW] )
                 if j==6: break
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"analyzeWords: NT has {len(self.lemmasToNormalizedWords):,} Greek self.lemmasToNormalizedWords" )
         if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,lem in enumerate( self.lemmasToNormalizedWords.keys() ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ", lem, self.lemmasToNormalizedWords[lem] )
