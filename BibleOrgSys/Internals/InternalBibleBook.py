@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-08-01' # by RJH
+LAST_MODIFIED_DATE = '2022-10-16' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -100,7 +100,8 @@ def hasClosingPeriod( text:str ) -> bool:
     for period in '.።':
         if text[-1] == period: return True
         for closingPunctuation in ''')]"'”’»›''':
-            if text.endswith( period + closingPunctuation ): return True
+            if text.endswith( f'{period}{closingPunctuation}' ):
+                return True
     return False
 # end of hasClosingPeriod
 
@@ -115,7 +116,8 @@ def hasClosingPunctuation( text:str ) -> bool:
     for period in '.።?!':
         if text[-1] == period: return True
         for closingPunctuation in ''')]"'”’»›''':
-            if text.endswith( period + closingPunctuation ): return True
+            if text.endswith( f'{period}{closingPunctuation}' ):
+                return True
     return False
 # end of hasClosingPunctuation
 
@@ -1444,7 +1446,7 @@ class InternalBibleBook:
             if endMarker:
                 assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker expected {openMarkers} to end with '{endMarker}'"
             if endMarker in ('c','v'):
-                assert withText
+                assert withText, f"_addNestingMarkers._closeLastOpenMarker expected text with {endMarker=}"
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of _addNestingMarkers._closeLastOpenMarker
 

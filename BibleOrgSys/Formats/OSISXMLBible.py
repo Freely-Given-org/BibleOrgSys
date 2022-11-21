@@ -55,10 +55,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-10-06' # by RJH
+LAST_MODIFIED_DATE = '2022-11-22' # by RJH
 SHORT_PROGRAM_NAME = "OSISBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
-PROGRAM_VERSION = '0.66'
+PROGRAM_VERSION = '0.67'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2932,7 +2932,7 @@ class OSISXMLBible( Bible ):
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Appending {thisBook.BBB} and {len(loadErrors)} load errors to bookList" )
                 for bkLE in bookList:
                     assert len(bkLE) == 2 # bookObject and loadErrors
-                    assert bkLE[0].BBB != BBB # Don't allow duplicate books
+                    assert bkLE[0].BBB != BBB, f"OSIS loader stopped at duplicate {BBB} book"
                 bookList.append( (thisBook,loadErrors.copy()) )
                 loadErrors.clear()
                 haveBook = True

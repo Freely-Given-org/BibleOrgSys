@@ -50,10 +50,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleExtraList
 
 
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+LAST_MODIFIED_DATE = '2022-11-22' # by RJH
 SHORT_PROGRAM_NAME = "MLWriter"
 PROGRAM_NAME = "XML/HTML Writer"
-PROGRAM_VERSION = '0.40'
+PROGRAM_VERSION = '0.41'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -113,6 +113,8 @@ class MLWriter:
         self._currentColumn = 0
         self._nl = '\n'
         self.linesWritten = 0
+
+        self.haltOnErrors = DEBUGGING_THIS_MODULE != False or BibleOrgSysGlobals.strictCheckingFlag
     # end of MLWriter.__init__
 
 
@@ -272,8 +274,9 @@ class MLWriter:
                 self._buffer = self._buffer[:-2]
                 removed = True
         if not removed:
-            logging.error( "MLWriter: " + _("No newline to remove") )
-            if self.doExtraChecking: halt
+            errorMsg = "MLWriter: " + _("No newline to remove")
+            logging.error( errorMsg )
+            if self.haltOnErrors: raise Exception( errorMsg )
         self._suppressFollowingIndent = suppressFollowingIndent
     # end of MLWriter.removeFinalNewline
 
@@ -334,7 +337,7 @@ class MLWriter:
             if char in ESCAPE_MAP:
                 print(f"{ix=} {char=}")
         print(f"{rawTextString=} {char_strings=} {extras=} {adjExtras=}")
-        MLWriter_escape_characters_with_extras_NOT_WRITTEN_YET
+        raise Exception("MLWriter: escape characters with extras NOT WRITTEN YET")
         return ''.join(char_strings), adjExtras
     # end of MLWriter.escape_characters_with_extras static function
 
@@ -348,8 +351,9 @@ class MLWriter:
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
         else:
-            logging.error( "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings ) )
-            if self.doExtraChecking: halt
+            errorMsg = "MLWriter: " + _("Unknown {!r} lineEndings flag").format( lineEndings )
+            logging.error( errorMsg )
+            if self.haltOnErrors: raise Exception( errorMsg )
         if BibleOrgSysGlobals.verbosityLevel>2: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "MLWriter: "+_("Writing {}…").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt', encoding='utf-8' ) # Just create the empty file
         self.__outputFile.close()
@@ -386,26 +390,30 @@ class MLWriter:
         """
         assert textString # It can't be blank
         if '<' in textString or '>' in textString or '"' in textString:
-            logging.error( "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString ) )
-            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+            errorMsg = "MLWriter:checkText: " + _("unexpected characters found in {} {!r}").format( self._outputType, textString )
+            logging.error( errorMsg )
+            if self.haltOnErrors: raise Exception( errorMsg )
         ix = textString.find( '&' )
         while ix != -1:
             ix2 = textString.find( ';', ix+1 )
             if ix2 == -1:
-                logging.error( "MLWriter:checkText: " + _("unescaped ampersand (&) found in {} {!r}").format( self._outputType, textString ) )
-                if self.doExtraChecking: halt
+                errorMsg = "MLWriter:checkText: " + _("unescaped ampersand (&) found in {} {!r}").format( self._outputType, textString )
+                logging.error( errorMsg )
+                if self.haltOnErrors: raise Exception( errorMsg )
                 break # Only give one error
             elif self._outputType == 'XML':
                 if textString[ix+1:ix2] not in XML_PREDEFINED_ENTITIES:
-                    logging.error( "MLWriter:checkText: " + _("unknown entity starting with ampersand (&) found in XML {!r}").format( textString ) )
-                    if self.doExtraChecking: halt
+                    errorMsg = "MLWriter:checkText: " + _("unknown entity starting with ampersand (&) found in XML {!r}").format( textString )
+                    logging.error( errorMsg )
+                    if self.haltOnErrors: raise Exception( errorMsg )
                     break # Only give one error
             elif self._outputType == 'HTML':
                 if textString[ix+1:ix2] not in HTML_PREDEFINED_CHARACTER_ENTITIES:
-                    logging.error( "MLWriter:checkText: " + _("unknown character entity starting with ampersand (&) found in XML {!r}").format( textString ) )
-                    if self.doExtraChecking: halt
+                    errorMsg = "MLWriter:checkText: " + _("unknown character entity starting with ampersand (&) found in XML {!r}").format( textString )
+                    logging.error( errorMsg )
+                    if self.haltOnErrors: raise Exception( errorMsg )
                     break # Only give one error
-            else: programmingError
+            else: raise Exception("Programming error")
             ix = textString.find( '&', ix+1 )
         return textString
     # end of MLWriter.checkText
@@ -521,13 +529,15 @@ class MLWriter:
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeLineClose', self._openStack )
         if not self._openStack:
-            logging.error( "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag ) )
-            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+            errorMsg = "MLWriter:writeLineClose: " + _("closed {!r} tag even though no tags open").format( closeTag )
+            logging.error( errorMsg )
+            if self.haltOnErrors: raise Exception( errorMsg )
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
-                logging.error( "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
-                if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+                errorMsg = "MLWriter.writeLineClose:" + _("closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag )
+                logging.error( errorMsg )
+                if self.haltOnErrors: raise Exception( errorMsg )
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -565,8 +575,9 @@ class MLWriter:
         """
         assert self.__outputFile is not None
         if self._openStack:
-            logging.error( "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack) )
-            if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+            errorMsg = "MLWriter.close: " + _("have unclosed tags: {}").format(self._openStack)
+            logging.error( errorMsg )
+            if self.haltOnErrors: raise Exception( errorMsg )
         if writeFinalNL: self.writeNewLine()
         if self._buffer: self._writeBuffer()
         if self._status != 'Buffered': pass
@@ -611,8 +622,9 @@ class MLWriter:
                 checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
                 returnCode = checkProcess.returncode
             except FileNotFoundError:
-                logging.error( "MLWriter.validate is unable to open {!r}".format( parameters[0] ) )
-                if self.doExtraChecking: halt
+                errorMsg = "MLWriter.validate is unable to open {!r}".format( parameters[0] )
+                logging.error( errorMsg )
+                if self.haltOnErrors: raise Exception( errorMsg )
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
             if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding='utf-8', errors='replace' ) )
@@ -624,8 +636,9 @@ class MLWriter:
             if returnCode != 0:
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
                 if returnCode == 5: # schema error
-                    logging.critical( "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath ) )
-                    if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag): halt
+                    errorMsg = "MLWriter.validate couldn't read/parse the schema at {}".format( schemaFilepath )
+                    logging.critical( errorMsg )
+                    if self.haltOnErrors: raise Exception( errorMsg )
             else: vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
