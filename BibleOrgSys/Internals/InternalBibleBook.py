@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-01-05' # by RJH
+LAST_MODIFIED_DATE = '2023-01-22' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -5101,7 +5101,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference ):
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
         """
         Returns an InternalBibleEntryListObject plus a list containing the context of the verse.
 

@@ -6,7 +6,7 @@
 # Module handling the internal representation of the overall Bible
 #       and which in turn holds the Bible book objects.
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -80,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2022-12-30' # by RJH
+LAST_MODIFIED_DATE = '2023-01-23' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.86'
@@ -401,7 +401,7 @@ class InternalBible:
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
-            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"NOLOAD: {BBB in self.books=} {BBB in self.triedLoadingBook=} {BBB in self.bookNeedsReloading=} {self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE'}" )
+            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"loadBookIfNecessary NOLOAD: {BBB in self.books=} {BBB in self.triedLoadingBook=} {BBB in self.bookNeedsReloading=} {self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE'}" )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -2275,12 +2275,12 @@ class InternalBible:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumStr()=='0' or BCVReference.getVerseNumStr()=='0' # Why did we get nothing???
         else:
-            verseData, context = result
+            verseData, _context = result
             if BibleOrgSysGlobals.debugFlag:
                 assert isinstance( verseData, InternalBibleEntryList )
                 # The following numbers include end markers, i.e., \q1 xyz becomes q1,p~ xyz,¬q1
-                if len(verseData)<1 or len(verseData)>30: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
-                if len(verseData)>35: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseData )
+                if len(verseData)<1 or len(verseData)>30: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
+                if len(verseData)>35: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseData )
                 if self.abbreviation not in ('mhl','sua',): # This version has Matt 1:1-11 combined! 57 entries
                     assert 1 <= len(verseData) <= 35 # Smallest is just a chapter number line
             return verseData
