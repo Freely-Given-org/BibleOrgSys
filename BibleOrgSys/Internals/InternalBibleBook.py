@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -76,7 +76,7 @@ from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex,
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-10-16' # by RJH
+LAST_MODIFIED_DATE = '2023-01-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -129,15 +129,15 @@ def cleanUWalignments( workAbbreviation:str, BBB:str, originalAlignments:List[Tu
 
     Typical input data is:
 cleanUWalignmentsL 140 TI1 1:11 'x-strong="G25960" x-lemma="κατά" x-morph="Gr,P,,,,,A,,," x-occurrence="1" x-occurrences="1" x-content="κατὰ"'
-    = ' \v 11 \w according|x-occurrence="1" x-occurrences="1"\w* \w to|x-occurrence="1" x-occurrences="1"\w*'
+    = ' \\v 11 \\w according|x-occurrence="1" x-occurrences="1"\\w* \\w to|x-occurrence="1" x-occurrences="1"\\w*'
 cleanUWalignmentsL 141 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,ANS," x-occurrence="1" x-occurrences="1" x-content="τὸ"'
-    = '\w the|x-occurrence="1" x-occurrences="2"\w*'
+    = '\\w the|x-occurrence="1" x-occurrences="2"\\w*'
 cleanUWalignmentsL 142 TI1 1:11 'x-strong="G20980" x-lemma="εὐαγγέλιον" x-morph="Gr,N,,,,,ANS," x-occurrence="1" x-occurrences="1" x-content="εὐαγγέλιον"'
-    = '\w gospel|x-occurrence="1" x-occurrences="1"\w*'
+    = '\\w gospel|x-occurrence="1" x-occurrences="1"\\w*'
 cleanUWalignmentsL 143 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,GFS," x-occurrence="1" x-occurrences="1" x-content="τῆς"|x-strong="G13910" x-lemma="δόξα" x-morph="Gr,N,,,,,GFS," x-occurrence="1" x-occurrences="1" x-content="δόξης"'
-    = '\w of|x-occurrence="1" x-occurrences="2"\w* \w glory|x-occurrence="1" x-occurrences="1"\w*'
+    = '\\w of|x-occurrence="1" x-occurrences="2"\\w* \\w glory|x-occurrence="1" x-occurrences="1"\\w*'
 cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,,,,GMS," x-occurrence="1" x-occurrences="1" x-content="τοῦ"'
-    = '\w of|x-occurrence="2" x-occurrences="2"\w* \w the|x-occurrence="2" x-occurrences="2"\w*'
+    = '\\w of|x-occurrence="2" x-occurrences="2"\\w* \\w the|x-occurrence="2" x-occurrences="2"\\w*'
 
     Extracts the actual data fields and gets rid of the USFM fluff.
 
@@ -1091,7 +1091,7 @@ class InternalBibleBook:
                 logging.warning( _("_processLineFix: Found custom marker after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
                 self.addPriorityError( 21, C, V, _("{} contains custom marker").format( thisOne.title() ) )
                 cleanedNote = re.sub( '\\\\z.+? ', '', cleanedNote ) # Remove custom markers
-                cleanedNote = re.sub( '\\\\z.+?\*', '', cleanedNote ) # Remove custom marker closings (don't normally occur in footnotes)
+                cleanedNote = re.sub( '\\\\z.+?\\*', '', cleanedNote ) # Remove custom marker closings (don't normally occur in footnotes)
             if '\\' in cleanedNote:
                 fixErrors.append( lineLocationSpace + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
                 logging.error( _("_processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
@@ -1446,7 +1446,7 @@ class InternalBibleBook:
             if endMarker:
                 assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker expected {openMarkers} to end with '{endMarker}'"
             if endMarker in ('c','v'):
-                assert withText, f"_addNestingMarkers._closeLastOpenMarker expected text with {endMarker=}"
+                assert withText, f"_addNestingMarkers._closeLastOpenMarker for {self.BBB} expected text with {endMarker=}"
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of _addNestingMarkers._closeLastOpenMarker
 

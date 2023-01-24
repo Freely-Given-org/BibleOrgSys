@@ -80,7 +80,7 @@ from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2022-07-29' # by RJH
+LAST_MODIFIED_DATE = '2022-12-30' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.86'
@@ -2639,7 +2639,7 @@ class InternalBible:
                 p(p)=''
                 v(v)='15'
                 v~(v)='εἰρήνη σοι. ἀσπάζονταί σε οἱ φίλοι. ἀσπάζου τοὺς φίλους κατ’ ὄνομα.'
-                adjText=\w εἰρήνη\w* \w σοι\w*. \w ἀσπάζονταί\w* \w σε\w* \w οἱ\w* \w φίλοι\w*. \w ἀσπάζου\w* \w τοὺς\w* \w φίλους\w* \w κατ’\w* \w ὄνομα\w*.
+                adjText=\\w εἰρήνη\\w* \\w σοι\\w*. \\w ἀσπάζονταί\\w* \\w σε\\w* \\w οἱ\\w* \\w φίλοι\\w*. \\w ἀσπάζου\\w* \\w τοὺς\\w* \\w φίλους\\w* \\w κατ’\\w* \\w ὄνομα\\w*.
                 extras=InternalBibleExtraList object:
                 1 ww @ 12 = 'εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"'
                 2 ww @ 22 = 'σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"'
@@ -2652,7 +2652,7 @@ class InternalBible:
                 9 ww @ 109 = 'φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"'
                 10 ww @ 120 = 'κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"'
                 11 ww @ 132 = 'ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"'
-                originalText=\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\w* \w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\w*. \w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\w* \w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\w* \w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\w* \w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\w*. \w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\w* \w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\w* \w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\w* \w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\w* \w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\w*.
+                originalText=\\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\\w* \\w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\\w*. \\w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\\w* \\w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\\w* \\w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\\w* \\w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\\w*. \\w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\\w* \\w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\\w* \\w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\\w* \\w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\\w* \\w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\\w*.
             """
             lines:Dict[Tuple(str,str),List[Union[str,Tuple[str,str,str,str]]]] = defaultdict( list )
             C, V = -1, 0

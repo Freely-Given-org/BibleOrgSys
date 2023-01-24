@@ -119,7 +119,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+LAST_MODIFIED_DATE = '2022-12-30' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -738,7 +738,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pseudoMarker, bookUSFM[-200:] )
 
             # Adjust the bookUSFM output
-            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
+            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\\str\\*' )
             if self.doExtraChecking:
                 assert '\\str' not in bookUSFM
                 assert '&quot;' not in bookUSFM
@@ -911,7 +911,7 @@ class BibleWriter( InternalBible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pseudoMarker, bookUSFM[-200:] )
 
             # Adjust the bookUSFM output
-            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\str\\*' )
+            bookUSFM = noisyRegExDeleteAll( bookUSFM, '\\\\str .+?\\\\str\\*' )
             if self.doExtraChecking:
                 assert '\\str' not in bookUSFM
                 assert '&quot;' not in bookUSFM

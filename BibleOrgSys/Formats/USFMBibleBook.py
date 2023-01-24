@@ -5,7 +5,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-07-20' # by RJH
+LAST_MODIFIED_DATE = '2023-01-05' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.58'
@@ -149,7 +149,7 @@ class USFMBibleBook( BibleBook ):
             Alters variables dict as a side-effect.
 
             Returns a new marker and text with uW alignment markers (zaln-s and zaln-e) removed
-                (but \w markers left in the text)
+                (but \\w markers left in the text)
             """
             debuggingThisFunction = DEBUGGING_THIS_MODULE or False # (99 if self.BBB=='NEH' and C=='1' else False)
             # if self.BBB=='NEH' and C=='1' and V=='2': halt
@@ -440,7 +440,7 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}") \
                                     .format( marker, text, self.workName, self.BBB, C, V ) )
                     # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB} {C}:{V}")
-                else: print( f"Mismatched in \w fields {marker}='{text}'" ); halt # Some other marker
+                else: print( f"Mismatched in \\w fields {marker}='{text}'" ); halt # Some other marker
 
             if (marker=='w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker!='w' and text.count('\\w ') !=  text.count('\\w*')):
@@ -578,7 +578,9 @@ class USFMBibleBook( BibleBook ):
                     elif marker == 'p~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
                         logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB} {C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
                         marker = 'p'
-                    elif marker == 'qs*' and not text: # selah character ending marker on its own line
+                    elif marker=='qs*' and not text.strip(): # selah character ending marker on its own line
+                        pass
+                    elif marker=='qa' and text: # Hebrew letters in Psalm 119
                         pass
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )

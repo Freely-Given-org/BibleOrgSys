@@ -6,7 +6,7 @@
 # Module handling UBS/SIL Paratext (PTX 8) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2022 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial Paratext 8 Bibles
     along with any enclosed metadata.
 
 On typical Windows installations, Paratext 8 projects are in folders inside
-    'C:\My Paratext 8 Projects' and contain the project settings information
+    'C:\\My Paratext 8 Projects' and contain the project settings information
     in a Settings.xml file inside that project folder.
 
 The Paratext 8 Bible (PTX8Bible) object contains USFM 2 or 3 BibleBooks.
@@ -59,7 +59,7 @@ from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Reference.LDML import LDMLFile
 
 
-LAST_MODIFIED_DATE = '2020-04-21' # by RJH
+LAST_MODIFIED_DATE = '2022-12-30' # by RJH
 SHORT_PROGRAM_NAME = "Paratext8Bible"
 PROGRAM_NAME = "Paratext-8 Bible handler"
 PROGRAM_VERSION = '0.27'

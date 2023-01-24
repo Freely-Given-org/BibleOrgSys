@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+LAST_MODIFIED_DATE = '2022-12-30' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.82'
@@ -93,7 +93,7 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 """
-    c~  anything after the chapter number on a \c line is split off into here --
+    c~  anything after the chapter number on a \\c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
     c#  the chapter number in the correct position to be printed
             This is usually a duplicate of the c field, but may have come from the cp field instead
@@ -160,7 +160,7 @@ assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> Dict[str,str]:
     """
-    Take the attributes of a USFM3 \w field (the attributes include the first pipe/vertical-bar symbol)
+    Take the attributes of a USFM3 \\w field (the attributes include the first pipe/vertical-bar symbol)
         and analyze them.
 
     Returns a dictionary of attributes.
