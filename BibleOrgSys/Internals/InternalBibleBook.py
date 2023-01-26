@@ -68,15 +68,16 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
     USFM_ALL_BIBLE_PARAGRAPH_MARKERS
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, \
-    BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_CONTENT_MARKERS, BOS_CUSTOM_NESTING_MARKERS, \
+    BOS_END_MARKERS, BOS_ALL_CUSTOM_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
     parseWordAttributes, parseFigureAttributes
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
+from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-01-22' # by RJH
+LAST_MODIFIED_DATE = '2023-01-25' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -410,7 +411,7 @@ class InternalBibleBook:
             loggingFunction = logging.error
         else: loggingFunction = logging.warning
 
-        logString = f"{self.BBB} {C}:{V} {message}"
+        logString = f"{self.BBB}_{C}:{V} {message}"
         if options: logString = f'{logString} with {options}'
         loggingFunction( logString )
     # end of InternalBibleBook.addNotice
@@ -478,7 +479,7 @@ class InternalBibleBook:
                 assert isinstance( text, str )
                 assert '\n' not in text and '\r' not in text
 
-        if not ( marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
+        if not ( marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS ):
             logging.critical( "InternalBibleBook.addLine marker for {} not in USFM/BOS lists: {}={!r}" \
                                                         .format( self.objectTypeString, marker, text ) )
             if marker in self.badMarkers:
@@ -488,9 +489,9 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
+        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS
 
-        if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
+        if marker not in BOS_CUSTOM_CONTENT_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
             logging.warning( "IBB.addLine: Not a NL marker: {}={!r}".format( marker, text ) )
             if 1 or marker != 'w': # This can happen with unfoldingWord aligned Bibles
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self, repr(marker), repr(text) )
@@ -695,7 +696,7 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert originalMarker and isinstance( originalMarker, str )
             assert isinstance( text, str )
-        lineLocation = f'{self.BBB} {C}:{V}'
+        lineLocation = f'{self.BBB}_{C}:{V}'
         lineLocationSpace = lineLocation + ' '
         adjText = text
         cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
@@ -773,7 +774,7 @@ class InternalBibleBook:
         #       since the contents of it need to be included in the regular text.)
         # However, if the \w fields contains a strongs field, the \w field markers are removed completely.
         if '|' in adjText: # Only if it has a pipe somewhere in the line
-            # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nW adjText @ {self.BBB} {C}:{V} = {adjText}" )
+            # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nW adjText @ {self.BBB}_{C}:{V} = {adjText}" )
             ixW = -3
             for _safetyCount in range(9999): # loop thru \w fields
                 ixW = adjText.find( '\\w ', ixW+3 )
@@ -1269,9 +1270,12 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "exp", extras )
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
         if '|' in adjText: # this will become a problem
-            logging.critical( "_processLineFix: Why do we still have a vertical pipe in {!r}\n  from {!r}?".format( adjText, text ) )
-            if 'Brenton' not in self.workName:
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt
+            logging.critical( f"_processLineFix: {self.workName} {self.BBB}_{C}:{V} Why do we still have a vertical pipe in '{adjText}'\n  from '{text}'?" )
+            if self.workName == 'SR-GNT':
+                adjText = adjText.replace( 'Stone|Petros', 'Petros(Stone)' )
+            if '|' in adjText \
+            and 'Brenton' not in self.workName:
+                if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: halt
 
         # Check trailing spaces again now
         if adjText and adjText[-1].isspace():
@@ -1459,19 +1463,19 @@ class InternalBibleBook:
             """
             assert openMarkers
             lastMarker = openMarkers[-1]
-            fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._addNestingMarkers._closeOpenMarker( {endMarker}, {withText!r} ) @ {self.BBB} {C}:{V} rather than {lastMarker} from {openMarkers}" )
+            fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._addNestingMarkers._closeOpenMarker( {endMarker}, {withText!r} ) @ {self.BBB}_{C}:{V} rather than {lastMarker} from {openMarkers}" )
 
             if endMarker == lastMarker:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Should have called _closeLastOpenMarker (not _closeOpenMarker) for closing '{endMarker}' with {openMarkers} @ {self.BBB} {C}:{V}" )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Should have called _closeLastOpenMarker (not _closeOpenMarker) for closing '{endMarker}' with {openMarkers} @ {self.BBB}_{C}:{V}" )
                 if self.doExtraChecking:
-                    assert endMarker != lastMarker, f"Should have called _closeLastOpenMarker (not _closeOpenMarker) for closing {endMarker=} with {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert endMarker != lastMarker, f"Should have called _closeLastOpenMarker (not _closeOpenMarker) for closing {endMarker=} with {openMarkers} @ {self.BBB}_{C}:{V}"
             if endMarker=='c' and lastMarker=='s1':
-                logging.info( f"  We have a {lastMarker} section crossing a chapter boundary at {self.BBB} {C}:{V}" )
+                logging.info( f"  We have a {lastMarker} section crossing a chapter boundary at {self.BBB}_{C}:{V}" )
                 # There's too many of these to document
                 #if (self.BBB,C,V) not in (('GEN','1','31'),('GEN','27','46'),('GEN','29','35'),('GEN','46','34'),('GEN','49','33'),):
                     #halt # Add ref of section crossing chapter boundary please
             elif endMarker != lastMarker:
-                logging.info( f"  We have a {lastMarker} in a segment at {self.BBB} {C}:{V} that previously crossed a boundary" )
+                logging.info( f"  We have a {lastMarker} in a segment at {self.BBB}_{C}:{V} that previously crossed a boundary" )
                 # There's too many of these to document
                 #if (self.BBB,C,V) not in (('GEN','2','4'),  # section heading from chapter 1
                                           #('GEN','2','23'),('GEN','3','13')): # paragraphs starting inside verses
@@ -1603,20 +1607,20 @@ class InternalBibleBook:
 
             if C=='-1': V = int(V) + 1 # Count intro lines -- first/id line will be -1:0
 
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook.processLines._addNestingMarkers: {j:4} {self.BBB} {C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
-            assert openMarkers.count(marker) < 2, f"Shouldn't ever have more than one '{marker}': {openMarkers=} @ {self.BBB} {C}:{V} {j}"
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"InternalBibleBook.processLines._addNestingMarkers: {j:4} {self.BBB}_{C}:{V} {marker}({markerContentType})={text!r} then {nextMarker} now have {openMarkers}" )
+            assert openMarkers.count(marker) < 2, f"Shouldn't ever have more than one '{marker}': {openMarkers=} @ {self.BBB}_{C}:{V} {j}"
             if 0: # not generally required
                 if marker == 'nb': hadNB = True
                 if 'c' in openMarkers and 'p' in openMarkers and not hadNB:
-                    assert openMarkers.index('c') < openMarkers.index('p'), f"_openMarker expected 'c' BEFORE 'p' in {openMarkers} @ {self.BBB} {C}:{V} {marker}"
+                    assert openMarkers.index('c') < openMarkers.index('p'), f"_openMarker expected 'c' BEFORE 'p' in {openMarkers} @ {self.BBB}_{C}:{V} {marker}"
                 # The following is not universal because sometimes c is before ms1 (esp. for Psalms) and sometimes (often wrongly) after
                 if 'c' in openMarkers and 'ms1' in openMarkers:
-                    assert openMarkers.index('c') < openMarkers.index('ms1'), f"_openMarker expected 'c' BEFORE 'ms1' in {openMarkers} @ {self.BBB} {C}:{V} {marker}"
+                    assert openMarkers.index('c') < openMarkers.index('ms1'), f"_openMarker expected 'c' BEFORE 'ms1' in {openMarkers} @ {self.BBB}_{C}:{V} {marker}"
 
             if marker == 'h':
                 if self.doExtraChecking:
                     # NOTE: There are files with h1 and h2 fields, e.g., CEVUK
-                    assert not openMarkers, f"{self.BBB} {C}:{V} {openMarkers=} {j} {marker}={text}"
+                    assert not openMarkers, f"{self.BBB}_{C}:{V} {openMarkers=} {j} {marker}={text}"
                 if 'headers' not in openMarkers:
                     _openMarker( 'headers' )
 
@@ -1636,12 +1640,12 @@ class InternalBibleBook:
             if lastOpenMarker=='ilist' and marker not in OUR_INTRO_LIST_MARKERS: _closeLastOpenMarker( 'ilist' )
             if lastOpenMarker=='list' and marker not in OUR_MAIN_TEXT_LIST_MARKERS and marker not in ('v~','p~',):
                 # This is more complex coz can cross v and c boundaries
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Shall we close '{marker}' given {_findNextRelevantListMarker(j)=} and {_findNextRelevantMarker(j)=} @ {self.BBB} {C}:{V}" )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Shall we close '{marker}' given {_findNextRelevantListMarker(j)=} and {_findNextRelevantMarker(j)=} @ {self.BBB}_{C}:{V}" )
                 if _findNextRelevantListMarker(j) not in OUR_MAIN_TEXT_LIST_MARKERS:
                     _closeLastOpenMarker( 'list' )
 
             if marker == 'c':
-                # print( f"  At 'c' {self.BBB} {C}:{V} with {lastOpenMarker=} {openMarkers=}" )
+                # print( f"  At 'c' {self.BBB}_{C}:{V} with {lastOpenMarker=} {openMarkers=}" )
                 if lastOpenMarker=='headers' or lastOpenMarker=='intro':
                     _closeLastOpenMarker( lastOpenMarker )
                     lastOpenMarker = _getLastOpenMarker()
@@ -1657,7 +1661,7 @@ class InternalBibleBook:
                 if lastOpenMarker == 'v':
                     _closeLastOpenMarker( 'v', V )
                 elif 'v' in openMarkers:
-                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingA v even though not last with {openMarkers} @ {self.BBB} {C}:{V} {marker}" )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingA v even though not last with {openMarkers} @ {self.BBB}_{C}:{V} {marker}" )
                     _closeOpenMarker( 'v', V )
                 if 'chapters' not in openMarkers: # we're just starting chapter one
                     _openMarker( 'chapters' )
@@ -1673,7 +1677,7 @@ class InternalBibleBook:
                 elif 'c' in openMarkers: _closeOpenMarker( 'c', C )
                 C, V = text, '0'
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 openMarkers.append( marker )
             elif marker == 'vp#':
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After ({}) vp#: {!r} {} {}:{} in {}".format( previousMarker, nextMarker, self.BBB, C, V, self.name ) )
@@ -1681,7 +1685,7 @@ class InternalBibleBook:
                     if self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
                 if lastOpenMarker == 'v': _closeLastOpenMarker( 'v', V )
                 elif 'v' in openMarkers: # we're not starting the first verse
-                    # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingB v even though not last with {openMarkers} @ {self.BBB} {C}:{V} {marker}" )
+                    # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingB v even though not last with {openMarkers} @ {self.BBB}_{C}:{V} {marker}" )
                     _closeOpenMarker( 'v', V )
             elif marker == 'v':
                 for _safetyCount in range(9):
@@ -1694,11 +1698,11 @@ class InternalBibleBook:
                     if not madeChange: break
                     lastOpenMarker = _getLastOpenMarker()
                 if 'v' in openMarkers: # still, we're not starting the first verse
-                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingC v even though not last with {openMarkers} @ {self.BBB} {C}:{V} {marker}" )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingC v even though not last with {openMarkers} @ {self.BBB}_{C}:{V} {marker}" )
                     _closeOpenMarker( 'v', V )
                 V = text
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 openMarkers.append( marker )
             elif marker == 'iot':
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert 'iot' not in openMarkers
@@ -1730,20 +1734,20 @@ class InternalBibleBook:
                     lastOpenMarker = _getLastOpenMarker()
                 if 'v' in openMarkers and _verseHasEnded( j ): _closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers:
-                    logging.info( f"We have a {marker} section heading possibly inside a verse @ {self.BBB} {C}:{V}" )
+                    logging.info( f"We have a {marker} section heading possibly inside a verse @ {self.BBB}_{C}:{V}" )
                     _closeOpenMarker( lastPMarker ); lastPMarker = None
                 lastOpenMarker = _getLastOpenMarker()
                 if lastSMarker and lastOpenMarker == lastSMarker:
                     _closeLastOpenMarker( lastOpenMarker ); lastSMarker = None
                 elif lastSMarker in openMarkers: _closeOpenMarker( lastSMarker ); lastSMarker = None
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 # openMarkers.append( marker ) # Why???
                 # lastSMarker = marker
                 #if marker=='is' or marker=='is1': dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "YY", marker, openMarkers, lastPMarker )
             elif marker in OUR_HEADING_BLOCK_MARKERS:
                 # NOTE: The markers like \ms1 might be placed either before (esp. in Psalms) or after the \c marker
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM1 {self.BBB} {C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM1 {self.BBB}_{C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
                 for _safetyCount in range(9):
                     madeChange = False
                     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  OUR_HEADING_BLOCK_MARKERS {_safetyCount} {lastOpenMarker=} {openMarkers=}" )
@@ -1765,7 +1769,7 @@ class InternalBibleBook:
                         _closeLastOpenMarker( marker ); madeChange = True
                     if not madeChange: break
                     lastOpenMarker = _getLastOpenMarker()
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM2 {self.BBB} {C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM2 {self.BBB}_{C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
                 if 'chapters' not in openMarkers: # presumably we're just about to start chapter one
                     _openMarker( 'chapters' ); lastOpenMarker = 'chapters'
                 # elif lastOpenMarker=='c' and _chapterHasEnded( j ):
@@ -1773,7 +1777,7 @@ class InternalBibleBook:
                 # if 'v' in openMarkers and _verseHasEnded( j ): _closeOpenMarker( 'v', V )
                 # TODO: Investigate -- not sure if these next pMarker and sMarker lines are even needed
                 elif lastPMarker in openMarkers:
-                    logging.info( f"We have a {marker} section heading possibly inside a verse @ {self.BBB} {C}:{V}" )
+                    logging.info( f"We have a {marker} section heading possibly inside a verse @ {self.BBB}_{C}:{V}" )
                     _closeOpenMarker( lastPMarker ); lastPMarker = None
                     lastOpenMarker = _getLastOpenMarker()
                 if lastSMarker and lastOpenMarker == lastSMarker:
@@ -1784,9 +1788,9 @@ class InternalBibleBook:
                 if marker in openMarkers: # last resort to delete existing value
                     _closeLastOpenMarker( marker ) if lastOpenMarker==marker else _closeOpenMarker( marker )
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 openMarkers.append( marker )
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM3 {self.BBB} {C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"HBM3 {self.BBB}_{C}:{V} {marker=} {openMarkers=} {lastPMarker=} {lastSMarker=}" )
             elif marker in OUR_MAIN_TEXT_LIST_MARKERS: # li# markers
                 assert not text
                 for _safetyCount in range(9):
@@ -1804,12 +1808,12 @@ class InternalBibleBook:
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBook.processLines._addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
                     _openMarker( 'list' )
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 openMarkers.append( marker )
                 lastPMarker = marker
             elif marker in USFM_BIBLE_PARAGRAPH_MARKERS: # e.g., p, q1, m, etc.
                 assert not text
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB}_{C}:{V} lastPMarker={lastPMarker}" )
                 for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = _getLastOpenMarker()
@@ -1822,12 +1826,12 @@ class InternalBibleBook:
                 if 'v' in openMarkers and _verseHasEnded( j ): _closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: _closeOpenMarker( lastPMarker ); lastPMarker = None
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB} {C}:{V}"
+                    assert marker not in openMarkers, f"_addNestingMarkers: already have '{marker}' in {openMarkers} @ {self.BBB}_{C}:{V}"
                 openMarkers.append( marker )
                 lastPMarker = marker
             elif markerContentType == 'N': # N = never, e.g., b, ib, nb
-                assert not text, f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.BBB} {C}:{V}"
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB} {C}:{V} lastPMarker={lastPMarker}" )
+                assert not text, f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.BBB}_{C}:{V}"
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB}_{C}:{V} lastPMarker={lastPMarker}" )
                 for _safetyCount in range(999):
                     madeChange = False
                     lastOpenMarker = _getLastOpenMarker()
@@ -1910,7 +1914,7 @@ class InternalBibleBook:
                 except IndexError: nextMarker = None # Out of range
                 try: nextNextMarker = newLines[j+2].getMarker()
                 except IndexError: nextNextMarker = None # Out of range
-                cleanoriginalLanguageTextString = f'={cleanText}' if cleanText else f' in {self.BBB} {C}:{V}'
+                cleanoriginalLanguageTextString = f'={cleanText}' if cleanText else f' in {self.BBB}_{C}:{V}'
                 if marker in BOS_NESTING_MARKERS:
                     markerContext.append( marker )
                     indentLevel += 1
@@ -1932,7 +1936,7 @@ class InternalBibleBook:
                             markerContext.append( poppedMarker )
                             newLines2.append( thisEntry )
                         else:
-                            logging.warning( f"CHECK {self.BBB} {C}:{V} NESTING: Got {marker} but expected ¬{poppedMarker}" )
+                            logging.warning( f"CHECK {self.BBB}_{C}:{V} NESTING: Got {marker} but expected ¬{poppedMarker}" )
                             #halt
                             newLines2.append( thisEntry )
                 else:
@@ -2267,7 +2271,7 @@ class InternalBibleBook:
                     and then save the line.
             """
             nonlocal C, V, haveWaitingC
-            fnPrint( DEBUGGING_THIS_MODULE, f"_processLine( {originalMarker} {originalText=} ) @ {self.BBB} {C}:{V}" )
+            fnPrint( DEBUGGING_THIS_MODULE, f"_processLine( {originalMarker} {originalText=} ) @ {self.BBB}_{C}:{V}" )
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
                 assert originalMarker and isinstance( originalMarker, str )
                 assert isinstance( originalText, str )
@@ -2278,7 +2282,7 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker in BOS_CUSTOM_CONTENT_MARKERS else BibleOrgSysGlobals.loadedUSFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
                 logging.error( f"_processLine-check: unknown {self.objectTypeString} originalMarker = {originalMarker}" )
                 adjustedMarker = originalMarker # temp……
@@ -2394,7 +2398,7 @@ class InternalBibleBook:
                     if C != '-1':
                         dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBook._processLine: Something before cl", self.workName, self.BBB, C, V, repr(text) )
                     # if DEBUGGING_THIS_MODULE:
-                    #     assert V == '0', f"_processLine expected V=='0' with {originalMarker}='{text}' @ {self.BBB} {C}:{V}" # coz this should precede the first c, or follow the c and precede the v
+                    #     assert V == '0', f"_processLine expected V=='0' with {originalMarker}='{text}' @ {self.BBB}_{C}:{V}" # coz this should precede the first c, or follow the c and precede the v
                 if C == '-1': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
@@ -2785,7 +2789,7 @@ class InternalBibleBook:
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker[1:] ) ) \
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
-            or ( marker[0]!='¬' and marker not in ('c#','cl¤','vp#','v=') and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','cl¤','vp#','v=') and marker not in BOS_CUSTOM_NESTING_MARKERS and not BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( lineLocationSpace + _("Unexpected {!r} newline marker in Bible book (Text is {!r})").format( marker, text ) )
                 logging.warning( _("Unexpected {!r} newline marker in Bible book after {} {}:{} (Text is {!r})").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {!r} not expected at beginning of line").format( marker ) )
@@ -3148,7 +3152,7 @@ class InternalBibleBook:
             """
             try: uwaFlag = self.containerBibleObject.uWencoded
             except AttributeError: uwaFlag = False
-            fnPrint( DEBUGGING_THIS_MODULE, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB} {C}:{V}{' (uWencoded)' if uwaFlag else ''}" )
+            fnPrint( DEBUGGING_THIS_MODULE, f"countWordsForDiscover( {marker}, {segment!r}, {location} ) from {self.BBB}_{C}:{V}{' (uWencoded)' if uwaFlag else ''}" )
             #def stripWordEndsPunctuation( word ):
                 #"""Removes leading and trailing punctuation from a word.
                     #Returns the "clean" word."""
@@ -3177,7 +3181,7 @@ class InternalBibleBook:
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if '|' in word or 'x-' in word: # Should never happen
-                        logging.critical( f"countWordsForDiscover({marker}, '{segment}', {location}) word content problem: {self.BBB} {C}:{V} Got '{word}' from '{rawWord}'" )
+                        logging.critical( f"countWordsForDiscover({marker}, '{segment}', {location}) word content problem: {self.BBB}_{C}:{V} Got '{word}' from '{rawWord}'" )
                         # '<p ' is for commentary with HTML entries
                         if not segment.startswith('<p ') \
                         and (BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE)):
@@ -3215,7 +3219,7 @@ class InternalBibleBook:
             marker = entry.getMarker()
             if '¬' in marker: continue # Just ignore end markers -- not needed here
             text, cleanText, extras = entry.getText(), entry.getCleanText(), entry.getExtras()
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Discover {self.BBB} {C}:{V} {marker}={text}")
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Discover {self.BBB}_{C}:{V} {marker}={text}")
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -3674,7 +3678,7 @@ class InternalBibleBook:
                 if logger is not None:
                     logger( _("Marker {!r} has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
 
-            if marker[0] == '¬' or marker in BOS_ADDED_NESTING_MARKERS or marker=='v=':
+            if marker[0] == '¬' or marker in BOS_CUSTOM_NESTING_MARKERS or marker=='v=':
                 continue # Just ignore these added markers
             elif marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
@@ -3696,7 +3700,7 @@ class InternalBibleBook:
                 continue
             else: # it's not our (non-USFM) c~,c#,v~ markers
                 if marker not in allAvailableNewlineMarkers: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected marker is {!r}".format( marker ) )
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in allAvailableNewlineMarkers or marker in BOS_ALL_ADDED_MARKERS # Should have been checked at load time
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert marker in allAvailableNewlineMarkers or marker in BOS_ALL_CUSTOM_MARKERS # Should have been checked at load time
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
@@ -4234,7 +4238,7 @@ class InternalBibleBook:
                 continue # v fields contain no quote signs and don't affect formatting blocks
             elif C == '-1' and marker not in ('headers','intro'): V = str( int(V) + 1 ) # first/id line will be -1:0
 
-            lineLocation = f'{self.BBB} {C}:{V}'
+            lineLocation = f'{self.BBB}_{C}:{V}'
             lineLocationSpace = f'{lineLocation} '
 
             if marker in ('s1','s2','s3','s4', 'qa'):
@@ -4257,7 +4261,7 @@ class InternalBibleBook:
                 startsWithOpen = True
                 openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[1] )
 
-            if debuggingThisFunction: dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{self.BBB} {C}:{V} {marker} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openSpeechChars} '{cleanText}'" )
+            if debuggingThisFunction: dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"{self.BBB}_{C}:{V} {marker} newSection={newSection} newPara={newParagraph} newBit={newBit} startsWithOpen={startsWithOpen} endedWithClose={endedWithClose} {openSpeechChars} '{cleanText}'" )
             if openSpeechChars:
                 if (newSection and closeQuotesAtSectionEnd) \
                 or (newParagraph and closeQuotesAtParagraphEnd):
@@ -4287,7 +4291,7 @@ class InternalBibleBook:
                 if debuggingThisFunction: dPrint( 'Normal', DEBUGGING_THIS_MODULE, 'Gave "Unnecessary closing of speech marks before section heading" error' )
 
             # TODO: Do we need to check for more than 2 speech marks in a row?
-            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here0 at {self.BBB} {C}:{V} with ", openSpeechChars, newParagraph, marker, '<' + cleanText + '>' )
+            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here0 at {self.BBB}_{C}:{V} with ", openSpeechChars, newParagraph, marker, '<' + cleanText + '>' )
             j = -1
             while j < len(cleanText) - 1: # Go through each character handling speech marks
                 # Loop like this so we can advance j coz we look-ahead
@@ -4303,11 +4307,11 @@ class InternalBibleBook:
                     and (j==0 or (j==1 and cleanText[0]==' ')):
                         # This above also handles cross-references with an extra space at the beginning of a verse causing the opening quote(s) to be the second character
                         if char==openSpeechChars[-1][0] and char2 not in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
-                            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here2a at {j} {self.BBB} {C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} (and {char2!r}) with {openSpeechChars}" )
+                            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here2a at {j} {self.BBB}_{C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} (and {char2!r}) with {openSpeechChars}" )
                             last = openSpeechChars.pop()
                             openSpeechChars.append( last.replace( ')', f',{C}:{V}:{originalMarker})' ) ) # Add repeat reference
                         elif len(openSpeechChars)>1 and char==openSpeechChars[-2][0] and char2==openSpeechChars[-1][0]:
-                            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here2b at {j} {self.BBB} {C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} and {char2!r} with {openSpeechChars}, advancing j by {jump}" )
+                            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here2b at {j} {self.BBB}_{C}:{V} with: Ignored (restarting new paragraph quotation) {char!r} and {char2!r} with {openSpeechChars}, advancing j by {jump}" )
                             last1 = openSpeechChars.pop()
                             last2 = openSpeechChars.pop()
                             openSpeechChars.append( last2.replace( ')', f',{C}:{V}:{originalMarker})' ) ) # Add repeat references
@@ -4321,7 +4325,7 @@ class InternalBibleBook:
                             have2Again = True
                         if have2Again:
                             if newBit:
-                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here3a at {j} {self.BBB} {C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]} then {openSpeechChars[-2]}" )
+                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here3a at {j} {self.BBB}_{C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]} then {openSpeechChars[-2]}" )
                                 speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Seemed to reopen {} and {} speech marks after {}").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker ) )
                                 logging.warning( _("Seemed to reopen {} and {} speech marks after {} at").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker ) \
@@ -4330,14 +4334,14 @@ class InternalBibleBook:
                                 openSpeechChars.pop() # char2
                                 openSpeechChars.pop() # char
                             else:
-                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here3b at {j} {self.BBB} {C}:{V} giving 'unclosed or improperly nested or reopened error'" )
+                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here3b at {j} {self.BBB}_{C}:{V} giving 'unclosed or improperly nested or reopened error'" )
                                 speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker ) )
                                 logging.error( _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {}) at {}").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker, self.__makeErrorRef(C,V) ) )
                                 self.addPriorityError( 53, C, V, _("Unclosed {} and {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-2], openSpeechChars[-1], bitMarker, bitMarker ) )
                         elif have1Again:
                             if newBit:
-                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here4a at {j} {self.BBB} {C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]}" )
+                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here4a at {j} {self.BBB}_{C}:{V} giving 'seemed to reopen error' and popping {openSpeechChars[-1]}" )
                                 speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Seemed to reopen {} speech marks after {}").format( openSpeechChars[-1], bitMarker ) )
                                 logging.warning( _("Seemed to reopen {} speech marks after {} at").format( openSpeechChars[-1], bitMarker ) \
@@ -4345,12 +4349,12 @@ class InternalBibleBook:
                                 self.addPriorityError( 43, C, V, _("Seemed to reopen {} speech marks after {}").format( openSpeechChars[-1], bitMarker ) )
                                 openSpeechChars.pop() # char
                             else:
-                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here4b at {j} {self.BBB} {C}:{V} giving 'unclosed or improperly nested or reopened error'" )
+                                if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here4b at {j} {self.BBB}_{C}:{V} giving 'unclosed or improperly nested or reopened error'" )
                                 speechMarkErrors.append( lineLocationSpace \
                                                                             + _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-1], bitMarker, bitMarker ) )
                                 logging.error( _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {}) at {}").format( openSpeechChars[-1], bitMarker, bitMarker, self.__makeErrorRef(C,V) ) )
                                 self.addPriorityError( 53, C, V, _("Unclosed {} speech marks before {} (or improperly nested or reopened speech marks after {})").format( openSpeechChars[-1], bitMarker, bitMarker ) )
-                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here5 at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars, f"adding {char}" )
+                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here5 at {j} {self.BBB}_{C}:{V} with ", char, openSpeechChars, f"adding {char}" )
                         openSpeechChars.append( f'{char} ({_("opened at")} {C}:{V}:{originalMarker})' )
                     if len(openSpeechChars)>4:
                         speechMarkErrors.append( lineLocationSpace + _("Excessive nested speech marks {}").format( openSpeechChars ) )
@@ -4363,23 +4367,23 @@ class InternalBibleBook:
                 elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
                     closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
                     if not openSpeechChars:
-                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7a at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars )
+                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7a at {j} {self.BBB}_{C}:{V} with ", char, openSpeechChars )
                         if char not in '?!': # Ignore the dual purpose punctuation characters
                             speechMarkErrors.append( lineLocationSpace + _("Unexpected {!r} speech closing character").format( char ) )
                             logging.error( _("Unexpected {!r} speech closing character at {}").format( char, self.__makeErrorRef(C,V) ) )
                             self.addPriorityError( 52, C, V, _("Unexpected {!r} speech closing character").format( char ) )
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openSpeechChars[-1][0]): # A good closing match
-                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7b at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars, f"popping {openSpeechChars[-1]}" )
+                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7b at {j} {self.BBB}_{C}:{V} with ", char, openSpeechChars, f"popping {openSpeechChars[-1]}" )
                         openSpeechChars.pop()
                     elif char not in '?!': # Ignore the dual purpose punctuation characters
                         # We have closing marker that doesn't match
-                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7c at {j} {self.BBB} {C}:{V} with ", char, openSpeechChars )
+                        if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here7c at {j} {self.BBB}_{C}:{V} with ", char, openSpeechChars )
                         speechMarkErrors.append( lineLocationSpace + _("Mismatched {!r} speech closing character after {}").format( char, openSpeechChars ) )
                         logging.error( _("Mismatched {!r} speech closing character after {} at {}").format( char, openSpeechChars, self.__makeErrorRef(C,V) ) )
                         self.addPriorityError( 51, C, V, _("Mismatched {!r} speech closing character after {}").format( char, openSpeechChars ) )
                 lastV = V
                 # end of main loop
-            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here8 at {self.BBB} {C}:{V} with ", openSpeechChars )
+            if debuggingThisFunction: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"here8 at {self.BBB}_{C}:{V} with ", openSpeechChars )
 
             # End of processing clean-up
             endedWithClose = cleanText[-1] in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS
@@ -5117,10 +5121,16 @@ class InternalBibleBook:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
             assert self._indexedCVFlag
-        if isinstance( BCVReference, tuple ): C, V = BCVReference[1], BCVReference[2]
+        if isinstance( BCVReference, tuple ) and len(BCVReference)==2: # no verse number specified
+            # We need an entire chapter of verses
+            return self._CVIndex.getChapterEntriesWithContext( BCVReference[1] ) # Gives a KeyError if not found
+        # else we only need one verse
+        if isinstance( BCVReference, tuple ):
+            assert len(BCVReference) == 3
+            C, V = BCVReference[1], BCVReference[2]
         else: # assume it's a SimpleVerseKey or similar
             C,V = BCVReference.getCV()
-        return self._CVIndex.getEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
+        return self._CVIndex.getVerseEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 
 
@@ -5138,7 +5148,7 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'writeBOSBCVFiles: {} {}:{}'.format( self.BBB, C, V ) )
 
             # Put all of the pseudoUSFM lines for the entry at CVKey into
-            for entry in self._CVIndex.getEntries( CVKey ):
+            for entry in self._CVIndex.getVerseEntries( CVKey ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
                 marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
                 line = '\\'+marker

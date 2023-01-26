@@ -484,7 +484,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
     import zipfile
     import tarfile
 
-    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS
     from BibleOrgSys.Reference.USFM3Markers import USFM_PRECHAPTER_MARKERS
     from BibleOrgSys.InputOutput.MLWriter import MLWriter
     from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
@@ -929,7 +929,7 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
                     haveOpenPara = False
                 xw.writeLineOpenSelfclose( 'chapter', [('eid',f'{USXAbbrev} {C}')] )
                 continue
-            elif '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS or marker in ('v=','cl¤'):
+            elif '¬' in marker or marker in BOS_CUSTOM_NESTING_MARKERS or marker in ('v=','cl¤'):
                 continue # Just ignore added markers — not needed here
             if marker in USFM_PRECHAPTER_MARKERS:
                 if self.doExtraChecking:

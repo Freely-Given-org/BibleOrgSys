@@ -63,7 +63,7 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
@@ -364,7 +364,7 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
+        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_CUSTOM_NESTING_MARKERS: # don't need end markers here either
             if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
@@ -989,7 +989,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{} {}:{} {}={}'.format( BBB, C, V, marker, text ) )
-        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+        if '¬' in marker or marker in BOS_CUSTOM_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
         if marker == 'v': # handle versification differences here

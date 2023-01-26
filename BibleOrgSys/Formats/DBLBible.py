@@ -1614,7 +1614,7 @@ def __processDBLBible( parametersTuple ): # for demo
         if BBB in DBL_Bible:
             DBL_Bible.books[BBB].debugPrint()
             for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 # end of __processDBLBible
 
 
@@ -1653,7 +1653,7 @@ def briefDemo() -> None:
             if BBB in DBL_Bible:
                 DBL_Bible.books[BBB].debugPrint()
                 for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 00: # specified installed modules
         good = ('eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30',
@@ -1704,7 +1704,7 @@ def briefDemo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 1: # Older versions of bundles from Haiola
@@ -1737,7 +1737,7 @@ def briefDemo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 1: # all discovered modules in the test folder
@@ -1770,7 +1770,7 @@ def briefDemo() -> None:
                         if BBB in DBL_Bible:
                             DBL_Bible.books[BBB].debugPrint()
                             for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
         else: vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"DBL H Skipped unreadable testFolder: {testFolder}")
 
     if 00:
@@ -1835,7 +1835,7 @@ def fullDemo() -> None:
             if BBB in DBL_Bible:
                 DBL_Bible.books[BBB].debugPrint()
                 for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 00: # specified installed modules
         good = ('eng-asv_dbl_06125adad2d5898a-rev1-2014-08-30',
@@ -1885,7 +1885,7 @@ def fullDemo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 1: # Older versions of bundles from Haiola
@@ -1918,7 +1918,7 @@ def fullDemo() -> None:
                     if BBB in DBL_Bible:
                         DBL_Bible.books[BBB].debugPrint()
                         for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 1: # all discovered modules in the test folder
@@ -1951,7 +1951,7 @@ def fullDemo() -> None:
                         if BBB in DBL_Bible:
                             DBL_Bible.books[BBB].debugPrint()
                             for entryKey in DBL_Bible.books[BBB]._CVIndex:
-                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, DBL_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
         else: vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"DBL H Skipped unreadable testFolder: {testFolder}")
 
     if 00:

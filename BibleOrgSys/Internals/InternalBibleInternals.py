@@ -81,17 +81,17 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2022-12-30' # by RJH
+LAST_MODIFIED_DATE = '2023-01-25' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.82'
+PROGRAM_VERSION = '0.83'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 
-BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
+BOS_CUSTOM_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 """
     c~  anything after the chapter number on a \\c line is split off into here --
             note that it can be blank (but have extras) if the chapter number is footnoted
@@ -113,18 +113,18 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
 BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
 
 # BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
-BOS_REGULAR_NESTING_MARKERS = ('c','v' )
+BOS_REGULAR_NESTING_MARKERS = ('c','v')
 
-BOS_ADDED_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
+BOS_CUSTOM_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)
     chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
     list       Inserted at the start of lists (before li markers)
 """
-BOS_ALL_ADDED_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ADDED_NESTING_MARKERS
+BOS_ALL_CUSTOM_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_CUSTOM_NESTING_MARKERS
 
-BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
+BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ('iot',)
 """
     intro       Inserted at the start of book introductions
     iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
@@ -133,7 +133,7 @@ BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
     list       Inserted at the start of lists (before li markers)
 """
 
-BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
+BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS + ('ms1',)
 
 #BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
@@ -141,7 +141,7 @@ BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKER
 BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
 
-#BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
+#BOS_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS + BOS_END_MARKERS
 
 # "EXTRA" here means footnote type fields that are not part of the main line of text.
 BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'ww', 'vp', )
@@ -587,7 +587,7 @@ class InternalBibleEntry:
             assert '\n' not in cleanText and '\r' not in cleanText
 
             if marker[0] == '¬' \
-            or marker in BOS_ALL_ADDED_NESTING_MARKERS and originalMarker is None: # It's an end marker or an added marker
+            or marker in BOS_ALL_CUSTOM_NESTING_MARKERS and originalMarker is None: # It's an end marker or an added marker
                 assert originalMarker is None and adjustedText is None and extras is None and originalText is None
             else: # it's not an end marker
                 assert originalMarker and isinstance( originalMarker, str ) # Mustn't be blank
@@ -600,8 +600,8 @@ class InternalBibleEntry:
                 assert extras is None or isinstance( extras, InternalBibleExtraList )
                 assert isinstance( originalText, str )
                 assert '\n' not in originalText and '\r' not in originalText
-                #assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS
-                if marker not in BibleOrgSysGlobals.loadedUSFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
+                #assert marker in BibleOrgSysGlobals.loadedUSFMMarkers or marker in BOS_CUSTOM_CONTENT_MARKERS
+                if marker not in BibleOrgSysGlobals.loadedUSFMMarkers and marker not in BOS_CUSTOM_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle {!r} marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 

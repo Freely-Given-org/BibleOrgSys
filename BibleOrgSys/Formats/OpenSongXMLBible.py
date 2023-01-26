@@ -78,7 +78,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleBooksNames import BibleBooksNamesSystems
 from BibleOrgSys.Bible import Bible, BibleBook
@@ -252,7 +252,7 @@ def createOpenSongXML( BibleObject, outputFolder=None, controlDict=None, validat
             marker, text, extras = processedBibleEntry.getMarker(), processedBibleEntry.getCleanText(), processedBibleEntry.getExtras()
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, repr(text) )
             #if text: assert text[0] != ' '
-            if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+            if '¬' in marker or marker in BOS_CUSTOM_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             if marker in USFM_PRECHAPTER_MARKERS:
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                     assert C=='-1' or marker=='rem' or marker.startswith('mte')

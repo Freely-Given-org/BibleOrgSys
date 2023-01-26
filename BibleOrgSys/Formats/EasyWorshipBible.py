@@ -48,7 +48,7 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
@@ -188,7 +188,7 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
         for entry in pseudoESFMData:
             marker, text = entry.getMarker(), entry.getCleanText()
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, marker, text )
-            if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+            if '¬' in marker or marker in BOS_CUSTOM_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
             elif marker == 'c':
                 C = int( text ) # Just so we get an error if we have something different
                 V = lastVWritten = '0'

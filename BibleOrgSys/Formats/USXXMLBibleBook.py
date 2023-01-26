@@ -282,7 +282,7 @@ class USXXMLBibleBook( BibleBook ):
                 assert '\n' not in charStyle
                 assert '\n' not in charTail
             charLine += charTail
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB} {C}:{V} {charStyle} {charLine!r}" )
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB}_{C}:{V} {charStyle} {charLine!r}" )
             assert '\n' not in charLine
             # assert ' \\bk*' not in charLine
             return charLine

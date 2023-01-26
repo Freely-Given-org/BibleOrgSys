@@ -460,7 +460,7 @@ def __processScriptureBurritoBible( parametersTuple ): # for demo
         if BBB in SB_Bible:
             SB_Bible.books[BBB].debugPrint()
             for entryKey in SB_Bible.books[BBB]._CVIndex:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 # end of __processScriptureBurritoBible
 
 
@@ -513,7 +513,7 @@ def briefDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 0: # Older versions of bundles from Haiola
@@ -546,7 +546,7 @@ def briefDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 0: # all discovered modules in the test folder
@@ -578,7 +578,7 @@ def briefDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 00:
         testFolders = (
@@ -655,7 +655,7 @@ def fullDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 0: # Older versions of bundles from Haiola
@@ -688,7 +688,7 @@ def fullDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
 
     if 0: # all discovered modules in the test folder
@@ -720,7 +720,7 @@ def fullDemo() -> None:
                     if BBB in SB_Bible:
                         SB_Bible.books[BBB].debugPrint()
                         for entryKey in SB_Bible.books[BBB]._CVIndex:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SB_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     #if BibleOrgSysGlobals.commandLineArguments.export:
     #    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( PROGRAM_NAME, PROGRAM_VERSION ) )

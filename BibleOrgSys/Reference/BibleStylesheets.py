@@ -299,7 +299,7 @@ class BibleStylesheet():
     def validate( self ):
         """
         """
-        from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_ADDED_MARKERS
+        from BibleOrgSys.Internals.InternalBibleInternals import BOS_ALL_CUSTOM_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
             dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"validate {USFMMarker} {styleData}" )
             if USFMMarker.startswith( 'Heb' ) or USFMMarker.startswith( 'WordRef' ): continue
@@ -307,7 +307,7 @@ class BibleStylesheet():
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
             if USFMMarker[-1] == '#': USFMMarker = USFMMarker[:-1] # Remove any trailing hash for the check
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMMarker )
-            assert USFMMarker in BibleOrgSysGlobals.loadedUSFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS
+            assert USFMMarker in BibleOrgSysGlobals.loadedUSFMMarkers or USFMMarker in BOS_ALL_CUSTOM_MARKERS
     # end of BibleStylesheet.load
 
 

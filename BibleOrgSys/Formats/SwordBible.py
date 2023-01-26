@@ -558,7 +558,7 @@ def briefDemo() -> None:
             if BBB in SwBible:
                 SwBible.books[BBB].debugPrint()
                 for entryKey in SwBible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SwBible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 1: # specified installed modules (Removed 'ESV2001','ESV2011', 'TS1998',)
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ISV','NET','OEB',
@@ -631,7 +631,7 @@ def fullDemo() -> None:
             if BBB in SwBible:
                 SwBible.books[BBB].debugPrint()
                 for entryKey in SwBible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SwBible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, SwBible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 1: # specified installed modules (Removed 'ESV2001','ESV2011', 'TS1998',)
         good = ('KJV','WEB','KJVA','YLT','ASV','LEB', 'ISV','NET','OEB',

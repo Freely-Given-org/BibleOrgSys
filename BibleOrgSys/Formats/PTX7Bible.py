@@ -1804,7 +1804,7 @@ def __processPTX7Bible( parametersTuple ): # for demo
         if BBB in PTX7_Bible:
             PTX7_Bible.books[BBB].debugPrint()
             for entryKey in PTX7_Bible.books[BBB]._CVIndex:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX7_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX7_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 # end of __processPTX7Bible
 
 
@@ -1843,7 +1843,7 @@ def briefDemo() -> None:
             if BBB in PTX_Bible:
                 PTX_Bible.books[BBB].debugPrint()
                 for entryKey in PTX_Bible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 1: # specified installed modules
         good = ( '',)
@@ -1976,7 +1976,7 @@ def fullDemo() -> None:
             if BBB in PTX_Bible:
                 PTX_Bible.books[BBB].debugPrint()
                 for entryKey in PTX_Bible.books[BBB]._CVIndex:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getEntries( entryKey ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, entryKey, PTX_Bible.books[BBB]._CVIndex.getVerseEntries( entryKey ) )
 
     if 1: # specified installed modules
         good = ( '',)

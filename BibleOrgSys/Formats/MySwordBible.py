@@ -463,7 +463,7 @@ def createMySwordModule( self, outputFolder, controlDict ):
     self here is a Bible object with _processedLines
     """
     import tarfile
-    from BibleOrgSys.Internals.InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
+    from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS
     from BibleOrgSys.Formats.theWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
 
     def writeMSBook( sqlObject, BBB:str, ourGlobals ):

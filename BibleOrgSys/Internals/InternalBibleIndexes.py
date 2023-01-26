@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -86,7 +86,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2022-10-06' # by RJH
+LAST_MODIFIED_DATE = '2023-01-25' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.79'
@@ -198,7 +198,7 @@ class InternalBibleBookCVIndex:
             #for j, key in enumerate( sorted( self.__indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
                 #indexEntry = self.__indexData[key]
-                #entries = self.getEntries( key )
+                #entries = self.getVerseEntries( key )
                 #result += "\n{} {} {} {}".format( j, key, indexEntry, entries )
                 #if j>10: break
         #except: pass # ignore it
@@ -231,7 +231,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.items
 
 
-    def getEntries( self, CVkey:Tuple[str,str] ):
+    def getVerseEntries( self, CVkey:Tuple[str,str] ):
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this verse.
 
@@ -239,10 +239,25 @@ class InternalBibleBookCVIndex:
         """
         indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()]
-    # end of InternalBibleBookCVIndex.getEntries
+    # end of InternalBibleBookCVIndex.getVerseEntries
 
 
-    def getEntriesWithContext( self, CVkey:Tuple[str,str] ) -> Tuple:
+    def getChapterEntries( self, C:str ):
+        """
+        Given C, return the InternalBibleEntryList containing the InternalBibleEntries for this chapter.
+
+        Raises a KeyError if the C key doesn't exist.
+        """
+        firstIndexEntry = self.__indexData[(C,'0')]
+        try:
+            nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
+            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()]
+        except KeyError: # presumably no more chapters
+            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():]
+    # end of InternalBibleBookCVIndex.getChapterEntries
+
+
+    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str] ) -> Tuple:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
@@ -252,7 +267,24 @@ class InternalBibleBookCVIndex:
         """
         indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()], indexEntry.getContext()
-    # end of InternalBibleBookCVIndex.getEntriesWithContext
+    # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
+
+
+    def getChapterEntriesWithContext( self, C:str ) -> tuple:
+        """
+        Given C, return a 2-tuple containing
+            the InternalBibleEntryList containing the InternalBibleEntries for this chapter,
+            along with the context for this chapter.
+
+        Raises a KeyError if the C key doesn't exist.
+        """
+        firstIndexEntry = self.__indexData[(C,'0')]
+        try:
+            nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
+            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContext()
+        except KeyError: # presumably no more chapters
+            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContext()
+    # end of InternalBibleBookCVIndex.getChapterEntriesWithContext
 
 
     def makeBookCVIndex( self, givenBibleEntries ) -> None:
@@ -527,7 +559,7 @@ class InternalBibleBookCVIndex:
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                             assert contextMarkerList.count( originalMarker ) == 1
                     try: # Remove first open occurrence of the marker just closed (e.g., s1 can occur after c and still be open)
-                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    makeBookCVIndex: Removing {marker=} {originalMarker=} from {contextMarkerList=} at {self.BBB} {C}:{V}" )
+                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    makeBookCVIndex: Removing {marker=} {originalMarker=} from {contextMarkerList=} at {self.BBB}_{C}:{V}" )
                         contextMarkerList.remove( originalMarker )
                     except ValueError: # oops something went wrong
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'makeBookCVIndex: marker = {}'.format( marker ) )
@@ -586,7 +618,7 @@ class InternalBibleBookCVIndex:
         #for j, key in enumerate( sortedIndex ):
             #C, V = key
             #indexEntry = self.__indexData[key]
-            #entries = self.getEntries( key )
+            #entries = self.getVerseEntries( key )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "checkBookCVIndex display", j, key, indexEntry, entries )
             #if self.BBB!='FRT' and j>30: break
 
@@ -605,14 +637,14 @@ class InternalBibleBookCVIndex:
             C, V = key
 
             indexEntry = self.__indexData[key]
-            entries = self.getEntries( key ) # Gets the list of index entries for this one CV index
+            entries = self.getVerseEntries( key ) # Gets the list of index entries for this one CV index
             foundMarkers = []
             anyText = anyExtras = False
             vCount = 0
             for entry in entries:
                 marker = entry.getMarker()
                 foundMarkers.append( marker )
-                if marker[0]=='¬': assert marker in BOS_END_MARKERS
+                if marker[0]=='¬': assert marker in BOS_END_MARKERS, f"InternalBibleBookCVIndex.checkBookCVIndex: '{marker}' not in ({len(BOS_END_MARKERS)}) {BOS_END_MARKERS}"
                 if marker == 'v': vCount += 1
                 if marker not in ('c','v'): # These always have to have text
                     if entry.getCleanText(): anyText = True
@@ -677,19 +709,19 @@ class InternalBibleBookCVIndex:
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','vp#','c#','¬p'):
-                            if lastKey and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookCVIndex.checkBookCVIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey ) )
+                            if lastKey and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookCVIndex.checkBookCVIndex: lastKey1", self.BBB, lastKey, self.getVerseEntries( lastKey ) )
 # NOTE: temporarily down-graded from critical …
                             logging.error( "InternalBibleBookCVIndex.checkBookCVIndex: Probable p encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
                             if DEBUGGING_THIS_MODULE:
-                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey ) )
-                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextNextKey1", self.BBB, nextNextKey, self.getEntries( nextNextKey ) )
+                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextKey1", self.BBB, nextKey, self.getVerseEntries( nextKey ) )
+                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextNextKey1", self.BBB, nextNextKey, self.getVerseEntries( nextNextKey ) )
                                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         elif marker=='q1' and nextMarker not in ('v','p~','c#','¬q1',):
-                            if lastKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookCVIndex.checkBookCVIndex: lastKey2", self.BBB, lastKey, self.getEntries( lastKey ) )
+                            if lastKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookCVIndex.checkBookCVIndex: lastKey2", self.BBB, lastKey, self.getVerseEntries( lastKey ) )
                             logging.critical( "InternalBibleBookCVIndex.checkBookCVIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
                             if DEBUGGING_THIS_MODULE:
-                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextKey2", self.BBB, nextKey, self.getEntries( nextKey ) )
-                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextNextKey2", self.BBB, nextNextKey, self.getEntries( nextNextKey ) )
+                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextKey2", self.BBB, nextKey, self.getVerseEntries( nextKey ) )
+                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookCVIndex.checkBookCVIndex: nextNextKey2", self.BBB, nextNextKey, self.getVerseEntries( nextNextKey ) )
                                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
                             logging.critical( "InternalBibleBookCVIndex.checkBookCVIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
@@ -713,7 +745,7 @@ class InternalBibleBookCVIndex:
                     #newKey = (C, '1')
                     #try:
                         #iE = self.__indexData[newKey]
-                        #iD, ct = self.getEntries( newKey )
+                        #iD, ct = self.getVerseEntries( newKey )
                     #except KeyError: pass
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", newKey, iD, ct )
@@ -873,7 +905,7 @@ class InternalBibleBookSectionIndex:
             #for j, key in enumerate( sorted( self.__indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
                 #indexEntry = self.__indexData[key]
-                #entries = self.getEntries( key )
+                #entries = self.getVerseEntries( key )
                 #result += "\n{} {} {} {}".format( j, key, indexEntry, entries )
                 #if j>10: break
         #except: pass # ignore it
@@ -906,7 +938,7 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.items
 
 
-    def getEntries( self, CVkey ):
+    def getVerseEntries( self, CVkey:Tuple[str,str] ):
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this verse.
 
@@ -914,10 +946,10 @@ class InternalBibleBookSectionIndex:
         """
         indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()]
-    # end of InternalBibleBookSectionIndex.getEntries
+    # end of InternalBibleBookSectionIndex.getVerseEntries
 
 
-    def getEntriesWithContext( self, CVkey ):
+    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str] ) -> tuple:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
@@ -927,7 +959,7 @@ class InternalBibleBookSectionIndex:
         """
         indexEntry = self.__indexData[CVkey]
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()], indexEntry.getContext()
-    # end of InternalBibleBookSectionIndex.getEntriesWithContext
+    # end of InternalBibleBookSectionIndex.getVerseEntriesWithContext
 
 
     def makeBookSectionIndex( self ) -> None:
@@ -1341,7 +1373,7 @@ class InternalBibleBookSectionIndex:
         #for j, key in enumerate( sortedIndex ):
             #C, V = key
             #indexEntry = self.__indexData[key]
-            #entries = self.getEntries( key )
+            #entries = self.getVerseEntries( key )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "checkBookSectionIndex display", j, key, indexEntry, entries )
             #if self.BBB!='FRT' and j>30: break
 
@@ -1360,7 +1392,7 @@ class InternalBibleBookSectionIndex:
             C, V = key
 
             indexEntry = self.__indexData[key]
-            entries = self.getEntries( key ) # Gets the list of index entries for this one CV index
+            entries = self.getVerseEntries( key ) # Gets the list of index entries for this one CV index
             foundMarkers = []
             anyText = anyExtras = False
             vCount = 0
@@ -1432,19 +1464,19 @@ class InternalBibleBookSectionIndex:
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','vp#','c#','¬p'):
-                            if lastKey and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookSectionIndex.checkBookSectionIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey ) )
+                            if lastKey and DEBUGGING_THIS_MODULE: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookSectionIndex.checkBookSectionIndex: lastKey1", self.BBB, lastKey, self.getVerseEntries( lastKey ) )
 # NOTE: temporarily down-graded from critical …
                             logging.error( "InternalBibleBookSectionIndex.checkBookSectionIndex: Probable p encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
                             if DEBUGGING_THIS_MODULE:
-                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey ) )
-                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextNextKey1", self.BBB, nextNextKey, self.getEntries( nextNextKey ) )
+                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextKey1", self.BBB, nextKey, self.getVerseEntries( nextKey ) )
+                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextNextKey1", self.BBB, nextNextKey, self.getVerseEntries( nextNextKey ) )
                                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         elif marker=='q1' and nextMarker not in ('v','p~','c#','¬q1',):
-                            if lastKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookSectionIndex.checkBookSectionIndex: lastKey2", self.BBB, lastKey, self.getEntries( lastKey ) )
+                            if lastKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBookSectionIndex.checkBookSectionIndex: lastKey2", self.BBB, lastKey, self.getVerseEntries( lastKey ) )
                             logging.critical( "InternalBibleBookSectionIndex.checkBookSectionIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
                             if DEBUGGING_THIS_MODULE:
-                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextKey2", self.BBB, nextKey, self.getEntries( nextKey ) )
-                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextNextKey2", self.BBB, nextNextKey, self.getEntries( nextNextKey ) )
+                                if nextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextKey2", self.BBB, nextKey, self.getVerseEntries( nextKey ) )
+                                if nextNextKey: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  InternalBibleBookSectionIndex.checkBookSectionIndex: nextNextKey2", self.BBB, nextNextKey, self.getVerseEntries( nextNextKey ) )
                                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
                             logging.critical( "InternalBibleBookSectionIndex.checkBookSectionIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )
@@ -1468,7 +1500,7 @@ class InternalBibleBookSectionIndex:
                     #newKey = (C, '1')
                     #try:
                         #iE = self.__indexData[newKey]
-                        #iD, ct = self.getEntries( newKey )
+                        #iD, ct = self.getVerseEntries( newKey )
                     #except KeyError: pass
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", newKey, iD, ct )
