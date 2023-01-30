@@ -5,7 +5,7 @@
 #
 # Module handling "theWord" Bible module files
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -69,7 +69,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-18' # by RJH
+LAST_MODIFIED_DATE = '2023-01-30' # by RJH
 SHORT_PROGRAM_NAME = "theWordBible"
 PROGRAM_NAME = "theWord Bible format handler"
 PROGRAM_VERSION = '0.55'
@@ -1148,7 +1148,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
 
 def createTheWordModule( self, outputFolder, controlDict ):
     """
-    Create a SQLite3 database module for the program MySword.
+    Create a module for the program theWord.
 
     self here is a Bible object with _processedLines
     """
