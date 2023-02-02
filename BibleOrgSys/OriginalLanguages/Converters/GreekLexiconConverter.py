@@ -31,6 +31,7 @@ from gettext import gettext as _
 # from typing import Optional
 import logging
 import os.path
+from pathlib import Path
 import sys
 import re
 from xml.etree.ElementTree import ElementTree, ParseError
@@ -54,8 +55,7 @@ DEBUGGING_THIS_MODULE = False
 
 # Greek lexicon folder
 # TODO: Fix temporary solution
-# DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
-from pathlib import Path
+# DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
 DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' )
 
 

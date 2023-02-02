@@ -5,7 +5,7 @@
 #
 # Module handling EasyWorship Bible files
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,10 +52,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARK
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "EasyWorshipBible"
 PROGRAM_NAME = "EasyWorship Bible format handler"
-PROGRAM_VERSION = '0.15'
+PROGRAM_VERSION = '0.16'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -180,7 +180,8 @@ def createEasyWorshipBible( BibleObject, outputFolder=None ):
     # Books are written as C:V verseText with double-spaced lines
     compressedDictionary = {}
     for BBB,bookObject in BibleObject.books.items():
-        if BBB in ('FRT','INT','BAK','OTH','GLS','XXA','XXB','XXC','XXD','XXE','XXF','XXG',): continue # Ignore these books
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isChapterVerseBook( BBB ):
+            continue # Ignore these books
         pseudoESFMData = bookObject._processedLines
 
         textBuffer = ''

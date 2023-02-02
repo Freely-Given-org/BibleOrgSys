@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -109,10 +109,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2022-10-06' # by RJH
+LAST_MODIFIED_DATE = '2023-02-01' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.90'
+PROGRAM_VERSION = '0.91'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -691,15 +691,14 @@ def backupAnyExistingFile( filenameOrFilepath:Union[Path,str], numBackups:int=1,
 # If one line is requested, returns the line (string)
 # Otherwise, returns a list of lines
 
-def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:str=None ):
+def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:str=None ) -> Optional[Union[str,List[str]]]:
     """
     Reads and returns the first line of a text file as a string
         unless more than one line is requested
         in which case a list of strings is returned (including empty strings for empty lines).
     """
     if debugFlag: assert 1 <= numLines < 5
-    if encoding is None: encodingList = ['utf-8', 'iso-8859-1', 'iso-8859-15',]
-    else: encodingList = [encoding]
+    encodingList = ['utf-8', 'iso-8859-1', 'iso-8859-15',] if encoding is None else [encoding]
     filepath = Path( folderName, filenameOrFilepath ) if folderName else filenameOrFilepath
     for tryEncoding in encodingList:
         lines = []
@@ -716,7 +715,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:
         except UnicodeDecodeError: # Could be binary or a different encoding
             #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
             thisLogger = logging.warning if DEBUGGING_THIS_MODULE or debugFlag else logging.info
-            thisLogger( f"{'BibleOrgSysGlobals.' if debugFlag else ''}peekIntoFile: Seems we couldn't decode Unicode in {filepath}" )
+            thisLogger( f"{'BibleOrgSysGlobals.' if debugFlag else ''}peekIntoFile: Seems we couldn't decode '{tryEncoding}' in {filepath}" )
 # end of BibleOrgSysGlobals.peekIntoFile
 
 

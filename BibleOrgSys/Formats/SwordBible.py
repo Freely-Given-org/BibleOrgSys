@@ -5,7 +5,7 @@
 #
 # Module handling Sword Bible files
 #
-# Copyright (C) 2015-2020 Robert Hunt
+# Copyright (C) 2015-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -57,7 +57,7 @@ from BibleOrgSys.Formats import SwordResources # import SwordType, SwordInterfac
 #from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "SwordBible"
 PROGRAM_NAME = "Sword Bible format handler"
 PROGRAM_VERSION = '0.36'
@@ -534,8 +534,7 @@ def briefDemo() -> None:
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    MSTestFolderOld = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
-    MSTestFolder = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
+    MSTestFolder = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/Demos/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )
@@ -607,8 +606,7 @@ def fullDemo() -> None:
 
     testFolder = os.path.join( os.path.expanduser('~'), '.sword/')
     # Matigsalug_Test module
-    MSTestFolderOld = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/Matigsalug.USFM.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
-    MSTestFolder = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
+    MSTestFolder = Path( '/srv/Websites/Freely-Given.org/Software/BibleDropBox/Demos/MBTV.PTX8.Demo/Sword_(from OSIS_Crosswire_Python)/CompressedSwordModule' )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = SwordBibleFileCheck( testFolder )

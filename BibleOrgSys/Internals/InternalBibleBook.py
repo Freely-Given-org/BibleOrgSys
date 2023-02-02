@@ -77,7 +77,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-01-25' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -1450,7 +1450,8 @@ class InternalBibleBook:
             if endMarker:
                 assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker expected {openMarkers} to end with '{endMarker}'"
             if endMarker in ('c','v'):
-                assert withText, f"_addNestingMarkers._closeLastOpenMarker for {self.BBB} expected text with {endMarker=}"
+                if not withText:
+                    logging.critical( f"_addNestingMarkers._closeLastOpenMarker for {self.BBB} expected some text with {endMarker=}" )
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of _addNestingMarkers._closeLastOpenMarker
 

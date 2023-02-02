@@ -5,7 +5,7 @@
 #
 # Module handling Sword modules directly
 #
-# Copyright (C) 2012-2020 Robert Hunt
+# Copyright (C) 2012-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -68,7 +68,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 #from BibleOrgSys.Misc.singleton import singleton
-from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
+from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
@@ -77,7 +77,7 @@ from BibleOrgSys.Online.SwordInstallManager import processConfLines, ALL_SWORD_C
 
 
 
-LAST_MODIFIED_DATE = '2020-04-16' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "SwordModules"
 PROGRAM_NAME = "Sword module handler"
 PROGRAM_VERSION = '0.49'
@@ -846,9 +846,9 @@ class SwordModule():
         self.OTIndex, self.NTIndex = [], []
 
         # Default to KJV versification
-        self.OTList = OT39_BOOKLIST
+        self.OTList = BOOKLIST_OT39
         assert len(self.OTList) == 39
-        self.NTList = NT27_BOOKLIST
+        self.NTList = BOOKLIST_NT27
         assert len(self.NTList) == 27
         if 'Versification' in self.SwordModuleConfiguration.confDict:
             if self.SwordModuleConfiguration.confDict['Versification'] == 'KJVA':

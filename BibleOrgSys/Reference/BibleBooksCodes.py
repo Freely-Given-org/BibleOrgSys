@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,14 +51,24 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.89'
+PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
+
+BOOKLIST_OT39 = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
+        'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
+        'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
+assert len( BOOKLIST_OT39 ) == 39
+BOOKLIST_NT27 = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
+        'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
+assert len( BOOKLIST_NT27 ) == 27
+BOOKLIST_66 = BOOKLIST_OT39 + BOOKLIST_NT27
+assert len( BOOKLIST_66 ) == 66
 
 
 @singleton # Can only ever have one instance
@@ -345,6 +355,7 @@ class BibleBooksCodes:
         Attempt to return the BBB reference abbreviation string for the given book information (text).
 
         Only works for English.
+        TODO: This DEFINITELY NEEDS IMPROVING !!!
         BibleBooksNames.py has a more generic version.
 
         Returns BBB or None.
@@ -364,23 +375,46 @@ class BibleBooksCodes:
         if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
             return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
-        if SomeUppercaseText == 'EPJER': return 'LJE' # Special case but TODO: why isn't this one already there???
+        if SomeUppercaseText == 'EPJER': return 'LJE' # Fails below because both 'LJE' and 'PJE' are valid BBBs
+        if SomeUppercaseText == 'DEUTERONOMY': return 'DEU' # Fails below because 'EUT' is also a valid BBB
+        if SomeUppercaseText == 'JUDGES': return 'JDG' # Fails below because 'GES' is also a valid BBB
+        if SomeUppercaseText == '1 SAMUEL': return 'SA1' # Fails below because 'SAM' is also a valid BBB
+        if SomeUppercaseText == '2 SAMUEL': return 'SA2' # Fails below because 'SAM' is also a valid BBB
+        if SomeUppercaseText == '1 CHRONICLES': return 'CH1' # Fails below because 'CHR' is also a valid BBB
+        if SomeUppercaseText == '2 CHRONICLES': return 'CH2' # Fails below because 'CHR' is also a valid BBB
+        if SomeUppercaseText == 'ECCLESIASTES': return 'ECC' # Fails below because 'LES' is also a valid BBB
+        if SomeUppercaseText == 'LAMENTATIONS': return 'LAM' # Fails below because 'TAT' is also a valid BBB
+        if SomeUppercaseText == 'HABAKKUK': return 'HAB' # Fails below because 'BAK' is also a valid BBB
+        if SomeUppercaseText == 'ZEPHANIAH': return 'ZEP' # Fails below because 'EPH' is also a valid BBB
+        if SomeUppercaseText == 'ZECHARIAH': return 'ZEC' # Fails below because 'ARI' is also a valid BBB
+        if SomeUppercaseText == 'ROMANS': return 'ROM' # Fails below because 'MAN' is also a valid BBB
+        if SomeUppercaseText == '1 CORINTHIANS': return 'CO1' # Fails below because 'INT' is also a valid BBB
+        if SomeUppercaseText == '2 CORINTHIANS': return 'CO2' # Fails below because 'INT' is also a valid BBB
+        if SomeUppercaseText == '1 TIMOTHY': return 'TI1' # Fails below because 'OTH' is also a valid BBB
+        if SomeUppercaseText == '2 TIMOTHY': return 'TI2' # Fails below because 'OTH' is also a valid BBB
         # TODO: We need to find a way to add these
+        if SomeUppercaseText == '1 KINGS': return 'KI1'
+        if SomeUppercaseText == '2 KINGS': return 'KI2'
+        if SomeUppercaseText == 'SONG OF SONGS' or SomeUppercaseText == 'SONG OF SOLOMON': return 'SNG'
         if SomeUppercaseText == 'MK': return 'MRK'
-        if SomeUppercaseText == '1THS': return 'TH1'
-        if SomeUppercaseText == '2THS': return 'TH2'
+        if SomeUppercaseText == 'PHILIPPIANS': return 'PHP'
+        if SomeUppercaseText == '1 THESSALONIANS' or SomeUppercaseText == '1THS': return 'TH1'
+        if SomeUppercaseText == '2 THESSALONIANS' or SomeUppercaseText == '2THS': return 'TH2'
+        if SomeUppercaseText == 'PHILEMON': return 'PHM'
+        if SomeUppercaseText == '1 PETER': return 'PE1'
+        if SomeUppercaseText == '2 PETER': return 'PE2'
         if SomeUppercaseText == 'PS151': return 'PS2' # Special case
 
         # Ok, let's try guessing
         matchCount, foundBBB = 0, None
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             if BBB in SomeUppercaseText:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getBBB1', BBB, SomeUppercaseText )
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"getBBB1: {BBB=} {SomeUppercaseText=}" )
                 matchCount += 1
                 foundBBB = BBB
-        # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'getBBB2', repr(someText), matchCount, foundBBB )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"getBBB2: {someText=} {matchCount=} {foundBBB=}" )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, sorted(self.__DataDicts['allAbbreviationsDict']) )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBBFromText
 
 
@@ -754,8 +788,10 @@ def briefDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
+    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
+        BBB = bbc.getBBBFromText( someString )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
+        assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
@@ -798,8 +834,10 @@ def fullDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r} -> {}'.format( something, bbc.getBBBFromText( something ) ) )
+    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
+        BBB = bbc.getBBBFromText( someString )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
+        assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )

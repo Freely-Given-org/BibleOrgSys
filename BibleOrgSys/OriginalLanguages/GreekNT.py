@@ -44,6 +44,7 @@ Module handling xxx to produce C and Python data tables.
 from typing import Optional
 from gettext import gettext as _
 import os
+from pathlib import Path
 import logging
 
 if __name__ == '__main__':
@@ -452,7 +453,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    fileFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/sblgnt/' )
+    fileFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/sblgnt/' )
 
     # Demonstrate the Greek NT class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek NT class…" )

@@ -63,6 +63,7 @@ Some notes about internal formats:
 
     The introduction is stored as chapter '-1'. (All our chapter and verse "numbers" are stored as strings.)
         (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
+    Books (like FRT) that don't have chapters (or verses) store the information in chapter '0'.
 
 CHANGELOG:
     2022-06-05 quieten makeBookCVIndex print statement
@@ -86,10 +87,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-01-25' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.79'
+PROGRAM_VERSION = '0.80'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -97,9 +98,9 @@ DEBUGGING_THIS_MODULE = False
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
-BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX', 'TDX', 'BAK', 'OTH',
-                          'XXA','XXB','XXC','XXD','XXE','XXF','XXG',
-                          'UNK', '???', )
+# BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX', 'TDX', 'BAK', 'OTH',
+#                           'XXA','XXB','XXC','XXD','XXE','XXF','XXG',
+#                           'UNK', '???', )
 
 
 
@@ -278,12 +279,17 @@ class InternalBibleBookCVIndex:
 
         Raises a KeyError if the C key doesn't exist.
         """
+        assert isinstance( C, str )
         firstIndexEntry = self.__indexData[(C,'0')]
         try:
             nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
             return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContext()
-        except KeyError: # presumably no more chapters
-            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContext()
+        except KeyError: # Couldn't find the next chapter
+            if C != '-1': # presumably no more chapters
+                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContext()
+            # else it's a bit more complicated finding the introduction because mostly there's no chapter zero
+            nextIndexEntry = self.__indexData[('1','0')]
+            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContext()
     # end of InternalBibleBookCVIndex.getChapterEntriesWithContext
 
 
@@ -382,7 +388,7 @@ class InternalBibleBookCVIndex:
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    " + _("Indexing {:,} {} {} entries…").format( len(self.givenBibleEntries), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
-        if self.BBB in BOS_NON_CHAPTER_BOOKS:
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isChapterVerseBook( self.BBB ):
             # It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
             indexEntryLineCount = 0 # indexEntryLineCount is the number of datalines pointed to by this index entry
@@ -390,6 +396,8 @@ class InternalBibleBookCVIndex:
             for j, entry in enumerate( self.givenBibleEntries):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  makeBookCVIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
+                if marker in ('c','v'):
+                    logging.critical( f"makeBookCVIndex unexpected 'c' or 'v' in non-chapter book: {self.BBB} {strC}:{strV} {marker}='{entry.getOriginalText()}'" )
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert not entry.getText() and not entry.getCleanText() and not entry.getExtras()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
@@ -404,7 +412,7 @@ class InternalBibleBookCVIndex:
                     logging.warning( "makeBookCVIndex: Why do we have a verse number in a {} {} book without chapters?".format( self.workName, self.BBB ) )
                     if DEBUGGING_THIS_MODULE:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  makeBookCVIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
-                            entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
+                            marker, entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                     _saveAnyOutstandingCV() # with the adjusted indexEntryLineCount
                     #if 0:
                         ## Remove verse ranges, etc. and then save the verse number
@@ -1118,7 +1126,7 @@ class InternalBibleBookSectionIndex:
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    " + _("Indexing {:,} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
-        if self.BBB in BOS_NON_CHAPTER_BOOKS:
+        if not BibleOrgSysGlobals.loadedBibleBooksCodes.isChapterVerseBook( self.BBB ):
             return
             ## It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             #lastC = lastV = saveCV = saveJ = None

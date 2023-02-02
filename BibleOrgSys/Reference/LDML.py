@@ -5,7 +5,7 @@
 #
 # Module handling Unicode LOCALE DATA MARKUP LANGUAGE (XML) files
 #
-# Copyright (C) 2017 Robert Hunt
+# Copyright (C) 2017-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,8 +54,9 @@ NOTE: This preliminary module currently parses a range of XML files
 from gettext import gettext as _
 import sys
 import os
+from pathlib import Path
 import logging
-import multiprocessing
+# import multiprocessing
 from xml.etree.ElementTree import ElementTree
 
 if __name__ == '__main__':
@@ -67,7 +68,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2019-05-28' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "LDML_Handler"
 PROGRAM_NAME = "Unicode LOCALE DATA MARKUP LANGUAGE handler"
 PROGRAM_VERSION = '0.13'
@@ -3840,7 +3841,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    mainTestFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/SIL_NRSI/sldr/sldr/' )
+    mainTestFolder = Path( '/home/robert/Programming/ExternalPrograms/SIL_NRSI/sldr/sldr/' )
     if 1: # test load all SIL LDML files (cloned from GitHub)
         for something in sorted( os.listdir( mainTestFolder ) ):
             somepath = os.path.join( mainTestFolder, something )

@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2022 Robert Hunt
+# Copyright (C) 2014-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,8 +42,13 @@ e.g.,
     Gen|1|1|<pb/>In the beginning when God created <f>[1]</f> the heavens and the earth,
     Gen|1|2|the earth was a formless void and darkness covered the face of the deep, while a wind from God <f>[2]</f> swept over the face of the waters.
     Gen|1|3|Then God said, ‘Let there be light’; and there was light.
+
+CHANGELOG:
+    2023-02-01 Allowed for multiple files as well as one single file for the whole Bible
+                TODO: It hasn't been fully tested, and filecheck has not yet been updated to reflect this
 """
 from gettext import gettext as _
+from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import logging
 import os
@@ -61,10 +66,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-05-06' # by RJH
+LAST_MODIFIED_DATE = '2023-02-01' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.33'
+PROGRAM_VERSION = '0.34'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -202,44 +207,56 @@ class CSVBible( Bible ):
     """
     Class for reading, validating, and converting CSVBible files.
     """
-    def __init__( self, sourceFolder, givenName:str, encoding:str='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( {sourceFolder}, {givenName}, {encoding} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
+        assert givenName != 'utf-8'
+        assert givenAbbreviation != 'utf-8'
 
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        super().__init__()
         self.objectNameString = 'CSV Bible object'
         self.objectTypeString = 'CSV'
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        for self.sourceFilename in (f'{self.givenName}.csv', f'{self.givenName}.tsv', f'{self.givenName}.txt', self.givenName):
+        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
+        if self.givenName and not self.name:
+            self.name = self.givenName
+        for self.sourceFilename in (f'{self.givenName}.csv',f'{self.givenName}.CSV',
+                                    f'{self.givenName}.tsv',f'{self.givenName}.TSV',
+                                    f'{self.givenName}.txt',f'{self.givenName}.TXT',
+                                    self.givenName,
+                                    f'{self.abbreviation}.csv',f'{self.abbreviation}.CSV', f'{self.abbreviation.lower()}.csv',f'{self.abbreviation.lower()}.CSV',
+                                    f'{self.abbreviation}.tsv',f'{self.abbreviation}.TSV', f'{self.abbreviation.lower()}.tsv',f'{self.abbreviation.lower()}.TSV',
+                                    f'{self.abbreviation}.txt',f'{self.abbreviation}.TXT', f'{self.abbreviation.lower()}.txt',f'{self.abbreviation.lower()}.TXT',
+                                    self.abbreviation,):
             self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
             # Do a preliminary check on the readability of our file
             if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
                 break
         else:
-            logging.critical( _("CSVBible: Unable to discover filename in {}".format( self.sourceFolder )) )
-
-        self.name = self.givenName
+            logging.critical( _("CSVBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
+            self.sourceFilename = self.sourceFilepath = None
     # end of CSVBible.__init__
 
 
-    def load( self ):
+    def _loadFile( self, filepath:Union[str,Path], temporaryBookStore:Optional[dict]=None ) -> Bible:
         """
-        Load a single source file and load book elements.
-        """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("CSVBible: Loading {}…").format( self.sourceFilepath ) )
+        Does the work of loading a CSV file into memory.
 
-        separator = ',' # Default to comma
+        Parameter store is optionally used to save the books
+            (because we don't always load them in the correct order)
+        """
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loading {}…").format( filepath ) )
+
+        separator = numColumns = quoted = BBB = None # Empty defaults
         lastLine, lineCount = '', 0
-        BBB = None
         lastBookNumber = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
-        quoted = None
-        with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
+        with open( filepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==BibleOrgSysGlobals.BOM:
@@ -249,33 +266,50 @@ class CSVBible( Bible ):
                 if not line: continue # Just discard blank lines
                 if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "CSV file line {} is {!r}".format( lineCount, line ) )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, "CSV file line {} is {!r}".format( lineCount, line ) )
                 if line[0]=='#': continue # Just discard comment lines
-                if lineCount==1:
+                if not separator and lineCount < 4:
                     if line.startswith( '"Book",' ):
-                        separator, quoted = ',', True
+                        separator, quoted, numColumns = ',', True, 4
                         continue # Just discard header line
                     elif line.startswith( 'Book,' ):
-                        separator, quoted = ',', False
+                        separator, quoted, numColumns = ',', False, 4
                         continue # Just discard header line
                     elif line.startswith( '"Book"|' ):
-                        separator, quoted = '|', True
+                        separator, quoted, numColumns = '|', True, 4
                         continue # Just discard header line
                     elif line.startswith( 'Book|' ):
-                        separator, quoted = '|', False
+                        separator, quoted, numColumns = '|', False, 4
                         continue # Just discard header line
+                    elif '\t' in line:
+                        separator = '\t'
+                        numColumns = line.count( '\t' ) + 1
+                    elif ',' in line:
+                        separator = ','
+                        numColumns = line.count( ',' ) + 1 # Might be wrong if text is quoted
+                    if not separator: continue # keep searching
+                if lineCount <= 3: dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{lineCount}: {separator=} {numColumns=} {quoted=} {BBB=}" )
 
-                bits = line.split( separator, 3 )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, lineCount, self.givenName, BBB, bits )
+                bits = line.split( separator, numColumns-1 )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, lineCount, self.givenName, BBB, bits )
                 if len(bits) == 4:
-                    bString, chapterNumberString, verseNumberString, vText = bits
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                    booknameString, chapterNumberString, verseNumberString, vText = bits
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, "bString, chapterNumberString, verseNumberString, vText", booknameString, chapterNumberString, verseNumberString, vText )
+                elif len(bits) == 2:
+                    refString, vText = bits
+                    if BBB is None and refString.count(':') != 1:
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Skipping the rest of line because no BBB yet: {lineCount}: {bits} '{line}'" )
+                        continue # Still in header lines ???
+                    booknameString, CV = refString.rsplit( ' ', 1) # e.g., Genesis 1:1, 3 John 1:2, Song of Songs 2:3
+                    assert 0 <= booknameString.count( ' ' ) <= 3, f"{booknameString=}"
+                    assert CV.count( ':' ) == 1
+                    chapterNumberString, verseNumberString = CV.split( ':' )
                 else:
-                    logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
+                    logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, booknameString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
 
                 # Remove quote marks from these strings
                 if quoted:
-                    if len(bString)>=2 and bString[0]==bString[-1] and bString[0] in '"\'': bString = bString[1:-1]
+                    if len(booknameString)>=2 and booknameString[0]==booknameString[-1] and booknameString[0] in '"\'': booknameString = booknameString[1:-1]
                     if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
                     if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
                     if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
@@ -287,16 +321,25 @@ class CSVBible( Bible ):
                 #if BibleOrgSysGlobals.debugFlag: assert 2  <= len(bookCode) <= 4
                 #if BibleOrgSysGlobals.debugFlag: assert chapterNumberString.isdigit()
                 #if BibleOrgSysGlobals.debugFlag: assert verseNumberString.isdigit()
-                try: bookNumber = int( bString )
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"  Now have {lineCount}: {booknameString=} {chapterNumberString=} {verseNumberString=}" )
+                bookNumber = -1
+                try: bookNumber = int( booknameString )
                 except ValueError: # Assume it's a book code of some sort or a book name
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bString )
-                    bookNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( booknameString )
+                    if BBB:
+                        bookNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getReferenceNumber( BBB )
+                if lastBookNumber==-1 and not BBB:
+                    dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Skipping the rest of introductory line because no BBB yet: {lineCount}: '{line}'" )
+                    continue
+
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"    which gives: {bookNumber=} {BBB=} {chapterNumber=} {verseNumber=}" )
 
                 if bookNumber != lastBookNumber: # We've started a new book
                     if lastBookNumber != -1: # Better save the last book
-                        self.stashBook( thisBook )
+                        if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
+                        else: self.stashBook( thisBook )
                     BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )  # Try to guess
                     assert BBB
                     thisBook = BibleBook( self, BBB )
@@ -304,7 +347,6 @@ class CSVBible( Bible ):
                     thisBook.objectTypeString = 'CSV'
                     lastBookNumber = bookNumber
                     lastChapterNumber = lastVerseNumber = -1
-
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     if BibleOrgSysGlobals.debugFlag: assert chapterNumber > lastChapterNumber or BBB=='ESG' # Esther Greek might be an exception
                     if chapterNumber == 0:
@@ -363,9 +405,52 @@ class CSVBible( Bible ):
                 lastVerseNumber = verseNumber
 
         # Save the final book
-        self.stashBook( thisBook )
+        if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
+        else: self.stashBook( thisBook )
+    # end of CSVBible._loadFile
+
+
+    def load( self ):
+        """
+        Assumes self.sourceFilepath is set
+            (If not, use loadBooks() instead.)
+
+        Load a single source file and load book elements.
+        """
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("CSVBible: Loading {}…").format( self.sourceFilepath ) )
+        assert self.sourceFilepath is not None
+
+        self._loadFile( self.sourceFilepath )
         self.doPostLoadProcessing()
     # end of CSVBible.load
+
+
+    def loadBooks( self ):
+        """
+        Assumes self.sourceFilepath is not set
+            (If not, use load() instead.)
+
+        Finds and loads multiple source files and load book elements.
+        """
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading books from {}…").format( self.sourceFolder ) )
+        assert self.sourceFilepath is None
+
+        tempBookStore = {}
+        for filename in os.listdir( self.sourceFolder ):
+            # print( f"  {filename=}" )
+            if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.vpl') or filename.endswith('.VPL'):
+                filenameStart = filename[:-4]
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( filenameStart )
+                # print( f"  Got {BBB=} from {filenameStart=}")
+                self._loadFile( os.path.join( self.sourceFolder, filename ), tempBookStore )
+
+        # Now save the books in the right Biblical order
+        for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
+            if BBB in tempBookStore:
+                self.stashBook( tempBookStore[BBB] )
+
+        self.doPostLoadProcessing()
+    # end of VPLBible.loadBooks
 # end of CSVBible class
 
 

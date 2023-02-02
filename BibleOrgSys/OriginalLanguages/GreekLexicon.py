@@ -5,7 +5,7 @@
 #
 # Module handling the Greek lexicon
 #
-# Copyright (C) 2014-2020 Robert Hunt
+# Copyright (C) 2014-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,6 +32,7 @@ Module handling the Greek lexicon.
 from gettext import gettext as _
 from typing import Optional
 # import logging
+from pathlib import Path
 import os.path
 import sys
 
@@ -43,7 +44,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexicon"
 PROGRAM_NAME = "Greek Lexicon handler"
 PROGRAM_VERSION = '0.17'
@@ -190,7 +191,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+    testFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # Demonstrate the Greek Lexicon class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )
@@ -211,7 +212,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+    testFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # demonstrate the Greek Lexicon class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )

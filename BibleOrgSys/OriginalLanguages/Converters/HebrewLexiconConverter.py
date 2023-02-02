@@ -5,7 +5,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,6 +29,7 @@ Module handling the OpenScriptures Hebrew lexicon.
 """
 from gettext import gettext as _
 import logging
+from pathlib import Path
 import os.path
 import sys
 import re
@@ -42,7 +43,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-04' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon format handler"
 PROGRAM_VERSION = '0.20'
@@ -52,7 +53,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 # Hebrew lexicon folder
-DEFAULT_LEXICON_FOLDERPATH = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' )
+DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' )
 
 
 
@@ -73,10 +74,10 @@ class AugmentedStrongsIndexFileConverter:
         <w aug="8674">pdc</w>
 
     """
-    indexFilename = "AugIndex.xml"
-    XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    HebLexNameSpace = "{http://openscriptures.github.com/morphhb/namespace}"
-    treeTag = HebLexNameSpace + "index"
+    indexFilename = 'AugIndex.xml'
+    XMLNameSpace = '{http://www.w3.org/XML/1998/namespace}'
+    HebLexNameSpace = '{http://openscriptures.github.com/morphhb/namespace}'
+    treeTag = f'{HebLexNameSpace}index'
 
 
     def __init__( self ) -> None:
@@ -223,10 +224,10 @@ class LexicalIndexFileConverter:
                 <etym type="sub">aao</etym>
             </entry>
     """
-    indexFilename = "LexicalIndex.xml"
-    XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    HebLexNameSpace = "{http://openscriptures.github.com/morphhb/namespace}"
-    treeTag = HebLexNameSpace + "index"
+    indexFilename = 'LexicalIndex.xml'
+    XMLNameSpace = '{http://www.w3.org/XML/1998/namespace}'
+    HebLexNameSpace = '{http://openscriptures.github.com/morphhb/namespace}'
+    treeTag = f'{HebLexNameSpace}index'
 
 
     def __init__( self ) -> None:
@@ -452,10 +453,10 @@ class HebrewStrongsFileConverter:
             <usage>Tatnai.</usage>
         </entry>
     """
-    databaseFilename = "HebrewStrong.xml"
-    XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    HebLexNameSpace = "{http://openscriptures.github.com/morphhb/namespace}"
-    treeTag = HebLexNameSpace + "lexicon"
+    databaseFilename = 'HebrewStrong.xml'
+    XMLNameSpace = '{http://www.w3.org/XML/1998/namespace}'
+    HebLexNameSpace = '{http://openscriptures.github.com/morphhb/namespace}'
+    treeTag = f'{HebLexNameSpace}lexicon'
 
 
     def __init__( self ) -> None:
@@ -659,10 +660,10 @@ class BrownDriverBriggsFileConverter:
             </entry>
         </section>
     """
-    databaseFilename = "BrownDriverBriggs.xml"
-    XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    HebLexNameSpace = "{http://openscriptures.github.com/morphhb/namespace}"
-    treeTag = HebLexNameSpace + "lexicon"
+    databaseFilename = 'BrownDriverBriggs.xml'
+    XMLNameSpace = '{http://www.w3.org/XML/1998/namespace}'
+    HebLexNameSpace = '{http://openscriptures.github.com/morphhb/namespace}'
+    treeTag = f'{HebLexNameSpace}lexicon'
 
 
     def __init__( self ) -> None:

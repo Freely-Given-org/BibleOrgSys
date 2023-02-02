@@ -5,7 +5,7 @@
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2020 Robert Hunt
+# Copyright (C) 2011-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -33,6 +33,7 @@ from gettext import gettext as _
 from typing import Optional
 # import logging
 import os.path
+from pathlib import Path
 import re
 
 if __name__ == '__main__':
@@ -44,7 +45,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2020-05-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
 PROGRAM_VERSION = '0.20'
@@ -229,7 +230,7 @@ class HebrewLexiconSimple:
         from BibleOrgSys.OriginalLanguages.Converters.HebrewLexiconConverter import HebrewStrongsFileConverter, BrownDriverBriggsFileConverter
 
         if self.XMLFolder is None:
-            self.XMLFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( 'HebrewLexicon/' ) # Hebrew lexicon folder
+            self.XMLFolder = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' ) # Hebrew lexicon folder
 
         hStr = HebrewStrongsFileConverter() # Create the empty object
         hStr.loadAndValidate( self.XMLFolder ) # Load the XML

@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2022 Robert Hunt
+# Copyright (C) 2011-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,7 +50,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-12-30' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
 PROGRAM_VERSION = '0.11'
@@ -99,20 +99,20 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
     assert '\\' not in marker and ' ' not in marker and '*' not in marker
     text = originalText
     mLen = len( marker )
-    ix = text.find( '\\'+marker+' ' )
+    ix = text.find( f'\\{marker} ' )
     while ix != -1:
         tLen = len( text )
         if closedFlag is None:
             ixEnd = text.find( '\\', ix+mLen+2 )
             if ixEnd == -1: # remove until end of line
                 text = text[:ix]
-            elif text[ixEnd:].startswith( '\\'+marker+'*' ): # remove the end marker also
+            elif text[ixEnd:].startswith( f'\\{marker}*' ): # remove the end marker also
                 text = text[:ix] + text[ixEnd+mLen+2:]
             else: # leave the next marker in place
                 text = text[:ix] + text[ixEnd:]
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "                         ", text ); halt
         elif closedFlag == True:
-            ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
+            ixEnd = text.find( f'\\{marker}*', ix+mLen+2 )
             if ixEnd == -1:
                 logging.error( "removeUSFMCharacterField: no end marker for {!r} in {!r}".format( marker, originalText ) )
                 break
@@ -127,7 +127,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
                 if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: halt
             else:
                 text = text[:ix] + text[ixEnd:]
-        ix = text.find( '\\'+marker+' ' )
+        ix = text.find( f'\\{marker} ' )
     return text
 # end of removeUSFMCharacterField
 

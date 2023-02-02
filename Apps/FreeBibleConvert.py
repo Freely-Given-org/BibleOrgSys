@@ -30,6 +30,7 @@ Given the MediaWiki text export of the Free Bible New Testament from LibreOffice
 from gettext import gettext as _
 import os.path
 import logging
+from pathlib import Path
 from datetime import datetime
 
 if __name__ == '__main__':
@@ -58,7 +59,7 @@ BIBLES_FOLDERPATH = Path( '/mnt/SSDs/Bibles/' )
 
 #INPUT_FILEPATH = '/home/robert/FBVNT2.1.1.LOExport.txt'
 #INPUT_FILEPATH = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'
-INPUT_FILEPATH = os.path.join( BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/FBVNT2.1.1.txt' )
+INPUT_FILEPATH = BIBLES_FOLDERPATH.joinpath( 'English translations/Free Bible/FBVNT2.1.1.txt' )
 
 # Subfolder USFM/ gets added to OUTPUT_FOLDERPATH for writing the individual USFM files
 OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'FreeBibleConversion/' )
@@ -90,12 +91,12 @@ def splitAndWriteBooks( entireBibleText, folderpath ):
         # if bookID == 'FRT':
 
         filepath = os.path.join( folderpath, 'FBV_{}.usfm'.format( bookID ) )
-    vPrint( 'Info', DEBUGGING_THIS_MODULE, "Writing {}…".format( filepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, "Writing {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as bookFile:
             bookFile.write( splitText )
-    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "  {} characters ({} lines) written".format( len(splitText), splitText.count('\n') ) )
         writtenCount += 1
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} books written to {}".format( writtenCount, folderpath ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} books written to {}".format( writtenCount, folderpath ) )
 # end of FreeBibleConvert.splitAndWriteBooks
 
 
@@ -250,13 +251,13 @@ def main() -> None:
         # Write out entire file for checking
         if not os.path.exists( OUTPUT_FOLDERPATH):
             os.makedirs( OUTPUT_FOLDERPATH )
-        filepath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
+        filepath = OUTPUT_FOLDERPATH.joinpath( 'FBV.NT.usfm' )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Writing temp file {}…".format( filepath ) )
         with open( filepath, 'wt', encoding='utf-8' ) as BibleTextFile:
             BibleTextFile.write( entireText )
 
     # Write out the USFM files
-    USFMFolderpath = os.path.join( OUTPUT_FOLDERPATH.joinpath( 'USFM/' )
+    USFMFolderpath = OUTPUT_FOLDERPATH.joinpath( 'USFM/' )
     if not os.path.exists( USFMFolderpath):
         os.makedirs( USFMFolderpath )
     splitAndWriteBooks( entireText, USFMFolderpath )

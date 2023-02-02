@@ -78,9 +78,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-01-23' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.86'
@@ -90,15 +91,6 @@ DEBUGGING_THIS_MODULE = False
 
 
 JSON_INDENT = 0 # None gives smallest file (no newlines), then 0, 1, 2, ....
-
-OT39_BOOKLIST = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
-        'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZE', 'DAN', \
-        'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
-assert len( OT39_BOOKLIST ) == 39
-NT27_BOOKLIST = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
-        'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
-assert len( NT27_BOOKLIST ) == 27
-
 
 
 InternalBibleProperties = {} # Used for diagnostic reasons
@@ -301,7 +293,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
             logging.critical( _("containsAnyOT39Books result is unreliable because all books not loaded!") )
-        for BBB in OT39_BOOKLIST:
+        for BBB in BOOKLIST_OT39:
             if BBB in self: return True
         return False
     #end of InternalBible.containsAnyOT39Books
@@ -313,7 +305,7 @@ class InternalBible:
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
             logging.critical( _("containsAnyNT27Books result is unreliable because all books not loaded!") )
-        for BBB in NT27_BOOKLIST:
+        for BBB in BOOKLIST_NT27:
             if BBB in self: return True
         return False
     #end of InternalBible.containsAnyNT27Books
@@ -2236,7 +2228,7 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ) -> Optional[Tuple[list,list]]:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2256,7 +2248,7 @@ class InternalBible:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books: return self.books[BBB].getContextVerseData( BCVReference )
-        #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
+        else: vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBible {self.name} doesn't have {BBB}" )
     # end of InternalBible.getContextVerseData
 
 

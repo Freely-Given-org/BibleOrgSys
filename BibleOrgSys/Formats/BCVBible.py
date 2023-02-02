@@ -28,6 +28,7 @@ Module for defining and manipulating complete or partial BCV Bibles.
 from gettext import gettext as _
 from typing import Optional
 import os
+from pathlib import Path
 import logging
 import multiprocessing
 

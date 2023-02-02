@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -29,6 +29,7 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
     Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
 from gettext import gettext as _
+from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import os
 import logging
@@ -48,7 +49,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2022-07-30' # by RJH
+LAST_MODIFIED_DATE = '2023-02-01' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.80'
@@ -64,7 +65,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT'
 
 
 
-def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False, discountSSF=True ):
+def USFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False, discountSSF:bool=True ):
     """
     Given a folder, search for USFM Bible files or folders in the folder and in the next level down.
 
@@ -484,7 +485,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ) -> None:
+    def __init__( self, sourceFolder, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
         """
         Create the internal USFM Bible object.
 

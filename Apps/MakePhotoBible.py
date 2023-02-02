@@ -70,6 +70,7 @@ inputFolder = Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 from gettext import gettext as _
 import os
+from pathlib import Path
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':

@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-01-27' # by RJH
+LAST_MODIFIED_DATE = '2023-02-01' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.59'
@@ -430,17 +430,18 @@ class USFMBibleBook( BibleBook ):
 
             # Check for lines like:
             #   \w='480|x-occurrence="1" x-occurrences="1"\w*\w th|x-occurrence="1" x-occurrences="1"\w*' after ULT KI1 6:1
-            if '\\w*\\w ' in text: # two separate words with no space or punctuation between them
-                if marker in ('w','v','p','zaln-s'):
-                    ixWordEndIndex = text.index( '|' )
-                    firstWord = text[:ixWordEndIndex]
-                    if not firstWord.isdigit():
-                        loadErrors.append( _("{} {}:{} Found suspect concatenated w fields in \\{}='{}'") \
-                                    .format( self.BBB, C, V, marker, text ) )
-                        logging.warning( _("Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}") \
-                                    .format( marker, text, self.workName, self.BBB, C, V ) )
-                    # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB}_{C}:{V}")
-                else: print( f"Mismatched in \\w fields {marker}='{text}'" ); halt # Some other marker
+            # I'm not totally sure why we needed to detect this??? Removed Feb2023
+            # if '\\w*\\w ' in text: # two separate words with no space or punctuation between them
+            #     if marker in ('w','v','p','zaln-s'):
+            #         ixWordEndIndex = text.index( '|' )
+            #         firstWord = text[:ixWordEndIndex]
+            #         if not firstWord.isdigit():
+            #             loadErrors.append( _("{} {}:{} Found suspect concatenated w fields in \\{}='{}'") \
+            #                         .format( self.BBB, C, V, marker, text ) )
+            #             logging.warning( _("Found suspect concatenated w fields in \\{}='{}' after {} {} {}:{}") \
+            #                         .format( marker, text, self.workName, self.BBB, C, V ) )
+            #         # else: print( f"handleUWEncoding(): Got '{text[ixWordEndIndex+1:]}' immediately following '{firstWord}' in '{self.workName}' {self.BBB}_{C}:{V}")
+            #     else: print( f"Mismatched in \\w fields {marker}='{text}'" ); halt # Some other marker
 
             if (marker=='w' and text.count('\\w ')+1 !=  text.count('\\w*')) \
             or (marker!='w' and text.count('\\w ') !=  text.count('\\w*')):
@@ -746,7 +747,7 @@ def briefDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
-        testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/usfm-js/__tests__/resources/' )
+        testFolder = Path( '/home/robert/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
         for filename in os.listdir( testFolder ):
             if filename.endswith( '.usfm' ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -808,7 +809,7 @@ def fullDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
-        testFolder = BibleOrgSysGlobals.BADBAD_PARALLEL_RESOURCES_BASE_FOLDERPATH.joinpath( '../../ExternalPrograms/usfm-js/__tests__/resources/' )
+        testFolder = Path( '/home/robert/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
         for filename in os.listdir( testFolder ):
             if filename.endswith( '.usfm' ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:

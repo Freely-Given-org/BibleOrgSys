@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2022 Robert Hunt
+# Copyright (C) 2014-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -70,8 +70,11 @@ NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
 
 CHANGELOG:
     2022-06-04 correctly tested for Bible instance in full and brief demos
+    2023-02-01 Allowed for multiple files as well as one single file for the whole Bible
+                TODO: It hasn't been fully tested, and filecheck has not yet been updated to reflect this
 """
 from gettext import gettext as _
+from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import logging
 import os
@@ -89,10 +92,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2022-06-04' # by RJH
+LAST_MODIFIED_DATE = '2023-02-01' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.39'
+PROGRAM_VERSION = '0.40'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -157,32 +160,35 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '1', repr(firstLine) )
-                if firstLine is None: continue # seems we couldn't decode the file
-                if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
+                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=4 )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Check 1: {firstLines=}" )
+                if firstLines is None: continue # seems we couldn't decode the file
+                if firstLines and firstLines[0][0]==BibleOrgSysGlobals.BOM:
                     logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
-                    firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
-                # Try to identify the VPL type
-                match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
-                if match: vplType = 1
-                else:
-                    match = re.search( '^(\\d{8})\\s', firstLine )
-                    if match: vplType = 2
+                    firstLines = firstLines[0][1:] # Remove the Unicode Byte Order Marker (BOM)
+                for line in firstLines:
+                    # Try to identify the VPL type
+                    match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', line )
+                    if match: vplType = 1
                     else:
-                        match = re.search( '^# language_name:\\s', firstLine )
-                        if match: vplType = 3
-                        #else:
-                            #match = re.search( '^; TITLE:\\s', firstLine )
-                            # NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
-                            #if match: vplType = 4
-                if match:
-                    if BibleOrgSysGlobals.debugFlag:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                        match = re.search( '^(\\d{8})\\s', line )
+                        if match: vplType = 2
+                        else:
+                            match = re.search( '^# language_name:\\s', line )
+                            if match: vplType = 3
+                            #else:
+                                #match = re.search( '^; TITLE:\\s', firstLine )
+                                # NOTE: These are now moved to a separate module ForgeForSwordSearcherBible.py
+                                #if match: vplType = 4
+                    if match:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), line ) )
+                        break
+                    else:
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck: (unexpected) line was {!r} in {}".format( line, thisFilename ) )
                 else:
-                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                    vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"VPLBibleFileCheck: Nothing helpful found in {firstLines} from {thisFilename}" )
                     continue
-            lastFilenameFound = thisFilename
+                lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
@@ -222,20 +228,20 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
+                    firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '2', repr(firstLine) )
-                    if firstLine is None: continue # seems we couldn't decode the file
-                    if firstLine and firstLine[0]==BibleOrgSysGlobals.BOM:
+                    if firstLines is None: continue # seems we couldn't decode the file
+                    if firstLines and firstLines[0]==BibleOrgSysGlobals.BOM:
                         logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
-                        firstLine = firstLine[1:] # Remove the Unicode Byte Order Marker (BOM)
+                        firstLines = firstLines[1:] # Remove the Unicode Byte Order Marker (BOM)
                     # Try to identify the VPL type
-                    match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLine )
+                    match = re.search( '^(\\w{2,5}?)\\s(\\d{1,3})[:\\.](\\d{1,3})\\s', firstLines )
                     if match: vplType = 1
                     else:
-                        match = re.search( '^(\\d{8})\\s', firstLine )
+                        match = re.search( '^(\\d{8})\\s', firstLines )
                         if match: vplType = 2
                         else:
-                            match = re.search( '^# language_name:\\s', firstLine )
+                            match = re.search( '^# language_name:\\s', firstLines )
                             if match: vplType = 3
                             #else:
                                 #match = re.search( '^; TITLE:\\s', firstLine )
@@ -243,9 +249,9 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                                 #if match: vplType = 4
                     if match:
                         if BibleOrgSysGlobals.debugFlag:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLine ) )
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "First line got type #{} {!r} match from {!r}".format( vplType, match.group(0), firstLines ) )
                     else:
-                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
+                        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                         if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -267,49 +273,58 @@ class VPLBible( Bible ):
     """
     Class for reading, validating, and converting VPLBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
+        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
+        assert givenName != 'utf-8'
+        assert givenAbbreviation != 'utf-8'
+
          # Setup and initialise the base class first
-        Bible.__init__( self )
+        super().__init__()
         self.objectNameString = 'VPL Bible object'
         self.objectTypeString = 'VPL'
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.txt' )
+        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
+        if self.givenName and not self.name:
+            self.name = self.givenName
+        # NOTE: The following code assumes one file for the entire work
+        #           but load() can also handle one file per book
+        for self.sourceFilename in (f'{self.givenName}.vpl', f'{self.givenName}.VPL',
+                                    f'{self.givenName}.txt', f'{self.givenName}.TXT',
+                                    self.givenName,
+                                    f'{self.abbreviation}.vpl', f'{self.abbreviation}.VPL',
+                                    f'{self.abbreviation}.txt', f'{self.abbreviation}.TXT',
+                                    self.abbreviation,):
+            self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
+            # Do a preliminary check on the readability of our file
+            if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
+                break
+        else:
+            logging.critical( _("VPLBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
+            self.sourceFilename = self.sourceFilepath = None
 
-        # Do a preliminary check on the readability of our file
-        if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("VPLBible: File {!r} is unreadable").format( self.sourceFilepath ) )
-
-        self.name = self.givenName
-        #if self.name is None:
-            #pass
+        if self.sourceFilepath: # Do a preliminary check on the readability of our file
+            if not os.access( self.sourceFilepath, os.R_OK ):
+                logging.critical( _("VPLBible: File {!r} is unreadable").format( self.sourceFilepath ) )
     # end of VPLBible.__init__
 
 
-    def load( self ):
+    def _loadFile( self, filepath:Union[str,Path], settingsDict:dict ) -> Bible:
         """
-        Load a single source file and load book elements.
+        Does the work of loading a VPL file into memory.
         """
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( filepath ) )
 
-        global BOS66, BOS81, BOSx
-        if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
-        if BOS81 is None: BOS81 = BibleOrganisationalSystem( 'GENERIC-KJV-80-ENG' )
-        if BOSx is None: BOSx = BibleOrganisationalSystem( 'GENERIC-ENG' )
-
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
-
-        lastLine, lineCount = '', 0
-        vplType = bookCodeText = lastBookCodeText = BBB = lastBBB = metadataName = None
+        lineCount = 0
+        vplType = bookCodeText = lastBookCodeText = BBB = lastBBB = None
         lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
         thisBook = None
-        settingsDict = {}
-        with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
+        with open( filepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
@@ -636,6 +651,26 @@ class VPLBible( Bible ):
 
         # Save the final book
         if thisBook is not None: self.stashBook( thisBook )
+    # end of VPLBible._loadFile
+
+    def load( self ):
+        """
+        Assumes self.sourceFilepath is set
+            (If not, use loadBooks() instead.)
+
+        Load a single source file and load book elements.
+        """
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
+        assert self.sourceFilepath is not None
+
+        global BOS66, BOS81, BOSx
+        if BOS66 is None: BOS66 = BibleOrganisationalSystem( 'GENERIC-KJV-66-ENG' )
+        if BOS81 is None: BOS81 = BibleOrganisationalSystem( 'GENERIC-KJV-80-ENG' )
+        if BOSx is None: BOSx = BibleOrganisationalSystem( 'GENERIC-ENG' )
+
+        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+        settingsDict = {}
+        self._loadFile( self.sourceFilename, settingsDict )
 
         # Clean up
         if settingsDict:
@@ -646,6 +681,36 @@ class VPLBible( Bible ):
 
         self.doPostLoadProcessing()
     # end of VPLBible.load
+
+    def loadBooks( self ):
+        """
+        Assumes self.sourceFilepath is not set
+            (If not, use load() instead.)
+
+        Finds and loads multiple source files and load book elements.
+        """
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading books from {}…").format( self.sourceFolder ) )
+        assert self.sourceFilepath is None
+
+        settingsDict = {}
+
+        for filename in os.listdir( self.sourceFolder ):
+            # print( f"  {filename=}" )
+            if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.vpl') or filename.endswith('.VPL'):
+                filenameStart = filename[:-4]
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( filenameStart )
+                # print( f"  Got {BBB=} from {filenameStart=}")
+                self._loadFile( os.path.join( self.sourceFolder, filename ), settingsDict )
+
+        # Clean up
+        if settingsDict:
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "VPL settingsDict", settingsDict )
+            if self.suppliedMetadata is None: self.suppliedMetadata = {}
+            self.suppliedMetadata['VPL'] = settingsDict
+            self.applySuppliedMetadata( 'VPL' ) # Copy some to self.settingsDict
+
+        self.doPostLoadProcessing()
+    # end of VPLBible.loadBooks
 # end of VPLBible class
 
 
