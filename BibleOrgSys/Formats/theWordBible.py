@@ -62,17 +62,17 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBible import OT39_BOOKLIST, NT27_BOOKLIST
+from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS
 from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-01-30' # by RJH
+LAST_MODIFIED_DATE = '2023-02-02' # by RJH
 SHORT_PROGRAM_NAME = "theWordBible"
 PROGRAM_NAME = "theWord Bible format handler"
-PROGRAM_VERSION = '0.55'
+PROGRAM_VERSION = '0.56'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -86,7 +86,7 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 # These are the verses per book in the traditional KJV versification (but only for the 66 books)
 #       (They must precede the Bible import)
 theWordOTBookCount = 39
-theWordOTBooks = OT39_BOOKLIST
+theWordOTBooks = BOOKLIST_OT39
 assert len( theWordOTBooks ) == theWordOTBookCount
 theWordOTTotalLines = 23145
 theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
@@ -97,7 +97,7 @@ for count in theWordOTBookLines: total += count
 assert total == theWordOTTotalLines
 
 theWordNTBookCount = 27
-theWordNTBooks = NT27_BOOKLIST
+theWordNTBooks = BOOKLIST_NT27
 assert len( theWordNTBooks ) == theWordNTBookCount
 theWordNTTotalLines = 7957
 theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
@@ -401,18 +401,43 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
     """
     line = originalLine # Keep a copy of the original line for error messages
 
+    """Here is a sample of a verse including cross-references:
+        \\v 1 \\x - \\xo 1:1 \\xt Ps 90:2; Jes 40:21-22; Joh 1:1-3; Hand 17:24; Kol 1:16-17; Heb 1:10; 11:3\\x*In die begin het God die hemel en die aarde\\f + \\fr 1:1 \\fk hemel ... aarde: \\ft Sien kaart nr. 13.\\f* geskep.
+        
+    The cross references are: "Ps 90:2; Jes 40:21-22; Joh 1:1-3; Hand 17:24; Kol 1:16-17; Heb 1:10; 11:3"
+    
+    theWord however needs the Bible books to be converted to book numbers, which I can handle. All I realy require is that:
+        \\x - \\xo 1:1 \\xt Ps 90:2; Jes 40:21-22; Joh 1:1-3; Hand 17:24; Kol 1:16-17; Heb 1:10; 11:3\\x*
+    Be replaced by:
+        <RX Ps 90:2><RX Jes 40:21-22><RX Joh 1:1-3><RX Hand 17:24><RX Kol 1:16-17><RX Heb 1:10><RX Heb 11:3>"""
     if '\\x' in line: # Remove cross-references completely (why???)
-        #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-        line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+        # #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+        # line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
+        for marker in ( 'xo', ): # simply remove these whole fields if they exist
+            line = removeUSFMCharacterField( marker, line, closedFlag=None )
+        for safetyCount in range(1,10):
+            if '\\x' not in line: break # all done
+            ixStart = line.index( '\\x ')
+            assert ixStart != -1
+            ixXT = line.index( '\\xt ', ixStart+3)
+            assert ixXT != -1
+            ixEnd = line.index( '\\x*', ixXT+4)
+            assert ixEnd != -1
+            xrList = line[ixXT+4:ixEnd].strip().split(';')
+            newList = [f'<RX {entry.strip()}>' for entry in xrList]
+            line = f"{line[:ixStart]}{''.join(newList)}{line[ixEnd+3]}" # Reassemble the line
+        else:
+            logging.critical( "theWordAdjustLine had footnote nesting problem with {BBB} {C}:{V} '{originalLine}'" )
+            line = removeUSFMCharacterField( 'x', originalLine, closedFlag=True ).lstrip() # Remove superfluous spaces
 
     if '\\f' in line: # Handle footnotes
-        for marker in ( 'fr', 'fm', ): # simply remove these whole field
+        for marker in ( 'fr', 'fm', ): # simply remove these whole fields
             line = removeUSFMCharacterField( marker, line, closedFlag=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
-            while '\\'+marker+' ' in line:
+            while f'\\{marker} ' in line:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB, C, V, marker, line.count('\\'+marker+' '), line )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "was", "'"+line+"'" )
-                ix = line.find( '\\'+marker+' ' )
+                ix = line.find( f'\\{marker} ' )
                 assert ix != -1
                 ixEnd = line.find( '\\', ix+len(marker)+2 )
                 if ixEnd == -1: # no following marker so assume field stops at the end of the line
@@ -466,10 +491,9 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
 
     # Check what's left at the end
     if '\\' in line:
-        logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
+        logging.critical( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
-        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            halt
+        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
     return line
 # end of theWordAdjustLine
 
@@ -1110,7 +1134,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v':
-                composedLine += theWordAdjustLine(BBB,C,V, text )
+                composedLine += theWordAdjustLine( BBB,C,V, text )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
                     halt # This should never happen -- probably a b marker with text
@@ -1121,7 +1145,7 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
             #elif ourGlobals['pi5']: composedLine += '<PI5>'
             #elif ourGlobals['pi6']: composedLine += '<PI6>'
             #elif ourGlobals['pi7']: composedLine += '<PI7>'
-            composedLine += theWordAdjustLine(BBB,C,V, text )
+            composedLine = f'{composedLine}{theWordAdjustLine( BBB,C,V, text )}'
         elif marker in ('nb',): # Just ignore these ones
             pass
         else:
@@ -1137,10 +1161,9 @@ def theWordComposeVerseLine( BBB:str, C:str, V:str, verseData, ourGlobals ):
 
     # Check what's left at the end
     if '\\' in composedLine:
-        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
+        logging.critical( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
         vPrint( 'Never', DEBUGGING_THIS_MODULE, "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
-        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            halt
+        if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag: halt
     return composedLine.rstrip()
 # end of theWordComposeVerseLine
 
@@ -1504,7 +1527,7 @@ def fullDemo() -> None:
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nTrying all {} discovered modules…".format( len(foundFolders) ) )
-                parameters = [('D'+str(j+1),testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
+                parameters = [(f'D{j+1}',testFolder,filename) for j,filename in enumerate(sorted(foundFiles))]
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.starmap( testtWB, parameters ) # have the pool do our loads
@@ -1512,7 +1535,7 @@ def fullDemo() -> None:
                 BibleOrgSysGlobals.alreadyMultiprocessing = False
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
-                    indexString = 'D{}'.format( j+1 )
+                    indexString = f'D{j+1}'
                     #if 'web' not in someFile: continue # Just try this module
                     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\ntW {}/ Trying {}".format( indexString, someFile ) )
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
