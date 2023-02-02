@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-02-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.90'
+PROGRAM_VERSION = '0.91'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -737,25 +737,29 @@ class BibleBooksCodes:
                     htmlFile.write( '<tr><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
                 htmlFile.write( "</table></body></html>\n" )
     # end of BibleBooksCodes.createLists
-# end of BibleBooksCodes class
 
 
+    @staticmethod
+    def tidyBBB( BBB:str ) -> str:
+        """
+        Change book codes like SA1 to the conventional 1SA.
 
-def tidyBBB( BBB:str ) -> str:
-    """
-    Change book codes like SA1 to the conventional 1SA.
+        BBB is always three characters starting with an UPPERCASE LETTER.
+        """
+        return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
+    # end of tidyBBB
 
-    BBB is always three characters starting with an UPPERCASE LETTER.
-    """
-    return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
-# end of tidyBBB
-
-def tidyBBBs( BBBs:List[str] ) -> List[str]:
-    """
-    Change a list of book codes like SA1 to the conventional 1SA.
-    """
-    return [tidyBBB(BBB) for BBB in BBBs]
+    @staticmethod
+    def tidyBBBs( BBBs:List[str] ) -> List[str]:
+        """
+        Change a list of book codes like SA1 to the conventional 1SA.
+        """
+        return [BibleBooksCodes.tidyBBB(BBB) for BBB in BBBs]
 # end of tidyBBBs
+
+
+
+# end of BibleBooksCodes class
 
 
 
