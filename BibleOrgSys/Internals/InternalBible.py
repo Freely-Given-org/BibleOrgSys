@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-02-03' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.86'
@@ -216,6 +216,8 @@ class InternalBible:
             Note that it returns the book object, not just the BBB.
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
+
+        If it's just the BBBs that you want, use self.books.keys() directly.
         """
         # fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.__getitem__( {keyIndex} )" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, list(self.books.items()) )
@@ -231,6 +233,8 @@ class InternalBible:
         Yields the next book object.
 
         NOTE: Most other functions return the BBB -- this returns the actual book object!
+
+        If it's just the BBBs that you want, use self.books.keys() directly.
         """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
             logging.critical( _("__iter__ result is unreliable because all books not loaded!") )
