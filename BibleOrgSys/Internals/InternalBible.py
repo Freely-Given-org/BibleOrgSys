@@ -397,7 +397,7 @@ class InternalBible:
             self.triedLoadingBook[BBB] = True
             self.bookNeedsReloading[BBB] = False
         else: # didn't try loading the book
-            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"loadBookIfNecessary NOLOAD: {BBB in self.books=} {BBB in self.triedLoadingBook=} {BBB in self.bookNeedsReloading=} {self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE'}" )
+            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"loadBookIfNecessary NOLOAD: {BBB} in_self.books={BBB in self.books} triedLoadingBook={BBB in self.triedLoadingBook} bookNeedsReloading={BBB in self.bookNeedsReloading} {self.bookNeedsReloading[BBB] if BBB in self.bookNeedsReloading else 'NONE'}" )
     # end of InternalBible.loadBookIfNecessary
 
 
@@ -2241,6 +2241,7 @@ class InternalBible:
 
         Expects a SimpleVerseKey for the parameter
             but also copes with a (B,C,V,S) tuple.
+        If the tuple is only (B,C), then it fetches the data for the entire chapter.
 
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.

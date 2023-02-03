@@ -164,12 +164,19 @@ class BibleBooksCodes:
 
 
     def __contains__( self, BBB:str ) -> bool:
-        """ Returns True or False. """
+        """
+        Returns True or False.
+        """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
 
 
     def __iter__( self ) -> str:
-        """ Yields the next BBB. """
+        """
+        Yields the next BBB.
+        
+        This gives the BBBs with the OT39 and NT27 first.
+            (This isn't always the order that you want -- see getSequenceList() below.)
+        """
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             yield BBB
 
@@ -195,7 +202,9 @@ class BibleBooksCodes:
 
 
     def getAllReferenceAbbreviations( self ) -> List[str]:
-        """ Returns a list of all possible BBB codes. """
+        """
+        Returns a list of all possible BBB codes.
+        """
         return [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']]
         #return self.__DataDicts['referenceAbbreviationDict'].keys() # Why didn't this work?
 
@@ -213,7 +222,7 @@ class BibleBooksCodes:
         """
         if myList is None: return self.__DataDicts['sequenceList']
         # They must have given us their list of books
-        assert isinstance( myList, list )
+        assert isinstance( myList, (list,tuple,set) )
         if not myList: return [] # Return an empty list if that's what they gave
         for something in myList: # Something can be a BBB string or a tuple
             BBB = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple

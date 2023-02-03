@@ -68,6 +68,7 @@ Some notes about internal formats:
 CHANGELOG:
     2022-06-05 quieten makeBookCVIndex print statement
     2022-07-31 added items() methods to indexes
+    2023-02-03 improved indexing of non-chapter books
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional
@@ -87,10 +88,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-02-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.80'
+PROGRAM_VERSION = '0.81'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -288,8 +289,11 @@ class InternalBibleBookCVIndex:
             if C != '-1': # presumably no more chapters
                 return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContext()
             # else it's a bit more complicated finding the introduction because mostly there's no chapter zero
-            nextIndexEntry = self.__indexData[('1','0')]
-            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContext()
+            try:
+                nextIndexEntry = self.__indexData[('1','0')]
+                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContext()
+            except KeyError: # give up and just return everything
+                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContext()
     # end of InternalBibleBookCVIndex.getChapterEntriesWithContext
 
 
@@ -315,6 +319,7 @@ class InternalBibleBookCVIndex:
         from BibleOrgSys.Internals.InternalBibleBook import OUR_HEADING_BLOCK_MARKERS
 
         fnPrint( DEBUGGING_THIS_MODULE, "\nInternalBibleBookCVIndex.makeBookCVIndex( {} )".format( givenBibleEntries ) )
+        assert givenBibleEntries, f"{self.workName} {self.BBB} {givenBibleEntries=}"
         self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
         self.__indexData:Dict[Tuple[str,str],InternalBibleBookCVIndexEntry] = {}
         errorData:List[str] = []
@@ -392,7 +397,7 @@ class InternalBibleBookCVIndex:
             # It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
             indexEntryLineCount = 0 # indexEntryLineCount is the number of datalines pointed to by this index entry
-            strC, strV = '0', '0'
+            strC, strV = '-1', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  makeBookCVIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                 marker = entry.getMarker()
@@ -589,6 +594,7 @@ class InternalBibleBookCVIndex:
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                 assert not contextMarkerList # Should be empty at end if nesting for the book is correct
 
+        assert self.__indexData, f"{self.workName} {self.BBB} {givenBibleEntries=} {self.__indexData=}"
         self._indexedFlag = True
         #if 0:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self )
@@ -901,14 +907,14 @@ class InternalBibleBookSectionIndex:
         """
         Just display a simplified view of the list of entries.
         """
-        result = "InternalBibleBookSectionIndex object for {}:".format( self.BBB )
-        try: result += "\n  {} index entries".format( len( self.__indexData ) )
-        except AttributeError: result += "\n  Index is empty"
-        try: result += " created from {} data entries".format( len( self.givenBibleEntries ) )
-        except AttributeError: pass # ignore it
+        result = f"InternalBibleBookSectionIndex object for {BBB}:"
+        try: result = f"{result}\n  {len( self.__indexData )} index entries"
+        except AttributeError: result = f"{result}\n  Index is empty"
+        try: result = f"{result} created from {len( self.givenBibleEntries )} data entries"
+        except AttributeError: pass # just ignore it
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.__indexData), 1 ) )
-            except ( AttributeError, ZeroDivisionError ): pass # ignore it
+            try: result = f"{result}\n  {round( len(self.givenBibleEntries)/len(self.__indexData), 1 )} average data entries per index entry"
+            except ( AttributeError, ZeroDivisionError ): pass # just ignore it
         #try:
             #for j, key in enumerate( sorted( self.__indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
