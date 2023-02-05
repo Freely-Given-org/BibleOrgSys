@@ -77,7 +77,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-02-05' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -2953,7 +2953,8 @@ class InternalBibleBook:
             The second list contains an entry for each missing verse in the book (not including verses that are missing at the END of a chapter).
             The third list contains an entry for all combined verses in the book.
             The fourth list contains an entry for all reordered verse in the book.
-        Note that all chapter and verse values are returned as strings not integers.
+        Note that all chapter and verse values are returned as strings not integers
+            (to copy with weird CV schemes in some of the less common Bible books)
         """
         if not self._processedFlag:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getVersification'" )
@@ -2980,13 +2981,13 @@ class InternalBibleBook:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} chapter {}".format( self.BBB, chapterText ) )
                 chapterNumber = int( chapterText)
                 if chapterNumber != lastChapterNumber+1:
-                    versificationErrors.append( _("{} ({} after {}) USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
-                    logging.error( _("USFM chapter numbers out of sequence in {} Bible book {} ({} after {})").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
+                    versificationErrors.append( _("{} ('{}' after '{}') USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
+                    logging.error( _("USFM chapter numbers out of sequence in {} Bible book {} ('{}' after '{}')").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
                 verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
                 versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Encountered cp field {}").format( self.BBB, chapterNumber, lastVerseNumberString, text ) )
-                logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.BBB ) )
+                logging.warning( _("Encountered cp field '{}' after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.BBB ) )
             elif marker == 'v':
                 if chapterText == '0':
                     versificationErrors.append( _("{} {} Missing chapter number field before verse {}").format( self.BBB, chapterText, text ) )
@@ -2997,11 +2998,13 @@ class InternalBibleBook:
                     continue
                 verseText = text
                 doneWarning = False
-                for char in 'abcdefghijklmnopqrstuvwxyz[]()\\':
+                if not verseText.isdigit():
+                    logging.info( f"getVersification found non-digit verse text {self.BBB} {chapterNumber} '{verseText}'" )
+                for char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ[]()\\':
                     if char in verseText:
                         if not doneWarning:
-                            versificationErrors.append( _("{} {} Removing letter(s) from USFM verse number {} in Bible book").format( self.BBB, chapterText, verseText ) )
-                            logging.info( _("Removing letter(s) from USFM verse number {} in Bible book {} {}").format( verseText, self.BBB, chapterText ) )
+                            versificationErrors.append( _("{} {} Removing letter(s) and/or brackets from USFM verse number {} in Bible book").format( self.BBB, chapterText, verseText ) )
+                            logging.info( _("Removing letter(s) and/or brackets from USFM verse number {} in Bible book {} {}").format( verseText, self.BBB, chapterText ) )
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
@@ -3056,7 +3059,7 @@ class InternalBibleBook:
                     logging.error( _("Invalid verse number digits in Bible book {} {} {}").format( self.BBB, chapterText, verseNumberString ) )
                     newString = ''
                     for char in verseNumberString:
-                        if char.isdigit(): newString += char
+                        if char.isdigit(): newString = f'{newString}{char}'
                         else: break
                     verseNumber = int(newString) if newString else 999
                 try:
@@ -3069,15 +3072,16 @@ class InternalBibleBook:
                     lastVerseNumber = int(newString) if newString else 999
                 if verseNumber != lastVerseNumber+1:
                     if verseNumber <= lastVerseNumber:
-                        versificationErrors.append( _("{} {} ({} after v{}) USFM verse numbers out of sequence in Bible book").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
-                        logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after v{})").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
+                        versificationErrors.append( _("{} {} ('{}' after '{}') USFM verse numbers out of sequence in Bible book").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
+                        logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ('{}' after '{}')").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
                         reorderedVerses.append( (chapterText, lastVerseNumberString, verseText,) )
                     else: # Must be missing some verse numbers
-                        versificationErrors.append( _("{} {} Missing USFM verse number(s) between {} and {} in Bible book").format( self.BBB, chapterText, lastVerseNumberString, verseNumberString ) )
-                        logging.info( _("Missing USFM verse number(s) between {} and {} in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.BBB, chapterText ) )
+                        versificationErrors.append( _("{} {} Missing USFM verse number(s) between '{}' and '{}' in Bible book").format( self.BBB, chapterText, lastVerseNumberString, verseNumberString ) )
+                        logging.info( _("Missing USFM verse number(s) between '{}' and '{}' in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.BBB, chapterText ) )
                         for number in range( lastVerseNumber+1, verseNumber ):
                             omittedVerses.append( (chapterText, str(number),) )
                 lastVerseNumberString = endVerseNumberString
+        assert chapterText.isdigit() and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
         versification.append( (chapterText, lastVerseNumberString,) ) # Append the verse count for the final chapter
         #if reorderedVerses: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Reordered verses in", self.BBB, "are:", reorderedVerses )
         if versificationErrors: self.checkResultsDictionary['Versification Errors'] = versificationErrors
@@ -3096,7 +3100,9 @@ class InternalBibleBook:
             assert self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None # also
             versificationResult = self.getVersification()
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, versificationResult )
-            if versificationResult is None: logging.critical( "getVersificationIfNecessary() got nothing!" )
+            if versificationResult is None:
+                logging.critical( "getVersificationIfNecessary() got nothing!" )
+                if DEBUGGING_THIS_MODULE: why_no_versification_result
             else:
                 self.versificationList, self.omittedVersesList, self.combinedVersesList, self.reorderedVersesList = versificationResult
     # end of InternalBibleBook.getVersificationIfNecessary
@@ -5093,7 +5099,7 @@ class InternalBibleBook:
 
         Returns None if there is no such chapter.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {C!r} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getNumVerses( {C=} )" )
 
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( "getNumVerses was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
@@ -5101,7 +5107,6 @@ class InternalBibleBook:
         self.getVersificationIfNecessary()
         for thisC,thisNumVerses in self.versificationList:
             if thisC == C:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "NumVerses", thisNumVerses )
                 return int( thisNumVerses )
     # end of InternalBibleBook.getNumVerses
 
@@ -5122,9 +5127,14 @@ class InternalBibleBook:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert self._processedLines
             assert self._indexedCVFlag
+
         if isinstance( BCVReference, tuple ) and len(BCVReference)==2: # no verse number specified
             # We need an entire chapter of verses
             return self._CVIndex.getChapterEntriesWithContext( BCVReference[1] ) # Gives a KeyError if not found
+        if isinstance( BCVReference, tuple ) and len(BCVReference)==1: # no chapter number specified
+            # We need an entire book
+            return self._CVIndex.givenBibleEntries, [] # Whole book, empty context
+
         # else we only need one verse
         if isinstance( BCVReference, tuple ):
             assert len(BCVReference) == 3

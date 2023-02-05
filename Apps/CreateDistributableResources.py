@@ -121,16 +121,14 @@ def runGitPull( gitFolderpath ) -> bool:
         #with open( os.path.join( outputFolderpath, 'ScriptOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programOutputString )
         if programOutputString.endswith( '\n' ):
             programOutputString = programOutputString[:-1] # Remove unneeded EOL character
-            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 0:
-                print( f"  {gitFolderpath} git response: {programOutputString!r}" ) # Use REPR so it all stays on one line
+            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  {gitFolderpath} git response: {programOutputString!r}" ) # Use REPR so it all stays on one line
     else: programOutputString = None
     if programErrorOutputBytes:
         programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors='replace' )
         #with open( os.path.join( outputFolderpath, 'ScriptErrorOutput.txt" ), 'wt', encoding='utf-8' ) as myFile: myFile.write( programErrorOutputString )
         if programErrorOutputString.endswith( '\n' ):
             programErrorOutputString = programErrorOutputString[:-1] # Remove unneeded EOL character
-        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-            print( f"  git ERROR response: {programErrorOutputString!r}" ) # Use REPR so it all stays on one line
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  git ERROR response: {programErrorOutputString!r}" ) # Use REPR so it all stays on one line
     changedFlag = programOutputString!='Already up to date.' and not programErrorOutputBytes
     if PROCESS_CHANGES_ONLY: print( f"    Returning haveChanges={changedFlag}" )
     return changedFlag
@@ -144,8 +142,7 @@ def makePickle( abbreviation:str, BibleObject, metadataDict:dict, outputFolderpa
 
     Test if necessary.
     """
-    if DEBUGGING_THIS_MODULE:
-        print( "makePickle( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
+    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "makePickle( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
 
     BibleObject.toPickledBible( outputFolderpath=outputFolderpath, metadataDict=metadataDict,
                         dataLevel=DEFAULT_DATA_LEVEL, zipOnly=True )

@@ -335,8 +335,8 @@ class MLWriter:
         char_strings, adjExtras = [], InternalBibleExtraList()
         for ix,char in enumerate(rawTextString):
             if char in ESCAPE_MAP:
-                print(f"{ix=} {char=}")
-        print(f"{rawTextString=} {char_strings=} {extras=} {adjExtras=}")
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{ix=} {char=}")
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{rawTextString=} {char_strings=} {extras=} {adjExtras=}")
         raise Exception("MLWriter: escape characters with extras NOT WRITTEN YET")
         return ''.join(char_strings), adjExtras
     # end of MLWriter.escape_characters_with_extras static function

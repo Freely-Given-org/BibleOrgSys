@@ -97,9 +97,8 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                 if line.startswith( '#' ): continue # comment line
                 if line == '---': state = 0; continue # start of table
                 numLeadingSpaces = len(line) - len( line.lstrip( ' ' ) )
-                if debuggingThisFunction:
-                    print( f"\nResult dict ({len(dataDict)}) = {dataDict}")
-                    print( f'Line {j}  State={state}  k1={key1!r} k2={key2!r}  numLS={numLeadingSpaces}: {line!r}' )
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"\nResult dict ({len(dataDict)}) = {dataDict}")
+                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'Line {j}  State={state}  k1={key1!r} k2={key2!r}  numLS={numLeadingSpaces}: {line!r}' )
 
                 # Check if we need to go back a level
                 if numLeadingSpaces==0:

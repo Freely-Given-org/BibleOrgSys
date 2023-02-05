@@ -679,9 +679,6 @@ class USFMBible( Bible ):
             logging.critical( "USFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         self.doPostLoadProcessing()
-
-        # for BBB,bookObject in self.books.items():
-        #     print( "USFMBible.loadBooks", id(self), BBB, id(bookObject), id(bookObject.containerBibleObject) )
     # end of USFMBible.loadBooks
 
     def load( self ):

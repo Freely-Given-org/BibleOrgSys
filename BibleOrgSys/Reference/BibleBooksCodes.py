@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-05' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.91'
@@ -755,18 +755,18 @@ class BibleBooksCodes:
 
         BBB is always three characters starting with an UPPERCASE LETTER.
         """
+        assert BBB in BibleBooksCodes(), f"BibleBooksCodes.tidyBBB {BBB=}"
         return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
-    # end of tidyBBB
+    # end of BibleBooksCodes.tidyBBB
 
     @staticmethod
     def tidyBBBs( BBBs:List[str] ) -> List[str]:
         """
         Change a list of book codes like SA1 to the conventional 1SA.
         """
-        return [BibleBooksCodes.tidyBBB(BBB) for BBB in BBBs]
-# end of tidyBBBs
-
-
+        assert all([BBB in BibleBooksCodes() for BBB in BBBs]), f"BibleBooksCodes,tidyBBBs {BBBs=}"
+        return [BibleBooksCodes().tidyBBB(BBB) for BBB in BBBs]
+    # end of BibleBooksCodes.tidyBBBs
 
 # end of BibleBooksCodes class
 
@@ -808,6 +808,7 @@ def briefDemo() -> None:
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])}" )
 
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:
@@ -854,6 +855,7 @@ def fullDemo() -> None:
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
 
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:

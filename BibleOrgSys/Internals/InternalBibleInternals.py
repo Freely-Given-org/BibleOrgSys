@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-01-25' # by RJH
+LAST_MODIFIED_DATE = '2023-02-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.83'
+PROGRAM_VERSION = '0.85'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -133,13 +133,20 @@ BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ('iot',)
     list       Inserted at the start of lists (before li markers)
 """
 
-BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS + ('ms1',)
+BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS \
+                            + USFM_BIBLE_PARAGRAPH_MARKERS + ('ms1','ms2','ms3')
 
 #BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS )
 BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
+# (46) ['¬c', '¬v', '¬headers', '¬intro', '¬ilist', '¬chapters', '¬list', '¬iot', '¬p', '¬pc', '¬pr',
+#       '¬m', '¬mi', '¬pm', '¬pmo', '¬pmc', '¬pmr', '¬cls',
+#       '¬pi','¬pi1','¬pi2','¬pi3','¬pi4', '¬ph','¬ph1','¬ph2','¬ph3','¬ph4',
+#       '¬q','¬q1','¬q2','¬q3','¬q4', '¬qr', '¬qm','¬qm1','¬qm2','¬qm3','¬qm4',
+#       '¬li','¬li1','¬li2','¬li3','¬li4', '¬ms1','¬ms2','¬ms3']
+
 
 #BOS_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS + BOS_END_MARKERS
 
@@ -762,6 +769,7 @@ class InternalBibleEntryList:
         self.data = []
         if initialData is not None:
             if isinstance( initialData, list ) or isinstance( initialData, InternalBibleEntryList ):
+                # TODO: Can this be more efficient with self.data.extend ???
                 for something in initialData:
                     self.append( something )
             else: logging.critical( "InternalBibleEntryList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
@@ -919,7 +927,7 @@ def fullDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
 
     resultDict = parseWordAttributes('testWork', 'GEN','1','2', 'word|x=pos="noun"')
-    print( f"resultDict = {resultDict}" )
+    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"resultDict = {resultDict}" )
     assert resultDict == {'word': 'word', 'x': 'pos="noun"'}
 
     #IBB = InternalBibleInternals( 'GEN' )

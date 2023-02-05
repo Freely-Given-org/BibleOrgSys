@@ -88,10 +88,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-02-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.81'
+PROGRAM_VERSION = '0.82'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -489,7 +489,7 @@ class InternalBibleBookCVIndex:
                     for char in strV:
                         if char.isdigit(): digitV += char
                         else: # the first non-digit in the verse "number"
-                            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                            logging.warning( f"InternalBibleBookCVIndex.makeBookCVIndex() ignored non-digits in verse for index: {self.BBB} {strC}:{strV}" )
                             break # ignore the rest
                     #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
                     saveCV, saveJ = (strC,digitV,), revertToJ
@@ -707,7 +707,10 @@ class InternalBibleBookCVIndex:
                     if marker == 'cp':
                         if self.BBB not in ('ESG','SIR'):
                             assert previousMarker in ('c','c~',None) # WEB Ps 151 gives None -- not totally sure why yet?
-                    elif marker == 'c#': assert nextMarker in ( 'v', 'vp#', )
+                    elif marker == 'c#':
+                        if nextMarker not in ( 'v', 'vp#', ):
+                            logging.critical( f"InternalBibleBookCVIndex.checkBookCVIndex: Probable encoding error with unexpected '{nextMarker}' following '{marker}' in {self.workName} {self.BBB} {C}:{V} {entries}" )
+                            if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                     elif marker == 'v':
                         if foundMarkers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleBookCVIndex.checkBookCVIndex: Probable v encoding error in {} {} {}:{} {}".format( self.workName, self.BBB, C, V, entries ) )

@@ -2710,7 +2710,7 @@ class InternalBible:
                                             # elif POS in ( 'D', ): assert morph.count( ',' ) == 10
                                             # else: print( POS, morph, morph.count(',') ); halt # Unrecognised morph POS
                                         else:
-                                            print( f"Unrecognised language code in '{morph}' from {BBB} {C}:{V} '{wField}'" )
+                                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Unrecognised language code in '{morph}' from {BBB} {C}:{V} '{wField}'" )
                                             # halt # Unrecognised morph language code
                                         morph = morph[3:] # No need for that language code
                                     else: # only one is UHB NEH 1:6

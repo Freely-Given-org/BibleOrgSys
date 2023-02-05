@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-01' # by RJH
+LAST_MODIFIED_DATE = '2023-02-04' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.59'
@@ -574,10 +574,10 @@ class USFMBibleBook( BibleBook ):
                         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended1b {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker == 'w' and lastMarker in ('ts','sp'): # \\ts: A common unfoldingWord USFM encoding error; \\sp in Hindu SNG
-                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
+                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker, text = 'p', '\\w {text}'
                     elif marker == 'p~' and lastMarker == 'ts': # A common unfoldingWord USFM encoding error
-                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
+                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     elif marker=='qs*' and not text.strip(): # selah character ending marker on its own line
                         pass
@@ -585,7 +585,7 @@ class USFMBibleBook( BibleBook ):
                         pass
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
-                        logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after '{lastMarker}': {marker}='{text}'" )
+                        logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
                         if self.doExtraChecking: halt
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
@@ -614,11 +614,11 @@ class USFMBibleBook( BibleBook ):
                         vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended3 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
                         marker = text = None # Seems to make no difference
                     elif marker == 'p~' and lastMarker in ('ts','sp','d'): # A common unfoldingWord USFM encoding error
-                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after '{lastMarker}': {marker}='{text}'" )
+                        logging.error( f"USFMBibleBook.load() '{self.workName}' {self.BBB}_{C}:{V} added new paragraph for encoding error after {lastMarker}='{lastText}': {marker}='{text}'" )
                         marker = 'p'
                     else:
                         # print( 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
-                        logging.critical( f"Programming error ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after '{lastMarker}': {marker}='{text}'" )
+                        logging.critical( f"Programming error ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text {lastMarker}='{lastText}': {marker}='{text}'" )
                         if self.doExtraChecking: halt
                 elif marker and marker[0] == 'z': # it's a custom marker
                     if text:
