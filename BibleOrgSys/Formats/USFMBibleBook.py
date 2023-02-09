@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-04' # by RJH
+LAST_MODIFIED_DATE = '2023-02-09' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.59'
@@ -282,7 +282,9 @@ class USFMBibleBook( BibleBook ):
                     else: # self-closing was ok
                         variables['level'] += 1
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
-                        if variables['level'] > MAX_EXPECTED_NESTING_LEVELS: halt
+                        if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
+                            logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.BBB}_{C}:{V} {marker}='{text}'" )
+                            halt
                         dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                     + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
@@ -701,7 +703,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB ):
+    def demoFile( name, filename, folder, BBB, encoding ):
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
@@ -733,7 +735,7 @@ def briefDemo() -> None:
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( name, filename, testFolder, BBB )
+            demoFile( name, filename, testFolder, BBB, encoding )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
@@ -743,7 +745,7 @@ def briefDemo() -> None:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
-                demoFile( name, filename, testFolder, BBB )
+                demoFile( name, filename, testFolder, BBB, encoding )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
@@ -763,7 +765,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    def demoFile( name, filename, folder, BBB ):
+    def demoFile( name, filename, folder, BBB, encoding ):
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading {} from {}{}…").format( BBB, filename, f" from {folder}" if BibleOrgSysGlobals.verbosityLevel > 2 else '' ) )
         UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
@@ -788,14 +790,14 @@ def fullDemo() -> None:
 
     if 1: # Test individual files -- choose one of these or add your own
         name, encoding, testFolder, filename, BBB = "USFM3Test", 'utf-8', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/'), '81-COLeng-amp.usfm', 'COL' # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
+        name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "WEB", 'utf-8', Path( '/mnt/SSDs/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, BBB = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( name, filename, testFolder, BBB )
+            demoFile( name, filename, testFolder, BBB, encoding )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test a whole folder full of files
@@ -805,7 +807,7 @@ def fullDemo() -> None:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
-                demoFile( name, filename, testFolder, BBB )
+                demoFile( name, filename, testFolder, BBB, encoding )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
