@@ -5,7 +5,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-05-06' # by RJH
+LAST_MODIFIED_DATE = '2023-02-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
 PROGRAM_VERSION = '0.82'
@@ -79,14 +79,14 @@ class BibleBooksCodesConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( 'nameEnglish', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber',
+        self._compulsoryElements = ( 'bookNameEnglishGuide', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber',
                                     'typicalSection' )
         self._optionalElements = ( 'expectedChapters', 'SBLAbbreviation', 'OSISAbbreviation', 'SwordAbbreviation',
                                     'CCELNumber', 'USFMAbbreviation', 'USFMNumber', 'USXNumber', 'UnboundCode',
                                     'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
                                     'BibleWorksAbbreviation', 'ByzantineAbbreviation',
                                     'possibleAlternativeAbbreviations', 'possibleAlternativeBooks' )
-        self._uniqueElements = ( 'nameEnglish', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber' ) + \
+        self._uniqueElements = ( 'bookNameEnglishGuide', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber' ) + \
                     ( 'USXNumber', 'UnboundCode', 'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
                       'BibleWorksAbbreviation', 'ByzantineAbbreviation' )
 
@@ -315,7 +315,7 @@ class BibleBooksCodesConverter:
         for element in self._XMLTree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
-            nameEnglish = element.find('nameEnglish').text # This name is really just a comment element
+            nameEnglish = element.find('bookNameEnglishGuide').text # This name is really just a comment element
             referenceAbbreviation = element.find('referenceAbbreviation').text
             if referenceAbbreviation.upper() != referenceAbbreviation:
                 logging.error( _("Reference abbreviation {!r} should be UPPER CASE").format( referenceAbbreviation ) )
@@ -361,7 +361,7 @@ class BibleBooksCodesConverter:
                                                     'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString,
                                                     'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
                                                     'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
-                                                    'nameEnglish':nameEnglish, 'typicalSection':typicalSection }
+                                                    'bookNameEnglishGuide':nameEnglish, 'typicalSection':typicalSection }
             if 'referenceNumber' in self._compulsoryElements or ID:
                 if 'referenceNumber' in self._uniqueElements: assert intID not in myIDDict # Shouldn't be any duplicates
                 if intID in myIDDict: halt
@@ -371,7 +371,7 @@ class BibleBooksCodesConverter:
                                     'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString,
                                     'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
                                     'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
-                                    'nameEnglish':nameEnglish, 'typicalSection':typicalSection }
+                                    'bookNameEnglishGuide':nameEnglish, 'typicalSection':typicalSection }
             if 'sequenceNumber' in self._compulsoryElements or sequenceNumber:
                 if 'sequenceNumber' in self._uniqueElements: assert intSequenceNumber not in sequenceNumberList # Shouldn't be any duplicates
                 if intSequenceNumber in sequenceNumberList: halt

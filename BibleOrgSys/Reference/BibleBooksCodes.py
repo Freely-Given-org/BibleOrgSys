@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-05' # by RJH
+LAST_MODIFIED_DATE = '2023-02-12' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.91'
@@ -691,7 +691,7 @@ class BibleBooksCodes:
             They are not intended to be used for a proper international human interface.
             The first one in the list is supposed to be the more common.
         """
-        return self.__DataDicts['referenceAbbreviationDict'][BBB]['nameEnglish'].split('/',1)[0].strip()
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['bookNameEnglishGuide'].split('/',1)[0].strip()
     # end of BibleBooksCodes.getEnglishName_NR
 
     def getEnglishNameList_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
@@ -702,7 +702,7 @@ class BibleBooksCodes:
             They are not intended to be used for a proper international human interface.
             The first one in the list is supposed to be the more common.
         """
-        names = self.__DataDicts['referenceAbbreviationDict'][BBB]['nameEnglish']
+        names = self.__DataDicts['referenceAbbreviationDict'][BBB]['bookNameEnglishGuide']
         return [name.strip() for name in names.split('/')]
     # end of BibleBooksCodes.getEnglishNameList_NR
 
