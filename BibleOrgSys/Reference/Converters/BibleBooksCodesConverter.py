@@ -42,7 +42,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-12' # by RJH
+LAST_MODIFIED_DATE = '2023-02-13' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
 PROGRAM_VERSION = '0.82'
@@ -346,7 +346,7 @@ class BibleBooksCodesConverter:
             else:
                 typicalSection = element.find('typicalSection').text
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'typicalSection', repr(typicalSection) )
-                if BibleOrgSysGlobals.debugFlag: assert typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK','???')
+                if BibleOrgSysGlobals.debugFlag: assert typicalSection in ('OT','OT+','NT','NT+','DC','PS','DSS5', 'FRT','BAK','???'), f"{typicalSection=}"
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
