@@ -45,7 +45,7 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-09' # by RJH
+LAST_MODIFIED_DATE = '2023-02-14' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
 PROGRAM_VERSION = '0.59'
@@ -138,7 +138,8 @@ class USFMBibleBook( BibleBook ):
         # end of doaddLine
 
 
-        MAX_EXPECTED_NESTING_LEVELS = 20 # Don't allow unlimited nesting
+        MAX_EXPECTED_NESTING_LEVELS = 25 # Don't allow unlimited nesting -- 22 in UST Rom 9:21-22
+        # NOTE: It's encoded as nested \zaln-s fields, but logically it's a sequence not nesting
 
         def handleUWEncoding( givenMarker:str, givenText:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
             """
@@ -284,7 +285,6 @@ class USFMBibleBook( BibleBook ):
                         if variables['level'] > variables['maxLevel']: variables['maxLevel'] = variables['level']
                         if variables['level'] > MAX_EXPECTED_NESTING_LEVELS:
                             logging.critical( f"findInternalStarts exceeded max nesting levels ({MAX_EXPECTED_NESTING_LEVELS}) at {self.BBB}_{C}:{V} {marker}='{text}'" )
-                            halt
                         dPrint( 'Never', debuggingThisFunction, f"      findInternalStarts: Increased level to {variables['level']}" )
                         variables['text'] += ('|' if variables['text'] else '') \
                                     + text[ixAlignmentStart+9:ixAlignmentStartEnding].strip() # Can still be a space after the |
