@@ -50,10 +50,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-02-15' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.11'
+PROGRAM_VERSION = '0.12'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -645,35 +645,36 @@ class USFM3Markers:
         for j, (m, ix, x, mx) in enumerate(firstResult):
             if self.isNewlineMarker( m ):
                 if cx:
-                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    # TODO: We really need to clean up this debugging code
+                    logger = logging.critical if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT1 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
-                        assert not cx
+                        assert not cx, f"USFM3Markers.getMarkerListFromText: ABOUT1 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}"
                 cx = [] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "rst", cx )
             elif x==' ' or x=='': # Open marker in line or at end of line
                 if cx \
                 and cx[0] not in ('f','fr','fq') and m not in ('fr','fq','ft'):
                     # TODO: Investigate why we get this for fqa, xo, etc.
-                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT2 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
-                        assert not cx or ( cx[0] in ('f','fr','fq') and m in ('fr','fq','ft') )
+                        assert not cx or ( cx[0] in ('f','fr','fq') and m in ('fr','fq','ft') ), f"USFM3Markers.getMarkerListFromText: ABOUT2 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}"
                 cx = [m] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "set", cx )
             elif x=='+': cx.append( m ) #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "add", m, cx )
             elif x=='-':
                 if cx: cx.pop() #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "del", m, cx )
                 else:
-                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: WHY IS CX EMPTY WHEN ABOUT TO POP {cx} after {j} {m} {ix} {x} {mx}???" )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
-                        assert cx
+                        assert cx, f"USFM3Markers.getMarkerListFromText: WHY IS CX EMPTY WHEN ABOUT TO POP {cx} after {j} {m} {ix} {x} {mx}???"
             elif x=='*':
                 if len(cx) != 1 \
                 or (cx[0]!=m and m!='ff' and cx[0] not in ('ft',) ):
-                    logger = logging.critical if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
+                    logger = logging.critical if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag else logging.error
                     logger( f"USFM3Markers.getMarkerListFromText: ABOUT3 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}" )
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
-                        assert len(cx)==1 and cx[0]==m and m=='ff' and cx[0] in ('ft',)
+                        assert len(cx)==1 and cx[0]==m and m=='ff' and cx[0] in ('ft',), f"USFM3Markers.getMarkerListFromText: ABOUT3 TO CLEAR {cx} after {j} {m} {ix} {x} {mx}"
                 cx = [] #; vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "clr", cx )
             else:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM3Markers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
@@ -691,7 +692,7 @@ class USFM3Markers:
             if x in (' ','+') and len(cx)>0: # i.e., a character start marker
                 # Find where this marker is closed
                 cxi = len(cx) - 1
-                assert cx[cxi] == m
+                assert cx[cxi] == m, f"In USFM3Markers.getMarkerListFromText: {cxi=} {cx[cxi]=}  {m=}"
                 for k in range( j+1, rLen ):
                     m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
                     if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
