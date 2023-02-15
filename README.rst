@@ -1,4 +1,4 @@
-ReadMe.txt for BibleOrgSys
+ReadMe.rst for BibleOrgSys
 
 Enclosed are the data and program files for the Bible Organisational System.
 
