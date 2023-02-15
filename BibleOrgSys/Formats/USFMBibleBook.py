@@ -45,10 +45,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-14' # by RJH
+LAST_MODIFIED_DATE = '2023-02-15' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.59'
+PROGRAM_VERSION = '0.60'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -139,7 +139,7 @@ class USFMBibleBook( BibleBook ):
 
 
         MAX_EXPECTED_NESTING_LEVELS = 25 # Don't allow unlimited nesting -- 22 in UST Rom 9:21-22
-        # NOTE: It's encoded as nested \zaln-s fields, but logically it's a sequence not nesting
+        # NOTE: It's encoded as either nested or overlapping \zaln-s fields, but logically it's a sequence of original language words
 
         def handleUWEncoding( givenMarker:str, givenText:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
             """
@@ -459,8 +459,9 @@ class USFMBibleBook( BibleBook ):
                 logging.critical( _("Found mismatched w fields in \\{}='{}' after {} {} {}:{}") \
                             .format( marker, text, self.workName, self.BBB, C, V ) )
 
-            if marker == 's5': # it's a Door43 translatable section, i.e., obsolete chunking marker
+            if marker == 's5': # it's a Door43 translatable section, i.e., not a section heading at all but an obsolete chunking marker
                 # We remove these
+                # TODO: Shouldn't we be converting these to the correct \\ts\\* ???
                 if text:
                     if text.strip():
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (WITH text)") \
@@ -485,8 +486,9 @@ class USFMBibleBook( BibleBook ):
                     logging.warning( _("Removed '\\{}' Door43 custom marker after {} {}:{} at beginning of line (with no text)") \
                                         .format( marker, self.BBB, C, V ) )
                     continue # so it just gets ignored, effectively deleted
-            elif marker == 'ts\\*': # it's a Door43 translatable section, i.e., self-closed chunking marker
+            elif marker == 'ts\\*': # it's a Door43 translatable section, i.e., self-closed chunking milestone
                 # We remove these
+                # TODO: Shouldn't we be keeping these?
                 if text:
                     if text.strip():
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (WITH text)") \
@@ -509,7 +511,7 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with following whitespace)") \
                                             .format( marker, self.BBB, C, V ) )
                         continue # so it just gets ignored, effectively deleted
-                else: # have \\ts\\* field without text!
+                else: # have \\ts\\* field without text (as it should be)
                     loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with no text)") \
                                         .format( self.BBB, C, V, marker ) )
                     logging.warning( _("Removed '\\{}' Door43 chunking marker after {} {}:{} at beginning of line (with no text)") \
