@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -119,7 +119,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2022-12-30' # by RJH
+LAST_MODIFIED_DATE = '2023-02-16' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -128,8 +128,8 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-OSISNameSpace = 'http://www.bibletechnologies.net/2003/OSIS/namespace'
-OSISSchemaLocation = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd'
+OSISNameSpace = 'http://www.bibletechnologies.net/2003/OSIS/namespace' # NOTE: not a working URL but doesn't matter
+OSISSchemaLocation = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd' # NOTE: not a working URL but doesn't matter
 
 
 logger = logging.getLogger( SHORT_PROGRAM_NAME )
@@ -239,7 +239,7 @@ class BibleWriter( InternalBible ):
 
 
     def toPickledBible( self, outputFolderpath:Optional[Path]=None,
-                            metadataDict:Optional[Dict[str,Any]]=None, dataLevel=1, zipOnly:bool=False ):
+                            metadataDict:Optional[Dict[str,Any]]=None, dataLevel:int=1, zipOnly:bool=False ) -> bool:
         """
         Saves the Python book objects as pickle files
             then the Bible object (less books)

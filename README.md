@@ -59,9 +59,9 @@ Eventually the BibleOrgSys became the basis for the Freely-Given.org [Bible Drop
 
 ## Essential requirements for an easy-to-use Bible library
 
-1. A way to define a Bible along with metadata (such as name, abbreviation, copyright, licence, etc., etc.)
+1. A way to define a Bible along with metadata (such as name, abbreviation, publication year, translators, copyright, licence, etc., etc.)
 1. Must be able to handle original language (Hebrew, Greek) Bibles as well as translations in any world language
-2. A way to iterate "works", "books", chapters, and verses (W/B/C/V)
+2. A way to iterate works, "books", chapters, and verses (W/B/C/V)
 2. A way to communicate this W/B/C/V information between windows and even between apps -- see [here](https://GitHub.com/Freely-Given-org/biblesync)
 3. A way to map between different versifications, i.e., the numbering of chapters and verses can differ but we still want to find the same content. (NOTE: Allow versification mapping is allowed for in most parts of the system, this vital part has never been completed -- see [here](https://github.com/Copenhagen-Alliance/versification-specification) for more information on what is expected.)
 1. A standard, internal Bible representation
@@ -78,4 +78,4 @@ We are also investigating ways of speeding up the system including:
 
 1. C or Rust functions for CPython
 2. Python compilers such as PyPy or Py2Exe or PyInstaller
-3. A stand-alone Rust or Go Bible compiler (to build to our internal Bible format)
+3. A stand-alone Rust or Golang (Go) Bible compiler (to build to our internal Bible format)
