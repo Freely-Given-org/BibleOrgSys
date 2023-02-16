@@ -5,7 +5,7 @@
 #
 # App to create zipped PickledBible for distributable Bible/commentary resources.
 #
-# Copyright (C) 2018-2022 Robert Hunt
+# Copyright (C) 2018-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,6 +35,7 @@ Use --export (-x) to also do BibleDropBox submissions.
 
 CHANGELOG:
     2022-06-05 reenabled all demos
+    2023-02-16 added OET RV & LV
 """
 from gettext import gettext as _
 import os
@@ -58,10 +59,10 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2022-07-24' # by RJH
+LAST_MODIFIED_DATE = '2023-02-16' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
-PROGRAM_VERSION = '0.31'
+PROGRAM_VERSION = '0.32'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -78,13 +79,17 @@ HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM 
 DOOR43_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Door43CatalogVersions/' )
 OPEN_BIBLE_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Biblica_Open.Bible_Versions/' )
 
+FG_REPOS_FOLDERPATH = Path( '/srv/Documents/FreelyGiven/' )
+OET_REPO_FOLDERPATH = FG_REPOS_FOLDERPATH.joinpath( 'OpenEnglishTranslation--OET/' )
+
 
 # NOTE: Use --export (-x) to also do BibleDropBox submissions
 
 # Demo function will process all modules (e.g., when called from Tests/DemoTests.py)
 #   but main won't.
-PROCESS_ONE = '' # Will disable all others if set to an abbreviation, e.g., 'ASV' or 'WLC'
+PROCESS_ONE = 'OET' # Will disable all others if set to an abbreviation, e.g., 'ASV' or 'WLC'
 PROCESS_ALL_FLAG = (True or __name__ != '__main__') and not PROCESS_ONE
+PROCESS_OET_FLAG = False and not PROCESS_ONE
 PROCESS_WLC_FLAG = False and not PROCESS_ONE
 PROCESS_EBIBLE_FLAG = False and not PROCESS_ONE
 PROCESS_UNFOLDING_WORD_FLAG = False and not PROCESS_ONE
@@ -142,15 +147,21 @@ def makePickle( abbreviation:str, BibleObject, metadataDict:dict, outputFolderpa
 
     Test if necessary.
     """
-    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "makePickle( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
+    fnPrint( DEBUGGING_THIS_MODULE, "makePickle( {}, {}, {}, {} )".format( abbreviation, BibleObject.getAName(), len(metadataDict), outputFolderpath ) )
+    assert isinstance( abbreviation, str )
+    assert 1 < len(abbreviation) < 10
+    assert isinstance( BibleObject, Bible )
+    assert isinstance( metadataDict, dict )
+    assert isinstance( outputFolderpath, Path )
 
     BibleObject.toPickledBible( outputFolderpath=outputFolderpath, metadataDict=metadataDict,
                         dataLevel=DEFAULT_DATA_LEVEL, zipOnly=True )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Created {} zipped PickledBible in {}".format( abbreviation, outputFolderpath ) )
 
-    if BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
+    if BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
         pickledBible = PickledBible( outputFolderpath.joinpath( abbreviation+ZIPPED_PICKLE_FILENAME_END ) )
-        assert pickledBible.abbreviation
+        pickledBible.preload()
+        assert pickledBible.abbreviation, f"{pickledBible=} {pickledBible.abbreviation=}"
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, pickledBible ) # Just print a summary
         pickledBible.loadBooks() # Test all the books
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, pickledBible ) # Now print a new summary
@@ -184,7 +195,7 @@ def makeIt( abbreviation:str, BibleObject, metadataDict, outputFolderpath:Path, 
     assert isinstance( submit2BDB, bool )
 
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("\nLoading {}…").format( abbreviation ) )
-    BibleObject.loadBooks() # Load and process the XML books
+    BibleObject.loadBooks() # Load and process the books (if that applies to this kind of Bible)
 
     if BibleObject.suppliedMetadata is None: BibleObject.suppliedMetadata = {}
     BibleObject.suppliedMetadata['File'] = metadataDict
@@ -207,6 +218,40 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
     """
     fnPrint( DEBUGGING_THIS_MODULE, f"runCreateAll( {outputFolderpath} )" )
     assert os.path.isdir( outputFolderpath )
+
+
+### Freely-Given.org Open English Translation Readers' Version & Literal Version (OET-RV & OET-LV)
+    if PROCESS_WLC_FLAG or PROCESS_ALL_FLAG or PROCESS_ONE=='OET':
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nUpdating OET from internet…" )
+        repo_changed = runGitPull( OET_REPO_FOLDERPATH ) # Make sure we have the latest version
+        if repo_changed or not PROCESS_CHANGES_ONLY:
+            abbreviation, name = 'OET-RV', 'Open English Translation Readers’ Version'
+            thisBible = USFMBible( OET_REPO_FOLDERPATH.joinpath( 'translatedTexts/ReadersVersion/' ),
+                                                    givenName=name, givenAbbreviation=abbreviation )
+            metadataDict = {
+                            'Abbreviation': abbreviation,
+                            'WorkName': name,
+                            'About': 'A still-being-translated, exciting new Bible translation viewable at https://OpenEnglishTranslation.Bible',
+                            'Source': 'https://github.com/Freely-Given-org/OpenEnglishTranslation--OET',
+                            'Licence': 'Creative Commons Attribution 4.0 International (CC BY 4.0)',
+                            'LanguageName': 'English',
+                            'ISOLanguageCode': 'eng',
+                            }
+            makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
+
+            abbreviation, name = 'OET-LV', 'Open English Translation Literal Version'
+            thisBible = USFMBible( OET_REPO_FOLDERPATH.joinpath( 'intermediateTexts/auto_edited_VLT_USFM/' ),
+                                                    givenName=name, givenAbbreviation=abbreviation )
+            metadataDict = {
+                            'Abbreviation': abbreviation,
+                            'WorkName': name,
+                            'About': 'A still-being-developed, very literal English Bible translation viewable at https://OpenEnglishTranslation.Bible',
+                            'Source': 'https://github.com/Freely-Given-org/OpenEnglishTranslation--OET',
+                            'Licence': 'Creative Commons Attribution 4.0 International (CC BY 4.0)',
+                            'LanguageName': 'English',
+                            'ISOLanguageCode': 'eng',
+                            }
+            makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
 
 
 ### OPEN SCRIPTURES HEBREW WLC
