@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-12' # by RJH
+LAST_MODIFIED_DATE = '2023-02-27' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.91'
@@ -210,7 +210,9 @@ class BibleBooksCodes:
 
 
     def getReferenceNumber( self, BBB:str ) -> int:
-        """ Return the referenceNumber 1..999 for the given book code (referenceAbbreviation). """
+        """
+        Return the referenceNumber 1..999 for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
 
@@ -249,37 +251,58 @@ class BibleBooksCodes:
 
 
     def getCCELNumber( self, BBB:str ) -> int:
-        """ Return the CCEL number string for the given book code (referenceAbbreviation). """
+        """
+        Return the CCEL number string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['CCELNumberString']
 
 
+    def getShortAbbreviation( self, BBB:str ) -> str:
+        """
+        Return the short abbreviation string for the given book code (referenceAbbreviation).
+        """
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['shortAbbreviation']
+
+
     def getSBLAbbreviation( self, BBB:str ) -> str:
-        """ Return the SBL abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the SBL abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SBLAbbreviation']
 
 
     def getOSISAbbreviation( self, BBB:str ) -> str:
-        """ Return the OSIS abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the OSIS abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['OSISAbbreviation']
 
 
     def getSwordAbbreviation( self, BBB:str ) -> str:
-        """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the Sword abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['SwordAbbreviation']
 
 
     def getUSFMAbbreviation( self, BBB:str ) -> str:
-        """ Return the USFM abbreviation string for the given book code (referenceAbbreviation). """
+        """
+        Return the USFM abbreviation string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMAbbreviation']
 
 
     def getUSFMNumStr( self, BBB:str ) -> str:
-        """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
+        """
+        Return the two-digit USFM number string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USFMNumberString']
 
 
     def getUSXNumStr( self, BBB:str ) -> str:
-        """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
+        """
+        Return the three-digit USX number string for the given book code (referenceAbbreviation).
+        """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['USXNumberString']
 
 
@@ -296,6 +319,13 @@ class BibleBooksCodes:
         Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation).
         """
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['BibleditNumberString']
+
+
+    def getLogosNumStr( self, BBB:str ) -> str:
+        """
+        Return the one to three digit Logos number string for the given book code (referenceAbbreviation).
+        """
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['LogosNumberString']
 
 
     def getNETBibleAbbreviation( self, BBB:str ) -> str:
@@ -319,17 +349,39 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['ByzantineAbbreviation']
 
 
+    def getBBBFromShortAbbreviation( self, shortAbbreviation:str, strict:bool=False ) -> str:
+        """
+        Return the reference abbreviation string for the given short book code string.
+            NOTE: This tends to be more forgiving than more specific Bible code systems.
+
+        Also tries adding spaces in codes like 1Sa unless strict is set to True.
+        Also tries the SBL and NET book codes unless strict is set to True.
+        """
+        if strict:
+            return self.__DataDicts['shortAbbreviationDict'][shortAbbreviation.upper()][1]
+        # else: # not strict
+        try: return self.__DataDicts['shortAbbreviationDict'][shortAbbreviation.upper()][1]
+        except KeyError: # Maybe it has a space in it
+            try: return self.__DataDicts['shortAbbreviationDict'][shortAbbreviation.upper().replace(' ','')][1]
+            except KeyError: # try SBL
+                try: return self.__DataDicts['SBLAbbreviationDict'][shortAbbreviation.upper()][1]
+                except KeyError: # try NET for last desperate attempt
+                    return self.__DataDicts['NETBibleAbbreviationDict'][shortAbbreviation.upper()][1]
+
+
     def getBBBFromOSISAbbreviation( self, osisAbbreviation:str, strict:bool=False ) -> str:
         """
         Return the reference abbreviation string for the given OSIS book code string.
 
         Also tries the Sword book codes unless strict is set to True.
         """
-        if strict: return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
-        else:
-            try: return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
-            except KeyError: # Maybe Sword has an informal abbreviation???
-                return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
+        if strict:
+            return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
+        # else: # not strict
+        try: return self.__DataDicts['OSISAbbreviationDict'][osisAbbreviation.upper()][1]
+        except KeyError: # Maybe Sword has an informal abbreviation???
+            return self.__DataDicts['SwordAbbreviationDict'][osisAbbreviation.upper()][1]
+
 
     def getBBBFromUSFMAbbreviation( self, USFMAbbreviation:str, strict:bool=False ) -> str:
         """
@@ -365,7 +417,7 @@ class BibleBooksCodes:
 
         Only works for English.
         TODO: This DEFINITELY NEEDS IMPROVING !!!
-        BibleBooksNames.py has a more generic version.
+        Ah, BibleBooksNames.py has a more generic version.
 
         Returns BBB or None.
         """
@@ -384,6 +436,7 @@ class BibleBooksCodes:
         if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
             return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
+        # TODO: We need to find a way to add these into the table
         if SomeUppercaseText == 'EPJER': return 'LJE' # Fails below because both 'LJE' and 'PJE' are valid BBBs
         if SomeUppercaseText == 'DEUTERONOMY': return 'DEU' # Fails below because 'EUT' is also a valid BBB
         if SomeUppercaseText == 'JUDGES': return 'JDG' # Fails below because 'GES' is also a valid BBB
@@ -401,7 +454,6 @@ class BibleBooksCodes:
         if SomeUppercaseText == '2 CORINTHIANS': return 'CO2' # Fails below because 'INT' is also a valid BBB
         if SomeUppercaseText == '1 TIMOTHY': return 'TI1' # Fails below because 'OTH' is also a valid BBB
         if SomeUppercaseText == '2 TIMOTHY': return 'TI2' # Fails below because 'OTH' is also a valid BBB
-        # TODO: We need to find a way to add these
         if SomeUppercaseText == '1 KINGS': return 'KI1'
         if SomeUppercaseText == '2 KINGS': return 'KI2'
         if SomeUppercaseText == 'SONG OF SONGS' or SomeUppercaseText == 'SONG OF SOLOMON': return 'SNG'
@@ -489,7 +541,9 @@ class BibleBooksCodes:
 
 
     def getOSISSingleChapterBooksList( self ) -> List[str]:
-        """ Gets a list of OSIS single chapter book abbreviations. """
+        """
+        Gets a list of OSIS single chapter book abbreviations.
+        """
         results = []
         for BBB in self.getSingleChapterBooksList():
             osisAbbrev = self.getOSISAbbreviation(BBB)
@@ -679,13 +733,21 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.sortBCVReferences
 
 
+    def getBookName( self, BBB:str ):
+        """
+        Returns the original language name for a book.
+        """
+        return self.__DataDicts['referenceAbbreviationDict'][BBB]['bookName']
+    # end of BibleBooksCodes.getEnglishName_NR
+
+
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
     #           (where the precisely correct information is unknown)
     def getEnglishName_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
         """
-        Returns the first English name for a book.
+        Returns the first English name for a book. (Options are separated by forward slashes.)
 
         Remember: These names are only intended as comments or for some basic module processing.
             They are not intended to be used for a proper international human interface.
@@ -702,8 +764,7 @@ class BibleBooksCodes:
             They are not intended to be used for a proper international human interface.
             The first one in the list is supposed to be the more common.
         """
-        names = self.__DataDicts['referenceAbbreviationDict'][BBB]['bookNameEnglishGuide']
-        return [name.strip() for name in names.split('/')]
+        return [name.strip() for name in self.__DataDicts['referenceAbbreviationDict'][BBB]['bookNameEnglishGuide'].split('/')]
     # end of BibleBooksCodes.getEnglishNameList_NR
 
     def isOldTestament_NR( self, BBB:str ): # NR = not recommended (because not completely general/international)
@@ -796,9 +857,12 @@ def briefDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+    assert bbc.getUSFMNumStr( 'MAT' ) == '41'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
+    assert bbc.getBibleditNumStr( 'MAT' ) == '40'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
+    assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
@@ -808,7 +872,7 @@ def briefDemo() -> None:
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
-    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])}" )
+    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
 
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:
@@ -843,9 +907,12 @@ def fullDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} is typically in {} section".format( BBB, bbc.getTypicalSection( BBB ) ) )
+    assert bbc.getUSFMNumStr( 'MAT' ) == '41'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
+    assert bbc.getBibleditNumStr( 'MAT' ) == '40'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
+    assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):

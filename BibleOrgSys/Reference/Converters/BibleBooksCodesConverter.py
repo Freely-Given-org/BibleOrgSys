@@ -3,7 +3,7 @@
 #
 # BibleBooksCodesConverter.py
 #
-# Module handling BibleBooksCodes.xml to produce C and Python data tables
+# Module handling BibleBooksCodes.xml to produce various derived export formats
 #
 # Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
@@ -45,13 +45,13 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 LAST_MODIFIED_DATE = '2023-02-13' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
-PROGRAM_VERSION = '0.82'
+PROGRAM_VERSION = '0.91'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
 
 
-SPECIAL_BOOK_CODES = ('ALL',) # We check these aren't used for other things
+SPECIAL_BOOK_CODES = ('ALL',) # We use these for other things so check they aren't used in the XML
 
 
 
@@ -79,15 +79,18 @@ class BibleBooksCodesConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( 'bookNameEnglishGuide', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber',
+        self._compulsoryElements = ( 'originalLanguageCode', 'bookName', 'bookNameEnglishGuide', 'referenceAbbreviation',
+                                    'referenceNumber', 'sequenceNumber',
                                     'typicalSection' )
-        self._optionalElements = ( 'expectedChapters', 'SBLAbbreviation', 'OSISAbbreviation', 'SwordAbbreviation',
+        self._optionalElements = ( 'expectedChapters', 'shortAbbreviation', 'SBLAbbreviation', 'OSISAbbreviation', 'SwordAbbreviation',
                                     'CCELNumber', 'USFMAbbreviation', 'USFMNumber', 'USXNumber', 'UnboundCode',
-                                    'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
+                                    'BibleditNumber', 'LogosNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
                                     'BibleWorksAbbreviation', 'ByzantineAbbreviation',
                                     'possibleAlternativeAbbreviations', 'possibleAlternativeBooks' )
-        self._uniqueElements = ( 'bookNameEnglishGuide', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber' ) + \
-                    ( 'USXNumber', 'UnboundCode', 'BibleditNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
+        self._ElementsWithoutDuplicates = ( 'bookName', 'bookNameEnglishGuide', 'referenceAbbreviation', 'referenceNumber', 'sequenceNumber',
+                    'shortAbbreviation', 'SBLAbbreviation', 'OSISAbbreviation', 'SwordAbbreviation',
+                    'CCELNumber', 'USFMAbbreviation', 'USFMNumber', 'USXNumber', 'UnboundCode',
+                    'BibleditNumber', 'LogosNumber', 'NETBibleAbbreviation', 'DrupalBibleAbbreviation',
                       'BibleWorksAbbreviation', 'ByzantineAbbreviation' )
 
         # These are fields that we will fill later
@@ -168,7 +171,7 @@ class BibleBooksCodesConverter:
         assert self._XMLTree
 
         uniqueDict = {}
-        for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
+        for elementName in self._ElementsWithoutDuplicates: uniqueDict["Element_"+elementName] = []
         for attributeName in self._uniqueAttributes: uniqueDict["Attribute_"+attributeName] = []
 
         expectedID = 1
@@ -239,7 +242,7 @@ class BibleBooksCodesConverter:
                         logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
-                for elementName in self._uniqueElements:
+                for elementName in self._ElementsWithoutDuplicates:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
@@ -310,12 +313,15 @@ class BibleBooksCodesConverter:
 
         # We'll create a number of dictionaries with different elements as the key
         myIDDict, myRefAbbrDict = {}, {}
-        mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myUCDict,myBENDict,myNETDict,myBWDict,myDrBibDict,myBzDict,myPossAltBooksDict, myENDict, initialAllAbbreviationsDict = {},{},{},{},{},{},{},{},{},{},{},{},{},{}, {}, {}
+        myShortAbbrevDict,mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myUCDict,myBENDict,myLNDict,myNETDict,myBWDict,myDrBibDict,myBzDict,myPossAltBooksDict, myENDict, initialAllAbbreviationsDict \
+            = {}, {},{},{},{},{},{},{},{},{},{},{},{},{},{},{}, {}, {}
         sequenceNumberList, sequenceTupleList = [], [] # Both have the integer form (not the string form) of the sequenceNumber
         for element in self._XMLTree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
-            nameEnglish = element.find('bookNameEnglishGuide').text # This name is really just a comment element
+            originalLanguageCode = element.find('originalLanguageCode').text # IETF code
+            bookName = element.find('bookName').text # In the original language
+            bookNameEnglishGuide = element.find('bookNameEnglishGuide').text # This name is really just a comment element
             referenceAbbreviation = element.find('referenceAbbreviation').text
             if referenceAbbreviation.upper() != referenceAbbreviation:
                 logging.error( _("Reference abbreviation {!r} should be UPPER CASE").format( referenceAbbreviation ) )
@@ -325,6 +331,7 @@ class BibleBooksCodesConverter:
             intSequenceNumber = int( sequenceNumber )
             # The optional elements are set to None if they don't exist
             expectedChapters = None if element.find('expectedChapters') is None else element.find('expectedChapters').text
+            shortAbbreviation = None if element.find('shortAbbreviation') is None else element.find('shortAbbreviation').text
             SBLAbbreviation = None if element.find('SBLAbbreviation') is None else element.find('SBLAbbreviation').text
             OSISAbbreviation = None if element.find('OSISAbbreviation') is None else element.find('OSISAbbreviation').text
             SwordAbbreviation = None if element.find('SwordAbbreviation') is None else element.find('SwordAbbreviation').text
@@ -336,6 +343,7 @@ class BibleBooksCodesConverter:
             USXNumberString = None if element.find('USXNumber') is None else element.find('USXNumber').text
             UnboundCodeString = None if element.find('UnboundCode') is None else element.find('UnboundCode').text
             BibleditNumberString = None if element.find('BibleditNumber') is None else element.find('BibleditNumber').text
+            LogosNumberString = None if element.find('LogosNumber') is None else element.find('LogosNumber').text
             NETBibleAbbreviation = None if element.find('NETBibleAbbreviation') is None else element.find('NETBibleAbbreviation').text
             DrupalBibleAbbreviation = None if element.find('DrupalBibleAbbreviation') is None else element.find('DrupalBibleAbbreviation').text
             BibleWorksAbbreviation = None if element.find('BibleWorksAbbreviation') is None else element.find('BibleWorksAbbreviation').text
@@ -353,96 +361,114 @@ class BibleBooksCodesConverter:
             #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
             #   The referenceAbbreviation is UPPER CASE by definition
             if 'referenceAbbreviation' in self._compulsoryElements or referenceAbbreviation:
-                if 'referenceAbbreviation' in self._uniqueElements: assert referenceAbbreviation not in myRefAbbrDict # Shouldn't be any duplicates
+                if 'referenceAbbreviation' in self._ElementsWithoutDuplicates: assert referenceAbbreviation not in myRefAbbrDict, f"{referenceAbbreviation=}" # Shouldn't be any duplicates
                 if referenceAbbreviation in myRefAbbrDict: halt
-                else: myRefAbbrDict[referenceAbbreviation] = { 'referenceNumber':intID, 'SBLAbbreviation':SBLAbbreviation, 'OSISAbbreviation':OSISAbbreviation,
-                                                    'SwordAbbreviation':SwordAbbreviation, 'CCELNumberString':CCELNumberString,
-                                                    'USFMAbbreviation':USFMAbbreviation, 'USFMNumberString':USFMNumberString, 'USXNumberString':USXNumberString,
-                                                    'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString,
-                                                    'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
-                                                    'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
-                                                    'bookNameEnglishGuide':nameEnglish, 'typicalSection':typicalSection }
+                else: myRefAbbrDict[referenceAbbreviation] = {
+                        'originalLanguageCode': originalLanguageCode, 'bookName':bookName,
+                        'referenceNumber':intID,  'shortAbbreviation':shortAbbreviation,
+                        'SBLAbbreviation':SBLAbbreviation, 'OSISAbbreviation':OSISAbbreviation,
+                        'SwordAbbreviation':SwordAbbreviation, 'CCELNumberString':CCELNumberString,
+                        'USFMAbbreviation':USFMAbbreviation, 'USFMNumberString':USFMNumberString, 'USXNumberString':USXNumberString,
+                        'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString, 'LogosNumberString':LogosNumberString,
+                        'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
+                        'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
+                        'bookNameEnglishGuide':bookNameEnglishGuide, 'typicalSection':typicalSection }
             if 'referenceNumber' in self._compulsoryElements or ID:
-                if 'referenceNumber' in self._uniqueElements: assert intID not in myIDDict # Shouldn't be any duplicates
+                if 'referenceNumber' in self._ElementsWithoutDuplicates: assert intID not in myIDDict # Shouldn't be any duplicates
                 if intID in myIDDict: halt
-                else: myIDDict[intID] = { 'referenceAbbreviation':referenceAbbreviation, 'SBLAbbreviation':SBLAbbreviation, 'OSISAbbreviation':OSISAbbreviation,
-                                    'SwordAbbreviation':SwordAbbreviation, 'CCELNumberString':CCELNumberString,
-                                    'USFMAbbreviation':USFMAbbreviation, 'USFMNumberString':USFMNumberString, 'USXNumberString':USXNumberString,
-                                    'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString,
-                                    'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
-                                    'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
-                                    'bookNameEnglishGuide':nameEnglish, 'typicalSection':typicalSection }
+                else: myIDDict[intID] = {
+                        'referenceAbbreviation':referenceAbbreviation,
+                        'originalLanguageCode': originalLanguageCode, 'bookName':bookName,
+                        'shortAbbreviation':shortAbbreviation,
+                        'SBLAbbreviation':SBLAbbreviation, 'OSISAbbreviation':OSISAbbreviation,
+                        'SwordAbbreviation':SwordAbbreviation, 'CCELNumberString':CCELNumberString,
+                        'USFMAbbreviation':USFMAbbreviation, 'USFMNumberString':USFMNumberString, 'USXNumberString':USXNumberString,
+                        'UnboundCodeString':UnboundCodeString, 'BibleditNumberString':BibleditNumberString, 'LogosNumberString':LogosNumberString,
+                        'NETBibleAbbreviation':NETBibleAbbreviation, 'DrupalBibleAbbreviation':DrupalBibleAbbreviation, 'ByzantineAbbreviation':ByzantineAbbreviation,
+                        'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
+                        'bookNameEnglishGuide':bookNameEnglishGuide, 'typicalSection':typicalSection }
             if 'sequenceNumber' in self._compulsoryElements or sequenceNumber:
-                if 'sequenceNumber' in self._uniqueElements: assert intSequenceNumber not in sequenceNumberList # Shouldn't be any duplicates
-                if intSequenceNumber in sequenceNumberList: halt
+                if 'sequenceNumber' in self._ElementsWithoutDuplicates: assert intSequenceNumber not in sequenceNumberList # Shouldn't be any duplicates
+                if intSequenceNumber in sequenceNumberList: raise f"Have duplicate '{intSequenceNumber}' sequence numbers"
                 else:
                     sequenceNumberList.append( intSequenceNumber ) # Only used for checking duplicates
                     sequenceTupleList.append( (intSequenceNumber,referenceAbbreviation,) ) # We'll sort this later
+            if 'ShortAbbreviation' in self._compulsoryElements or shortAbbreviation:
+                if 'ShortAbbreviation' in self._ElementsWithoutDuplicates: assert shortAbbreviation not in myShortAbbrevDict # Shouldn't be any duplicates
+                UCAbbreviation = shortAbbreviation.upper()
+                if UCAbbreviation in myShortAbbrevDict: myShortAbbrevDict[UCAbbreviation] = ( intID, makeList(myShortAbbrevDict[UCAbbreviation][1],referenceAbbreviation), )
+                else: myShortAbbrevDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                addToAllCodesDict( UCAbbreviation, 'short', initialAllAbbreviationsDict )
             if 'SBLAbbreviation' in self._compulsoryElements or SBLAbbreviation:
-                if 'SBLAbbreviation' in self._uniqueElements: assert SBLAbbreviation not in mySBLDict # Shouldn't be any duplicates
+                if 'SBLAbbreviation' in self._ElementsWithoutDuplicates: assert SBLAbbreviation not in mySBLDict # Shouldn't be any duplicates
                 UCAbbreviation = SBLAbbreviation.upper()
                 if UCAbbreviation in mySBLDict: mySBLDict[UCAbbreviation] = ( intID, makeList(mySBLDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'SBL', initialAllAbbreviationsDict )
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
-                if "OSISAbbreviation" in self._uniqueElements: assert OSISAbbreviation not in myOADict # Shouldn't be any duplicates
+                if "OSISAbbreviation" in self._ElementsWithoutDuplicates: assert OSISAbbreviation not in myOADict # Shouldn't be any duplicates
                 UCAbbreviation = OSISAbbreviation.upper()
                 if UCAbbreviation in myOADict: myOADict[UCAbbreviation] = ( intID, makeList(myOADict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myOADict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'OSIS', initialAllAbbreviationsDict )
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
-                if "SwordAbbreviation" in self._uniqueElements: assert SwordAbbreviation not in mySwDict # Shouldn't be any duplicates
+                if "SwordAbbreviation" in self._ElementsWithoutDuplicates: assert SwordAbbreviation not in mySwDict # Shouldn't be any duplicates
                 UCAbbreviation = SwordAbbreviation.upper()
                 if UCAbbreviation in mySwDict: mySwDict[UCAbbreviation] = ( intID, makeList(mySwDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'Sword', initialAllAbbreviationsDict )
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
-                if "CCELNumberString" in self._uniqueElements: assert CCELNumberString not in myCCELDict # Shouldn't be any duplicates
+                if "CCELNumberString" in self._ElementsWithoutDuplicates: assert CCELNumberString not in myCCELDict # Shouldn't be any duplicates
                 UCNumberString = CCELNumberString.upper()
                 if UCNumberString in myCCELDict: myCCELDict[UCNumberString] = ( intID, makeList(myCCELDict[UCNumberString][1],referenceAbbreviation), )
                 else: myCCELDict[UCNumberString] = ( intID, referenceAbbreviation, )
             if "USFMAbbreviation" in self._compulsoryElements or USFMAbbreviation:
-                if "USFMAbbreviation" in self._uniqueElements: assert USFMAbbreviation not in myUSFMAbbrDict # Shouldn't be any duplicates
+                if "USFMAbbreviation" in self._ElementsWithoutDuplicates: assert USFMAbbreviation not in myUSFMAbbrDict # Shouldn't be any duplicates
                 UCAbbreviation = USFMAbbreviation.upper()
                 if UCAbbreviation in myUSFMAbbrDict: myUSFMAbbrDict[UCAbbreviation] = ( intID, makeList(myUSFMAbbrDict[UCAbbreviation][1],referenceAbbreviation), makeList(myUSFMAbbrDict[UCAbbreviation][2],USFMNumberString), )
                 else: myUSFMAbbrDict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
                 addToAllCodesDict( UCAbbreviation, 'USFM', initialAllAbbreviationsDict )
             if "USFMNumberString" in self._compulsoryElements or USFMNumberString:
-                if "USFMNumberString" in self._uniqueElements: assert USFMNumberString not in myUSFMNDict # Shouldn't be any duplicates
+                if "USFMNumberString" in self._ElementsWithoutDuplicates: assert USFMNumberString not in myUSFMNDict # Shouldn't be any duplicates
                 UCNumberString = USFMNumberString.upper()
                 if UCNumberString in myUSFMNDict: myUSFMNDict[UCNumberString] = ( intID, makeList(myUSFMNDict[UCNumberString][1],referenceAbbreviation), makeList(myUSFMNDict[UCNumberString][2],USFMAbbreviation), )
                 else: myUSFMNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "USXNumberString" in self._compulsoryElements or USXNumberString:
-                if "USXNumberString" in self._uniqueElements: assert USXNumberString not in myUSXNDict # Shouldn't be any duplicates
+                if "USXNumberString" in self._ElementsWithoutDuplicates: assert USXNumberString not in myUSXNDict # Shouldn't be any duplicates
                 UCNumberString = USXNumberString.upper()
                 if UCNumberString in myUSXNDict:
                     if BibleOrgSysGlobals.debugFlag: halt
                 else: myUSXNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "UnboundCodeString" in self._compulsoryElements or UnboundCodeString:
-                if "UnboundCodeString" in self._uniqueElements: assert UnboundCodeString not in myUCDict # Shouldn't be any duplicates
+                if "UnboundCodeString" in self._ElementsWithoutDuplicates: assert UnboundCodeString not in myUCDict # Shouldn't be any duplicates
                 UCCodeString = UnboundCodeString.upper()
                 assert len(UCCodeString)==3 and UCCodeString[0].isdigit() and UCCodeString[1].isdigit() and UCCodeString[2] in ('N','O','A')
                 if UCCodeString in myUCDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UCCodeString, myUCDict ); halt
                 else: myUCDict[UCCodeString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "BibleditNumberString" in self._compulsoryElements or BibleditNumberString:
-                if "BibleditNumberString" in self._uniqueElements: assert BibleditNumberString not in myBENDict  # Shouldn't be any duplicates
+                if "BibleditNumberString" in self._ElementsWithoutDuplicates: assert BibleditNumberString not in myBENDict  # Shouldn't be any duplicates
                 UCNumberString = BibleditNumberString.upper()
                 if UCNumberString in myBENDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UCNumberString, myBENDict ); halt
                 else: myBENDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
+            if "LogosNumberString" in self._compulsoryElements or LogosNumberString:
+                if "LogosNumberString" in self._ElementsWithoutDuplicates: assert LogosNumberString not in myLNDict  # Shouldn't be any duplicates
+                UCNumberString = LogosNumberString.upper()
+                if UCNumberString in myLNDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, UCNumberString, myLNDict ); halt
+                else: myLNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
-                if "NETBibleAbbreviation" in self._uniqueElements: assert NETBibleAbbreviation not in myNETDict  # Shouldn't be any duplicates
+                if "NETBibleAbbreviation" in self._ElementsWithoutDuplicates: assert NETBibleAbbreviation not in myNETDict  # Shouldn't be any duplicates
                 UCAbbreviation = NETBibleAbbreviation.upper()
                 if UCAbbreviation in myNETDict: myNETDict[UCAbbreviation] = ( intID, makeList(myNETDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'NET', initialAllAbbreviationsDict )
             if "DrupalBibleAbbreviation" in self._compulsoryElements or DrupalBibleAbbreviation:
-                if "DrupalBibleAbbreviation" in self._uniqueElements: assert DrupalBibleAbbreviation not in myDrBibDict  # Shouldn't be any duplicates
+                if "DrupalBibleAbbreviation" in self._ElementsWithoutDuplicates: assert DrupalBibleAbbreviation not in myDrBibDict  # Shouldn't be any duplicates
                 UCAbbreviation = DrupalBibleAbbreviation.upper()
                 if UCAbbreviation in myDrBibDict: myDrBibDict[UCAbbreviation] = ( intID, makeList(myDrBibDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myDrBibDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'DrupalBible', initialAllAbbreviationsDict )
             if "BibleWorksAbbreviation" in self._compulsoryElements or BibleWorksAbbreviation:
-                if "BibleWorksAbbreviation" in self._uniqueElements:
+                if "BibleWorksAbbreviation" in self._ElementsWithoutDuplicates:
                     if BibleWorksAbbreviation in myBWDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "bwA", repr(BibleWorksAbbreviation) )
                     assert BibleWorksAbbreviation not in myBWDict # Shouldn't be any duplicates
                 UCAbbreviation = BibleWorksAbbreviation.upper()
@@ -450,21 +476,21 @@ class BibleBooksCodesConverter:
                 else: myBWDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'BibleWorks', initialAllAbbreviationsDict )
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
-                if "ByzantineAbbreviation" in self._uniqueElements: assert ByzantineAbbreviation not in myBzDict # Shouldn't be any duplicates
+                if "ByzantineAbbreviation" in self._ElementsWithoutDuplicates: assert ByzantineAbbreviation not in myBzDict # Shouldn't be any duplicates
                 UCAbbreviation = ByzantineAbbreviation.upper()
                 if UCAbbreviation in myBzDict:
                     if BibleOrgSysGlobals.debugFlag: halt
                 else: myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 addToAllCodesDict( UCAbbreviation, 'Byzantine', initialAllAbbreviationsDict )
-            if "nameEnglish" in self._compulsoryElements or USFMNumberString:
-                if "nameEnglish" in self._uniqueElements: assert nameEnglish not in myENDict # Shouldn't be any duplicates
-                UCName = nameEnglish.upper()
+            if "bookNameEnglishGuide" in self._compulsoryElements or USFMNumberString:
+                if "bookNameEnglishGuide" in self._ElementsWithoutDuplicates: assert bookNameEnglishGuide not in myENDict # Shouldn't be any duplicates
+                UCName = bookNameEnglishGuide.upper()
                 if UCName in myENDict:
                     if BibleOrgSysGlobals.debugFlag: halt
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
             if "possibleAlternativeAbbreviations" in self._compulsoryElements or possibleAlternativeAbbreviations:
                 for possibleAlternativeAbbreviation in possibleAlternativeAbbreviations:
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here", possibleAlternativeAbbreviation, referenceAbbreviation )
+                    # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here654", possibleAlternativeAbbreviation, referenceAbbreviation )
                     assert possibleAlternativeAbbreviation.upper() == possibleAlternativeAbbreviation
                     assert possibleAlternativeAbbreviation not in myPossAltBooksDict
                     myPossAltBooksDict[possibleAlternativeAbbreviation] = referenceAbbreviation
@@ -509,7 +535,7 @@ class BibleBooksCodesConverter:
 
         # Add possible alternative (shortened) abbreviations to the all abbreviations dict and then remove bad entries
         for abbreviation,BBB in myPossAltBooksDict.items(): # Add these entries (esp. for VPL Bibles)
-            if abbreviation in initialAllAbbreviationsDict: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ohoh", abbreviation, BBB )
+            if abbreviation in initialAllAbbreviationsDict: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ohoh", abbreviation, BBB )
             assert ' ' not in abbreviation
             assert abbreviation not in initialAllAbbreviationsDict
             initialAllAbbreviationsDict[abbreviation] = BBB
@@ -532,9 +558,10 @@ class BibleBooksCodesConverter:
                 if BibleOrgSysGlobals.debugFlag: halt
 
         self.__DataDicts = { 'referenceNumberDict':myIDDict, 'referenceAbbreviationDict':myRefAbbrDict, 'sequenceList':sequenceList,
+                        'shortAbbreviationDict': myShortAbbrevDict,
                         'SBLAbbreviationDict':mySBLDict, 'OSISAbbreviationDict':myOADict, 'SwordAbbreviationDict':mySwDict,
                         'CCELDict':myCCELDict, 'USFMAbbreviationDict':myUSFMAbbrDict, 'USFMNumberDict':myUSFMNDict,
-                        'USXNumberDict':myUSXNDict, 'UnboundCodeDict':myUCDict, 'BibleditNumberDict':myBENDict,
+                        'USXNumberDict':myUSXNDict, 'UnboundCodeDict':myUCDict, 'BibleditNumberDict':myBENDict, 'LogosNumberDict':myLNDict,
                         'NETBibleAbbreviationDict':myNETDict, 'DrupalBibleAbbreviationDict':myDrBibDict,
                         'BibleWorksAbbreviationDict':myBWDict, 'ByzantineAbbreviationDict':myBzDict,
                         'EnglishNameDict':myENDict, 'allAbbreviationsDict':adjAllAbbreviationsDict }
@@ -588,7 +615,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = Path('../derivedFormats/')
                             # TODO: What was this all about ???
                             # if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
                             # else BibleOrgSysGlobals.DEFAULT_WRITEABLE_CACHE_FOLDERPATH
@@ -623,9 +650,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH \
-                            if isinstance( self.__XMLFileOrFilepath, (str,Path) ) \
-                            else BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = Path('../derivedFormats/')
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.py' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -641,6 +666,7 @@ class BibleBooksCodesConverter:
                     "referenceAbbreviationDict":("referenceAbbreviation","specified"),
                     "sequenceList":("referenceAbbreviation/BBB (3-uppercase characters)",""),
                     "CCELDict":("CCELNumberString", mostEntries),
+                    "ShortAbbreviationDict":("ShortAbbreviation", mostEntries),
                     "SBLAbbreviationDict":("SBLAbbreviation", mostEntries),
                     "OSISAbbreviationDict":("OSISAbbreviation", mostEntries),
                     "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
@@ -649,11 +675,12 @@ class BibleBooksCodesConverter:
                     "USXNumberDict":("USXNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                     "UnboundCodeDict":("UnboundCodeString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                     "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                    "LogosNumberDict":("LogosNumberString", "0=referenceNumber (integer 1..208), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                     "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries),
                     "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", mostEntries),
                     "BibleWorksAbbreviationDict":("BibleWorksAbbreviation", mostEntries),
                     "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
-                    "EnglishNameDict":("nameEnglish", mostEntries),
+                    "EnglishNameDict":("bookNameEnglishGuide", mostEntries),
                     "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
@@ -665,7 +692,7 @@ class BibleBooksCodesConverter:
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
 
-        See http://en.wikipedia.org/wiki/JSON.
+        See https://en.wikipedia.org/wiki/JSON.
         """
         import json
 
@@ -674,7 +701,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = Path('../derivedFormats/')
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables.json' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -747,7 +774,7 @@ class BibleBooksCodesConverter:
         assert self.__DataDicts
 
         if not filepath:
-            folderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
+            folderpath = Path('../derivedFormats/')
             if not os.path.exists( folderpath ): os.mkdir( folderpath )
             filepath = os.path.join( folderpath, self._filenameBase + '_Tables' )
         hFilepath = filepath + '.h'
@@ -778,25 +805,27 @@ class BibleBooksCodesConverter:
             BYTE = "const int"
             dictInfo = {
                 "referenceNumberDict":("referenceNumber (integer 1..255)",
-                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} referenceAbbreviation[3+1];"
+                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* bookNameEnglishGuide; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} referenceAbbreviation[3+1];"
                    .format(BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "referenceAbbreviationDict":("referenceAbbreviation",
-                    "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
+                    "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* bookNameEnglishGuide; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "sequenceList":("sequenceList",),
-                "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "ShortAbbreviationDict":("ShortAbbreviation", "{}* ShortAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SBLAbbreviationDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "USFMAbbreviationDict":("USFMAbbreviation", "{} USFMAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "USFMNumberDict":("USFMNumberString", "{} USFMNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "USXNumberDict":("USXNumberString", "{} USXNumberString[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "UnboundCodeDict":("UnboundCodeString", "{} UnboundCodeString[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "BibleditNumberDict":("BibleditNumberString", "{} BibleditNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "LogosNumberDict":("LogosNumberString", "{} LogosNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", "{}* DrupalBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
-                "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "EnglishNameDict":("bookNameEnglishGuide", "{}* bookNameEnglishGuide; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "initialAllAbbreviationsDict":("abbreviation", "{}* abbreviation; {} referenceAbbreviation[3+1];".format(CHAR,CHAR) ) }
 
             for dictName,dictData in self.__DataDicts.items():
@@ -828,8 +857,9 @@ def briefDemo() -> None:
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbcc ) # Just print a summary
         OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OAD', len(OAD), sorted(OAD) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, OAD['WIS'] )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSample output:" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nOSISAbbreviationDict: ({len(OAD)}) {sorted(OAD)}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{OAD['WIS']=}" )
 # end of BibleBooksCodesConverter.briefDemo
 
 def fullDemo() -> None:
@@ -838,8 +868,8 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
+    bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
     if BibleOrgSysGlobals.commandLineArguments.export:
-        bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         bbcc.pickle() # Produce a pickle output file
         bbcc.exportDataToJSON() # Produce a json output file
         # bbcc.exportDataToPython() # Produce the .py tables
@@ -847,11 +877,18 @@ def fullDemo() -> None:
 
     else: # Must be demo mode
         # Demo the converter object
-        bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbcc ) # Just print a summary
-        OAD = bbcc.importDataToPython()['OSISAbbreviationDict']
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'OAD', len(OAD), sorted(OAD) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, OAD['WIS'] )
+        importedData = bbcc.importDataToPython()
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSample output:" )
+        allKeys = importedData.keys()
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nallKeys: ({len(allKeys)}) {allKeys}" )
+        rND10 = importedData['referenceNumberDict'][10]
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nreferenceNumberDict[10]: ({len(rND10)}) {rND10}" )
+        rAD_CO1 = importedData['referenceAbbreviationDict']['CO1']
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nreferenceAbbreviationDict['CO1']: ({len(rAD_CO1)}) {rAD_CO1}" )
+        OAD = importedData['OSISAbbreviationDict']
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nOSISAbbreviationDict: ({len(OAD)}) {sorted(OAD)}" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{OAD['WIS']=}" )
 # end of BibleBooksCodesConverter.fullDemo
 
 if __name__ == '__main__':
