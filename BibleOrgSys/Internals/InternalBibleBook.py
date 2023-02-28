@@ -77,7 +77,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-02-16' # by RJH
+LAST_MODIFIED_DATE = '2023-02-28' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -465,8 +465,6 @@ class InternalBibleBook:
         forceDebugHere = False
         vPrint( 'Never', forceDebugHere or DEBUGGING_THIS_MODULE,
                 f"InternalBibleBook.addLine( {marker}= '{text}' ) for {self.objectTypeString} '{self.workName} …" )
-            #if len(self._rawLines ) > 200: halt
-            #if 'xyz' in text: halt
         assert marker and isinstance( marker, str )
 
         if text and ( '\n' in text or '\r' in text ):
@@ -1832,7 +1830,9 @@ class InternalBibleBook:
                 openMarkers.append( marker )
                 lastPMarker = marker
             elif markerContentType == 'N': # N = never, e.g., b, ib, nb
-                assert not text, f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.BBB}_{C}:{V}"
+                if text:
+                    logging.critical( f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.BBB}_{C}:{V}" )
+                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB}_{C}:{V} lastPMarker={lastPMarker}" )
                 for _safetyCount in range(999):
                     madeChange = False
@@ -1939,7 +1939,6 @@ class InternalBibleBook:
                             newLines2.append( thisEntry )
                         else:
                             logging.warning( f"CHECK {self.BBB}_{C}:{V} NESTING: Got {marker} but expected ¬{poppedMarker}" )
-                            #halt
                             newLines2.append( thisEntry )
                 else:
                     newLines2.append( thisEntry )
@@ -1952,7 +1951,6 @@ class InternalBibleBook:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\n'+self.BBB, "aNM markerListString2", markerListString )
                 assert 'v= ¬v' not in markerListString
                 assert 'q1 p~ ¬v ¬q1' not in markerListString
-                #if self.BBB=='GEN': halt
 
         if (len(newLines) != len(self._processedLines)):
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    _addNestingMarkers adjusted {self.BBB} from {len(self._processedLines):,} lines to {len(newLines):,} lines" )
@@ -2045,7 +2043,6 @@ class InternalBibleBook:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, "aVSM markerListString", markerListString )
                 assert 'v= ¬v' not in markerListString
                 assert 'q1 p~ ¬v ¬q1' not in markerListString
-            #if self.BBB=='GEN': halt
 
         if DEBUGGING_THIS_MODULE and (len(newLines) != len(self._processedLines)):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  addVerseStartMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
@@ -2428,7 +2425,6 @@ class InternalBibleBook:
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
                             logging.info( "{} {}:{} Assumed {} was part of intro after {}".format( self.BBB, C, V, lastAdjustedMarker, marker ) )
-                            #if V!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
                         if lastOriginalText:
                             self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', None, '1') ) # Write the explicit chapter number
@@ -2695,7 +2691,6 @@ class InternalBibleBook:
                 #C, V = CV
                 ##A, L, X = ALX
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
-            #halt
 
         self._indexedCVFlag = True
     # end of InternalBibleBook.makeBookCVIndex
@@ -4399,7 +4394,6 @@ class InternalBibleBook:
             newSection = newParagraph = newBit = False
             # bitMarker = ''
 
-            #if C=='9': halt
             extras = entry.getExtras()
             if extras: # Check the notes also -- each note is complete in itself so it's much simpler
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes

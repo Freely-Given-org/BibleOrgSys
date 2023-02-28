@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-02-03' # by RJH
+LAST_MODIFIED_DATE = '2023-02-27' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.86'
@@ -943,7 +943,7 @@ class InternalBible:
         Save the Bible book into our Bible object
             and update our indexes.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"stashBook( {len(bookData)} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"stashBook( {len(bookData)} lines ) for {bookData.BBB}" )
 
         BBB = bookData.BBB
         if BBB in self.books: # already

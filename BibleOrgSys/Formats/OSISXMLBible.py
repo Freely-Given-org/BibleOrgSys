@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,8 +32,6 @@ This is a quickly updated version of an early module,
     and it's both ugly and fragile  :-(
 
 Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
-
-NOTE: We could use multiprocessing in loadBooks()
 """
 from gettext import gettext as _
 from typing import List, Tuple
@@ -55,8 +53,8 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-11-22' # by RJH
-SHORT_PROGRAM_NAME = "OSISBible"
+LAST_MODIFIED_DATE = '2023-02-27' # by RJH
+SHORT_PROGRAM_NAME = "OSISXMLBible"
 PROGRAM_NAME = "OSIS XML Bible format handler"
 PROGRAM_VERSION = '0.67'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -218,7 +216,13 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
 
     If the text is None, returns None
     """
+    fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.clean( '{elementText}', '{location}', {verseMilestone} )" )
+    if loadErrors: assert isinstance( loadErrors, list )
+    if location: assert isinstance( location, str )
+    if verseMilestone: assert isinstance( verseMilestone, str )
+
     if elementText is None: return None
+    assert isinstance( elementText, str )
     # else it's not None
 
     info = ''
@@ -250,10 +254,9 @@ def clean( elementText, loadErrors=None, location=None, verseMilestone=None ):
 class OSISXMLBible( Bible ):
     """
     Class for reading, validating, and converting OSISXMLBible XML.
-    This is only intended as a transitory class (used at start-up).
-    The OSISXMLBible class has functions more generally useful.
     """
     filenameBase = 'OSISXMLBible'
+    # It does not matter if the NameSpace declarations are no longer valid online links
     XMLNameSpace = '{http://www.w3.org/XML/1998/namespace}'
     #OSISNameSpace = '{http://ebible.org/2003/OSIS/namespace}'
     OSISNameSpace = '{http://www.bibletechnologies.net/2003/OSIS/namespace}'
@@ -362,8 +365,6 @@ class OSISXMLBible( Bible ):
     def loadBooks( self ):
         """
         Loads the OSIS XML file or files.
-
-        NOTE: We could use multiprocessing here
         """
         fnPrint( DEBUGGING_THIS_MODULE, "OSISXMLBible.loadBooks()" )
 
@@ -2411,7 +2412,7 @@ class OSISXMLBible( Bible ):
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "23f4 BBB is", BBB )
                             USFMAbbreviation = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMAbbreviation( BBB )
                             USFMNumber = BibleOrgSysGlobals.loadedBibleBooksCodes.getUSFMNumStr( BBB )
-                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}…" )
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  It seems we have {BBB}" )
                             thisBook = BibleBook( self, BBB )
                             thisBook.objectNameString = 'OSIS XML Bible Book object'
                             thisBook.objectTypeString = 'OSIS'

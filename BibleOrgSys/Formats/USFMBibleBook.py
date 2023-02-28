@@ -45,10 +45,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-15' # by RJH
+LAST_MODIFIED_DATE = '2023-02-28' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.60'
+PROGRAM_VERSION = '0.61'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -472,8 +472,8 @@ class USFMBibleBook( BibleBook ):
                         if text.startswith( '\\v ' ):
                             marker, text = 'v', text[3:] # Drop s5 and adjust marker
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"s5 text='{text}'" )
-                            halt
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} s5 {text=}" )
+                            if self.doExtraChecking: halt
                     else: # was just whitespace
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 custom marker at beginning of line (with following whitespace)") \
                                             .format( self.BBB, C, V, marker ) )
@@ -503,8 +503,8 @@ class USFMBibleBook( BibleBook ):
                         elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
                             marker = 'p~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ts\\* text='{text}'" )
-                            halt
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} ts\\* {text=}" )
+                            if self.doExtraChecking: halt
                     else: # was just whitespace
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with following whitespace)") \
                                             .format( self.BBB, C, V, marker ) )

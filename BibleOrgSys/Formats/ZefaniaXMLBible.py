@@ -5,7 +5,7 @@
 #
 # Module handling Zefania XML Bibles
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -78,10 +78,10 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-06-04' # by RJH
+LAST_MODIFIED_DATE = '2023-02-27' # by RJH
 SHORT_PROGRAM_NAME = "ZefaniaBible"
 PROGRAM_NAME = "Zefania XML Bible format handler"
-PROGRAM_VERSION = '0.37'
+PROGRAM_VERSION = '0.38'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -242,7 +242,7 @@ class ZefaniaXMLBible( Bible ):
     grTag = 'gr'
 
 
-    def __init__( self, sourceFolder, givenName, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName, givenAbbreviation=None, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the Zefania Bible object.
         """
@@ -252,8 +252,12 @@ class ZefaniaXMLBible( Bible ):
         self.objectTypeString = 'Zefania'
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
+        self.givenName, self.givenAbbreviation, self.encoding = givenName, givenAbbreviation, encoding
+        if os.path.isfile( sourceFileOrFolder ):
+            self.sourceFilepath = sourceFileOrFolder
+        elif os.path.isdir( sourceFileOrFolder ):
+            self.sourceFolder = sourceFileOrFolder
+            self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
         self.XMLTree = self.header = None # Will hold the XML data
 
@@ -265,12 +269,12 @@ class ZefaniaXMLBible( Bible ):
         if not os.access( self.sourceFilepath, os.R_OK ):
             logging.warning( "ZefaniaXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
-        self.name = self.givenName
-        #if self.name is None:
-            #pass
+        self.name, self.abbreviation = self.givenName, self.givenAbbreviation
     # end of ZefaniaXMLBible.__init__
 
 
+    def loadBooks( self ):
+        self.load()
     def load( self ):
         """
         Load a single source XML file and load book elements.
@@ -460,7 +464,7 @@ class ZefaniaXMLBible( Bible ):
         Check/validate and extract book data from the given XML book record
             finding chapter subelements.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML book…") )
+        fnPrint( DEBUGGING_THIS_MODULE, f"__validateAndExtractBook( ... )" )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -472,16 +476,25 @@ class ZefaniaXMLBible( Bible ):
             elif attrib=="bsname":
                 bookShortName = value
             else: logging.error( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
-        if bookNumber:
-            try: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
-            except (KeyError, ValueError):
-                logging.critical( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
-                                                                        .format( bookNumber, bookName, bookShortName ) )
+        if 1 <= int(bookNumber) <= 66:
+            BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB}' from {bookNumber}" )
+        else:
+            BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookName )
+            BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookShortName )
+            if BBB1 == BBB2: BBB = BBB1
+            else:
+                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB1}' from '{bookName}' and '{BBB2}' from '{bookShortName}'" )
+                if BBB1 and not BBB2: BBB = BBB1
+                elif not BBB1 and BBB2: BBB = BBB2
+                else: BBB = BBB2 # bookShortName is perhaps more reliable ???
+            # logging.critical( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
+            #                                                         .format( bookNumber, bookName, bookShortName ) )
         if BBB is None and bookName:
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Validating {} {}…").format( BBB, bookName ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Validating Zefania '{}' '{}' '{}'…").format( BBB, bookName, bookShortName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Zefania XML Bible Book object'
             thisBook.objectTypeString = 'Zefania'
