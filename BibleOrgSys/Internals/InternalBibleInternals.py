@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-02-04' # by RJH
+LAST_MODIFIED_DATE = '2023-03-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.85'
+PROGRAM_VERSION = '0.86'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -139,7 +139,7 @@ BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKE
 #BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
 #for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS )
-BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
+BOS_END_MARKERS = [ f'¬{marker}' for marker in BOS_NESTING_MARKERS]
 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
 # (46) ['¬c', '¬v', '¬headers', '¬intro', '¬ilist', '¬chapters', '¬list', '¬iot', '¬p', '¬pc', '¬pr',
 #       '¬m', '¬mi', '¬pm', '¬pmo', '¬pmc', '¬pmr', '¬cls',
@@ -163,6 +163,17 @@ BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
     vp  published verse number
 """
 assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
+
+
+def getLeadingInt( someString:str ) -> int:
+    """
+    Especially used for verse numbers like '17a' and ranges like 17-25
+    """
+    # print( f"getLeadingInt( '{someString}' )…")
+    reMatch = re.search( '^-?[0-9]*', someString ) # Can return None
+    # print( f"{reMatch=}")
+    return int(reMatch.group())
+# end of InternalBibleInternals.getLeadingInt function
 
 
 def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> Dict[str,str]:
@@ -803,7 +814,7 @@ class InternalBibleEntryList:
                                                     else (entry.cleanText[:50]+'…'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}" \
                             .format( ' ' if j<9 and dataLen>=10 else '',
-                                    j if DEBUGGING_THIS_MODULE else j+1,
+                                    j,
                                     entry.marker,
                                     repr(cleanAbbreviation),
                                     " + extras" if entry.extras else '' )
@@ -851,6 +862,14 @@ class InternalBibleEntryList:
         assert isinstance( newList, InternalBibleEntryList )
         self.data.extend( newList )
     # end of InternalBibleEntryList.extend
+    def __add__( self, listToAppend ):
+        """
+        So we can use Python + operator to add lists (e.g., to combine verses)
+        """
+        assert isinstance( listToAppend, InternalBibleEntryList )
+        self.data.extend( listToAppend )
+        return self.data
+    # end of InternalBibleEntryList.__add__
 
 
     def contains( self, searchMarker, maxLines=None ):

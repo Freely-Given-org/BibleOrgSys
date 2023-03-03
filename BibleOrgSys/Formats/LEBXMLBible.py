@@ -45,10 +45,10 @@ from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-28' # by RJH
+LAST_MODIFIED_DATE = '2023-03-03' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.10'
+PROGRAM_VERSION = '0.11'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -596,6 +596,7 @@ class LEBXMLBible( Bible ):
         bookList.append( (thisBook,loadErrors.copy()) )
         loadErrors.clear()
         self.haveBook = True
+        self.addLine( 'ide', 'UTF-8', thisBook )
         doneChapter = False
         for subelement in bookElement:
             BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'kf93', loadErrors )

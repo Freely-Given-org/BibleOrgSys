@@ -77,7 +77,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-02-28' # by RJH
+LAST_MODIFIED_DATE = '2023-03-03' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -2204,6 +2204,8 @@ class InternalBibleBook:
             Also, splits lines if a paragraph marker appears within a line.
 
             Uses self._rawLines and fills self._processedLines.
+
+        Also creates the CV index (but NOT the section index)
         """
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Processing {} {} {!r} {} {:,} lines…").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB, len(self._rawLines) ) )
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
@@ -2654,7 +2656,7 @@ class InternalBibleBook:
         if fixErrors: self.checkResultsDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
         self.makeBookCVIndex()
-        #self.makeBookSectionIndex() # Not created by default
+        #self._makeBookSectionIndex() # Not created by default
     # end of InternalBibleBook.processLines
 
 
@@ -2690,7 +2692,7 @@ class InternalBibleBook:
             #for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
                 #C, V = CV
                 ##A, L, X = ALX
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContextList() ), end='  ' )
 
         self._indexedCVFlag = True
     # end of InternalBibleBook.makeBookCVIndex
@@ -2717,7 +2719,7 @@ class InternalBibleBook:
         assert isinstance( self.containerBibleObject, Bible )
         assert len(self.containerBibleObject.books)
         self._SectionIndex = InternalBibleBookSectionIndex( self, self.containerBibleObject )
-        self._SectionIndex.makeBookSectionIndex()
+        self._SectionIndex.makeBookSectionIndex( self._processedLines )
 
         self._indexedSectionsFlag = True
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Finished InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
@@ -5113,9 +5115,8 @@ class InternalBibleBook:
         Raises a KeyError if the C:V reference is not found
         """
         fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
+        assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
 
-        if isinstance( BCVReference, tuple ): assert BCVReference[0] == self.BBB
-        else: assert BCVReference.getBBB() == self.BBB
         if not self._processedFlag:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getContextVerseData'" )
             self.processLines()
