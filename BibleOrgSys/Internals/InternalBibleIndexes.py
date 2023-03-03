@@ -1098,12 +1098,12 @@ class InternalBibleBookSectionIndex:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           Got a short index entry: {lastIndexEntry}" )
                     lStartC, lStartV, lEndC, lEndV, lStartIx, lEndIx, lReasonMarker, lSectionName, lContext = lastIndexEntry
                     assert lStartC == lEndC
-                    if reasonMarker == 's1' and lastIndexEntry.reasonMarker in ('c','ms1'):
+                    if reasonMarker == 's1' and lastIndexEntry[6] in ('c','ms1'):
                         if DEBUGGING_THIS_MODULE:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "           COMBINING index entries" )
-                        startV, startIx = lastIndexEntry.startV, lastIndexEntry.startIx
-                        reasonMarker = f'{lastIndexEntry.reasonMarker}/{reasonMarker}'
-                        sectionName = f'{lastIndexEntry.sectionName}/{sectionName}'
+                        startV, startIx = lastIndexEntry[1], lastIndexEntry[4]
+                        reasonMarker = f'{lastIndexEntry[6]}/{reasonMarker}'
+                        sectionName = f'{lastIndexEntry[7]}/{sectionName}'
                         del tempIndexData[lastIndexEntryKey] # Just to be sure
 
             # Since startV is the current verse number when a section heading or something is encountered,
