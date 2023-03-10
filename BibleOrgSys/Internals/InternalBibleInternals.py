@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-03-03' # by RJH
+LAST_MODIFIED_DATE = '2023-03-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.86'
@@ -173,7 +173,7 @@ def getLeadingInt( someString:str ) -> int:
     reMatch = re.search( '^-?[0-9]*', someString ) # Can return None
     # print( f"{reMatch=}")
     return int(reMatch.group())
-# end of InternalBibleInternals.getLeadingInt function
+# end of getLeadingInt function
 
 
 def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> Dict[str,str]:

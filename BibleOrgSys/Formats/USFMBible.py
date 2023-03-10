@@ -49,7 +49,7 @@ from BibleOrgSys.Bible import Bible
 
 
 
-LAST_MODIFIED_DATE = '2023-02-01' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "USFMBible"
 PROGRAM_NAME = "USFM Bible handler"
 PROGRAM_VERSION = '0.80'
@@ -599,6 +599,7 @@ class USFMBible( Bible ):
             logging.critical( "Was a preload() done on this USFMBible?" )
             raise e
         if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
+
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:

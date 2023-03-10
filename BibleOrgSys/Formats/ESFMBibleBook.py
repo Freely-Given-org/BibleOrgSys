@@ -5,7 +5,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2020 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,6 +24,25 @@
 
 """
 Module for defining and manipulating ESFM Bible books.
+
+See https://GitHub.com/Freely-Given-org/ESFM for more info on ESFM.
+        \\id 1JN - Matigsalug Translation v1.0.17
+        \\usfm 3.0
+        \\ide UTF-8
+        \\rem ESFM v0.6 JN1
+        \\rem WORKDATA Matigsalug.txt
+        \\rem FILEDATA Matigsalug.JN1.txt
+        \\rem WORDTABLE Matigsalug.words.tsv
+        \\h 1 Huwan
+        \\toc1 1 Huwan
+        \\toc2 1 Huwan
+        \\toc3 1Huw
+        \\mt2 Ka an-anayan ne sulat ni
+        \\mt1 Huwan
+
+NOTE: We've started adding coding for the ESFM v0.6 spec,
+    but not yet removed the old code
+    (which may or may not still be needed and may or may not still work).
 """
 from gettext import gettext as _
 import os
@@ -42,10 +61,10 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-03-13' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.48'
+PROGRAM_VERSION = '0.49'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -74,6 +93,8 @@ class ESFMBibleBook( BibleBook ):
         global sortedNLMarkers
         if sortedNLMarkers is None:
             sortedNLMarkers = sorted( BibleOrgSysGlobals.loadedUSFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+
+        self.ESFMWorkDataFilename = self.ESFMFileDataFilename = self.ESFMWordTableFilename = None
     # end of __init__
 
 
@@ -87,10 +108,9 @@ class ESFMBibleBook( BibleBook ):
         Uses the addLine function of the base class to save the lines.
 
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
-                we don't need to worry about that here.
+                we don't need to worry about doing that here.
         """
-        if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFM.load( {}, {} )".format( filename, folder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.load( {}, {} )".format( filename, folder ) )
 
 
         def ESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
@@ -113,16 +133,14 @@ class ESFMBibleBook( BibleBook ):
             Note: This DOESN'T remove the underline/underscore characters used to join translated words
                 which were one word in the original, e.g., went_down
             """
-            if (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag) \
-            and len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nESFMPreprocessing( {} {}:{}, {}, {!r} )".format( BBB, C, V, marker, originalText ) )
+            if len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
+                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.ESFMPreprocessing( {} {}:{}, {}, '{}' )".format( BBB, C, V, marker, originalText ) )
 
 
             def saveWord( BBB:str, C:str, V:str, word ):
                 """
                 """
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFM saveWord( {}, {}:{}, {!r} )".format( BBB, C, V, word ) )
+                # fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveWord( {}, {}:{}, '{}' )".format( BBB, C, V, word ) )
                 assert word and ' ' not in word
             # end of saveWord
 
@@ -138,9 +156,7 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                #if C=='4' and V in ('11','12'):
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFM saveSemanticTag( {} {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
+                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveSemanticTag( {} {}:{}, '{}', '{}' )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and len(tag)>=2
                 tagMarker, tagContent = tag[1], tag[2:]
@@ -179,9 +195,7 @@ class ESFMBibleBook( BibleBook ):
                 Returns a character SFM field to be inserted into the line
                     (for better compatibility with the software chain).
                 """
-                #if C=='4' and V in ('11','12'):
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFM saveStrongsTag( {}, {}:{}, {!r}, {!r} )".format( BBB, C, V, word, tag ) )
+                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.saveStrongsTag( {}, {}:{}, '{}', '{}' )".format( BBB, C, V, word, tag ) )
                 assert word and ' ' not in word
                 assert tag and tag[0]=='=' and tag[1]=='S' and len(tag)>=3
                 tagMarker, tagContent = tag[2], tag[3:]
@@ -367,7 +381,7 @@ class ESFMBibleBook( BibleBook ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "returned:", repr(resultText) )
 
             return resultText
-        # end of ESFMBibleBook.ESFMPreprocessing
+        # end of ESFMBibleBook.load.ESFMPreprocessing
 
 
         def doaddLine( originalMarker, originalText ):
@@ -532,7 +546,64 @@ class ESFMBibleBook( BibleBook ):
                                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} Found {} {}: {}".format( name, tag, num, thisDict[tag][num] ) )
             halt
         #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
+
+        self.lookForAuxilliaryFilenames()
     # end of ESFMBibleBook.load
+
+
+    def lookForAuxilliaryFilenames( self ):
+        """
+        Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxilliary filenames.
+            \\id 1JN - Matigsalug Translation v1.0.17
+            \\usfm 3.0
+            \\ide UTF-8
+            \\rem ESFM v0.6 JN1
+            \\rem WORKDATA Matigsalug.txt
+            \\rem FILEDATA Matigsalug.JN1.txt
+            \\rem WORDTABLE Matigsalug.words.tsv
+            \\h 1 Huwan
+
+        If it finds some, and if that particular filename is not yet already listed,
+            loads any unique filename into a dict with the value set to None.
+        Also checks that the referred file does actually exist.
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxilliaryFilenames( {self.BBB} )" )
+        for marker,rest in self._rawLines[:10]: # Should be within the first seven lines
+            if marker != 'rem': continue
+            if rest.startswith( 'WORKDATA ' ):
+                filePart = rest[9:]
+                # assert filePart.rstrip().endswith( '.txt' )
+                assert filePart.endswith( '.txt' )
+                if self.ESFMWorkDataFilename is None:
+                    self.ESFMWorkDataFilename = filePart
+                    filepath = os.path.join( self.sourceFolder, filePart )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
+                else:
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: Have '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
+            elif rest.startswith( 'FILEDATA ' ):
+                filePart = rest[9:]
+                # assert filePart.rstrip().endswith( '.txt' )
+                assert filePart.endswith( '.txt' )
+                if self.ESFMFileDataFilename is None:
+                    self.ESFMFileDataFilename = filePart
+                    filepath = os.path.join( self.sourceFolder, filePart )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
+                else:
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: Have '{self.ESFMFileDataFilename}' and now got '{filePart}'")
+            if rest.startswith( 'WORDTABLE ' ):
+                filePart = rest[10:]
+                # assert filePart.rstrip().endswith( '.tsv' )
+                assert filePart.endswith( '.tsv' )
+                if self.ESFMWordTableFilename is None:
+                    self.ESFMWordTableFilename = filePart
+                    filepath = os.path.join( self.sourceFolder, filePart )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
+                else:
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: Have '{self.ESFMWordTableFilename}' and now got '{filePart}'")
+    # end of ESFMBibleBook.load.lookForAuxilliaryFilenames
 # end of class ESFMBibleBook
 
 

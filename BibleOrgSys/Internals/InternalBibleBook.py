@@ -71,13 +71,13 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, US
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_CONTENT_MARKERS, BOS_CUSTOM_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_CUSTOM_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
-    parseWordAttributes, parseFigureAttributes
+    parseWordAttributes, parseFigureAttributes, getLeadingInt
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-03-03' # by RJH
+LAST_MODIFIED_DATE = '2023-03-04' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -181,7 +181,7 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         # Remove (unnecessary here) USFM paragraph markers
         for _safetyCount in range(9999): # Keep looping as long as there's changes
             changedSomething = False
-            for paragraphMarker in ('q','q1','q2','q3', 'p','m','pi','pi1',):
+            for paragraphMarker in ('q','q1','q2','q3', 'p','m','pi','pi1'):
                 if translatedWordsString.startswith( f'\\{paragraphMarker} ' ):
                     # vPrint( 'Never', debuggingThisFunction, f"             cleanUWalignments1 {BBB} {C}:{V}: Removing \\{paragraphMarker} number from '{translatedWordsString}'" )
                     translatedWordsString = translatedWordsString[len(paragraphMarker)+2:] # Remove the unwanted paragraph formatting
@@ -433,12 +433,12 @@ class InternalBibleBook:
         # Maybe to reduce data structure size, but it was confusing
         # BBB = self.BBB
         # if self.checkResultsDictionary['Priority Errors']:
-        #     LastPriority, lastString, (lastBBB,lastC,lastV,) = self.checkResultsDictionary['Priority Errors'][-1]
+        #     LastPriority, lastString, (lastBBB,lastC,lastV) = self.checkResultsDictionary['Priority Errors'][-1]
         #     if priority==LastPriority and errorString==lastString and BBB==lastBBB: # Remove unneeded repetitive information
         #         BBB = ''
         #         if C==lastC: C = ''
 
-        self.checkResultsDictionary['Priority Errors'].append( (priority,errorString,(self.BBB,C,V,),) )
+        self.checkResultsDictionary['Priority Errors'].append( (priority,errorString,(self.BBB,C,V)) )
     # end of InternalBibleBook.addPriorityError
 
 
@@ -545,11 +545,11 @@ class InternalBibleBook:
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
         if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert marker == expectedLastMarker
-        #if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
+        #if marker in ('v','c') and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
         if forceDebugHere: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  newText for {!r} is {!r}".format( marker, text ) )
         #if 'there is no longer any that is' in text: halt
-        self._rawLines[-1] = (marker, text,)
+        self._rawLines[-1] = (marker, text)
     # end of InternalBibleBook.appendToLastLine
 
 
@@ -718,8 +718,8 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'oTS', self.objectTypeString )
-        if self.objectTypeString in ('USFM2','USFM3','USX',):
-            if originalMarker not in ('id','ide','h','rem',):
+        if self.objectTypeString in ('USFM2','USFM3','USX'):
+            if originalMarker not in ('id','ide','h','rem'):
                 # Fix up quote marks
                 if '<' in adjText or '>' in adjText:
                     if not self.givenAngleBracketWarning: # Just give the warning once (per book)
@@ -1104,7 +1104,7 @@ class InternalBibleBook:
                 extras.append( InternalBibleExtra(this1,noteIndexAdjText,note,cleanedNote,lineLocation) ) # Saves 4 bits: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp# newline entry BEFORE the v field that it presumably came from
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBook._processLineFix insertvp# (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert originalMarker in ('v~','p~',) # Shouldn't occur in other fields
+                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert originalMarker in ('v~','p~') # Shouldn't occur in other fields
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
@@ -1164,7 +1164,7 @@ class InternalBibleBook:
                     indexDigit = remainingText[4]
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert indexDigit.isdigit()
                     adjText = adjText[:ixStart] + adjText[ixStart+9:]
-                    indexDigits.append( (indexDigit,ixStart,) )
+                    indexDigits.append( (indexDigit,ixStart) )
                     #ixStart += 0
                 elif remainingText.startswith( '<RF>1) ' ):
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "iT", C, V, indexDigits, remainingText )
@@ -1472,7 +1472,7 @@ class InternalBibleBook:
             if endMarker=='c' and lastMarker=='s1':
                 logging.info( f"  We have a {lastMarker} section crossing a chapter boundary at {self.BBB}_{C}:{V}" )
                 # There's too many of these to document
-                #if (self.BBB,C,V) not in (('GEN','1','31'),('GEN','27','46'),('GEN','29','35'),('GEN','46','34'),('GEN','49','33'),):
+                #if (self.BBB,C,V) not in (('GEN','1','31'),('GEN','27','46'),('GEN','29','35'),('GEN','46','34'),('GEN','49','33')):
                     #halt # Add ref of section crossing chapter boundary please
             elif endMarker != lastMarker:
                 logging.info( f"  We have a {lastMarker} in a segment at {self.BBB}_{C}:{V} that previously crossed a boundary" )
@@ -1638,7 +1638,7 @@ class InternalBibleBook:
             lastOpenMarker = _getLastOpenMarker()
             if lastOpenMarker=='iot' and marker not in OUR_INTRO_OUTLINE_MARKERS: _closeLastOpenMarker( 'iot' )
             if lastOpenMarker=='ilist' and marker not in OUR_INTRO_LIST_MARKERS: _closeLastOpenMarker( 'ilist' )
-            if lastOpenMarker=='list' and marker not in OUR_MAIN_TEXT_LIST_MARKERS and marker not in ('v~','p~',):
+            if lastOpenMarker=='list' and marker not in OUR_MAIN_TEXT_LIST_MARKERS and marker not in ('v~','p~'):
                 # This is more complex coz can cross v and c boundaries
                 dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Shall we close '{marker}' given {_findNextRelevantListMarker(j)=} and {_findNextRelevantMarker(j)=} @ {self.BBB}_{C}:{V}" )
                 if _findNextRelevantListMarker(j) not in OUR_MAIN_TEXT_LIST_MARKERS:
@@ -1682,7 +1682,7 @@ class InternalBibleBook:
             elif marker == 'vp#':
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After ({}) vp#: {!r} {} {}:{} in {}".format( previousMarker, nextMarker, self.BBB, C, V, self.name ) )
                 if DEBUGGING_THIS_MODULE:
-                    if self.BBB!='ESG': assert nextMarker in ('v','p',) # after vp#
+                    if self.BBB!='ESG': assert nextMarker in ('v','p') # after vp#
                 if lastOpenMarker == 'v': _closeLastOpenMarker( 'v', V )
                 elif 'v' in openMarkers: # we're not starting the first verse
                     # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"ClosingB v even though not last with {openMarkers} @ {self.BBB}_{C}:{V} {marker}" )
@@ -1858,7 +1858,7 @@ class InternalBibleBook:
             if 'ilist' in openMarkers or 'iot' in openMarkers:
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBibleBook.processLines._addNestingMarkers: stillOpen", self.BBB, openMarkers )
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                    if self.BBB not in ('GLS','BAK',): halt
+                    if self.BBB not in ('GLS','BAK'): halt
             for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                 if lMarker == 'v': _closeLastOpenMarker( 'v', V )
                 elif lMarker == 'c': _closeLastOpenMarker( 'c', C )
@@ -2116,7 +2116,7 @@ class InternalBibleBook:
                 #skip = False
                 #continue # skip this empty p or q marker completely now
 
-            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None)
 
             if lastMarker=='v' and marker in USFM_BIBLE_PARAGRAPH_MARKERS and text:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "increase: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
@@ -2162,7 +2162,7 @@ class InternalBibleBook:
                 #skip = False
                 #continue # skip this empty p or q marker completely now
 
-            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None)
 
             if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText:
                 if marker in USFM_BIBLE_PARAGRAPH_MARKERS and not text:
@@ -2243,10 +2243,10 @@ class InternalBibleBook:
             # From here on, we use adjText (not text)
 
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker {!r} text {!r}, adjText {!r}".format( adjMarker, text, adjText ) )
-            if not adjText and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
+            if not adjText and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(adjMarker)=='A' or adjMarker in ('v~','c~','c#') ): # should always have text
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "_processLine: marker should always have text (ignoring it):", self.BBB, C, V, originalMarker, adjMarker, " originally '"+text+"'" )
                 #fixErrors.append( lineLocationSpace + _("Marker {!r} should always have text").format( originalMarker ) )
-                if self.objectTypeString in ('USFM2','USFM3','USX',):
+                if self.objectTypeString in ('USFM2','USFM3','USX'):
                     if self.sahtCount != -1:
                         self.sahtCount += 1
                         if self.sahtCount <= self.maxNoncriticalErrorsPerBook:
@@ -2421,7 +2421,7 @@ class InternalBibleBook:
                     else: lastAdjustedMarker = lastOriginalMarker = lastAdjustedText = lastCleanText = lastExtras = lastOriginalText = None
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
-                    if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
+                    if lastAdjustedMarker in ('p','q1','m','nb'): # The chapter marker should go before this
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', None, '1') ) # Write the explicit chapter number
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                     else: # Assume that the last marker was part of the introduction, so write it first
@@ -2454,7 +2454,7 @@ class InternalBibleBook:
                     # (and especially coz we don't know yet if this is a finished translation)
                     #fixErrors.append( lineLocationSpace + _("Nothing after verse number: {!r}").format( originalText ) )
                     #priority = 92
-                    if self.objectTypeString in ('USFM2','USFM3','USX',):
+                    if self.objectTypeString in ('USFM2','USFM3','USX'):
                         #if self.nfvnCount == -1:
                             #priority = 12
                         #else:
@@ -2968,9 +2968,9 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, text )
             if marker == 'c':
                 if chapterNumber == 0: # it's the book introduction
-                    versification.append( (chapterText, str(j-1),) ) # Count each line as a 'verse'
+                    versification.append( (chapterText, str(j-1)) ) # Count each line as a 'verse'
                 else: # it's a regular chapter
-                    versification.append( (chapterText, lastVerseNumberString,) )
+                    versification.append( (chapterText, lastVerseNumberString) )
                 chapterText = text.strip()
                 if ' ' in chapterText: # Seems that we can have footnotes here :)
                     versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Unexpected space in USFM chapter number field {!r}").format( self.BBB, lastChapterNumber, lastVerseNumberString, chapterText, lastChapterNumber ) )
@@ -3025,7 +3025,7 @@ class InternalBibleBook:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse range out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                         logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
-                    combinedVerses.append( (chapterText, verseText,) )
+                    combinedVerses.append( (chapterText, verseText) )
                 elif ',' in verseText: # we have a range like 7,8
                     versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Encountered comma combined verses field {}").format( self.BBB, chapterNumber, lastVerseNumberString, verseText ) )
                     logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.BBB ) )
@@ -3046,7 +3046,7 @@ class InternalBibleBook:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse list out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                         logging.error( _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
-                    combinedVerses.append( (chapterText, verseText,) )
+                    combinedVerses.append( (chapterText, verseText) )
                 else: # Should be just a single verse number
                     verseNumberString = verseText
                     endVerseNumberString = verseNumberString
@@ -3072,15 +3072,15 @@ class InternalBibleBook:
                     if verseNumber <= lastVerseNumber:
                         versificationErrors.append( _("{} {} ('{}' after '{}') USFM verse numbers out of sequence in Bible book").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
                         logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ('{}' after '{}')").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
-                        reorderedVerses.append( (chapterText, lastVerseNumberString, verseText,) )
+                        reorderedVerses.append( (chapterText, lastVerseNumberString, verseText) )
                     else: # Must be missing some verse numbers
                         versificationErrors.append( _("{} {} Missing USFM verse number(s) between '{}' and '{}' in Bible book").format( self.BBB, chapterText, lastVerseNumberString, verseNumberString ) )
                         logging.info( _("Missing USFM verse number(s) between '{}' and '{}' in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.BBB, chapterText ) )
                         for number in range( lastVerseNumber+1, verseNumber ):
-                            omittedVerses.append( (chapterText, str(number),) )
+                            omittedVerses.append( (chapterText, str(number)) )
                 lastVerseNumberString = endVerseNumberString
         assert chapterText.isdigit() and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
-        versification.append( (chapterText, lastVerseNumberString,) ) # Append the verse count for the final chapter
+        versification.append( (chapterText, lastVerseNumberString) ) # Append the verse count for the final chapter
         #if reorderedVerses: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Reordered verses in", self.BBB, "are:", reorderedVerses )
         if versificationErrors: self.checkResultsDictionary['Versification Errors'] = versificationErrors
         return versification, omittedVerses, combinedVerses, reorderedVerses
@@ -3299,7 +3299,7 @@ class InternalBibleBook:
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    _discover() for {self.BBB} done word counts." )
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
-            for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress',):
+            for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress'):
                 #assert bkDict[aKey] is None \
                     #or ( aKey=='chapterCount' and bkDict[aKey]==1 ) # Some people put a chapter count in their front matter, glossary, etc.
                 if bkDict[aKey] is not None and ( aKey!='chapterCount' or bkDict[aKey]!=1 ):
@@ -3373,42 +3373,42 @@ class InternalBibleBook:
                     continue
                 verseNumberStr = text
             elif marker == 'p':
-                reference = primeReference = (chapterNumberStr,verseNumberStr,)
+                reference = primeReference = (chapterNumberStr,verseNumberStr)
                 while reference in paragraphReferences: # Must be a single verse broken into multiple paragraphs
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert primeReference in paragraphReferences
-                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
+                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a') # Append a suffix
                     else: # Already have a suffix
-                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
+                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1)) # Just increment the suffix
                 paragraphReferences.append( reference )
             elif len(marker)==2 and marker[0]=='q' and marker[1].isdigit():# q1, q2, etc.
-                reference = primeReference = (chapterNumberStr,verseNumberStr,)
+                reference = primeReference = (chapterNumberStr,verseNumberStr)
                 while reference in qReferences: # Must be a single verse broken into multiple segments
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert primeReference in qReferences
-                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
+                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a') # Append a suffix
                     else: # Already have a suffix
-                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
+                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1)) # Just increment the suffix
                 level = int( marker[1] ) # 1, 2, etc.
                 qReferences.append( (reference,level,) )
             elif marker in ('s1','s2','s3','s4', 'd','r', 'qa'):
                 # \d is Psalm description, \r is section reference, \qa is Acrostic Heading
                 if text and text[-1].isspace(): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, chapterNumberStr, verseNumberStr, marker, "'"+text+"'" )
-                reference = (chapterNumberStr,verseNumberStr,)
+                reference = (chapterNumberStr,verseNumberStr)
                 # if marker == 'qa': level = 1
                 # else: level = int( marker[1] ) # 1, 2, etc.
-                #levelReference = (level,reference,)
+                #levelReference = (level,reference)
                 adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, reference, levelReference, marker, text )
                 #assert levelReference not in sectionHeadingReferences # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
                 #sectionHeadingReferences.append( levelReference ) # Just for checking
-                sectionHeadings.append( (reference,marker,adjText,) ) # This is the real data
+                sectionHeadings.append( (reference,marker,adjText) ) # This is the real data
             elif marker == 'r':
-                reference = (chapterNumberStr,verseNumberStr,)
+                reference = (chapterNumberStr,verseNumberStr)
                 if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert reference not in sectionReferenceReferences # Shouldn't be any cases of two lots of section references within one verse boundary
                 sectionReferenceReferences.append( reference ) # Just for checking
                 sectionReferenceText = text
                 if sectionReferenceText and sectionReferenceText[0]=='(' and sectionReferenceText[-1]==')':
                     sectionReferenceText = sectionReferenceText[1:-1] # Remove parenthesis
-                sectionReferences.append( (reference,sectionReferenceText,) ) # This is the real data
+                sectionReferences.append( (reference,sectionReferenceText) ) # This is the real data
 
             if text and 'wj' in text:
                 reference = (chapterNumberStr,verseNumberStr)
@@ -3416,8 +3416,8 @@ class InternalBibleBook:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", marker, text )
                 wjCount = text.count( 'wj' ) // 2 # Assuming that half of them are \wj* end markers
                 wjFirst, wjLast = text.startswith( '\\wj ' ), text.endswith( '\\wj*' )
-                wjInfo = (entry.getOriginalMarker(),wjCount,wjFirst,wjLast,)
-                wordsOfJesus.append( (reference,wjInfo,) ) # This is the real data
+                wjInfo = (entry.getOriginalMarker(),wjCount,wjFirst,wjLast)
+                wordsOfJesus.append( (reference,wjInfo) ) # This is the real data
 
         if addedUnitErrors: self.checkResultsDictionary['Added Unit Errors'] = addedUnitErrors
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert len(paragraphReferences) == len(set(paragraphReferences)) # No duplicates
@@ -3666,8 +3666,8 @@ class InternalBibleBook:
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
             # Check for markers that shouldn't be empty
-            if markerEmpty and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
-                #if self.objectTypeString in ('USFM','USX',):
+            if markerEmpty and not extras and ( BibleOrgSysGlobals.loadedUSFMMarkers.getMarkerContentType(marker)=='A' or marker in ('v~','c~','c#') ): # should always have text
+                #if self.objectTypeString in ('USFM','USX'):
                     #if self.sahtCount != -1:
                         #self.sahtCount += 1
                         #if self.sahtCount <= self.maxNoncriticalErrorsPerBook:
@@ -3726,14 +3726,14 @@ class InternalBibleBook:
                 elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( lineLocationSpace + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
                 if section=='Introduction' and newSection!='Numbering':
                     newlineMarkerErrors.append( lineLocationSpace + _("Missing Numbering section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
-                if section=='Numbering' and newSection not in ('Text','Canonical Text','Text, Poetry',):
+                if section=='Numbering' and newSection not in ('Text','Canonical Text','Text, Poetry'):
                     newlineMarkerErrors.append( lineLocationSpace + _("Missing Text section (went from {} straight to {} section with {} marker)").format( section, newSection, marker ) )
-                if section=='Text' and newSection not in ('Canonical Text','Text, Poetry',):
+                if section=='Text' and newSection not in ('Canonical Text','Text, Poetry'):
                     newlineMarkerErrors.append( lineLocationSpace + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
                 #elif section!='Text' and newSection=='Text, Poetry':
                     #newlineMarkerErrors.append( lineLocationSpace + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
 
-                if newSection=='Text' and section not in ('Introduction','Numbering','Canonical Text','Text, Poetry',):
+                if newSection=='Text' and section not in ('Introduction','Numbering','Canonical Text','Text, Poetry'):
                     newlineMarkerErrors.append( lineLocationSpace + _("DDidn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "section", newSection )
                 section = newSection
@@ -4031,7 +4031,7 @@ class InternalBibleBook:
 
         if 'USFMs' not in self.checkResultsDictionary: self.checkResultsDictionary['USFMs'] = {} # So we hopefully get the errors first
         if newlineMarkerErrors: self.checkResultsDictionary['USFMs']['Newline Marker Errors'] = newlineMarkerErrors
-        #if newlineMarkerErrors and self.BBB not in ('NEH','GLS',): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, newlineMarkerErrors ); halt
+        #if newlineMarkerErrors and self.BBB not in ('NEH','GLS'): vPrint( 'Quiet', DEBUGGING_THIS_MODULE, newlineMarkerErrors ); halt
         if internalMarkerErrors: self.checkResultsDictionary['USFMs']['Internal Marker Errors'] = internalMarkerErrors
         if noteMarkerErrors: self.checkResultsDictionary['USFMs']['Footnote and Cross-Reference Marker Errors'] = noteMarkerErrors
         if modifiedMarkerList:
@@ -4107,7 +4107,7 @@ class InternalBibleBook:
                                                    'DIGIT ONE','DIGIT TWO','DIGIT THREE','DIGIT FOUR','DIGIT FIVE',
                                                    'DIGIT SIX','DIGIT SEVEN','DIGIT EIGHT','DIGIT NINE','DIGIT ZERO', )
                     if not isCommon:
-                        for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER ',):
+                        for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER '):
                             if unicodeCharName.startswith(commonString) \
                             and len(unicodeCharName) == len(commonString)+1: # prevents things like letter ENG
                                 isCommon = True; break
@@ -4546,7 +4546,7 @@ class InternalBibleBook:
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk '):
                     #    cleanExtraText = cleanExtraText.replace( marker, '' )
                     countWordsForCheck( extraType, cleanExtraText )
 
@@ -4696,7 +4696,7 @@ class InternalBibleBook:
             lineLocation = '{} {}:{}'.format( self.BBB, C, V )
             lineLocationSpace = lineLocation + ' '
 
-            if marker in ('imt1','imt2','imt3','imt4',):
+            if marker in ('imt1','imt2','imt3','imt4'):
                 if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
@@ -4705,7 +4705,7 @@ class InternalBibleBook:
                 elif cleanText[-1] in '.።':
                     introductionErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
-            elif marker in ('is1','is2','is3','is4',):
+            elif marker in ('is1','is2','is3','is4'):
                 if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: headingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
@@ -4722,7 +4722,7 @@ class InternalBibleBook:
                 elif cleanText[-1] in '.።':
                     introductionErrors.append( lineLocationSpace + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 48, C, V, _("Heading ends with a period") )
-            elif marker in ('io1','io2','io3','io4',):
+            elif marker in ('io1','io2','io3','io4'):
                 if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
@@ -4731,7 +4731,7 @@ class InternalBibleBook:
                 elif cleanText[-1] in '.።':
                     introductionErrors.append( lineLocationSpace + _("{} outline entry ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 47, C, V, _("Outline entry ends with a period") )
-            elif marker in ('ip','ipi','im','imi',):
+            elif marker in ('ip','ipi','im','imi'):
                 if not cleanText:
                     introductionErrors.append( lineLocationSpace + _("Missing introduction text for marker {}").format( marker ) )
                     self.addPriorityError( 36, C, V, _("Missing introduction text") )
@@ -4796,7 +4796,7 @@ class InternalBibleBook:
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk '):
                     #    cleanExtraText = cleanExtraText.replace( marker, '' )
 
                     if extraType in ('fn', 'en', 'xr', ):
@@ -4809,7 +4809,7 @@ class InternalBibleBook:
                         for char in adjExtraText:
                             if status==0: # waiting for leader char
                                 if char==' ' and myString:
-                                    extraList.append( ('leader',myString,) )
+                                    extraList.append( ('leader',myString) )
                                     status, myString = 1, ''
                                 else: myString += char
                             elif status==1: # waiting for a backslash code
@@ -4818,7 +4818,7 @@ class InternalBibleBook:
                                     if myString and myString!=' ':
                                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Something funny in", extraText, extraList, myString ) # Perhaps a fv field embedded in another field???
                                         #assert len(extraList)>=2 and extraList[-2][1] == '' # If so, the second to last field is often blank
-                                        extraList.append( ('',myString.rstrip(),) ) # Handle it by listing a blank field
+                                        extraList.append( ('',myString.rstrip()) ) # Handle it by listing a blank field
                                     status, myString = 2, ''
                                 else: myString += char
                             elif status==2: # getting a backslash code
@@ -4826,15 +4826,15 @@ class InternalBibleBook:
                                     lastCode = myString
                                     status, myString = 3, ''
                                 #elif char=='*' and lastCode and lastString and myString==lastCode: # closed a marker
-                                #    extraList.append( (lastCode,lastString,) )
+                                #    extraList.append( (lastCode,lastString) )
                                 else: myString += char
                             elif status==3: # getting a backslash code entry text
                                 if char=='\\' and lastCode and myString: # getting the next backslash code
-                                    extraList.append( (lastCode,myString.rstrip(),) )
+                                    extraList.append( (lastCode,myString.rstrip()) )
                                     status, myString = 4, ''
                                 elif char=='\\' and lastCode and not myString: # Getting another (embedded?) backslash code instead
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here", lastCode, extraList, extraText )
-                                    extraList.append( (lastCode,'',) )
+                                    extraList.append( (lastCode,'') )
                                     status, myString, lastCode = 4, '', ''
                                 else: myString += char
                             elif status==4: # getting the backslash closing code or the next code
@@ -4855,7 +4855,7 @@ class InternalBibleBook:
                                     status, myString = 3, ''
                                 else: myString += char
                             else: raise KeyError
-                        if lastCode and myString: extraList.append( (lastCode,myString.rstrip(),) ) # Append the final part of the note
+                        if lastCode and myString: extraList.append( (lastCode,myString.rstrip()) ) # Append the final part of the note
                         #if len(extraList)<3 or '\\ft \\fq' in extraText:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "extraList", extraList, "'"+extraText+"'" )
 
@@ -5137,7 +5137,11 @@ class InternalBibleBook:
             C, V = BCVReference[1], BCVReference[2]
         else: # assume it's a SimpleVerseKey or similar
             C,V = BCVReference.getCV()
-        return self._CVIndex.getVerseEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
+        try:
+            return self._CVIndex.getVerseEntriesWithContext( (C,V) ) # Gives a KeyError if not found
+        except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
+            logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")
+            return self._CVIndex.getVerseEntriesWithContext( (C,str(getLeadingInt(V))) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 
 
@@ -5159,7 +5163,7 @@ class InternalBibleBook:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entry )
                 marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
                 line = '\\'+marker
-                if originalMarker and originalMarker!=marker and (marker,originalMarker) not in (('c#','c'),('v~','v'),):
+                if originalMarker and originalMarker!=marker and (marker,originalMarker) not in (('c#','c'),('v~','v')):
                     line += '<<'+originalMarker
                 content = entry.getOriginalText()
                 if content: line += '='+content

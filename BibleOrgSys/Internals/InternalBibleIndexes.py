@@ -84,15 +84,15 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 # from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-03-03' # by RJH
+LAST_MODIFIED_DATE = '2023-03-05' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.83'
+PROGRAM_VERSION = '0.84'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1083,11 +1083,13 @@ class InternalBibleBookSectionIndex:
                 if int(endV) < int(startV): endV = startV
 
             # Do some basic checking here
-            if self.workName != 'LEB':
-                if reasonMarker != 'c':
-                    assert endV != '0', f"Section index failed {self.workName} {self.BBB} _saveAnySectionOutstanding( {startC}:{startV} {endC}:{endV} {startIx=} {endIx=} {reasonMarker=} {sectionName=} ) Could this be a zero-length section???"
-            assert int(endC) >= int(startC)
-            if endC==startC: assert int(endV) >= int(startV) # Verse ranges shouldn't go backwards
+            if reasonMarker != 'c':
+                if endV == '0':
+                    logging.warning( f"makeBookSectionIndex: seems that {self.workName} {self.BBB} has a zero-length section at {startC}:0" )
+                # if self.workName != 'LEB':
+                #     assert endV != '0', f"Section index failed {self.workName} {self.BBB} _saveAnySectionOutstanding( {startC}:{startV} {endC}:{endV} {startIx=} {endIx=} {reasonMarker=} {sectionName=} ) Could this be a zero-length section???"
+            assert int(endC) >= getLeadingInt(startC)
+            if endC==startC: assert int(endV) >= getLeadingInt(startV) # Verse ranges shouldn't go backwards
 
             # If the last entry was very small, we might need to combine it with this one
             if tempIndexData:
@@ -1123,6 +1125,7 @@ class InternalBibleBookSectionIndex:
                         startV = text
                     break
                 elif marker in ('v~','p~'): # e.g., if we encountered a section heading that's in the middle of a verse
+                    # or could it mean that our nesting markers aren't inserted correctly ???
                     if DEBUGGING_THIS_MODULE:
                         assert startV.isdigit()
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {startV}b" )
@@ -1130,8 +1133,10 @@ class InternalBibleBookSectionIndex:
                     lastIndexEntryKey = list(tempIndexData.keys())[-1]
                     lastIndexEntry = tempIndexData[lastIndexEntryKey]
                     lStartC, lStartV, lEndC, lEndV, lStartIx, lEndIx, lReasonMarker, lSectionName, lContext = lastIndexEntry
-                    if self.workName != 'LEB': # Why ???
-                        assert lEndC==startC and lEndV==startV, f"{self.workName} {self.BBB} section index start={startC}:{startV} lEnd={lEndC}:{lEndV}"
+                    if lEndC!=startC or lEndV!=startV:
+                        logging.warning( f"makeBookSectionIndex: missing section? {self.workName} {self.BBB} section index start={startC}:{startV} lEnd={lEndC}:{lEndV}" )
+                    # if self.workName not in ('LEB','ULT','BSB','WEB'): # Why ??? ULT Psa 24:10 to Psa 25:0 , BSB Psa 1:1 ???, WEB SIR 51:0
+                    #     assert lEndC==startC and lEndV==startV, f"makeBookSectionIndex: missing section? {self.workName} {self.BBB} section index start={startC}:{startV} lEnd={lEndC}:{lEndV}"
                     lEndV += 'a'
                     tempIndexData[(lStartC,lStartV)] = (lStartC, lStartV, lEndC, lEndV, lStartIx, lEndIx,
                                                             lReasonMarker, lSectionName, lContext)
@@ -1232,8 +1237,10 @@ class InternalBibleBookSectionIndex:
                         assert startC=='-1' and endC=='-1'
                         assert int(startV) == savedJ
                         assert int(endV) == j-1
-                        if self.workName not in ('OEB','LEB'): # Why is this failing at OEB CH1 c='10' -- ah, no prior chapters!
-                            assert j-1 > savedJ, f"{self.workName} {self.BBB} c='{text}' after last={lastC}:{lastV} with start={startC}:{startV} end={endC}:{endV} {j=} {savedJ=}"
+                        if j-1 <= savedJ:
+                            logging.warning( f"makeBookSectionIndex: weird or missing section in {self.workName} {self.BBB} c='{text}' after last={lastC}:{lastV} with start={startC}:{startV} end={endC}:{endV} {j=} {savedJ=}" )
+                        # if self.workName not in ('OEB','LEB','ULT','NET'): # Why is this failing at OEB CH1 c='10' -- ah, no prior chapters! ULT fails at PSA 1 (c 1 directly after ms1) NET JOB -1:9
+                        #     assert j-1 > savedJ, f"makeBookSectionIndex: weird or missing section in {self.workName} {self.BBB} c='{text}' after last={lastC}:{lastV} with start={startC}:{startV} end={endC}:{endV} {j=} {savedJ=}"
                         _saveAnySectionOutstanding( startC, startV, endC, endV, savedJ, j-1, lastMarkerReason, lastSectionName )
                         savedJ = j
                         startC, startV = text, '0'
@@ -1302,7 +1309,7 @@ class InternalBibleBookSectionIndex:
                         #lastSectionName = f'{bookName} {strC}'
                 elif marker in ('v~','p~'): # We have verse data
                     if not lastSectionName:
-                        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"Setting lastSectionName for verse info found at {strC}:{strV}" )
+                        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Setting lastSectionName for verse info found at {strC}:{strV}" )
                         lastSectionName = f"{bookName} {strC}"
                 # else: # All the other lines don't cause a new index entry to be made
 

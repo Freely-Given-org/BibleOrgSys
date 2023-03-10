@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -25,6 +25,21 @@
 """
 Module for defining and manipulating complete or partial ESFM Bibles.
 
+See https://GitHub.com/Freely-Given-org/ESFM for more info on ESFM.
+        \\id 1JN - Matigsalug Translation v1.0.17
+        \\usfm 3.0
+        \\ide UTF-8
+        \\rem ESFM v0.6 JN1
+        \\rem WORKDATA Matigsalug.txt
+        \\rem FILEDATA Matigsalug.JN1.txt
+        \\rem WORDTABLE Matigsalug.words.tsv
+        \\h 1 Huwan
+        \\toc1 1 Huwan
+        \\toc2 1 Huwan
+        \\toc3 1Huw
+        \\mt2 Ka an-anayan ne sulat ni
+        \\mt1 Huwan
+
 Creates a semantic dictionary with keys:
     'Tag errors': contains a list of 4-tuples (BBB,C,V,errorWord)
     'Missing': contains a dictionary
@@ -32,11 +47,13 @@ Creates a semantic dictionary with keys:
         where the key is the name (e.g., 'Jonah')
         and the entry is a list of 4-tuples (BBB,C,V,actualWord)
 """
+from typing import List, Tuple
 from gettext import gettext as _
 import os
 from pathlib import Path
 import logging
 import multiprocessing
+import re
 
 if __name__ == '__main__':
     import sys
@@ -49,13 +66,14 @@ from BibleOrgSys.InputOutput.USFMFilenames import USFMFilenames
 from BibleOrgSys.Formats.PTX7Bible import loadPTX7ProjectData
 from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.62'
+PROGRAM_VERSION = '0.63'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -63,35 +81,6 @@ DEBUGGING_THIS_MODULE = False
 
 filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
 
-
-
-def t( messageString ):
-    """
-    Prepends the module name to a error or warning message string if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
-        nameBit = '{}{}{}'.format( SHORT_PROGRAM_NAME, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, errorBit )
-# end of t
-
-
-
-#def removeUnwantedTupleExtensions( fnTuples ):
-    #"""
-    #Given a container of (BBB,filename) 2-tuples,
-        #results a list without any of the above file extensions.
-    #"""
-    #resultList = []
-    #for BBB,filename in fnTuples:
-        #ignoreFlag = False
-        #for ignoreExtension in extensionsToIgnore:
-            #if filename.upper().endswith( ignoreExtension ): ignoreFlag = True; break
-        #if not ignoreFlag: resultList.append( (BBB,filename) )
-    #return resultList
-## end of removeUnwantedTupleExtensions
 
 
 def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
@@ -243,6 +232,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 
+linkedWordRegex = re.compile( '([-A-za-zⱤḩⱪşʦāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
 class ESFMBible( Bible ):
     """
     Class to load and manipulate ESFM Bibles.
@@ -251,6 +241,13 @@ class ESFMBible( Bible ):
     def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None ) -> None:
         """
         Create the internal ESFM Bible object.
+
+        Note that there's no encoding parameter here
+            because ESFM is defined to only be UTF-8.
+
+        After creating the class,
+            set loadAuxilliaryFiles to True if
+                you want metadata and word files to be loaded along with each book.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
 
@@ -261,8 +258,10 @@ class ESFMBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation = sourceFolder, givenName, givenAbbreviation
-
         self.dontLoadBook = []
+
+        self.loadAuxilliaryFiles = False
+        self.ESFMWorkData, self.ESFMFileData, self.ESFMWordTables = {}, {}, {}
         self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
     # end of ESFMBible.__init_
 
@@ -270,8 +269,7 @@ class ESFMBible( Bible ):
     def preload( self ):
         """
         """
-        if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 2:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, t("preload() from {}").format( self.sourceFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.preload() from {}".format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -478,9 +476,17 @@ class ESFMBible( Bible ):
             logging.warning( "We had already tried loading ESFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
+
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-        if filename is None: filename = self.possibleFilenameDict[BBB]
+        try:
+            if filename is None and BBB in self.possibleFilenameDict:
+                filename = self.possibleFilenameDict[BBB]
+        except AttributeError as e:
+            logging.critical( "Was a preload() done on this ESFMBible?" )
+            raise e
+        if filename is None: raise FileNotFoundError( "ESFMBible.loadBook: Unable to find file for {}".format( BBB ) )
+
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
         if EBB._rawLines:
@@ -514,9 +520,9 @@ class ESFMBible( Bible ):
 
     def loadBooks( self ):
         """
-        Load all the books.
+        Load all the books that we can find.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, _("ESFMBible: Loading {} from {}…").format( self.name, self.sourceFolder ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.loadBooks() loading {} from {}".format( self.name, self.sourceFolder ) )
 
         if not self.preloadDone: self.preload()
 
@@ -529,7 +535,7 @@ class ESFMBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, t("ESFMBible: Loading {} ESFM books using {} processes…").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMBible: Loading {} ESFM books using {} processes…".format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -559,11 +565,123 @@ class ESFMBible( Bible ):
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSemantic dict:" )
         for someKey,someEntry in self.semanticDict.items():
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: {}".format( someKey, someEntry ) )
+        if self.loadAuxilliaryFiles: self.lookForAuxilliaryFilenames()
         self.doPostLoadProcessing()
-    # end of ESFMBible.load
+    # end of ESFMBible.loadBooks
 
     def load( self ):
         self.loadBooks()
+
+
+    def lookForAuxilliaryFilenames( self ):
+        """
+        Looks into the loaded ESFM books for WORKDATA, FILEDATA, and/or WORDTABLE auxilliary filenames.
+            \\id 1JN - Matigsalug Translation v1.0.17
+            \\usfm 3.0
+            \\ide UTF-8
+            \\rem ESFM v0.6 JN1
+            \\rem WORKDATA Matigsalug.txt
+            \\rem FILEDATA Matigsalug.JN1.txt
+            \\rem WORDTABLE Matigsalug.words.tsv
+            \\h 1 Huwan
+
+        If it finds some, and if that particular filename is not yet already listed,
+            loads any unique filename into a dict with the value set to None.
+        Also checks that the referred file does actually exist.
+
+        By doing it at this Bible level,
+            later we can cache any data files that are used by multiple Bible books.
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.lookForAuxilliaryFilenames()" )
+
+        for BBB,bookObject in self.books.items():
+            if bookObject.ESFMWorkDataFilename:
+                assert bookObject.ESFMWorkDataFilename.endswith( '.txt' )
+                if bookObject.ESFMWorkDataFilename not in self.ESFMWorkData:
+                    self.ESFMWorkData[bookObject.ESFMWorkDataFilename] = None
+                    filepath = os.path.join( self.sourceFolder, bookObject.ESFMWorkDataFilename )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORK DATA file at {filepath}")
+                if len(self.ESFMWorkData) > 1:
+                    logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA files: ({len(self.ESFMWorkData)}) {[k for k in self.ESFMWorkData]}")
+            if bookObject.ESFMFileDataFilename:
+                assert bookObject.ESFMFileDataFilename.endswith( '.txt' )
+                if bookObject.ESFMFileDataFilename in self.ESFMFileData:
+                    logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't expect REPEATED FILE DATA files: ({len(self.ESFMFileData)}) {[k for k in self.ESFMFileData]} now {BBB} {bookObject.ESFMFileDataFilename}")
+                else:
+                    self.ESFMFileData[bookObject.ESFMFileDataFilename] = None
+                    filepath = os.path.join( self.sourceFolder, bookObject.ESFMFileDataFilename )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a FILE DATA file at {filepath}")
+            if bookObject.ESFMWordTableFilename:
+                assert bookObject.ESFMWordTableFilename.endswith( '.tsv' )
+                if bookObject.ESFMWordTableFilename not in self.ESFMWordTables:
+                    self.ESFMWordTables[bookObject.ESFMWordTableFilename] = None
+                    filepath = os.path.join( self.sourceFolder, bookObject.ESFMWordTableFilename )
+                    if not os.path.isfile( filepath ):
+                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORD TABLE file at {filepath}")
+        if DEBUGGING_THIS_MODULE:
+            print( f"{self.ESFMWorkData=}" )
+            print( f"{self.ESFMFileData=}" )
+            print( f"{self.ESFMWordTables=}" )
+    # end of ESFMBible.lookForAuxilliaryFilenames
+
+
+    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str ) -> Tuple[InternalBibleEntryList,List[str]]:
+        """
+        The link template can be a filename like 'Word_{n}.html' or an entire link like 'https://SomeSite/words/page_{n}.html'
+            The '{n}' gets substituted with the actual word link string.
+
+        Note that we don't have enough information here to surround the <a>..</a> link with a <span title="something">..</span>
+            so that will have to be done later.
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"livenESFMWordLinks( {BBB}, ({len(verseList)}) {verseList} )" )
+        assert '{n}' in linkTemplate
+        bookObject = self.books[BBB]
+        wordFileName = bookObject.ESFMWordTableFilename
+        assert wordFileName.endswith( '.tsv' )
+        # print( f"ESFMBible.livenESFMWordLinks found filename '{wordFileName}' for {self.abbreviation} {BBB}" )
+        # print( f"ESFMBible.livenESFMWordLinks found loaded word links: {self.ESFMWordTables[wordFileName]}" )
+        if self.ESFMWordTables[wordFileName] is None:
+            with open( os.path.join( self.sourceFolder, wordFileName ), 'rt', encoding='UTF-8' ) as wordFile:
+                self.ESFMWordTables[wordFileName] = wordFile.read().split( '\n' )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded {len(self.ESFMWordTables[wordFileName]):,} total rows from {wordFileName}" )
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded column names were: ({len(self.ESFMWordTables[wordFileName][0])}) {self.ESFMWordTables[wordFileName][0]}" )
+
+        updatedVerseList = InternalBibleEntryList()
+        for entry in verseList:
+            originalText = entry.getOriginalText()
+            if originalText is None or '¦' not in originalText:
+                updatedVerseList.append( entry )
+                continue
+            # If we get here, we have at least one ESFM wordlink row number in the text
+            # print( f"{n}: '{originalText}'")
+            searchStartIndex = 0
+            count = 0
+            while True:
+                match = linkedWordRegex.search( originalText, searchStartIndex )
+                if not match:
+                    break
+                # print( f"{BBB} word match 1='{match.group(1)}' 2='{match.group(2)}' all='{book_html[match.start():match.end()]}'" )
+                assert match.group(2).isdigit()
+                # row_number = int( match.group(2) )
+                originalText = f'''{originalText[:match.start()]}<a href="{linkTemplate.replace('{n}', match.group(2))}">{match.group(1)}</a>{originalText[match.end():]}'''
+                searchStartIndex = match.end() + len(linkTemplate) + 4 # We've added at least that many characters
+                count += 1
+            if count > 0:
+                # print( f"  Now '{originalText}'")
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
+                # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] )
+                # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), originalText )
+                # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used
+                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), None, '', None, originalText )
+                updatedVerseList.append( newEntry )
+            else:
+                logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{originalText}'" )
+                updatedVerseList.append( entry )
+
+        return updatedVerseList, self.ESFMWordTables[wordFileName]
+    # end of ESFMBible.livenESFMWordLinks
 # end of class ESFMBible
 
 
