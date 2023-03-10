@@ -69,7 +69,7 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "theWordBible"
 PROGRAM_NAME = "theWord Bible format handler"
 PROGRAM_VERSION = '0.56'
@@ -566,11 +566,11 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     #if '\xa0' in line: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, myName, BBB, C, V, repr(originalLine) ); halt
     line = line.replace( '\xa0', ' ' ) # NBSpace? Not sure what this is (in aleppo and arm1967 and others?)
     if line.endswith( ' <CM>\t' ): line = line.replace( ' <CM>\t', '<CM>' ) # asv
-    line = re.sub( '<V (\d{1,3}):(\d{1,3})>', '', line ) # cpdv for some verses
-    line = re.sub( '<V P:(\d{1,2})>', '', line ) # cpdv for some prologue verses
-    line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,3})>', '', line ) # dutsv
-    #line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,2}) >', '', line ) # fpr1933
-    line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,3})[+-\.](\d{1,3})>', '', line ) # dutsv, fpr1933
+    line = re.sub( '<V (\\d{1,3}):(\\d{1,3})>', '', line ) # cpdv for some verses
+    line = re.sub( '<V P:(\\d{1,2})>', '', line ) # cpdv for some prologue verses
+    line = re.sub( '<RX (\\d{1,2})\\.(\\d{1,3})\\.(\\d{1,3})>', '', line ) # dutsv
+    #line = re.sub( '<RX (\\d{1,2})\\.(\\d{1,3})\\.(\\d{1,2}) >', '', line ) # fpr1933
+    line = re.sub( '<RX (\\d{1,2})\\.(\\d{1,3})\\.(\\d{1,3})[+-.](\\d{1,3})>', '', line ) # dutsv, fpr1933
     #line = line.replace( '<BOOK THE FIRST> ', '' ) # ebr
     line = line.replace( ' /a>', '' ) # jfa-rc(pt)
     line = line.replace( '?>> A', '? A' ).replace( 'viu>.', 'viu.' ) # romorthodox
@@ -581,12 +581,12 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     # Not sure what <A represents, but it's often at the beginning of a line and messes up other tests
     #   so lets remove them here
     line = re.sub( '<AX (.+?)>', '', line ) # fpr1933
-    line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
-    line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
+    line = re.sub( '<A(\\d{1,3}):(\\d{1,2})>', '', line )
+    line = re.sub( '<A (\\d{1,3})\\.(\\d{1,2})>', '', line )
     #if '<A' in line:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line3", repr(originalLine), '\n', repr(line) )
         #if BibleOrgSysGlobals.debugFlag: halt
-    line = re.sub( '<22-Song of Songs\.(\d{1,2})\.(\d{1,2})>', '', line ) # Tanakh1917
+    line = re.sub( '<22-Song of Songs\\.(\\d{1,2})\\.(\\d{1,2})>', '', line ) # Tanakh1917
     line = line.replace( '<z1>', '' ).replace( '<z2>', '' ) # footnote referent text in leb
     line = re.sub( '<AF(.)(.*?)>', '', line ) # sblgnt.nt seems to have alternatives immediately before the word
     line = re.sub( '<AU(.)>', '', line ) # sblgnt.nt seems to have this immediately after the word
@@ -657,7 +657,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line1", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line2", repr(originalLine), '\n', repr(line) )
-    line = re.sub( '<WH(\d{1,4})>', '', line )
+    line = re.sub( '<WH(\\d{1,4})>', '', line )
     line = line.replace( '<wh>','' )
     if '<WH' in line or '<wh' in line:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "line4", repr(originalLine), '\n', repr(line) )
@@ -675,7 +675,7 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
     line = line.replace( ' <br> ', '\\NL*\\m ' ).replace( '<br> ', '\\NL*\\m ' ).replace( '<br>', '\\NL*\\m ' )
     line = line.replace('<sup>','\\ord ').replace('</sup>','\\ord*') # Not proper USFM meaning
     line = re.sub('<font size=-1>(.+?)</font>', r'\\sc \1\\sc*', line ) # This causes nested markers in aleppo
-    line = re.sub('<font size=\+1>(.+?)</font>', r'\\em \1\\em*', line )
+    line = re.sub('<font size=\\+1>(.+?)</font>', r'\\em \1\\em*', line )
     line = re.sub( '<font color=(.+?)>(.+?)</font>', r'\2', line )
     line = re.sub( '<font color=(.+?)>', '', line ).replace( '</font>','' ) # asv has <font color="850000"> with the closing on the next line
     line = re.sub( '<HEB>(.+?)<heb>', r'\\qac \1\\qac*', line ) # acrostic letter in asv
@@ -700,8 +700,8 @@ def handleRTFLine( myName, BBB:str, C:str, V:str, originalLine:str, bookObject, 
         myGlobals['haveParagraph'] = 'CL'
 
     # Paragraph markers (not at the end of the line)
-    #line = re.sub('<CI><PI(\d)>',r'\\NL*\\q\1 ',line).replace('<Ci>','')
-    #line = re.sub('<CI><PF(\d)>',r'\\NL*\\q\1 ',line)
+    #line = re.sub('<CI><PI(\\d)>',r'\\NL*\\q\1 ',line).replace('<Ci>','')
+    #line = re.sub('<CI><PF(\\d)>',r'\\NL*\\q\1 ',line)
     line = line.replace( '<CI><PF0>','\\NL*\\p ' )
     line = line.replace( '<CI><PF1><PI1>','\\NL*\\q1 ' )
     line = line.replace( '<CI><PF1>','\\NL*\\p ' )

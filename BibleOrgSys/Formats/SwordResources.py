@@ -6,7 +6,7 @@
 # Interface module handling Sword resources
 #   using either the Sword engine (if available) or else our own software
 #
-# Copyright (C) 2013-2022 Robert Hunt
+# Copyright (C) 2013-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,7 +50,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "SwordResources"
 PROGRAM_NAME = "Sword resource handler"
 PROGRAM_VERSION = '0.31'
@@ -190,7 +190,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                 savlm = match2.group(1)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'savlm', repr(savlm) )
                 while True:
-                    match3 = re.search( 'strong:([GH]\d{1,5})', savlm )
+                    match3 = re.search( 'strong:([GH]\\d{1,5})', savlm )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
                     attributeReplacementResult += '\\str {}\\str*'.format( match3.group(1) )
@@ -202,7 +202,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                 lemma = match2.group(1)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'lemma', repr(lemma) )
                 while True:
-                    match3 = re.search( 'strong:([GH]\d{1,5})', lemma )
+                    match3 = re.search( 'strong:([GH]\\d{1,5})', lemma )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
                     attributeReplacementResult += '\\str {}\\str*'.format( match3.group(1) )
@@ -214,7 +214,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                 morph = match2.group(1)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'morph', repr(morph) )
                 while True:
-                    match3 = re.search( 'strongMorph:(TH\d{1,4})', morph )
+                    match3 = re.search( 'strongMorph:(TH\\d{1,4})', morph )
                     if not match3: break
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'string', repr(match3.group(1) ) )
                     attributeReplacementResult += '\\morph {}\\morph*'.format( match3.group(1) )
@@ -249,7 +249,7 @@ def filterOSISVerseLine( osisVerseString, moduleName, BBB:str, C:str, V ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'gloss', repr(gloss) ) # What does this mean?
                 attributeString = attributeString[:match2.start()] + attributeString[match2.end():] # Remove this attribute entry
 
-            match2 = re.search( 'wn="(\d+?)"', attributeString )
+            match2 = re.search( 'wn="(\\d+?)"', attributeString )
             if match2:
                 wn = match2.group(1)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'wn', repr(wn) ) # What does this mean?
@@ -856,12 +856,12 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
     lastCalled = None
     contentsDict = {}
     while True:
-        match1 = re.search( '<RF>(\d{1,2}?)<Rf>', verseLine ) # Footnote caller
+        match1 = re.search( '<RF>(\\d{1,2}?)<Rf>', verseLine ) # Footnote caller
         if not match1: break
         caller = match1.group(1)
-        match2 = re.search( '<RF>(\d{1,2}?)\\)? (.+?)<Rf>', verseLine ) # Footnote text starts with 1) or just 1
+        match2 = re.search( '<RF>(\\d{1,2}?)\\)? (.+?)<Rf>', verseLine ) # Footnote text starts with 1) or just 1
         if not match2:
-            match3 = re.search( '<RF>([^\d].+?)<Rf>', verseLine )
+            match3 = re.search( '<RF>([^\\d].+?)<Rf>', verseLine )
         if match1 or match2: assert match1 and (match2 or lastCalled or match3)
         #if not match1: break
         #caller = int(match1.group(1))
@@ -876,8 +876,8 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
             j = 0
             while replacement2:
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'Loop {} start: now {} with replacement2={!r}'.format( j, contentsDict, replacement2 ) )
-                match8 = re.search( '(\d{1,2})\\) (.*?)(\d{1,2})\\) ', replacement2 )
-                match9 = re.search( '(\d{1,2})\\) ', replacement2 )
+                match8 = re.search( '(\\d{1,2})\\) (.*?)(\\d{1,2})\\) ', replacement2 )
+                match9 = re.search( '(\\d{1,2})\\) ', replacement2 )
                 if match8: assert match9 and match9.group(1)==match8.group(1)
                 if not match9: break
                 if match8: callee8a, contents8, callee8b = match8.group(1), match8.group(2), match8.group(3)
@@ -939,13 +939,13 @@ def filterGBFVerseLine( gbfVerseString, moduleName, BBB:str, C:str, V ):
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
-        match = re.search( '<WH0(\d{1,4})>', verseLine ) # Found in rwebster
+        match = re.search( '<WH0(\\d{1,4})>', verseLine ) # Found in rwebster
         if not match: break
         replacement = '\\str H{} \\str*'.format( match.group( 1 ) )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )
         verseLine = verseLine[:match.start()] + replacement + verseLine[match.end():]
     while True:
-        match = re.search( '<WG(\d{1,4})>', verseLine ) # Found in rwebster
+        match = re.search( '<WG(\\d{1,4})>', verseLine ) # Found in rwebster
         if not match: break
         replacement = '\\str G{} \\str*'.format( match.group( 1 ) )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'replacement1', repr(replacement1) )

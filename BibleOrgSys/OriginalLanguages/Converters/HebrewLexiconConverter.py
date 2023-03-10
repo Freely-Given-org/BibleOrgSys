@@ -43,7 +43,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon format handler"
 PROGRAM_VERSION = '0.20'
@@ -800,7 +800,7 @@ class BrownDriverBriggsFileConverter:
                             .replace( '\t', '' ).replace( '\n', '' )
         if entryID == "m.ba.ab": flattenedXML = flattenedXML.rstrip() # Seems to have a space at the start of the XML line
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, entryID, repr(flattenedXML) )
-        match = re.search( '<status p="(\d{1,4})">(.+?)</status>', flattenedXML )
+        match = re.search( '<status p="(\\d{1,4})">(.+?)</status>', flattenedXML )
         if match:
             #logging.warning( "Removed {} status field {} from {}" \
                 #.format( entryID, repr(flattenedXML[match.start():match.end()]), repr(flattenedXML) ) )

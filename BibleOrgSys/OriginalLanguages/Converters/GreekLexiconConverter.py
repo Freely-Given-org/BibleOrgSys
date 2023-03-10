@@ -5,7 +5,7 @@
 #
 # Module handling the XML Greek lexicon
 #
-# Copyright (C) 2014-2022 Robert Hunt
+# Copyright (C) 2014-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2023-03-10' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexiconConverter"
 PROGRAM_NAME = "Greek Lexicon XML format handler"
 PROGRAM_VERSION = '0.17'
@@ -273,10 +273,10 @@ class GreekStrongsFileConverter:
                 strongsRef = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 if BibleOrgSysGlobals.debugFlag:
                     assert strongsRef and '\t' not in strongsRef and '\n' not in strongsRef
-                strongsRef = re.sub( '<language="GREEK" strongs="(\d{1,5})">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
-                strongsRef = re.sub( '<strongs="(\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
-                #strongsRef = re.sub( '<language="HEBREW" strongs="(\d{1,5})">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
-                #strongsRef = re.sub( '<strongs="(\d{1,5})" language="HEBREW">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
+                strongsRef = re.sub( '<language="GREEK" strongs="(\\d{1,5})">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
+                strongsRef = re.sub( '<strongs="(\\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
+                #strongsRef = re.sub( '<language="HEBREW" strongs="(\\d{1,5})">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
+                #strongsRef = re.sub( '<strongs="(\\d{1,5})" language="HEBREW">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "strongsRef", repr(strongsRef) )
                 entryString += ' ' + strongsRef
             elif element.tag == "see":
@@ -301,13 +301,13 @@ class GreekStrongsFileConverter:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, strongs5, "entryString", repr(entryString) )
             if BibleOrgSysGlobals.debugFlag:
                 assert '\t' not in entryString and '\n' not in entryString
-            entryString = re.sub( '<strongsref language="GREEK" strongs="(\d{1,5})"></strongsref>',
+            entryString = re.sub( '<strongsref language="GREEK" strongs="(\\d{1,5})"></strongsref>',
                                 r'<StrongsRef>G\1</StrongsRef>', entryString )
-            entryString = re.sub( '<strongsref strongs="(\d{1,5})" language="GREEK"></strongsref>',
+            entryString = re.sub( '<strongsref strongs="(\\d{1,5})" language="GREEK"></strongsref>',
                                 r'<StrongsRef>G\1</StrongsRef>', entryString )
-            entryString = re.sub( '<strongsref language="HEBREW" strongs="(\d{1,5})"></strongsref>',
+            entryString = re.sub( '<strongsref language="HEBREW" strongs="(\\d{1,5})"></strongsref>',
                                 r'<StrongsRef>H\1</StrongsRef>', entryString )
-            entryString = re.sub( '<strongsref strongs="(\d{1,5})" language="HEBREW"></strongsref>',
+            entryString = re.sub( '<strongsref strongs="(\\d{1,5})" language="HEBREW"></strongsref>',
                                 r'<StrongsRef>H\1</StrongsRef>', entryString )
             if BibleOrgSysGlobals.debugFlag:
                 assert 'strongsref' not in entryString
