@@ -5114,7 +5114,7 @@ class InternalBibleBook:
 
         Raises a KeyError if the C:V reference is not found
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {}".format( BCVReference, self.BBB ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {} {}".format( BCVReference, self.workName, self.BBB ) )
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
 
         if not self._processedFlag:

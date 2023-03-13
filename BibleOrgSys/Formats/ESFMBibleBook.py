@@ -61,10 +61,10 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-10' # by RJH
+LAST_MODIFIED_DATE = '2023-03-13' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.49'
+PROGRAM_VERSION = '0.50'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -113,7 +113,7 @@ class ESFMBibleBook( BibleBook ):
         fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.load( {}, {} )".format( filename, folder ) )
 
 
-        def ESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
+        def oldESFMPreprocessing( BBB:str, C:str, V:str, marker, originalText ):
             """
             Converts ESFM tagging to pseudo-USFM codes for easier handling later on.
 
@@ -134,7 +134,7 @@ class ESFMBibleBook( BibleBook ):
                 which were one word in the original, e.g., went_down
             """
             if len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
-                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.ESFMPreprocessing( {} {}:{}, {}, '{}' )".format( BBB, C, V, marker, originalText ) )
+                fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.oldESFMPreprocessing( {} {}:{}, {}, '{}' )".format( BBB, C, V, marker, originalText ) )
 
 
             def saveWord( BBB:str, C:str, V:str, word ):
@@ -231,7 +231,7 @@ class ESFMBibleBook( BibleBook ):
             # end of saveStrongsTag
 
 
-            # Main code for ESFMPreprocessing
+            # Main code for oldESFMPreprocessing
             # Analyse and collect all ESFM tags and special characters,
             #    and put the results into USFM type character fields
             bracedGroupFlag = underlineGroupFlag = startsWithUnderline = False
@@ -242,14 +242,14 @@ class ESFMBibleBook( BibleBook ):
             #textLen = len( originalText )
             resultText = ''
             firstWordFlag = True
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
+            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'oldESFMPreprocessing {} {}:{}'.format( BBB, C, V ) )
             for j, originalChar in enumerate( originalText ):
                 char = originalChar
                 #nextChar = originalText[j+1] if j<textLen-1 else ''
 
                 #if '{'  in originalText or '_' in originalText or '=' in originalText:
                 #if C=='4' and V=='11':
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  ESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  oldESFMPreprocessing {}={!r} lc={!r} uGF={} hUC={} uL={!r} bGF={} bG={!r} tg={!r} \n    oT={!r} \n    rT={!r}" \
                     #.format( j, originalChar, lastChar, underlineGroupFlag, hangingUnderlineCount, underlineGroup, bracedGroupFlag, bracedGroup, tag, originalText, resultText ) )
 
                 # Handle hanging underlines, e.g., 'and_ ' or ' _then' or 'and_ they_ _were_ _not _ashamed'
@@ -381,7 +381,7 @@ class ESFMBibleBook( BibleBook ):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "returned:", repr(resultText) )
 
             return resultText
-        # end of ESFMBibleBook.load.ESFMPreprocessing
+        # end of ESFMBibleBook.load.oldESFMPreprocessing
 
 
         def doaddLine( originalMarker, originalText ):
@@ -474,10 +474,12 @@ class ESFMBibleBook( BibleBook ):
             elif marker=='restore': continue # Ignore these lines completely
 
             # Now load the actual Bible book data
-            if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS:
-                text = originalText
-            else:
-                text = ESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM
+            text = originalText
+            # Disabled 2023-03-13
+            # if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS:
+            #     text = originalText
+            # else:
+            #     text = oldESFMPreprocessing( self.BBB, C, V, marker, originalText ) # Convert ESFM encoding to pseudo-USFM
             if BibleOrgSysGlobals.loadedUSFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text

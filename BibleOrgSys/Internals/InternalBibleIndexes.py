@@ -89,7 +89,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-03-05' # by RJH
+LAST_MODIFIED_DATE = '2023-03-11' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.84'
@@ -1117,18 +1117,18 @@ class InternalBibleBookSectionIndex:
             #else:
             for entry in self.bookObject._processedLines[startIx:endIx]:
                 marker, text = entry.getMarker(), entry.getCleanText()
-                vPrint( 'Never', DEBUGGING_THIS_MODULE, f"                  {marker}={text}" )
+                dPrint( 'Never', DEBUGGING_THIS_MODULE, f"                  {marker}={text}" )
                 if marker == 'v': # e.g., if we encountered section heading but hadn't encountered the verse number yet
                     if text != startV and '-' not in text: # Don't want to undo verse bridge work from above
                         if DEBUGGING_THIS_MODULE or startV != '0':
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {text}" )
+                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {text}" )
                         startV = text
                     break
                 elif marker in ('v~','p~'): # e.g., if we encountered a section heading that's in the middle of a verse
                     # or could it mean that our nesting markers aren't inserted correctly ???
                     if DEBUGGING_THIS_MODULE:
                         assert startV.isdigit()
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {startV}b" )
+                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {startV}b" )
                     # So the previous entry should end with 'a'
                     lastIndexEntryKey = list(tempIndexData.keys())[-1]
                     lastIndexEntry = tempIndexData[lastIndexEntryKey]
@@ -1156,7 +1156,7 @@ class InternalBibleBookSectionIndex:
 
             # Save this new index entry
             if DEBUGGING_THIS_MODULE and (startC,startV) in tempIndexData:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           About to rewrite {startC}:{startV} in section index" )
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           About to rewrite {startC}:{startV} in section index" )
             tempIndexData[(startC,startV)] = (startC,startV, endC,endV, startIx,endIx, reasonMarker, sectionName, None)
         # end of _saveAnySectionOutstanding
 

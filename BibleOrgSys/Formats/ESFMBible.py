@@ -47,7 +47,7 @@ Creates a semantic dictionary with keys:
         where the key is the name (e.g., 'Jonah')
         and the entry is a list of 4-tuples (BBB,C,V,actualWord)
 """
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from gettext import gettext as _
 import os
 from pathlib import Path
@@ -70,10 +70,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-03-10' # by RJH
+LAST_MODIFIED_DATE = '2023-03-13' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.63'
+PROGRAM_VERSION = '0.64'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -627,7 +627,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
-    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str ) -> Tuple[InternalBibleEntryList,Optional[List[str]]]:
         """
         The link template can be a filename like 'Word_{n}.html' or an entire link like 'https://SomeSite/words/page_{n}.html'
             The '{n}' gets substituted with the actual word link string.
@@ -639,14 +639,15 @@ class ESFMBible( Bible ):
         assert '{n}' in linkTemplate
         bookObject = self.books[BBB]
         wordFileName = bookObject.ESFMWordTableFilename
-        assert wordFileName.endswith( '.tsv' )
-        # print( f"ESFMBible.livenESFMWordLinks found filename '{wordFileName}' for {self.abbreviation} {BBB}" )
-        # print( f"ESFMBible.livenESFMWordLinks found loaded word links: {self.ESFMWordTables[wordFileName]}" )
-        if self.ESFMWordTables[wordFileName] is None:
-            with open( os.path.join( self.sourceFolder, wordFileName ), 'rt', encoding='UTF-8' ) as wordFile:
-                self.ESFMWordTables[wordFileName] = wordFile.read().split( '\n' )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded {len(self.ESFMWordTables[wordFileName]):,} total rows from {wordFileName}" )
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded column names were: ({len(self.ESFMWordTables[wordFileName][0])}) {self.ESFMWordTables[wordFileName][0]}" )
+        if wordFileName:
+            assert wordFileName.endswith( '.tsv' )
+            # print( f"ESFMBible.livenESFMWordLinks found filename '{wordFileName}' for {self.abbreviation} {BBB}" )
+            # print( f"ESFMBible.livenESFMWordLinks found loaded word links: {self.ESFMWordTables[wordFileName]}" )
+            if self.ESFMWordTables[wordFileName] is None:
+                with open( os.path.join( self.sourceFolder, wordFileName ), 'rt', encoding='UTF-8' ) as wordFile:
+                    self.ESFMWordTables[wordFileName] = wordFile.read().split( '\n' )
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded {len(self.ESFMWordTables[wordFileName]):,} total rows from {wordFileName}" )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded column names were: ({len(self.ESFMWordTables[wordFileName][0])}) {self.ESFMWordTables[wordFileName][0]}" )
 
         updatedVerseList = InternalBibleEntryList()
         for entry in verseList:
@@ -680,7 +681,7 @@ class ESFMBible( Bible ):
                 logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{originalText}'" )
                 updatedVerseList.append( entry )
 
-        return updatedVerseList, self.ESFMWordTables[wordFileName]
+        return updatedVerseList, self.ESFMWordTables[wordFileName]if wordFileName else None
     # end of ESFMBible.livenESFMWordLinks
 # end of class ESFMBible
 
