@@ -70,10 +70,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-03-13' # by RJH
+LAST_MODIFIED_DATE = '2023-03-16' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.64'
+PROGRAM_VERSION = '0.65'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -562,9 +562,10 @@ class ESFMBible( Bible ):
             if 'Missing' in self.semanticDict:
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nESFMBible.load missing:", self.semanticDict['Missing'] )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nSemantic dict: {}".format( self.semanticDict ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSemantic dict:" )
-        for someKey,someEntry in self.semanticDict.items():
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: {}".format( someKey, someEntry ) )
+        if self.semanticDict:
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSemantic dict:" )
+            for someKey,someEntry in self.semanticDict.items():
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: {}".format( someKey, someEntry ) )
         if self.loadAuxilliaryFiles: self.lookForAuxilliaryFilenames()
         self.doPostLoadProcessing()
     # end of ESFMBible.loadBooks

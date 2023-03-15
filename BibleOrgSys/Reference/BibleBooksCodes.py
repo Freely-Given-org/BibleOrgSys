@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-27' # by RJH
+LAST_MODIFIED_DATE = '2023-03-15' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.91'
+PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -810,25 +810,29 @@ class BibleBooksCodes:
 
 
     @staticmethod
-    def tidyBBB( BBB:str ) -> str:
+    def tidyBBB( BBB:str, titleCase=False ) -> str:
         """
-        Change book codes like SA1 to the conventional 1SA.
+        Change book codes like SA1 to the conventional 1SA
+            (or 1Sa using the titleCase flag).
 
         BBB is always three characters starting with an UPPERCASE LETTER.
         """
         assert BBB in BibleBooksCodes(), f"BibleBooksCodes.tidyBBB {BBB=}"
-        return (BBB[2]+BBB[:2]) if BBB[2].isdigit() else BBB
+        if titleCase:
+            return f'{BBB[2]}{BBB[0]}{BBB[1].lower()}' if BBB[2].isdigit() else f'{BBB[0]}{BBB[1:].lower()}'
+        # else: # leave as UPPERCASE
+        return f'{BBB[2]}{BBB[:2]}' if BBB[2].isdigit() else BBB
     # end of BibleBooksCodes.tidyBBB
 
     @staticmethod
-    def tidyBBBs( BBBs:List[str] ) -> List[str]:
+    def tidyBBBs( BBBs:List[str], titleCase=False ) -> List[str]:
         """
-        Change a list of book codes like SA1 to the conventional 1SA.
+        Change a list of book codes like SA1 to the conventional 1SA
+            (or 1Sa using the titleCase flag).
         """
         assert all([BBB in BibleBooksCodes() for BBB in BBBs]), f"BibleBooksCodes,tidyBBBs {BBBs=}"
-        return [BibleBooksCodes().tidyBBB(BBB) for BBB in BBBs]
+        return [BibleBooksCodes().tidyBBB( BBB, titleCase ) for BBB in BBBs]
     # end of BibleBooksCodes.tidyBBBs
-
 # end of BibleBooksCodes class
 
 

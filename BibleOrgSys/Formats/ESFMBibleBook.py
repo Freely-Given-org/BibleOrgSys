@@ -61,10 +61,10 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-13' # by RJH
+LAST_MODIFIED_DATE = '2023-03-15' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.50'
+PROGRAM_VERSION = '0.51'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -125,15 +125,15 @@ class ESFMBibleBook( BibleBook ):
                 A string replacement to use instead of originalText
 
             Converts:
-                XXX=PYYYY to \dic PXXX=YYY\dic*
-                    e.g., "{the three lepers}=PMat6Lepers" to "the three lepers\dic Pthe_three_lepers=Mat6lepers\dic*"
+                XXX=PYYYY to \\dic PXXX=YYY\\dic*
+                    e.g., "{the three lepers}=PMat6Lepers" to "the three lepers\\dic Pthe_three_lepers=Mat6lepers\\dic*"
                 i.e, braces and equal signs are removed from the text
-                    and the information is placed in a \dic field.
+                    and the information is placed in a \\dic field.
 
             Note: This DOESN'T remove the underline/underscore characters used to join translated words
                 which were one word in the original, e.g., went_down
             """
-            if len(originalText)>5: # Don't display for "blank" lines (like '\v 10 ')
+            if len(originalText)>5: # Don't display for "blank" lines (like '\\v 10 ')
                 fnPrint( DEBUGGING_THIS_MODULE, "ESFMBibleBook.oldESFMPreprocessing( {} {}:{}, {}, '{}' )".format( BBB, C, V, marker, originalText ) )
 
 
@@ -582,7 +582,7 @@ class ESFMBibleBook( BibleBook ):
                     if not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: Have '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
             elif rest.startswith( 'FILEDATA ' ):
                 filePart = rest[9:]
                 # assert filePart.rstrip().endswith( '.txt' )
@@ -593,7 +593,7 @@ class ESFMBibleBook( BibleBook ):
                     if not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: Have '{self.ESFMFileDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
             if rest.startswith( 'WORDTABLE ' ):
                 filePart = rest[10:]
                 # assert filePart.rstrip().endswith( '.tsv' )
@@ -604,7 +604,7 @@ class ESFMBibleBook( BibleBook ):
                     if not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: Have '{self.ESFMWordTableFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
     # end of ESFMBibleBook.load.lookForAuxilliaryFilenames
 # end of class ESFMBibleBook
 

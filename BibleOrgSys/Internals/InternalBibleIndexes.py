@@ -89,10 +89,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-03-11' # by RJH
+LAST_MODIFIED_DATE = '2023-03-15' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1035,12 +1035,12 @@ class InternalBibleBookSectionIndex:
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "book DR", self.BibleObject.discoveryResults[self.BBB].keys() )
         # The following line can give a KeyError if the BBB doesn't exist in the discoveryResults
         haveSectionHeadingsForBook = self.BibleObject.discoveryResults[self.BBB]['haveSectionHeadings']
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"\nhaveSectionHeadingsForBook {self.BBB}={haveSectionHeadingsForBook}" ) #, self.discoveryResults[BBB] )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Make section heading index for {self.workName} {self.BBB} ({haveSectionHeadingsForBook=})…" )
         needToSaveByChapter = not haveSectionHeadingsForBook \
                                 or not BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)}" )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)}" )
         bookName = self.bookObject.getAssumedBookNames()[0]
-        vPrint( 'Never', DEBUGGING_THIS_MODULE, f"Got '{bookName}' for {self.BBB}" )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Got '{bookName}' for {self.BBB}" )
 
         # def _printIndexEntry( ie ):
         #     result = str( ie )
@@ -1061,7 +1061,7 @@ class InternalBibleBookSectionIndex:
             """
             # fnPrint( DEBUGGING_THIS_MODULE, f"         _saveAnySectionOutstanding( {startC}:{startV}-{endC}:{endV}"
             #         f" {startIx}-{endIx} {reasonMarker}='{sectionName}' ) for {self.BBB}…" )
-            if DEBUGGING_THIS_MODULE:
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
                 assert isinstance( startC, str ) and isinstance( startV, str )
                 assert isinstance( endC, str ) and isinstance( endV, str )
                 assert isinstance( startIx, int ) and isinstance( endIx, int )
@@ -1088,8 +1088,10 @@ class InternalBibleBookSectionIndex:
                     logging.warning( f"makeBookSectionIndex: seems that {self.workName} {self.BBB} has a zero-length section at {startC}:0" )
                 # if self.workName != 'LEB':
                 #     assert endV != '0', f"Section index failed {self.workName} {self.BBB} _saveAnySectionOutstanding( {startC}:{startV} {endC}:{endV} {startIx=} {endIx=} {reasonMarker=} {sectionName=} ) Could this be a zero-length section???"
-            assert int(endC) >= getLeadingInt(startC)
-            if endC==startC: assert int(endV) >= getLeadingInt(startV) # Verse ranges shouldn't go backwards
+            if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
+                assert getLeadingInt(endC) >= getLeadingInt(startC), f"Expected a higher ending chapter number: {self.workName} {self.BBB} {startC=} {endC=} {reasonMarker=} {sectionName=}"
+                if endC==startC:
+                    assert getLeadingInt(endV) >= getLeadingInt(startV), f"Expected a higher ending verse number: {self.workName} {self.BBB} {startC}:{startV} {endV=} {reasonMarker=} {sectionName=}" # Verse ranges shouldn't go backwards
 
             # If the last entry was very small, we might need to combine it with this one
             if tempIndexData:
@@ -1099,7 +1101,8 @@ class InternalBibleBookSectionIndex:
                     if DEBUGGING_THIS_MODULE:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"           Got a short index entry: {lastIndexEntry}" )
                     lStartC, lStartV, lEndC, lEndV, lStartIx, lEndIx, lReasonMarker, lSectionName, lContext = lastIndexEntry
-                    assert lStartC == lEndC
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
+                        assert lStartC == lEndC, f"Expected to be in the same chapter: {self.workName} {self.BBB} {lStartC=} {lEndC=} {reasonMarker=} {sectionName=}"
                     if reasonMarker == 's1' and lastIndexEntry[6] in ('c','ms1'):
                         if DEBUGGING_THIS_MODULE:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "           COMBINING index entries" )
@@ -1126,9 +1129,9 @@ class InternalBibleBookSectionIndex:
                     break
                 elif marker in ('v~','p~'): # e.g., if we encountered a section heading that's in the middle of a verse
                     # or could it mean that our nesting markers aren't inserted correctly ???
-                    if DEBUGGING_THIS_MODULE:
+                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
                         assert startV.isdigit()
-                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {startV}b" )
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"           Adjusting startV from {startV} to {startV}b" )
                     # So the previous entry should end with 'a'
                     lastIndexEntryKey = list(tempIndexData.keys())[-1]
                     lastIndexEntry = tempIndexData[lastIndexEntryKey]
