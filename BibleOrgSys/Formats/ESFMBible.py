@@ -73,7 +73,7 @@ from BibleOrgSys.Bible import Bible
 LAST_MODIFIED_DATE = '2023-03-16' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.65'
+PROGRAM_VERSION = '0.66'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -483,9 +483,10 @@ class ESFMBible( Bible ):
             if filename is None and BBB in self.possibleFilenameDict:
                 filename = self.possibleFilenameDict[BBB]
         except AttributeError as e:
-            logging.critical( "Was a preload() done on this ESFMBible?" )
-            raise e
-        if filename is None: raise FileNotFoundError( "ESFMBible.loadBook: Unable to find file for {}".format( BBB ) )
+            logging.critical( f"Was a preload() done on this {self.abbreviation} ESFMBible? Or is folder {self.sourceFolder} empty? (Can't find any possible filenames.)" )
+            # raise ValueError( f"ESFMBible.loadBook: Unable to load {BBB}{' '+filename if filename else ''} for {self.abbreviation} ESFM Bible" )
+        if filename is None:
+            raise FileNotFoundError( "ESFMBible.loadBook: Unable to find file for {}".format( BBB ) )
 
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
