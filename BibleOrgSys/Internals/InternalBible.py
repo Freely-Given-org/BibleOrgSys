@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-02-27' # by RJH
+LAST_MODIFIED_DATE = '2023-03-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.87'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2214,20 +2214,21 @@ class InternalBible:
     # end of InternalBible.getNumChapters
 
 
-    def getNumVerses( self, BBB:str, C:str ) -> int:
+    def getNumVerses( self, BBB:str, C:Union[str,int] ) -> int:
         """
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C!r} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"getNumVerses( {BBB}, {C=} )" )
         assert len(BBB) == 3
 
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
-            if isinstance( C, int ): # Just double-check the parameter
-                logging.debug( _("getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
-                C = str( C )
+            # NOTE: The next call will handle type conversion for the C parameter -- no need to do it here as well
+            # if isinstance( C, int ): # Just double-check the parameter
+            #     logging.debug( _("InternalBible.getNumVerses() was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
+            #     C = str( C )
             return self.books[BBB].getNumVerses( C )
     # end of InternalBible.getNumVerses
 

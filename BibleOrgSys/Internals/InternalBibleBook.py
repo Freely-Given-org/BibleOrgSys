@@ -49,6 +49,8 @@ To use the InternalBibleBook class,
 
 CHANGELOG:
     2022-06-05 reduced surplus "_addNestingMarkers ignored" messages
+    2023-03-20 added "haveTables", "haveLists', and "figuresCount" discovery flags
+                plus fix versification tables for introduction (chapter -1)
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
@@ -77,7 +79,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-03-04' # by RJH
+LAST_MODIFIED_DATE = '2023-03-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -1447,10 +1449,10 @@ class InternalBibleBook:
             fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._addNestingMarkers._closeLastOpenMarker( withText={withText!r} ) for {openMarkers[-1] if openMarkers else 'INVALID'} from {openMarkers}" )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  add", '¬'+openMarkers[-1], withText, "in _closeLastOpenMarker" )
             if endMarker:
-                assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker expected {openMarkers} to end with '{endMarker}'"
+                assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker for {self.workName} {self.BBB} expected {openMarkers} to end with '{endMarker}'"
             if endMarker in ('c','v'):
                 if not withText:
-                    logging.critical( f"_addNestingMarkers._closeLastOpenMarker for {self.BBB} expected some text with {endMarker=}" )
+                    logging.critical( f"_addNestingMarkers._closeLastOpenMarker for {self.workName} {self.BBB} expected some text with {endMarker=}" )
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of _addNestingMarkers._closeLastOpenMarker
 
@@ -2961,13 +2963,13 @@ class InternalBibleBook:
         versificationErrors:List[str] = []
 
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
-        chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
+        chapterText, chapterNumber, lastChapterNumber = '-1', -1, -1
         verseText = verseNumberString = lastVerseNumberString = '0'
         for j, entry in enumerate( self._processedLines ):
             marker, text = entry.getMarker(), entry.getText()
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, text )
             if marker == 'c':
-                if chapterNumber == 0: # it's the book introduction
+                if chapterNumber == -1: # it's the book introduction
                     versification.append( (chapterText, str(j-1)) ) # Count each line as a 'verse'
                 else: # it's a regular chapter
                     versification.append( (chapterText, lastVerseNumberString) )
@@ -3079,7 +3081,7 @@ class InternalBibleBook:
                         for number in range( lastVerseNumber+1, verseNumber ):
                             omittedVerses.append( (chapterText, str(number)) )
                 lastVerseNumberString = endVerseNumberString
-        assert chapterText.isdigit() and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
+        assert (chapterText.isdigit() or chapterText=='-1') and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
         versification.append( (chapterText, lastVerseNumberString) ) # Append the verse count for the final chapter
         #if reorderedVerses: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Reordered verses in", self.BBB, "are:", reorderedVerses )
         if versificationErrors: self.checkResultsDictionary['Versification Errors'] = versificationErrors
@@ -3133,6 +3135,8 @@ class InternalBibleBook:
         bkDict['haveMainHeadings'] = False; bkDict['mainHeadingsCount'] = 0
         bkDict['haveSectionHeadings'] = False; bkDict['sectionHeadingsCount'] = 0
         bkDict['haveSectionReferences'] = False
+        bkDict['haveTables'] = bkDict['haveLists'] = False
+        bkDict['figuresCount'] = 0
         bkDict['haveFootnotes'] = bkDict['haveFootnoteOrigins'] = False
         bkDict['haveCrossReferences'] = bkDict['haveCrossReferenceOrigins'] = False
         bkDict['sectionReferencesCount'] = bkDict['footnotesCount'] = bkDict['crossReferencesCount'] = 0
@@ -3257,16 +3261,21 @@ class InternalBibleBook:
             elif marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                 bkDict['haveParagraphMarkers'] = True
                 if text: bkDict['haveVerseText'] = True
-            elif marker in ('ip',):
+            elif marker in ('is1','ip','iot','io1'):
                 bkDict['haveIntroductoryMarkers'] = True
                 if text: bkDict['haveIntroductoryText'] = True
+            elif marker == 'tr':
+                bkDict['haveTables'] = True
+            elif marker == 'li1':
+                bkDict['haveLists'] = True
 
-            if text and '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
-
-            if text and marker in BOS_PRINTABLE_MARKERS: # process this main text
-                countWordsForDiscover( marker, cleanText, 'main' )
-            #elif text: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Ignoring {} {}:{} {}={}".format( self.BBB, C, V, marker, repr(text) ) )
+            if text:
+                if '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
+                bkDict['figuresCount'] += text.count( '\\fig ' )
+                if marker in BOS_PRINTABLE_MARKERS: # process this main text
+                    countWordsForDiscover( marker, cleanText, 'main' )
+                #else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Ignoring {} {}:{} {}={}".format( self.BBB, C, V, marker, repr(text) ) )
 
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
@@ -5088,7 +5097,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumChapters
 
 
-    def getNumVerses( self, C:str ) -> int:
+    def getNumVerses( self, C:Union[str,int] ) -> int:
         """
         Returns the number of verses (int) in the given chapter.
 
@@ -5099,7 +5108,7 @@ class InternalBibleBook:
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getNumVerses( {C=} )" )
 
         if isinstance( C, int ): # Just double-check the parameter
-            logging.debug( "getNumVerses was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
+            logging.debug( "InternalBibleBook.getNumVerses() was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
             C = str( C )
         self.getVersificationIfNecessary()
         for thisC,thisNumVerses in self.versificationList:

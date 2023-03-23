@@ -52,6 +52,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.OriginalLanguages.HebrewWLCBible import OSISHebrewWLCBible
 from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Formats.ESFMBible import ESFMBible
 from BibleOrgSys.Formats.USFMBible import USFMBible
 from BibleOrgSys.Formats.PTX8Bible import PTX8Bible
 from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAME_END
@@ -59,10 +60,10 @@ from BibleOrgSys.Formats.PickledBible import PickledBible, ZIPPED_PICKLE_FILENAM
 from Extras.BibleDropBoxHelpers import submitBDBFolder
 
 
-LAST_MODIFIED_DATE = '2023-02-16' # by RJH
+LAST_MODIFIED_DATE = '2023-03-20' # by RJH
 SHORT_PROGRAM_NAME = "CreateDistributableResources"
 PROGRAM_NAME = "Create Distributable Resources"
-PROGRAM_VERSION = '0.32'
+PROGRAM_VERSION = '0.33'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_MODIFIED_DATE}'
 
@@ -226,7 +227,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
         repo_changed = runGitPull( OET_REPO_FOLDERPATH ) # Make sure we have the latest version
         if repo_changed or not PROCESS_CHANGES_ONLY:
             abbreviation, name = 'OET-RV', 'Open English Translation Readers’ Version'
-            thisBible = USFMBible( OET_REPO_FOLDERPATH.joinpath( 'translatedTexts/ReadersVersion/' ),
+            thisBible = ESFMBible( OET_REPO_FOLDERPATH.joinpath( 'translatedTexts/ReadersVersion/' ),
                                                     givenName=name, givenAbbreviation=abbreviation )
             metadataDict = {
                             'Abbreviation': abbreviation,
@@ -240,7 +241,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             makeIt( abbreviation, thisBible, metadataDict, outputFolderpath, submit2BDB=submit2BDB )
 
             abbreviation, name = 'OET-LV', 'Open English Translation Literal Version'
-            thisBible = USFMBible( OET_REPO_FOLDERPATH.joinpath( 'intermediateTexts/auto_edited_VLT_USFM/' ),
+            thisBible = ESFMBible( OET_REPO_FOLDERPATH.joinpath( 'intermediateTexts/auto_edited_VLT_ESFM/' ),
                                                     givenName=name, givenAbbreviation=abbreviation )
             metadataDict = {
                             'Abbreviation': abbreviation,

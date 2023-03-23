@@ -70,10 +70,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-03-16' # by RJH
+LAST_MODIFIED_DATE = '2023-03-21' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.66'
+PROGRAM_VERSION = '0.67'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -647,7 +647,7 @@ class ESFMBible( Bible ):
             # print( f"ESFMBible.livenESFMWordLinks found loaded word links: {self.ESFMWordTables[wordFileName]}" )
             if self.ESFMWordTables[wordFileName] is None:
                 with open( os.path.join( self.sourceFolder, wordFileName ), 'rt', encoding='UTF-8' ) as wordFile:
-                    self.ESFMWordTables[wordFileName] = wordFile.read().split( '\n' )
+                    self.ESFMWordTables[wordFileName] = wordFile.read().rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded {len(self.ESFMWordTables[wordFileName]):,} total rows from {wordFileName}" )
                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded column names were: ({len(self.ESFMWordTables[wordFileName][0])}) {self.ESFMWordTables[wordFileName][0]}" )
 
