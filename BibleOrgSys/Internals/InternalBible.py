@@ -4,7 +4,8 @@
 # InternalBible.py
 #
 # Module handling the internal representation of the overall Bible
-#       and which in turn holds the Bible book objects.
+#       and which in turn holds the Bible book objects
+#       (and acts as an intermediary to them).
 #
 # Copyright (C) 2010-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
@@ -81,10 +82,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-03-20' # by RJH
+LAST_MODIFIED_DATE = '2023-03-29' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2253,8 +2254,10 @@ class InternalBible:
         else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKey object
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
-        if BBB in self.books: return self.books[BBB].getContextVerseData( BCVReference )
-        else: vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBible {self.name} doesn't have {BBB}" )
+        if BBB in self.books:
+            return self.books[BBB].getContextVerseData( BCVReference )
+        else:
+            logging.warning( f"InternalBible.getContextVerseData( {BCVReference} ): {self.name} doesn't have {BBB}" )
     # end of InternalBible.getContextVerseData
 
 
