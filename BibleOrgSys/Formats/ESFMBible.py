@@ -70,10 +70,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-03-21' # by RJH
+LAST_MODIFIED_DATE = '2023-03-31' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.67'
+PROGRAM_VERSION = '0.68'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -629,13 +629,13 @@ class ESFMBible( Bible ):
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
-    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str ) -> Tuple[InternalBibleEntryList,Optional[List[str]]]:
+    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:Optional[str]=None ) -> Tuple[InternalBibleEntryList,Optional[List[str]]]:
         """
         The link template can be a filename like 'Word_{n}.html' or an entire link like 'https://SomeSite/words/page_{n}.html'
-            The '{n}' gets substituted with the actual word link string.
+            The '{n}' gets substituted with the actual word link string of digits.
+            Also '{BBB}' gets the book code and '{W}' gets the actual word.
 
-        Note that we don't have enough information here to surround the <a>..</a> link with a <span title="something">..</span>
-            so that will have to be done later.
+        If specified, the title template can also contain the same patterns.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"livenESFMWordLinks( {BBB}, ({len(verseList)}) {verseList} )" )
         assert '{n}' in linkTemplate
@@ -666,10 +666,12 @@ class ESFMBible( Bible ):
                 if not match:
                     break
                 # print( f"{BBB} word match 1='{match.group(1)}' 2='{match.group(2)}' all='{book_html[match.start():match.end()]}'" )
-                assert match.group(2).isdigit()
+                word, digits = match.group(1), match.group(2)
+                assert digits.isdigit()
                 # row_number = int( match.group(2) )
-                originalText = f'''{originalText[:match.start()]}<a href="{linkTemplate.replace('{n}', match.group(2))}">{match.group(1)}</a>{originalText[match.end():]}'''
-                searchStartIndex = match.end() + len(linkTemplate) + 4 # We've added at least that many characters
+                titleHTML = f'''title="{titleTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}" ''' if titleTemplate else ''
+                originalText = f'''{originalText[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{originalText[match.end():]}'''
+                searchStartIndex = match.end() + len(linkTemplate) + len(titleHTML) + 4 # We've added at least that many characters
                 count += 1
             if count > 0:
                 # print( f"  Now '{originalText}'")
