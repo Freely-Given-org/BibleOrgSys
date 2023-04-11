@@ -45,10 +45,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-28' # by RJH
+LAST_MODIFIED_DATE = '2023-03-31' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.61'
+PROGRAM_VERSION = '0.62'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -503,7 +503,7 @@ class USFMBibleBook( BibleBook ):
                         elif text.startswith( '{\\w ' ): # uW UST Exo 17:10 (probably bad USFM???)
                             marker = 'p~' # Drop \ts\\* -- try a continuation paragraph???
                         else:
-                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} ts\\* {text=}" )
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"USFMBibleBook.load() {self.workName} {self.BBB} {C}:{V} ts\\* {text=}" )
                             if self.doExtraChecking: halt
                     else: # was just whitespace
                         loadErrors.append( _("{} {}:{} Removed '\\{}' Door43 chunking marker at beginning of line (with following whitespace)") \
@@ -529,8 +529,9 @@ class USFMBibleBook( BibleBook ):
                                         .format( text, self.BBB, C, V ) )
                     self.addPriorityError( 100, C, V, _("Found invalid/empty chapter field in file") )
                 V = '0'
-            elif marker=='v' and text:
-                newV = text.split()[0]
+            elif marker=='v' and text.strip():
+                # print( f"{self.workName} {self.BBB} {C}:{V} v {text=}" )
+                newV = text.split()[0] # Why does this give an IndexError if text==' '
                 if V=='0' and not ( newV=='1' or newV.startswith( '1-' ) ):
                     loadErrors.append( _("{} {}:{} Expected v1 after chapter marker not {!r}") \
                                         .format( self.BBB, C, V, newV ) )

@@ -70,10 +70,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-03-31' # by RJH
+LAST_MODIFIED_DATE = '2023-04-09' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.68'
+PROGRAM_VERSION = '0.70'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -629,13 +629,36 @@ class ESFMBible( Bible ):
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
+    def loadESFMWordFile( self, filename ):
+        """
+        Loads the given filename (in the same folder as the .ESFM files)
+            as a list of line strings (Doesn't separate by tabs.)
+            into self.ESFMWordTables[filename].
+
+        However, it also loads the column names (separated into a list)
+            into self.ESFMColumnNameList[filename].
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"loadESFMWordFile( {filename} )" )
+        assert filename.endswith( '.tsv' )
+
+        with open( os.path.join( self.sourceFolder, filename ), 'rt', encoding='UTF-8' ) as wordFile:
+            self.ESFMWordTables[filename] = wordFile.read().rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
+            # Uses less memory to keep the rows as single strings, rather than separating the columns at the tabs
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
+        self.ESFMColumnNameList = {}
+        self.ESFMColumnNameList[filename] = self.ESFMWordTables[filename][0].split( '\t' )
+        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
+    # end of ESFMBible.loadESFMWordFile
+
+
     def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:Optional[str]=None ) -> Tuple[InternalBibleEntryList,Optional[List[str]]]:
         """
-        The link template can be a filename like 'Word_{n}.html' or an entire link like 'https://SomeSite/words/page_{n}.html'
+        The link template can be a filename like 'Word_{n}.htm' or an entire link like 'https://SomeSite/words/page_{n}.html'
             The '{n}' gets substituted with the actual word link string of digits.
             Also '{BBB}' gets the book code and '{W}' gets the actual word.
 
-        If specified, the title template can also contain the same patterns.
+        If specified, the title template can also contain the same patterns
+            as well as a table column name surrounded by « ».
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"livenESFMWordLinks( {BBB}, ({len(verseList)}) {verseList} )" )
         assert '{n}' in linkTemplate
@@ -646,10 +669,7 @@ class ESFMBible( Bible ):
             # print( f"ESFMBible.livenESFMWordLinks found filename '{wordFileName}' for {self.abbreviation} {BBB}" )
             # print( f"ESFMBible.livenESFMWordLinks found loaded word links: {self.ESFMWordTables[wordFileName]}" )
             if self.ESFMWordTables[wordFileName] is None:
-                with open( os.path.join( self.sourceFolder, wordFileName ), 'rt', encoding='UTF-8' ) as wordFile:
-                    self.ESFMWordTables[wordFileName] = wordFile.read().rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
-                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded {len(self.ESFMWordTables[wordFileName]):,} total rows from {wordFileName}" )
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.livenESFMWordLinks loaded column names were: ({len(self.ESFMWordTables[wordFileName][0])}) {self.ESFMWordTables[wordFileName][0]}" )
+                self.loadESFMWordFile( wordFileName )
 
         updatedVerseList = InternalBibleEntryList()
         for entry in verseList:
@@ -668,8 +688,15 @@ class ESFMBible( Bible ):
                 # print( f"{BBB} word match 1='{match.group(1)}' 2='{match.group(2)}' all='{book_html[match.start():match.end()]}'" )
                 word, digits = match.group(1), match.group(2)
                 assert digits.isdigit()
-                # row_number = int( match.group(2) )
                 titleHTML = f'''title="{titleTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}" ''' if titleTemplate else ''
+                if titleHTML and wordFileName and '«' in titleTemplate:
+                    row_number = int( digits )
+                    rowColumns = self.ESFMWordTables[wordFileName][row_number].split( '\t' )
+                    # print( f"{titleTemplate=} {self.ESFMColumnNameList[wordFileName]=}")
+                    # print( f"  {row_number=} {rowColumns=} {titleHTML=}")
+                    for cc,columnName in enumerate( self.ESFMColumnNameList[wordFileName] ):
+                        titleHTML = titleHTML.replace( f'«{columnName}»', rowColumns[cc] )
+                    # print( f"  {titleHTML=}")
                 originalText = f'''{originalText[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{originalText[match.end():]}'''
                 searchStartIndex = match.end() + len(linkTemplate) + len(titleHTML) + 4 # We've added at least that many characters
                 count += 1
