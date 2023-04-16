@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-03-29' # by RJH
+LAST_MODIFIED_DATE = '2023-04-13' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.88'
@@ -2234,7 +2234,7 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ) -> Optional[Tuple[list,list]]:
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Optional[Tuple[list,list]]:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2247,6 +2247,9 @@ class InternalBible:
 
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.
+
+        If the strict flag is not set, we try to remove any letter suffix
+            and/or to search verse ranges for a match.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseData( {BCVReference} ) for {self.name}" )
 
@@ -2255,7 +2258,7 @@ class InternalBible:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books:
-            return self.books[BBB].getContextVerseData( BCVReference )
+            return self.books[BBB].getContextVerseData( BCVReference, strict )
         else:
             logging.warning( f"InternalBible.getContextVerseData( {BCVReference} ): {self.name} doesn't have {BBB}" )
     # end of InternalBible.getContextVerseData

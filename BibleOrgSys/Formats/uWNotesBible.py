@@ -5,7 +5,7 @@
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020-2022 Robert Hunt
+# Copyright (C) 2020-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -53,13 +53,13 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+# from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2023-04-16' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.03'
+PROGRAM_VERSION = '0.12'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -77,6 +77,8 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
     """
     Load the given YAML file
         and return the settings dict.
+
+    Oh dear, what absolutely miserable, low-quality code!!!
     """
     debuggingThisFunction = DEBUGGING_THIS_MODULE or False
     fnPrint( debuggingThisFunction, f"uWNotesBible.loadYAML( {YAMLFilepath} )" )
@@ -95,10 +97,13 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                 line = line.rstrip( '\n\r ' )
                 if not line: continue
                 if line.startswith( '#' ): continue # comment line
-                if line == '---': state = 0; continue # start of table
+                if line == '---': # start of table
+                    if debuggingThisFunction: print( f"T 0: table start so returned to 0 from {state}")
+                    state = 0
+                    continue
                 numLeadingSpaces = len(line) - len( line.lstrip( ' ' ) )
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"\nResult dict ({len(dataDict)}) = {dataDict}")
-                dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'Line {j}  State={state}  k1={key1!r} k2={key2!r}  numLS={numLeadingSpaces}: {line!r}' )
+                dPrint( 'Verbose', debuggingThisFunction, f"\nResult dict = ({len(dataDict)}) {dataDict.keys()} {indent=}")
+                dPrint( 'Verbose', debuggingThisFunction, f'Line {j}  State={state}  k1={key1!r} k2={key2!r}  numLS={numLeadingSpaces}: {line!r}' )
 
                 # Check if we need to go back a level
                 if numLeadingSpaces==0:
@@ -125,7 +130,7 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                         key1 = match.group(1)
                         state = 1; continue
 
-                elif state == 1:
+                elif state == 1: # have one key, e.g., dublin_core or projects
                     assert key1
                     if line == f"{' '*indent}-":
                         if debuggingThisFunction: print( f"1-0: {line!r} with k1={key1!r} => 3" )
@@ -135,28 +140,37 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                             assert isinstance( dataDict[key1][-1], dict )
                             dataDict[key1].append( {} )
                         state = 3; continue
-                    match = re.match( rf'''{' '*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
+                    # Digits after colon
+                    match = re.match( rf"{' '*indent}([^ :]+?): ?(\d+?)$", line )
                     if match:
                         if debuggingThisFunction: print( f"1-1: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = {}
                         else: assert isinstance( dataDict[key1], dict )
-                        dataDict[key1][match.group(1)] = match.group(2); continue
-                    match = re.match( rf"{' '*indent}([^ :]+?): ?(\d+?)$", line )
+                        dataDict[key1][match.group(1)] = int(match.group(2)); continue
+                    # String in quotes after colon
+                    match = re.match( rf'''{' '*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
                         if debuggingThisFunction: print( f"1-2: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = {}
                         else: assert isinstance( dataDict[key1], dict )
-                        dataDict[key1][match.group(1)] = int(match.group(2)); continue
-
+                        dataDict[key1][match.group(1)] = match.group(2); continue
+                    # String (without quotes) after colon
+                    match = re.match( rf'''{' '*indent}([^ :]+?): ?(.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"1-3: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if key1 not in dataDict: dataDict[key1] = {}
+                        else: assert isinstance( dataDict[key1], dict )
+                        dataDict[key1][match.group(1)] = match.group(2); continue
+                    # Nothing after colon -- must be the second key (before the colon)
                     match = re.match( rf"{' '*indent}([^ :]+?):$", line )
                     if match:
-                        if debuggingThisFunction: print( f"1-3: 1={match.group(1)}'" )
+                        if debuggingThisFunction: print( f"1-4: 1={match.group(1)}'" )
                         if key1 not in dataDict: dataDict[key1] = {}
                         key2 = match.group(1); state = 2; continue
-
+                    # String in quotes after colon after hyphen
                     match = re.match( rf'''{' '*indent}- ([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"1-4: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
+                        if debuggingThisFunction: print( f"1-5: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
                         if key2:
                             if key2 not in dataDict[key1]:
                                 dataDict[key1][key2] = []
@@ -169,10 +183,27 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                             dataDict[key1].append( {} )
                             dataDict[key1][-1][match.group(1)] = match.group(2)
                             state = 3; continue
+                    # String (without quotes) after colon after hyphen
+                    match = re.match( rf'''{' '*indent}- ([^ :]+?): ?(.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"1-5: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
+                        if key2:
+                            if key2 not in dataDict[key1]:
+                                dataDict[key1][key2] = []
+                            dataDict[key1][key2].append( {} )
+                            dataDict[key1][key2][-1][match.group(1)] = match.group(2)
+                            state = 3; continue
+                        else: # no key2
+                            if key1 not in dataDict: dataDict[key1] = []
+                            else: assert isinstance( dataDict[key1], list )
+                            dataDict[key1].append( {} )
+                            dataDict[key1][-1][match.group(1)] = match.group(2)
+                            state = 3; continue
 
-                elif state == 2:
+                elif state == 2: # have 2 nested keys, e.g., dublin_core / creator
                     assert key1
                     assert key2
+                    # Hyphen only
                     if line == f"{' '*2*indent}-":
                         if debuggingThisFunction: print( f"2-0: '{line}' with k1={key1!r} k2={key2!r}" )
                         if key2 not in dataDict[key1]:
@@ -182,48 +213,97 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
                             assert isinstance( dataDict[key1][key2][-1], dict )
                             dataDict[key1][key2].append( {} )
                         state = 4; continue
+                    # Digits after hyphen
+                    match = re.match( rf"{' '*2*indent}([^ :]+?): ?(\d+?)$", line )
+                    if match:
+                        if debuggingThisFunction: print( f"2-1: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
+                        else: assert isinstance( dataDict[key1][key2], dict )
+                        dataDict[key1][key2][match.group(1)] = int(match.group(2)); continue
+                    # String in quotes after hyphen
                     match = re.match( rf'''{' '*indent}- ['"]([^:'"]+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"2-1: k1={key1!r} k2={key2!r} 1={match.group(1)}'" )
+                        if debuggingThisFunction: print( f"2-2: k1={key1!r} k2={key2!r} 1={match.group(1)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = []
                         else: assert isinstance( dataDict[key1][key2], list )
                         dataDict[key1][key2].append( match.group(1) ); continue
+                    # String in quotes after colon
                     match = re.match( rf'''{' '*2*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
-                    if match:
-                        if debuggingThisFunction: print( f"2-2: 1={match.group(1)}' 2='{match.group(2)}'" )
-                        if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
-                        else: assert isinstance( dataDict[key1][key2], dict )
-                        dataDict[key1][key2][match.group(1)] = match.group(2); continue
-                    match = re.match( rf"{' '*2*indent}([^ :]+?): ?(\d+?)$", line )
                     if match:
                         if debuggingThisFunction: print( f"2-3: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
                         else: assert isinstance( dataDict[key1][key2], dict )
-                        dataDict[key1][key2][match.group(1)] = int(match.group(2)); continue
+                        dataDict[key1][key2][match.group(1)] = match.group(2); continue
+                    # String (without quotes) after colon
+                    match = re.match( rf'''{' '*2*indent}([^ :]+?): ?(.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"2-4: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if key2 not in dataDict[key1]: dataDict[key1][key2] = {}
+                        else: assert isinstance( dataDict[key1][key2], dict )
+                        dataDict[key1][key2][match.group(1)] = match.group(2); continue
+                    # String in quotes after hyphen
                     match = re.match( rf'''{' '*2*indent}- ['"](.+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"2-4: 1={match.group(1)}'" )
+                        if debuggingThisFunction: print( f"2-5: 1={match.group(1)}'" )
+                        if key2 not in dataDict[key1]: dataDict[key1][key2] = []
+                        else: assert isinstance( dataDict[key1][key2], list )
+                        dataDict[key1][key2].append( match.group(1) ); continue
+                    # String (without quotes) after hyphen
+                    match = re.match( rf'''{' '*2*indent}- (.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"2-6: 1={match.group(1)}'" )
                         if key2 not in dataDict[key1]: dataDict[key1][key2] = []
                         else: assert isinstance( dataDict[key1][key2], list )
                         dataDict[key1][key2].append( match.group(1) ); continue
 
-                elif state == 3:
+                elif state == 3: # Have one key and a dictionary in that
                     assert key1
+                    # Hyphen only
                     if line == f"{' '*indent}-":
                         if debuggingThisFunction: print( f"3-0: '{line}' with k1={key1!r}" )
                         assert isinstance( dataDict[key1], list )
                         assert isinstance( dataDict[key1][-1], dict )
                         dataDict[key1].append( {} )
                         continue
+                    # String in quotes after colon after hyphen
+                    match = re.match( rf'''{' '*indent}- ([^ :]+?): ?['"](.+?)['"]$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"1-5: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
+                        if key2:
+                            if key2 not in dataDict[key1]:
+                                dataDict[key1][key2] = []
+                            dataDict[key1][key2].append( {} )
+                            dataDict[key1][key2][-1][match.group(1)] = match.group(2); continue
+                        else:
+                            if key1 not in dataDict: dataDict[key1] = []
+                            else: assert isinstance( dataDict[key1], list )
+                            dataDict[key1].append( {} )
+                            dataDict[key1][-1][match.group(1)] = match.group(2); continue
+                    # String (without quotes) after colon after hyphen
+                    match = re.match( rf'''{' '*indent}- ([^ :]+?): ?(.+?)$''', line )
+                    if match:
+                        if debuggingThisFunction: print( f"3-1: k1={key1!r} k2={key2!r} mg1={match.group(1)!r} mg2={match.group(2)!r} => 3" )
+                        if key2:
+                            if key2 not in dataDict[key1]:
+                                dataDict[key1][key2] = []
+                            dataDict[key1][key2].append( {} )
+                            dataDict[key1][key2][-1][match.group(1)] = match.group(2); continue
+                        else: # no key2
+                            if key1 not in dataDict: dataDict[key1] = []
+                            else: assert isinstance( dataDict[key1], list )
+                            dataDict[key1].append( {} )
+                            dataDict[key1][-1][match.group(1)] = match.group(2); continue
+                    # String in quotes after a colon
                     match = re.match( rf'''{' '*2*indent}([^ :]+?): ?['"](.+?)['"]$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"3-1: k1={key1!r} k2={key2!r} mg1={match.group(1)}' mg2='{match.group(2)}'" )
+                        if debuggingThisFunction: print( f"3-2: k1={key1!r} k2={key2!r} mg1={match.group(1)}' mg2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = [{}]
                         else: assert isinstance( dataDict[key1], list )
                         dataDict[key1][-1][match.group(1)] = match.group(2); continue
+                    # String (without quotes) after a colon
                     match = re.match( rf'''{' '*2*indent}([^ :]+?): ?(.+?)$''', line )
                     if match:
-                        if debuggingThisFunction: print( f"3-2: 1={match.group(1)}' 2='{match.group(2)}'" )
+                        if debuggingThisFunction: print( f"3-3: 1={match.group(1)}' 2='{match.group(2)}'" )
                         if key1 not in dataDict: dataDict[key1] = [{}]
                         else: assert isinstance( dataDict[key1], list )
                         dataDict[key1][-1][match.group(1)] = match.group(2); continue
@@ -250,7 +330,11 @@ def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
     #dPrint( 'Info', DEBUGGING_THIS_MODULE, "\nSettings", len(dataDict), dataDict.keys() )
     if debuggingThisFunction or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
         for j, (section,value) in enumerate( dataDict.items(), start=1 ):
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  loadYAML.load {j}: {section} = {value!r}" )
+            if section == 'dublin_core':
+                for k, (subsection,subvalue) in enumerate( value.items(), start=1 ):
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  {j}/{k}: {section}: {subsection} = {subvalue!r}" )
+            else: # no dublin_core
+                vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  loadYAML.load {j}: {section} = {value!r}" )
 
     return dataDict
 # end of loadYAML function
@@ -603,18 +687,23 @@ class uWNotesBibleBook( BibleBook ):
                     logging.info( "loaduWNotesBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, CV, "line", line )
-                assert line.count( '\t' )  == 8 # 9 fields
+                assert line.count( '\t' )  == 6 # 7 fields
+                assert '\\t' not in line and '\\r not in line' # TSV escaped characters, but ones we don't expect
                 if lineCount == 1: # Heading line
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                        assert line == 'Book\tChapter\tVerse\tID\tSupportReference\tOrigQuote\tOccurrence\tGLQuote\tOccurrenceNote'
+                        assert line == 'Reference\tID\tTags\tSupportReference\tQuote\tOccurrence\tNote'
                     continue
+                line = line.replace( '\\n', '\n' ).replace( '\\\\', '\\' ) # TSV escaped characters that could be in there
                 fields = line.split( '\t' )
-                assert len(fields) == 9
-                bkCode, C, V, fieldID, supportReference, origQuote, occurrence, GLQuote, occurrenceNote = fields
-                if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-                    BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode )
-                    assert BBB == self.BBB
+                assert len(fields) == 7
+                ref, fieldID, tags, supportReference, quote, occurrence, note = fields
+                # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
+                if not ref:
+                    logging.critical( f"Missing uW TN field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
+                    continue # ignore this (invalid) note
+                C, V = ref.split( ':' )
                 if C=='front': C = '-1'
+                if V=='front': V = '0'
                 if C != lastC: doAddLine( 'c', C )
                 try: intC = int(C)
                 except ValueError: intC = -999
@@ -622,11 +711,12 @@ class uWNotesBibleBook( BibleBook ):
                     doAddLine( 'v', '0' if V in ('headers','intro') else V )
                 # NOTE: We don't save the ID field (nor the BBB field, of course)
                 if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
-                if origQuote: doAddLine( 'q1' if intC>0 else 'iq1', origQuote )
                 if occurrence and occurrence not in ('0','1'):
+                    if not occurrence.isdigit():
+                        logging.critical( f"Unexpected uW TN occurrence field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} '{quote}' {occurrence=} (should be an integer)" )
                     doAddLine( 'pi' if intC>0 else 'ipi', occurrence )
-                if GLQuote: doAddLine( 'q2' if intC>0 else 'iq2', GLQuote )
-                if occurrenceNote: doAddLine( 'p' if intC>0 else 'ip', occurrenceNote )
+                if quote: doAddLine( 'q1' if intC>0 else 'iq1', quote )
+                if note: doAddLine( 'p' if intC>0 else 'ip', note )
 
                 lastC, lastV = C, V
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors

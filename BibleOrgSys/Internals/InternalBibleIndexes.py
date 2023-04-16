@@ -70,6 +70,7 @@ CHANGELOG:
     2022-07-31 added items() methods to indexes
     2023-02-03 improved indexing of non-chapter books
     2023-03-02 improved section index
+    2023-04-13 put verse ranges and suffixes back into CV index entries -- this might be a breaking change for some applications???
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional
@@ -89,10 +90,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-03-15' # by RJH
+LAST_MODIFIED_DATE = '2023-04-16' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.85'
+PROGRAM_VERSION = '0.87'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -264,16 +265,70 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.getChapterEntries
 
 
-    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str] ) -> Tuple:
+    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False ) -> Tuple:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
             along with the context for this verse.
 
         Raises a KeyError if the CV key doesn't exist.
+
+        However, even if C:V can't be found, there might be a prior verse range (C:v1-v2) that we could/should? return.
+
+        If the strict flag is not set, we try to remove any letter suffix
+            and/or to search verse ranges for a match.
         """
         # print( f"{self.__indexData.keys()}" )
-        indexEntry = self.__indexData[CVkey]
+        try: indexEntry = self.__indexData[CVkey]
+        except KeyError:
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} was unable to immediately find {self.BBB} {CVkey=}")
+            if strict or CVkey[0]=='-1': # strict selection or else in the introduction (no verse ranges there)
+                raise KeyError
+            # else: # Look for a verse range that contains our verse
+            # print( f"{self.__indexData.keys()=}" )
+            desiredVint = getLeadingInt( CVkey[1] )
+            found = False
+            if not CVkey[1].isdigit():
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} searching for non-digit {CVkey}" )
+                try:
+                    indexEntry = self.__indexData[ (CVkey[0],str(desiredVint)) ]
+                    found = True
+                except KeyError: # no, that didn't work either
+                    pass
+            if not found: # look for a verse range that would match
+                for ixCVkey in self.__indexData.keys():
+                    ixC, ixV = ixCVkey
+                    if ixC==CVkey[0]:
+                        if '-' in ixV: # must include a verse range
+                            # See if our desired verse is within the range
+                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
+                            V1,V2 = ixV.split( '-' )
+                            if getLeadingInt(V1) <= desiredVint <= getLeadingInt(V2):
+                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
+                                indexEntry = self.__indexData[ixCVkey]
+                                break # we found a range that includes the verse we're looking for
+                        elif ',' in ixV:
+                            for ixVx in ixV.split( ',' ):
+                                if desiredVint == int(ixVx):
+                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in list {ixC}:{ixV}" )
+                                    indexEntry = self.__indexData[ixCVkey]
+                                    break # we found a list of verses that includes the verse we're looking for
+                        elif not ixV.isdigit(): # not a verse range, so might be something like '50a'
+                            try:
+                                if desiredVint == getLeadingInt(ixV):
+                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
+                                    indexEntry = self.__indexData[ixCVkey]
+                                    break # we found a partial verse that includes the verse we're looking for
+                                    # NOTE: There still might be a second half, e.g., '50a' and '50b'
+                            except ValueError: # no int there but which one
+                                # It likely means a verse number error which we should have repaired at load time, e.g. '\\v 7Afterwards, …' or maybe '\\v Afterwards. …'
+                                logging.critical( f"getVerseEntriesWithContext {self.workName} {self.BBB} couldn't find a verse number integer in either {CVkey=} or in {ixC}:{ixV} from index entry" )
+                                if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: bad_verse_number_in_CV_index
+                        # else:
+                        #     dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} was confused trying to find {CVkey=} at {ixC}:{ixV}" )
+                        #     halt
+                else: # No, we just couldn't find it anywhere
+                    raise KeyError
         return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()], indexEntry.getContextList()
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
 
@@ -346,15 +401,14 @@ class InternalBibleBookCVIndex:
             """
             nonlocal saveCV, saveJ, indexEntryLineCount, errorData
             if saveCV and saveJ is not None:
-                if DEBUGGING_THIS_MODULE:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "    _saveAnyOutstandingCV", self.BBB, saveCV, saveJ, indexEntryLineCount )
+                # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    _saveAnyOutstandingCV", self.BBB, saveCV, saveJ, indexEntryLineCount )
                 #if saveCV == ('0','0'): halt
                 #assert 1 <= indexEntryLineCount <= 120 # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.__indexData: # we already have an index entry for this C:V
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "makeBookCVIndex._saveAnyOutstandingCV: already have an index entry @ {} {}:{}".format( self.BBB, strC, strV ) )
                     errorData.append( ( self.BBB,strC,strV,) )
                     if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 2):
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '      _saveAnyOutstandingCV @ ', self.BBB, saveCV )
+                        # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '      _saveAnyOutstandingCV @ ', self.BBB, saveCV )
                         try: # printing the previous index entry
                             ix, lc = self.__indexData[(saveCV[0],str(int(saveCV[1])-1))]
                             logging.error( "  mI:sAO previous {} {}".format( ix, lc ) )
@@ -374,9 +428,8 @@ class InternalBibleBookCVIndex:
                                 halt # This is a serious error that is losing Biblical text
                     # Let's combine the entries
                     ix, lc = self.__indexData[saveCV]
-                    if DEBUGGING_THIS_MODULE:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      About to save UPDATED index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "        ix={} count={}".format( ix, lc+indexEntryLineCount ) )
+                    # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "      About to save UPDATED index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
+                    # dPrint( 'Verbose', DEBUGGING_THIS_MODULE, "        ix={} count={}".format( ix, lc+indexEntryLineCount ) )
                     self.__indexData[saveCV] = ( ix, lc+indexEntryLineCount )
                     if BibleOrgSysGlobals.debugFlag and (DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.verbosityLevel > 2):
                         logging.error( "  mI:sAO combined {}".format( (ix,lc+indexEntryLineCount) ) )
@@ -384,10 +437,10 @@ class InternalBibleBookCVIndex:
                             logging.error( "   mI:sAO {}".format( self.givenBibleEntries[ixx] ) )
                 else: # no pre-existing duplicate
                     if DEBUGGING_THIS_MODULE:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      About to save NEW index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "        ix={} count={}".format( saveJ, indexEntryLineCount ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "      About to save NEW index entry for {} {}:{}".format( self.BBB, saveCV[0], saveCV[1] ) )
+                        dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "        ix={} count={}".format( saveJ, indexEntryLineCount ) )
                         for pqr in range( saveJ, saveJ+indexEntryLineCount ):
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "       {}".format( self.givenBibleEntries[pqr] ) )
+                            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "       {}".format( self.givenBibleEntries[pqr] ) )
                     self.__indexData[saveCV] = (saveJ, indexEntryLineCount)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'sAO', _printIndexEntry( self.__indexData[saveCV] ) )
                 saveCV = saveJ = None
@@ -421,9 +474,8 @@ class InternalBibleBookCVIndex:
                 elif marker == 'v':
                     assert strC != '0' # Should be in a chapter by now
                     logging.warning( "makeBookCVIndex: Why do we have a verse number in a {} {} book without chapters?".format( self.workName, self.BBB ) )
-                    if DEBUGGING_THIS_MODULE:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  makeBookCVIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
-                            marker, entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
+                    dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  makeBookCVIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =",
+                        marker, entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '…') )
                     _saveAnyOutstandingCV() # with the adjusted indexEntryLineCount
                     #if 0:
                         ## Remove verse ranges, etc. and then save the verse number
@@ -491,14 +543,18 @@ class InternalBibleBookCVIndex:
                     _saveAnyOutstandingCV() # with the adjusted indexEntryLineCount
                     # Remove verse ranges, etc. and then save the verse number
                     strV = entry.getCleanText()
-                    digitV = ''
-                    for char in strV:
-                        if char.isdigit(): digitV += char
-                        else: # the first non-digit in the verse "number"
-                            logging.warning( f"InternalBibleBookCVIndex.makeBookCVIndex() ignored non-digits in verse for index: {self.BBB} {strC}:{strV}" )
-                            break # ignore the rest
-                    #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
-                    saveCV, saveJ = (strC,digitV,), revertToJ
+                    assert '–' not in strV # that's an en-dash -- it MUST be a hyphen here for a verse range
+                    # # TODO: We don't need this next little section now
+                    # digitV = ''
+                    # for char in strV:
+                    #     if char.isdigit(): digitV += char
+                    #     else: # the first non-digit in the verse "number"
+                    #         logging.warning( f"InternalBibleBookCVIndex.makeBookCVIndex() ignored non-digits in verse for index: {self.BBB} {strC}:{strV}" )
+                    #         break # ignore the rest
+                    # #assert strV != '0' or self.BBB=='PSA' # Not really handled properly yet
+                    # NEXT LINE CHANGED 2023-04-13
+                    # saveCV, saveJ = (strC,digitV,), revertToJ
+                    saveCV, saveJ = (strC,strV,), revertToJ
                     indexEntryLineCount += (j-revertToJ) + 1 # For the v
                     #if 0 and BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
                         ## Double-check that each entry contains only ONE v field
@@ -586,7 +642,11 @@ class InternalBibleBookCVIndex:
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'makeBookCVIndex: contextMarkerList = {}'.format( contextMarkerList ) )
                         logging.critical( "makeBookCVIndex found an unknown nesting error for {} {} around {}:{}".format( self.workName, self.BBB, C, V ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
-                    if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
+                    if contextMarkerList.count( originalMarker ) > 0:
+                        # TODO: Is this a code error or a data error???
+                        logging.warning( f"makeBookCVIndex( {self.workName} {self.BBB} ) why does {contextMarkerList} for {C}:{V} have '{originalMarker}' in it?")
+                    # TODO: Not sure what is happening here -- needs further detailed debugging
+                    if 0 and DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag and BibleOrgSysGlobals.debugFlag:
                         if contextMarkerList.count( originalMarker ):
                             dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{}/ {} {}:{} {!r} {}".format( j, self.BBB, C, V, originalMarker, contextMarkerList ) )
                         assert contextMarkerList.count( originalMarker ) == 0, f"{self.BBB} {C}:{V} {j=} {originalMarker} {contextMarkerList} cnt={contextMarkerList.count( originalMarker )}"

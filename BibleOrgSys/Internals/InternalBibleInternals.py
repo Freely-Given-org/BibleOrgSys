@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-03-13' # by RJH
+LAST_MODIFIED_DATE = '2023-04-15' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.86'
@@ -168,6 +168,8 @@ assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 def getLeadingInt( someString:str ) -> int:
     """
     Especially used for verse numbers like '17a' and ranges like 17-25
+
+    Raises ValueError if no int found
     """
     # print( f"getLeadingInt( '{someString}' )…")
     reMatch = re.search( '^-?[0-9]*', someString ) # Can return None

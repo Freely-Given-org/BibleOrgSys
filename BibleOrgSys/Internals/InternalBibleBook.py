@@ -79,7 +79,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-03-20' # by RJH
+LAST_MODIFIED_DATE = '2023-04-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -470,7 +470,8 @@ class InternalBibleBook:
         assert marker and isinstance( marker, str )
 
         if text and ( '\n' in text or '\r' in text ):
-            logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
+            logger = logging.warning if self.objectTypeString=='uW Notes' else logging.critical
+            logger( f"InternalBibleBook.addLine found newLine in {self.objectTypeString} text: {marker}='{text}'" )
             if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
@@ -534,7 +535,7 @@ class InternalBibleBook:
             assert not self._processedFlag
             assert self._rawLines # Must be an existing line to append to
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
-            logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
+            logging.critical( f"InternalBibleBook.appendToLastLine found newLine in {self.objectTypeString} additionalText: {expectedLastMarker}='{additionalText}'" )
             if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
@@ -5117,11 +5118,14 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ):
         """
         Returns an InternalBibleEntryListObject plus a list containing the context of the verse.
 
         Raises a KeyError if the C:V reference is not found
+
+        If the strict flag is not set, we try to remove any letter suffix
+            and/or to search verse ranges for a match.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {} {}".format( BCVReference, self.workName, self.BBB ) )
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
@@ -5146,11 +5150,12 @@ class InternalBibleBook:
             C, V = BCVReference[1], BCVReference[2]
         else: # assume it's a SimpleVerseKey or similar
             C,V = BCVReference.getCV()
-        try:
-            return self._CVIndex.getVerseEntriesWithContext( (C,V) ) # Gives a KeyError if not found
-        except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
-            logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")
-            return self._CVIndex.getVerseEntriesWithContext( (C,str(getLeadingInt(V))) ) # Gives a KeyError if not found
+        # try:
+        return self._CVIndex.getVerseEntriesWithContext( (C,V), strict ) # Gives a KeyError if not found
+        # NOTE: The following (and more) is now done by the index get function
+        # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
+        #     logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")
+        #     return self._CVIndex.getVerseEntriesWithContext( (C,str(getLeadingInt(V))) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 
 
