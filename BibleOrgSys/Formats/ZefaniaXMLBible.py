@@ -60,6 +60,9 @@ or
 
 or
       <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
+
+CHANGELOG:
+    2023-04-20 allowed for up to five lines of XML comments before the '<XMLBIBLE'
 """
 from gettext import gettext as _
 import logging
@@ -144,13 +147,18 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-            firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+            firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=7 )
             if not firstLines or len(firstLines)<2: continue
             if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
             and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<XMLBIBLE' ) \
+            and not firstLines[2].startswith( '<XMLBIBLE' ) \
+            and not firstLines[3].startswith( '<XMLBIBLE' ) \
+            and not firstLines[4].startswith( '<XMLBIBLE' ) \
+            and not firstLines[5].startswith( '<XMLBIBLE' ) \
+            and not firstLines[6].startswith( '<XMLBIBLE' ) \
             and not firstLines[1].startswith( '<!--Nice Viewer' ) \
             and not firstLines[1].startswith( '<!--Builded with' ) \
             and not firstLines[1].startswith( '<!--For Programmers' ) \
@@ -195,13 +203,18 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
         # See if there's an Zefania project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
-                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=7 )
                 if not firstLines or len(firstLines)<2: continue
                 if not ( firstLines[0].startswith( '<?xml version="1.0"' ) or firstLines[0].startswith( "<?xml version='1.0'" ) ) \
                 and not ( firstLines[0].startswith( '\ufeff<?xml version="1.0"' ) or firstLines[0].startswith( "\ufeff<?xml version='1.0'" ) ): # same but with BOM
                     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<XMLBIBLE' ) \
+                and not firstLines[2].startswith( '<XMLBIBLE' ) \
+                and not firstLines[3].startswith( '<XMLBIBLE' ) \
+                and not firstLines[4].startswith( '<XMLBIBLE' ) \
+                and not firstLines[5].startswith( '<XMLBIBLE' ) \
+                and not firstLines[6].startswith( '<XMLBIBLE' ) \
                 and not firstLines[1].startswith( '<!--Nice Viewer' ) \
                 and not firstLines[1].startswith( '<!--Builded with' ) \
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
