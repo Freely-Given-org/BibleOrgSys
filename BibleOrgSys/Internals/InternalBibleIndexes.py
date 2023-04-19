@@ -90,7 +90,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BO
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-04-16' # by RJH
+LAST_MODIFIED_DATE = '2023-04-17' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.87'
@@ -281,7 +281,7 @@ class InternalBibleBookCVIndex:
         # print( f"{self.__indexData.keys()}" )
         try: indexEntry = self.__indexData[CVkey]
         except KeyError:
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} was unable to immediately find {self.BBB} {CVkey=}")
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} was unable to immediately find {self.BBB} {CVkey=}")
             if strict or CVkey[0]=='-1': # strict selection or else in the introduction (no verse ranges there)
                 raise KeyError
             # else: # Look for a verse range that contains our verse
