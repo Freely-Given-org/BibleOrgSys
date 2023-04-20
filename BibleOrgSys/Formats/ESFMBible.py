@@ -46,6 +46,9 @@ Creates a semantic dictionary with keys:
     'A' 'G' 'L' 'O' 'P' 'Q' entries each containing a dictionary
         where the key is the name (e.g., 'Jonah')
         and the entry is a list of 4-tuples (BBB,C,V,actualWord)
+
+CHANGELOG:
+    2023-04-20 handle word numbers for proper nouns that include a \\sup, e.g., 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
 """
 from typing import List, Tuple, Optional
 from gettext import gettext as _
@@ -70,10 +73,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-04-09' # by RJH
+LAST_MODIFIED_DATE = '2023-04-20' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.70'
+PROGRAM_VERSION = '0.71'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -232,7 +235,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 
+# Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
 linkedWordRegex = re.compile( '([-A-za-zⱤḩⱪşʦāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
+
 class ESFMBible( Bible ):
     """
     Class to load and manipulate ESFM Bibles.
@@ -681,6 +686,8 @@ class ESFMBible( Bible ):
             # print( f"{n}: '{originalText}'")
             searchStartIndex = 0
             count = 0
+            # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
+            originalText = originalText.replace( '\\sup ', 'SSsupP' ).replace( '\\sup*', 'ESsupP' ) # We have to temporarily make these into normal word-formation chars for the regex to include them
             while True:
                 match = linkedWordRegex.search( originalText, searchStartIndex )
                 if not match:
@@ -700,6 +707,7 @@ class ESFMBible( Bible ):
                 originalText = f'''{originalText[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{originalText[match.end():]}'''
                 searchStartIndex = match.end() + len(linkTemplate) + len(titleHTML) + 4 # We've added at least that many characters
                 count += 1
+            originalText = originalText.replace( 'SSsupP', '\\sup ' ).replace( 'ESsupP', '\\sup*' ) # Restores our 'hidden' HTML markup
             if count > 0:
                 # print( f"  Now '{originalText}'")
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
