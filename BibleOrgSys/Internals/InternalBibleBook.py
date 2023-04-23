@@ -79,7 +79,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-04-14' # by RJH
+LAST_MODIFIED_DATE = '2023-04-23' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -771,10 +771,10 @@ class InternalBibleBook:
 
         # \w fields can indicate glossary entries.
         # However, it's also a way to assign attributes to a word (after a |).
-        # Adjust \w or \+w ('w') fields to remove attributes (and copy the word) into a separate \ww ('ww') field
+        # Adjust \w or \+w ('w') fields to remove attributes (and copy the word and place the attributes) into a separate \ww ('ww') field
         #   (This then makes the \w field into a regular "formatting field"
         #       since the contents of it need to be included in the regular text.)
-        # However, if the \w fields contains a strongs field, the \w field markers are removed completely.
+        # However, if the \w field only contains a single strongs field, the \w field markers are removed completely.
         if '|' in adjText: # Only if it has a pipe somewhere in the line
             # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nW adjText @ {self.BBB}_{C}:{V} = {adjText}" )
             ixW = -3
@@ -830,6 +830,7 @@ class InternalBibleBook:
                     # adjText = f'{adjText[:ixPipe]}\\+w*\\ww {word}{adjText[ixPipe:ixWend+1]}ww{adjText[ixWend+3:]}'
                     adjText = f'{adjText[:ixW]}{adjText[ixW+4:ixPipe]}\\ww {word}{adjText[ixPipe:ixWend+1]}ww{adjText[ixWend+3:]}'
                     # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  +now {adjText=}" )
+            else: _processLineFix_w_loop_counter_is_too_small
 
         # Move all footnotes and cross-references, etc. from the main text out to extras
         #  (This includes our \ww fields which contain the atttributes from \w fields)
@@ -1111,7 +1112,7 @@ class InternalBibleBook:
                 vEntry = self._processedLines.pop() # because the v field has already been written
                 self._processedLines.append( InternalBibleEntry('vp#', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
                 self._processedLines.append( vEntry ) # Put the original v entry back afterwards
-            # end of while True loop
+        else: _processLineFix_main_loop_counter_is_too_small
 
         #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Fix gave {!r} and {!r}".format( adjText, extras ) )
         #if len(extras)>1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )

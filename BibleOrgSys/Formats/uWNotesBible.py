@@ -56,10 +56,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 # from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2023-04-16' # by RJH
+LAST_MODIFIED_DATE = '2023-04-21' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.13'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -711,8 +711,8 @@ class uWNotesBibleBook( BibleBook ):
                     doAddLine( 'v', '0' if V in ('headers','intro') else V )
                 # NOTE: We don't save the ID field (nor the BBB field, of course)
                 if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
-                if occurrence and occurrence not in ('0','1'):
-                    if not occurrence.isdigit():
+                if occurrence and occurrence!='1' : # not in ('0','1')
+                    if occurrence!='-1' and not occurrence.isdigit():
                         logging.critical( f"Unexpected uW TN occurrence field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} '{quote}' {occurrence=} (should be an integer)" )
                     doAddLine( 'pi' if intC>0 else 'ipi', occurrence )
                 if quote: doAddLine( 'q1' if intC>0 else 'iq1', quote )

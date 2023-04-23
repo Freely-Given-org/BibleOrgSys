@@ -73,10 +73,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-04-20' # by RJH
+LAST_MODIFIED_DATE = '2023-04-22' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.71'
+PROGRAM_VERSION = '0.72'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -236,7 +236,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
-linkedWordRegex = re.compile( '([-A-za-zⱤḩⱪşʦāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
+linkedWordRegex = re.compile( '([-A-za-zḨŌⱤḩⱪşţʦĀĒāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
 
 class ESFMBible( Bible ):
     """
@@ -628,9 +628,9 @@ class ESFMBible( Bible ):
                     if not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORD TABLE file at {filepath}")
         if DEBUGGING_THIS_MODULE:
-            print( f"{self.ESFMWorkData=}" )
-            print( f"{self.ESFMFileData=}" )
-            print( f"{self.ESFMWordTables=}" )
+            print( f"lookForAuxilliaryFilenames {self.ESFMWorkData=}" )
+            print( f"lookForAuxilliaryFilenames {self.ESFMFileData=}" )
+            print( f"lookForAuxilliaryFilenames {self.ESFMWordTables=}" )
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
