@@ -36,6 +36,9 @@ There might be some intro versions of the above fields before chapter 1.
 There might be some verse 0 fields for chapter introductions.
 There might be several notes for one verse.
 Some verses might have no notes.
+
+CHANGELOG:
+    2023-05-04 Handle comma-separated lists in ref column
 """
 from gettext import gettext as _
 from typing import Dict, List, Any, Optional
@@ -56,10 +59,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 # from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2023-04-21' # by RJH
+LAST_MODIFIED_DATE = '2023-05-04' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.13'
+PROGRAM_VERSION = '0.14'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -701,22 +704,29 @@ class uWNotesBibleBook( BibleBook ):
                 if not ref:
                     logging.critical( f"Missing uW TN field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
                     continue # ignore this (invalid) note
-                C, V = ref.split( ':' )
-                if C=='front': C = '-1'
-                if V=='front': V = '0'
-                if C != lastC: doAddLine( 'c', C )
-                try: intC = int(C)
-                except ValueError: intC = -999
-                if (V != lastV or C != lastC) and intC > 0:
-                    doAddLine( 'v', '0' if V in ('headers','intro') else V )
-                # NOTE: We don't save the ID field (nor the BBB field, of course)
-                if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
-                if occurrence and occurrence!='1' : # not in ('0','1')
-                    if occurrence!='-1' and not occurrence.isdigit():
-                        logging.critical( f"Unexpected uW TN occurrence field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} '{quote}' {occurrence=} (should be an integer)" )
-                    doAddLine( 'pi' if intC>0 else 'ipi', occurrence )
-                if quote: doAddLine( 'q1' if intC>0 else 'iq1', quote )
-                if note: doAddLine( 'p' if intC>0 else 'ip', note )
+                # Note: The ref field can contain a comma separated list
+                for individualRef in ref.split( ',' ):
+                    # assert individualRef.count(':') == 1, f"Invalid uW TN ref {individualRef=} from {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}"
+                    if individualRef.count( ':' ) == 0: # Might be something like 42:3,10, so we just have a verse number
+                        # C should already be set
+                        V = individualRef
+                    else:
+                        C, V = individualRef.split( ':' )
+                    if C=='front': C = '-1'
+                    if V=='front': V = '0'
+                    if C != lastC: doAddLine( 'c', C )
+                    try: intC = int(C)
+                    except ValueError: intC = -999
+                    if (V != lastV or C != lastC) and intC > 0:
+                        doAddLine( 'v', '0' if V in ('headers','intro') else V )
+                    # NOTE: We don't save the ID field (nor the BBB field, of course)
+                    if supportReference: doAddLine( 'm' if intC>0 else 'im', supportReference )
+                    if occurrence and occurrence!='1' : # not in ('0','1')
+                        if occurrence!='-1' and not occurrence.isdigit():
+                            logging.critical( f"Unexpected uW TN occurrence field {self.BBB} {individualRef=} {ref=} {fieldID} {tags=} {supportReference} '{quote}' {occurrence=} (should be an integer)" )
+                        doAddLine( 'pi' if intC>0 else 'ipi', occurrence )
+                    if quote: doAddLine( 'q1' if intC>0 else 'iq1', quote )
+                    if note: doAddLine( 'p' if intC>0 else 'ip', note )
 
                 lastC, lastV = C, V
             #if loadErrors: self.checkResultsDictionary['Load Errors'] = loadErrors
