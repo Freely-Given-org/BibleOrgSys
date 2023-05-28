@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-04-15' # by RJH
+LAST_MODIFIED_DATE = '2023-05-27' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.86'
+PROGRAM_VERSION = '0.87'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -868,7 +868,7 @@ class InternalBibleEntryList:
         """
         So we can use Python + operator to add lists (e.g., to combine verses)
         """
-        assert isinstance( listToAppend, InternalBibleEntryList )
+        assert isinstance( listToAppend, InternalBibleEntryList ), f"__add__ {type(listToAppend)=} {listToAppend=}"
         self.data.extend( listToAppend )
         return self.data
     # end of InternalBibleEntryList.__add__

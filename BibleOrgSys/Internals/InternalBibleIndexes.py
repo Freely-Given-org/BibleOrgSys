@@ -85,15 +85,15 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 # from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-04-17' # by RJH
+LAST_MODIFIED_DATE = '2023-05-27' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -164,7 +164,7 @@ class InternalBibleBookCVIndexEntry:
         return self.entryIndex + self.entryCount # exclusive
     def getEntryCount( self ) -> int:
         return self.entryCount
-    def getContextList( self ) -> Optional[List[str]]:
+    def getContextList( self ) -> List[str]:
         return self.context
 # end of class InternalBibleBookCVIndexEntry
 
@@ -265,7 +265,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.getChapterEntries
 
 
-    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False ) -> Tuple:
+    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
@@ -329,11 +329,22 @@ class InternalBibleBookCVIndex:
                         #     halt
                 else: # No, we just couldn't find it anywhere
                     raise KeyError
-        return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()], indexEntry.getContextList()
+        verseEntryList = InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] )
+        if len(verseEntryList) == 1:
+            verseEntry = verseEntryList[0]
+            if not verseEntry.getFullText() \
+            and verseEntry.getMarker() in ('chapters','headers','¬headers','intro'):
+                verseEntryList = InternalBibleEntryList() # Don't return useless stuff
+                # TODO: Check back why the useless stuff is getting this far -- probably should be prevented earlier (in the indexing function)
+            else:
+                # print( f"{CVkey=} {strict=} {verseEntry=}" )
+                if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
+        assert isinstance( verseEntryList, InternalBibleEntryList )
+        return verseEntryList, indexEntry.getContextList()
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
 
 
-    def getChapterEntriesWithContext( self, C:str ) -> tuple:
+    def getChapterEntriesWithContext( self, C:str ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
         Given C, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this chapter,
@@ -345,16 +356,16 @@ class InternalBibleBookCVIndex:
         firstIndexEntry = self.__indexData[(C,'0')]
         try:
             nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
-            return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContextList()
+            return InternalBibleEntryList( self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()] ), firstIndexEntry.getContextList()
         except KeyError: # Couldn't find the next chapter
             if C != '-1': # presumably no more chapters
-                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContextList()
+                return InternalBibleEntryList( self.givenBibleEntries[firstIndexEntry.getEntryIndex():] ), firstIndexEntry.getContextList()
             # else it's a bit more complicated finding the introduction because mostly there's no chapter zero
             try:
                 nextIndexEntry = self.__indexData[('1','0')]
-                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()], firstIndexEntry.getContextList()
+                return InternalBibleEntryList( self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()] ), firstIndexEntry.getContextList()
             except KeyError: # give up and just return everything
-                return self.givenBibleEntries[firstIndexEntry.getEntryIndex():], firstIndexEntry.getContextList()
+                return InternalBibleEntryList( self.givenBibleEntries[firstIndexEntry.getEntryIndex():] ), firstIndexEntry.getContextList()
     # end of InternalBibleBookCVIndex.getChapterEntriesWithContext
 
 

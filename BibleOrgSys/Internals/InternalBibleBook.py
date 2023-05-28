@@ -79,7 +79,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-04-23' # by RJH
+LAST_MODIFIED_DATE = '2023-05-27' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -1995,7 +1995,7 @@ class InternalBibleBook:
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"addVerseStartMarkers() for {self.BBB}" )
 
-        newLines:List[InternalBibleEntry] = InternalBibleEntryList()
+        newLines = InternalBibleEntryList()
         fieldsPreceded = ('s','s1','s2','s3','s4','sp')
         fieldsAlsoPreceded = USFM_ALL_BIBLE_PARAGRAPH_MARKERS \
                                 + ('c#','r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr')
@@ -5119,9 +5119,9 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ):
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
-        Returns an InternalBibleEntryListObject plus a list containing the context of the verse.
+        Returns an InternalBibleEntryList plus a list containing the context of the verse.
 
         Raises a KeyError if the C:V reference is not found
 
@@ -5143,6 +5143,7 @@ class InternalBibleBook:
             return self._CVIndex.getChapterEntriesWithContext( BCVReference[1] ) # Gives a KeyError if not found
         if isinstance( BCVReference, tuple ) and len(BCVReference)==1: # no chapter number specified
             # We need an entire book
+            assert isinstance( self._CVIndex.givenBibleEntries, InternalBibleEntryList )
             return self._CVIndex.givenBibleEntries, [] # Whole book, empty context
 
         # else we only need one verse

@@ -59,10 +59,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 # from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2023-05-04' # by RJH
+LAST_MODIFIED_DATE = '2023-05-29' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.14'
+PROGRAM_VERSION = '0.15'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -696,7 +696,8 @@ class uWNotesBibleBook( BibleBook ):
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert line == 'Reference\tID\tTags\tSupportReference\tQuote\tOccurrence\tNote'
                     continue
-                line = line.replace( '\\n', '\n' ).replace( '\\\\', '\\' ) # TSV escaped characters that could be in there
+                # No, we have to leave the TSV escaped characters in there until later
+                # line = line.replace( '\\n', '\n' ).replace( '\\\\', '\\' ) # TSV escaped characters that could be in there
                 fields = line.split( '\t' )
                 assert len(fields) == 7
                 ref, fieldID, tags, supportReference, quote, occurrence, note = fields

@@ -82,10 +82,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-04-13' # by RJH
+LAST_MODIFIED_DATE = '2023-05-27' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.88'
+PROGRAM_VERSION = '0.89'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2234,7 +2234,7 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Optional[Tuple[list,list]]:
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2264,7 +2264,7 @@ class InternalBible:
     # end of InternalBible.getContextVerseData
 
 
-    def getVerseDataList( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ):
+    def getVerseDataList( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ) -> Optional[InternalBibleEntryList]:
         """
         Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
 
@@ -2280,8 +2280,9 @@ class InternalBible:
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumStr()=='0' or BCVReference.getVerseNumStr()=='0' # Why did we get nothing???
         else:
             verseData, _context = result
+            assert isinstance( verseData, InternalBibleEntryList )
             if BibleOrgSysGlobals.debugFlag:
-                assert isinstance( verseData, InternalBibleEntryList )
+                assert isinstance( _context, list )
                 # The following numbers include end markers, i.e., \q1 xyz becomes q1,p~ xyz,¬q1
                 if len(verseData)<1 or len(verseData)>30: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
                 if len(verseData)>35: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, verseData )
