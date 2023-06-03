@@ -91,10 +91,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-06-02' # by RJH
+LAST_MODIFIED_DATE = '2023-06-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.89'
+PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -386,12 +386,13 @@ class InternalBibleBookCVIndex:
             verseEntry = verseEntryList[0]
             if not verseEntry.getFullText() \
             and verseEntry.getMarker() in ('chapters','headers','¬headers','intro'):
-                verseEntryList = InternalBibleEntryList() # Don't return useless stuff
+                raise KeyError # Don't return just useless stuff
                 # TODO: Check back why the useless stuff is getting this far -- probably should be prevented earlier (in the indexing function)
             else:
                 # print( f"{CVkey=} {strict=} {verseEntry=}" )
                 if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
 
+        assert verseEntryList # We don't want to return an empty list
         assert isinstance( verseEntryList, InternalBibleEntryList )
         return verseEntryList, indexEntries[0].getContextList()
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext

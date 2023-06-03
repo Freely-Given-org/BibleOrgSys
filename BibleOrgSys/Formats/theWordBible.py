@@ -361,8 +361,6 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
         try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
-        # TODO: Is it a bug in getContextVerseData that we needed to add this next line
-        if not verseData: break # Presumably reached the end of the introduction?
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
