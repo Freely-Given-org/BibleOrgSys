@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-05-27' # by RJH
+LAST_MODIFIED_DATE = '2023-06-02' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.89'
@@ -2234,7 +2234,7 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2258,7 +2258,7 @@ class InternalBible:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
         if BBB in self.books:
-            return self.books[BBB].getContextVerseData( BCVReference, strict )
+            return self.books[BBB].getContextVerseData( BCVReference, strict, complete )
         else:
             logging.warning( f"InternalBible.getContextVerseData( {BCVReference} ): {self.name} doesn't have {BBB}" )
     # end of InternalBible.getContextVerseData

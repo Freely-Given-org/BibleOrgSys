@@ -69,10 +69,10 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-10' # by RJH
+LAST_MODIFIED_DATE = '2023-06-04' # by RJH
 SHORT_PROGRAM_NAME = "theWordBible"
 PROGRAM_NAME = "theWord Bible format handler"
-PROGRAM_VERSION = '0.56'
+PROGRAM_VERSION = '0.57'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -361,6 +361,8 @@ def theWordHandleIntroduction( BBB:str, bookData, ourGlobals ):
         try: result = bookData.getContextVerseData( (BBB,str(intC),str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
+        # TODO: Is it a bug in getContextVerseData that we needed to add this next line
+        if not verseData: break # Presumably reached the end of the introduction?
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
             assert len(verseData) == 1 # in the introductory section (each individual line is a "verse")
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()

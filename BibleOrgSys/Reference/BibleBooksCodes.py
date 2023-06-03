@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-03-15' # by RJH
+LAST_MODIFIED_DATE = '2023-06-03' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.92'
+PROGRAM_VERSION = '0.93'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -387,7 +387,7 @@ class BibleBooksCodes:
         """
         Return the reference abbreviation string for the given USFM (Paratext) book code string.
         """
-        assert len(USFMAbbreviation) == 3
+        assert len(USFMAbbreviation) == 3, f"{USFMAbbreviation=} {strict=}"
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, USFMAbbreviation, self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()] )
         result = self.__DataDicts['USFMAbbreviationDict'][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result

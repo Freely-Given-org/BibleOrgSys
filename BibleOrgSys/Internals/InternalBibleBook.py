@@ -79,7 +79,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-05-27' # by RJH
+LAST_MODIFIED_DATE = '2023-06-02' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -310,6 +310,7 @@ class InternalBibleBook:
             self.containerBibleObject = parameter1
             #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"set {BBB} cBO to {id(parameter1)} for {id(self)}" )
             self.workName = self.containerBibleObject.getAName( abbrevFirst=True )
+        assert isinstance( BBB, str ), f"InternalBibleBook.__init__ {type(BBB)=} {BBB=}"
         self.BBB = BBB
         if self.doExtraChecking: assert self.BBB in BibleOrgSysGlobals.loadedBibleBooksCodes
 
@@ -5119,7 +5120,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
         Returns an InternalBibleEntryList plus a list containing the context of the verse.
 
@@ -5153,7 +5154,7 @@ class InternalBibleBook:
         else: # assume it's a SimpleVerseKey or similar
             C,V = BCVReference.getCV()
         # try:
-        return self._CVIndex.getVerseEntriesWithContext( (C,V), strict ) # Gives a KeyError if not found
+        return self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
         #     logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")

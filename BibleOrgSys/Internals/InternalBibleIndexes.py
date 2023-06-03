@@ -71,6 +71,7 @@ CHANGELOG:
     2023-02-03 improved indexing of non-chapter books
     2023-03-02 improved section index
     2023-04-13 put verse ranges and suffixes back into CV index entries -- this might be a breaking change for some applications???
+    2023-06-02 allow finding all verses and verse ranges (esp. for notes, commentaries)
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional
@@ -90,10 +91,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-05-27' # by RJH
+LAST_MODIFIED_DATE = '2023-06-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.88'
+PROGRAM_VERSION = '0.89'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -265,7 +266,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.getChapterEntries
 
 
-    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
@@ -277,59 +278,110 @@ class InternalBibleBookCVIndex:
 
         If the strict flag is not set, we try to remove any letter suffix
             and/or to search verse ranges for a match.
+
+        If complete flag is set, try to find every reference with that verse.
         """
         # print( f"{self.__indexData.keys()}" )
-        try: indexEntry = self.__indexData[CVkey]
+        desiredCint = int( CVkey[0] )
+        desiredVint = getLeadingInt( CVkey[1] )
+        indexEntries = []
+
+        if complete: # First look for all verse ranges that would match (they probably precede any specific verse entries)
+            for ixCVkey in self.__indexData.keys():
+                ixC, ixV = ixCVkey
+                if ixC==CVkey[0]:
+                    if '-' in ixV: # must include a verse range
+                        # See if our desired verse is within the range
+                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
+                        V1,V2 = ixV.split( '-' )
+                        if getLeadingInt(V1) <= desiredVint <= getLeadingInt(V2):
+                            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
+                            # We found a range that includes the verse we're looking for
+                            indexEntries.append( self.__indexData[ixCVkey] )
+                    elif ',' in ixV:
+                        for ixVx in ixV.split( ',' ):
+                            if desiredVint == int(ixVx):
+                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} found {CVkey} in list {ixC}:{ixV}" )
+                                # We found a list of verses that includes the verse we're looking for
+                                indexEntries.append( self.__indexData[ixCVkey] )
+                    elif not ixV.isdigit(): # not a verse range, so might be something like '50a'
+                        try:
+                            if desiredVint == getLeadingInt(ixV):
+                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
+                                # We found a partial verse that includes the verse we're looking for
+                                indexEntries.append( self.__indexData[ixCVkey] )
+                                # NOTE: There still might be a second half, e.g., '50a' and '50b'
+                        except ValueError: # no int there but which one
+                            # It likely means a verse number error which we should have repaired at load time, e.g. '\\v 7Afterwards, …' or maybe '\\v Afterwards. …'
+                            logging.critical( f"getVerseEntriesWithContextA {self.workName} {self.BBB} couldn't find a verse number integer in either {CVkey=} or in {ixC}:{ixV} from index entry" )
+                            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: bad_verse_number_in_CV_index
+                    # else:
+                    #     dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} was confused trying to find {CVkey=} at {ixC}:{ixV}" )
+                    #     halt
+
+        # Now look for specific verses that match
+        try:
+            indexEntries.append( self.__indexData[CVkey] )
         except KeyError:
-            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} was unable to immediately find {self.BBB} {CVkey=}")
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextB {self.workName} was unable to immediately find {self.BBB} {CVkey=}")
             if strict or CVkey[0]=='-1': # strict selection or else in the introduction (no verse ranges there)
                 raise KeyError
             # else: # Look for a verse range that contains our verse
             # print( f"{self.__indexData.keys()=}" )
-            desiredVint = getLeadingInt( CVkey[1] )
-            found = False
             if not CVkey[1].isdigit():
-                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} searching for non-digit {CVkey}" )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextB {self.workName} {self.BBB} searching for non-digit {CVkey}" )
                 try:
-                    indexEntry = self.__indexData[ (CVkey[0],str(desiredVint)) ]
-                    found = True
+                    indexEntries.append( self.__indexData[ (CVkey[0],str(desiredVint)) ] )
                 except KeyError: # no, that didn't work either
                     pass
-            if not found: # look for a verse range that would match
+
+            if not indexEntries and not complete: # look for a verse range that would match
                 for ixCVkey in self.__indexData.keys():
                     ixC, ixV = ixCVkey
                     if ixC==CVkey[0]:
                         if '-' in ixV: # must include a verse range
                             # See if our desired verse is within the range
-                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
+                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
                             V1,V2 = ixV.split( '-' )
                             if getLeadingInt(V1) <= desiredVint <= getLeadingInt(V2):
-                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
-                                indexEntry = self.__indexData[ixCVkey]
+                                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
+                                indexEntries.append( self.__indexData[ixCVkey] )
                                 break # we found a range that includes the verse we're looking for
                         elif ',' in ixV:
                             for ixVx in ixV.split( ',' ):
                                 if desiredVint == int(ixVx):
-                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in list {ixC}:{ixV}" )
-                                    indexEntry = self.__indexData[ixCVkey]
+                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} found {CVkey} in list {ixC}:{ixV}" )
+                                    indexEntries.append( self.__indexData[ixCVkey] )
                                     break # we found a list of verses that includes the verse we're looking for
                         elif not ixV.isdigit(): # not a verse range, so might be something like '50a'
                             try:
                                 if desiredVint == getLeadingInt(ixV):
-                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
-                                    indexEntry = self.__indexData[ixCVkey]
+                                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
+                                    indexEntries.append( self.__indexData[ixCVkey] )
                                     break # we found a partial verse that includes the verse we're looking for
                                     # NOTE: There still might be a second half, e.g., '50a' and '50b'
                             except ValueError: # no int there but which one
                                 # It likely means a verse number error which we should have repaired at load time, e.g. '\\v 7Afterwards, …' or maybe '\\v Afterwards. …'
-                                logging.critical( f"getVerseEntriesWithContext {self.workName} {self.BBB} couldn't find a verse number integer in either {CVkey=} or in {ixC}:{ixV} from index entry" )
+                                logging.critical( f"getVerseEntriesWithContextC {self.workName} {self.BBB} couldn't find a verse number integer in either {CVkey=} or in {ixC}:{ixV} from index entry" )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: bad_verse_number_in_CV_index
                         # else:
                         #     dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContext {self.workName} {self.BBB} was confused trying to find {CVkey=} at {ixC}:{ixV}" )
                         #     halt
-                else: # No, we just couldn't find it anywhere
-                    raise KeyError
-        verseEntryList = InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] )
+                # else: # No, we just couldn't find it anywhere
+                #     raise KeyError
+                
+        if not indexEntries: # we just couldn't find it anywhere
+            raise KeyError
+        
+        # if len(indexEntries) > 1:
+        #     print( f"InternalBibleBookCVIndex.getVerseEntriesWithContext {self.workName} {self.BBB} got {len(indexEntries)} results for {CVkey} {strict=} {complete=}")
+        #     print( f"{indexEntries}" )
+        verseEntryList = InternalBibleEntryList()
+        for ii,indexEntry in enumerate( indexEntries ):       
+            # print( f"{ii}: {indexEntry}" )
+            verseEntryList.extend( InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] ) )
+
+        # Just clean up if we have a single meaningless entry
         if len(verseEntryList) == 1:
             verseEntry = verseEntryList[0]
             if not verseEntry.getFullText() \
@@ -339,8 +391,9 @@ class InternalBibleBookCVIndex:
             else:
                 # print( f"{CVkey=} {strict=} {verseEntry=}" )
                 if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
+
         assert isinstance( verseEntryList, InternalBibleEntryList )
-        return verseEntryList, indexEntry.getContextList()
+        return verseEntryList, indexEntries[0].getContextList()
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
 
 
