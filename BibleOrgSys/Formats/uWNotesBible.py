@@ -465,6 +465,7 @@ class uWNotesBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
+        assert os.path.isdir( self.sourceFolder )
     # end of uWNotesBible.__init_
 
 

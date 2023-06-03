@@ -46,6 +46,7 @@ e.g.,
 CHANGELOG:
     2023-02-01 Allowed for multiple files as well as one single file for the whole Bible
                 TODO: It hasn't been fully tested, and filecheck has not yet been updated to reflect this
+    2023-05-30 Allow for a filepath to be given to the class (as well as a folderpath)
 """
 from gettext import gettext as _
 from typing import List, Tuple, Optional, Union
@@ -66,10 +67,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-01' # by RJH
+LAST_MODIFIED_DATE = '2023-05-30' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.34'
+PROGRAM_VERSION = '0.35'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -207,11 +208,11 @@ class CSVBible( Bible ):
     """
     Class for reading, validating, and converting CSVBible files.
     """
-    def __init__( self, sourceFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
         # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         assert givenName != 'utf-8'
         assert givenAbbreviation != 'utf-8'
@@ -222,24 +223,32 @@ class CSVBible( Bible ):
         self.objectTypeString = 'CSV'
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
+        self.givenName, self.abbreviation, self.encoding = givenName, givenAbbreviation, encoding
         if self.givenName and not self.name:
             self.name = self.givenName
-        for self.sourceFilename in (f'{self.givenName}.csv',f'{self.givenName}.CSV',
-                                    f'{self.givenName}.tsv',f'{self.givenName}.TSV',
-                                    f'{self.givenName}.txt',f'{self.givenName}.TXT',
-                                    self.givenName,
-                                    f'{self.abbreviation}.csv',f'{self.abbreviation}.CSV', f'{self.abbreviation.lower()}.csv',f'{self.abbreviation.lower()}.CSV',
-                                    f'{self.abbreviation}.tsv',f'{self.abbreviation}.TSV', f'{self.abbreviation.lower()}.tsv',f'{self.abbreviation.lower()}.TSV',
-                                    f'{self.abbreviation}.txt',f'{self.abbreviation}.TXT', f'{self.abbreviation.lower()}.txt',f'{self.abbreviation.lower()}.TXT',
-                                    self.abbreviation,):
-            self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
-            # Do a preliminary check on the readability of our file
-            if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
-                break
-        else:
-            logging.critical( _("CSVBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
-            self.sourceFilename = self.sourceFilepath = None
+        if os.path.isfile( sourceFileOrFolder ):
+            self.sourceFilepath = Path( sourceFileOrFolder )
+            self.sourceFolder = self.sourceFilepath.parent
+            self.sourceFilename = self.sourceFilepath.name
+        elif os.path.isdir( sourceFileOrFolder ):
+            self.sourceFolder = sourceFileOrFolder
+            # NOTE: The following code assumes one file for the entire work
+            #           but load() can also handle one file per book
+            for self.sourceFilename in (f'{self.givenName}.csv',f'{self.givenName}.CSV',
+                                        f'{self.givenName}.tsv',f'{self.givenName}.TSV',
+                                        f'{self.givenName}.txt',f'{self.givenName}.TXT',
+                                        self.givenName,
+                                        f'{self.abbreviation}.csv',f'{self.abbreviation}.CSV', f'{self.abbreviation.lower()}.csv',f'{self.abbreviation.lower()}.CSV',
+                                        f'{self.abbreviation}.tsv',f'{self.abbreviation}.TSV', f'{self.abbreviation.lower()}.tsv',f'{self.abbreviation.lower()}.TSV',
+                                        f'{self.abbreviation}.txt',f'{self.abbreviation}.TXT', f'{self.abbreviation.lower()}.txt',f'{self.abbreviation.lower()}.TXT',
+                                        self.abbreviation,):
+                self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
+                # Do a preliminary check on the readability of our file
+                if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
+                    break
+            else:
+                logging.critical( _("CSVBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
+                self.sourceFilename = self.sourceFilepath = None
     # end of CSVBible.__init__
 
 
@@ -247,9 +256,10 @@ class CSVBible( Bible ):
         """
         Does the work of loading a CSV file into memory.
 
-        Parameter store is optionally used to save the books
+        Parameter 'temporaryBookStore' is optionally used to save the books
             (because we don't always load them in the correct order)
         """
+        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadFile( {filepath}, {temporaryBookStore} )")
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loading {}…").format( filepath ) )
 
         separator = numColumns = quoted = BBB = None # Empty defaults
@@ -405,8 +415,8 @@ class CSVBible( Bible ):
                 lastVerseNumber = verseNumber
 
         # Save the final book
-        if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
-        else: self.stashBook( thisBook )
+        if temporaryBookStore is None: self.stashBook( thisBook )
+        else: temporaryBookStore[thisBook.BBB] = thisBook
     # end of CSVBible._loadFile
 
 
@@ -432,8 +442,10 @@ class CSVBible( Bible ):
 
         Finds and loads multiple source files and load book elements.
         """
+        if self.sourceFilepath:
+            return self.load()
+        # else: # we have a folder
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Loading books from {}…").format( self.sourceFolder ) )
-        assert self.sourceFilepath is None
 
         tempBookStore = {}
         for filename in os.listdir( self.sourceFolder ):
