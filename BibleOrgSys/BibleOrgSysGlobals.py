@@ -109,7 +109,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2023-02-01' # by RJH
+LAST_MODIFIED_DATE = '2023-06-02' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.91'
@@ -1047,7 +1047,7 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
 # Validating XML fields (from element tree)
 #
 
-def elementStr( element, level:int=0 ):
+def elementStr( element, level:int=0 ) -> str:
     """
     Return a string representation of an element (from element tree).
 
@@ -1150,7 +1150,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
 # end of BibleOrgSysGlobals.checkXMLNoSubelementsWithText
 
 
-def getFlattenedXML( element, locationString, idString=None, level=0 ):
+def getFlattenedXML( element, locationString, idString=None, level=0 ) -> str:
     """
     Return the XML nested inside the element as a text string.
 
@@ -1162,21 +1162,23 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     # Get attributes
     attributes = ''
     for attribName,attribValue in element.items():
-        attributes += '{}{}="{}"'.format( ' ' if attributes else '', attribName, attribValue )
+        attributes = f'''{attributes+' ' if attributes else ''}{attribName}="{attribValue}"'''
     if level: # For lower levels (other than the called one) need to add the tags
-        result += '<' + element.tag
-        if attributes: result += ' ' + attributes
-        result += '>'
+        result = f"{result}<{element.tag}{' '+attributes if attributes else ''}>"
     elif attributes:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "We are losing attributes here:", attributes ); halt
-        result += '<' + attributes + '>'
-    if element.text: result += element.text
+        result = f'{result}<{attributes}>'
+    if element.text: result = f'{result}{element.text}'
     for subelement in element:
         result += getFlattenedXML( subelement, subelement.tag + ' in ' + locationString, idString, level+1 ) # Recursive call
     if level:
-        result += '</' + element.tag + '>'
-    if element.tail and element.tail.strip(): result += ' ' + element.tail.strip()
-    #else: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getFlattenedXML: Result is {!r}".format( result ) )
+        result = f'{result}</{element.tag}>'
+    if element.tail:
+        # Remove linefeeds and multiple spaces
+        tail = element.tail.replace( '\n', '' ).replace( '    ', ' ' ).replace( '   ', ' ' ).replace( '  ', ' ' )
+        while '  ' in tail: tail = tail.replace( '  ', ' ' )
+        result = f'{result}{tail}'
+    # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"getFlattenedXML: Result is '{result}'" )
     return result
 # end of BibleOrgSysGlobals.getFlattenedXML
 
