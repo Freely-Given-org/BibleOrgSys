@@ -119,7 +119,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2023-02-16' # by RJH
+LAST_MODIFIED_DATE = '2023-05-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'
@@ -1094,7 +1094,8 @@ class BibleWriter( InternalBible ):
                         indentLevel += 1
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pseudoMarker, indentLevel )
             if indentLevel !=  0:
-                logger.error( "toESFM: Ended with wrong indent level of {} for {}".format( indentLevel, BBB ) );  halt
+                logger.error( "toESFM: Ended with wrong indent level of {} for {}".format( indentLevel, BBB ) )
+                if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
 
         if ignoredMarkers:
             logger.info( "toESFM: Ignored markers were {}".format( ignoredMarkers ) )
