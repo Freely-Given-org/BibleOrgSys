@@ -25,13 +25,9 @@
 """
 Module for defining and manipulating complete or partial Tyndale Notes Bibles.
 
+Current is able to read StudyNotes and ThemeNotes.
+
 Note that we squeeze the XML format into pseudo-USFM.
-We only save non-blank fields.
-    SupportReference    m
-    OrigQuote           q1
-    Occurrence (digit)  pi (if non-zero and not '1')
-    GLQuote             q2
-    OccurrenceNote      p (Saved as markdown containing <br> fields for newLines)
 There might be some intro versions of the above fields before chapter 1.
 There might be some verse 0 fields for chapter introductions.
 There might be several notes for one verse.
@@ -45,8 +41,6 @@ import os
 from pathlib import Path
 import logging
 from xml.etree.ElementTree import ElementTree, ParseError
-# import multiprocessing
-import re
 
 if __name__ == '__main__':
     import sys
@@ -56,13 +50,12 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
-# from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2023-06-03' # by RJH
+LAST_MODIFIED_DATE = '2023-06-08' # by RJH
 SHORT_PROGRAM_NAME = "TyndaleNotesBible"
 PROGRAM_NAME = "Tyndale Bible Notes handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.20'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -182,11 +175,11 @@ class TyndaleNotesBible( Bible ):
     Class to load and manipulate Tyndale Notes Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFilepath, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
         """
         Create the internal Tyndale Notes Bible object.
 
-        Note that sourceFolder can be None if we don't know that yet.
+        Note that sourceFilepath can be None if we don't know that yet.
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -194,18 +187,24 @@ class TyndaleNotesBible( Bible ):
         self.objectTypeString = 'Tyndale Notes'
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
-        assert os.path.isdir( self.sourceFolder )
+        self.givenName, self.abbreviation, self.encoding = givenName, givenAbbreviation, encoding
+        if self.givenName and not self.name:
+            self.name = self.givenName
+        if os.path.isfile( sourceFilepath ):
+            self.sourceFilepath = Path( sourceFilepath )
+            self.sourceFolder = self.sourceFilepath.parent
+            self.sourceFilename = self.sourceFilepath.name
+        else:
+            logging.critical( _("TyndaleNotesBible: Unable to discover a single filename in {}".format( sourceFilepath )) )
+            self.sourceFilename = self.sourceFilepath = None
     # end of TyndaleNotesBible.__init_
 
 
     def preload( self ) -> None:
         """
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.sourceFolder}" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"preload() from {self.sourceFilepath}" )
 
-        self.sourceFilename = 'StudyNotes.xml'
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
         assert os.path.isfile( self.sourceFilepath )
 
         self.preloadDone = True
@@ -240,33 +239,44 @@ class TyndaleNotesBible( Bible ):
 
             for element in self.XMLTree:
                 location = f"{topLocation}-{element.tag}"
-                # print( f"{element} {element.text=}")
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{element} {element.text=}" )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, '1wk8', loadErrors )
                 assert element.tag == 'item'
                 # Process the attributes first
-                ref = None
+                name = None
                 for attrib,value in element.items():
                     if attrib == 'name':
-                        ref = value
+                        name = value
                     elif attrib == 'typename':
-                        assert value == 'StudyNote'
+                        assert value in ('StudyNote','ThemeNote','Profile'), f"{name=} {value=}"
+                        # 'Profile' only occurs in TTN at Eph.1.22-23
                     elif attrib == 'product':
                         assert value == 'TyndaleOpenStudyNotes'
                     else:
                         logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, topLocation ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, topLocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                assert ref
-                assert ref.count('.') >= 1 # Usually 2, but could be 'Psalm.142'
-                # NOTE: ref can be something like 'IISam.7.22'
+                assert name
+                if self.abbreviation == 'TSN':
+                    ref = name
+                    assert ref.count('.') >= 1 # Usually 2, but could be 'Psalm.142'
+                    # NOTE: ref can be something like 'IISam.7.22'
 
+                # Now work thru each item
                 stateCounter = 0
+                title = None
                 for subelement in element:
-                    # print( f"{subelement} {subelement.text=}")
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{subelement} {subelement.text=}" )
                     sublocation = f"{location}-{subelement.tag}"
                     BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '1wk8', loadErrors )
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '1wk8', loadErrors )
-                    if stateCounter == 0:
+                    if stateCounter == 0 and self.abbreviation=='TTN':
+                        assert subelement.tag == 'title'
+                        title = subelement.text
+                        assert title
+                        stateCounter += 1
+                    elif ( stateCounter == 0 and self.abbreviation=='TSN' ) \
+                    or ( stateCounter == 1 and self.abbreviation=='TTN'): # these have the extra title field
                         assert subelement.tag == 'refs'
                         refs = subelement.text
                         assert refs
@@ -303,11 +313,15 @@ class TyndaleNotesBible( Bible ):
                             assert firstC.isdigit()
                             thisBook.addLine( 'c', firstC )
                             C = firstC
+                        if title:
+                            thisBook.addLine( 's1', title )
+                            title = None
                         if firstVs != V: # Can be a range
                             thisBook.addLine( 'v', firstVs )
                             V = firstVs
                         stateCounter += 1
-                    elif stateCounter == 1:
+                    elif ( stateCounter == 1 and self.abbreviation=='TSN' ) \
+                    or ( stateCounter == 2 and self.abbreviation=='TTN'): # these have the extra title field
                         assert subelement.tag == 'body'
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, '1wk8', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '1wk8', loadErrors )
@@ -321,8 +335,12 @@ class TyndaleNotesBible( Bible ):
                             for attrib,value in bodyelement.items():
                                 if attrib == 'class':
                                     pClass = value
-                                    # The list ones only occur at Rom.2.6-11
-                                    assert pClass in ('sn-text','sn-list-1','sn-list-2','sn-list-3'), f"{refs} {pClass=} {bodyLocation}"
+                                    if self.abbreviation == 'TSN':
+                                        # The list ones only occur at Rom.2.6-11
+                                        assert pClass in ('sn-text','sn-list-1','sn-list-2','sn-list-3'), f"{refs} {pClass=} {bodyLocation}"
+                                    elif self.abbreviation == 'TTN':
+                                        assert pClass in ('theme-title','theme-body','theme-body-fl','theme-body-sp','theme-body-fl-sp','theme-refs-title','theme-refs','theme-list-sp','theme-list','theme-h2'), f"{refs} {pClass=} {bodyLocation}"
+                                    else: halt
                                 elif attrib == 'ts': # Not exactly sure what this is
                                     ts = value # Things like 'sn-text -1v -5'
                                     # TODO: We're losing this whatever it is
@@ -338,12 +356,42 @@ class TyndaleNotesBible( Bible ):
                             #     print( f"{BBB} {C}:{V} {htmlSegment=}")
                             #     halt
                             assert '\\' not in htmlSegment
-                            if pClass == 'sn-text':
-                                htmlSegment = htmlSegment.replace( '"sn-excerpt-divine-name"', '"sn-excerpt nd"' ).replace( '"divine-name"', '"nd"' )
-                                thisBook.appendToLastLine( f' {htmlSegment}' )
-                            elif pClass.startswith( 'sn-list-' ):
-                                # TODO: We're losing the list number here
-                                thisBook.addLine( 'li', htmlSegment )
+                            if self.abbreviation == 'TSN':
+                                if pClass == 'sn-text':
+                                    htmlSegment = htmlSegment.replace( '"sn-excerpt-divine-name"', '"sn-excerpt nd"' ).replace( '"divine-name"', '"nd"' )
+                                    thisBook.appendToLastLine( f' {htmlSegment}' )
+                                elif pClass.startswith( 'sn-list-' ):
+                                    # TODO: We're losing the list number here
+                                    thisBook.addLine( 'li', htmlSegment )
+                                else: halt
+                            elif self.abbreviation == 'TTN':
+                                if pClass == 'theme-title':
+                                    assert pCount == 0
+                                    # it's the same as the title above already saved
+                                elif pClass == 'theme-body':
+                                    thisBook.addLine( 'p', htmlSegment )
+                                elif pClass == 'theme-body-sp':
+                                    thisBook.addLine( 'b', '' )
+                                    thisBook.addLine( 'p', htmlSegment )
+                                elif pClass == 'theme-body-fl':
+                                    thisBook.addLine( 'pi', htmlSegment )
+                                elif pClass == 'theme-body-fl-sp':
+                                    thisBook.addLine( 'b', '' )
+                                    thisBook.addLine( 'pi', htmlSegment )
+                                elif pClass == 'theme-refs-title':
+                                    thisBook.addLine( 's2', htmlSegment )
+                                elif pClass == 'theme-h2':
+                                    thisBook.addLine( 's3', htmlSegment )
+                                elif pClass == 'theme-refs':
+                                    thisBook.addLine( 'pi2', htmlSegment )
+                                elif pClass == 'theme-list-sp':
+                                    # thisBook.addLine( 'b', '' ) # Not needed before an HTML list
+                                    thisBook.addLine( 'li', htmlSegment )
+                                elif pClass == 'theme-list':
+                                    thisBook.addLine( 'li', htmlSegment )
+                                else:
+                                    print( f"{pClass=} {htmlSegment=}" )
+                                    halt
                             else: halt
                             pCount += 1
                             # assert pCount == 1

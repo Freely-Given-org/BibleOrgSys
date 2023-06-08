@@ -382,15 +382,17 @@ class InternalBibleBookCVIndex:
             verseEntryList.extend( InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] ) )
 
         # Just clean up if we have a single meaningless entry
-        if len(verseEntryList) == 1:
-            verseEntry = verseEntryList[0]
-            if not verseEntry.getFullText() \
-            and verseEntry.getMarker() in ('chapters','headers','¬headers','intro'):
-                raise KeyError # Don't return just useless stuff
-                # TODO: Check back why the useless stuff is getting this far -- probably should be prevented earlier (in the indexing function)
-            else:
-                # print( f"{CVkey=} {strict=} {verseEntry=}" )
-                if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
+        # Hmmh, doesn't work well -- we don't want to return an empty list
+        #   but if we raise a KeyError, it might be interpreted as reaching the end of the introduction (when it's not)
+        # if len(verseEntryList) == 1:
+        #     verseEntry = verseEntryList[0]
+        #     if not verseEntry.getFullText() \
+        #     and verseEntry.getMarker() in ('chapters','headers','¬headers','intro'):
+        #         raise KeyError # Don't return just useless stuff
+        #         # TODO: Check back why the useless stuff is getting this far -- probably should be prevented earlier (in the indexing function)
+        #     else:
+        #         # print( f"{CVkey=} {strict=} {verseEntry=}" )
+        #         if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
 
         assert verseEntryList # We don't want to return an empty list
         assert isinstance( verseEntryList, InternalBibleEntryList )

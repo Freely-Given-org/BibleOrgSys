@@ -45,10 +45,10 @@ from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-03' # by RJH
+LAST_MODIFIED_DATE = '2023-06-07' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.11'
+PROGRAM_VERSION = '0.12'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -253,14 +253,14 @@ class LEBXMLBible( Bible ):
     treeTag = 'leb'
 
 
-    def __init__( self, sourceFilepath, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName=None, givenAbbreviation=None, encoding='utf-8' ) -> None:
         """
         Constructor: just sets up the LEB Bible object.
 
         sourceFilepath can be a folder (esp. if each book is in a separate file)
             or the path of a specific file (probably containing the whole Bible -- most common)
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.__init__( {sourceFilepath}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"LEBXMLBible.__init__( {sourceFileOrFolder}, '{givenName}', '{givenAbbreviation}', {encoding} )" )
 
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -268,7 +268,13 @@ class LEBXMLBible( Bible ):
         self.objectTypeString = 'LEB'
 
         # Now we can set our object variables
-        self.sourceFilepath, self.givenName, self.givenAbbreviation, self.encoding  = sourceFilepath, givenName, givenAbbreviation, encoding
+        self.sourceFileOrFolder, self.givenName, self.givenAbbreviation, self.encoding  = sourceFileOrFolder, givenName, givenAbbreviation, encoding
+        if os.path.isdir( self.sourceFileOrFolder ):
+            self.sourceFolder = self.sourceFileOrFolder
+        elif os.path.isfile( self.sourceFileOrFolder ):
+            self.sourceFilepath = Path( sourceFileOrFolder )
+            self.sourceFolder = self.sourceFilepath.parent
+            self.sourceFilename = self.sourceFilepath.name
 
 
         self.title = self.version = self.date = self.source = None
@@ -280,7 +286,7 @@ class LEBXMLBible( Bible ):
         # Do a preliminary check on the readability of our file(s)
         self.possibleFilenames = []
         self.possibleFilenameDict = {}
-        if os.path.isdir( self.sourceFilepath ): # We've been given a folder -- see if we can find the files
+        if os.path.isdir( self.sourceFileOrFolder ): # We've been given a folder -- see if we can find the files
             self.sourceFolder = self.sourceFilepath
             # There's no standard for LEB XML file naming
             fileList = os.listdir( self.sourceFilepath )
@@ -336,7 +342,6 @@ class LEBXMLBible( Bible ):
             self.possibleFilenames = newCorrectlyOrderedList
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now", self.possibleFilenames ); halt
         else: # it's presumably a file name
-            self.sourceFolder = os.path.dirname( self.sourceFilepath )
             if not os.access( self.sourceFilepath, os.R_OK ):
                 logging.critical( 'LEBXMLBible: ' + _("File {!r} is unreadable").format( self.sourceFilepath ) )
                 return # No use continuing
