@@ -52,10 +52,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-06-08' # by RJH
+LAST_MODIFIED_DATE = '2023-06-14' # by RJH
 SHORT_PROGRAM_NAME = "TyndaleNotesBible"
 PROGRAM_NAME = "Tyndale Bible Notes handler"
-PROGRAM_VERSION = '0.20'
+PROGRAM_VERSION = '0.21'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -236,6 +236,7 @@ class TyndaleNotesBible( Bible ):
                     logging.warning( "fv6g Unprocessed {} attribute ({}) in {}".format( attrib, value, topLocation ) )
                     loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, topLocation ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
+            assert self.releaseVersion == '1.25'
 
             for element in self.XMLTree:
                 location = f"{topLocation}-{element.tag}"
@@ -257,7 +258,7 @@ class TyndaleNotesBible( Bible ):
                         loadErrors.append( "Unprocessed {} attribute ({}) in {} (fv6g)".format( attrib, value, topLocation ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                 assert name
-                if self.abbreviation == 'TSN':
+                if self.abbreviation in ('TSN','TOSN'):
                     ref = name
                     assert ref.count('.') >= 1 # Usually 2, but could be 'Psalm.142'
                     # NOTE: ref can be something like 'IISam.7.22'
@@ -275,7 +276,7 @@ class TyndaleNotesBible( Bible ):
                         title = subelement.text
                         assert title
                         stateCounter += 1
-                    elif ( stateCounter == 0 and self.abbreviation=='TSN' ) \
+                    elif ( stateCounter == 0 and self.abbreviation in ('TSN','TOSN') ) \
                     or ( stateCounter == 1 and self.abbreviation=='TTN'): # these have the extra title field
                         assert subelement.tag == 'refs'
                         refs = subelement.text
@@ -320,7 +321,7 @@ class TyndaleNotesBible( Bible ):
                             thisBook.addLine( 'v', firstVs )
                             V = firstVs
                         stateCounter += 1
-                    elif ( stateCounter == 1 and self.abbreviation=='TSN' ) \
+                    elif ( stateCounter == 1 and self.abbreviation in ('TSN','TOSN') ) \
                     or ( stateCounter == 2 and self.abbreviation=='TTN'): # these have the extra title field
                         assert subelement.tag == 'body'
                         BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, '1wk8', loadErrors )
@@ -335,7 +336,7 @@ class TyndaleNotesBible( Bible ):
                             for attrib,value in bodyelement.items():
                                 if attrib == 'class':
                                     pClass = value
-                                    if self.abbreviation == 'TSN':
+                                    if self.abbreviation in ('TSN','TOSN'):
                                         # The list ones only occur at Rom.2.6-11
                                         assert pClass in ('sn-text','sn-list-1','sn-list-2','sn-list-3'), f"{refs} {pClass=} {bodyLocation}"
                                     elif self.abbreviation == 'TTN':
@@ -356,7 +357,7 @@ class TyndaleNotesBible( Bible ):
                             #     print( f"{BBB} {C}:{V} {htmlSegment=}")
                             #     halt
                             assert '\\' not in htmlSegment
-                            if self.abbreviation == 'TSN':
+                            if self.abbreviation in ('TSN','TOSN'):
                                 if pClass == 'sn-text':
                                     htmlSegment = htmlSegment.replace( '"sn-excerpt-divine-name"', '"sn-excerpt nd"' ).replace( '"divine-name"', '"nd"' )
                                     thisBook.appendToLastLine( f' {htmlSegment}' )
@@ -552,7 +553,7 @@ def fullDemo() -> None:
     print( f"A {result}\n" )
     result.loadBooks()
     print( f"B {result}\n" )
-    return 
+    return
 
     if 0: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
