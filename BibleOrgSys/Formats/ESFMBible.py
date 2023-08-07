@@ -48,7 +48,8 @@ Creates a semantic dictionary with keys:
         and the entry is a list of 4-tuples (BBB,C,V,actualWord)
 
 CHANGELOG:
-    2023-04-20 handle word numbers for proper nouns that include a \\sup, e.g., 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
+    2023-04-20 Handle word numbers for proper nouns that include a \\sup, e.g., 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
+    2023-08-07 Handle numbers in word regex, e.g. 'feeding 5,000 men'
 """
 from typing import List, Tuple, Optional
 from gettext import gettext as _
@@ -73,10 +74,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-06-28' # by RJH
+LAST_MODIFIED_DATE = '2023-08-07' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.73'
+PROGRAM_VERSION = '0.74'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -236,7 +237,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
-linkedWordRegex = re.compile( '([-¬A-za-zḨŌⱤḩⱪşţʦĀĒāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
+linkedWordRegex = re.compile( '([-¬A-za-z0-9,ḨŌⱤḩⱪşţʦĀĒāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
 
 class ESFMBible( Bible ):
     """
