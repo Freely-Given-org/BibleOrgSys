@@ -61,7 +61,7 @@ PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
 PROGRAM_VERSION = '0.31'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-DEBUGGING_THIS_MODULE = 99
+DEBUGGING_THIS_MODULE = False
 
 
 COMPULSORY_FILENAMES = ( 'METADATA.XML', 'LICENSE.XML', 'STYLES.XML' ) # Must all be UPPER-CASE
@@ -233,7 +233,7 @@ class DBLBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, "DBLBible.__init__( {}, {}, {} )".format( givenFolderName, givenName, encoding ) )
         if BibleOrgSysGlobals.debugFlag or DEBUGGING_THIS_MODULE:
             assert isinstance( givenFolderName, (str,Path) )
-            assert isinstance( givenName, str )
+            if givenName: assert isinstance( givenName, str )
             assert isinstance( encoding, str )
 
          # Setup and initialise the base class first
