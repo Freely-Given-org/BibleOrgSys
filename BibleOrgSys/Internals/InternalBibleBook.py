@@ -51,6 +51,7 @@ CHANGELOG:
     2022-06-05 reduced surplus "_addNestingMarkers ignored" messages
     2023-03-20 added "haveTables", "haveLists', and "figuresCount" discovery flags
                 plus fix versification tables for introduction (chapter -1)
+    2023-08-15 make more robust for handling uW encoding errors
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
@@ -79,7 +80,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-06-08' # by RJH
+LAST_MODIFIED_DATE = '2023-08-15' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -168,7 +169,7 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
         assert originalLanguageTextString.startswith( 'x-strong="' ), f"cleanUWalignmentsL {j} {BBB} {C}:{V} expected {originalLanguageTextString=} to start with x-strong="
         assert '\\w' not in originalLanguageTextString
         assert 'x-strong="' in originalLanguageTextString
-        assert 'x-lemma="' in originalLanguageTextString
+        if 'x-lemma="' not in originalLanguageTextString: logging.critical( f"cleanUWalignments expected 'x-lemma' field in {workAbbreviation} {BBB} {C}:{V} {j} {originalLanguageTextString=}" )
         assert 'x-morph="' in originalLanguageTextString
         assert 'x-occurrence="' in originalLanguageTextString
         assert 'x-occurrences="' in originalLanguageTextString
@@ -1837,7 +1838,10 @@ class InternalBibleBook:
                 lastPMarker = marker
             elif markerContentType == 'N': # N = never, e.g., b, ib, nb
                 if text:
-                    logging.critical( f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.BBB}_{C}:{V}" )
+                    if marker == 'ts' and text=='*': # a common mistake
+                        logging.critical( f"_addNestingMarkers found badly formed \\ts\\* (milestone) marker '{marker}'='{text}' @ @ {self.workName} {self.BBB}_{C}:{V}" )
+                    else:
+                        logging.critical( f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.workName} {self.BBB}_{C}:{V}" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB}_{C}:{V} lastPMarker={lastPMarker}" )
                 for _safetyCount in range(999):

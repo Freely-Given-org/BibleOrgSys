@@ -55,17 +55,18 @@ from BibleOrgSys.Formats.PTX7Bible import loadPTX7Languages, loadPTXVersificatio
 from BibleOrgSys.Formats.PTX8Bible import getFlagFromAttribute
 
 
-LAST_MODIFIED_DATE = '2022-04-22' # by RJH
+LAST_MODIFIED_DATE = '2023-09-18' # by RJH
 SHORT_PROGRAM_NAME = "DigitalBibleLibrary"
 PROGRAM_NAME = "Digital Bible Library (DBL) XML Bible handler"
-PROGRAM_VERSION = '0.30'
+PROGRAM_VERSION = '0.31'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-DEBUGGING_THIS_MODULE = False
+DEBUGGING_THIS_MODULE = 99
 
 
 COMPULSORY_FILENAMES = ( 'METADATA.XML', 'LICENSE.XML', 'STYLES.XML' ) # Must all be UPPER-CASE
-
+NUM_REQUIRED_FILENAMES = len(COMPULSORY_FILENAMES) - 1 # Seems styles.xml might not be compulsory???
+POSSIBLE_FOLDERNAMES = ( 'RELEASE' ) # Must all be UPPER-CASE
 
 
 def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
@@ -108,8 +109,10 @@ def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
     for filename in foundFiles:
         if filename.upper() in COMPULSORY_FILENAMES: numFilesFound += 1
     for folderName in foundFolders:
-        if folderName.upper().startswith('USX_'): numFoldersFound += 1
-    if numFilesFound==len(COMPULSORY_FILENAMES) and numFoldersFound>0: numFound += 1
+        if folderName.upper().startswith('USX_') \
+        or folderName.upper() in POSSIBLE_FOLDERNAMES:
+            numFoldersFound += 1
+    if numFilesFound>=NUM_REQUIRED_FILENAMES and numFoldersFound>0: numFound += 1
 
     ## See if there's an USXBible project here in this given folder
     #numFound = 0
@@ -153,8 +156,10 @@ def DBLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         for filename in foundSubfiles:
             if filename.upper() in COMPULSORY_FILENAMES: numFilesFound += 1
         for folderName in foundSubfolders:
-            if folderName.upper().startswith('USX_'): numFoldersFound += 1
-        if numFilesFound==len(COMPULSORY_FILENAMES) and numFoldersFound>0:
+            if folderName.upper().startswith('USX_') \
+            or folderName.upper() in POSSIBLE_FOLDERNAMES:
+                numFoldersFound += 1
+        if numFilesFound>=NUM_REQUIRED_FILENAMES and numFoldersFound>0:
             foundProjects.append( tryFolderName )
             numFound += 1
 
@@ -1805,6 +1810,11 @@ def fullDemo() -> None:
     Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
+
+    testFolder = Path( '/srv/Websites/Freely-Given.org/PrivatePage/Haderekh_“The_Way”_(Hebrew_Living_NT)_2009.2023-09-17_06.27_0.50124500_1694888839/YourSourceFiles/Unzipped/' )
+    resultX = DBLBibleFileCheck( testFolder )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "DBL TestX", resultX )
+    return
 
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' )
 
