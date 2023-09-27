@@ -5,7 +5,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2022 Robert Hunt
+# Copyright (C) 2012-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,6 +24,9 @@
 
 """
 Module for defining and manipulating complete or partial USX Bibles.
+
+CHANGELOG:
+    2023-09-28 Add test for USFMAllExpandedCharacterMarkers in main()
 """
 from gettext import gettext as _
 from typing import Optional, Union
@@ -45,10 +48,10 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2022-08-01' # by RJH
+LAST_MODIFIED_DATE = '2023-09-28' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
-PROGRAM_VERSION = '0.42'
+PROGRAM_VERSION = '0.43'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1307,6 +1310,7 @@ if __name__ == '__main__':
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    assert USFMAllExpandedCharacterMarkers # List should have been filled by the above function
 
     fullDemo()
 

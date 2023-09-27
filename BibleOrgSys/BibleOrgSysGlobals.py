@@ -84,6 +84,9 @@ Contains functions:
     closedown( PROGRAM_NAME, PROGRAM_VERSION )
 
     fullDemo()
+
+CHANGELOG:
+    2023-09-28 Fixed preloadCommonData() to not create new variables
 """
 from gettext import gettext as _
 from typing import List, Tuple, Optional, Union
@@ -109,10 +112,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2023-06-02' # by RJH
+LAST_MODIFIED_DATE = '2023-09-28' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.91'
+PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1496,12 +1499,12 @@ def setStrictCheckingFlag( newValue=True ):
 
 
 # Some global variables
-loadedBibleBooksCodes:Optional[List[str]] = None
-loadedUSFMMarkers:Optional[List[str]] = None
-USFMParagraphMarkers:Optional[List[str]] = None
-USFMCharacterMarkers:Optional[List[str]] = None
-USFMAllExpandedCharacterMarkers:Optional[List[str]] = None
-internal_SFMs_to_remove:Optional[List[str]] = None
+loadedBibleBooksCodes = None # will contain the class
+loadedUSFMMarkers = None # will contain the class
+USFMParagraphMarkers:List[str] = []
+USFMCharacterMarkers:List[str] = []
+USFMAllExpandedCharacterMarkers:List[str] = []
+internal_SFMs_to_remove:List[str] = []
 
 def preloadCommonData() -> None:
     """
@@ -1512,21 +1515,21 @@ def preloadCommonData() -> None:
     global loadedBibleBooksCodes, loadedUSFMMarkers, USFMParagraphMarkers, USFMCharacterMarkers, USFMAllExpandedCharacterMarkers, internal_SFMs_to_remove
 
     from BibleOrgSys.Reference.BibleBooksCodes import BibleBooksCodes
-    loadedBibleBooksCodes = BibleBooksCodes().loadData()
+    loadedBibleBooksCodes = BibleBooksCodes().loadData() # This is a class 'BibleOrgSys.Reference.BibleBooksCodes.BibleBooksCodes'
     assert len(loadedBibleBooksCodes) >= 243
 
     from BibleOrgSys.Reference.USFM3Markers import USFM3Markers
-    loadedUSFMMarkers = USFM3Markers().loadData()
+    loadedUSFMMarkers = USFM3Markers().loadData() # This is a class 'BibleOrgSys.Reference.USFM3Markers.USFM3Markers'
     assert len(loadedUSFMMarkers) >= 220
-    USFMParagraphMarkers = loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    USFMParagraphMarkers += loadedUSFMMarkers.getNewlineMarkersList( 'CanonicalText' )
     USFMParagraphMarkers.remove( 'qa' ) # This is actually a heading marker
     USFMParagraphMarkers.remove( 'qc' ) # Treat this like a heading marker also
     assert len(USFMParagraphMarkers) >= 32
-    USFMCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList()
+    USFMCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList()
     assert len(USFMCharacterMarkers) >= 40
-    USFMAllExpandedCharacterMarkers = loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+    USFMAllExpandedCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
     assert len(USFMAllExpandedCharacterMarkers) >= 64
-    internal_SFMs_to_remove = loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
+    internal_SFMs_to_remove += loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
     assert len(internal_SFMs_to_remove) >= 160
     internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first
 # end of BibleOrgSysGlobals.preloadCommonData

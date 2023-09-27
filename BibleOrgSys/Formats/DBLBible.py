@@ -1811,11 +1811,6 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = Path( '/srv/Websites/Freely-Given.org/PrivatePage/Haderekh_“The_Way”_(Hebrew_Living_NT)_2009.2023-09-17_06.27_0.50124500_1694888839/YourSourceFiles/Unzipped/' )
-    resultX = DBLBibleFileCheck( testFolder )
-    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "DBL TestX", resultX )
-    return
-
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'DBLTest/' )
 
 
