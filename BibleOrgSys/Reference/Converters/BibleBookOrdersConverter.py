@@ -260,7 +260,7 @@ class BibleBookOrdersConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
         assert self._XMLSystems
-        if self.__DataDicts and self.__DataLists: # We've already done an import/restructuring -- no need to repeat it
+        if self.__DataDicts and len(self.__DataLists): # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts, self.__DataLists
 
         # We'll create a number of dictionaries
@@ -318,7 +318,7 @@ class BibleBookOrdersConverter:
 
         assert self._XMLSystems
         self.importDataToPython()
-        assert self.__DataDicts and self.__DataLists
+        assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -345,7 +345,7 @@ class BibleBookOrdersConverter:
 
         assert self._XMLSystems
         self.importDataToPython()
-        assert self.__DataDicts and self.__DataLists
+        assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.py' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -383,7 +383,7 @@ class BibleBookOrdersConverter:
 
         assert self._XMLSystems
         self.importDataToPython()
-        assert self.__DataDicts and self.__DataLists
+        assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables.json' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -440,7 +440,7 @@ class BibleBookOrdersConverter:
 
         assert self._XMLSystems
         self.importDataToPython()
-        assert self.__DataDicts and self.__DataLists
+        assert len(self.__DataDicts) and len(self.__DataLists)
 
         if not filepath: filepath = str( BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self.__filenameBase + '_Tables' ) )
         hFilepath = filepath + '.h'

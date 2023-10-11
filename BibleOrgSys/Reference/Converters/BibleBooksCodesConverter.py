@@ -42,10 +42,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-13' # by RJH
+LAST_MODIFIED_DATE = '2023-10-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
-PROGRAM_VERSION = '0.91'
+PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -107,9 +107,9 @@ class BibleBooksCodesConverter:
         """
         if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( f'{self._filenameBase}.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
-                XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
+                XMLFileOrFilepath = importlib.resources.files('BibleOrgSys.DataFiles').joinpath( f'{self._filenameBase}.xml' )
 
             self.__load( XMLFileOrFilepath )
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -131,7 +131,7 @@ class BibleBooksCodesConverter:
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading BibleBooksCodes XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
-        assert self._XMLTree # Fail here if we didn't load anything at all
+        assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
         if self._XMLTree.tag == self._treeTag:
             header = self._XMLTree[0]
@@ -168,7 +168,7 @@ class BibleBooksCodesConverter:
         """
         Check/validate the loaded data.
         """
-        assert self._XMLTree
+        assert len(self._XMLTree)
 
         uniqueDict = {}
         for elementName in self._ElementsWithoutDuplicates: uniqueDict["Element_"+elementName] = []
@@ -307,8 +307,8 @@ class BibleBooksCodesConverter:
         # end of addToAllCodesDict
 
 
-        assert self._XMLTree
-        if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
+        assert len(self._XMLTree)
+        if len(self.__DataDicts): # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different elements as the key
@@ -388,7 +388,7 @@ class BibleBooksCodesConverter:
                         'numExpectedChapters':expectedChapters, 'possibleAlternativeBooks':possibleAlternativeBooks,
                         'bookNameEnglishGuide':bookNameEnglishGuide, 'typicalSection':typicalSection }
             if 'sequenceNumber' in self._compulsoryElements or sequenceNumber:
-                if 'sequenceNumber' in self._ElementsWithoutDuplicates: assert intSequenceNumber not in sequenceNumberList # Shouldn't be any duplicates
+                if 'sequenceNumber' in self._ElementsWithoutDuplicates: assert intSequenceNumber not in sequenceNumberList, f"{intSequenceNumber=} {len(sequenceNumberList)=} {sorted(sequenceNumberList)=}" # Shouldn't be any duplicates
                 if intSequenceNumber in sequenceNumberList: raise f"Have duplicate '{intSequenceNumber}' sequence numbers"
                 else:
                     sequenceNumberList.append( intSequenceNumber ) # Only used for checking duplicates
@@ -610,9 +610,9 @@ class BibleBooksCodesConverter:
         """
         import pickle
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folderpath = Path('../derivedFormats/')
@@ -645,9 +645,9 @@ class BibleBooksCodesConverter:
         # end of exportPythonDictOrList
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folderpath = Path('../derivedFormats/')
@@ -696,9 +696,9 @@ class BibleBooksCodesConverter:
         """
         import json
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folderpath = Path('../derivedFormats/')
@@ -769,9 +769,9 @@ class BibleBooksCodesConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folderpath = Path('../derivedFormats/')

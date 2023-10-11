@@ -63,6 +63,7 @@ or
 
 CHANGELOG:
     2023-04-20 allowed for up to five lines of XML comments before the '<XMLBIBLE'
+    2023-10-11 better handling of Strongs numbers
 """
 from gettext import gettext as _
 import logging
@@ -81,10 +82,10 @@ from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisational
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-02-27' # by RJH
+LAST_MODIFIED_DATE = '2023-10-11' # by RJH
 SHORT_PROGRAM_NAME = "ZefaniaBible"
 PROGRAM_NAME = "Zefania XML Bible format handler"
-PROGRAM_VERSION = '0.38'
+PROGRAM_VERSION = '0.39'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -271,6 +272,8 @@ class ZefaniaXMLBible( Bible ):
         elif os.path.isdir( sourceFileOrFolder ):
             self.sourceFolder = sourceFileOrFolder
             self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
+        else:
+            raise FileNotFoundError( f"ZefaniaXMLBible: File {self.sourceFilepath} is invalid" )
 
         self.XMLTree = self.header = None # Will hold the XML data
 
@@ -507,7 +510,7 @@ class ZefaniaXMLBible( Bible ):
             BBB = self.genericBOS.getBBBFromText( bookName )
 
         if BBB:
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Validating Zefania '{}' '{}' '{}'…").format( BBB, bookName, bookShortName ) )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Validating Zefania {BBB} {bookName=} {bookShortName=}…" )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = 'Zefania XML Bible Book object'
             thisBook.objectTypeString = 'Zefania'
@@ -530,7 +533,7 @@ class ZefaniaXMLBible( Bible ):
             finding and saving chapter numbers and
             finding and saving verse elements.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML chapter…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Validating {BBB} XML chapter…" )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -575,13 +578,13 @@ class ZefaniaXMLBible( Bible ):
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
-    def __validateAndExtractVerse( self, BBB:str, chapterNumber, thisBook, verse ):
+    def __validateAndExtractVerse( self, BBB:str, chapterNumber:SHORT_PROGRAM_NAME, thisBook, verse ):
         """
         Check/validate and extract chapter data from the given XML book record
             finding and saving chapter numbers and
             finding and saving verse elements.
         """
-        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Validating XML verse…") )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Validating {BBB} C{chapterNumber} XML verse…" )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
         BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
@@ -596,7 +599,7 @@ class ZefaniaXMLBible( Bible ):
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
         vText = verse.text
-        if vText: vText = vText.strip()
+        if vText: vText = vText.strip('\n')
         #if not vText: # This happens if a verse starts immediately with a style or note
             #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
 
@@ -643,11 +646,11 @@ class ZefaniaXMLBible( Bible ):
                         else:
                             logging.error( "Ignored1 css is {!r} idStyle is {!r}".format( css, idStyle ) )
                             if BibleOrgSysGlobals.debugFlag: halt
-                        sText, sTail = sub2element.text.strip(), sub2element.tail
+                        sText, sTail = sub2element.text.strip('\n'), sub2element.tail
                         if BibleOrgSysGlobals.debugFlag: assert sText
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
-                        if sTail: vText += sTail.strip()
+                        if sTail: vText += sTail.strip('\n')
                     else: logging.error( "Expected to find {} but got {!r} in {}".format( ZefaniaXMLBible.styleTag, sub2element.tag, sublocation ) )
 
             elif subelement.tag == ZefaniaXMLBible.styleTag:
@@ -676,13 +679,13 @@ class ZefaniaXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location, 'ks12' )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'dl36' )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'js24' )
-                        grText = sub2element.text.strip() if sub2element.text else ''
+                        grText = sub2element.text.strip('\n') if sub2element.text else ''
                         logging.error( "Unfinished to process 'gr' {!r} sub2element ({}) in style subelement".format( grText, sublocation ) )
                     else: logging.error( "Expected to find 'gr' but got {!r} in {}".format( sub2element.tag, sublocation ) )
 
-                #sText, sTail = subelement.text.strip(), subelement.tail
-                sText = subelement.text.strip() if subelement.text else ''
-                sTail = subelement.tail.strip() if subelement.tail else None
+                #sText, sTail = subelement.text.strip('\n'), subelement.tail
+                sText = subelement.text.strip('\n') if subelement.text else ''
+                sTail = subelement.tail.strip('\n') if subelement.tail else None
                 if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: assert sText
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+(css if css else '')+']' + sText + '\\sc* ' # Use sc for unknown styles
@@ -706,7 +709,7 @@ class ZefaniaXMLBible( Bible ):
                         vText = vText.replace( '\n', ' ' )
                     thisBook.addLine( 'v', verseNumber + ' ' + vText )
                     vText = ''
-                breakText = subelement.tail.strip() if subelement.tail else ''
+                breakText = subelement.tail.strip('\n') if subelement.tail else ''
                 if '\n' in breakText:
                     logging.warning( "ZefaniaXMLBible.__validateAndExtractVerse: newline in breakText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, breakText ) )
                     breakText = breakText.replace( '\n', ' ' )
@@ -723,17 +726,23 @@ class ZefaniaXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location, 'lc35' )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'ks27' )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location, 'ksd1' )
-                        noteText = sub2element.text.strip() if sub2element.text else ''
-                        vText += '\\f {}\\f*'.format( noteText )
+                        noteText = sub2element.text.strip('\n') if sub2element.text else ''
+                        vText = f'{vText}\\f {noteText}\\f*'
                     else: logging.error( "Expected to find 'NOTE' but got {!r} in {}".format( sub2element.tag, sublocation ) )
 
             elif subelement.tag == ZefaniaXMLBible.grTag:
                 sublocation = "gr in " + location
-                BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'ksd2' )
-                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ls10' )
-                BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'cg27' )
-                grText = subelement.text.strip() if subelement.text else ''
-                logging.error( "Unfinished to process 'gr' {!r} subelement ({}) in style subelement".format( grText, location ) )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ls10' ) # It does seem that there can be nested gr elements (the nested ones don't contain words) -- what does it mean
+                grText = subelement.text.strip('\n') if subelement.text else ''
+                grTail = subelement.tail.strip('\n') if subelement.tail else ''
+                grStrongsNumberStr = None
+                for attrib,value in subelement.items():
+                    if attrib == 'str':
+                        grStrongsNumberStr = value
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in gr subelement".format( attrib, value ) )
+                if grStrongsNumberStr: assert grStrongsNumberStr.isdigit()
+                vText = f'{vText}\\w {grText}|strong="G{grStrongsNumberStr}"\\w*{grTail}'
+                # logging.error( "Unfinished to process 'gr' {!r} subelement ({}) in style subelement".format( grText, location ) )
 
             else: logging.error( "Expected to find NOTE or STYLE or BREAK or DIV but got {!r} in {}".format( subelement.tag, location ) )
 

@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-06-02' # by RJH
+LAST_MODIFIED_DATE = '2023-10-10' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.87'
@@ -612,7 +612,7 @@ class InternalBibleEntry:
             else: # it's not an end marker
                 assert originalMarker and isinstance( originalMarker, str ) # Mustn't be blank
                 assert '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker
-                assert isinstance( adjustedText, str )
+                assert isinstance( adjustedText, str ), f"{type(adjustedText)=} {adjustedText=}"
                 assert '\n' not in adjustedText and '\r' not in adjustedText
                 if '\\' in cleanText:
                     logging.critical( "Clean text {!r} at {} from {!r}".format( cleanText, marker, originalText ) )

@@ -48,7 +48,7 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-09-28' # by RJH
+LAST_MODIFIED_DATE = '2023-10-12' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
 PROGRAM_VERSION = '0.43'
@@ -506,14 +506,14 @@ def createUSXXMLBible( self, outputFolderpath:Path|str, controlDict, validationS
         """
         Writes a book to the filesFolder.
         """
-        attributeStringStarts = set() # Set of start of string of first \\ww attributes (from \w after |)
+        attributeStringStarts = set() # Set of start of string of first /ww attributes (from /w after |)
 
         def _handleInternalTextMarkersForUSX( originalText:str ) -> str:
             """
             Handles character formatting markers within the originalText.
             Tries to find pairs of markers and replaces them with html char segments.
 
-            Note: Has to do extra work for \w markers with attributes
+            Note: Has to do extra work for /w USFM markers with attributes
             """
             if not originalText: return ''
             if '\\' not in originalText: return originalText

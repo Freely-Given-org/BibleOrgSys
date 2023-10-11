@@ -45,10 +45,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-31' # by RJH
+LAST_MODIFIED_DATE = '2023-10-03' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.62'
+PROGRAM_VERSION = '0.63'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -246,7 +246,7 @@ class USFMBibleBook( BibleBook ):
                     if ixAlignmentEnd!=-1 and ixAlignmentEnd < ixAlignmentStart:
                         # Usually this happens around punctuation such as Hebrew maqqef (where spaces aren't wanted)
                         # We have to process the end of the previous field first
-                        assert variables['level'] > 0
+                        assert variables['level'] > 0, f"uW alignment format error in {self.workName} {self.BBB}_{C}:{V} {variables['level']=} {marker}='{text}'"
                         dPrint( 'Never', debuggingThisFunction, f"        findInternalStarts: Found {lookForCount} preceding level {variables['level']} end marker(s) inside line" )
                         assert variables['text']
                         if marker == 'INLINE': assert not variables['words']

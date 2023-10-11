@@ -87,6 +87,7 @@ Contains functions:
 
 CHANGELOG:
     2023-09-28 Fixed preloadCommonData() to not create new variables
+    2023-10-11 Raised XMLError on XML errors (rather than halt)
 """
 from gettext import gettext as _
 from typing import List, Tuple, Optional, Union
@@ -112,14 +113,14 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2023-09-28' # by RJH
+LAST_MODIFIED_DATE = '2023-10-10' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-haltOnXMLWarning = False # Used for XML debugging
+errorOnXMLWarning = False # Used for XML debugging
 
 
 # Global variables
@@ -1050,6 +1051,9 @@ def fileCompareXML( filename1:str, filename2:str, folder1:str=None, folder2:str=
 # Validating XML fields (from element tree)
 #
 
+class XMLError( Exception ):
+    pass
+
 def elementStr( element, level:int=0 ) -> str:
     """
     Return a string representation of an element (from element tree).
@@ -1094,7 +1098,8 @@ def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict
                         .format( (idString+' ') if idString else '', attrib, value, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-        if strictCheckingFlag or debugFlag and haltOnXMLWarning: bad_XML_attributes
+        if strictCheckingFlag or debugFlag and errorOnXMLWarning:
+            raise XMLError( f"Unexpected '{attrib}' attribute = '{value}' @ '{locationString}'{' id='+idString if idString else ''}" )
 # end of BibleOrgSysGlobals.checkXMLNoAttributes
 
 
@@ -1107,7 +1112,8 @@ def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None 
                         .format( (idString+' ') if idString else '', element.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
-        if strictCheckingFlag or debugFlag and haltOnXMLWarning: unexpected_XML_text
+        if strictCheckingFlag or debugFlag and errorOnXMLWarning:
+            raise XMLError( f"Unexpected text = '{element.text}' @ '{locationString}'{' id='+idString if idString else ''}" )
 # end of BibleOrgSysGlobals.checkXMLNoText
 
 def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ):
@@ -1119,7 +1125,8 @@ def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None 
                         .format( (idString+' ') if idString else '', element.tail, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-        if strictCheckingFlag or debugFlag and haltOnXMLWarning: unexpected_XML_tail
+        if strictCheckingFlag or debugFlag and errorOnXMLWarning:
+            raise XMLError( f"Unexpected tail = '{element.tail}' @ '{locationString}'{' id='+idString if idString else ''}" )
 # end of BibleOrgSysGlobals.checkXMLNoTail
 
 
@@ -1133,7 +1140,8 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
         logger = logging.critical if subelement.text else logging.error
         logger( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
-        if strictCheckingFlag or debugFlag and haltOnXMLWarning: unexpected_XML_subelements
+        if strictCheckingFlag or debugFlag and errorOnXMLWarning:
+            raise XMLError( f"Unexpected '{subelement.tag}' subelement @ '{locationString}'{' id='+idString if idString else ''}" )
 # end of BibleOrgSysGlobals.checkXMLNoSubelements
 
 def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ):
@@ -1149,7 +1157,8 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
                                 element.tail.strip() if element.tail else element.tail )
             logging.warning( warningString )
             if loadErrorsDict is not None: loadErrorsDict.append( warningString )
-            if strictCheckingFlag or debugFlag and haltOnXMLWarning: unexpected_XML_subelements_with_text
+            if strictCheckingFlag or debugFlag and errorOnXMLWarning:
+                raise XMLError( f"Unexpected text '{element.text}' or tail '{element.tail}' with '{subelement.tag}' subelement @ '{locationString}'{' id='+idString if idString else ''}" )
 # end of BibleOrgSysGlobals.checkXMLNoSubelementsWithText
 
 

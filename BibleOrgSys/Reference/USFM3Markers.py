@@ -50,10 +50,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-15' # by RJH
+LAST_MODIFIED_DATE = '2023-10-12' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.13'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -425,8 +425,7 @@ class USFM3Markers:
         if closed == "Always": return 'A'
         if closed == "Optional": return 'O'
         if closed == "Self": return 'S'
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'msbc {}'.format( closed ))
-        raise KeyError # Should be something better here
+        raise ValueError( f"getMarkerClosureType found invalid closed value '{closed}' for marker={marker}" )
     # end of USFM3Markers.getMarkerClosureType
 
 

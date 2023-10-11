@@ -96,9 +96,9 @@ class BibleReferencesLinksConverter:
         """
         if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( f'{self._filenameBase}.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
-                XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
+                XMLFileOrFilepath = importlib.resources.files('BibleOrgSys.DataFiles').joinpath( f'{self._filenameBase}.xml' )
 
             self.__load( XMLFileOrFilepath )
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -120,7 +120,7 @@ class BibleReferencesLinksConverter:
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading BibleReferencesLinks XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
-        assert self._XMLTree # Fail here if we didn't load anything at all
+        assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
         if self._XMLTree.tag == self._treeTag:
             header = self._XMLTree[0]
@@ -157,7 +157,7 @@ class BibleReferencesLinksConverter:
         """
         Check/validate the loaded data.
         """
-        assert self._XMLTree
+        assert len(self._XMLTree)
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -287,7 +287,7 @@ class BibleReferencesLinksConverter:
         # end of makeList
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         if self.__DataList: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataList, self.__DataDict
 
@@ -447,7 +447,7 @@ class BibleReferencesLinksConverter:
         """
         import pickle
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
         assert self.__DataList
         assert self.__DataDict
@@ -471,7 +471,7 @@ class BibleReferencesLinksConverter:
         """
         import pickle
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
         assert self.__DataList
         assert self.__DataDict
@@ -516,7 +516,7 @@ class BibleReferencesLinksConverter:
         # end of exportPythonDictOrList
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
         assert self.__DataList
         assert self.__DataDict
@@ -555,7 +555,7 @@ class BibleReferencesLinksConverter:
         """
         import json
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
         assert self.__DataList
         assert self.__DataDict
@@ -638,7 +638,7 @@ class BibleReferencesLinksConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
         assert self.__DataList
 

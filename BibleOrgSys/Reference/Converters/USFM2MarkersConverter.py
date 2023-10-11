@@ -94,9 +94,9 @@ class USFM2MarkersConverter:
         """
         if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( f'{self._filenameBase}.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
-                XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
+                XMLFileOrFilepath = importlib.resources.files('BibleOrgSys.DataFiles').joinpath( f'{self._filenameBase}.xml' )
 
             self.__load( XMLFileOrFilepath )
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -117,7 +117,7 @@ class USFM2MarkersConverter:
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading USFM2Markers XML file from {!r}…").format( self.__XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( self.__XMLFileOrFilepath )
-        assert self._XMLTree # Fail here if we didn't load anything at all
+        assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
         if self._XMLTree.tag == self._treeTag:
             header = self._XMLTree[0]
@@ -153,7 +153,7 @@ class USFM2MarkersConverter:
         """
         Check/validate the loaded data.
         """
-        assert self._XMLTree
+        assert len(self._XMLTree)
 
         uniqueDict = {}
         for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -256,8 +256,8 @@ class USFM2MarkersConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        assert self._XMLTree
-        if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
+        assert len(self._XMLTree)
+        if len(self.__DataDicts): # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
         # Load and validate entries and create the dictionaries and lists
@@ -355,9 +355,9 @@ class USFM2MarkersConverter:
         """
         import pickle
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -406,9 +406,9 @@ class USFM2MarkersConverter:
             theFile.write( "], # end of {} ({} entries)\n\n".format( listName, len(theList) ) )
         # end of exportPythonList
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.py' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -447,9 +447,9 @@ class USFM2MarkersConverter:
         """
         import json
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables.json' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Exporting to {}…").format( filepath ) )
@@ -510,9 +510,9 @@ class USFM2MarkersConverter:
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         raise Exception( "C export not written yet, sorry." )
         if not filepath: filepath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '_Tables' )

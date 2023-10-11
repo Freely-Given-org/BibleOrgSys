@@ -42,10 +42,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-01-19' # by RJH
+LAST_MODIFIED_DATE = '2023-10-12' # by RJH
 SHORT_PROGRAM_NAME = "ISOLanguagesConverter"
 PROGRAM_NAME = "ISO 639_3_Languages handler"
-PROGRAM_VERSION = '0.84'
+PROGRAM_VERSION = '0.85'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -80,7 +80,7 @@ class ISO_639_3_LanguagesConverter:
         self.title = "ISO 639-3 language codes"
 
         # These are fields that we will fill later
-        self._XMLTree, self.__DataDicts = None, None
+        self._XMLTree, self.__DataDicts = None, {}
     # end of __init__
 
     def loadAndValidate( self, XMLFileOrFilepath=None ):
@@ -90,9 +90,9 @@ class ISO_639_3_LanguagesConverter:
         """
         if self._XMLTree is None: # We mustn't have already have loaded the data
             if XMLFileOrFilepath is None:
-                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( self._filenameBase + '.xml' ) # Relative to module, not cwd
+                # XMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( f'{self._filenameBase}.xml' ) # Relative to module, not cwd
                 import importlib.resources # From Python 3.7 onwards -- handles zipped resources also
-                XMLFileOrFilepath = importlib.resources.open_text('BibleOrgSys.DataFiles', self._filenameBase + '.xml')
+                XMLFileOrFilepath = importlib.resources.files('BibleOrgSys.DataFiles').joinpath( f'{self._filenameBase}.xml' )
 
             self._load( XMLFileOrFilepath )
             if BibleOrgSysGlobals.strictCheckingFlag:
@@ -113,7 +113,7 @@ class ISO_639_3_LanguagesConverter:
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading ISO 639-3 languages XML file from {!r}…").format( XMLFileOrFilepath ) )
         self._XMLTree = ElementTree().parse( XMLFileOrFilepath )
-        assert self._XMLTree # Fail here if we didn't load anything at all
+        assert len(self._XMLTree) # Fail here if we didn't load anything at all
 
         if self._XMLTree.tag  != self._treeTag:
             logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLTree.tag ) )
@@ -123,7 +123,7 @@ class ISO_639_3_LanguagesConverter:
         """
         Check/validate the loaded data.
         """
-        assert self._XMLTree
+        assert len(self._XMLTree)
 
         uniqueDict = {}
         #for elementName in self._uniqueElements: uniqueDict["Element_"+elementName] = []
@@ -190,8 +190,8 @@ class ISO_639_3_LanguagesConverter:
         Loads (and pivots) the data into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLTree if you prefer.)
         """
-        assert self._XMLTree
-        if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
+        assert len(self._XMLTree)
+        if len(self.__DataDicts): # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different Attributes as the key
@@ -226,9 +226,9 @@ class ISO_639_3_LanguagesConverter:
         """
         import pickle
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -252,9 +252,9 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -281,9 +281,9 @@ class ISO_639_3_LanguagesConverter:
         """
         import json
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH
@@ -343,9 +343,9 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        assert self._XMLTree
+        assert len(self._XMLTree)
         self.importDataToPython()
-        assert self.__DataDicts
+        assert len(self.__DataDicts)
 
         if not filepath:
             folder = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DERIVED_DATAFILES_FOLDERPATH

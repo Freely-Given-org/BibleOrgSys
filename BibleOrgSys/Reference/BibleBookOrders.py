@@ -189,7 +189,7 @@ class BibleBookOrderSystems:
         """
         assert thisSystemName
         assert bookOrderSchemeToCheck
-        assert self.__DataLists
+        assert len(self.__DataLists)
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
             if not BibleOrgSysGlobals.loadedBibleBooksCodes.isValidBBB( BBB ):
