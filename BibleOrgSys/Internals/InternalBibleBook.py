@@ -52,6 +52,7 @@ CHANGELOG:
     2023-03-20 added "haveTables", "haveLists', and "figuresCount" discovery flags
                 plus fix versification tables for introduction (chapter -1)
     2023-08-15 make more robust for handling uW encoding errors
+    2023-10-14 allow more footnote and xref internal markers
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
@@ -80,7 +81,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-08-15' # by RJH
+LAST_MODIFIED_DATE = '2023-10-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.98'
@@ -1087,7 +1088,8 @@ class InternalBibleBook:
                             .replace( '&quot;', '"' ) # Undo any replacements above
             for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                 cleanedNote = cleanedNote.replace( sign, '' )
-            for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
+            # TODO: This is bad having a list like this inside the code!!!
+            for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xta*','\\xta ', '\\xk*','\\xk ', '\\xq*','\\xq ', '\\xop*','\\xop ', 
                             '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
                             '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
                             '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \

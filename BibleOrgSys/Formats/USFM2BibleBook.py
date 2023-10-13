@@ -24,6 +24,9 @@
 
 """
 Module for defining and manipulating USFM2 Bible books.
+
+CHANGELOG:
+    2023-10-13 Improved message about finding USFM3 markers (in USFM2 file)
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -42,10 +45,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.USFM2Markers import USFM2Markers, USFM3_ALL_NEW_MARKERS
 
 
-LAST_MODIFIED_DATE = '2020-08-20' # by RJH
+LAST_MODIFIED_DATE = '2023-10-13' # by RJH
 SHORT_PROGRAM_NAME = "USFM2BibleBook"
 PROGRAM_NAME = "USFM2 Bible book handler"
-PROGRAM_VERSION = '0.53'
+PROGRAM_VERSION = '0.54'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -136,7 +139,7 @@ class USFM2BibleBook( BibleBook ):
             if count:
                 loadErrors.append( _("Found {} USFM3 '\\{}' markers in USFM2 file: {}").format( count, marker, self.sourceFilename ) )
                 logging.error( _("Found {} USFM3 '\\{}' markers in USFM2 file: {}").format( count, marker, self.sourceFilepath ) )
-                self.addPriorityError( 88, 0, 0, _("Found {} USFM3 '\\{}' markers in file").format( count, marker ) )
+                self.addPriorityError( 88, 0, 0, f"Found {count:,} USFM3 '\\{marker}' markers in USFM2 file" )
         del completeText # Not required any more
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Loading {}…").format( filename ) )

@@ -284,7 +284,7 @@ class USFM3MarkersConverter:
             elif level == 'Note': noteMarkersList.append( marker )
             else: logging.error( _("Unexpected {!r} level field for marker {!r}").format( level, marker ) )
             highestNumberSuffix = element.find('highestNumberSuffix').text
-            if  highestNumberSuffix not in ( 'None', '3','4','5','6','7','8','9' ):
+            if  highestNumberSuffix not in ( 'None', '2','3','4','5','6','7','8','9' ):
                 logging.error( _("Unexpected {!r} highestNumberSuffix field for marker {!r}").format( highestNumberSuffix, marker ) )
             numberableFlag = highestNumberSuffix != 'None'
             if numberableFlag and level == 'Character':
