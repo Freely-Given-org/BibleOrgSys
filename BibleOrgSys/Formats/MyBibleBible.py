@@ -102,10 +102,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2023-10-22' # by RJH
+LAST_MODIFIED_DATE = '2023-10-25' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
-PROGRAM_VERSION = '0.23'
+PROGRAM_VERSION = '0.24'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -420,9 +420,9 @@ class MyBibleBible( Bible ):
                 if len(row) == 6:
                     bookNumber, shortName, longName, title, bookColor, isPresent = row
                     assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
-                    assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
-                    assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
-                    assert isinstance( title, str ) and 3 <= len(title) <= 15, f"Invalid {title=}"
+                    assert isinstance( shortName, str ) and 2 <= len(shortName) <= 6, f"Invalid {shortName=}"
+                    assert isinstance( longName, str ) and 3 <= len(longName) <= 25, f"Invalid {longName=}"
+                    assert isinstance( title, str ) and 3 <= len(title) <= 25, f"Invalid {title=}"
                     assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
                 elif len(row) == 5:
                     for attempt in (1,2):
