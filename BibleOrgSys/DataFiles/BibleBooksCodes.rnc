@@ -1,13 +1,13 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Last modified: 2014-12-21 by RJH
-#   Version 0.75
+#   Last modified: 2022-02-20 by RJH
+#   Version 0.84
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
+#       trang BibleBooksCodes.rnc ../derivedFormats/BibleBooksCodes.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+#       xmllint --noout --relaxng ../derivedFormats/BibleBooksCodes.rng BibleBooksCodes.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#       xmllint --noout --relaxng ../derivedFormats/BibleBooksCodes.rng --valid BibleBooksCodes.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
@@ -43,11 +43,14 @@ work = element work
 }
 
 BibleBookCodes = element BibleBookCodes
-{   element nameEnglish { xsd:string { minLength="3" maxLength="140" } },
+{   element originalLanguageCode { xsd:string { minLength="3" maxLength="10" } },
+    element bookName { xsd:string { minLength="4" maxLength="100" } },
+    element bookNameEnglishGuide { xsd:string { minLength="3" maxLength="140" } },
     element referenceAbbreviation { xsd:string { length="3" } },
     element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="999" } },
     element sequenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="999" } },
     element expectedChapters { xsd:string { minLength="1" maxLength="7" } }?,
+    element shortAbbreviation { xsd:string { minLength="2" maxLength="3" } }?,
     element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
     element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
     element SwordAbbreviation { xsd:string { minLength="2" maxLength="13" } }?,
@@ -62,6 +65,8 @@ BibleBookCodes = element BibleBookCodes
     element BibleWorksAbbreviation { xsd:string { length="3" } }?,
     element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
     element possibleAlternativeAbbreviations { xsd:string { minLength="1" maxLength="25" } }?,
-    element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?,
-    element typicalSection { "OT" | "OT+" | "NT" | "NT+" | "DC" | "PS" | "FRT" | "BAK" | "???" }?
+    element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="23" } }?,
+    element consistsOfBooks { xsd:string { minLength="3" maxLength="19" } }?,
+    element typicalSection { "OT" | "OT+" | "NT" | "NT+" | "DC" | "PS" | "FRT" | "BAK" | "???" }?,
+    element typicalSubsection { "Pentateuch" | "Historical" | "Poetry-Wisdom" | "Major Prophets" | "Minor Prophets" | "Gospels" | "Acts" | "Paul's Letters" | "General Letters" | "Revelation" }?
 }

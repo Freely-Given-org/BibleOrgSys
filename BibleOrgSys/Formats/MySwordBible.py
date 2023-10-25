@@ -744,7 +744,7 @@ def briefDemo() -> None:
                 break
 
 
-    if 1: # all discovered modules in the test folder
+    if 0: # all discovered modules in the test folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -838,7 +838,7 @@ def fullDemo() -> None:
                 testMySwB( indexString, testFolder, fullname )
 
 
-    if 1: # all discovered modules in the test folder
+    if 0: # all discovered modules in the test folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):

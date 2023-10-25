@@ -5,7 +5,7 @@
 #
 # Module handling "MyBible" Bible module files
 #
-# Copyright (C) 2016-2021 Robert Hunt
+# Copyright (C) 2016-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -102,10 +102,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2021-06-06' # by RJH
+LAST_MODIFIED_DATE = '2023-10-22' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
-PROGRAM_VERSION = '0.22'
+PROGRAM_VERSION = '0.23'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -417,22 +417,31 @@ class MyBibleBible( Bible ):
             isPresent = True
             for j, row in enumerate( rows ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{list(row)}" )
-                assert len(row) == 5
-                for attempt in (1,2):
-                    # Why are there two different possible orders here ???
-                    if attempt == 1: bookColor, bookNumber, shortName, longName, isPresent = row
-                    elif attempt == 2: bookNumber, shortName, longName, bookColor, isPresent = row
-                    try:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{attempt=}: {bookColor=}, {bookNumber=}, {shortName=}, {longName=}, {isPresent=}" )
-                        assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
-                        assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
-                        assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
-                        assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
-                        break
-                    except AssertionError as err:
-                        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Failed assertion: {err}")
-                        if attempt == 1: pass
-                        else: halt
+                if len(row) == 6:
+                    bookNumber, shortName, longName, title, bookColor, isPresent = row
+                    assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
+                    assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
+                    assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
+                    assert isinstance( title, str ) and 3 <= len(title) <= 15, f"Invalid {title=}"
+                    assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
+                elif len(row) == 5:
+                    for attempt in (1,2):
+                        # Why are there two different possible orders here ???
+                        if attempt == 1: bookColor, bookNumber, shortName, longName, isPresent = row
+                        elif attempt == 2: bookNumber, shortName, longName, bookColor, isPresent = row
+                        try:
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{attempt=}: {bookColor=}, {bookNumber=}, {shortName=}, {longName=}, {isPresent=}" )
+                            assert isinstance( bookNumber, int ) and bookNumber % 10 == 0, f"Invalid {bookNumber=}"
+                            assert isinstance( bookColor, str ) and bookColor.startswith('#'), f"Invalid {bookColor=}"
+                            assert isinstance( shortName, str ) and 2 <= len(shortName) <= 4, f"Invalid {shortName=}"
+                            assert isinstance( longName, str ) and 3 <= len(longName) <= 15, f"Invalid {longName=}"
+                            break
+                        except AssertionError as err:
+                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Failed assertion: {err}")
+                            if attempt == 1: pass
+                            else: halt
+                else:
+                    raise ValueError( f"Unexpected number of columns in BOOKS_ALL table row: {len(row)}" )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:
@@ -440,8 +449,10 @@ class MyBibleBible( Bible ):
                     if BBB is None: BBB = self.BibleOrganisationalSystem.getBBBFromText( shortName ) # Might not work for other languages
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Got1 BBB", BBB, repr(longName) )
                 assert BBB
-                self.suppliedMetadata['MyBible']['BookInfo'][BBB] = { 'bookNumber':bookNumber, 'longName':longName,
-                                                'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
+                self.suppliedMetadata['MyBible']['BookInfo'][BBB] = \
+                    { 'bookNumber':bookNumber, 'longName':longName, 'shortName':shortName, 'title':title, 'bookColor':bookColor, 'isPresent':isPresent } \
+                        if len(row)==6 else \
+                    { 'bookNumber':bookNumber, 'longName':longName, 'shortName':shortName, 'isPresent':isPresent, 'bookColor':bookColor }
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  Loaded book info ({}) from BOOKS_ALL table".format( len(rows) ) )
             loadedBookInfo = True
         except sqlite3.OperationalError: pass # Table is not in older module versions
@@ -1433,7 +1444,7 @@ def briefDemo() -> None:
                 break
 
 
-    if 1: # D: all discovered modules in the test folder
+    if 0: # D: all discovered modules in the test folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -1605,7 +1616,7 @@ def fullDemo() -> None:
                 testMyBB( indexString, testFolder, fullname )
 
 
-    if 1: # D: all discovered modules in the test folder
+    if 0: # D: all discovered modules in the test folder
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordRoundtripTestFiles/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):

@@ -721,7 +721,7 @@ class ESFMBible( Bible ):
                 logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{originalText}'" )
                 updatedVerseList.append( entry )
 
-        return updatedVerseList, self.ESFMWordTables[wordFileName]if wordFileName else None
+        return updatedVerseList, self.ESFMWordTables[wordFileName] if wordFileName else None
     # end of ESFMBible.livenESFMWordLinks
 # end of class ESFMBible
 
