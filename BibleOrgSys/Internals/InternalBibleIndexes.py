@@ -1162,7 +1162,7 @@ class InternalBibleBookSectionIndex:
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "book DR", self.BibleObject.discoveryResults[self.BBB].keys() )
         # The following line can give a KeyError if the BBB doesn't exist in the discoveryResults
         haveSectionHeadingsForBook = self.BibleObject.discoveryResults[self.BBB]['haveSectionHeadings']
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Make section heading index for {self.workName} {self.BBB} ({haveSectionHeadingsForBook=})…" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Make section heading index for {self.workName} {self.BBB} ({haveSectionHeadingsForBook=})…" )
         needToSaveByChapter = not haveSectionHeadingsForBook \
                                 or not BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)
         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)}" )

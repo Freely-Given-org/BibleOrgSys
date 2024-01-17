@@ -5,7 +5,7 @@
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2021 Robert Hunt
+# Copyright (C) 2012-2023 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,6 +28,7 @@ Module handling Greek language particularities.
 
 from gettext import gettext as _
 import unicodedata
+from typing import Optional
 
 if __name__ == '__main__':
     import os
@@ -39,10 +40,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-02-19' # by RJH
+LAST_MODIFIED_DATE = '2023-12-16' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.03'
+PROGRAM_VERSION = '0.10'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -112,12 +113,27 @@ NORMAL_LETTERS = NORMAL_CONSONANTS + VOWELS
 assert len(NORMAL_LETTERS) == len(normalLetters)
 FINAL_CONSONANTS = ( SIGMA_FINAL, )
 CONSONANTS = NORMAL_CONSONANTS + FINAL_CONSONANTS
-ALL_FINAL_CONSONANTS = ( BETA, GAMMA, DELTA, ZETA, THETA, KAPPA, LAMBDA, MU, NU, XI, PI, RHO, SIGMA_FINAL, TAU, PHI, CHI, PSI )
+ALL_CONSONANTS = ( BETA, GAMMA, DELTA, ZETA, THETA, KAPPA, LAMBDA, MU, NU, XI, PI, RHO, SIGMA_FINAL, TAU, PHI, CHI, PSI )
+ALL_LETTERS = NORMAL_LETTERS + FINAL_CONSONANTS
 
-
-# Other marks
-#otherMarks = ( dageshOrMapiq, rafe, paseq, shinDot, sinDot, upperDot, lowerDot, qamatzQatan, )
-
+GREEK_ACCENT_DICT = { 
+    # Lowercase composed-Unicode accented characters
+    '᾽':'', # Koronis -- not strictly an accent
+    'Ἀ':'Α', 'Ἄ':'Α', 'Ἆ':'Α', 'Ἁ':'Α', 'Ἅ':'Α', 'Ἃ':'Α', 'ᾍ':'Α',
+    'ά':'α', 'ὰ':'α', 'ἀ':'α', 'ἁ':'α', 'ᾳ':'α', 'ἄ':'α', 'ᾶ':'α', 'ἅ':'α', 'ἃ':'α', 'ἆ':'α', 'ἂ':'α', 'ᾷ':'α',
+             'ᾅ':'α', 'ᾴ':'α', 'ᾄ':'α',
+    'έ':'ε', 'ὲ':'ε', 'ἐ':'ε', 'ἑ':'ε', 'ἔ':'ε', 'ἓ':'ε', 'ἕ':'ε',
+    'ή':'η', 'ὴ':'η', 'ἡ':'η', 'ῆ':'η', 'ἦ':'η', 'ῇ':'η', 'ἤ':'η', 'ῃ':'η', 'ἠ':'η', 'ἥ':'η', 'ᾔ':'η', 'ἢ':'η',
+             'ᾖ':'η', 'ᾐ':'η', 'ᾗ':'η', 'ἧ':'η', 'ἣ':'η', 'ῄ':'η', 'ᾑ':'η',
+    'ί':'ι', 'ί':'ι', 'ὶ':'ι', 'ἰ':'ι', 'ἱ':'ι', 'ῖ':'ι', 'ἷ':'ι', 'ἶ':'ι', 'ΐ':'ι', 'ῒ':'ι', 'ἵ':'ι', 'ἴ':'ι',
+             'ἳ':'ι', 'ϊ':'ι', 'ΐ':'ι',
+    'ό':'ο', 'ὸ':'ο', 'ὀ':'ο', 'ὁ':'ο', 'ὃ':'ο', 'ὅ':'ο', 'ὄ':'ο', 'ὂ':'ο',
+    'ώ':'ω', 'ὼ':'ω', 'ὠ':'ω', 'ὡ':'ω', 'ῶ':'ω', 'ῷ':'ω', 'ῳ':'ω', 'ᾧ':'ω', 'ὥ':'ω', 'ὦ':'ω', 'ὧ':'ω', 'ῴ':'ω',
+             'ὤ':'ω', 'ᾠ':'ω', 'ὢ':'ω',
+    'ύ':'υ', 'ὺ':'υ', 'ὐ':'υ', 'ὑ':'υ', 'ῦ':'υ', 'ὕ':'υ', 'ὖ':'υ', 'ὗ':'υ', 'ϋ':'υ', 'ὓ':'υ', 'ὔ':'υ', 'ὒ':'υ',
+             'ΰ':'υ', 'ῢ':'υ',
+    'ῥ':'ρ',
+    }
 
 if BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
@@ -215,7 +231,7 @@ class Greek():
         return result
     # end of __str__
 
-    def printUnicodeData( self, text=None ):
+    def printUnicodeData( self, text:Optional[str]=None ):
         if text is None: text = self.currentText
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
@@ -223,10 +239,31 @@ class Greek():
             #for j,char in enumerate(text):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
-    # end of printUnicodeData
+    # end of Greek.printUnicodeData
+
+
+    def removeAccents( self, text:Optional[str]=None ) -> str:
+        """
+        Remove accents from the string and return it (used for fuzzy matching)
+
+        Currently only works for lowercase accented Greek characters
+
+        Doesn't cope with punctuation characters yet.
+        """
+        if text is None: text = self.currentText
+        resultText = ''.join( GREEK_ACCENT_DICT[someChar] if someChar in GREEK_ACCENT_DICT
+                                        else someChar for someChar in text )
+        for char in resultText:
+            if char != ' ':
+                assert char in ALL_LETTERS, f"Greek accent not removed by removeAccents: {char=} from {text=}"
+        return resultText
+    # end of Greek.removeAccents
+
 
     def removeOtherMarks( self, text=None ):
-        """ Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed. """
+        """
+        Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed.
+        """
         if text is None: # Use our own text
             self.currentText = self.removeOtherMarks( self.currentText ) # recursive call
             return self.currentText
