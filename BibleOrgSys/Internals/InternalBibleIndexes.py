@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -91,10 +91,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 #                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2023-06-04' # by RJH
+LAST_MODIFIED_DATE = '2024-01-26' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.90'
+PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -240,18 +240,38 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.items
 
 
-    def getVerseEntries( self, CVkey:Tuple[str,str] ):
+    def getVerseEntries( self, CVkey:Tuple[str,str], strict=True ) -> InternalBibleEntryList:
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this verse.
 
         Raises a KeyError if the CV key doesn't exist.
+
+        If strict is false, after failing a dictionary lookup,
+            it will also loop through the index looking for bridged verses starting with that verse
+
+        TODO: What if the searched verse number is a middle or the last verse of the bridged verses?
         """
-        indexEntry = self.__indexData[CVkey]
-        return self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()]
+        # print( f"getVerseEntries( {CVkey}, {strict=} )..." )
+        try:
+            indexEntry = self.__indexData[CVkey]
+        except KeyError as k:
+            if strict: raise k
+            # print( "  Trying a search for bridged verses..." )
+            strCVkey = str(CVkey)
+            searchCVString = f'{strCVkey[:-2]}-' # Drop of the final two characters (closing bracket and closing quote), and then add hyphen
+            for someCVkey in self.__indexData:
+                # print( f"    Have {someCVkey} trying to find {self.BBB} {strCVkey} -> {searchCVString=}" )
+                if str(someCVkey).startswith( searchCVString ): # Yes, it's there but bridged
+                    indexEntry = self.__indexData[someCVkey]
+                    break
+            else: raise k
+        result = self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()]
+        assert isinstance( result, InternalBibleEntryList )
+        return result
     # end of InternalBibleBookCVIndex.getVerseEntries
 
 
-    def getChapterEntries( self, C:str ):
+    def getChapterEntries( self, C:str ) -> InternalBibleEntryList:
         """
         Given C, return the InternalBibleEntryList containing the InternalBibleEntries for this chapter.
 
@@ -379,7 +399,7 @@ class InternalBibleBookCVIndex:
         verseEntryList = InternalBibleEntryList()
         for ii,indexEntry in enumerate( indexEntries ):       
             # print( f"{ii}: {indexEntry}" )
-            verseEntryList.extend( InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] ) )
+            verseEntryList += InternalBibleEntryList( self.givenBibleEntries[indexEntry.getEntryIndex():indexEntry.getNextEntryIndex()] )
 
         # Just clean up if we have a single meaningless entry
         # Hmmh, doesn't work well -- we don't want to return an empty list
@@ -395,7 +415,7 @@ class InternalBibleBookCVIndex:
         #         if verseEntry.getMarker() not in ('id','usfm','ide','rem','h','toc1','toc2','toc3','mt1','mt2','mt3','c'): halt
 
         assert verseEntryList # We don't want to return an empty list
-        assert isinstance( verseEntryList, InternalBibleEntryList )
+        assert isinstance( verseEntryList, InternalBibleEntryList ), f"{type(verseEntryList)=} {verseEntryList=}"
         return verseEntryList, indexEntries[0].getContextList()
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
 

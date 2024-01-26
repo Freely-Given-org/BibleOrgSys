@@ -890,7 +890,7 @@ def briefDemo() -> None:
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
+    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Jude','JDE'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
         BBB = bbc.getBBBFromText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
@@ -940,7 +940,7 @@ def fullDemo() -> None:
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
+    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Jude','JDE'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
         BBB = bbc.getBBBFromText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"

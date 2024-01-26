@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -53,6 +53,7 @@ CHANGELOG:
                 plus fix versification tables for introduction (chapter -1)
     2023-08-15 make more robust for handling uW encoding errors
     2023-10-14 allow more footnote and xref internal markers
+    2024-01-24 add getContextVerseDataRange() function
 """
 from gettext import gettext as _
 from typing import Dict, List, Tuple, Optional, Union
@@ -81,10 +82,10 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2023-10-14' # by RJH
+LAST_MODIFIED_DATE = '2024-01-26' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
-PROGRAM_VERSION = '0.98'
+PROGRAM_VERSION = '0.99'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -5135,6 +5136,8 @@ class InternalBibleBook:
 
         If the strict flag is not set, we try to remove any letter suffix
             and/or to search verse ranges for a match.
+
+        If complete flag is set, try to find every reference with that verse.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "InternalBibleBook.getContextVerseData( {} ) for {} {}".format( BCVReference, self.workName, self.BBB ) )
         assert self.BBB == BCVReference[0] if isinstance( BCVReference, tuple ) else BCVReference.getBBB()
@@ -5161,12 +5164,89 @@ class InternalBibleBook:
         else: # assume it's a SimpleVerseKey or similar
             C,V = BCVReference.getCV()
         # try:
-        return self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
+        verseEntryList, contextList = self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
+        assert isinstance( verseEntryList, InternalBibleEntryList )
+        return verseEntryList, contextList
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
         #     logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")
         #     return self._CVIndex.getVerseEntriesWithContext( (C,str(getLeadingInt(V))) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
+
+
+    def getContextVerseDataRange( self, startBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], endBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict=True ) -> Tuple[InternalBibleEntryList,List[str]]:
+        """
+        Returns an InternalBibleEntryList for an inclusive range of consecutive verses
+            plus a list containing the context of the verses.
+
+        Raises a KeyError if the starting C:V reference is not found
+
+        If strict is true, only returns a value if every verse is found.
+        If strict is false, logs a critical error and
+            returns whatever we have when we fail to find a verse (perhaps because inadequate handling of bridged verses)
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
+        assert self.BBB == startBCVReference[0] if isinstance( startBCVReference, tuple ) else startBCVReference.getBBB()
+        assert self.BBB == endBCVReference[0] if isinstance( endBCVReference, tuple ) else endBCVReference.getBBB()
+
+        verseEntryList, contextList = self.getContextVerseData( startBCVReference, strict=True )
+        assert isinstance( verseEntryList, InternalBibleEntryList )
+
+        # Now concatenate the verse lists for the following verses
+        startC = startBCVReference[1] if isinstance( startBCVReference, tuple ) else startBCVReference.getC()
+        startV = startBCVReference[2] if isinstance( startBCVReference, tuple ) else startBCVReference.getV()
+        endC = endBCVReference[1] if isinstance( endBCVReference, tuple ) else endBCVReference.getC()
+        endV = endBCVReference[2] if isinstance( endBCVReference, tuple ) else endBCVReference.getV()
+
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Concatenating {self.workName} {self.BBB} from {startC}:{startV} to {endC}:{endV} {strict=}" )
+        intC = int(startC)
+        intV = getLeadingInt(startV) + 1 # Handles strings like '4b'
+        endVint = getLeadingInt(endV)
+        for _safetyCount in range( 1000 ): # Maximum number of expected verses in this chunk -- might be something big like '1Sam 16:1–1Ki 2:11'
+            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Looking for {C}:{V}" )
+            if intC > int(endC) \
+            or (intC==int(endC) and intV > endVint):
+                break
+            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Adding {C}:{V}" )
+            strC, strV = str(intC), str(intV)
+            try:
+                thisVerseEntryList = self._CVIndex.getVerseEntries( (strC,strV), strict=False )
+                assert isinstance( thisVerseEntryList, InternalBibleEntryList )
+            except KeyError as kerr:
+                if startC == '-1': # This is expected, because LV doesn't have intros, so endV will be excessive
+                    assert endC == '-1'
+                    assert intV > 0, f"{self.workName} {self.BBB} {startC}:{startV} {intV=}" # We should have got some lines
+                    break
+                else:
+                    # We're in a chapter and may have reached the end
+                    if startC != endC:
+                        numVerses = self.getNumVerses( strC )
+                        if intV > numVerses:
+                            intC += 1
+                            intV = 0
+                            # Try again with the first verse of the next chapter
+                            thisVerseEntryList = self._CVIndex.getVerseEntries( (str(intC),'0'), strict=True )
+                            assert isinstance( thisVerseEntryList, InternalBibleEntryList )
+                        else:
+                            if not strict:
+                                logging.critical( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) for {self.workName} {self.BBB} failed at {strC}:{strV}")
+                                halt
+                                break # return what we've got
+                            raise kerr
+                    else:
+                        if strict:
+                            raise kerr
+                        else: # Log it, but continue looping
+                            logging.critical( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}, {strict=}) for {self.workName} {self.BBB} failed to find {strC}:{strV}")
+            verseEntryList += thisVerseEntryList
+            intV += 1
+        else:
+            loop_safety_counter_too_small
+
+        assert isinstance( verseEntryList, InternalBibleEntryList )
+        assert isinstance( contextList, list )
+        return verseEntryList, contextList
+    # end of InternalBibleBook.getContextVerseDataRange
 
 
     def writeBOSBCVFiles( self, bookFolderpath ) -> None:

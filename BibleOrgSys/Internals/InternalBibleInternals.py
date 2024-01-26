@@ -5,7 +5,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -81,10 +81,10 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2023-10-10' # by RJH
+LAST_MODIFIED_DATE = '2024-01-26' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
-PROGRAM_VERSION = '0.87'
+PROGRAM_VERSION = '0.88'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -839,7 +839,7 @@ class InternalBibleEntryList:
     # end of InternalBibleEntryList.__getitem__
 
 
-    def append( self, newBibleEntry ):
+    def append( self, newBibleEntry ) -> None:
         """
         Append the newBibleEntry to the InternalBibleEntryList.
         """
@@ -857,7 +857,7 @@ class InternalBibleEntryList:
         except IndexError: return None
     # end of InternalBibleEntryList.pop
 
-    def extend( self, additionalList ):
+    def extend( self, additionalList ) -> None:
         """
         Extend the InternalBibleEntryList with the newList given.
         """
@@ -870,7 +870,7 @@ class InternalBibleEntryList:
         """
         assert isinstance( listToAppend, InternalBibleEntryList ), f"__add__ {type(listToAppend)=} {listToAppend=}"
         self.data.extend( listToAppend )
-        return self.data
+        return self
     # end of InternalBibleEntryList.__add__
 
 

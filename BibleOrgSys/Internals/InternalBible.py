@@ -7,7 +7,7 @@
 #       and which in turn holds the Bible book objects
 #       (and acts as an intermediary to them).
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -57,6 +57,9 @@ The calling class then fills
 Note that this software does write some files to
     BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH
         which is usually ~/BibleOrgSysData/BOSOutputFiles/
+
+CHANGELOG:
+    2024-01-24 add getContextVerseDataRange() function
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 from gettext import gettext as _
@@ -82,10 +85,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2023-06-02' # by RJH
+LAST_MODIFIED_DATE = '2024-01-24' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.89'
+PROGRAM_VERSION = '0.90'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -2264,6 +2267,48 @@ class InternalBible:
     # end of InternalBible.getContextVerseData
 
 
+    def getContextVerseDataRange( self, startBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], endBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict=True ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
+        """
+        Search for a Bible reference
+            and return a 2-tuple containing
+                the Bible text (in a InternalBibleEntryList)
+                along with the context.
+
+        Expects a SimpleVerseKey for the parameter
+            but also copes with a (B,C,V,S) tuple.
+        If the tuple is only (B,C), then it fetches the data for the entire chapter.
+
+        Returns None if there is no information for this book.
+        Raises a KeyError if there is no such CV reference.
+
+        If the strict flag is not set, we try to remove any letter suffix
+            and/or to search verse ranges for a match.
+
+        Capable of handling ranges across books, e.g., '1Sam 16:1–1Ki 2:11'
+        """
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getContextVerseDataRange( {startBCVReference}, {endBCVReference}, {strict=} ) for {self.name}" )
+
+        if isinstance( startBCVReference, tuple ): startBBB = startBCVReference[0]
+        else: startBBB = startBCVReference.getBBB() # Assume it's a SimpleVerseKey object
+        if isinstance( endBCVReference, tuple ): endBBB = endBCVReference[0]
+        else: endBBB = endBCVReference.getBBB() # Assume it's a SimpleVerseKey object
+        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, " ", BBB in self.books )
+        self.loadBookIfNecessary( startBBB )
+        if endBBB != startBBB:
+            self.loadBookIfNecessary( endBBB )
+
+        if startBBB in self.books and endBBB in self.books:
+            if endBBB == startBBB: # most common case
+                return self.books[startBBB].getContextVerseDataRange( startBCVReference, endBCVReference, strict=strict )
+            else: # sometimes they can be different books
+                verseEntryList1, contextList1 = self.books[startBBB].getContextVerseDataRange( startBCVReference, (startBBB,'999','999'), strict=strict )
+                verseEntryList2, _contextList2 = self.books[startBBB].getContextVerseDataRange( (endBBB,'1','1'), endBCVReference, strict=strict )
+                return verseEntryList1+verseEntryList2, contextList1
+        else:
+            logging.warning( f"InternalBible.getContextVerseDataRange( {startBCVReference}, {endBCVReference}, {strict=} ): {self.name} doesn't have {startBBB}{'' if endBBB==startBBB else f' or {endBBB}'}" )
+    # end of InternalBible.getContextVerseDataRange
+
+
     def getVerseDataList( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ) -> Optional[InternalBibleEntryList]:
         """
         Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
@@ -2275,8 +2320,7 @@ class InternalBible:
         result = self.getContextVerseData( BCVReference )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  gVD", self.name, BCVReference, verseData )
         if result is None:
-            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, "InternalBible.getVerseDataList: no VerseData for {} {} got {}".format( self.name, BCVReference, result ) )
             #if BibleOrgSysGlobals.debugFlag: assert BCVReference.getChapterNumStr()=='0' or BCVReference.getVerseNumStr()=='0' # Why did we get nothing???
         else:
             verseData, _context = result
