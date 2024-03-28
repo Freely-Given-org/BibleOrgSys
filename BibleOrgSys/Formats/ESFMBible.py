@@ -5,7 +5,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -50,6 +50,7 @@ Creates a semantic dictionary with keys:
 CHANGELOG:
     2023-04-20 Handle word numbers for proper nouns that include a \\sup, e.g., 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
     2023-08-07 Handle numbers in word regex, e.g. 'feeding 5,000 men'
+    2024-03-21 Add code to handle two word tables (OT and NT) from different source folders
 """
 from typing import List, Tuple, Optional
 from gettext import gettext as _
@@ -74,10 +75,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-08-07' # by RJH
+LAST_MODIFIED_DATE = '2024-03-26' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.74'
+PROGRAM_VERSION = '0.76'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -237,7 +238,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
-linkedWordRegex = re.compile( '([-¬A-za-z0-9,ḨŌⱤḩⱪşţʦĀĒāēīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})' )
+linkedWordRegex = re.compile( "([-¬A-za-z0-9,'’ḨŌⱤḩⱪşţʦĀĒāēéīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})" )
 
 class ESFMBible( Bible ):
     """
@@ -263,11 +264,14 @@ class ESFMBible( Bible ):
         self.objectTypeString = 'ESFM'
 
         # Now we can set our object variables
+        # NOTE: If some cases where OT and NT are in different folders,
+        #   self.sourceFolder can be set to None, and we use self.OTsourceFolder and self.NTsourceFolder instead
+        #       (This is mostly to handle separate word tables for OT and NT.)
         self.sourceFolder, self.givenName, self.abbreviation = sourceFolder, givenName, givenAbbreviation
         self.dontLoadBook = []
 
         self.loadAuxilliaryFiles = False
-        self.ESFMWorkData, self.ESFMFileData, self.ESFMWordTables = {}, {}, {}
+        self.ESFMWorkData, self.ESFMFileData, self.ESFMWordTables, self.ESFMColumnNameList = {}, {}, {}, {}
         self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
     # end of ESFMBible.__init_
 
@@ -628,10 +632,21 @@ class ESFMBible( Bible ):
                     filepath = os.path.join( self.sourceFolder, bookObject.ESFMWordTableFilename )
                     if not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORD TABLE file at {filepath}")
-        if DEBUGGING_THIS_MODULE:
-            print( f"lookForAuxilliaryFilenames {self.ESFMWorkData=}" )
-            print( f"lookForAuxilliaryFilenames {self.ESFMFileData=}" )
-            print( f"lookForAuxilliaryFilenames {self.ESFMWordTables=}" )
+                        if '_OT_' in bookObject.ESFMWordTableFilename:
+                            try: filepath = os.path.join( self.OTsourceFolder, bookObject.ESFMWordTableFilename )
+                            except AttributeError: filepath = bookObject.ESFMWordTableFilename
+                            if not os.path.isfile( filepath ):
+                                logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find an OT WORD TABLE file at {filepath}")
+                        elif '_NT_' in bookObject.ESFMWordTableFilename:
+                            try: filepath = os.path.join( self.NTsourceFolder, bookObject.ESFMWordTableFilename )
+                            except AttributeError: filepath = bookObject.ESFMWordTableFilename
+                            if not os.path.isfile( filepath ):
+                                logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a NT WORD TABLE file at {filepath}")
+
+        if 1 or DEBUGGING_THIS_MODULE:
+            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
+            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
+            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
@@ -647,13 +662,21 @@ class ESFMBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, f"loadESFMWordFile( {filename} )" )
         assert filename.endswith( '.tsv' )
 
-        with open( os.path.join( self.sourceFolder, filename ), 'rt', encoding='UTF-8' ) as wordFile:
-            self.ESFMWordTables[filename] = wordFile.read().rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
-            # Uses less memory to keep the rows as single strings, rather than separating the columns at the tabs
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
-        self.ESFMColumnNameList = {}
+        tableSourceFolder = self.sourceFolder if self.sourceFolder \
+                else self.OTsourceFolder if '_OT_' in filename \
+                else self.NTsourceFolder if '_NT_' in filename \
+                else None
+        with open( os.path.join( tableSourceFolder, filename ), 'rt', encoding='UTF-8' ) as wordFile:
+            wordFileText = wordFile.read()
+        if wordFileText.startswith( BibleOrgSysGlobals.BOM ):
+            logging.info( f"loadESFMWordFile: Detected UTF-16 Byte Order Marker in {filename}" )
+            wordFileText = wordFileText[1:] # Remove the Unicode Byte Order Marker (BOM)
+
+        self.ESFMWordTables[filename] = wordFileText.rstrip( '\n' ).split( '\n' ) # Remove any blank line at the end then split
+        # Uses less memory to keep the rows as single strings, rather than separating the columns at the tabs now
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile for {self.abbreviation} loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
         self.ESFMColumnNameList[filename] = self.ESFMWordTables[filename][0].split( '\t' )
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
+        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"ESFMBible.loadESFMWordFile for {self.abbreviation} loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
     # end of ESFMBible.loadESFMWordFile
 
 

@@ -429,7 +429,10 @@ class InternalBibleBookCVIndex:
         Raises a KeyError if the C key doesn't exist.
         """
         assert isinstance( C, str )
-        firstIndexEntry = self.__indexData[(C,'0')]
+        try: firstIndexEntry = self.__indexData[(C,'0')]
+        except KeyError as err:
+            logging.critical( f"getChapterEntriesWithContext couldn't get {self.BBB} ({C},0) from {self.__indexData.keys()}")
+            raise err
         try:
             nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
             return InternalBibleEntryList( self.givenBibleEntries[firstIndexEntry.getEntryIndex():nextIndexEntry.getEntryIndex()] ), firstIndexEntry.getContextList()
