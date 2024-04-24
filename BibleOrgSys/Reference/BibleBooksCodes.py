@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-03-13' # by RJH
+LAST_MODIFIED_DATE = '2024-04-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.94'
@@ -836,7 +836,7 @@ class BibleBooksCodes:
                 if BBB == 'PE2': return '2Pet'
                 if BBB == 'JN1': return '1Jhn'
                 if BBB == 'JN2': return '2Jhn'
-                if BBB == 'JN3': return '2Jhn'
+                if BBB == 'JN3': return '3Jhn'
                 if BBB == 'JDE': return 'Jude'
             return f'{BBB[2]}{BBB[0]}{BBB[1].lower()}' if BBB[2].isdigit() else f'{BBB[0]}{BBB[1:].lower()}'
         
@@ -858,7 +858,7 @@ class BibleBooksCodes:
             if BBB == 'PE2': return '2PET'
             if BBB == 'JN1': return '1JHN'
             if BBB == 'JN2': return '2JHN'
-            if BBB == 'JN3': return '2JHN'
+            if BBB == 'JN3': return '3JHN'
             if BBB == 'JDE': return 'JUDE'
         return f'{BBB[2]}{BBB[:2]}' if BBB[2].isdigit() else BBB
     # end of BibleBooksCodes.tidyBBB

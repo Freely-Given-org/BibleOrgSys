@@ -64,7 +64,7 @@ Some notes about internal formats:
         (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
 """
 from gettext import gettext as _
-from typing import Dict, List
+from typing import Dict, List, Optional
 import logging
 import re
 
@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2024-03-28' # by RJH
+LAST_MODIFIED_DATE = '2024-04-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.88'
@@ -582,7 +582,7 @@ class InternalBibleEntry:
 
     def __init__( self, marker:str, originalMarker:str,
                         adjustedText:str, cleanText:str,
-                        extras:InternalBibleExtraList, originalText:str ) -> None:
+                        extras:Optional[InternalBibleExtraList], originalText:str ) -> None:
         """
         Accept the parameters and double-check them if requested.
 

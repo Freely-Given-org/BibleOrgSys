@@ -5,7 +5,7 @@
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020-2023 Robert Hunt
+# Copyright (C) 2020-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -59,10 +59,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 # from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2023-05-29' # by RJH
+LAST_MODIFIED_DATE = '2024-04-05' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.15'
+PROGRAM_VERSION = '0.17'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -74,6 +74,9 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT'
                     'SAV', 'SAVE', 'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 METADATA_FILENAME = 'manifest.yaml'
+
+TAB = '\t'
+
 
 
 def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
@@ -691,8 +694,8 @@ class uWNotesBibleBook( BibleBook ):
                     logging.info( "loaduWNotesBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, CV, "line", line )
-                assert line.count( '\t' )  == 6 # 7 fields
-                assert '\\t' not in line and '\\r not in line' # TSV escaped characters, but ones we don't expect
+                assert line.count( '\t' )  == 6, f"Expected 6 tabs not {line.count(TAB)} in {filename} {line=}" # 7 fields
+                assert '\\t' not in line and '\\r not in line', f"{filename} {line=}" # TSV escaped characters, but ones we don't expect
                 if lineCount == 1: # Heading line
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
                         assert line == 'Reference\tID\tTags\tSupportReference\tQuote\tOccurrence\tNote'

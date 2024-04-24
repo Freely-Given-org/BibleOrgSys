@@ -75,7 +75,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2024-03-26' # by RJH
+LAST_MODIFIED_DATE = '2024-04-19' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
 PROGRAM_VERSION = '0.76'
@@ -643,7 +643,7 @@ class ESFMBible( Bible ):
                             if not os.path.isfile( filepath ):
                                 logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a NT WORD TABLE file at {filepath}")
 
-        if 1 or DEBUGGING_THIS_MODULE:
+        if DEBUGGING_THIS_MODULE:
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
@@ -738,7 +738,7 @@ class ESFMBible( Bible ):
                 # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] )
                 # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), originalText )
                 # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used
-                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), None, '', None, originalText )
+                newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), '', '', None, originalText )
                 updatedVerseList.append( newEntry )
             else:
                 logging.critical( f"ESFMBible.livenESFMWordLinks unable to find wordlink in '{originalText}'" )

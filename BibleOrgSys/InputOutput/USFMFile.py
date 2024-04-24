@@ -5,7 +5,7 @@
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -46,7 +46,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
 
 
-LAST_MODIFIED_DATE = '2022-07-03' # by RJH
+LAST_MODIFIED_DATE = '2024-03-10' # by RJH
 SHORT_PROGRAM_NAME = "USFMFile"
 PROGRAM_NAME = "USFM File loader"
 PROGRAM_VERSION = '0.87'
@@ -141,13 +141,14 @@ class USFMFile:
 
         Puts the result into self.lines
         """
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMFile.read( {!r}, {!r}, {!r} )".format( USFMFilepath, ignoreSFMs, encoding ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"USFMFile.read( {USFMFilepath=}, {ignoreSFMs=}, {encoding=} )" )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
         if encoding is None: encoding = 'utf-8'
 
         lastLine, lineCount, result = '', 0, []
+
         with open( USFMFilepath, encoding=encoding ) as ourFile: # Automatically closes the file when done
             try:
                 for line in ourFile:

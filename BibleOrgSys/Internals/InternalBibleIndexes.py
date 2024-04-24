@@ -87,11 +87,9 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
-# from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
-#                         USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 
 
-LAST_MODIFIED_DATE = '2024-01-26' # by RJH
+LAST_MODIFIED_DATE = '2024-04-20' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.92'
@@ -101,10 +99,6 @@ DEBUGGING_THIS_MODULE = False
 
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
-
-# BOS_NON_CHAPTER_BOOKS = ( 'FRT', 'PRF', 'ACK', 'INT', 'TOC', 'GLS', 'CNC', 'NDX', 'TDX', 'BAK', 'OTH',
-#                           'XXA','XXB','XXC','XXD','XXE','XXF','XXG',
-#                           'UNK', '???', )
 
 
 
@@ -431,7 +425,7 @@ class InternalBibleBookCVIndex:
         assert isinstance( C, str )
         try: firstIndexEntry = self.__indexData[(C,'0')]
         except KeyError as err:
-            logging.critical( f"getChapterEntriesWithContext couldn't get {self.BBB} ({C},0) from {self.__indexData.keys()}")
+            logging.critical( f"getChapterEntriesWithContext {self.workName} couldn't get {self.BBB} ({C},0){f' from {self.__indexData.keys()}' if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag else ''}")
             raise err
         try:
             nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
@@ -633,7 +627,7 @@ class InternalBibleBookCVIndex:
                     _saveAnyOutstandingCV() # with the adjusted indexEntryLineCount
                     # Remove verse ranges, etc. and then save the verse number
                     strV = entry.getCleanText()
-                    assert '–' not in strV # that's an en-dash -- it MUST be a hyphen here for a verse range
+                    assert '–' not in strV, f"en-dash in {self.BBB} {strC}:{strV}" # that's an en-dash -- it MUST be a hyphen here for a verse range
                     # # TODO: We don't need this next little section now
                     # digitV = ''
                     # for char in strV:
