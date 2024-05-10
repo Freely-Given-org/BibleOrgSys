@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2024-01-26' # by RJH
+LAST_MODIFIED_DATE = '2024-04-25' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -333,6 +333,7 @@ class InternalBibleBook:
 
         self.badMarkers, self.badMarkerCounts = [], []
         self.versificationList = self.omittedVersesList = self.combinedVersesList = self.reorderedVersesList = None
+        self.versificationDict = None
         self.pntsCount = self.nfvnCount = self.owfvnCount = self.rtsCount = self.sahtCount = self.fwmifCount = self.fswncCount = 0
 
         self.maxNoncriticalErrorsPerBook = MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE \
@@ -2987,25 +2988,25 @@ class InternalBibleBook:
                 chapterText = text.strip()
                 if ' ' in chapterText: # Seems that we can have footnotes here :)
                     versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Unexpected space in USFM chapter number field {!r}").format( self.BBB, lastChapterNumber, lastVerseNumberString, chapterText, lastChapterNumber ) )
-                    logging.info( _("Unexpected space in USFM chapter number field {!r} after chapter {} of {}").format( chapterText, lastChapterNumber, self.BBB ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Unexpected space in USFM chapter number field {!r} after chapter {} of {}").format( chapterText, lastChapterNumber, self.BBB ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} chapter {}".format( self.BBB, chapterText ) )
                 chapterNumber = int( chapterText)
                 if chapterNumber != lastChapterNumber+1:
                     versificationErrors.append( _("{} ('{}' after '{}') USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
-                    logging.error( _("USFM chapter numbers out of sequence in {} Bible book {} ('{}' after '{}')").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM chapter numbers out of sequence in {} Bible book {} ('{}' after '{}')").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
                 verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
                 versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Encountered cp field {}").format( self.BBB, chapterNumber, lastVerseNumberString, text ) )
-                logging.warning( _("Encountered cp field '{}' after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.BBB ) )
+                vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Encountered cp field '{}' after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.BBB ) )
             elif marker == 'v':
                 if chapterText == '0':
                     versificationErrors.append( _("{} {} Missing chapter number field before verse {}").format( self.BBB, chapterText, text ) )
-                    logging.warning( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.BBB ) )
+                    logging.error( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.BBB ) )
                 if not text:
                     versificationErrors.append( _("{} {} Missing USFM verse number after v{}").format( self.BBB, chapterNumber, lastVerseNumberString ) )
-                    logging.warning( _("Missing USFM verse number after v{} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.BBB ) )
+                    logging.error( _("Missing USFM verse number after v{} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.BBB ) )
                     continue
                 verseText = text
                 doneWarning = False
@@ -3015,12 +3016,12 @@ class InternalBibleBook:
                     if char in verseText:
                         if not doneWarning:
                             versificationErrors.append( _("{} {} Removing letter(s) and/or brackets from USFM verse number {} in Bible book").format( self.BBB, chapterText, verseText ) )
-                            logging.info( _("Removing letter(s) and/or brackets from USFM verse number {} in Bible book {} {}").format( verseText, self.BBB, chapterText ) )
+                            vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Removing letter(s) and/or brackets from USFM verse number {} in Bible book {} {}").format( verseText, self.BBB, chapterText ) )
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
                     #versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Encountered combined verses field {}").format( self.BBB, chapterNumber, lastVerseNumberString, verseText ) )
-                    logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.BBB ) )
+                    vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.BBB ) )
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString, verseNumber = bits[0], 0
                     endVerseNumberString, endVerseNumber = bits[1], 0
@@ -3028,20 +3029,20 @@ class InternalBibleBook:
                         verseNumber = int( verseNumberString )
                     except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse range start {!r} in {!r} in Bible book").format( self.BBB, chapterText, verseNumberString, verseText ) )
-                        logging.error( _("Invalid USFM verse range start {!r} in {!r} in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse range start {!r} in {!r} in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
                     except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse range end {!r} in {!r} in Bible book").format( self.BBB, chapterText, endVerseNumberString, verseText ) )
-                        logging.error( _("Invalid USFM verse range end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse range end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse range out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
-                        logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText) )
                 elif ',' in verseText: # we have a range like 7,8
                     versificationErrors.append( "{} {}:{} ".format( self.BBB, chapterText, verseNumberString ) + _("Encountered comma combined verses field {}").format( self.BBB, chapterNumber, lastVerseNumberString, verseText ) )
-                    logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.BBB ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.BBB ) )
                     bits = verseText.split( ',', 1 )
                     verseNumberString, verseNumber = bits[0], 0
                     endVerseNumberString, endVerseNumber = bits[1], 0
@@ -3049,15 +3050,15 @@ class InternalBibleBook:
                         verseNumber = int( verseNumberString )
                     except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse list start {!r} in {!r} in Bible book").format( self.BBB, chapterText, verseNumberString, verseText ) )
-                        logging.error( _("Invalid USFM verse list start {!r} in {!r} in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse list start {!r} in {!r} in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
                     except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse list end {!r} in {!r} in Bible book").format( self.BBB, chapterText, endVerseNumberString, verseText ) )
-                        logging.error( _("Invalid USFM verse list end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse list end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse list out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
-                        logging.error( _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText) )
                 else: # Should be just a single verse number
@@ -3067,7 +3068,7 @@ class InternalBibleBook:
                     verseNumber = int( verseNumberString )
                 except ValueError:
                     versificationErrors.append( _("{} {} {} Invalid verse number digits in Bible book").format( self.BBB, chapterText, verseNumberString ) )
-                    logging.error( _("Invalid verse number digits in Bible book {} {} {}").format( self.BBB, chapterText, verseNumberString ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid verse number digits in Bible book {} {} {}").format( self.BBB, chapterText, verseNumberString ) )
                     newString = ''
                     for char in verseNumberString:
                         if char.isdigit(): newString = f'{newString}{char}'
@@ -3084,14 +3085,18 @@ class InternalBibleBook:
                 if verseNumber != lastVerseNumber+1:
                     if verseNumber <= lastVerseNumber:
                         versificationErrors.append( _("{} {} ('{}' after '{}') USFM verse numbers out of sequence in Bible book").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
-                        logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ('{}' after '{}')").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse numbers out of sequence in Bible book {} {} ('{}' after '{}')").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
                         reorderedVerses.append( (chapterText, lastVerseNumberString, verseText) )
                     else: # Must be missing some verse numbers
                         versificationErrors.append( _("{} {} Missing USFM verse number(s) between '{}' and '{}' in Bible book").format( self.BBB, chapterText, lastVerseNumberString, verseNumberString ) )
-                        logging.info( _("Missing USFM verse number(s) between '{}' and '{}' in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.BBB, chapterText ) )
+                        errorMsg = f"getVersification(): missing USFM verse number(s) between '{lastVerseNumberString}' and '{verseNumberString}' in Bible book {self.BBB} {chapterText}"
+                        if verseNumberString.isdigit(): vPrint( 'Normal', DEBUGGING_THIS_MODULE, errorMsg )
+                        else: logging.critical( errorMsg )
                         for number in range( lastVerseNumber+1, verseNumber ):
                             omittedVerses.append( (chapterText, str(number)) )
                 lastVerseNumberString = endVerseNumberString
+                if not lastVerseNumberString.isdigit():
+                    logging.critical( f"getVersification value for {self.BBB}_{chapterText} is not an integer: {lastVerseNumberString!r}" )
         assert (chapterText.isdigit() or chapterText=='-1') and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
         versification.append( (chapterText, lastVerseNumberString) ) # Append the verse count for the final chapter
         #if reorderedVerses: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Reordered verses in", self.BBB, "are:", reorderedVerses )
@@ -5122,9 +5127,21 @@ class InternalBibleBook:
             logging.debug( "InternalBibleBook.getNumVerses() was passed an integer chapter instead of a string with {} {}".format( self.BBB, C ) )
             C = str( C )
         self.getVersificationIfNecessary()
-        for thisC,thisNumVerses in self.versificationList:
-            if thisC == C:
-                return int( thisNumVerses )
+        if self.versificationDict is None:
+            self.versificationDict = { k:v for (k,v) in self.versificationList }
+        try: return int( self.versificationDict[C] )
+        except KeyError: # C not in versification
+            return None
+        except ValueError: # not an int
+            logging.critical( f"InternalBibleBook.getNumVerses( {C=} )  got {self.versificationDict[C]=}" )
+            return 0
+        # for thisC,thisNumVerses in self.versificationList:
+        #     # print( f"InternalBibleBook.getNumVerses( {C=} ) got {thisC=} {thisNumVerses=}" )
+        #     if thisC == C:
+        #         try: return int( thisNumVerses )
+        #         except ValueError:
+        #             logging.critical( f"InternalBibleBook.getNumVerses( {C=} )  got {thisC=} {thisNumVerses=}" )
+        #             return 0
     # end of InternalBibleBook.getNumVerses
 
 

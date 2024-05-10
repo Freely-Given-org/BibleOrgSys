@@ -85,7 +85,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2024-01-24' # by RJH
+LAST_MODIFIED_DATE = '2024-04-26' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.90'
@@ -1198,6 +1198,24 @@ class InternalBible:
     # end of InternalBible.getAddedUnits
 
 
+    """ The following is disabled until we solve this:
+ File "/srv/Documents/FreelyGiven/OpenBibleData/createPages/../../BibleOrgSys/BibleOrgSys/Internals/InternalBible.py", line 1239, in discover
+    results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/multiprocessing/pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/multiprocessing/pool.py", line 774, in get
+    raise self._value
+  File "/usr/local/lib/python3.12/multiprocessing/pool.py", line 540, in _handle_tasks
+    put(task)
+  File "/usr/local/lib/python3.12/multiprocessing/connection.py", line 205, in send
+    self._send_bytes(_ForkingPickler.dumps(obj))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/multiprocessing/reduction.py", line 51, in dumps
+    cls(buf, protocol).dump(obj)
+_pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksNames.BibleBooksNamesSystems'>: it's not the same object as BibleOrgSys.Reference.BibleBooksNames.BibleBooksNamesSystems
+    """
     # def _discoverBookMP( self, BBB:str ):
     #     """
     #     """
@@ -1229,19 +1247,20 @@ class InternalBible:
         # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
         # NOTE: Multiprocessing discover is considerably slower, hence disabled
         #           68 books 12 sec, but multithreaded 16s using 67s of processing!!!
-        if 0 and self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
-        and BibleOrgSysGlobals.maxProcesses > 1 \
-        and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
-            BibleOrgSysGlobals.alreadyMultiprocessing = True
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
-            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
-                assert len(results) == len(self.books)
-                for j,BBB in enumerate( self.books ):
-                    self.discoveryResults[BBB] = results[j] # Saves them in the correct order
-            BibleOrgSysGlobals.alreadyMultiprocessing = False
-        else: # Just single threaded
+        # if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
+        # and BibleOrgSysGlobals.maxProcesses > 1 \
+        # and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
+        #     BibleOrgSysGlobals.alreadyMultiprocessing = True
+        #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
+        #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
+        #     with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+        #         results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
+        #         assert len(results) == len(self.books)
+        #         for j,BBB in enumerate( self.books ):
+        #             self.discoveryResults[BBB] = results[j] # Saves them in the correct order
+        #     BibleOrgSysGlobals.alreadyMultiprocessing = False
+        # else: # Just single threaded
+        if 1: # Just single threaded
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, " " + _("Prechecking in single-threaded mode!") )
             for BBB in self.books: # Do individual book prechecks
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Prechecking {}…").format( BBB ) )
