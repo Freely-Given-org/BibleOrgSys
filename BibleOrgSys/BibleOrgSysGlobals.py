@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -88,6 +88,7 @@ Contains functions:
 CHANGELOG:
     2023-09-28 Fixed preloadCommonData() to not create new variables
     2023-10-11 Raised XMLError on XML errors (rather than halt)
+    2024-06-14 Print more info for failed pickles
 """
 from gettext import gettext as _
 from typing import List, Tuple, Optional, Union
@@ -113,7 +114,7 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2023-10-10' # by RJH
+LAST_MODIFIED_DATE = '2024-06-14' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
 PROGRAM_VERSION = '0.92'
@@ -718,8 +719,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines:int=1, encoding:
                     if lineNumber >= numLines: return lines # Return a list of lines
         except UnicodeDecodeError: # Could be binary or a different encoding
             #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-            thisLogger = logging.warning if DEBUGGING_THIS_MODULE or debugFlag else logging.info
-            thisLogger( f"{'BibleOrgSysGlobals.' if debugFlag else ''}peekIntoFile: Seems we couldn't decode '{tryEncoding}' in {filepath}" )
+            (logging.warning if DEBUGGING_THIS_MODULE or debugFlag else logging.info)( f"{'BibleOrgSysGlobals.' if debugFlag else ''}peekIntoFile: Seems we couldn't decode '{tryEncoding}' in {filepath}" )
 # end of BibleOrgSysGlobals.peekIntoFile
 
 
@@ -1137,8 +1137,7 @@ def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDic
     for subelement in element:
         errorString = "{}Unexpected {!r} XML sub-element ({}) in {}" \
                         .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString )
-        logger = logging.critical if subelement.text else logging.error
-        logger( errorString )
+        (logging.critical if subelement.text else logging.error)( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if strictCheckingFlag or debugFlag and errorOnXMLWarning:
             raise XMLError( f"Unexpected '{subelement.tag}' subelement @ '{locationString}'{' id='+idString if idString else ''}" )
@@ -1352,8 +1351,14 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
         try:
             pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
         except pickle.PicklingError as err:
-            logging.error( "BibleOrgSysGlobals: Unexpected error in pickleObject: {0} {1}".format( sys.exc_info()[0], err ) )
+            logging.critical( "BibleOrgSysGlobals: Unexpected error in pickleObject: {0} {1}".format( sys.exc_info()[0], err ) )
             logging.critical( "BibleOrgSysGlobals.pickleObject: Unable to pickle into {}".format( filename ) )
+            for k,v in theObject.__dict__.items(): # Adapted from https://stackoverflow.com/questions/30499341/establishing-why-an-object-cant-be-pickled
+                try: pickle.dumps(v)
+                except:
+                    badAttribute = k
+                    logging.critical( f"Can't pickle {badAttribute=} when pickling {type(v)} from {type(theObject)}" )
+                    # break
             return False
     return True
 # end of BibleOrgSysGlobals.pickleObject
@@ -1535,9 +1540,10 @@ def preloadCommonData() -> None:
     USFMParagraphMarkers.remove( 'qc' ) # Treat this like a heading marker also
     assert len(USFMParagraphMarkers) >= 32
     USFMCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList()
-    assert len(USFMCharacterMarkers) >= 40
+    assert 'qac' in USFMCharacterMarkers
+    assert len(USFMCharacterMarkers) >= 42
     USFMAllExpandedCharacterMarkers += loadedUSFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-    assert len(USFMAllExpandedCharacterMarkers) >= 64
+    assert len(USFMAllExpandedCharacterMarkers) >= 66
     internal_SFMs_to_remove += loadedUSFMMarkers.getCharacterMarkersList( includeBackslash=True, includeNestedMarkers=True, includeEndMarkers=True )
     assert len(internal_SFMs_to_remove) >= 160
     internal_SFMs_to_remove.sort( key=len, reverse=True ) # List longest first

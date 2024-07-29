@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2023 Robert Hunt
+# Copyright (C) 2014-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -110,7 +110,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2023-02-28' # by RJH
+LAST_MODIFIED_DATE = '2024-06-05' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
 PROGRAM_VERSION = '0.41'
@@ -471,7 +471,7 @@ class VPLBible( Bible ):
                         chapterNumberString, verseNumberString = CVString.split( ':' )
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {} bc={!r} c={!r} v={!r} txt={!r}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, vText ) )
                         if chapterNumberString == '': chapterNumberString = '1' # Handle a bug in some single chapter books in VPL
-                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
+                    else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of VPL1 bits", self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, len(bits), bits )
 
                     if not bookCodeText and not chapterNumberString and not verseNumberString:
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString ) )

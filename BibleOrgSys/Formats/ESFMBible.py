@@ -75,7 +75,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2024-04-19' # by RJH
+LAST_MODIFIED_DATE = '2024-06-14' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
 PROGRAM_VERSION = '0.76'
@@ -238,7 +238,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 # Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
-linkedWordRegex = re.compile( "([-¬A-za-z0-9,'’ḨŌⱤḩⱪşţʦĀĒāēéīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})" )
+linkedWordRegex = re.compile( "([-¬A-za-z0-9,'’ḨŌⱤḩⱪşţʦⱱĀĒāēéīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})" )
 
 class ESFMBible( Bible ):
     """
@@ -734,7 +734,7 @@ class ESFMBible( Bible ):
             originalText = originalText.replace( 'SSsupP', '\\sup ' ).replace( 'ESsupP', '\\sup*' ) # Restores our 'hidden' HTML markup
             if count > 0:
                 # print( f"  Now '{originalText}'")
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
+                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
                 # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] )
                 # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), originalText )
                 # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used

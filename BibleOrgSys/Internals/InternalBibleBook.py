@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2024-04-25' # by RJH
+LAST_MODIFIED_DATE = '2024-07-20' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -303,8 +303,7 @@ class InternalBibleBook:
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.__init__( {BBB} )" )
         self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         if isinstance( parameter1, str ):
-            logger = logging.warning if parameter1.startswith('NoneYet') else logging.critical
-            logger( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
+            (logging.warning if parameter1.startswith('NoneYet') else logging.critical)( "InternalBibleBook.constructor( {!r}, {} ): Not passed a containing Bible object".format( parameter1, BBB ) )
             self.containerBibleObject = None
             self.workName = parameter1
         else:
@@ -475,8 +474,7 @@ class InternalBibleBook:
         assert marker and isinstance( marker, str )
 
         if text and ( '\n' in text or '\r' in text ):
-            logger = logging.warning if self.objectTypeString=='uW Notes' else logging.critical
-            logger( f"InternalBibleBook.addLine found newLine in {self.objectTypeString} text: {marker}='{text}'" )
+            (logging.warning if self.objectTypeString=='uW Notes' else logging.critical)( f"InternalBibleBook.addLine found newLine in {self.objectTypeString} text: {marker}='{text}'" )
             if forceDebugHere or BibleOrgSysGlobals.debugFlag: halt
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag:
             assert not self._processedFlag
@@ -505,8 +503,7 @@ class InternalBibleBook:
                 if DEBUGGING_THIS_MODULE: halt # How did this happen?
 
         if text is None:
-            logger = logging.warning if marker in ('b',) else logging.critical
-            logger( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
+            (logging.warning if marker in ('b',) else logging.critical)( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: halt # Programming error in the calling routine, sorry
             text = '' # Try to recover
 
@@ -1280,7 +1277,8 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "exp", extras )
             #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
         if '|' in adjText: # this will become a problem
-            logging.critical( f"_processLineFix: {self.workName} {self.BBB}_{C}:{V} Why do we still have a vertical pipe in '{adjText}'\n  from '{text}'?" )
+            if '\\jmp ' not in adjText and '\\fig ' not in adjText and '\\rb ' not in adjText: # What about \w and \xt -- see https://ubsicap.github.io/usfm/attributes/index.html#character-markers-providing-attributes
+                logging.critical( f"_processLineFix: {self.workName} {self.BBB}_{C}:{V} Why do we still have a vertical pipe in '{adjText}'\n  from '{text}'?" )
             if self.workName == 'SR-GNT':
                 adjText = adjText.replace( 'Stone|Petros', 'Petros(Stone)' )
             if '|' in adjText \
@@ -1843,9 +1841,9 @@ class InternalBibleBook:
             elif markerContentType == 'N': # N = never, e.g., b, ib, nb
                 if text:
                     if marker == 'ts' and text=='*': # a common mistake
-                        logging.critical( f"_addNestingMarkers found badly formed \\ts\\* (milestone) marker '{marker}'='{text}' @ @ {self.workName} {self.BBB}_{C}:{V}" )
+                        logging.critical( f"_addNestingMarkers found badly formed \\ts\\* (milestone) marker '{marker}'='{text}' @ {self.workName} {self.BBB}_{C}:{V}" )
                     else:
-                        logging.critical( f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ @ {self.workName} {self.BBB}_{C}:{V}" )
+                        logging.critical( f"_addNestingMarkers did not expect text for marker '{marker}'='{text}' @ {self.workName} {self.BBB}_{C}:{V}" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Got {marker} @ {self.BBB}_{C}:{V} lastPMarker={lastPMarker}" )
                 for _safetyCount in range(999):
@@ -2992,7 +2990,8 @@ class InternalBibleBook:
                     chapterText = chapterText.split( None, 1)[0]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} chapter {}".format( self.BBB, chapterText ) )
                 chapterNumber = int( chapterText)
-                if chapterNumber != lastChapterNumber+1:
+                if chapterNumber != lastChapterNumber+1 \
+                and (lastChapterNumber!=-1 or chapterNumber!=1): # It's usual for chapter 1 to follow the introduction (chapter -1) without any chapter 0
                     versificationErrors.append( _("{} ('{}' after '{}') USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
                     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM chapter numbers out of sequence in {} Bible book {} ('{}' after '{}')").format( self.workName, self.BBB, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
@@ -3037,7 +3036,7 @@ class InternalBibleBook:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse range end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse range out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse range out of sequence in {} Bible book {} {} ({}-{})").format( self.workName, self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText) )
                 elif ',' in verseText: # we have a range like 7,8
@@ -3058,7 +3057,7 @@ class InternalBibleBook:
                         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid USFM verse list end {!r} in {!r} in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse list out of sequence in Bible book").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse list out of sequence in {} Bible book {} {} ({}-{})").format( self.workName, self.BBB, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText) )
                 else: # Should be just a single verse number
@@ -3068,7 +3067,7 @@ class InternalBibleBook:
                     verseNumber = int( verseNumberString )
                 except ValueError:
                     versificationErrors.append( _("{} {} {} Invalid verse number digits in Bible book").format( self.BBB, chapterText, verseNumberString ) )
-                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid verse number digits in Bible book {} {} {}").format( self.BBB, chapterText, verseNumberString ) )
+                    vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Invalid verse number digits in {} Bible book {} {} {}").format( self.workName, self.BBB, chapterText, verseNumberString ) )
                     newString = ''
                     for char in verseNumberString:
                         if char.isdigit(): newString = f'{newString}{char}'
@@ -3085,18 +3084,18 @@ class InternalBibleBook:
                 if verseNumber != lastVerseNumber+1:
                     if verseNumber <= lastVerseNumber:
                         versificationErrors.append( _("{} {} ('{}' after '{}') USFM verse numbers out of sequence in Bible book").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
-                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse numbers out of sequence in Bible book {} {} ('{}' after '{}')").format( self.BBB, chapterText, verseText, lastVerseNumberString ) )
+                        vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("USFM verse numbers out of sequence in {} Bible book {} {} ('{}' after '{}')").format( self.workName, self.BBB, chapterText, verseText, lastVerseNumberString ) )
                         reorderedVerses.append( (chapterText, lastVerseNumberString, verseText) )
                     else: # Must be missing some verse numbers
                         versificationErrors.append( _("{} {} Missing USFM verse number(s) between '{}' and '{}' in Bible book").format( self.BBB, chapterText, lastVerseNumberString, verseNumberString ) )
                         errorMsg = f"getVersification(): missing USFM verse number(s) between '{lastVerseNumberString}' and '{verseNumberString}' in Bible book {self.BBB} {chapterText}"
-                        if verseNumberString.isdigit(): vPrint( 'Normal', DEBUGGING_THIS_MODULE, errorMsg )
-                        else: logging.critical( errorMsg )
+                        if verseNumberString.isdigit(): vPrint( 'Info', DEBUGGING_THIS_MODULE, errorMsg )
+                        else: logging.error( errorMsg )
                         for number in range( lastVerseNumber+1, verseNumber ):
                             omittedVerses.append( (chapterText, str(number)) )
                 lastVerseNumberString = endVerseNumberString
                 if not lastVerseNumberString.isdigit():
-                    logging.critical( f"getVersification value for {self.BBB}_{chapterText} is not an integer: {lastVerseNumberString!r}" )
+                    logging.error( f"getVersification value for {self.BBB}_{chapterText} is not an integer: {lastVerseNumberString!r}" )
         assert (chapterText.isdigit() or chapterText=='-1') and lastVerseNumberString.isdigit(), f"getVersification not digits {self.workName} {self.BBB} {chapterText=} {verseText=} {lastVerseNumberString=}"
         versification.append( (chapterText, lastVerseNumberString) ) # Append the verse count for the final chapter
         #if reorderedVerses: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Reordered verses in", self.BBB, "are:", reorderedVerses )
@@ -3206,7 +3205,7 @@ class InternalBibleBook:
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if '|' in word or 'x-' in word: # Should never happen
-                        logging.critical( f"countWordsForDiscover({marker}, '{segment}', {location}) word content problem: {self.BBB}_{C}:{V} Got '{word}' from '{rawWord}'" )
+                        logging.error( f"countWordsForDiscover({marker}, '{segment}', {location}) word content problem: {self.BBB}_{C}:{V} Got '{word}' from '{rawWord}'" )
                         # '<p ' is for commentary with HTML entries
                         if not segment.startswith('<p ') \
                         and (BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE)):
@@ -5183,6 +5182,16 @@ class InternalBibleBook:
         # try:
         verseEntryList, contextList = self._CVIndex.getVerseEntriesWithContext( (C,V), strict, complete ) # Gives a KeyError if not found
         assert isinstance( verseEntryList, InternalBibleEntryList )
+
+        # # Check that we don't have any duplicated verses in the section that we're about to return
+        # lastV = None
+        # for entry in verseEntryList:
+        #     marker, text = entry.getMarker(), entry.getFullText()
+        #     print( f"InternalBibleBook.getContextVerseData {BCVReference} {marker}={text}" )
+        #     if marker == 'v':
+        #         assert text != lastV
+        #         lastV = text
+    
         return verseEntryList, contextList
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
@@ -5205,6 +5214,7 @@ class InternalBibleBook:
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
         assert self.BBB == startBCVReference[0] if isinstance( startBCVReference, tuple ) else startBCVReference.getBBB()
         assert self.BBB == endBCVReference[0] if isinstance( endBCVReference, tuple ) else endBCVReference.getBBB()
+        # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  InternalBibleBook.getContextVerseData  {startBCVReference} to {endBCVReference}) {strict=} for {self.workName} {self.BBB}" )
 
         verseEntryList, contextList = self.getContextVerseData( startBCVReference, strict=True )
         assert isinstance( verseEntryList, InternalBibleEntryList )
@@ -5215,21 +5225,23 @@ class InternalBibleBook:
         endC = endBCVReference[1] if isinstance( endBCVReference, tuple ) else endBCVReference.getC()
         endV = endBCVReference[2] if isinstance( endBCVReference, tuple ) else endBCVReference.getV()
 
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"Concatenating {self.workName} {self.BBB} from {startC}:{startV} to {endC}:{endV} {strict=}" )
+        # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData concatenating {self.workName} {self.BBB} from {startC}:{startV} to {endC}:{endV} {strict=}" )
         intC = int(startC)
         intV = getLeadingInt(startV) + 1 # Handles strings like '4b'
         endVint = getLeadingInt(endV)
         for _safetyCount in range( 1000 ): # Maximum number of expected verses in this chunk -- might be something big like '1Sam 16:1–1Ki 2:11'
-            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Looking for {C}:{V}" )
+            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  InternalBibleBook.getContextVerseData looking for {intC}:{intV}" )
             if intC > int(endC) \
             or (intC==int(endC) and intV > endVint):
                 break
-            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    Adding {C}:{V}" )
+            # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    InternalBibleBook.getContextVerseData adding {intC}:{intV}" )
             strC, strV = str(intC), str(intV)
             try:
                 thisVerseEntryList = self._CVIndex.getVerseEntries( (strC,strV), strict=False )
                 assert isinstance( thisVerseEntryList, InternalBibleEntryList )
+                verseEntryList += thisVerseEntryList
             except KeyError as kerr:
+                # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    InternalBibleBook.getContextVerseData got KeyError with {strC}:{strV}" )
                 if startC == '-1': # This is expected, because LV doesn't have intros, so endV will be excessive
                     assert endC == '-1'
                     assert intV > 0, f"{self.workName} {self.BBB} {startC}:{startV} {intV=}" # We should have got some lines
@@ -5244,24 +5256,34 @@ class InternalBibleBook:
                             # Try again with the first verse of the next chapter
                             thisVerseEntryList = self._CVIndex.getVerseEntries( (str(intC),'0'), strict=True )
                             assert isinstance( thisVerseEntryList, InternalBibleEntryList )
+                            verseEntryList += thisVerseEntryList
                         else:
                             if not strict:
                                 logging.critical( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}) for {self.workName} {self.BBB} failed at {strC}:{strV}")
                                 halt
                                 break # return what we've got
                             raise kerr
-                    else:
+                    else: # we're only doing one chapter
                         if strict:
                             raise kerr
                         else: # Log it, but continue looping
                             logging.critical( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}, {strict=}) for {self.workName} {self.BBB} failed to find {strC}:{strV}")
-            verseEntryList += thisVerseEntryList
             intV += 1
         else:
             loop_safety_counter_too_small
 
-        assert isinstance( verseEntryList, InternalBibleEntryList )
-        assert isinstance( contextList, list )
+        if DEBUGGING_THIS_MODULE:
+            assert isinstance( verseEntryList, InternalBibleEntryList )
+            assert isinstance( contextList, list )
+            # Check that we don't have any duplicated verses in the section that we're about to return
+            lastV = None
+            for entry in verseEntryList:
+                if entry.getMarker() == 'v':
+                    text = entry.getFullText()
+                    print( f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}, {strict=}) for {self.workName} {self.BBB} v={text}" )
+                    assert text != lastV, f"InternalBibleBook.getContextVerseData( {startBCVReference} to {endBCVReference}, {strict=}) for {self.workName} {self.BBB} REPEATED v={text}"
+                    lastV = text
+
         return verseEntryList, contextList
     # end of InternalBibleBook.getContextVerseDataRange
 

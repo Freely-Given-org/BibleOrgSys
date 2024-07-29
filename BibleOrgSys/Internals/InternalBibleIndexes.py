@@ -89,10 +89,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 
 
-LAST_MODIFIED_DATE = '2024-04-20' # by RJH
+LAST_MODIFIED_DATE = '2024-07-20' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.92'
+PROGRAM_VERSION = '0.93'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -425,7 +425,7 @@ class InternalBibleBookCVIndex:
         assert isinstance( C, str )
         try: firstIndexEntry = self.__indexData[(C,'0')]
         except KeyError as err:
-            logging.critical( f"getChapterEntriesWithContext {self.workName} couldn't get {self.BBB} ({C},0){f' from {self.__indexData.keys()}' if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag else ''}")
+            (logging.warning if C=='0' else logging.error)( f"getChapterEntriesWithContext {self.workName} couldn't get {self.BBB} ({C},0){f' from {self.__indexData.keys()}' if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag else ''}")
             raise err
         try:
             nextIndexEntry = self.__indexData[(str(int(C)+1),'0')]
@@ -692,8 +692,7 @@ class InternalBibleBookCVIndex:
                     errorDataString += (' ' if lastC is None else '; ') + C + ':'
                     lastC = C
                 errorDataString += ('' if errorDataString[-1]==':' else ',') + V
-            thisLogger = logging.warning if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag else logging.info
-            thisLogger( f"makeBookCVIndex._saveAnyOutstandingCV: Needed to combine multiple index entries for {errorDataString}" )
+            (logging.warning if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag else logging.info)( f"makeBookCVIndex._saveAnyOutstandingCV: Needed to combine multiple index entries for {errorDataString}" )
 
         # Now calculate the contextMarkerList for each CV entry and create the proper (full) InternalBibleBookCVIndexEntries
         contextMarkerList = []
@@ -1113,7 +1112,7 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.items
 
 
-    def getSectionEntries( self, keyStartCVDuple:Tuple[str,str] ):
+    def getSectionEntries( self, keyStartCVDuple:Tuple[str,str] ) -> InternalBibleEntryList:
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this section.
 
@@ -1124,7 +1123,7 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.getVerseEntries
 
 
-    def getSectionEntriesWithContext( self, keyStartCVDuple:Tuple[str,str] ) -> tuple:
+    def getSectionEntriesWithContext( self, keyStartCVDuple:Tuple[str,str] ) -> Tuple[InternalBibleEntryList,List[str]]:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this section,
@@ -1140,7 +1139,19 @@ class InternalBibleBookSectionIndex:
         # print( f" end={self._givenBibleEntries[indexEntry.getEndIndex()]}")
         # print( f" end+1={self._givenBibleEntries[indexEntry.getEndIndex()+1]}")
         # print( f"{self._givenBibleEntries[indexEntry.getStartIndex():indexEntry.getEndIndex()]}")
-        return self._givenBibleEntries[indexEntry.getStartIndex():indexEntry.getEndIndex()+1], indexEntry.getContextList()
+        verseEntryList,contextList = self._givenBibleEntries[indexEntry.getStartIndex():indexEntry.getEndIndex()+1], indexEntry.getContextList()
+
+        if DEBUGGING_THIS_MODULE:
+            # Check that we don't have any duplicated verses in the section that we're about to return
+            lastV = None
+            for entry in verseEntryList:
+                if entry.getMarker() == 'v':
+                    vText = entry.getFullText()
+                    print( f"getSectionEntriesWithContext v={vText}" )
+                    assert vText != lastV
+                    lastV = vText
+    
+        return verseEntryList,contextList
     # end of InternalBibleBookSectionIndex.getVerseEntriesWithContext
 
 

@@ -5,7 +5,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2015-2022 Robert Hunt
+# Copyright (C) 2015-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -70,7 +70,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2022-06-04' # by RJH
+LAST_MODIFIED_DATE = '2024-06-05' # by RJH
 SHORT_PROGRAM_NAME = "ForgeForSwordSearcherBible"
 PROGRAM_NAME = "Forge for SwordSearcher Bible format handler"
 PROGRAM_VERSION = '0.38'
@@ -357,7 +357,7 @@ class ForgeForSwordSearcherBible( Bible ):
                                     if not BBB: BBB = BOS81.getBBBFromText( bookCode )  # Try to guess
                                     if not BBB: BBB = BOSx.getBBBFromText( bookCode )  # Try to guess
                                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "4BBB =", repr(BBB) )
-                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
+                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of Forge bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
                     continue # Just save the pointer information which refers to the text on the next line
                 else: # it's not a $$ line
                     text = line

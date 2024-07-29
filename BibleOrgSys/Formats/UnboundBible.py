@@ -5,7 +5,7 @@
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013-2020 Robert Hunt
+# Copyright (C) 2013-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -100,7 +100,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2020-04-12' # by RJH
+LAST_MODIFIED_DATE = '2024-06-05' # by RJH
 SHORT_PROGRAM_NAME = "UnboundBible"
 PROGRAM_NAME = "Unbound Bible format handler"
 PROGRAM_VERSION = '0.29'
@@ -308,7 +308,7 @@ class UnboundBible( Bible ):
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
                     logging.warning( _("Skipping bad {!r} line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Unexpected number of Unbound bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
                 if NRSVA_bookCode: assert len(NRSVA_bookCode) == 3
                 if NRSVA_chapterNumberString: assert NRSVA_chapterNumberString.isdigit()

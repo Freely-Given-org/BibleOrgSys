@@ -85,10 +85,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2024-04-26' # by RJH
+LAST_MODIFIED_DATE = '2024-06-14' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.90'
+PROGRAM_VERSION = '0.91'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -978,7 +978,7 @@ class InternalBible:
     def pickle( self, filename:str=None, folderpath=None ) -> bool:
         """
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
-            If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
+            If folderpath is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
             Created the folder(s) if necessary.
 
         Returns a True/False flag for success.
@@ -992,20 +992,31 @@ class InternalBible:
             filename = self.objectTypeString
         if BibleOrgSysGlobals.debugFlag:
             assert filename
-            assert not filename.endswith( '.pickle' )
-        filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
+            # assert not filename.endswith( '.pickle' )
+        if not filename.endswith( '.pickle' ):
+            filename = f'{BibleOrgSysGlobals.makeSafeFilename( filename )}.pickle'
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("pickle: Saving {} to {}…") \
                 .format( self.objectNameString, filename if folderpath is None else os.path.join( folderpath, filename ) ) )
+        
+        try: del self.XMLTree # No need to hold onto this XML source code
+        except AttributeError: pass
+        try: del self.genericBOS # This is unpicklable for some reason
+        except AttributeError: pass
+            # CRITICAL: BibleOrgSysGlobals: Unexpected error in pickleObject: <class '_pickle.PicklingError'> Can't pickle <class 'BibleOrgSys.Reference.BibleBooksNames.BibleBooksNamesSystems'>: it's not the same object as BibleOrgSys.Reference.BibleBooksNames.BibleBooksNamesSystems
+            # CRITICAL: Can't pickle badAttribute='books' when pickling <class 'dict'> from <class 'BibleOrgSys.Formats.ZefaniaXMLBible.ZefaniaXMLBible'>
+            # CRITICAL: Can't pickle badAttribute='genericBOS' when pickling <class 'BibleOrgSys.Reference.BibleOrganisationalSystems.BibleOrganisationalSystem'> from <class 'BibleOrgSys.Formats.ZefaniaXMLBible.ZefaniaXMLBible'>
+
         try: pResult = BibleOrgSysGlobals.pickleObject( self, filename, folderpath )
         except TypeError: # Could be a yet undebugged SWIG error
             pResult = False
             errorClass, exceptionInstance, traceback = sys.exc_info()
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{!r}  {!r}  {!r}'.format( errorClass, exceptionInstance, traceback ) )
+            logging.critical( f"{errorClass=}  {exceptionInstance=}  {traceback=}" )
             if 'SwigPyObject' in str(exceptionInstance):
-                logging.critical( _("SWIG binding error when pickling {} Bible") \
-                    .format( self.getAName( abbrevFirst=True ) ) ) # Ignore errors
+                logging.critical( f"SWIG binding error when pickling {self.getAName( abbrevFirst=True )} Bible" )
+                # Ignore errors
             else: # it's some other attribute error in the loadBook function
                 raise
+
         return pResult
     # end of InternalBible.pickle
 
@@ -2369,7 +2380,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
-            verseData, context = result
+            verseData, _context = result
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "gVT", self.name, BCVReference, verseData )
             assert isinstance( verseData, InternalBibleEntryList )
             #if BibleOrgSysGlobals.debugFlag: assert 1 <= len(verseData) <= 5
@@ -2395,8 +2406,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 elif marker == 'v~': verseText += cleanText
                 elif marker == 'p~': verseText += cleanText
                 elif marker == 'vw':
-                    if not firstWord: verseText += ' '
-                    verseText += cleanText
+                    verseText = f"{verseText}{'' if firstWord else ' '}{cleanText}"
                     firstWord = False
                 else: logging.warning( f"InternalBible.getVerseText Unknown marker '{marker}'='{cleanText}'" )
             return verseText

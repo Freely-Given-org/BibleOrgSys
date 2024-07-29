@@ -1,6 +1,6 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Last modified: 2022-02-20 by RJH
-#   Version 0.84
+#   Last modified: 2024-06-30 by RJH
+#   Version 0.85
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksCodes.rnc ../derivedFormats/BibleBooksCodes.rng
@@ -59,7 +59,9 @@ BibleBookCodes = element BibleBookCodes
     element USFMNumber { xsd:string { length="2" } }?,
     element USXNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="123" } }?,
     element UnboundCode { xsd:string { length="3" } }?,
-    element BibleditNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
+    element BibleditNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="88" } }?,
+    element LogosNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="87" } }?,
+    element LogosAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
     element DrupalBibleAbbreviation { xsd:string { minLength="2" maxLength="3" } }?,
     element BibleWorksAbbreviation { xsd:string { length="3" } }?,

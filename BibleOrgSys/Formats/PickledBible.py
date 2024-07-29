@@ -5,7 +5,7 @@
 #
 # Module handling a set of pickled Bible books (intended for fast loading)
 #
-# Copyright (C) 2018-2023 Robert Hunt
+# Copyright (C) 2018-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,10 +66,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
-LAST_MODIFIED_DATE = '2023-02-16' # by RJH
+LAST_MODIFIED_DATE = '2024-06-13' # by RJH
 SHORT_PROGRAM_NAME = "PickledBible"
 PROGRAM_NAME = "Pickle Bible handler"
-PROGRAM_VERSION = '0.18'
+PROGRAM_VERSION = '0.19'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -894,8 +894,7 @@ def briefDemo() -> None:
                     somepath = os.path.join( testFolder, something )
                     if not something.endswith( ZIPPED_PICKLE_FILENAME_END ):
                         # Could be a DBL.zip file or something
-                        logger = logging.warning if something.endswith(DBL_FILENAME_END) else logging.error
-                        logger( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
+                        (logging.warning if something.endswith(DBL_FILENAME_END) else logging.error)( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
@@ -919,8 +918,7 @@ def briefDemo() -> None:
                     somepath = os.path.join( testFolder, something )
                     if not something.endswith( ZIPPED_PICKLE_FILENAME_END ):
                         # Could be a DBL.zip file or something
-                        logger = logging.warning if something.endswith(DBL_FILENAME_END) else logging.error
-                        logger( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
+                        (logging.warning if something.endswith(DBL_FILENAME_END) else logging.error)( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
@@ -1102,8 +1100,7 @@ def fullDemo() -> None:
                     somepath = os.path.join( testFolder, something )
                     if not something.endswith( ZIPPED_PICKLE_FILENAME_END ):
                         # Could be a DBL.zip file or something
-                        logger = logging.warning if something.endswith(DBL_FILENAME_END) else logging.error
-                        logger( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
+                        (logging.warning if something.endswith(DBL_FILENAME_END) else logging.error)( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )
@@ -1125,8 +1122,7 @@ def fullDemo() -> None:
                     somepath = os.path.join( testFolder, something )
                     if not something.endswith( ZIPPED_PICKLE_FILENAME_END ):
                         # Could be a DBL.zip file or something
-                        logger = logging.warning if something.endswith(DBL_FILENAME_END) else logging.error
-                        logger( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
+                        (logging.warning if something.endswith(DBL_FILENAME_END) else logging.error)( "PickledBible: "+_("Skipping non-BOS-pickle file: {}").format( somepath ) )
                         continue
                     abbrev = something.split('.',1)[0]
                     pBible = PickledBible( somepath )

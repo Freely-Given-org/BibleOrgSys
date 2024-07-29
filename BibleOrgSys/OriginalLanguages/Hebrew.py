@@ -5,7 +5,7 @@
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2021 Robert Hunt
+# Copyright (C) 2011-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,10 +39,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2021-02-19' # by RJH
+LAST_MODIFIED_DATE = '2024-05-27' # by RJH
 SHORT_PROGRAM_NAME = "Hebrew"
 PROGRAM_NAME = "Hebrew language handler"
-PROGRAM_VERSION = '0.09'
+PROGRAM_VERSION = '0.15'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -150,23 +150,22 @@ sofPasuq = '׃'
 # These substitutions are executed in the order given
 #   (so longer sequences should precede shorter ones)
 BOS_HEBREW_TRANSLITERATION = (
-            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
-            (dalet+dageshOrMapiq,'d'),(dalet,'d'),
+            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'ⱱ'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
+            (dalet+dageshOrMapiq,'dd'),(dalet,'d'),
             (he+dageshOrMapiq,'h'),(he+qamats,'āh'),(he,'h'),
             (waw+dageshOrMapiq,'u'),(waw+dageshOrMapiq,'ō'),(waw,'v'),
-            (zayin+dageshOrMapiq,'z'),(zayin,'z'),
+            (zayin+dageshOrMapiq,'zz'),(zayin,'z'),
             (het+dageshOrMapiq,'ħ'),(het,'ħ'), (tet+dageshOrMapiq,'ŧ'),(tet,'ŧ'),
-            (yod+dageshOrMapiq,'u'),(yod,'y'), (kaf+dageshOrMapiq,'k'),(kaf,'k'),
-            (lamed+dageshOrMapiq,'l'),(lamed,'l'),
-            (mem+dageshOrMapiq,'m'),(mem,'m'), (memFinal+dageshOrMapiq,'m'),(memFinal,'m'),
-            (nun+dageshOrMapiq,'n'),(nun,'n'), (nunFinal+dageshOrMapiq,'n'),(nunFinal,'n'),
+            (yod+dageshOrMapiq,'u'),(yod,'y'), (kaf+dageshOrMapiq,'kk'),(kaf,'k'),
+            (lamed+dageshOrMapiq,'ll'),(lamed,'l'),
+            (mem+dageshOrMapiq,'mm'),(mem,'m'), (memFinal+dageshOrMapiq,'mm'),(memFinal,'m'),
+            (nun+dageshOrMapiq,'nn'),(nun,'n'), (nunFinal+dageshOrMapiq,'nn'),(nunFinal,'n'),
             (samekh+dageshOrMapiq,'ş'),(samekh,'ş'), (ayin+dageshOrMapiq,''),(ayin,''),
             (pe+dageshOrMapiq,'p'),(pe,'f'),
-            (tsadi+dageshOrMapiq,'ʦ'),(tsadi,'ʦ'), (tsadiFinal+dageshOrMapiq,'ʦ'),(tsadiFinal,'ʦ'),
-            (qof+dageshOrMapiq,'q'),(qof,'q'), (qofFinal+dageshOrMapiq,'q'),(qofFinal,'q'),
-            (resh+dageshOrMapiq,'r'),(resh,'r'),
-            (sinShin+shinDot,'sh'),(sinShin+sinDot,'s'), (taw+dageshOrMapiq,'t'),(taw,'t'),
-            (resh+dageshOrMapiq,'r'),(resh,'r'),
+            (tsadi+dageshOrMapiq,'ʦʦ'),(tsadi,'ʦ'), (tsadiFinal+dageshOrMapiq,'ʦʦ'),(tsadiFinal,'ʦ'),
+            (qof+dageshOrMapiq,'qq'),(qof,'q'), (qofFinal+dageshOrMapiq,'qq'),(qofFinal,'q'),
+            (resh+dageshOrMapiq,'rr'),(resh,'r'),
+            (sinShin+shinDot,'sh'),(sinShin+sinDot,'s'), (taw+dageshOrMapiq,'tt'),(taw,'t'),
             (sheva,'(ə)'),(hatafSegol,'e'),(segol,'e'),(hiriq,'i'),(tsere,'ē'),(patah,'a'),(qamats,'ā'),(holam,'o'),(qubuts,'u'),
             #sheva = 'ְ'
             #hatafSegol = 'ֱ'
@@ -221,7 +220,7 @@ STANDARD_HEBREW_TRANSLITERATION = (
             (maqaf,'-'), (sofPasuq,'.'),
             )
 BOS_NAMES_HEBREW_TRANSLITERATION = (
-            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'v'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
+            (alef,''), (bet+dageshOrMapiq,'b'),(bet,'ⱱ'), (gimel+dageshOrMapiq,'g'),(gimel,'g'),
             (dalet+dageshOrMapiq,'d'),(dalet,'d'),
             (he+dageshOrMapiq,'h'),(he+qamats,'ah'),(he,'h'),
             (waw+dageshOrMapiq,'u'),(waw+dageshOrMapiq,'ō'),(waw,'v'),
@@ -401,26 +400,36 @@ class Hebrew():
     # end of Hebrew._removeMetegOrSiluq
 
 
-    def removeCantillationMarks( self, text=None, removeMetegOrSiluq=False ) -> str:
+    def removeCantillationMarks( self, givenText=None, removeMetegOrSiluq=False ) -> str:
         """
         Return the text with cantillation marks removed.
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeMetegOrSiluq( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
-        if text is None: # Use our own text
+        if givenText is None: # Use our own text
             self.currentText = self.removeCantillationMarks( self.currentText, removeMetegOrSiluq ) # recursive call
+            if 1 or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+                for char in self.currentText:
+                    # print( f"{ord(char)=} {unicodedata.name(char)=} {char=} {unicodedata.category(char)=} {unicodedata.bidirectional(char)=} {unicodedata.combining(char)=} {unicodedata.mirrored(char)=}" )
+                    assert 'ACCENT' not in unicodedata.name(char), f"{unicodedata.name(char)=}"
             return self.currentText
 
         # else we were given some text to process
-        if removeMetegOrSiluq: text = self._removeMetegOrSiluq( text, asVowel=False )
-        for cantillationMark in cantillationMarks: text = text.replace(cantillationMark, '')
-        return text
+        adjustedText = givenText
+        if removeMetegOrSiluq: adjustedText = self._removeMetegOrSiluq( adjustedText, asVowel=False )
+        for cantillationMark in cantillationMarks:
+            adjustedText = adjustedText.replace(cantillationMark, '')
+        if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+            for char in adjustedText:
+                # print( f"{ord(char)=} {unicodedata.name(char)=} {char=} {unicodedata.category(char)=} {unicodedata.bidirectional(char)=} {unicodedata.combining(char)=} {unicodedata.mirrored(char)=}" )
+                assert 'ACCENT' not in unicodedata.name(char), f"{unicodedata.name(char)=} {givenText=} {adjustedText=}"
+        return adjustedText
     # end of Hebrew.removeCantillationMarks
 
 
     def removeVowelPointing( self, text=None, removeMetegOrSiluq=False ) -> str:
         """
-        Return the text with cantillation marks removed.
+        Return the text with vowel pointing removed.
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeVowelPointing( {!r}, {} )".format( text, removeMetegOrSiluq ) )
 
@@ -434,9 +443,10 @@ class Hebrew():
     # end of Hebrew.removeVowelPointing
 
 
-    def removeOtherMarks( self, text:Optional[str]=None ) -> str:
+    def removeOtherMarks( self, text=None, removeSinShinDots=True ) -> str:
         """
-        Return the text with other marks (like sin/shin marks) and any remaining metegOrSiluq removed.
+        Return the text with other marks (like dagesh and sin/shin marks if required)
+            and any remaining metegOrSiluq removed.
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeOtherMarks( {!r} )".format( text ) )
 
@@ -445,7 +455,9 @@ class Hebrew():
             return self.currentText
         # else we were given some text to process
         text = self.removeAllMetegOrSiluq( text )
-        for otherMark in otherMarks: text = text.replace(otherMark, '')
+        for otherMark in otherMarks:
+            if removeSinShinDots or otherMark not in (sinDot, shinDot):
+                text = text.replace(otherMark, '')
         return text
     # end of Hebrew.removeOtherMarks
 

@@ -5,7 +5,7 @@
 #
 # Module handling comma-separated-values text Bible files
 #
-# Copyright (C) 2014-2023 Robert Hunt
+# Copyright (C) 2014-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -67,7 +67,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-05-30' # by RJH
+LAST_MODIFIED_DATE = '2024-06-05' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
 PROGRAM_VERSION = '0.35'
@@ -315,7 +315,7 @@ class CSVBible( Bible ):
                     assert CV.count( ':' ) == 1
                     chapterNumberString, verseNumberString = CV.split( ':' )
                 else:
-                    logging.critical( "Unexpected number of bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, booknameString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
+                    logging.critical( "Unexpected number of CSV bits {} {} {} {}:{} {!r} {} {}".format( self.givenName, BBB, booknameString, chapterNumberString, verseNumberString, vText, len(bits), bits ) )
 
                 # Remove quote marks from these strings
                 if quoted:

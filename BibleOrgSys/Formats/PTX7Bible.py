@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial Paratext 7 Bibles
     along with any enclosed metadata.
 
 On typical Windows installations, Paratext 7 projects are in folders inside
-    'C:\My Paratext Projects' and contain the project settings information
+    'C:\\My Paratext Projects' and contain the project settings information
     in a .SSF (XML) file in the above folder (not in the project folder).
 
 The Paratext 7 Bible (PTX7Bible) object contains USFM 2 BibleBooks.

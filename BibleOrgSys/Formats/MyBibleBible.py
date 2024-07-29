@@ -5,7 +5,7 @@
 #
 # Module handling "MyBible" Bible module files
 #
-# Copyright (C) 2016-2023 Robert Hunt
+# Copyright (C) 2016-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -102,7 +102,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2023-10-25' # by RJH
+LAST_MODIFIED_DATE = '2024-06-05' # by RJH
 SHORT_PROGRAM_NAME = "MyBibleBible"
 PROGRAM_NAME = "MyBible Bible format handler"
 PROGRAM_VERSION = '0.24'
@@ -441,7 +441,7 @@ class MyBibleBible( Bible ):
                             if attempt == 1: pass
                             else: halt
                 else:
-                    raise ValueError( f"Unexpected number of columns in BOOKS_ALL table row: {len(row)}" )
+                    raise ValueError( f"Unexpected number of columns in MyBible BOOKS_ALL table row: {len(row)}" )
                 if BibleOrgSysGlobals.debugFlag: assert bookNumber in BOOKNUMBER_TABLE
                 if len(rows) == 66: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( j+1 )
                 else:

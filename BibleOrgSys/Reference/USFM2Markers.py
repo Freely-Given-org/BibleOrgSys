@@ -777,7 +777,7 @@ def briefDemo() -> None:
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
-                 '\\v 7 \\wj \+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
+                 '\\v 7 \\wj \\+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
                  ):
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text {!r} got markers:".format( text ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
@@ -788,7 +788,7 @@ def briefDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
-    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
+    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \\wj \\wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
@@ -849,7 +849,7 @@ def fullDemo() -> None:
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
-                 '\\v 7 \\wj \+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
+                 '\\v 7 \\wj \\+nd Jesus said \\+add this \\+em nested\\+em*\\+add*\\+nd* \\+bd 3 levels\\+bd*.\\wj* maybe.'
                  ):
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text {!r} got markers:".format( text ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
@@ -860,7 +860,7 @@ def fullDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
-    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
+    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \\wj \\wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nFor text: {!r}".format( text ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )

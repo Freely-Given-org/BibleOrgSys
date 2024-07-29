@@ -5,7 +5,7 @@
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2022 Robert Hunt
+# Copyright (C) 2012-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,6 +24,9 @@
 
 """
 Module handling USX Bible book xml to parse and load as an internal Bible book.
+
+CHANGELOG:
+    2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
 """
 from gettext import gettext as _
 from typing import List
@@ -42,10 +45,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2024-06-11' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleBookHandler"
 PROGRAM_NAME = "USX XML Bible book handler"
-PROGRAM_VERSION = '0.27'
+PROGRAM_VERSION = '0.28'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -212,7 +215,7 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            fnPrint( DEBUGGING_THIS_MODULE, "loadCharField( {}, {} @ {} {}:{} )".format( charElement.tag, charLocation, self.BBB, C, V ) )
+            fnPrint( DEBUGGING_THIS_MODULE, f"loadCharField( {charElement.tag=}, {charLocation=} @ {self.BBB}_{C}:{V} )" )
             assert charElement.tag == 'char'
 
             # Process the attributes first
@@ -228,15 +231,15 @@ class USXXMLBibleBook( BibleBook ):
                 else:
                     logging.error( _("QU52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-            if BibleOrgSysGlobals.isBlank( charElement.text): charLine = '\\{} '.format( charStyle )
-            else: charLine = '\\{} {}'.format( charStyle, charElement.text )
+            charLine = f"\\{charStyle} {'' if BibleOrgSysGlobals.isBlank( charElement.text) else charElement.text}"
             assert '\n' not in charLine
 
             # Now process the subelements -- chars are one of the few multiply embedded fields in USX
             for subelement in charElement:
-                sublocation = subelement.tag + ' ' + location
+                sublocation = f'{subelement.tag} {location}'
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '{} {}:{} {}'.format( self.BBB, C, V, charElement.tag ) )
                 if subelement.tag == 'char': # milestone (not a container)
+                    # print( f"RECURSIVE {sublocation=} {subelement=}" )
                     charLine += loadCharField( subelement, sublocation ) # recursive call
                 elif subelement.tag == 'ref':
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ref", BibleOrgSysGlobals.elementStr( subelement ) )
@@ -281,8 +284,8 @@ class USXXMLBibleBook( BibleBook ):
                 assert '\n' not in charLine
                 assert '\n' not in charStyle
                 assert '\n' not in charTail
-            charLine += charTail
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB}_{C}:{V} {charStyle} {charLine!r}" )
+            charLine = f'{charLine}{charTail}'
+            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"USX.loadCharField: {self.BBB}_{C}:{V} {charStyle=} {charLine=}" )
             assert '\n' not in charLine
             # assert ' \\bk*' not in charLine
             return charLine
@@ -297,8 +300,8 @@ class USXXMLBibleBook( BibleBook ):
 
             Results the result as a string (to be appended to whatever came before)
             """
-            fnPrint( DEBUGGING_THIS_MODULE, "loadNoteField( {}, {} @ {} {} {}:{} )".format( noteElement.tag, noteLocation, self.workName, self.BBB, C, V ) )
-            dPrint( 'Never', DEBUGGING_THIS_MODULE, "  {}".format( BibleOrgSysGlobals.elementStr( noteElement ) ) )
+            fnPrint( DEBUGGING_THIS_MODULE, f"loadNoteField( {noteElement.tag}, {noteLocation} @ {self.workName} {self.BBB}_{C}:{V} )" )
+            # dPrint( 'Never', DEBUGGING_THIS_MODULE, f"  {BibleOrgSysGlobals.elementStr( noteElement )=}" )
             assert noteElement.tag == 'note'
 
             # Process the attributes first
@@ -326,10 +329,10 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the subelements -- notes are one of the few multiply embedded fields in USX
             for subelement in noteElement:
                 sublocation = subelement.tag + ' ' + noteLocation
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, C, V, subelement.tag, repr(noteField) )
+                # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Note subelement {self.BBB}_{C}:{V} {subelement.tag=} {noteField=}" )
                 if subelement.tag == 'char': # milestone (not a container)
-                    noteCharField = loadCharField( subelement, sublocation )
-                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "noteCharField: {!r}".format( noteCharField ) )
+                    noteCharField = loadCharField( subelement, sublocation ) # Handles the tail
+                    # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  loadCharField() returned {noteCharField=}" )
                     noteField += noteCharField
                 elif subelement.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
@@ -343,12 +346,13 @@ class USXXMLBibleBook( BibleBook ):
                             logging.error( _("NV21 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
                     self.addPriorityError( 2, C, V, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
+                    if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
                 else:
                     logging.error( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, C, V, sublocation ) )
                     self.addPriorityError( 1, C, V, _("Unprocessed {} subelement").format( subelement.tag ) )
                     if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.haltOnXMLWarning: halt
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BibleOrgSysGlobals.isBlank( subelement.tail ), repr(subelement.tail), repr(noteField) )
-                if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
+                    if not BibleOrgSysGlobals.isBlank( subelement.tail ): noteField += subelement.tail
+                # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Note subelement {self.BBB}_{C}:{V} {BibleOrgSysGlobals.isBlank( subelement.tail )=} {subelement.tail=} {noteField=}" )
                 if self.doExtraChecking: assert '\n' not in noteField
             noteField += '\\{}*'.format( noteStyle )
 

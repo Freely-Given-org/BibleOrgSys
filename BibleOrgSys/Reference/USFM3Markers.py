@@ -5,7 +5,7 @@
 #
 # Module handling Unified Standard Format Markers (USFMs)
 #
-# Copyright (C) 2011-2023 Robert Hunt
+# Copyright (C) 2011-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,6 +34,7 @@ Contains the singleton class: USFM3Markers
 
 CHANGELOG:
     2022-07-31 moved 'qc' marker from paragraphs to headings
+    2024-06-07 Added qac (ACROSTIC VERSE) character marker to getCharacterMarkersList()
 """
 from gettext import gettext as _
 from typing import List, Optional
@@ -50,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-10-12' # by RJH
+LAST_MODIFIED_DATE = '2024-06-07' # by RJH
 SHORT_PROGRAM_NAME = "USFM3Markers"
 PROGRAM_NAME = "USFM3 Markers handler"
-PROGRAM_VERSION = '0.13'
+PROGRAM_VERSION = '0.14'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -523,7 +524,7 @@ class USFM3Markers:
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, marker, self.markerOccursIn(marker) )
-            if self.markerOccursIn(marker) in ('Text','Canonical Text','Poetry','Table row','Introduction','Numbering'):
+            if self.markerOccursIn(marker) in ('Text','Canonical Text','Poetry','Table row','Introduction','Numbering','Acrostic verse'):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
                 if includeNestedMarkers:

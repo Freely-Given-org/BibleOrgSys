@@ -36,6 +36,7 @@ and then these optional fields (optional because not all systems handle the less
     The 1-2 digit Bibledit ID number
     The Faithlife Logos ID number (Can be used online as n in ref.ly/logosref/bible.n)
         These were obtained from https://github.com/Clear-Bible/Biblelib/blob/main/biblelib/books/books.tsv
+    The 2-7 character Logos abbreviation from https://wiki.logos.com/COM_API_Bible_Book_Abbreviations
     The three-character NET Bible abbreviation
     The three-character DrupalBible abbreviation
     The 2-4 character Bible abbreviation used for the Robinson-Pierpont Byzantine Greek text
@@ -99,7 +100,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
                 <!ELEMENT rights (#PCDATA)>
         <!ELEMENT BibleBookCodes (originalLanguageCode, bookName,bookNameEnglishGuide,referenceAbbreviation,referenceNumber,sequenceNumber,expectedChapters?,
                         shortAbbreviation?,SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,USFMAbbreviation?,USFMNumber?,
-                        USXNumber?,UnboundCode?,BibleditNumber?,LogosNumber?,
+                        USXNumber?,UnboundCode?,BibleditNumber?,
+                        LogosNumber?,LogosAbbreviation?,
                         NETBibleAbbreviation?,DrupalBibleAbbreviation?,
                         BibleWorksAbbreviation?, ByzantineAbbreviation?,
                         possibleAlternativeAbbreviations?,possibleAlternativeBooks?,consistsOfBooks?,
@@ -122,6 +124,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
             <!ELEMENT UnboundCode (#PCDATA)>
             <!ELEMENT BibleditNumber (#PCDATA)>
             <!ELEMENT LogosNumber (#PCDATA)>
+            <!ELEMENT LogosAbbreviation (#PCDATA)>
             <!ELEMENT NETBibleAbbreviation (#PCDATA)>
             <!ELEMENT DrupalBibleAbbreviation (#PCDATA)>
             <!ELEMENT BibleWorksAbbreviation (#PCDATA)>
@@ -137,8 +140,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.88</version>
-      <date>2023-10-10</date>
+      <version>0.89</version>
+      <date>2024-06-30</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">https://ubsicap.github.io/usfm/identification/books.html</identifier>
@@ -152,6 +155,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
       <identifier type="URL">http://unbound.biola.edu/index.cfm?method=unbound.showFAQ&amp;faq_name=Bible_Index_Codes</identifier>
       <identifier type="URL">http://www.bibleworks.com/bw9help/bwh42_Abbreviations.htm</identifier>
       <identifier type="URL">https://github.com/Clear-Bible/Biblelib/blob/main/biblelib/books/books.tsv</identifier>
+      <identifier type="URL">https://wiki.logos.com/COM_API_Bible_Book_Abbreviations</identifier>
       <rights>Public Domain</rights>
     </work>
   </header>
@@ -176,6 +180,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>01O</UnboundCode>
     <BibleditNumber>1</BibleditNumber>
     <LogosNumber>1</LogosNumber>
+    <LogosAbbreviation>Ge</LogosAbbreviation>
     <NETBibleAbbreviation>Gen</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Gen</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>GEN</BibleWorksAbbreviation>
@@ -202,6 +207,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>02O</UnboundCode>
     <BibleditNumber>2</BibleditNumber>
     <LogosNumber>2</LogosNumber>
+    <LogosAbbreviation>Ex</LogosAbbreviation>
     <NETBibleAbbreviation>Exo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Exo</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EXO</BibleWorksAbbreviation>
@@ -228,6 +234,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>03O</UnboundCode>
     <BibleditNumber>3</BibleditNumber>
     <LogosNumber>3</LogosNumber>
+    <LogosAbbreviation>Le</LogosAbbreviation>
     <NETBibleAbbreviation>Lev</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Lev</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>LEV</BibleWorksAbbreviation>
@@ -254,6 +261,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>04O</UnboundCode>
     <BibleditNumber>4</BibleditNumber>
     <LogosNumber>4</LogosNumber>
+    <LogosAbbreviation>Nu</LogosAbbreviation>
     <NETBibleAbbreviation>Num</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Num</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NUM</BibleWorksAbbreviation>
@@ -280,6 +288,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>05O</UnboundCode>
     <BibleditNumber>5</BibleditNumber>
     <LogosNumber>5</LogosNumber>
+    <LogosAbbreviation>Dt</LogosAbbreviation>
     <NETBibleAbbreviation>Deu</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Deu</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>DEU</BibleWorksAbbreviation>
@@ -306,6 +315,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>06O</UnboundCode>
     <BibleditNumber>6</BibleditNumber>
     <LogosNumber>6</LogosNumber>
+    <LogosAbbreviation>Jos</LogosAbbreviation>
     <NETBibleAbbreviation>Jos</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jos</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JOS</BibleWorksAbbreviation>
@@ -333,6 +343,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>07O</UnboundCode>
     <BibleditNumber>7</BibleditNumber>
     <LogosNumber>7</LogosNumber>
+    <LogosAbbreviation>Jdg</LogosAbbreviation>
     <NETBibleAbbreviation>Jdg</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jug</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JDG</BibleWorksAbbreviation>
@@ -360,6 +371,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>08O</UnboundCode>
     <BibleditNumber>8</BibleditNumber>
     <LogosNumber>8</LogosNumber>
+    <LogosAbbreviation>Ru</LogosAbbreviation>
     <NETBibleAbbreviation>Rut</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Rut</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>RUT</BibleWorksAbbreviation>
@@ -386,6 +398,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>09O</UnboundCode>
     <BibleditNumber>9</BibleditNumber>
     <LogosNumber>9</LogosNumber>
+    <LogosAbbreviation>1Sa</LogosAbbreviation>
     <NETBibleAbbreviation>1Sa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Sm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1SA</BibleWorksAbbreviation>
@@ -411,6 +424,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>10O</UnboundCode>
     <BibleditNumber>10</BibleditNumber>
     <LogosNumber>10</LogosNumber>
+    <LogosAbbreviation>2Sa</LogosAbbreviation>
     <NETBibleAbbreviation>2Sa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Sm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2SA</BibleWorksAbbreviation>
@@ -436,6 +450,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>11O</UnboundCode>
     <BibleditNumber>11</BibleditNumber>
     <LogosNumber>11</LogosNumber>
+    <LogosAbbreviation>1Ki</LogosAbbreviation>
     <NETBibleAbbreviation>1Ki</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Kg</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1KI</BibleWorksAbbreviation>
@@ -462,6 +477,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>12O</UnboundCode>
     <BibleditNumber>12</BibleditNumber>
     <LogosNumber>12</LogosNumber>
+    <LogosAbbreviation>2Ki</LogosAbbreviation>
     <NETBibleAbbreviation>2Ki</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Kg</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2KI</BibleWorksAbbreviation>
@@ -488,6 +504,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>13O</UnboundCode>
     <BibleditNumber>13</BibleditNumber>
     <LogosNumber>13</LogosNumber>
+    <LogosAbbreviation>1Ch</LogosAbbreviation>
     <NETBibleAbbreviation>1Ch</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Ch</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1CH</BibleWorksAbbreviation>
@@ -513,6 +530,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>14O</UnboundCode>
     <BibleditNumber>14</BibleditNumber>
     <LogosNumber>14</LogosNumber>
+    <LogosAbbreviation>2Ch</LogosAbbreviation>
     <NETBibleAbbreviation>2Ch</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Ch</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2CH</BibleWorksAbbreviation>
@@ -539,6 +557,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>15O</UnboundCode>
     <BibleditNumber>15</BibleditNumber>
     <LogosNumber>15</LogosNumber>
+    <LogosAbbreviation>Ezr</LogosAbbreviation>
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ezr</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EZR</BibleWorksAbbreviation>
@@ -565,6 +584,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>16O</UnboundCode>
     <BibleditNumber>16</BibleditNumber>
     <LogosNumber>16</LogosNumber>
+    <LogosAbbreviation>Ne</LogosAbbreviation>
     <NETBibleAbbreviation>Neh</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Neh</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NEH</BibleWorksAbbreviation>
@@ -592,6 +612,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>17O</UnboundCode>
     <BibleditNumber>17</BibleditNumber>
     <LogosNumber>17</LogosNumber>
+    <LogosAbbreviation>Es</LogosAbbreviation>
     <NETBibleAbbreviation>Est</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Est</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EST</BibleWorksAbbreviation>
@@ -618,6 +639,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>18O</UnboundCode>
     <BibleditNumber>18</BibleditNumber>
     <LogosNumber>18</LogosNumber>
+    <LogosAbbreviation>Job</LogosAbbreviation>
     <NETBibleAbbreviation>Job</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Job</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JOB</BibleWorksAbbreviation>
@@ -643,6 +665,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>19O</UnboundCode>
     <BibleditNumber>19</BibleditNumber>
     <LogosNumber>19</LogosNumber>
+    <LogosAbbreviation>Ps</LogosAbbreviation>
     <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ps</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PSA</BibleWorksAbbreviation>
@@ -671,6 +694,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>20O</UnboundCode>
     <BibleditNumber>20</BibleditNumber>
     <LogosNumber>20</LogosNumber>
+    <LogosAbbreviation>Pr</LogosAbbreviation>
     <NETBibleAbbreviation>Pro</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Pro</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PRO</BibleWorksAbbreviation>
@@ -698,6 +722,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>21O</UnboundCode>
     <BibleditNumber>21</BibleditNumber>
     <LogosNumber>21</LogosNumber>
+    <LogosAbbreviation>Ec</LogosAbbreviation>
     <NETBibleAbbreviation>Ecc</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ecc</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ECC</BibleWorksAbbreviation>
@@ -723,6 +748,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>22O</UnboundCode>
     <BibleditNumber>22</BibleditNumber>
     <LogosNumber>22</LogosNumber>
+    <LogosAbbreviation>So</LogosAbbreviation>
     <NETBibleAbbreviation>Sos</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Son</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>SOL</BibleWorksAbbreviation>
@@ -749,6 +775,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>23O</UnboundCode>
     <BibleditNumber>23</BibleditNumber>
     <LogosNumber>23</LogosNumber>
+    <LogosAbbreviation>Is</LogosAbbreviation>
     <NETBibleAbbreviation>Isa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Isa</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ISA</BibleWorksAbbreviation>
@@ -774,6 +801,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>24O</UnboundCode>
     <BibleditNumber>24</BibleditNumber>
     <LogosNumber>24</LogosNumber>
+    <LogosAbbreviation>Je</LogosAbbreviation>
     <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jer</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JER</BibleWorksAbbreviation>
@@ -800,6 +828,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>25O</UnboundCode>
     <BibleditNumber>25</BibleditNumber>
     <LogosNumber>25</LogosNumber>
+    <LogosAbbreviation>La</LogosAbbreviation>
     <NETBibleAbbreviation>Lam</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Lam</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>LAM</BibleWorksAbbreviation>
@@ -826,6 +855,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>26O</UnboundCode>
     <BibleditNumber>26</BibleditNumber>
     <LogosNumber>26</LogosNumber>
+    <LogosAbbreviation>Eze</LogosAbbreviation>
     <NETBibleAbbreviation>Eze</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Eze</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EZE</BibleWorksAbbreviation>
@@ -852,6 +882,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>27O</UnboundCode>
     <BibleditNumber>27</BibleditNumber>
     <LogosNumber>27</LogosNumber>
+    <LogosAbbreviation>Da</LogosAbbreviation>
     <NETBibleAbbreviation>Dan</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Dan</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>DAN</BibleWorksAbbreviation>
@@ -879,6 +910,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>28O</UnboundCode>
     <BibleditNumber>28</BibleditNumber>
     <LogosNumber>28</LogosNumber>
+    <LogosAbbreviation>Ho</LogosAbbreviation>
     <NETBibleAbbreviation>Hos</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Hos</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HOS</BibleWorksAbbreviation>
@@ -905,6 +937,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>29O</UnboundCode>
     <BibleditNumber>29</BibleditNumber>
     <LogosNumber>29</LogosNumber>
+    <LogosAbbreviation>Joe</LogosAbbreviation>
     <NETBibleAbbreviation>Joe</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Joe</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JOE</BibleWorksAbbreviation>
@@ -931,6 +964,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>30O</UnboundCode>
     <BibleditNumber>30</BibleditNumber>
     <LogosNumber>30</LogosNumber>
+    <LogosAbbreviation>Am</LogosAbbreviation>
     <NETBibleAbbreviation>Amo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Amo</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>AMO</BibleWorksAbbreviation>
@@ -957,6 +991,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>31O</UnboundCode>
     <BibleditNumber>31</BibleditNumber>
     <LogosNumber>31</LogosNumber>
+    <LogosAbbreviation>Ob</LogosAbbreviation>
     <NETBibleAbbreviation>Oba</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Oba</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>OBA</BibleWorksAbbreviation>
@@ -983,6 +1018,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>32O</UnboundCode>
     <BibleditNumber>32</BibleditNumber>
     <LogosNumber>32</LogosNumber>
+    <LogosAbbreviation>Jon</LogosAbbreviation>
     <NETBibleAbbreviation>Jon</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jon</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JON</BibleWorksAbbreviation>
@@ -1009,6 +1045,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>33O</UnboundCode>
     <BibleditNumber>33</BibleditNumber>
     <LogosNumber>33</LogosNumber>
+    <LogosAbbreviation>Mic</LogosAbbreviation>
     <NETBibleAbbreviation>Mic</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mic</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MIC</BibleWorksAbbreviation>
@@ -1035,6 +1072,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>34O</UnboundCode>
     <BibleditNumber>34</BibleditNumber>
     <LogosNumber>34</LogosNumber>
+    <LogosAbbreviation>Na</LogosAbbreviation>
     <NETBibleAbbreviation>Nah</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Nah</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NAH</BibleWorksAbbreviation>
@@ -1060,6 +1098,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>35O</UnboundCode>
     <BibleditNumber>35</BibleditNumber>
     <LogosNumber>35</LogosNumber>
+    <LogosAbbreviation>Hab</LogosAbbreviation>
     <NETBibleAbbreviation>Hab</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Hab</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HAB</BibleWorksAbbreviation>
@@ -1086,6 +1125,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>36O</UnboundCode>
     <BibleditNumber>36</BibleditNumber>
     <LogosNumber>36</LogosNumber>
+    <LogosAbbreviation>Zep</LogosAbbreviation>
     <NETBibleAbbreviation>Zep</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Zep</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ZEP</BibleWorksAbbreviation>
@@ -1112,6 +1152,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>37O</UnboundCode>
     <BibleditNumber>37</BibleditNumber>
     <LogosNumber>37</LogosNumber>
+    <LogosAbbreviation>Hag</LogosAbbreviation>
     <NETBibleAbbreviation>Hag</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Hag</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HAG</BibleWorksAbbreviation>
@@ -1138,6 +1179,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>38O</UnboundCode>
     <BibleditNumber>38</BibleditNumber>
     <LogosNumber>38</LogosNumber>
+    <LogosAbbreviation>Zec</LogosAbbreviation>
     <NETBibleAbbreviation>Zec</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Zec</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ZEC</BibleWorksAbbreviation>
@@ -1164,6 +1206,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>39O</UnboundCode>
     <BibleditNumber>39</BibleditNumber>
     <LogosNumber>39</LogosNumber>
+    <LogosAbbreviation>Mal</LogosAbbreviation>
     <NETBibleAbbreviation>Mal</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mal</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MAL</BibleWorksAbbreviation>
@@ -1192,6 +1235,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>40N</UnboundCode>
     <BibleditNumber>40</BibleditNumber>
     <LogosNumber>61</LogosNumber>
+    <LogosAbbreviation>Mt</LogosAbbreviation>
     <NETBibleAbbreviation>Mat</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mat</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MAT</BibleWorksAbbreviation>
@@ -1219,6 +1263,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>41N</UnboundCode>
     <BibleditNumber>41</BibleditNumber>
     <LogosNumber>62</LogosNumber>
+    <LogosAbbreviation>Mk</LogosAbbreviation>
     <NETBibleAbbreviation>Mar</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mak</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MAR</BibleWorksAbbreviation>
@@ -1245,6 +1290,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>42N</UnboundCode>
     <BibleditNumber>42</BibleditNumber>
     <LogosNumber>63</LogosNumber>
+    <LogosAbbreviation>Lk</LogosAbbreviation>
     <NETBibleAbbreviation>Luk</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Luk</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>LUK</BibleWorksAbbreviation>
@@ -1272,6 +1318,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>43N</UnboundCode>
     <BibleditNumber>43</BibleditNumber>
     <LogosNumber>64</LogosNumber>
+    <LogosAbbreviation>Jn</LogosAbbreviation>
     <NETBibleAbbreviation>Joh</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jhn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JOH</BibleWorksAbbreviation>
@@ -1298,6 +1345,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>44N</UnboundCode>
     <BibleditNumber>44</BibleditNumber>
     <LogosNumber>65</LogosNumber>
+    <LogosAbbreviation>Ac</LogosAbbreviation>
     <NETBibleAbbreviation>Act</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Act</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ACT</BibleWorksAbbreviation>
@@ -1325,6 +1373,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>45N</UnboundCode>
     <BibleditNumber>45</BibleditNumber>
     <LogosNumber>66</LogosNumber>
+    <LogosAbbreviation>Ro</LogosAbbreviation>
     <NETBibleAbbreviation>Rom</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Rom</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ROM</BibleWorksAbbreviation>
@@ -1352,6 +1401,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>46N</UnboundCode>
     <BibleditNumber>46</BibleditNumber>
     <LogosNumber>67</LogosNumber>
+    <LogosAbbreviation>1Co</LogosAbbreviation>
     <NETBibleAbbreviation>1Co</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Co</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1CO</BibleWorksAbbreviation>
@@ -1378,6 +1428,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>47N</UnboundCode>
     <BibleditNumber>47</BibleditNumber>
     <LogosNumber>68</LogosNumber>
+    <LogosAbbreviation>2Co</LogosAbbreviation>
     <NETBibleAbbreviation>2Co</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Co</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2CO</BibleWorksAbbreviation>
@@ -1404,6 +1455,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>48N</UnboundCode>
     <BibleditNumber>48</BibleditNumber>
     <LogosNumber>69</LogosNumber>
+    <LogosAbbreviation>Ga</LogosAbbreviation>
     <NETBibleAbbreviation>Gal</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Gal</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>GAL</BibleWorksAbbreviation>
@@ -1431,6 +1483,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>49N</UnboundCode>
     <BibleditNumber>49</BibleditNumber>
     <LogosNumber>70</LogosNumber>
+    <LogosAbbreviation>Eph</LogosAbbreviation>
     <NETBibleAbbreviation>Eph</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Eph</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EPH</BibleWorksAbbreviation>
@@ -1458,6 +1511,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>50N</UnboundCode>
     <BibleditNumber>50</BibleditNumber>
     <LogosNumber>71</LogosNumber>
+    <LogosAbbreviation>Php</LogosAbbreviation>
     <NETBibleAbbreviation>Phi</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Phl</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PHI</BibleWorksAbbreviation>
@@ -1485,6 +1539,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>51N</UnboundCode>
     <BibleditNumber>51</BibleditNumber>
     <LogosNumber>72</LogosNumber>
+    <LogosAbbreviation>Col</LogosAbbreviation>
     <NETBibleAbbreviation>Col</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Col</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>COL</BibleWorksAbbreviation>
@@ -1512,6 +1567,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>52N</UnboundCode>
     <BibleditNumber>52</BibleditNumber>
     <LogosNumber>73</LogosNumber>
+    <LogosAbbreviation>1Th</LogosAbbreviation>
     <NETBibleAbbreviation>1Th</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Ts</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1TH</BibleWorksAbbreviation>
@@ -1538,6 +1594,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>53N</UnboundCode>
     <BibleditNumber>53</BibleditNumber>
     <LogosNumber>74</LogosNumber>
+    <LogosAbbreviation>2Th</LogosAbbreviation>
     <NETBibleAbbreviation>2Th</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Ts</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2TH</BibleWorksAbbreviation>
@@ -1564,6 +1621,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>54N</UnboundCode>
     <BibleditNumber>54</BibleditNumber>
     <LogosNumber>75</LogosNumber>
+    <LogosAbbreviation>1Ti</LogosAbbreviation>
     <NETBibleAbbreviation>1Ti</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Tm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1TI</BibleWorksAbbreviation>
@@ -1590,6 +1648,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>55N</UnboundCode>
     <BibleditNumber>55</BibleditNumber>
     <LogosNumber>76</LogosNumber>
+    <LogosAbbreviation>2Ti</LogosAbbreviation>
     <NETBibleAbbreviation>2Ti</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Tm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2TI</BibleWorksAbbreviation>
@@ -1616,6 +1675,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>56N</UnboundCode>
     <BibleditNumber>56</BibleditNumber>
     <LogosNumber>77</LogosNumber>
+    <LogosAbbreviation>Tt</LogosAbbreviation>
     <NETBibleAbbreviation>Tit</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Tit</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>TIT</BibleWorksAbbreviation>
@@ -1643,6 +1703,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>57N</UnboundCode>
     <BibleditNumber>57</BibleditNumber>
     <LogosNumber>78</LogosNumber>
+    <LogosAbbreviation>Phm</LogosAbbreviation>
     <NETBibleAbbreviation>Phm</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Phm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PHM</BibleWorksAbbreviation>
@@ -1669,6 +1730,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>58N</UnboundCode>
     <BibleditNumber>58</BibleditNumber>
     <LogosNumber>79</LogosNumber>
+    <LogosAbbreviation>Heb</LogosAbbreviation>
     <NETBibleAbbreviation>Heb</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Heb</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HEB</BibleWorksAbbreviation>
@@ -1696,6 +1758,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>59N</UnboundCode>
     <BibleditNumber>59</BibleditNumber>
     <LogosNumber>80</LogosNumber>
+    <LogosAbbreviation>Jas</LogosAbbreviation>
     <NETBibleAbbreviation>Jam</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jam</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JAM</BibleWorksAbbreviation>
@@ -1723,6 +1786,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>60N</UnboundCode>
     <BibleditNumber>60</BibleditNumber>
     <LogosNumber>81</LogosNumber>
+    <LogosAbbreviation>1Pe</LogosAbbreviation>
     <NETBibleAbbreviation>1Pe</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Pe</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1PE</BibleWorksAbbreviation>
@@ -1750,6 +1814,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>61N</UnboundCode>
     <BibleditNumber>61</BibleditNumber>
     <LogosNumber>82</LogosNumber>
+    <LogosAbbreviation>2Pe</LogosAbbreviation>
     <NETBibleAbbreviation>2Pe</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Pe</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2PE</BibleWorksAbbreviation>
@@ -1777,6 +1842,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>62N</UnboundCode>
     <BibleditNumber>62</BibleditNumber>
     <LogosNumber>83</LogosNumber>
+    <LogosAbbreviation>1Jn</LogosAbbreviation>
     <NETBibleAbbreviation>1Jo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1JO</BibleWorksAbbreviation>
@@ -1804,6 +1870,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>63N</UnboundCode>
     <BibleditNumber>63</BibleditNumber>
     <LogosNumber>84</LogosNumber>
+    <LogosAbbreviation>2Jn</LogosAbbreviation>
     <NETBibleAbbreviation>2Jo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2JO</BibleWorksAbbreviation>
@@ -1831,6 +1898,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>64N</UnboundCode>
     <BibleditNumber>64</BibleditNumber>
     <LogosNumber>85</LogosNumber>
+    <LogosAbbreviation>3Jn</LogosAbbreviation>
     <NETBibleAbbreviation>3Jo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>3Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>3JO</BibleWorksAbbreviation>
@@ -1858,6 +1926,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>65N</UnboundCode>
     <BibleditNumber>65</BibleditNumber>
     <LogosNumber>86</LogosNumber>
+    <LogosAbbreviation>Jud</LogosAbbreviation>
     <NETBibleAbbreviation>Jud</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jud</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JUD</BibleWorksAbbreviation>
@@ -1885,6 +1954,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>66N</UnboundCode>
     <BibleditNumber>66</BibleditNumber>
     <LogosNumber>87</LogosNumber>
+    <LogosAbbreviation>Re</LogosAbbreviation>
     <NETBibleAbbreviation>Rev</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Rev</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>REV</BibleWorksAbbreviation>
@@ -1913,6 +1983,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>69A</UnboundCode>
     <BibleditNumber>72</BibleditNumber>
     <LogosNumber>42</LogosNumber>
+    <LogosAbbreviation>GkEs</LogosAbbreviation>
     <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -2031,6 +2102,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>76A</UnboundCode>
     <BibleditNumber>79</BibleditNumber>
     <LogosNumber>49</LogosNumber>
+    <LogosAbbreviation>Bel</LogosAbbreviation>
     <BibleWorksAbbreviation>BEL</BibleWorksAbbreviation>
     <possibleAlternativeBooks>BLT</possibleAlternativeBooks>
     <typicalSection>DC</typicalSection>
@@ -2054,6 +2126,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>75A</UnboundCode>
     <BibleditNumber>78</BibleditNumber>
     <LogosNumber>48</LogosNumber>
+    <LogosAbbreviation>Sus</LogosAbbreviation>
     <BibleWorksAbbreviation>SUS</BibleWorksAbbreviation>
     <possibleAlternativeBooks>SST</possibleAlternativeBooks>
     <typicalSection>DC</typicalSection>
@@ -2077,6 +2150,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>68A</UnboundCode>
     <BibleditNumber>71</BibleditNumber>
     <LogosNumber>41</LogosNumber>
+    <LogosAbbreviation>Jdt</LogosAbbreviation>
     <BibleWorksAbbreviation>JDT</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2099,6 +2173,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>83A</UnboundCode>
     <BibleditNumber>83</BibleditNumber>
     <LogosNumber>53</LogosNumber>
+    <LogosAbbreviation>PrMan</LogosAbbreviation>
     <BibleWorksAbbreviation>PRM</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2121,6 +2196,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>71A</UnboundCode>
     <BibleditNumber>74</BibleditNumber>
     <LogosNumber>44</LogosNumber>
+    <LogosAbbreviation>Sir</LogosAbbreviation>
     <BibleWorksAbbreviation>SIR</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2155,6 +2231,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>67A</UnboundCode>
     <BibleditNumber>70</BibleditNumber>
     <LogosNumber>40</LogosNumber>
+    <LogosAbbreviation>Tob</LogosAbbreviation>
     <BibleWorksAbbreviation>TOB</BibleWorksAbbreviation>
     <possibleAlternativeAbbreviations>TB,TBT</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>TBS</possibleAlternativeBooks>
@@ -2179,6 +2256,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>70A</UnboundCode>
     <BibleditNumber>73</BibleditNumber>
     <LogosNumber>43</LogosNumber>
+    <LogosAbbreviation>Wis</LogosAbbreviation>
     <BibleWorksAbbreviation>WIS</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2204,6 +2282,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>74A</UnboundCode>
     <BibleditNumber>77</BibleditNumber>
     <LogosNumber>47</LogosNumber>
+    <LogosAbbreviation>SongThr</LogosAbbreviation>
     <BibleWorksAbbreviation>PRA</BibleWorksAbbreviation>
     <possibleAlternativeAbbreviations>PRAZ</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
@@ -2230,6 +2309,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>81A</UnboundCode>
     <BibleditNumber>82</BibleditNumber>
     <LogosNumber>52</LogosNumber>
+    <LogosAbbreviation>1Esd</LogosAbbreviation>
     <BibleWorksAbbreviation>1ES</BibleWorksAbbreviation>
     <possibleAlternativeBooks>LES</possibleAlternativeBooks>
     <typicalSection>???</typicalSection>
@@ -2254,6 +2334,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>82A</UnboundCode>
     <BibleditNumber>86</BibleditNumber>
     <LogosNumber>56</LogosNumber>
+    <LogosAbbreviation>2Esd</LogosAbbreviation>
     <BibleWorksAbbreviation>4ES</BibleWorksAbbreviation>
     <possibleAlternativeBooks>GES</possibleAlternativeBooks>
     <typicalSection>???</typicalSection>
@@ -2352,6 +2433,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>73A</UnboundCode>
     <BibleditNumber>76</BibleditNumber>
     <LogosNumber>46</LogosNumber>
+    <LogosAbbreviation>LetJer</LogosAbbreviation>
     <BibleWorksAbbreviation>EPJ</BibleWorksAbbreviation>
     <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
     <typicalSection>DC</typicalSection>
@@ -2376,6 +2458,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>72A</UnboundCode>
     <BibleditNumber>75</BibleditNumber>
     <LogosNumber>45</LogosNumber>
+    <LogosAbbreviation>Bar</LogosAbbreviation>
     <BibleWorksAbbreviation>BAR</BibleWorksAbbreviation>
     <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
     <typicalSection>DC</typicalSection>
@@ -2523,6 +2606,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>77A</UnboundCode>
     <BibleditNumber>80</BibleditNumber>
     <LogosNumber>50</LogosNumber>
+    <LogosAbbreviation>1Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>1MA</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2545,6 +2629,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>78A</UnboundCode>
     <BibleditNumber>81</BibleditNumber>
     <LogosNumber>51</LogosNumber>
+    <LogosAbbreviation>2Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>2MA</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2568,6 +2653,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>79A</UnboundCode>
     <BibleditNumber>85</BibleditNumber>
     <LogosNumber>55</LogosNumber>
+    <LogosAbbreviation>3Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>3MA</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2591,6 +2677,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>80A</UnboundCode>
     <BibleditNumber>87</BibleditNumber>
     <LogosNumber>57</LogosNumber>
+    <LogosAbbreviation>4Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>4MA</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2742,6 +2829,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <UnboundCode>84A</UnboundCode>
     <BibleditNumber>84</BibleditNumber>
     <LogosNumber>54</LogosNumber>
+    <LogosAbbreviation>Ps151</LogosAbbreviation>
     <BibleWorksAbbreviation>PSX</BibleWorksAbbreviation>
     <typicalSection>OT+</typicalSection>
   </BibleBookCodes>
@@ -2776,6 +2864,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USXNumber>086</USXNumber>
     <UnboundCode>85A</UnboundCode> <!-- Not totally sure about this UB says PSALM (singular) of Solomon -->
     <LogosNumber>59</LogosNumber>
+    <LogosAbbreviation>PsSol</LogosAbbreviation>
     <BibleWorksAbbreviation>PSS</BibleWorksAbbreviation>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
@@ -2794,6 +2883,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USFMNumber>C3</USFMNumber>
     <USXNumber>123</USXNumber>
     <LogosNumber>60</LogosNumber>
+    <LogosAbbreviation>Laod</LogosAbbreviation>
     <BibleWorksAbbreviation>LAO</BibleWorksAbbreviation>
     <typicalSection>NT+</typicalSection>
   </BibleBookCodes>
@@ -2812,6 +2902,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USXNumber>085</USXNumber>
     <UnboundCode>86A</UnboundCode>
     <LogosNumber>58</LogosNumber>
+    <LogosAbbreviation>Ode</LogosAbbreviation>
     <BibleWorksAbbreviation>ODE</BibleWorksAbbreviation>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>

@@ -51,10 +51,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-04-18' # by RJH
+LAST_MODIFIED_DATE = '2024-07-11' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.94'
+PROGRAM_VERSION = '0.95'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -69,6 +69,10 @@ BOOKLIST_NT27 = [ 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL',
 assert len( BOOKLIST_NT27 ) == 27
 BOOKLIST_66 = BOOKLIST_OT39 + BOOKLIST_NT27
 assert len( BOOKLIST_66 ) == 66
+BOOKLIST_DC15 = ['GES','LES', 'TOB', 'JDT', 'ESA', 'WIS', 'SIR', 'BAR', 'LJE', 'PAZ', 'SUS', 'BEL', 'MAN', 'MA1','MA2' ]
+assert len( BOOKLIST_DC15 ) == 15
+BOOKLIST_81 = BOOKLIST_OT39 + BOOKLIST_DC15 + BOOKLIST_NT27
+assert len( BOOKLIST_81 ) == 81
 
 
 @singleton # Can only ever have one instance
@@ -917,6 +921,9 @@ def briefDemo() -> None:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
 
+    for BBB in BOOKLIST_81:
+        assert bbc.isValidBBB( BBB ), f"BOOKLIST_81 {BBB} is invalid"
+
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:
         section = bbc.getTypicalSection( BBB )
@@ -935,6 +942,7 @@ def fullDemo() -> None:
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, bbc ) # Just print a summary
+
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
@@ -942,6 +950,7 @@ def fullDemo() -> None:
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "All BBBs in a print sequence", len(bbc.getSequenceList()), bbc.getSequenceList() )
+
     myBBBs = ['GEN','EXO','PSA','ISA','MAL','MAT','REV','GLS']
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     for BBB in myBBBs:
@@ -966,6 +975,9 @@ def fullDemo() -> None:
     for osisCode in myOSIS:
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Osis {!r} -> {}".format( osisCode, bbc.getBBBFromOSISAbbreviation( osisCode ) ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BibleBooksCodes().tidyBBBs(['GEN','SA1','CO2','JN3','XXA'])=}" )
+
+    for BBB in BOOKLIST_81:
+        assert bbc.isValidBBB( BBB ), f"BOOKLIST_81 {BBB} is invalid"
 
     sections:Dict[str,List[str]] = {}
     for BBB in bbc:
