@@ -51,7 +51,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-07-11' # by RJH
+LAST_MODIFIED_DATE = '2024-09-30' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.95'
@@ -172,6 +172,7 @@ class BibleBooksCodes:
         Returns True or False.
         """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
+    # end of BibleBooksCodes.__contains__
 
 
     def __iter__( self ) -> str:
@@ -183,6 +184,7 @@ class BibleBooksCodes:
         """
         for BBB in self.__DataDicts['referenceAbbreviationDict']:
             yield BBB
+    # end of BibleBooksCodes.__iter__
 
 
     def isValidBBB( self, BBB:str ) -> bool:
@@ -190,6 +192,7 @@ class BibleBooksCodes:
         Returns True or False.
         """
         return BBB in self.__DataDicts['referenceAbbreviationDict']
+    # end of BibleBooksCodes.isValidBBB
 
 
     def getBBBFromReferenceNumber( self, referenceNumber ) -> str:

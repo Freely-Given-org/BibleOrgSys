@@ -5,7 +5,7 @@
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2024 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,10 +39,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-06-05' # by RJH
+LAST_MODIFIED_DATE = '2024-09-09' # by RJH
 SHORT_PROGRAM_NAME = "USFMFilenames"
 PROGRAM_NAME = "USFM Bible filenames handler"
-PROGRAM_VERSION = '0.69'
+PROGRAM_VERSION = '0.70'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -460,6 +460,7 @@ class USFMFilenames:
         for possibleFilename in self.fileList:
             pFUpper = possibleFilename.upper()
             if pFUpper in FILENAMES_TO_IGNORE: continue
+            if pFUpper.endswith( '.ZIP' ) or pFUpper.endswith( '.PICKLE' ): continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                 ignore = False
@@ -500,7 +501,7 @@ class USFMFilenames:
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
-        #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples( {} )".format( strictCheck ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"getMaximumPossibleFilenameTuples( {strictCheck=} )" )
 
         resultString, resultList = 'Confirmed', self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
@@ -514,6 +515,9 @@ class USFMFilenames:
         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
             #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  getMaximumPossibleFilenameTuples doing strictCheck…" )
             for BBB,filename in resultList.copy():
+                if filename.lower().endswith( '.zip' ) or filename.lower().endswith( '.pickle' ): # Must be a text filetype
+                    resultList.remove( (BBB,filename) )
+                    continue
                 firstLine = BibleOrgSysGlobals.peekIntoFile( filename, self.givenFolderName )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'UFN', repr(firstLine) )
                 if firstLine is None: resultList.remove( (BBB,filename) ); continue # seems we couldn't decode the file
@@ -524,7 +528,7 @@ class USFMFilenames:
                     resultList.remove( (BBB,filename) )
 
         self.lastTupleList = resultList
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples is returning", resultList )
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of USFMFilenames.getMaximumPossibleFilenameTuples
 

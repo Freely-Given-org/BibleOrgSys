@@ -140,8 +140,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.89</version>
-      <date>2024-06-30</date>
+      <version>0.90</version>
+      <date>2024-09-30</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">https://ubsicap.github.io/usfm/identification/books.html</identifier>
@@ -705,7 +705,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <originalLanguageCode>hbo</originalLanguageCode>
     <bookName>קֹהֶלֶת</bookName>
-    <bookNameEnglishGuide>קֹהֶלֶת / Qoholeth</bookNameEnglishGuide>
+    <bookNameEnglishGuide>Ecclesiastes / Qoholeth</bookNameEnglishGuide>
     <!-- For Ecclesiasticus use code SIR -->
     <referenceAbbreviation>ECC</referenceAbbreviation>
     <referenceNumber>21</referenceNumber>
@@ -2446,7 +2446,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>BAR</referenceAbbreviation>
     <referenceNumber>101</referenceNumber>
     <sequenceNumber>220</sequenceNumber>
-    <expectedChapters>5,6</expectedChapters>
+    <expectedChapters>5</expectedChapters>
     <shortAbbreviation>Bar</shortAbbreviation>
     <SBLAbbreviation>Bar</SBLAbbreviation>
     <OSISAbbreviation>Bar</OSISAbbreviation>

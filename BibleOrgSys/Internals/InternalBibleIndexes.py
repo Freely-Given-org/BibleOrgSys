@@ -89,7 +89,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 
 
-LAST_MODIFIED_DATE = '2024-07-20' # by RJH
+LAST_MODIFIED_DATE = '2024-09-04' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.93'
@@ -697,7 +697,7 @@ class InternalBibleBookCVIndex:
         # Now calculate the contextMarkerList for each CV entry and create the proper (full) InternalBibleBookCVIndexEntries
         contextMarkerList = []
         for (C,V), (indexStart,count) in self.__indexData.items():
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "makeBookCVIndex for {} {} {}:{} {} {} {}".format( self.workName, self.BBB, C, V, indexStart, count, contextMarkerList ) )
+            dPrint( 'Never', DEBUGGING_THIS_MODULE, "makeBookCVIndex for {} {} {}:{} {} {} {}".format( self.workName, self.BBB, C, V, indexStart, count, contextMarkerList ) )
             # Replace the existing (temporary) index entry to include a copy of the previous contextMarkerList
             #   e.g., a typical verse might be inside a paragraph in a section
             #            thus getting the contextMarkerList: ['chapters','c','s1','p'] or ['chapters','ms1','c','v','q1']

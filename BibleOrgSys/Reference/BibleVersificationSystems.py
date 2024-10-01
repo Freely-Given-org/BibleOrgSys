@@ -46,7 +46,8 @@ BibleVersificationSystem class:
     __init__( self, systemName )
     __str__( self )
     __len__( self )
-    __contains__( self, BBB )
+    __contains__( self, BBB ) -> bool
+    __iter__( self, BBB ) -> str
     numAvailableBooks( self )
     getVersificationSystemName( self )
     getNumChapters( self, BBB )
@@ -61,6 +62,10 @@ BibleVersificationSystem class:
     expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
     convertToReferenceVersification( self, BBB:str, C, V, S=None )
     convertfrom BibleOrgSys.ReferenceVersification( self, refBBB, refC, refV, refS=None )
+
+
+CHANGELOG:
+    2024-09-20 Made BibleVersificationSystem iterable
 """
 from gettext import gettext as _
 from typing import List
@@ -77,10 +82,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2022-07-12' # by RJH
+LAST_MODIFIED_DATE = '2024-09-30' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
-PROGRAM_VERSION = '0.61'
+PROGRAM_VERSION = '0.62'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -219,7 +224,7 @@ class BibleVersificationSystems:
     # end of BibleVersificationSystems.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """ Returns the number of systems loaded. """
         return len( self.__DataDict )
     # end of BibleVersificationSystems.__len__
@@ -650,7 +655,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.__str__
 
 
-    def __len__( self ):
+    def __len__( self ) -> int:
         """
         Returns the number of books defined in this versification system.
 
@@ -666,6 +671,17 @@ class BibleVersificationSystem:
         """
         return BBB in self.__chapterDataDict
     # end of BibleVersificationSystem.__contains__
+
+
+    def __iter__( self ) -> str:
+        """
+        Yields the next BBB.
+        
+        This gives the BBBs in order.
+        """
+        for BBB in self.__chapterDataDict:
+            yield BBB
+    # end of BibleVersificationSystem.__iter__
 
 
     def numAvailableBooks( self ):
