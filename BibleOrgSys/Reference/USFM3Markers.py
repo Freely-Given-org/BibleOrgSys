@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFM3Markers.py
 #
@@ -37,7 +38,6 @@ CHANGELOG:
     2024-06-07 Added qac (ACROSTIC VERSE) character marker to getCharacterMarkersList()
 """
 from gettext import gettext as _
-from typing import List, Optional
 import os
 import logging
 
@@ -565,7 +565,7 @@ class USFM3Markers:
     # end of USFM3Markers.getTypicalNoteSets
 
 
-    def getMarkerListFromText( self, text:str, includeInitialText:Optional[bool]=False, verifyMarkers:Optional[bool]=False ) -> List[str]:
+    def getMarkerListFromText( self, text:str, includeInitialText:bool|None=False, verifyMarkers:bool|None=False ) -> list[str]:
         """
         Given a text, return a dict of the actual markers
             (along with their positions and other useful derived information).

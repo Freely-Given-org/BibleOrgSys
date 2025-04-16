@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USX_test.py
 #
@@ -34,7 +35,6 @@ Made to be run from the BibleOrgSys folder, i.e.,
 CHANGELOG:
 """
 from gettext import gettext as _
-from typing import Tuple
 import os
 from pathlib import Path
 import multiprocessing
@@ -72,7 +72,7 @@ SCHEMA_FILEPATH = os.path.abspath( os.path.join( os.path.dirname(__file__), '../
 BOS_USX3_EXPORT_FOLDERPATH = Path( '/home/robert/BibleOrgSysData/BOSOutputFiles/BOS_USX3_Export/USX3Files/' )
 
 
-def validateXML( usx_filepath: Path | str ) -> Tuple:
+def validateXML( usx_filepath: Path | str ) -> tuple:
     """
     Validate the USX file against the schema.
 

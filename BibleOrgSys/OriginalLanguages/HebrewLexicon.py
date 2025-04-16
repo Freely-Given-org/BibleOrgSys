@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # HebrewLexicon.py
 #
 # Module handling the Hebrew lexicon
 #
-# Copyright (C) 2011-2023 Robert Hunt
+# Copyright (C) 2011-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -26,12 +27,10 @@
 Module handling the OpenScriptures Hebrew lexicon.
 
     The classes are the ones for users to
-        access the Strongs and Brown, Driver, Briggs lexical entries
+        access the Strongs and Brown,Driver,Briggs lexical entries
         via various keys and in various formats.
 """
 from gettext import gettext as _
-from typing import Optional
-# import logging
 import os.path
 from pathlib import Path
 import re
@@ -45,10 +44,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2025-03-17' # by RJH
 SHORT_PROGRAM_NAME = "HebrewLexicon"
 PROGRAM_NAME = "Hebrew Lexicon handler"
-PROGRAM_VERSION = '0.20'
+PROGRAM_VERSION = '0.21'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -101,6 +100,7 @@ class HebrewLexiconIndex:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
+        print( "Here in HebrewLexiconIndex.__str__" )
         result = "Hebrew Lexicon Index object"
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
@@ -112,16 +112,17 @@ class HebrewLexiconIndex:
     # end of HebrewLexiconIndex.__str__
 
 
-    def getLexiconCodeFromStrongsNumber( self, key:str ) -> Optional[str]:
+    def getBrDrBrCodeFromHebrewStrongsNumber( self, key:str ) -> str|None:
         """
         The key is a digit string like '172' (optional preceding H).
 
-        Returns a lexicon internal code like 'acd'.
+        Returns a lexicon internal code like 'acd'
+            or raises KeyError
         """
         if key and key[0]=='H': key = key[1:] # Remove any leading 'H'
-        keyDigits = key[1:]
-        if key in self.indexEntries1: return self.indexEntries1[key]
-    # end of HebrewLexiconIndex.getLexiconCodeFromStrongsNumber
+        # keyDigits = key[1:]
+        return self.indexEntries1[key]
+    # end of HebrewLexiconIndex.getBrDrBrCodeFromHebrewStrongsNumber
 
 
     def _getStrongsNumberFromLexiconCode1( self, key ):
@@ -230,7 +231,7 @@ class HebrewLexiconSimple:
         from BibleOrgSys.OriginalLanguages.Converters.HebrewLexiconConverter import HebrewStrongsFileConverter, BrownDriverBriggsFileConverter
 
         if self.XMLFolder is None:
-            self.XMLFolder = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' ) # Hebrew lexicon folder
+            self.XMLFolder = Path( '/srv/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' ) # Hebrew lexicon folder
 
         hStr = HebrewStrongsFileConverter() # Create the empty object
         hStr.loadAndValidate( self.XMLFolder ) # Load the XML
@@ -302,7 +303,7 @@ class HebrewLexiconSimple:
     # end of HebrewLexiconSimple.getStrongsEntryField
 
 
-    def getStrongsEntryHTML( self, key:str ) -> Optional[str]:
+    def getStrongsEntryHTML( self, key:str ) -> str|None:
         """
         The key is a Hebrew Strong's number (string) like 'H1979'.
 
@@ -540,13 +541,14 @@ class HebrewLexicon( HebrewLexiconSimple ):
     # end of HebrewLexicon.getBrDrBrEntryData
 
 
-    def getBrDrBrEntryField( self, key:str, fieldName:str ) -> Optional[str]:
+    def getBrDrBrEntryField( self, key:str, fieldName:str ) -> str|None:
         """
         The key is a BrDrBr number (string) like 'ah.ba.aa'.
             but can also be a Strong's number (with or without the leading H)
         The fieldName is a name (string) like 'status'.
 
         Returns a string for the given key and fieldName names.
+
         Returns None if the key or fieldName is not found.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "HebrewLexicon.getBrDrBrEntryField( {!r}, {!r} )".format( key, fieldName ) )
@@ -560,7 +562,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
     # end of HebrewLexicon.getBrDrBrEntryField
 
 
-    def getBrDrBrEntryHTML( self, key:str ) -> Optional[str]:
+    def getBrDrBrEntryHTML( self, key:str ) -> str|None:
         """
         The key is a BrDrBr number (string) like 'ah.ba.aa'.
             but can also be a Strong's number (with or without the leading H)
@@ -593,9 +595,9 @@ def briefDemo() -> None:
         hlix.load()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )
@@ -650,9 +652,9 @@ def fullDemo() -> None:
         hlix.load()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, hlix ) # Just print a summary
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getLexiconCodeFromStrongsNumber( '2' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getLexiconCodeFromStrongsNumber( 'H8674' ) )
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getLexiconCodeFromStrongsNumber( 'H8675' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for 2 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( '2' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8674 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8674' ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Code for H8675 is", hlix.getBrDrBrCodeFromHebrewStrongsNumber( 'H8675' ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for aac are", hlix.getStrongsNumberFromLexiconCode('aac'), hlix.getBrDrBrCodeFromLexiconCode('aac'), hlix.getTWOTCodeFromLexiconCode('aac') )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for nyy are", hlix.getStrongsNumberFromLexiconCode('nyy'), hlix.getBrDrBrCodeFromLexiconCode('nyy'), hlix.getTWOTCodeFromLexiconCode('nyy') )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Codes for pdc are", hlix.getStrongsNumberFromLexiconCode('pdc'), hlix.getBrDrBrCodeFromLexiconCode('pdc'), hlix.getTWOTCodeFromLexiconCode('pdc') )

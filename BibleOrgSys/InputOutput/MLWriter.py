@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # MLWriter.py
 #
@@ -35,7 +36,6 @@ TODO: Add writeAutoDTD
 
 """
 from gettext import gettext as _
-from typing import Optional, Union, Tuple, Dict, List
 import os
 import logging
 from pathlib import Path
@@ -82,7 +82,7 @@ class MLWriter:
     Note that character escapes are not automatically done by this class.
     """
 
-    def __init__( self, filename:Union[Path,str], folder:Optional[Union[Path,str]]=None, outputType:Optional[str]=None ) -> None:
+    def __init__( self, filename:Path|str, folder:Path|str|None=None, outputType:str|None=None ) -> None:
         """
         Constructor.
             filename: filename string or complete filepath
@@ -159,7 +159,7 @@ class MLWriter:
     # end of MLWriter.setHumanReadableFlag
 
 
-    def setSectionName( self, sectionName:Optional[str] ) -> None:
+    def setSectionName( self, sectionName:str|None ) -> None:
         """ Tells the writer the current section that we are writing.
             This can affect formatting depending on the _humanReadable flag. """
         assert sectionName in ('None', 'Header', 'Main')
@@ -304,7 +304,7 @@ class MLWriter:
     # end of MLWriter.escape_characters static function
 
     @staticmethod
-    def escape_characters_with_extras( rawTextString:str, extras:InternalBibleExtraList, checkFirst:bool=False ) -> Tuple[str,InternalBibleExtraList]:
+    def escape_characters_with_extras( rawTextString:str, extras:InternalBibleExtraList, checkFirst:bool=False ) -> tuple[str,InternalBibleExtraList]:
         """
         Does XML escapes, e.g., & -> &amp;
 
@@ -440,7 +440,7 @@ class MLWriter:
     # end of MLWriter.checkAttribValue
 
 
-    def getAttributes( self, attribInfo:Union[Tuple,List,Dict] ) -> str:
+    def getAttributes( self, attribInfo:tuple|list|dict ) -> str:
         """
         Returns a string containing the validated attributes.
         """
@@ -482,7 +482,7 @@ class MLWriter:
     # end of MLWriter.writeLineComment
 
 
-    def writeLineText( self, text:str, noTextCheck:bool=False, noNL:Optional[bool]=None ) -> int:
+    def writeLineText( self, text:str, noTextCheck:bool=False, noNL:bool|None=None ) -> int:
         """
         Writes raw text onto a line.
         """
@@ -493,7 +493,7 @@ class MLWriter:
     # end of MLWriter.writeLineText
 
 
-    def writeLineOpen( self, openTag:str, attribInfo:Optional[Union[Tuple,List]]=None, noNL:Optional[bool]=None ) -> None:
+    def writeLineOpen( self, openTag:str, attribInfo:tuple|list|None=None, noNL:bool|None=None ) -> None:
         """
         Writes an opening tag on a line.
             Attributes might by 2-tuples or a list of 2-tuples.
@@ -508,7 +508,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpen
 
 
-    def writeLineOpenText( self, openTag:str, text:str, attribInfo:Optional[Union[Tuple,List]]=None, noTextCheck:bool=False ) -> None:
+    def writeLineOpenText( self, openTag:str, text:str, attribInfo:tuple|list|None=None, noTextCheck:bool=False ) -> None:
         """
         Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting).
@@ -543,7 +543,7 @@ class MLWriter:
     # end of MLWriter.writeLineOpen
 
 
-    def writeLineOpenClose( self, tag:str, text:str, attribInfo:Optional[Union[Tuple,List]]=None, noTextCheck:bool=False ) -> int:
+    def writeLineOpenClose( self, tag:str, text:str, attribInfo:tuple|list|None=None, noTextCheck:bool=False ) -> int:
         """
         Writes an opening and closing tag on the same line.
         """
@@ -600,7 +600,7 @@ class MLWriter:
     # end of MLWriter.autoClose
 
 
-    def validate( self, schemaFilepath:Union[Path,str] ) -> Tuple:
+    def validate( self, schemaFilepath:Path|str ) -> tuple:
         """
         Validate the just closed file against the given schema (pathname or URL).
 

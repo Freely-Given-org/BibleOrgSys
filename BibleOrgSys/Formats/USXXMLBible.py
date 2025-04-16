@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USXXMLBible.py
 #
@@ -29,7 +30,6 @@ CHANGELOG:
     2023-09-28 Add test for USFMAllExpandedCharacterMarkers in main()
 """
 from gettext import gettext as _
-from typing import Optional, Union
 import os
 from pathlib import Path
 import logging
@@ -59,7 +59,7 @@ DEBUGGING_THIS_MODULE = False
 logger = logging.getLogger( SHORT_PROGRAM_NAME )
 
 
-def USXXMLBibleFileCheck( givenFolderName:Union[Path,str], strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
+def USXXMLBibleFileCheck( givenFolderName:Path|str, strictCheck:bool=True, autoLoad:bool=False, autoLoadBooks:bool=False ):
     """
     Given a folder, search for USX Bible files or folders in the folder and in the next level down.
 

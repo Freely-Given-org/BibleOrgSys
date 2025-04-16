@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # PTX8Bible.py
 #
@@ -743,7 +744,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='BookNames':
@@ -807,7 +808,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         def processLexiconItem( element, treeLocation ):
             """
@@ -956,7 +957,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='ProjectUserAccess':
@@ -1092,7 +1093,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         canonsDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'Canons':
@@ -1191,7 +1192,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         checkingStatusByBookDict, checkingStatusByCheckDict = {}, {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'CheckingStatuses':
@@ -1264,7 +1265,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( commentTagFilepath ): return
 
         commentTagDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
 
@@ -1335,7 +1336,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         derivedTranslationStatusByBookDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'DerivedTranslationVerseList':
@@ -1441,7 +1442,7 @@ class PTX8Bible( Bible ):
         if not noteFilenames: return
 
         notesDictByName, notesDictByThread = {}, {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for noteFilename in noteFilenames:
             noterName = noteFilename[6:-4] # Remove the Notes_ and the .xml
@@ -1583,7 +1584,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         parallelPassageStatusDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'PassageStatus':
@@ -1671,7 +1672,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( projectBiblicalTermsFilepath ): return
 
         projectBiblicalTermsDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
 
@@ -1767,7 +1768,7 @@ class PTX8Bible( Bible ):
         if not os.path.exists( projectProgressFilepath ): return
 
         projectProgressDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
 
@@ -2130,7 +2131,7 @@ class PTX8Bible( Bible ):
         if not printConfigFilenames: return
 
         printConfigDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for printConfigFilename in printConfigFilenames:
             printConfigType = printConfigFilename[5:-4] # Remove the .xml
@@ -2388,7 +2389,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag == 'SpellingStatus':
@@ -2693,7 +2694,7 @@ class PTX8Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         wordAnalysesDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
 
         def processWordAnalysis( word, element, treeLocation ):

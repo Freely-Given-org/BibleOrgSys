@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # SwordModules.py
 #
@@ -52,7 +53,6 @@ TODO: Do we want to replace 'replace' with something more helpful (e.g., 'backsl
 TODO: I think this entire module is very messy and needs to be completely rewritten! ???
 """
 from gettext import gettext as _
-from typing import Optional
 import os
 import logging
 import time
@@ -931,7 +931,7 @@ class SwordModule():
     # end of SwordModule.createChapterOffsets
 
 
-    def loadVersifiedBibleData( self, requestedBBB:Optional[str]=None ):
+    def loadVersifiedBibleData( self, requestedBBB:str|None=None ):
         """
         Loads data from a Sword module that is structured into chapters and verses.
 

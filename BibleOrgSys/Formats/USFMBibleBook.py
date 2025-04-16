@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFMBibleBook.py
 #
@@ -29,7 +30,7 @@ CHANGELOG:
     2022-06-10 Make uw alignment loading more robust to handle formatting errors
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Any
 import os
 from pathlib import Path
 import logging
@@ -77,7 +78,7 @@ class USFMBibleBook( BibleBook ):
     # end of USFMBibleBook.__init__
 
 
-    def load( self, filename:str, folder:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def load( self, filename:str, folder:str|None=None, encoding:str|None=None ) -> None:
         """
         Load the USFM Bible book from a file.
 
@@ -141,7 +142,7 @@ class USFMBibleBook( BibleBook ):
         MAX_EXPECTED_NESTING_LEVELS = 25 # Don't allow unlimited nesting -- 22 in UST Rom 9:21-22
         # NOTE: It's encoded as either nested or overlapping \zaln-s fields, but logically it's a sequence of original language words
 
-        def handleUWEncoding( givenMarker:str, givenText:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
+        def handleUWEncoding( givenMarker:str, givenText:str, variables:dict[str,Any] ) -> tuple[str,str]:
             """
             Extracts all of the uW alignment information from a translation.
                 This uses custom \\zaln fields (with complex nesting)
@@ -220,7 +221,7 @@ class USFMBibleBook( BibleBook ):
             # end of saveAlignment helper function inside handleUWEncoding
 
 
-            def findInternalStarts( marker:str, text:str, variables:Dict[str,Any] ) -> Tuple[str,str]:
+            def findInternalStarts( marker:str, text:str, variables:dict[str,Any] ) -> tuple[str,str]:
                 """
                 Finds self-closed \\zaln-s alignment start markers that may occur inside the line.
 
@@ -412,7 +413,7 @@ class USFMBibleBook( BibleBook ):
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = None
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "USFMBibleBook.load():", type(originalBook), type(originalBook.lines), len(originalBook.lines), originalBook.lines[0] )
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             if DEBUGGING_THIS_MODULE and gotUWEncoding:
@@ -749,7 +750,7 @@ def briefDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
-        testFolder = Path( '/home/robert/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
+        testFolder = Path( '/srv/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
         for filename in os.listdir( testFolder ):
             if filename.endswith( '.usfm' ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:
@@ -811,7 +812,7 @@ def fullDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("Sorry, test folder '{}' doesn't exist on this computer.").format( testFolder ) )
 
     if 0: # Test with translationCore test files
-        testFolder = Path( '/home/robert/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
+        testFolder = Path( '/srv/Programming/ExternalPrograms/usfm-js/__tests__/resources/' )
         for filename in os.listdir( testFolder ):
             if filename.endswith( '.usfm' ):
                 if BibleOrgSysGlobals.verbosityLevel > 0:

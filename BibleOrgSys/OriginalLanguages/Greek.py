@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Greek.py
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2023 Robert Hunt
+# Copyright (C) 2012-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,11 +25,13 @@
 
 """
 Module handling Greek language particularities.
+
+CHANGELOG:
+    2024-02-11 Improve assert test for left-over accents
 """
 
 from gettext import gettext as _
 import unicodedata
-from typing import Optional
 
 if __name__ == '__main__':
     import os
@@ -40,10 +43,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-12-16' # by RJH
+LAST_MODIFIED_DATE = '2025-02-11' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.10'
+PROGRAM_VERSION = '0.11'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -231,7 +234,7 @@ class Greek():
         return result
     # end of __str__
 
-    def printUnicodeData( self, text:Optional[str]=None ):
+    def printUnicodeData( self, text:str|None=None ):
         if text is None: text = self.currentText
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
         #def printUnicodeInfo( text, description ):
@@ -242,7 +245,7 @@ class Greek():
     # end of Greek.printUnicodeData
 
 
-    def removeAccents( self, text:Optional[str]=None ) -> str:
+    def removeAccents( self, text:str|None=None ) -> str:
         """
         Remove accents from the string and return it (used for fuzzy matching)
 
@@ -253,9 +256,16 @@ class Greek():
         if text is None: text = self.currentText
         resultText = ''.join( GREEK_ACCENT_DICT[someChar] if someChar in GREEK_ACCENT_DICT
                                         else someChar for someChar in text )
-        for char in resultText:
+        # Check
+        for cc,char in enumerate( resultText ):
             if char != ' ':
-                assert char in ALL_LETTERS, f"Greek accent not removed by removeAccents: {char=} from {text=}"
+                assert 'ACCENT' not in unicodedata.name(char), f"Greek accent not removed by removeAccents: {char=} ({unicodedata.name(char)}) from {text=}"
+
+        # Check2 (unreliable???)
+        # for char in resultText:
+        #     if char != ' ':
+        #         assert char in ALL_LETTERS, f"BB Greek accent not removed by removeAccents: {char=} from {text=}"
+
         return resultText
     # end of Greek.removeAccents
 
@@ -281,16 +291,22 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     # Demonstrate the Greek class
-    dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
-    dan12 = "וַיִּתֵּן֩ אֲדֹנָ֨י בְּיָד֜וֹ אֶת־יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֗ה וּמִקְצָת֙ כְּלֵ֣י בֵית־הָֽאֱלֹהִ֔ים וַיְבִיאֵ֥ם אֶֽרֶץ־שִׁנְעָ֖ר בֵּ֣ית אֱלֹהָ֑יו וְאֶת־הַכֵּלִ֣ים הֵבִ֔יא בֵּ֖ית אוֹצַ֥ר אֱלֹהָֽיו ׃"
-    dan13 = "וַיֹּ֣אמֶר הַמֶּ֔לֶךְ לְאַשְׁפְּנַ֖ז רַ֣ב סָרִיסָ֑יו לְהָבִ֞יא מִבְּנֵ֧י יִשְׂרָאֵ֛ל וּמִזֶּ֥רַע הַמְּלוּכָ֖ה וּמִן־הַֽפַּרְתְּמִֽים ׃"
-    dan14 = "יְלָדִ֣ים אֲשֶׁ֣ר אֵֽין־בָּהֶ֣ם כָּל־מאום וְטוֹבֵ֨י מַרְאֶ֜ה וּמַשְׂכִּילִ֣ים בְּכָל־חָכְמָ֗ה וְיֹ֤דְעֵי דַ֙עַת֙ וּמְבִינֵ֣י מַדָּ֔ע וַאֲשֶׁר֙ כֹּ֣חַ בָּהֶ֔ם לַעֲמֹ֖ד בְּהֵיכַ֣ל הַמֶּ֑לֶךְ וּֽלֲלַמְּדָ֥ם סֵ֖פֶר וּלְשׁ֥וֹן כַּשְׂדִּֽים ׃"
-    dan15 = "וַיְמַן֩ לָהֶ֨ם הַמֶּ֜לֶךְ דְּבַר־י֣וֹם בְּיוֹמ֗וֹ מִפַּת־בַּ֤ג הַמֶּ֙לֶךְ֙ וּמִיֵּ֣ין מִשְׁתָּ֔יו וּֽלְגַדְּלָ֖ם שָׁנִ֣ים שָׁל֑וֹשׁ וּמִ֨קְצָתָ֔ם יַֽעַמְד֖וּ לִפְנֵ֥י הַמֶּֽלֶךְ ׃"
-    for string in ( dan11, dan12, dan13, dan14, dan15 ):
+    mark11 = "Ἀρχὴ τοῦ εὐαγγελίου ˚Ἰησοῦ ˚Χριστοῦ, Υἱοῦ ˚Θεοῦ."
+    mark12 = "Καθὼς γέγραπται ἐν τῷ Ἠσαΐᾳ τῷ προφήτῃ: “Ἰδοὺ, ἀποστέλλω τὸν ἄγγελόν μου πρὸ προσώπου σου, ὃς κατασκευάσει τὴν ὁδόν σου.”"
+    mark13 = "“Φωνὴ βοῶντος ἐν τῇ ἐρήμῳ: ‘Ἑτοιμάσατε τὴν ὁδὸν ˚Κυρίου, εὐθείας ποιεῖτε τὰς τρίβους αὐτοῦ.’ ”"
+    mark14 = "Ἐγένετο Ἰωάννης, ὁ βαπτίζων ἐν τῇ ἐρήμῳ, καὶ κηρύσσων βάπτισμα μετανοίας εἰς ἄφεσιν ἁμαρτιῶν."
+    mark15 = "Καὶ ἐξεπορεύετο πρὸς αὐτὸν πᾶσα ἡ Ἰουδαία χώρα καὶ οἱ Ἱεροσολυμῖται πάντες, καὶ ἐβαπτίζοντο ὑπʼ αὐτοῦ ἐν τῷ Ἰορδάνῃ ποταμῷ, ἐξομολογούμενοι τὰς ἁμαρτίας αὐτῶν."
+    for string in ( mark11, mark12, mark13, mark14, mark15 ):
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
         h = Greek( string )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+        h.removeAccents()
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed accents" )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '' )
+
+        h = Greek( string )
         h.removeOtherMarks()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Removed other marks" )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, h )

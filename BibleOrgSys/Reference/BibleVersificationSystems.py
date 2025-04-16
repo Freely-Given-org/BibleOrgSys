@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BibleVersificationSystems.py
 #
@@ -68,7 +69,6 @@ CHANGELOG:
     2024-09-20 Made BibleVersificationSystem iterable
 """
 from gettext import gettext as _
-from typing import List
 import os
 import logging
 
@@ -747,7 +747,7 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.getNumVerses
 
 
-    def getNumVersesList( self, BBB:str ) -> List[int]:
+    def getNumVersesList( self, BBB:str ) -> list[int]:
         """
         Returns a list containing an integer for each chapter indicating the number of verses.
 

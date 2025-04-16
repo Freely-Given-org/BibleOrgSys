@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # PTX7Bible.py
 #
@@ -690,7 +691,7 @@ class PTX7Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='BookNames':
@@ -748,7 +749,7 @@ class PTX7Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='ProjectUsers':
@@ -820,7 +821,7 @@ class PTX7Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='ProjectUserFields':
@@ -892,7 +893,7 @@ class PTX7Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         def processLexiconItem( element, treeLocation ):
             """
@@ -1028,7 +1029,7 @@ class PTX7Bible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='SpellingStatus':
@@ -1103,7 +1104,7 @@ class PTX7Bible( Bible ):
         if not commentFilenames: return
 
         commentsList = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for commentFilename in commentFilenames:
             commenterName = commentFilename[9:-4] # Remove the .xml
@@ -1204,7 +1205,7 @@ class PTX7Bible( Bible ):
         if not BiblicalTermsFilenames: return
 
         BiblicalTermsDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for BiblicalTermsFilename in BiblicalTermsFilenames:
             versionName = BiblicalTermsFilename[13:-4] # Remove the .xml
@@ -1316,7 +1317,7 @@ class PTX7Bible( Bible ):
         if not progressFilenames: return
 
         progressDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for progressFilename in progressFilenames:
             versionName = progressFilename[8:-4] # Remove the .xml
@@ -1503,7 +1504,7 @@ class PTX7Bible( Bible ):
         if not printConfigFilenames: return
 
         printConfigDict = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         for printConfigFilename in printConfigFilenames:
             printConfigType = printConfigFilename[5:-4] # Remove the .xml

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ISO_639_3_LanguagesTests.py
 #   Last modified: 2014-12-15 by RJH (also update PROGRAM_VERSION below)

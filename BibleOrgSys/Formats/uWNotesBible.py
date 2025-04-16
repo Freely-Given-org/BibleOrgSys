@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # uWNotesBible.py
 #
 # Module handling unfoldingWord Bible Notes stored in TSV tables.
 #
-# Copyright (C) 2020-2024 Robert Hunt
+# Copyright (C) 2020-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -39,9 +40,11 @@ Some verses might have no notes.
 
 CHANGELOG:
     2023-05-04 Handle comma-separated lists in ref column
+    2025-01-06 Try to handle some common editing errors present in uW TN files
+    2025-01-13 Try to handle some more editing errors and inconsistencies present in uW TN files
 """
 from gettext import gettext as _
-from typing import Dict, List, Any, Optional
+from typing import Any
 import os
 from pathlib import Path
 import logging
@@ -56,13 +59,12 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
-# from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
-LAST_MODIFIED_DATE = '2024-04-05' # by RJH
+LAST_MODIFIED_DATE = '2025-01-13' # by RJH
 SHORT_PROGRAM_NAME = "uWNotesBible"
 PROGRAM_NAME = "unfoldingWord Bible Notes handler"
-PROGRAM_VERSION = '0.17'
+PROGRAM_VERSION = '0.19'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -79,7 +81,7 @@ TAB = '\t'
 
 
 
-def loadYAML( YAMLFilepath ) -> Dict[str,Any]:
+def loadYAML( YAMLFilepath ) -> dict[str,Any]:
     """
     Load the given YAML file
         and return the settings dict.
@@ -455,7 +457,7 @@ class uWNotesBible( Bible ):
     Class to load and manipulate uW Notes Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFolder, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Create the internal uW Notes Bible object.
 
@@ -559,7 +561,7 @@ class uWNotesBible( Bible ):
     # end of uWNotesBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
+    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -683,15 +685,15 @@ class uWNotesBibleBook( BibleBook ):
         # end of doAddLine
 
 
-        fixErrors:List[str] = []
+        fixErrors:list[str] = []
         lineCount = 0
         lastC, lastV = '-1', '0'
-        with open( os.path.join( self.filepath ), 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
+        with open( self.filepath, 'rt', encoding='utf-8' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 line = line.rstrip( '\n\r' )
                 lineCount += 1
                 if lineCount==1 and line and line[0]==BibleOrgSysGlobals.BOM:
-                    logging.info( "loaduWNotesBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( metadataFilepath ) )
+                    logging.info( "loaduWNotesBibleBook: Detected Unicode Byte Order Marker (BOM) in {}".format( self.filepath ) )
                     line = line[1:] # Remove the Byte Order Marker (BOM)
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, CV, "line", line )
                 assert line.count( '\t' )  == 6, f"Expected 6 tabs not {line.count(TAB)} in {filename} {line=}" # 7 fields
@@ -709,6 +711,10 @@ class uWNotesBibleBook( BibleBook ):
                 if not ref:
                     logging.critical( f"Missing uW TN field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
                     continue # ignore this (invalid) note
+                # Handle some common uW errors
+                if '–' in ref or '—' in ref: # endash or emdash
+                    logging.critical( f"Bad uW TN ref field {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}" )
+                    ref = ref.replace( '–', '-' ).replace( '—', '-' )
                 # Note: The ref field can contain a comma separated list
                 for individualRef in ref.split( ',' ):
                     # assert individualRef.count(':') == 1, f"Invalid uW TN ref {individualRef=} from {self.BBB} {ref=} {fieldID} {tags=} {supportReference} {quote} {occurrence} {note}"
@@ -716,7 +722,8 @@ class uWNotesBibleBook( BibleBook ):
                         # C should already be set
                         V = individualRef
                     else:
-                        C, V = individualRef.split( ':' )
+                        try: C, V = individualRef.split( ':' )
+                        except ValueError: raise ValueError( f"uW TN Too many colons in {individualRef=} from {self.BBB} {lineCount} {line=}" )
                     if C=='front': C = '-1'
                     if V=='front': V = '0'
                     if C != lastC: doAddLine( 'c', C )

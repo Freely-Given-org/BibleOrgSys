@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # OSISXMLBible.py
 #
@@ -34,7 +35,6 @@ This is a quickly updated version of an early module,
 Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 from gettext import gettext as _
-from typing import List, Tuple
 import logging
 import os
 import sys
@@ -368,7 +368,7 @@ class OSISXMLBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "OSISXMLBible.loadBooks()" )
 
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
             if BibleOrgSysGlobals.maxProcesses > 1 \
             and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
@@ -442,7 +442,7 @@ class OSISXMLBible( Bible ):
             #BB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             #self.stashBook( BB )
         #else: logging.info( "OSIS book {} was completely blank".format( BBB ) )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         pathname = os.path.join( self.sourceFolder, filename )
         loadedBooks = self.__loadFile( pathname )
         assert len(loadedBooks) == 1
@@ -479,7 +479,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible._loadBookFileMP function
 
 
-    def __loadFile( self, OSISFilepath ) -> List[BibleBook]:
+    def __loadFile( self, OSISFilepath ) -> list[BibleBook]:
         """
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -487,8 +487,8 @@ class OSISXMLBible( Bible ):
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  OSISXMLBible loading {OSISFilepath}…" )
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
-        bookList:List[Tuple[BibleBook,List[str]]] = []
-        loadErrors:List[str] = []
+        bookList:list[tuple[BibleBook,list[str]]] = []
+        loadErrors:list[str] = []
 
         try: self.XMLTree = ElementTree().parse( OSISFilepath )
         except ParseError as err:

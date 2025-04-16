@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # GreekLexicon.py
 #
 # Module handling the Greek lexicon
 #
-# Copyright (C) 2014-2023 Robert Hunt
+# Copyright (C) 2014-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -25,16 +26,15 @@
 """
 Module handling the Greek lexicon.
 
-    The later class is the one for users to
+    This class is the one for users to
         access the Strongs lexical entries
         via various keys and in various formats.
 """
 from gettext import gettext as _
-from typing import Optional
-# import logging
 from pathlib import Path
 import os.path
 import sys
+import logging
 
 if __name__ == '__main__':
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -44,10 +44,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2025-03-17' # by RJH
 SHORT_PROGRAM_NAME = "GreekLexicon"
 PROGRAM_NAME = "Greek Lexicon handler"
-PROGRAM_VERSION = '0.17'
+PROGRAM_VERSION = '0.19'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -111,7 +111,7 @@ class GreekLexicon:
     # end of GreekLexicon.__str__
 
 
-    def getStrongsEntryData( self, key:str ) -> Optional[str]:
+    def getStrongsEntryData( self, key:str ) -> str|None:
         """
         The key is a Greek Strong's number (string) like 'G1979'.
 
@@ -149,7 +149,7 @@ class GreekLexicon:
     # end of GreekLexicon.getStrongsEntryField
 
 
-    def getStrongsEntryHTML( self, key:str ) -> Optional[str]:
+    def getStrongsEntryHTML( self, key:str ) -> str|None:
         """
         The key is a Greek Strong's number (string) like 'G1979'.
 
@@ -177,8 +177,13 @@ class GreekLexicon:
             wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML created wordEntry: {wordEntry}" )
-            html = f'<span class="GreekWord" title="{keyDigits}" xml:lang="grk">{entry["word"][0]} ({entry["word"][1]})</span> {wordEntry}'
-            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML about to return: {html}" )
+            try: wordString = entry["word"]
+            except KeyError:
+                logger = logging.warning if entry['Entry']=='Not Used' else logging.critical
+                logger( f"GreekLexicon.getStrongsEntryHTML( {key} ) found no 'word' entry in {entry=}" )
+                wordString = f'{key} IS NOT USED' if entry['Entry']=='Not Used' else 'OOPS'
+            html = f'<span class="GreekWord" title="{keyDigits}" xml:lang="grk">{wordString[0]} ({wordString[1]})</span> {wordEntry}'
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  GreekLexicon.getStrongsEntryHTML about to return: {html=}" )
             return html
     # end of GreekLexicon.getStrongsEntryHTML
 # end of GreekLexicon class
@@ -191,7 +196,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+    testFolder = Path( '/srv/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # Demonstrate the Greek Lexicon class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )
@@ -212,7 +217,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
+    testFolder = Path( '/srv/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ) # Greek lexicon folder
 
     # demonstrate the Greek Lexicon class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek Lexicon class…" )

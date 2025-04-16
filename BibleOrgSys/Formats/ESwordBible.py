@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ESwordBible.py
 #
@@ -804,7 +805,7 @@ class ESwordBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, "preload()" )
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Preloading {}…").format( self.sourceFilepath ) )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -899,7 +900,7 @@ class ESwordBible( Bible ):
         if not self.preloaded: self.preload()
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
         #fileExtensionUpper = self.fileExtension.upper()
         #if fileExtensionUpper not in FILENAME_ENDINGS_TO_ACCEPT:
@@ -1089,7 +1090,7 @@ class ESwordBible( Bible ):
         self.triedLoadingBook[BBB] = True
         self.bookNeedsReloading[BBB] = False
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {} from {}…").format( BBB, self.sourceFilepath ) )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
         # Create the book
         thisBook = BibleBook( self, BBB )

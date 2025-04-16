@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFM2BibleBook.py
 #
@@ -128,7 +129,7 @@ class USFM2BibleBook( BibleBook ):
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Preloading {}…").format( filename ) )
         with open( self.sourceFilepath, 'rt', encoding=encoding) as f:
@@ -151,7 +152,7 @@ class USFM2BibleBook( BibleBook ):
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, text ) )
 

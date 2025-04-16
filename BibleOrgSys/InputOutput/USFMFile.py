@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFMFile.py
 #
@@ -33,7 +34,6 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 """
 
 from gettext import gettext as _
-from typing import Tuple, Optional
 import sys
 import logging
 
@@ -56,7 +56,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 
-def splitUSFMMarkerFromText( line:str ) -> Tuple[Optional[str],str]:
+def splitUSFMMarkerFromText( line:str ) -> tuple[str|None,str]:
     """
     Given a line of text (may be empty),
         returns a backslash marker and the text.
@@ -129,7 +129,7 @@ class USFMFile:
     # end of USFMFile.__str__
 
 
-    def read( self, USFMFilepath:str, ignoreSFMs:Optional[bool]=None, encoding:Optional[str]=None ) -> None:
+    def read( self, USFMFilepath:str, ignoreSFMs:bool|None=None, encoding:str|None=None ) -> None:
         """
         Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
 

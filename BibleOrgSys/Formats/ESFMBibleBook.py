@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ESFMBibleBook.py
 #
@@ -457,7 +458,7 @@ class ESFMBibleBook( BibleBook ):
         # Do some important cleaning up before we save the data
         C, V = '-1', '-1' # So first/id line starts at -1:0
         lastMarker = lastText = ''
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
             if not marker:

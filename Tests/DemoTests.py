@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # DemoTests.py
 #
@@ -40,7 +41,6 @@ CHANGELOG:
     2022-04-22 added ScriptureBurritoBible test
 """
 from gettext import gettext as _
-from typing import List, Tuple
 import sys
 import os.path
 from datetime import datetime
@@ -144,7 +144,7 @@ def formatAndPublish( timeList ):
 # end of formatAndPublish
 
 
-def formatFailureDetails( exceptionObject:Exception ) -> Tuple[str,Exception,str]:
+def formatFailureDetails( exceptionObject:Exception ) -> tuple[str,Exception,str]:
     """
     Returns a 3-tuple.
     """
@@ -171,8 +171,8 @@ def formatFailureDetails( exceptionObject:Exception ) -> Tuple[str,Exception,str
 
 
 
-def doAll( testType:str, failures:List[str], failureDetails:List[str],
-                         successes:List[str], times:List[str] ) -> None:
+def doAll( testType:str, failures:list[str], failureDetails:list[str],
+                         successes:list[str], times:list[str] ) -> None:
     """
     Run the demo() function on all the modules (depending on the testType).
 

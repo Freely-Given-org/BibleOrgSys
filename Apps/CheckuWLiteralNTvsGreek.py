@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
-# CheckLiteralNTvsGreek.py
+# CheckuWLiteralNTvsGreek.py
 #
 # Command-line app to download the UGNT and ULT from the Door43 Resource Catalog
 #   and then do some automated comparisons of the two texts.
 #
-# Copyright (C) 2019-2020 Robert Hunt
+# Copyright (C) 2019-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,18 +35,18 @@ Of course, you must already have Python3 installed on your system.
 
 Note that this app can be run from your BOS folder,
     e.g., using the command:
-        Apps/CheckLiteralNTvsGreek.py
+        Apps/CheckuWLiteralNTvsGreek.py
 
 You can discover the version with
-        Apps/CheckLiteralNTvsGreek.py --version
+        Apps/CheckuWLiteralNTvsGreek.py --version
 
 You can discover the available command line parameters with
-        Apps/CheckLiteralNTvsGreek.py --help
+        Apps/CheckuWLiteralNTvsGreek.py --help
 
     e.g., for verbose mode
-        Apps/CheckLiteralNTvsGreek.py --verbose
+        Apps/CheckuWLiteralNTvsGreek.py --verbose
     or
-        Apps/CheckLiteralNTvsGreek.py -v
+        Apps/CheckuWLiteralNTvsGreek.py -v
 
 This app also demonstrates how little actual code is required to use the BOS to load an online Bible
     and then to process it verse by verse.
@@ -58,7 +59,7 @@ import logging
 
 # Allow the system to find the BOS even when the app is down in its own folder
 if __name__ == '__main__':
-    import sys
+    import os, sys
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
     sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 from BibleOrgSys import BibleOrgSysGlobals
@@ -67,10 +68,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Online.Door43OnlineCatalog import Door43CatalogResources, Door43CatalogBible
 
 
-LAST_MODIFIED_DATE = '2020-06-10' # by RJH
-SHORT_PROGRAM_NAME = "CheckLiteralNTvsGreek"
-PROGRAM_NAME = "Check Literal NT vs Greek"
-PROGRAM_VERSION = '0.03'
+LAST_MODIFIED_DATE = '2025-02-08' # by RJH
+SHORT_PROGRAM_NAME = "CheckuWLiteralNTvsGreek"
+PROGRAM_NAME = "Check unfoldingWord Literal NT vs Greek"
+PROGRAM_VERSION = '0.04'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 
@@ -105,6 +106,7 @@ def main() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible )
         Door43CatalogUGNTBible.load()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogUGNTBible, end='\n\n' )
+    assert len(Door43CatalogUGNTBible) == 27, f"{len(Door43CatalogUGNTBible)=}"
 
     # Download the ULT = unfoldingWord® Literal Text
     ULTDict = door43CatalogResources.searchBibles( 'en', 'unfoldingWord® Literal Text' )
@@ -113,6 +115,7 @@ def main() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible )
         Door43CatalogULTBible.preload()
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, Door43CatalogULTBible, end='\n\n' )
+    assert len(Door43CatalogULTBible) == 66, f"{len(Door43CatalogULTBible)=}"
 
     # Go through the UGNT verse by verse
     #   and do some comparisions with the matching ULT verses
@@ -124,12 +127,12 @@ def main() -> None:
                 ref = SimpleVerseKey( BBB, C, V )
                 text1 = Door43CatalogUGNTBible.getVerseText( ref, fullTextFlag=False )
                 if not text1:
-                    logging.warning( f"Blank text at {ref.getShortText()} in UGNT" )
+                    logging.error( f"Blank text at {ref.getShortText()} in UGNT" )
                 try:
                     # NOTE: The following line will automatically load the ULT book into memory as required
                     text2 = Door43CatalogULTBible.getVerseText( ref, fullTextFlag=False )
                     if not text2:
-                        logging.warning( f"Blank text at {ref.getShortText()} in ULT" )
+                        logging.error( f"Blank text at {ref.getShortText()} in ULT" )
                 except KeyError:
                     logging.error( f"Can't find {ref.getShortText()} in ULT" )
                     text2 = ''
@@ -139,14 +142,12 @@ def main() -> None:
                 J1 = 'Ἰησοῦς' in text1 or 'Ἰησοῦ' in text1 or 'Ἰησοῦν' in text1
                 J2 = 'Jesus' in text2
                 if J1 and not J2:
-                    if BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text2}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in Grk {ref.getShortText()}: {text1}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text2}" )
                     count1 += 1
                 if J2 and not J1:
-                    if BibleOrgSysGlobals.verbosityLevel > 1:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text1}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Found 'Jesus' in ULT {ref.getShortText()}: {text2}" )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"                              {text1}" )
                     count2 += 1
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nFound {count1} unmatched occurrences in UGNT, {count2} in ULT." )
 # end of main
@@ -177,4 +178,4 @@ if __name__ == '__main__':
 
     # Do the BOS close-down stuff
     BibleOrgSysGlobals.closedown( PROGRAM_NAME, PROGRAM_VERSION )
-# end of CheckLiteralNTvsGreek.py
+# end of CheckuWLiteralNTvsGreek.py

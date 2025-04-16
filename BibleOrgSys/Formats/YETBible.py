@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # YETBible.py
 #
@@ -234,7 +235,7 @@ class YETBible( Bible ):
         """
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
 
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         def decodeVerse( encodedVerseString ):
             """
             Decodes the verse which has @ format codes.

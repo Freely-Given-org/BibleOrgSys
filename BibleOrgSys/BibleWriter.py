@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BibleWriter.py
 #
@@ -34,39 +35,39 @@ Module for exporting Bibles in various formats listed below.
 A class which extends InternalBible to add Bible export functions.
 
 Contains functions:
-    toPickleObject( outputFolderpath:Optional[Path]=None )
-    toPickledBible( outputFolderpath:Optional[Path]=None )
-    toBOSJSONBible( outputFolderpath:Optional[Path]=None )
-    makeLists( outputFolderpath:Optional[Path]=None )
-    toBOSBCV( self, outputFolderpath:Optional[Path]=None ) — one file per verse using our internal Bible format
-    toPseudoUSFM( outputFolderpath:Optional[Path]=None ) — this is our internal Bible format — exportable for debugging purposes
+    toPickleObject( outputFolderpath:Path|None=None )
+    toPickledBible( outputFolderpath:Path|None=None )
+    toBOSJSONBible( outputFolderpath:Path|None=None )
+    makeLists( outputFolderpath:Path|None=None )
+    toBOSBCV( self, outputFolderpath:Path|None=None ) — one file per verse using our internal Bible format
+    toPseudoUSFM( outputFolderpath:Path|None=None ) — this is our internal Bible format — exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
-    toUSFM2( outputFolderpath:Optional[Path]=None. removeVerseBridges=False )
-    toUSFM3( outputFolderpath:Optional[Path]=None. removeVerseBridges=False )
-    toESFM( outputFolderpath:Optional[Path]=None )
-    toText( outputFolderpath:Optional[Path]=None )
-    toVPL( outputFolderpath:Optional[Path]=None )
-    toMarkdown( outputFolderpath:Optional[Path]=None )
-    #toDoor43( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toHTML5( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None, humanReadable=True )
-    toBibleDoor( outputFolderpath:Optional[Path]=None, removeVerseBridges=False )
-    toUSX2XML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toUSXXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toUSFXXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toOSISXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toZefaniaXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toHaggaiXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toOpenSongXML( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    toSwordModule( outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None )
-    totheWord( outputFolderpath:Optional[Path]=None )
-    toMySword( outputFolderpath:Optional[Path]=None )
-    toESword( outputFolderpath:Optional[Path]=None )
-    toMyBible( outputFolderpath:Optional[Path]=None )
-    toSwordSearcher( outputFolderpath:Optional[Path]=None )
-    toDrupalBible( outputFolderpath:Optional[Path]=None )
-    toPhotoBible( outputFolderpath:Optional[Path]=None )
-    toODF( outputFolderpath:Optional[Path]=None ) for LibreOffice/OpenOffice exports
-    toTeX( outputFolderpath:Optional[Path]=None ) and thence to PDF
+    toUSFM2( outputFolderpath:Path|None=None. removeVerseBridges=False )
+    toUSFM3( outputFolderpath:Path|None=None. removeVerseBridges=False )
+    toESFM( outputFolderpath:Path|None=None )
+    toText( outputFolderpath:Path|None=None )
+    toVPL( outputFolderpath:Path|None=None )
+    toMarkdown( outputFolderpath:Path|None=None )
+    #toDoor43( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toHTML5( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None, humanReadable=True )
+    toBibleDoor( outputFolderpath:Path|None=None, removeVerseBridges=False )
+    toUSX2XML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toUSXXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toUSFXXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toOSISXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toZefaniaXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toHaggaiXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toOpenSongXML( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    toSwordModule( outputFolderpath:Path|None=None, controlDict=None, validationSchema=None )
+    totheWord( outputFolderpath:Path|None=None )
+    toMySword( outputFolderpath:Path|None=None )
+    toESword( outputFolderpath:Path|None=None )
+    toMyBible( outputFolderpath:Path|None=None )
+    toSwordSearcher( outputFolderpath:Path|None=None )
+    toDrupalBible( outputFolderpath:Path|None=None )
+    toPhotoBible( outputFolderpath:Path|None=None )
+    toODF( outputFolderpath:Path|None=None ) for LibreOffice/OpenOffice exports
+    toTeX( outputFolderpath:Path|None=None ) and thence to PDF
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         (doAllExports supports multiprocessing — it shares the exports out amongst available processes)
 
@@ -82,7 +83,7 @@ CHANGELOG:
     2022-07-29 Added BOMs to some file writes
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Any
 import sys
 import os
 import shutil
@@ -207,7 +208,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.__init_
 
 
-    def toPickleObject( self, outputFolderpath:Optional[Path]=None ) -> bool:
+    def toPickleObject( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
         """
@@ -238,8 +239,8 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPickledBible( self, outputFolderpath:Optional[Path]=None,
-                            metadataDict:Optional[Dict[str,Any]]=None, dataLevel:int=1, zipOnly:bool=False ) -> bool:
+    def toPickledBible( self, outputFolderpath:Path|None=None,
+                            metadataDict:dict[str,Any]|None=None, dataLevel:int=1, zipOnly:bool=False ) -> bool:
         """
         Saves the Python book objects as pickle files
             then the Bible object (less books)
@@ -268,8 +269,8 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toBOSJSONBible( self, outputFolderpath:Optional[Path]=None, sourceURL:Optional[str]=None,
-                                                                licenceString:Optional[str]=None ):
+    def toBOSJSONBible( self, outputFolderpath:Path|None=None, sourceURL:str|None=None,
+                                                                licenceString:str|None=None ):
         """
         Saves the Python book objects as json files
             then the Bible object (less books)
@@ -326,7 +327,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def makeLists( self, outputFolderpath:Optional[Path]=None ) -> bool:
+    def makeLists( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out directly (for debugging, etc.).
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
@@ -395,7 +396,7 @@ class BibleWriter( InternalBible ):
         ## end of countWords
 
 
-        def printWordCounts( typeString:str, dictionary:Dict[str,int] ) -> None:
+        def printWordCounts( typeString:str, dictionary:dict[str,int] ) -> None:
             """
             Given a description and a dictionary,
                 sorts and writes the word count data to text, csv, and xml files.
@@ -501,7 +502,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.makeLists
 
 
-    def toBOSBCV( self, outputFolderpath:Optional[Path]=None ):
+    def toBOSBCV( self, outputFolderpath:Path|None=None ):
         """
         Write the internal pseudoUSFM out directly with one file per verse.
         """
@@ -532,7 +533,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPseudoUSFM( self, outputFolderpath:Optional[Path]=None ):
+    def toPseudoUSFM( self, outputFolderpath:Path|None=None ):
         """
         Write the pseudo USFM out directly (for debugging, etc.).
             May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
@@ -623,7 +624,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFM2( self, outputFolderpath:Optional[Path]=None, removeVerseBridges=False ):
+    def toUSFM2( self, outputFolderpath:Path|None=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the USFM2 files.
 
@@ -790,7 +791,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFM3( self, outputFolderpath:Optional[Path]=None, removeVerseBridges=False ):
+    def toUSFM3( self, outputFolderpath:Path|None=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the USFM3 files.
 
@@ -963,7 +964,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toESFM( self, outputFolderpath:Optional[Path]=None ) -> bool: #, removeVerseBridges=False ):
+    def toESFM( self, outputFolderpath:Path|None=None ) -> bool: #, removeVerseBridges=False ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
@@ -1117,7 +1118,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toText( self, outputFolderpath:Optional[Path]=None ):
+    def toText( self, outputFolderpath:Path|None=None ):
         """
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -1222,7 +1223,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toVPL( self, outputFolderpath:Optional[Path]=None ):
+    def toVPL( self, outputFolderpath:Path|None=None ):
         """
         Write the pseudo USFM out into some simple verse-per-line formats.
         """
@@ -1340,7 +1341,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMarkdown( self, outputFolderpath:Optional[Path]=None ):
+    def toMarkdown( self, outputFolderpath:Path|None=None ):
         """
         Write the Bible data out into GFM markdown format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -2046,7 +2047,7 @@ class BibleWriter( InternalBible ):
     # end of __formatHTMLVerseText
 
 
-    def toHTML5( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None, humanReadable=True ):
+    def toHTML5( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None, humanReadable=True ):
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
@@ -2559,7 +2560,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def _toBibleDoorText( self, outputFolderpath:Optional[Path]=None ) -> bool:
+    def _toBibleDoorText( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Adjust the pseudo USFM and write the text and index files (by book) to be used by the Bible Door app.
             (This is a newer format than the older CHTML format used by the MS-Bible app.
@@ -2849,7 +2850,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def _toBibleDoorJSONCHTML( self, outputFolderpath:Optional[Path]=None ) -> bool:
+    def _toBibleDoorJSONCHTML( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the now deprecated JSON and CHTML compressed HTML files used by the MS-Bible (Android) app.
         """
@@ -3725,7 +3726,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter_toBibleDoorJSONCHTML
 
 
-    def toBibleDoor( self, outputFolderpath:Optional[Path]=None, removeVerseBridges:bool=False ) -> bool:
+    def toBibleDoor( self, outputFolderpath:Path|None=None, removeVerseBridges:bool=False ) -> bool:
         """
         Adjust the pseudo USFM and write the customized USFM files for the BibleDoor (Android) app.
         """
@@ -3749,7 +3750,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toEasyWorshipBible( self, outputFolderpath:Optional[Path]=None ) -> bool:
+    def toEasyWorshipBible( self, outputFolderpath:Path|None=None ) -> bool:
         """
         Write the pseudo USFM out into the compressed EasyWorship format.
 
@@ -3771,7 +3772,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSX2XML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toUSX2XML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         DEPRECATED
 
@@ -4313,7 +4314,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSXXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toUSXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Or toUSX3XML
 
@@ -4349,7 +4350,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFXXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toUSFXXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 USFX XML files.
@@ -4884,7 +4885,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toOSISXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toOSISXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to one or more UTF-8 OSIS XML files.
@@ -5627,7 +5628,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toZefaniaXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toZefaniaXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Zefania XML file.
@@ -6126,7 +6127,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toHaggaiXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toHaggaiXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Haggai XML file.
@@ -6318,7 +6319,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toOpenSongXML( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toOpenSongXML( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OpenSong XML file.
@@ -6346,7 +6347,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toSwordModule( self, outputFolderpath:Optional[Path]=None, controlDict=None, validationSchema=None ):
+    def toSwordModule( self, outputFolderpath:Path|None=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
@@ -7072,7 +7073,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def totheWord( self, outputFolderpath:Optional[Path]=None, controlDict=None ):
+    def totheWord( self, outputFolderpath:Path|None=None, controlDict=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 theWord file.
@@ -7101,7 +7102,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMySword( self, outputFolderpath:Optional[Path]=None, controlDict=None ):
+    def toMySword( self, outputFolderpath:Path|None=None, controlDict=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 MySword file.
@@ -7130,7 +7131,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toESword( self, outputFolderpath:Optional[Path]=None, controlDict=None ):
+    def toESword( self, outputFolderpath:Path|None=None, controlDict=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 e-Sword file.
@@ -7159,7 +7160,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toMyBible( self, outputFolderpath:Optional[Path]=None, controlDict=None ):
+    def toMyBible( self, outputFolderpath:Path|None=None, controlDict=None ):
         """
         Using settings from the given control file,
             converts the internal Bible information to a UTF-8 MyBible SQLite3 database file
@@ -7189,7 +7190,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toSwordSearcher( self, outputFolderpath:Optional[Path]=None ):
+    def toSwordSearcher( self, outputFolderpath:Path|None=None ):
         """
         Write the pseudo USFM out into the SwordSearcher pre-Forge format.
         """
@@ -7321,7 +7322,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toDrupalBible( self, outputFolderpath:Optional[Path]=None ):
+    def toDrupalBible( self, outputFolderpath:Path|None=None ):
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
@@ -7502,7 +7503,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPhotoBible( self, outputFolderpath:Optional[Path]=None ):
+    def toPhotoBible( self, outputFolderpath:Path|None=None ):
         """
         Write the internal Bible format out into small JPEG (photo) files
             that can be downloaded into a cheap (non-Java) camera phone.
@@ -8072,7 +8073,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.toPhotoBible
 
 
-    def toODF( self, outputFolderpath:Optional[Path]=None ):
+    def toODF( self, outputFolderpath:Path|None=None ):
         """
         Write the internal Bible format out into Open Document Format (ODF)
             suitable for opening in LibreOffice or OpenOffice.
@@ -9413,7 +9414,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toTeX( self, outputFolderpath:Optional[str]=None ) -> bool:
+    def toTeX( self, outputFolderpath:str|None=None ) -> bool:
         """
         Write the pseudo USFM out into a TeX (typeset) format.
             The format varies, depending on whether or not there are paragraph markers in the text.
@@ -9760,7 +9761,7 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.doExportHelper
 
 
-    def doAllExports( self, givenOutputFolderName=None, wantPhotoBible=None, wantODFs=None, wantPDFs=None ) -> Dict[str,bool]:
+    def doAllExports( self, givenOutputFolderName=None, wantPhotoBible=None, wantODFs=None, wantPDFs=None ) -> dict[str,bool]:
         """
         If the output folder is specified, it is expected that it's already created.
         Otherwise a new subfolder is created in the current folder.

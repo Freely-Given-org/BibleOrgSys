@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ScriptureBurritoBible.py
 #
@@ -233,7 +234,7 @@ class ScriptureBurritoBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "loadSBMetadata()" )
 
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         mdFilepath = os.path.join( self.sourceFilepath, 'metadata.json' )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "ScriptureBurritoBible.loading supplied SB metadata from {}…".format( mdFilepath ) )
         with open(mdFilepath, 'rt', encoding='utf-8') as jsonFile:

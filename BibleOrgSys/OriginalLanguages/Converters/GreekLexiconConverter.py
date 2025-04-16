@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # GreekLexiconConverter.py
 #
@@ -28,7 +29,6 @@ Module handling the morphgnt Greek lexicon.
     The class is the one that reads and parses the XML source file.
 """
 from gettext import gettext as _
-# from typing import Optional
 import logging
 import os.path
 from pathlib import Path
@@ -55,8 +55,8 @@ DEBUGGING_THIS_MODULE = False
 
 # Greek lexicon folder
 # TODO: Fix temporary solution
-# DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
-DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' )
+# DEFAULT_LEXICON_FOLDERPATH = Path( '/srv/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' ).resolve()
+DEFAULT_LEXICON_FOLDERPATH = Path( '/srv/Programming/ExternalPrograms/morphgnt/strongs-dictionary-xml/' )
 
 
 

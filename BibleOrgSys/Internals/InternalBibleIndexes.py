@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # InternalBibleIndexes.py
 #
@@ -74,7 +75,6 @@ CHANGELOG:
     2023-06-02 allow finding all verses and verse ranges (esp. for notes, commentaries)
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional
 from pathlib import Path
 import logging
 
@@ -113,11 +113,11 @@ class InternalBibleBookCVIndexEntry:
     __slots__ = ('entryIndex','entryCount','context') # Define allowed self variables (more efficient than a dict when have many instances)
 
 
-    def __init__( self, entryIndex:str, entryCount:int, context:Optional[List[str]]=None ) -> None:
+    def __init__( self, entryIndex:str, entryCount:int, context:list[str]|None=None ) -> None:
         """
         """
         #if context: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XXXXXXXX", entryIndex, entryCount, context )
-        if context is None: context:List[str] = []
+        if context is None: context:list[str] = []
         self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
         #self.indexNext = self.entryIndex + entryCount
     # end of InternalBibleBookCVIndexEntry.__init__
@@ -159,7 +159,7 @@ class InternalBibleBookCVIndexEntry:
         return self.entryIndex + self.entryCount # exclusive
     def getEntryCount( self ) -> int:
         return self.entryCount
-    def getContextList( self ) -> List[str]:
+    def getContextList( self ) -> list[str]:
         return self.context
 # end of class InternalBibleBookCVIndexEntry
 
@@ -212,12 +212,12 @@ class InternalBibleBookCVIndex:
     def __len__( self ) -> int:
         return len( self.__indexData )
 
-    def __contains__( self, keyStartCVDuple:Tuple[str,str] ) -> bool:
+    def __contains__( self, keyStartCVDuple:tuple[str,str] ) -> bool:
         return keyStartCVDuple in self.__indexData
-    def __getitem__( self, keyStartCVDuple:Tuple[str,str] ) -> InternalBibleBookCVIndexEntry:
+    def __getitem__( self, keyStartCVDuple:tuple[str,str] ) -> InternalBibleBookCVIndexEntry:
         return self.__indexData[keyStartCVDuple]
 
-    def __iter__( self ) -> Tuple[str,str]:
+    def __iter__( self ) -> tuple[str,str]:
         """
         Yields the next index entry CV key.
         """
@@ -225,7 +225,7 @@ class InternalBibleBookCVIndex:
             yield CVKey
     # end of InternalBibleBookCVIndex.__iter__
 
-    def items( self ) -> Tuple[Tuple[str,str],InternalBibleBookCVIndexEntry]:
+    def items( self ) -> tuple[tuple[str,str],InternalBibleBookCVIndexEntry]:
         """
         Yields the next index entry CV key and its value
         """
@@ -234,7 +234,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.items
 
 
-    def getVerseEntries( self, CVkey:Tuple[str,str], strict=True ) -> InternalBibleEntryList:
+    def getVerseEntries( self, CVkey:tuple[str,str], strict=True ) -> InternalBibleEntryList:
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this verse.
 
@@ -280,7 +280,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.getChapterEntries
 
 
-    def getVerseEntriesWithContext( self, CVkey:Tuple[str,str], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getVerseEntriesWithContext( self, CVkey:tuple[str,str], strict:bool|None=False, complete:bool|None=False ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this verse,
@@ -414,7 +414,7 @@ class InternalBibleBookCVIndex:
     # end of InternalBibleBookCVIndex.getVerseEntriesWithContext
 
 
-    def getChapterEntriesWithContext( self, C:str ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getChapterEntriesWithContext( self, C:str ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Given C, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this chapter,
@@ -466,8 +466,8 @@ class InternalBibleBookCVIndex:
         fnPrint( DEBUGGING_THIS_MODULE, "\nInternalBibleBookCVIndex.makeBookCVIndex( {} )".format( givenBibleEntries ) )
         assert givenBibleEntries, f"{self.workName} {self.BBB} {givenBibleEntries=}"
         self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
-        self.__indexData:Dict[Tuple[str,str],InternalBibleBookCVIndexEntry] = {}
-        errorData:List[str] = []
+        self.__indexData:dict[tuple[str,str],InternalBibleBookCVIndexEntry] = {}
+        errorData:list[str] = []
 
 
         # def _printIndexEntry( ie ):
@@ -969,12 +969,12 @@ class InternalBibleBookSectionIndexEntry:
 
 
     def __init__( self, endC:str, endV:str, startIx:int, endIx:int,
-                            reasonMarker:str, sectionName:str, contextList:Optional[List[str]]=None ) -> None:
-                 #startCV:str, endCV:str, entryIndex:int, entryCount:int, context:Optional[List[str]]=None ) -> None:
+                            reasonMarker:str, sectionName:str, contextList:list[str]|None=None ) -> None:
+                 #startCV:str, endCV:str, entryIndex:int, entryCount:int, context:list[str]|None=None ) -> None:
         """
         """
         #if context: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XXXXXXXX", entryIndex, entryCount, context )
-        if contextList is None: contextList:List[str] = []
+        if contextList is None: contextList:list[str] = []
         self.endC, self.endV = endC, endV
         self.startIx, self.endIx, self.reasonMarker, self.sectionName = startIx, endIx, reasonMarker, sectionName
         self.contextList = contextList
@@ -1015,19 +1015,19 @@ class InternalBibleBookSectionIndexEntry:
         else: raise IndexError
     # end of InternalBibleBookSectionIndexEntry.__getitem__
 
-    def getEndCV( self ) -> Tuple[str,str]:
+    def getEndCV( self ) -> tuple[str,str]:
         return self.endC,self.endV
     def getStartIndex( self ) -> int:
         return self.startIx
     def getEndIndex( self ) -> int:
         return self.endIx # inclusive
-    # def getStartNextIndexes( self ) -> Tuple[int,int]:
+    # def getStartNextIndexes( self ) -> tuple[int,int]:
     #     return self.startIx,self.endIx
     def getEntryCount( self ) -> int:
         return self.endIx + 1 - self.startIx
-    def getContextList( self ) -> Optional[List[str]]:
+    def getContextList( self ) -> list[str]|None:
         return self.contextList
-    def getSectionNameReason( self ) -> Tuple[str,str]:
+    def getSectionNameReason( self ) -> tuple[str,str]:
         return self.sectionName,self.reasonMarker
 # end of class InternalBibleBookSectionIndexEntry
 
@@ -1090,12 +1090,12 @@ class InternalBibleBookSectionIndex:
     def __len__( self ) -> int:
         return len( self.__indexData )
 
-    def __contains__( self, keyStartCVDuple:Tuple[str,str] ) -> bool:
+    def __contains__( self, keyStartCVDuple:tuple[str,str] ) -> bool:
         return keyStartCVDuple in self.__indexData
-    def __getitem__( self, keyStartCVDuple:Tuple[str,str] ) -> InternalBibleBookSectionIndexEntry:
+    def __getitem__( self, keyStartCVDuple:tuple[str,str] ) -> InternalBibleBookSectionIndexEntry:
         return self.__indexData[keyStartCVDuple]
 
-    def __iter__( self ) -> Tuple[str,str]:
+    def __iter__( self ) -> tuple[str,str]:
         """
         Yields the next index entry CV key.
         """
@@ -1103,7 +1103,7 @@ class InternalBibleBookSectionIndex:
             yield startCVDuple
     # end of InternalBibleBookSectionIndex.__iter__
 
-    def items( self ) -> Tuple[Tuple[str,str],InternalBibleBookSectionIndexEntry]:
+    def items( self ) -> tuple[tuple[str,str],InternalBibleBookSectionIndexEntry]:
         """
         Yields the next index entry CV key and its value
         """
@@ -1112,7 +1112,7 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.items
 
 
-    def getSectionEntries( self, keyStartCVDuple:Tuple[str,str] ) -> InternalBibleEntryList:
+    def getSectionEntries( self, keyStartCVDuple:tuple[str,str] ) -> InternalBibleEntryList:
         """
         Given C:V, return the InternalBibleEntryList containing the InternalBibleEntries for this section.
 
@@ -1123,7 +1123,7 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.getVerseEntries
 
 
-    def getSectionEntriesWithContext( self, keyStartCVDuple:Tuple[str,str] ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getSectionEntriesWithContext( self, keyStartCVDuple:tuple[str,str] ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Given C:V, return a 2-tuple containing
             the InternalBibleEntryList containing the InternalBibleEntries for this section,
@@ -1182,7 +1182,7 @@ class InternalBibleBookSectionIndex:
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "makeBookSectionIndex-BibleObject", self.BBB, self.BibleObject.getAName(), len(self.BibleObject.books) )
         assert 'discoveryResults' in self.BibleObject.__dict__
 
-        tempIndexData:Dict[Tuple[str,str],Tuple[str,str,str,str,int,int,str,str,str]] = {}
+        tempIndexData:dict[tuple[str,str],tuple[str,str,str,str,int,int,str,str,str]] = {}
         errorData = []
 
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "self.BBB", self.BBB )
@@ -1323,7 +1323,7 @@ class InternalBibleBookSectionIndex:
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    " + _("Indexing {:,} {} {} entries…").format( len(self.bookObject._processedLines), self.workName, self.BBB ) )
 
         # Firstly create the CV index keys with pointers to the actual lines
-        self.__indexData:Dict[Tuple[str,str],Tuple[str,str,int,int,str,str,str]] = {}
+        self.__indexData:dict[tuple[str,str],tuple[str,str,int,int,str,str,str]] = {}
         if not BibleOrgSysGlobals.loadedBibleBooksCodes.isChapterVerseBook( self.BBB ):
             return
             ## It's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)

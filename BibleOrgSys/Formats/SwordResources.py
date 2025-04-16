@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # SwordResources.py
 #
@@ -32,7 +33,6 @@ This is the interface module used to give a unified interface to either:
         files directly called SwordModules.py
 """
 from gettext import gettext as _
-from typing import List, Optional
 import logging
 import re
 
@@ -1163,7 +1163,7 @@ class SwordInterface():
     # end of SwordInterface.augmentModules
 
 
-    def getAvailableModuleCodes( self, onlyModuleTypes:Optional[List[str]]=None ):
+    def getAvailableModuleCodes( self, onlyModuleTypes:list[str]|None=None ):
         """
         Module type is a list of strings for the type(s) of modules to include.
 

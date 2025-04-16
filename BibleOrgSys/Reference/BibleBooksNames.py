@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BibleBooksNames.py
 #
@@ -26,7 +27,6 @@
 Module handling BibleBooksNames.
 """
 from gettext import gettext as _
-from typing import Optional
 import os
 import logging
 
@@ -358,7 +358,7 @@ class BibleBooksNamesSystems:
     # end of BibleBooksNamesSystems.getAvailableLanguageCodes
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> Optional[str]:
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> str|None:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)
@@ -527,7 +527,7 @@ class BibleBooksNamesSystem:
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
 
-    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> Optional[str]:
+    def getBBBFromText( self, bookNameOrAbbreviation:str ) -> str|None:
         """
         Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Hebrew.py
 #
@@ -26,7 +27,6 @@
 Module handling Hebrew language particularities.
 """
 from gettext import gettext as _
-from typing import Optional
 import unicodedata
 
 if __name__ == '__main__':
@@ -316,7 +316,7 @@ class Hebrew():
     # end of Hebrew.__str__
 
 
-    def printUnicodeData( self, text:Optional[str]=None ) -> None:
+    def printUnicodeData( self, text:str|None=None ) -> None:
         """
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "unicodedata", unicodedata.unidata_version )
@@ -331,7 +331,7 @@ class Hebrew():
     # end of Hebrew.printUnicodeData
 
 
-    def verifyConsonantsOnly( self, text:Optional[str]=None ) -> bool:
+    def verifyConsonantsOnly( self, text:str|None=None ) -> bool:
         """
         Check that we only have consonants left
         """
@@ -352,7 +352,7 @@ class Hebrew():
     # end of Hebrew.verifyConsonantsOnly
 
 
-    def removeAllMetegOrSiluq( self, text:Optional[str]=None ) -> str:
+    def removeAllMetegOrSiluq( self, text:str|None=None ) -> str:
         """
         """
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "removeAllMetegOrSiluq( {!r} )".format( text ) )

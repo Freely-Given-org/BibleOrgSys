@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -35,9 +36,12 @@ BibleOrgSys uses a three-character book code to identify books.
         This was because early versions of HTML ID fields used to need
                 to start with a letter (not a digit),
             (and most identifiers in computer languages still require that).
+
+
+CHANGELOG:
+    2025-03-07 Add hasPsalmTitle function
 """
 from gettext import gettext as _
-from typing import Optional, Dict, List, Tuple
 import os
 import logging
 
@@ -51,10 +55,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-09-30' # by RJH
+LAST_MODIFIED_DATE = '2025-03-07' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.95'
+PROGRAM_VERSION = '0.96'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -208,7 +212,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromReferenceNumber
 
 
-    def getAllReferenceAbbreviations( self ) -> List[str]:
+    def getAllReferenceAbbreviations( self ) -> list[str]:
         """
         Returns a list of all possible BBB codes.
         """
@@ -223,7 +227,7 @@ class BibleBooksCodes:
         return self.__DataDicts['referenceAbbreviationDict'][BBB]['referenceNumber']
 
 
-    def getSequenceList( self, myList=None ) -> List[str]:
+    def getSequenceList( self, myList=None ) -> list[str]:
         """
         Return a list of BBB codes in a sequence that could be used for the print order if no further information is available.
             If you supply a list of books, it puts your actual book codes into the default order.
@@ -486,7 +490,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromText
 
 
-    def getExpectedChaptersList( self, BBB:str ) -> List[str]:
+    def getExpectedChaptersList( self, BBB:str ) -> list[str]:
         """
         Gets a list with the number of expected chapters for the given book code (referenceAbbreviation).
         The number(s) of expected chapters is left in string form (not int).
@@ -519,7 +523,7 @@ class BibleBooksCodes:
     # end of getMaxChapters
 
 
-    def getSingleChapterBooksList( self ) -> List[str]:
+    def getSingleChapterBooksList( self ) -> list[str]:
         """
         Makes up and returns a list of single chapter book codes (BBB).
         """
@@ -530,6 +534,16 @@ class BibleBooksCodes:
                 results.append( BBB )
         return results
     # end of BibleBooksCodes.getSingleChapterBooksList
+
+
+    def hasPsalmTitle( self, BBB:str, C:str ) -> bool:
+        """
+        Returns True for 116 Psalms that traditional have a header field in the Hebrew (USFM /d field)
+        Otherwise returns False (for the other 34, plus for other books).
+        """
+        if BBB != 'PSA': return False
+        return int(C) not in (1,2, 10, 33, 43, 71, 91, 93,94,95,96,97,99,
+                              104,105,106,107, 111,112,113,114,115,116,117,118,119, 135,136,137, 146,147,148,149,150)
 
 
     def isSingleChapterBook( self, BBB:str ) -> bool:
@@ -547,7 +561,7 @@ class BibleBooksCodes:
             and self.__DataDicts['referenceAbbreviationDict'][BBB]['numExpectedChapters'] is not None
 
 
-    def getOSISSingleChapterBooksList( self ) -> List[str]:
+    def getOSISSingleChapterBooksList( self ) -> list[str]:
         """
         Gets a list of OSIS single chapter book abbreviations.
         """
@@ -559,7 +573,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getOSISSingleChapterBooksList
 
 
-    def getAllOSISBooksCodes( self ) -> List[str]:
+    def getAllOSISBooksCodes( self ) -> list[str]:
         """
         Return a list of all available OSIS book codes (in no particular order).
         """
@@ -567,7 +581,7 @@ class BibleBooksCodes:
     #end of BibleBooksCodes.getAllOSISBooksCodes
 
 
-    def getAllUSFMBooksCodes( self, toUpper:bool=False ) -> List[str]:
+    def getAllUSFMBooksCodes( self, toUpper:bool=False ) -> list[str]:
         """
         Return a list of all available USFM book codes.
         """
@@ -582,7 +596,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getAllUSFMBooksCodes
 
 
-    def getAllUSFMBooksCodeNumberTriples( self ) -> List[Tuple[str,int,str]]:
+    def getAllUSFMBooksCodeNumberTriples( self ) -> list[tuple[str,int,str]]:
         """
         Return a list of all available USFM book codes.
 
@@ -727,7 +741,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.BCVReferenceToInt
 
 
-    def sortBCVReferences( self, referencesList ) -> List[Tuple[str,str,str]]:
+    def sortBCVReferences( self, referencesList ) -> list[tuple[str,str,str]]:
         """
         Sort an iterable containing 3-tuples of BBB,C,V strings
             or 4-tuples of BBB,C,V,S strings
@@ -817,7 +831,7 @@ class BibleBooksCodes:
 
 
     @staticmethod
-    def tidyBBB( BBB:str, titleCase:Optional[bool]=False, allowFourChars:Optional[bool]=True ) -> str:
+    def tidyBBB( BBB:str, titleCase:bool|None=False, allowFourChars:bool|None=True ) -> str:
         """
         Change book codes like SA1 to the conventional 1SA
             (or 1Sa using the titleCase flag).
@@ -871,7 +885,7 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.tidyBBB
 
     @staticmethod
-    def tidyBBBs( BBBs:List[str], titleCase:Optional[bool]=False, allowFourChars:Optional[bool]=True ) -> List[str]:
+    def tidyBBBs( BBBs:list[str], titleCase:bool|None=False, allowFourChars:bool|None=True ) -> list[str]:
         """
         Change a list of book codes like SA1 to the conventional 1SA
             (or 1Sa using the titleCase flag).
@@ -927,7 +941,7 @@ def briefDemo() -> None:
     for BBB in BOOKLIST_81:
         assert bbc.isValidBBB( BBB ), f"BOOKLIST_81 {BBB} is invalid"
 
-    sections:Dict[str,List[str]] = {}
+    sections:dict[str,list[str]] = {}
     for BBB in bbc:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []
@@ -982,7 +996,7 @@ def fullDemo() -> None:
     for BBB in BOOKLIST_81:
         assert bbc.isValidBBB( BBB ), f"BOOKLIST_81 {BBB} is invalid"
 
-    sections:Dict[str,List[str]] = {}
+    sections:dict[str,list[str]] = {}
     for BBB in bbc:
         section = bbc.getTypicalSection( BBB )
         if section not in sections: sections[section] = []

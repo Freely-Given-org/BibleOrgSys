@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # BCVBible.py
 #
@@ -26,7 +27,6 @@
 Module for defining and manipulating complete or partial BCV Bibles.
 """
 from gettext import gettext as _
-from typing import Optional
 import os
 from pathlib import Path
 import logging
@@ -330,12 +330,10 @@ class BCVBible( Bible ):
     # end of BCVBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
+    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
-
-        Parameter is a 2-tuple containing BBB and the filename.
         """
         fnPrint( DEBUGGING_THIS_MODULE, _("loadBookMP( {} )").format( BBB ) )
         assert BBB not in self.books
@@ -510,7 +508,7 @@ class BCVBibleBook( BibleBook ):
         # Read book metadata
         self.loadBookMetadata( os.path.join( self.sourceFolder, self.BBB+'__BookMetadata.txt' ) )
 
-        fixErrors:List[str] = []
+        fixErrors:list[str] = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
 
         for CV in self.givenCVList:

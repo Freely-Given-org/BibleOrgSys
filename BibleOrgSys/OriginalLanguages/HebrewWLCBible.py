@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # HebrewWLCBible.py
 #
@@ -54,7 +55,7 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-INPUT_RESOURCES_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/' )
+INPUT_RESOURCES_FOLDERPATH = Path( '/srv/Programming/WebDevelopment/OpenScriptures/' )
 
 DEFAULT_OSIS_WLC_FILEPATH = INPUT_RESOURCES_FOLDERPATH.joinpath( 'morphhb/wlc/' )
 DEFAULT_ZIPPED_PICKLED_WLC_FILEPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_DOWNLOADED_RESOURCES_FOLDERPATH.joinpath( f'WLC{ZIPPED_PICKLE_FILENAME_END}' )

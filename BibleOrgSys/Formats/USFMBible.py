@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USFMBible.py
 #
@@ -29,7 +30,6 @@ NOTE: If it has a .SSF file, then it should be considered a PTX7Bible.
     Or if it has a Settings.XML file, then it should be considered a PTX8Bible.
 """
 from gettext import gettext as _
-from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import os
 import logging
@@ -485,7 +485,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFolder, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Create the internal USFM Bible object.
 

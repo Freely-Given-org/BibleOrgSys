@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # TyndaleNotesBible.py
 #
@@ -36,7 +37,6 @@ Some verses might have no notes.
 CHANGELOG:
 """
 from gettext import gettext as _
-from typing import Dict, List, Any, Optional
 import os
 from pathlib import Path
 import logging
@@ -175,7 +175,7 @@ class TyndaleNotesBible( Bible ):
     Class to load and manipulate Tyndale Notes Bibles.
 
     """
-    def __init__( self, sourceFilepath, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFilepath, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Create the internal Tyndale Notes Bible object.
 
@@ -219,8 +219,8 @@ class TyndaleNotesBible( Bible ):
 
         if not self.preloadDone: self.preload()
 
-        bookList:List[Tuple[BibleBook,List[str]]] = []
-        loadErrors:List[str] = []
+        bookList:list[tuple[BibleBook,list[str]]] = []
+        loadErrors:list[str] = []
         lastBBB = None
         self.XMLTree = ElementTree().parse( self.sourceFilepath )
         if self.XMLTree.tag == 'items':

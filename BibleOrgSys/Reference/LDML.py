@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # LDML.py
 #
@@ -3841,7 +3842,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    mainTestFolder = Path( '/home/robert/Programming/ExternalPrograms/SIL_NRSI/sldr/sldr/' )
+    mainTestFolder = Path( '/srv/Programming/ExternalPrograms/SIL_NRSI/sldr/sldr/' )
     if 1: # test load all SIL LDML files (cloned from GitHub)
         for something in sorted( os.listdir( mainTestFolder ) ):
             somepath = os.path.join( mainTestFolder, something )

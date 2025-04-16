@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # LEBXMLBible.py
 #
 # Module handling LEB XML Bibles
 #
-# Copyright (C) 2023 Robert Hunt
+# Copyright (C) 2023-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,15 +25,18 @@
 
 """
 Module handling the reading and import of LEB XML Bibles.
+
+CHANGELOG:
+    2024-11-13 Fix missing spaces between words, and improve C:V handling esp. for footnotes
+    2025-03-04 Fixed bug where idiom text wasn't being included and some li tails
 """
 from gettext import gettext as _
-from typing import List, Tuple
 import logging
 import os
 import sys
 from pathlib import Path
 from xml.etree.ElementTree import ElementTree, ParseError
-# import multiprocessing
+import multiprocessing
 
 if __name__ == '__main__':
     aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
@@ -45,10 +49,10 @@ from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-06-07' # by RJH
+LAST_MODIFIED_DATE = '2025-03-04' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.12'
+PROGRAM_VERSION = '0.16'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -268,13 +272,14 @@ class LEBXMLBible( Bible ):
         self.objectTypeString = 'LEB'
 
         # Now we can set our object variables
-        self.sourceFileOrFolder, self.givenName, self.givenAbbreviation, self.encoding  = sourceFileOrFolder, givenName, givenAbbreviation, encoding
-        if os.path.isdir( self.sourceFileOrFolder ):
+        self.sourceFileOrFolder, self.givenName, self.givenAbbreviation, self.encoding  = Path( sourceFileOrFolder ), givenName, givenAbbreviation, encoding
+        if self.sourceFileOrFolder.is_dir():
             self.sourceFolder = self.sourceFileOrFolder
-        elif os.path.isfile( self.sourceFileOrFolder ):
+        elif self.sourceFileOrFolder.is_file():
             self.sourceFilepath = Path( sourceFileOrFolder )
             self.sourceFolder = self.sourceFilepath.parent
             self.sourceFilename = self.sourceFilepath.name
+        else: neither
 
 
         self.title = self.version = self.date = self.source = None
@@ -351,6 +356,8 @@ class LEBXMLBible( Bible ):
         self.workNames, self.workPrefixes = [], {}
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['LEB'] = {}
+
+        self.state = {'C':'?', 'V':'?'}
     # end of LEBXMLBible.__init__
 
 
@@ -360,7 +367,7 @@ class LEBXMLBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "LEBXMLBible.loadBooks()" )
 
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
             # if BibleOrgSysGlobals.maxProcesses > 1 \
             # and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
@@ -402,77 +409,7 @@ class LEBXMLBible( Bible ):
         self.loadBooks()
 
 
-    # def loadBook( self, BBB:str, filename=None ):
-    #     """
-    #     Load the requested book into self.books if it's not already loaded.
-
-    #     #NOTE: You should ensure that preload() has been called first.
-    #     """
-    #     if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2 or DEBUGGING_THIS_MODULE:
-    #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "LEBXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
-    #         #assert self.preloadDone
-
-    #     if not self.possibleFilenames: # then the whole Bible was probably in one file
-    #         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  Unable to load LEB by individual book (only whole Bible?) -- returning" )
-    #         return # nothing to do here
-
-    #     if BBB not in self.bookNeedsReloading or not self.bookNeedsReloading[BBB]:
-    #         if BBB in self.books:
-    #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {BBB} is already loaded -- returning" )
-    #             return # Already loaded
-    #         if BBB in self.triedLoadingBook:
-    #             logging.warning( "We had already tried loading LEB {} for {}".format( BBB, self.name ) )
-    #             return # We've already attempted to load this book
-    #     self.triedLoadingBook[BBB] = True
-
-    #     if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-    #         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  LEBXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-    #     if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
-    #     if filename is None: raise FileNotFoundError( "LEBXMLBible.loadBook: Unable to find file for {}".format( BBB ) )
-    #     #BB = BibleBook( self, BBB )
-    #     #BB.load( filename, self.sourceFolder, self.encoding )
-    #     #if BB._rawLines:
-    #         #BB.validateMarkers() # Usually activates InternalBibleBook.processLines()
-    #         #self.stashBook( BB )
-    #     #else: logging.info( "LEB book {} was completely blank".format( BBB ) )
-    #     loadErrors:List[str] = []
-    #     pathname = os.path.join( self.sourceFolder, filename )
-    #     loadedBooks = self.__loadFile( pathname )
-    #     assert len(loadedBooks) == 1
-    #     for loadedBook,loadErrors in loadedBooks:
-    #         self.stashBook( loadedBook )
-    #         loadErrors += loadErrors
-    #     self.bookNeedsReloading[BBB] = False
-    #     if loadErrors:
-    #         if 'Load Errors' not in self.checkResultsDictionary: self.checkResultsDictionary['Load Errors'] = []
-    #         self.checkResultsDictionary['Load Errors'].extend( loadErrors )
-    #         #if BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "loadErrors", len(loadErrors), loadErrors ); halt
-    #     self.applySuppliedMetadata( 'LEB' ) # Copy some to self.settingsDict
-    #     #self.doPostLoadProcessing() # Should only be done after loading ALL books
-    # # end of LEBXMLBible.loadBook function
-
-
-    # def _loadBookFileMP( self, XMLBookFilename ) -> BibleBook:
-    #     """
-    #     Multiprocessing version!
-    #     Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
-
-    #     Parameter is a 2-tuple containing BBB and the filename.
-
-    #     Returns the book info.
-    #     """
-    #     fnPrint( DEBUGGING_THIS_MODULE, f"_loadBookFileMP( {XMLBookFilename} )" )
-    #     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  LoadingMP {self.name} book from {XMLBookFilename} from {self.sourceFolder}…" )
-
-    #     pathname = os.path.join( self.sourceFolder, XMLBookFilename )
-    #     result = self.__loadFile( pathname )
-    #     assert len(result) == 1 # only one book
-    #     assert len(result[0]) == 2 # book and errors
-    #     return result[0]
-    # # end of LEBXMLBible._loadBookFileMP function
-
-
-    def __loadFile( self, OSISFilepath ) -> List[BibleBook]:
+    def __loadFile( self, OSISFilepath ) -> list[BibleBook]:
         """
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
@@ -480,8 +417,8 @@ class LEBXMLBible( Bible ):
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  LEBXMLBible loading {OSISFilepath}…" )
 
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "Resetting bookList and loadErrors")
-        bookList:List[Tuple[BibleBook,List[str]]] = []
-        loadErrors:List[str] = []
+        bookList:list[tuple[BibleBook,list[str]]] = []
+        loadErrors:list[str] = []
 
         try: self.XMLTree = ElementTree().parse( OSISFilepath )
         except ParseError as err:
@@ -650,10 +587,10 @@ class LEBXMLBible( Bible ):
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
         bits = chapterID.split( ' ' )
         assert len(bits) == 3 if chapterID[1]==' ' else 2 # e.g., '2 Sa 1'
-        C = bits[-1]
-        self.addLine( 'c', C, thisBook )
+        self.state['C'] = bits[-1]
+        self.addLine( 'c', self.state['C'], thisBook )
 
-        V = '?'
+        self.state['V'] = '?'
         for subelement in chapterElement:
             BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'hb67', loadErrors )
             BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ms24', loadErrors )
@@ -742,7 +679,8 @@ class LEBXMLBible( Bible ):
                     # I think this is a random LEB encoding fault like '<p><verse-number id="Ge 2">2</verse-number><verse-number id="Ge 2:1">1</verse-number> And heaven...'
                     continue
                 assert subelement.text.strip() == subelement.text
-                self.addLine( 'v', f'{subelement.text} ', thisBook )
+                self.state['V'] = subelement.text
+                self.addLine( 'v', f'{self.state['V']} ', thisBook )
                 # assert haveOutstandingSpace == False # Why not???
                 haveOutstandingSpace = False
                 if tail := clean( subelement.tail, loadErrors, location ):
@@ -829,7 +767,7 @@ class LEBXMLBible( Bible ):
             BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ms24', loadErrors )
             if subelement.tag in ('li1','li2','li3'):
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'ld10', loadErrors )
-                BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ld01', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ms25', loadErrors )
                 self.addLine( subelement.tag, '', thisBook )
                 text = subelement.text
                 hadOutstandingSpace = haveOutstandingSpace # remember it
@@ -863,13 +801,13 @@ class LEBXMLBible( Bible ):
                         # BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gd63', loadErrors )
                         self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {sub2element.text}\\add*", thisBook )
                         haveOutstandingSpace = False
-                        if tail := clean( sub2element.tail, loadErrors, location ):
-                            hadOutstandingSpace = haveOutstandingSpace # Remember it
-                            if tail[-1] == ' ':
-                                tail = tail[:-1]
-                                haveOutstandingSpace = True
-                            if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        # if tail := clean( sub2element.tail, loadErrors, location ):
+                        #     hadOutstandingSpace = haveOutstandingSpace # Remember it
+                        #     if tail[-1] == ' ':
+                        #         tail = tail[:-1]
+                        #         haveOutstandingSpace = True
+                        #     if tail: # still
+                        #         self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     elif sub2element.tag == 'note':
                         # tag BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'gdf3', loadErrors )
                         self.processNote( sub2element, thisBook, loadErrors )
@@ -973,19 +911,27 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'df13', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, location, 'dsfg', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'jf56', loadErrors )
-                        # TODO: We don't currently save this information
-                        if tail := clean( subelement.tail, loadErrors, location ):
-                            hadOutstandingSpace = haveOutstandingSpace # Remember
-                            if tail[-1] == ' ':
-                                tail = tail[:-1]
-                                haveOutstandingSpace = True
-                            else: haveOutstandingSpace = False
-                            if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        # TODO: USFM has no marker for an idiom
+                        # if tail := clean( sub2element.tail, loadErrors, location ):
+                        #     hadOutstandingSpace = haveOutstandingSpace # Remember
+                        #     if tail[-1] == ' ':
+                        #         tail = tail[:-1]
+                        #         haveOutstandingSpace = True
+                        #     else: haveOutstandingSpace = False
+                        #     if tail: # still
+                        #         self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     else:
                         logging.error( "hsg3 Unprocessed {!r} sub2element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(hsg3)".format( sub2element.tag, sub2element.text, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                    if sub2element.tail and sub2element.tag != 'note': # coz processNote handles tails
+                        if tail := clean( sub2element.tail, loadErrors, location ):
+                            hadOutstandingSpace = haveOutstandingSpace # Remember it
+                            if tail[-1] == ' ':
+                                tail = tail[:-1]
+                                haveOutstandingSpace = True
+                            if tail: # still
+                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             else:
                 logging.error( "lfg3 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(lfg3)".format( subelement.tag, subelement.text, location ) )
@@ -999,10 +945,11 @@ class LEBXMLBible( Bible ):
         assert isinstance( thisBook, BibleBook )
         assert noteElement.tag == 'note'
 
+        DEBUGGING_THIS_FUNCTION = noteElement.tail and 'ten cubits' in noteElement.tail
+
         location = 'processNote'
         haveOutstandingSpace = False
-        C = V = '?'
-        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\f + \\fr {C}:{V} \\ft {noteElement.text}", thisBook )
+        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\f + \\fr {self.state['C']}:{self.state['V']} \\ft {noteElement.text if noteElement.text else ''}", thisBook )
         for subelement in noteElement:
             if subelement.tag == 'supplied':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'm56d', loadErrors )
@@ -1013,7 +960,8 @@ class LEBXMLBible( Bible ):
                         text = text[:-1]
                         haveOutstandingSpace = True
                 if text: # still
-                    self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
+                    # self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
+                    self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {text}\\add*", thisBook )
                 for sub2element in subelement:
                     if sub2element.tag == 'i':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'kj4d', loadErrors )
@@ -1052,14 +1000,15 @@ class LEBXMLBible( Bible ):
                 # Process the attribute(s) first
                 title = None
                 for attrib,value in subelement.items():
-                    if attrib=='title':
-                        title = value
+                    if attrib=='title': # seems to be a reference
+                        reference = value
                     else:
                         logging.warning( "h6k8 Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in {} (h6k8)".format( attrib, value, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                logging.warning( f"Not using cite {title=}" )
-                text = subelement.text
+                logging.warning( f"Not using cite {reference=}" ) # Because it's just a different format of the actual cite text field
+                text = subelement.text # also a reference, but possibly only the verse number
+                # assert text[-2:] == reference[-2:] or reference.endswith(text), f"CITE {text=} {reference=}"
                 if text:
                     hadOutstandingSpace = haveOutstandingSpace # Remember
                     if text[-1] == ' ':
@@ -1092,15 +1041,19 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'kj4d', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, location, 'x4vs', loadErrors )
                         # Process the attribute(s) first
-                        ref = None
+                        ref = title = None
                         for attrib,value in subelement.items():
                             if attrib=='ref':
                                 ref = value
+                            elif attrib=='title':
+                                superfluousTitle = value
                             else:
                                 logging.warning( "b4s6 Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                                 loadErrors.append( "Unprocessed {} attribute ({}) in {} (b4s6)".format( attrib, value, location ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                         assert sub2element.text
+                        # print( f"{ref=} {title=} {sub2element.text=}")
+                        #assert title == sub2element.text # ref=None title='1 Ch 2:9' sub2element.text='1 Chr 2:9'
                         self.appendToLastLine( f'\\+jmp {sub2element.text}|link-href="{ref}"\\+jmp*', thisBook )
                     else:
                         logging.error( "nfg4 Unprocessed {!r} sub3element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
@@ -1151,11 +1104,13 @@ class LEBXMLBible( Bible ):
         self.appendToLastLine( '\\f*', thisBook )
         if tail := clean( noteElement.tail, loadErrors, location ):
             hadOutstandingSpace = haveOutstandingSpace # Remember it
-            if tail[-1] == ' ':
-                tail = tail[:-1]
-                haveOutstandingSpace = True
+            # if tail[-1] == ' ':
+            #     tail = tail[:-1]
+            #     haveOutstandingSpace = True # Gets lost
             if tail: # still
                 self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+
+        # if DEBUGGING_THIS_FUNCTION: halt
     # end of processNote
 
     def processSpan( self, spanElement, thisBook, loadErrors ):
@@ -1276,92 +1231,51 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        for standardTestFolder in (
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest2/' ),
-                        BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
-                        BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
-                        Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ),
-                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
-                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
-                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
-                        BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Reexport/' ),
-                        'MadeUpFolder/',
+    if 0:
+        standardTestFolder = Path( '../OpenBibleData/copiedBibles/English/LogosBibleSoftware/LEB/' )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
+        result1 = LEBXMLBibleFileCheck( standardTestFolder )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
+        result2 = LEBXMLBibleFileCheck( standardTestFolder, autoLoad=True )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
+        result3 = LEBXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
+
+
+    # Path is done like this so it still works when called from different levels
+    standardTestFile = Path( aboveAboveFolderpath ).joinpath( '../OpenBibleData/copiedBibles/English/LogosBibleSoftware/LEB/LEB.xml' )
+    oB = LEBXMLBible( standardTestFile )
+    oB.loadBooks()
+
+    from BibleOrgSys.Reference import VerseReferences
+    for referenceTuple in (
+                        ('OT','GEN','1','1'), ('OT','GEN','1','3'),
+                        ('OT','RUT','1','1'), ('OT','RUT','3','3'),
+                        ('OT','SA1','1','1'),
+                        ('OT','PSA','3','0'), ('OT','PSA','3','1'),
+                            ('OT','PSA','105','16'),('OT','PSA','105','19'),
+                        ('OT','DAN','1','21'),
+                        ('NT','MAT','3','5'), ('NT','JAM','1','6'),
+                        ('NT','JDE','1','4'), ('NT','REV','22','21'),
+                        ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1'),
                         ):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nStandard testfolder is: {standardTestFolder}" )
-            result1 = LEBXMLBibleFileCheck( standardTestFolder )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA1", result1 )
-            result2 = LEBXMLBibleFileCheck( standardTestFolder, autoLoad=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA2", result2 )
-            result3 = LEBXMLBibleFileCheck( standardTestFolder, autoLoadBooks=True )
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
+        (t, b, c, v) = referenceTuple
+        if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
+        if t=='NT' and len(oB)==39: continue # Don't bother with NT references if it's only a OT
+        if t=='DC' and len(oB)<=66: continue # Don't bother with DC references if it's too small
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            try:
+                svk = VerseReferences.SimpleVerseKey( b, c, v )
+                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, oB.getVerseDataList( svk ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "LEBXMLBible.demo:", svk, oB.getVerseText( svk ) )
+            except KeyError:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"LEBXMLBible.demo: {b} {c}:{v} can't be found!" )
 
-
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
-    if 1: # Test LEBXMLBible object
-        testFilepaths = (
-            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample
-            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest2/' ), # Full KJV from Crosswire
-            BiblesFolderpath.joinpath( 'Original languages/SBLGNT/sblgnt.osis/SBLGNT.osis.xml' ),
-            BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/', 'Ruth.xml' ), # Hebrew Ruth
-            BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/', 'Dan.xml' ), # Hebrew Daniel
-            BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/' ), # Hebrew Bible
-            BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'wlc/', '1Sam.xml' ), # Hebrew 1 Samuel
-            BiblesFolderpath.joinpath( 'Formats/LEB/Crosswire USFM-to-LEB (Perl)/Matigsalug.osis.xml' ), # Entire Bible in one file 4.4MB
-            '../../MatigsalugOSIS/LEB-Output/MBTGEN.xml',
-            '../../MatigsalugOSIS/LEB-Output/MBTRUT.xml', # Single books
-            '../../MatigsalugOSIS/LEB-Output/MBTJAS.xml', # Single books
-               '../../MatigsalugOSIS/LEB-Output/MBTMRK.xml', '../../MatigsalugOSIS/LEB-Output/MBTJAS.xml', # Single books
-               '../../MatigsalugOSIS/LEB-Output/MBT2PE.xml', # Single book
-            '../../MatigsalugOSIS/LEB-Output', # Entire folder of single books
-            )
-        justOne = ( testFilepaths[0], )
-
-        # Demonstrate the LEB Bible class
-        #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
-        for j, testFilepath in enumerate( testFilepaths, start=1 ): # Choose testFilepaths or justOne
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"\nB/ LEB {j}/ Demonstrating the LEB Bible class…" )
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Test filepath is {testFilepath!r}" )
-            oB = LEBXMLBible( testFilepath ) # Load and process the XML
-            oB.load()
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, oB ) # Just print a summary
-
-            if 1: # Test verse lookup
-                from BibleOrgSys.Reference import VerseReferences
-                for referenceTuple in (
-                                    ('OT','GEN','1','1'), ('OT','GEN','1','3'),
-                                    ('OT','RUT','1','1'), ('OT','RUT','3','3'),
-                                    ('OT','SA1','1','1'),
-                                    ('OT','PSA','3','0'), ('OT','PSA','3','1'),
-                                    ('OT','DAN','1','21'),
-                                    ('NT','MAT','3','5'), ('NT','JAM','1','6'),
-                                    ('NT','JDE','1','4'), ('NT','REV','22','21'),
-                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1'),
-                                    ):
-                    (t, b, c, v) = referenceTuple
-                    if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
-                    if t=='NT' and len(oB)==39: continue # Don't bother with NT references if it's only a OT
-                    if t=='DC' and len(oB)<=66: continue # Don't bother with DC references if it's too small
-                    if BibleOrgSysGlobals.verbosityLevel > 0:
-                        try:
-                            svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, svk, oB.getVerseDataList( svk ) )
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "LEBXMLBible.demo:", svk, oB.getVerseText( svk ) )
-                        except KeyError:
-                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"LEBXMLBible.demo: {b} {c}:{v} can't be found!" )
-
-            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
-                oB.check()
-            if BibleOrgSysGlobals.commandLineArguments.export:
-                #oB.toODF(); halt
-                oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+    if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
+        oB.check()
+    if BibleOrgSysGlobals.commandLineArguments.export:
+        #oB.toODF(); halt
+        oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 # end of LEBXMLBible.fullDemo
 
 if __name__ == '__main__':

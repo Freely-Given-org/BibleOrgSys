@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # VPLBible.py
 #
@@ -92,7 +93,6 @@ CHANGELOG:
     2023-02-28 Add vplType 5 file handling
 """
 from gettext import gettext as _
-from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import logging
 import os
@@ -291,7 +291,7 @@ class VPLBible( Bible ):
     """
     Class for reading, validating, and converting VPLBible files.
     """
-    def __init__( self, sourceFileOrFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName:str, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -337,7 +337,7 @@ class VPLBible( Bible ):
     # end of VPLBible.__init__
 
 
-    def _loadFile( self, filepath:Union[str,Path], settingsDict:dict ) -> Bible:
+    def _loadFile( self, filepath:Path|str, settingsDict:dict ) -> Bible:
         """
         Does the work of loading a VPL file into memory.
         """

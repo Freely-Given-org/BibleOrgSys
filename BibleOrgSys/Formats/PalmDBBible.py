@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # PalmDBBible.py
 #
@@ -202,7 +203,7 @@ class PalmDBBible( Bible ):
         Load a single source file and load book elements.
         """
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Loading {}…").format( self.sourceFilepath ) )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
         mainDBIndex = []
 
 

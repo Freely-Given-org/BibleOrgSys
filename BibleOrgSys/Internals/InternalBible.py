@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-FileCopyrightText: © 2010 Robert Hunt <Freely.Given.org+BOS@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # InternalBible.py
 #
@@ -7,7 +9,7 @@
 #       and which in turn holds the Bible book objects
 #       (and acts as an intermediary to them).
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -60,10 +62,10 @@ Note that this software does write some files to
 
 CHANGELOG:
     2024-01-24 add getContextVerseDataRange() function
+    2025-02-13 Changed special characters in getVerseText() function and add includeNonCanonical parameter
 """
 from __future__ import annotations # So we can use typing -> ClassName (before Python 3.10)
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional, Union
 import os
 import sys
 import logging
@@ -85,10 +87,10 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2024-06-14' # by RJH
+LAST_MODIFIED_DATE = '2025-03-22' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
-PROGRAM_VERSION = '0.91'
+PROGRAM_VERSION = '0.92'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1272,7 +1274,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         #     BibleOrgSysGlobals.alreadyMultiprocessing = False
         # else: # Just single threaded
         if 1: # Just single threaded
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, " " + _("Prechecking in single-threaded mode!") )
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, " " + _(f"Prechecking {self.getAName( abbrevFirst=True )} in single-threaded mode!") )
             for BBB in self.books: # Do individual book prechecks
                 vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Prechecking {}…").format( BBB ) )
                 self.discoveryResults[BBB] = self.books[BBB]._discover()
@@ -1647,7 +1649,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
         # end of getCheckResults.appendList
 
-        def mergeCount( BBB:str, errorDict, firstKey:str, secondKey:Optional[str]=None ) -> None:
+        def mergeCount( BBB:str, errorDict, firstKey:str, secondKey:str|None=None ) -> None:
             """Merges the counts together."""
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
@@ -2248,7 +2250,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getNumChapters
 
 
-    def getNumVerses( self, BBB:str, C:Union[str,int] ) -> int:
+    def getNumVerses( self, BBB:str, C:str|int ) -> int:
         """
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
@@ -2267,7 +2269,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
+    def getContextVerseData( self, BCVReference:SimpleVerseKey|tuple[str,str,str,str], strict:bool|None=False, complete:bool|None=False ) -> tuple[InternalBibleEntryList,list[str]]|None:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2297,7 +2299,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getContextVerseData
 
 
-    def getContextVerseDataRange( self, startBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], endBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict=True ) -> Optional[Tuple[InternalBibleEntryList,List[str]]]:
+    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]|None:
         """
         Search for a Bible reference
             and return a 2-tuple containing
@@ -2339,7 +2341,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getContextVerseDataRange
 
 
-    def getVerseDataList( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]] ) -> Optional[InternalBibleEntryList]:
+    def getVerseDataList( self, BCVReference:SimpleVerseKey|tuple[str,str,str,str] ) -> InternalBibleEntryList|None:
         """
         Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
 
@@ -2366,7 +2368,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
     # end of InternalBible.getVerseDataList
 
 
-    def getVerseText( self, BCVReference, fullTextFlag:bool=False ) -> str:
+    def getVerseText( self, BCVReference, fullTextFlag:bool=False, includeNonCanonical:bool=True ) -> str:
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
 
@@ -2376,7 +2378,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         Raises a KeyError if the BCVReference isn't found/valid.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseText( {BCVReference}, fullTextFlag={fullTextFlag} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"InternalBible.getVerseText( {BCVReference}, {fullTextFlag=}, {includeNonCanonical=} )" )
 
         result = self.getContextVerseData( BCVReference )
         if result is not None:
@@ -2394,23 +2396,34 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 elif marker == 'c#': pass # Ignore print chapter number
                 elif marker == 'cl': pass # Ignore cl markers AFTER the '\c 1' marker (the text for the individual chapter/psalm heading)
                 elif marker == 'v=': pass # Ignore the verse number (not to be printed) that the next field(s) (usually a section heading) logically belong together with
-                elif marker == 'd': verseText += '¦' + cleanText + '¦'
-                elif marker == 's1': verseText += '¥' + cleanText + '¥'
+                # TODO: Why do these few paragraph markers have closing characters after them ???
+                elif marker == 'd': verseText += '⌂' + cleanText + '⌂'
+                elif marker == 's1':
+                    if includeNonCanonical: verseText += '¹' + cleanText + '¹' # Superscripts
+                elif marker == 's2':
+                    if includeNonCanonical: verseText += '²' + cleanText + '²'
+                elif marker == 's3':
+                    if includeNonCanonical: verseText += '³' + cleanText + '³'
+                elif marker == 's4':
+                    if includeNonCanonical: verseText += '⁴' + cleanText + '⁴'
                 elif marker == 'p': verseText += '¶' + cleanText
-                elif marker == 'q1': verseText += '₁' + cleanText
+                elif marker == 'q1': verseText += '₁' + cleanText # Subscripts
                 elif marker == 'q2': verseText += '₂' + cleanText
                 elif marker == 'q3': verseText += '₃' + cleanText
                 elif marker == 'q4': verseText += '₄' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText
+                elif marker == 'mi': verseText += '◊' + cleanText
+                elif marker == 'li1': verseText += '•' + cleanText
+                elif marker == 'li2': verseText += '◦' + cleanText
                 elif marker == 'v': firstWord = True # Ignore
                 elif marker == 'v~': verseText += cleanText
                 elif marker == 'p~': verseText += cleanText
-                elif marker == 'vw':
+                elif marker == 'vw': # What's this ???
                     verseText = f"{verseText}{'' if firstWord else ' '}{cleanText}"
                     firstWord = False
                 else: logging.warning( f"InternalBible.getVerseText Unknown marker '{marker}'='{cleanText}'" )
             return verseText
-    # end of InternalBible.getVerseText
+    # end of InternalBible.getVerseText function
 
 
     def findText( self, optionsDict ):
@@ -2682,18 +2695,18 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         # Firstly, aggregate the word data from all of the separate books
         analysedBookCount = 0
-        analysedOTBookList:List[str] = []
-        analysedDCBookList:List[str] = []
-        analysedNTBookList:List[str] = []
-        # perVerseWordDict:List[Tuple[str,str,str,list,str,list]] = []
-        # aggregatedAlignmentsOTList:List[Tuple[str,str,str,list,str,list]] = []
-        # aggregatedAlignmentsDCList:List[Tuple[str,str,str,list,str,list]] = []
-        # aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
-        perVerseWordDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
-        OTLemmaDictSet:Dict[str,Set[str]] = defaultdict( set )
-        NTLemmaDictSet:Dict[str,Set[str]] = defaultdict( set )
-        OTStrongsDictSet:Dict[str,Set[str]] = defaultdict( set )
-        NTStrongsDictSet:Dict[str,Set[str]] = defaultdict( set )
+        analysedOTBookList:list[str] = []
+        analysedDCBookList:list[str] = []
+        analysedNTBookList:list[str] = []
+        # perVerseWordDict:list[tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsOTList:list[tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsDCList:list[tuple[str,str,str,list,str,list]] = []
+        # aggregatedAlignmentsNTList:list[tuple[str,str,str,list,str,list]] = []
+        perVerseWordDict:dict[tuple[str,str,str],list[tuple[list,str,list]]] = defaultdict( list )
+        OTLemmaDictSet:dict[str,set[str]] = defaultdict( set )
+        NTLemmaDictSet:dict[str,set[str]] = defaultdict( set )
+        OTStrongsDictSet:dict[str,set[str]] = defaultdict( set )
+        NTStrongsDictSet:dict[str,set[str]] = defaultdict( set )
         for BBB,bookObject in self.books.items():
             assert 'uWalignments' not in bookObject.__dict__ # This is an original -- not an aligned translation
             ref = BBB, '1', '1'
@@ -2732,7 +2745,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 11 ww @ 132 = 'ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"'
                 originalText=\\w εἰρήνη|lemma="εἰρήνη" strong="G15150" x-morph="Gr,N,,,,,NFS," x-tw="rc://*/tw/dict/bible/other/peace"\\w* \\w σοι|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2D,S,"\\w*. \\w ἀσπάζονταί|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,IPM3,,P,"\\w* \\w σε|lemma="σύ" strong="G47710" x-morph="Gr,RP,,,2A,S,"\\w* \\w οἱ|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,NMP,"\\w* \\w φίλοι|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,NMP,"\\w*. \\w ἀσπάζου|lemma="ἀσπάζομαι" strong="G07820" x-morph="Gr,V,MPM2,,S,"\\w* \\w τοὺς|lemma="ὁ" strong="G35880" x-morph="Gr,EA,,,,AMP,"\\w* \\w φίλους|lemma="φίλος" strong="G53840" x-morph="Gr,NS,,,,AMP,"\\w* \\w κατ’|lemma="κατά" strong="G25960" x-morph="Gr,P,,,,,A,,,"\\w* \\w ὄνομα|lemma="ὄνομα" strong="G36860" x-morph="Gr,N,,,,,ANS," x-tw="rc://*/tw/dict/bible/kt/name"\\w*.
             """
-            lines:Dict[Tuple(str,str),List[Union[str,Tuple[str,str,str,str]]]] = defaultdict( list )
+            lines:dict[tuple[str,str,list[str|tuple[str,str,str,str]]]] = defaultdict( list )
             C, V = -1, 0
             for entry in bookObject._processedLines:
                 pseudoMarker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
@@ -2752,7 +2765,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                     if originalText:
                         if '\\w ' in originalText:
                             ix = 0
-                            line:List[Union[str,Tuple[str,str,str,str]]] = []
+                            line:list[str|tuple[str,str,str,str]] = []
                             while ix < len(originalText):
                                 if originalText[ix:].startswith( '\\w '):
                                     ixEnd = ix + 4 + originalText[ix+4:].index( '\\w*' )
@@ -2824,10 +2837,10 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         # The following lists help to track potential errors in the UHB and UGNT
         #   where normally the same lemma should always have the same Strongs' number
-        OTLemmaList:List[str,List[str]] = []
-        NTLemmaList:List[str,List[str]] = []
-        OTStrongsList:List[str,List[str]] = []
-        NTStrongsList:List[str,List[str]] = []
+        OTLemmaList:list[str,list[str]] = []
+        NTLemmaList:list[str,list[str]] = []
+        OTStrongsList:list[str,list[str]] = []
+        NTStrongsList:list[str,list[str]] = []
         for dictSet,listList in ( (OTLemmaDictSet,OTLemmaList),(NTLemmaDictSet,NTLemmaList),(OTStrongsDictSet,OTStrongsList),(NTStrongsDictSet,NTStrongsList) ):
             # for key,theSet in dictSet.items():
             #     listList.append( (key, list( theSet )) ) # Convert set to list coz JSON can't encode lists
@@ -2876,7 +2889,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Aggregates all the alignments with UHB/UGNT from each translated book.
 
         The cleaned aligments are
-            List[Tuple[str,str,List[Tuple[str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]
+            list[tuple[str,str,list[tuple[str,str,str,str,str,str]],str,list[tuple[str,str,str]]]]
             i.e., list entries of 5-tuples of C,V,originalWordsList,translatedWordsString,translatedWordsList.
                     where originalWordsList contains 6-tuples: (origWord, lemma, strongs, morph, occurrence,occurrences)
                     and translatedWordsList contains 3-tuples: (transWord, occurrence,occurrences).
@@ -2900,19 +2913,19 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         # Firstly, aggregate the alignment data from all of the separate books
         alignedBookCount = 0
-        alignedBookList:List[str] = []
-        alignedOTBookList:List[str] = []
-        alignedDCBookList:List[str] = []
-        alignedNTBookList:List[str] = []
-        aggregatedAlignmentsList:List[Tuple[str,str,str,list,str,list]] = []
-        aggregatedAlignmentsOTList:List[Tuple[str,str,str,list,str,list]] = []
-        aggregatedAlignmentsDCList:List[Tuple[str,str,str,list,str,list]] = []
-        aggregatedAlignmentsNTList:List[Tuple[str,str,str,list,str,list]] = []
-        largeAlignmentsList:List[Tuple[str,str,str,list,str,list]] = []
-        alignmentDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
-        alignmentOTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
-        alignmentDCDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
-        alignmentNTDict:Dict[Tuple[str,str,str],List[Tuple[list,str,list]]] = defaultdict( list )
+        alignedBookList:list[str] = []
+        alignedOTBookList:list[str] = []
+        alignedDCBookList:list[str] = []
+        alignedNTBookList:list[str] = []
+        aggregatedAlignmentsList:list[tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsOTList:list[tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsDCList:list[tuple[str,str,str,list,str,list]] = []
+        aggregatedAlignmentsNTList:list[tuple[str,str,str,list,str,list]] = []
+        largeAlignmentsList:list[tuple[str,str,str,list,str,list]] = []
+        alignmentDict:dict[tuple[str,str,str],list[tuple[list,str,list]]] = defaultdict( list )
+        alignmentOTDict:dict[tuple[str,str,str],list[tuple[list,str,list]]] = defaultdict( list )
+        alignmentDCDict:dict[tuple[str,str,str],list[tuple[list,str,list]]] = defaultdict( list )
+        alignmentNTDict:dict[tuple[str,str,str],list[tuple[list,str,list]]] = defaultdict( list )
 
         alignmentsOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Alignments_ByBook/' )
         try: os.makedirs( alignmentsOutputFolderpath )
@@ -2992,42 +3005,42 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
 
         # Second pass to go through the alignment data for the whole Bible
         vPrint( 'Info', debuggingThisFunction, f"Analysing {len(aggregatedAlignmentsList):,} alignment results for {alignedBookCount} {self.abbreviation} books…" )
-        originalFormToTransOccurrencesDict:Dict[str,dict] = {}
-        originalFormToTransOccurrencesOTDict:Dict[str,dict] = {}
-        originalFormToTransOccurrencesDCDict:Dict[str,dict] = {}
-        originalFormToTransOccurrencesNTDict:Dict[str,dict] = {}
-        originalLemmaToTransOccurrencesDict:Dict[str,dict] = {}
-        originalLemmaToTransOccurrencesOTDict:Dict[str,dict] = {}
-        originalLemmaToTransOccurrencesDCDict:Dict[str,dict] = {}
-        originalLemmaToTransOccurrencesNTDict:Dict[str,dict] = {}
-        originalFormToTransAlignmentsDict:Dict[str,list] = defaultdict( list )
-        originalFormToTransAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        originalFormToTransAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        originalFormToTransAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        originalLemmaToTransAlignmentsDict:Dict[str,list] = defaultdict( list )
-        originalLemmaToTransAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        originalLemmaToTransAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        originalLemmaToTransAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        origStrongsToTransAlignmentsDict:Dict[str,list] = defaultdict( list )
-        origStrongsToTransAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        origStrongsToTransAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        origStrongsToTransAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        oneToOneTransToOriginalAlignmentsDict:Dict[str,list] = defaultdict( list )
-        oneToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        oneToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        oneToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        manyToOneTransToOriginalAlignmentsDict:Dict[str,list] = defaultdict( list )
-        manyToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        manyToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        manyToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        anyToOneTransToOriginalAlignmentsDict:Dict[str,list] = defaultdict( list )
-        anyToOneTransToOriginalAlignmentsOTDict:Dict[str,list] = defaultdict( list )
-        anyToOneTransToOriginalAlignmentsDCDict:Dict[str,list] = defaultdict( list )
-        anyToOneTransToOriginalAlignmentsNTDict:Dict[str,list] = defaultdict( list )
-        HebrewOTWordDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
-        HebrewOTLemmaDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
-        GreekNTWordDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
-        GreekNTLemmaDict:Dict[str,Dict[str,List[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        originalFormToTransOccurrencesDict:dict[str,dict] = {}
+        originalFormToTransOccurrencesOTDict:dict[str,dict] = {}
+        originalFormToTransOccurrencesDCDict:dict[str,dict] = {}
+        originalFormToTransOccurrencesNTDict:dict[str,dict] = {}
+        originalLemmaToTransOccurrencesDict:dict[str,dict] = {}
+        originalLemmaToTransOccurrencesOTDict:dict[str,dict] = {}
+        originalLemmaToTransOccurrencesDCDict:dict[str,dict] = {}
+        originalLemmaToTransOccurrencesNTDict:dict[str,dict] = {}
+        originalFormToTransAlignmentsDict:dict[str,list] = defaultdict( list )
+        originalFormToTransAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        originalFormToTransAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        originalFormToTransAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        originalLemmaToTransAlignmentsDict:dict[str,list] = defaultdict( list )
+        originalLemmaToTransAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        originalLemmaToTransAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        originalLemmaToTransAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        origStrongsToTransAlignmentsDict:dict[str,list] = defaultdict( list )
+        origStrongsToTransAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        origStrongsToTransAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        origStrongsToTransAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        oneToOneTransToOriginalAlignmentsDict:dict[str,list] = defaultdict( list )
+        oneToOneTransToOriginalAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        oneToOneTransToOriginalAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        oneToOneTransToOriginalAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsDict:dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        manyToOneTransToOriginalAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsDict:dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsOTDict:dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsDCDict:dict[str,list] = defaultdict( list )
+        anyToOneTransToOriginalAlignmentsNTDict:dict[str,list] = defaultdict( list )
+        HebrewOTWordDict:dict[str,dict[str,list[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        HebrewOTLemmaDict:dict[str,dict[str,list[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        GreekNTWordDict:dict[str,dict[str,list[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
+        GreekNTLemmaDict:dict[str,dict[str,list[str,str,str,int,int,str]]] = defaultdict( lambda: defaultdict( list) )
 
         for BBB,C,V,originalWordsList,translatedWordsString,translatedWordsList in aggregatedAlignmentsList:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{BBB} {C}:{V} oWL={len(originalWordsList)} tWS={len(translatedWordsString)} tWL={len(translatedWordsList)}")
@@ -3227,7 +3240,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
                 assert isinstance( value, list )
                 if j > max_each: break
 
-        self.uWalignments:Dict[str,Dict[str,list]] = {}
+        self.uWalignments:dict[str,dict[str,list]] = {}
         self.uWalignments['originalFormToTransOccurrencesDict'] = originalFormToTransOccurrencesDict
         self.uWalignments['originalFormToTransAlignmentsDict'] = originalFormToTransAlignmentsDict
         self.uWalignments['originalLemmaToTransAlignmentsDict'] = originalLemmaToTransAlignmentsDict

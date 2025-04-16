@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # CSVBible.py
 #
@@ -49,7 +50,6 @@ CHANGELOG:
     2023-05-30 Allow for a filepath to be given to the class (as well as a folderpath)
 """
 from gettext import gettext as _
-from typing import List, Tuple, Optional, Union
 from pathlib import Path
 import logging
 import os
@@ -208,7 +208,7 @@ class CSVBible( Bible ):
     """
     Class for reading, validating, and converting CSVBible files.
     """
-    def __init__( self, sourceFileOrFolder, givenName:str, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFileOrFolder, givenName:str, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Constructor: just sets up the Bible object.
         """
@@ -252,7 +252,7 @@ class CSVBible( Bible ):
     # end of CSVBible.__init__
 
 
-    def _loadFile( self, filepath:Union[str,Path], temporaryBookStore:Optional[dict]=None ) -> Bible:
+    def _loadFile( self, filepath:Path|str, temporaryBookStore:dict|None=None ) -> Bible:
         """
         Does the work of loading a CSV file into memory.
 

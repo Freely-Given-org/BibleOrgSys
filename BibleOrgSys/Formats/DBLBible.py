@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # DBLBible.py
 #
@@ -312,7 +313,7 @@ class DBLBible( Bible ):
         assert self.XMLTree # Fail here if we didn't load anything at all
 
         DBLLicense = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='license':
@@ -459,7 +460,7 @@ class DBLBible( Bible ):
 
         if self.suppliedMetadata is None: self.suppliedMetadata = {}
         self.suppliedMetadata['DBL'] = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='DBLMetadata':
@@ -1348,7 +1349,7 @@ class DBLBible( Bible ):
         # end of getStyle
 
         DBLStyles = {}
-        #loadErrors:List[str] = []
+        #loadErrors:list[str] = []
 
         # Find the main container
         if self.XMLTree.tag=='stylesheet':

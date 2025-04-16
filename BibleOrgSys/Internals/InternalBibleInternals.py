@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # InternalBibleInternals.py
 #
@@ -64,7 +65,6 @@ Some notes about internal formats:
         (We allow for some rare printed Roman Catholic Bibles that have an actual chapter 0.)
 """
 from gettext import gettext as _
-from typing import Dict, List, Optional
 import logging
 import re
 
@@ -81,7 +81,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_TITLE_MARKERS, USFM_ALL_
 #from BibleReferences import BibleAnchorReference
 
 
-LAST_MODIFIED_DATE = '2024-04-19' # by RJH
+LAST_MODIFIED_DATE = '2024-11-08' # by RJH
 SHORT_PROGRAM_NAME = "BibleInternals"
 PROGRAM_NAME = "Bible internals handler"
 PROGRAM_VERSION = '0.88'
@@ -174,11 +174,13 @@ def getLeadingInt( someString:str ) -> int:
     # print( f"getLeadingInt( '{someString}' )…")
     reMatch = re.search( '^-?[0-9]*', someString ) # Can return None
     # print( f"{reMatch=}")
-    return int(reMatch.group())
+    try: return int(reMatch.group())
+    except ValueError:
+        raise ValueError( f"getLeadingInt( ({len(someString)}) '{someString}' ) can't find a valid leading integer" )
 # end of getLeadingInt function
 
 
-def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> Dict[str,str]:
+def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> dict[str,str]:
     """
     Take the attributes of a USFM3 \\w field (the attributes include the first pipe/vertical-bar symbol)
         and analyze them.
@@ -582,7 +584,7 @@ class InternalBibleEntry:
 
     def __init__( self, marker:str, originalMarker:str,
                         adjustedText:str, cleanText:str,
-                        extras:Optional[InternalBibleExtraList], originalText:str ) -> None:
+                        extras:InternalBibleExtraList|None, originalText:str ) -> None:
         """
         Accept the parameters and double-check them if requested.
 

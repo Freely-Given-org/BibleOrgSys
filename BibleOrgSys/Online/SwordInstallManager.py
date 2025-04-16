@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # SwordInstallManager.py
 #
@@ -32,7 +33,7 @@ This is the interface module used to give a unified interface to either:
 TODO: Currently only uses FTP which is about to be obsoleted!!!!
 """
 from gettext import gettext as _
-from typing import Dict, Any
+from typing import Any
 import os
 import logging
 from pathlib import Path
@@ -127,7 +128,7 @@ SWORD_CONF_FIELD_NAMES_ALLOWED_DUPLICATES = ('Feature', 'GlobalOptionFilter', 'D
 
 
 
-def processConfLines( abbreviation:str, openFile, confDict:Dict[str,str] ) -> None:
+def processConfLines( abbreviation:str, openFile, confDict:dict[str,str] ) -> None:
     """
     Process a line from a Sword .conf file
         and saves the results in the given confDict.
@@ -473,7 +474,7 @@ class SwordInstallManager():
     # end of SwordInstallManager.refreshAllRemoteSources
 
 
-    def _getConfFile( self, confName:str, confPath:Path ) -> Dict[str,Any]:
+    def _getConfFile( self, confName:str, confPath:Path ) -> dict[str,Any]:
         """
         Read a conf file that has already been downloaded from a repository
             and parse the information into self.availableModules.
@@ -481,7 +482,7 @@ class SwordInstallManager():
         fnPrint( DEBUGGING_THIS_MODULE, f"SwordInstallManager._getConfFile( {confName}, {confPath} )" )
 
         # Read the conf file
-        confDict:Dict[str,str] = {}
+        confDict:dict[str,str] = {}
         with open( confPath, 'rt', encoding=DEFAULT_SWORD_CONF_ENCODING ) as confFile:
             processConfLines( confName, confFile, confDict )
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USXFilenames.py
 #
@@ -27,7 +28,6 @@ Module for creating and manipulating USX filenames.
 """
 
 from gettext import gettext as _
-from typing import List, Tuple
 import os
 import logging
 
@@ -281,7 +281,7 @@ class USXFilenames:
     # end of USXFilenames.getConfirmedFilenameTuples
 
 
-    def getPossibleFilenameTuples( self, strictCheck:bool=False ) -> List[Tuple[str,str]]:
+    def getPossibleFilenameTuples( self, strictCheck:bool=False ) -> list[tuple[str,str]]:
         """
         Return a list of filenames just derived from the list of files in the folder,
                 i.e., look only externally at the filenames.

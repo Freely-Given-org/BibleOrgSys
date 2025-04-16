@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # USXXMLBibleBook.py
 #
@@ -29,7 +30,6 @@ CHANGELOG:
     2024-06-11 Fix bug with XML tail duplication after <char> field inside <note>
 """
 from gettext import gettext as _
-from typing import List
 import logging
 import os
 from pathlib import Path
@@ -83,7 +83,7 @@ class USXXMLBibleBook( BibleBook ):
         fnPrint( DEBUGGING_THIS_MODULE, "load( {}, {}, {} )".format( filename, folder, encoding ) )
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
 
         def loadChapterNumberField( chapterNumberElement, chapterNumberLocation:str ) -> None:

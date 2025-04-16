@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # PickledBible.py
 #
@@ -45,7 +46,7 @@ NOTE: Unfortunately it seems that loading a very large pickled object
         loadBooks( self )
 """
 from gettext import gettext as _
-from typing import Dict, Optional, Any
+from typing import Any
 from pathlib import Path
 import os
 import logging
@@ -181,7 +182,7 @@ def PickledBibleFileCheck( givenPathname:Path, strictCheck:bool=True, autoLoad:b
 
 
 
-def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:Optional[Dict[str,any]]=None, dataLevel:int=1, zipOnly:bool=False ) -> bool:
+def createPickledBible( BibleObject:Bible, outputFolder=None, metadataDict:dict[str,any]|None=None, dataLevel:int=1, zipOnly:bool=False ) -> bool:
     """
     Saves the Python book objects as pickle files
         then the Bible object (less books)
@@ -478,7 +479,7 @@ class PickledBible( Bible ):
         # Now we can set our object variables
         self.pickleVersionData = {}
 
-        def loadVersionStuff( pickleFileObject ) -> Dict[str,Any]:
+        def loadVersionStuff( pickleFileObject ) -> dict[str,Any]:
             """
             This function loads all the fields from the version file.
 
@@ -694,7 +695,7 @@ class PickledBible( Bible ):
     # end of PickledBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
+    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # GoBible.py
 #
@@ -29,7 +30,6 @@ See https://github.com/xkjyeah/gobible-creator
 and https://github.com/DavidHaslam/GoBibleCore.
 """
 from gettext import gettext as _
-from typing import Optional
 from pathlib import Path
 import logging
 import os
@@ -409,7 +409,7 @@ class GoBible( Bible ):
     # end of GoBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
+    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -508,7 +508,7 @@ class GoBibleBook( BibleBook ):
         fnPrint( DEBUGGING_THIS_MODULE, f"GoBibleBook.load( {indexToBook} )" )
         filenameBase = self.containerBibleObject.filenameBases[indexToBook]
         folderpath = os.path.join( self.containerBibleObject.dataFolderpath, filenameBase+'/' )
-        loadErrors:List[str] = []
+        loadErrors:list[str] = []
 
         # Load the book index first
         indexPath = os.path.join( folderpath, 'Index' )

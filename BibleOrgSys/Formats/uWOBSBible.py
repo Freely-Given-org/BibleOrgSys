@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # uWOBSBible.py
 #
@@ -33,7 +34,6 @@ Image links are stored in \\fig fields.
 Frame text is stored in the verse fields.
 """
 from gettext import gettext as _
-from typing import Dict, List, Any, Optional
 import os
 from pathlib import Path
 import logging
@@ -179,7 +179,7 @@ class uWOBSBible( Bible ):
     Class to load and manipulate uW OBS Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName:Optional[str]=None, givenAbbreviation:Optional[str]=None, encoding:Optional[str]=None ) -> None:
+    def __init__( self, sourceFolder, givenName:str|None=None, givenAbbreviation:str|None=None, encoding:str|None=None ) -> None:
         """
         Create the internal uW OBS Bible object.
 
@@ -282,7 +282,7 @@ class uWOBSBible( Bible ):
     # end of uWOBSBible.loadBook
 
 
-    def _loadBookMP( self, BBB:str ) -> Optional[BibleBook]:
+    def _loadBookMP( self, BBB:str ) -> BibleBook|None:
         """
         Multiprocessing version!
         Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
@@ -409,7 +409,7 @@ class uWOBSBibleBook( BibleBook ):
         # end of doAddLine
 
 
-        fixErrors:List[str] = []
+        fixErrors:list[str] = []
         for storyNumber in range(1,50+1):
             storyNumberString = str(storyNumber).zfill(2)
             mdFilepath = os.path.join( contentFolder, f'{storyNumberString}.md' )

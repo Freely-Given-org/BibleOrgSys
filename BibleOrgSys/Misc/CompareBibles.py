@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # CompareBibles.py
 #
@@ -75,7 +76,6 @@ REGEX stuff:
         as well as numbers and the underscore. If the ASCII flag is used, only [a-zA-Z0-9_] is matched.
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple
 from pathlib import Path
 import os.path
 import logging
@@ -440,7 +440,7 @@ def compareBooksPedantic( book1, book2,
         matchingPairs=DEFAULT_MATCHING_PAIRS, # For both Bibles
         illegalCompleteLineRegexes1=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_VERNACULAR, # For book1
         illegalCompleteLineRegexes2=DEFAULT_ILLEGAL_COMPLETE_LINE_REGEXES_BACK_TRANSLATION, # For book2
-        breakOnOne=False ) -> List[Tuple[Tuple[str,str,str],str]]:
+        breakOnOne=False ) -> list[tuple[tuple[str,str,str],str]]:
     """
     Given two Bible book objects, compare the two carefully
         and return differences.
@@ -461,8 +461,8 @@ def compareBooksPedantic( book1, book2,
     assert book2.workName != 'utf-8'
     assert book1.workName != book2.workName
 
-    bcResults:List[Tuple[Tuple[str,str,str],str]] = []
-    tempResults:List[Tuple[Tuple[str,str,str],str]] = [] # Used for warnings which might be rescinded, esp, parentheses closed in a different verse
+    bcResults:list[tuple[tuple[str,str,str],str]] = []
+    tempResults:list[tuple[tuple[str,str,str],str]] = [] # Used for warnings which might be rescinded, esp, parentheses closed in a different verse
 
     len1, len2 = len(book1), len(book2)
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'len', len1, len2 )
@@ -683,12 +683,12 @@ def compareBooksPedantic( book1, book2,
     return bcResults
 # end of compareBooksPedantic
 
-def _doCompare( parameters:List[Tuple[str,Bible,Bible]] ) -> List[Tuple[Tuple[str,str,str],str]]: # for multiprocessing
+def _doCompare( parameters:list[tuple[str,Bible,Bible]] ) -> list[tuple[tuple[str,str,str],str]]: # for multiprocessing
     BBB, Bible1, Bible2 = parameters
     return compareBooksPedantic( Bible1[BBB], Bible2[BBB] )
 
 
-def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[str]]:
+def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> list[list[str]]:
     """
     Break the line into segments (like sentences that should match across the translations)
         and then break each segment into words.
@@ -707,7 +707,7 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[s
     line = line.replace('—',' ').replace('–',' ') # Treat em-dash and en-dash as word break characters
 
 
-    lineList:List[List[str]] = []
+    lineList:list[list[str]] = []
     for segment in line.split( 'SsSsSsS' ):
         segmentList = []
         for rawWord in segment.split():
@@ -743,7 +743,7 @@ def segmentizeLine( line:str, segmentEndPunctuation:str='.?!;:' ) -> List[List[s
 # end of segmentizeLine
 
 
-def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> Tuple[list,list]:
+def segmentizeBooks( book1:BibleBook, book2:BibleBook ) -> tuple[list,list]:
     """
     Given two Bible book objects,
         break them into a list of segments
@@ -975,7 +975,7 @@ def analyzeWords( segmentList, dict12=None, dict21=None ):
 # end of CompareBibles.analyzeWords
 
 
-def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> Dict[str,list]:
+def analyzeBibles( Bible1:Bible, Bible2:Bible ) -> dict[str,list]:
     """
     Given two Bible objects, break the two into words
         and return a dictionary.

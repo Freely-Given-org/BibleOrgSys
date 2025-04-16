@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # GreekNT.py
 #
@@ -41,7 +42,6 @@ Module handling xxx to produce C and Python data tables.
     010102 C- -------- δὲ δὲ δέ δέ
     010102 V- 3AAI-S-- ἐγέννησεν ἐγέννησεν ἐγέννησε(ν) γεννάω
 """
-from typing import Optional
 from gettext import gettext as _
 import os
 from pathlib import Path
@@ -75,7 +75,7 @@ class GreekNT( Bible ):
 
     Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
-    def __init__( self, sourceFilepath, givenName:Optional[str]=None, encoding:str='utf-8' ) -> None:
+    def __init__( self, sourceFilepath, givenName:str|None=None, encoding:str='utf-8' ) -> None:
         """
         Constructor: expects the filepath of the source folder.
         Loads (and crudely validates the file(s)) into ???.
@@ -453,7 +453,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    fileFolder = Path( '/home/robert/Programming/ExternalPrograms/morphgnt/sblgnt/' )
+    fileFolder = Path( '/srv/Programming/ExternalPrograms/morphgnt/sblgnt/' )
 
     # Demonstrate the Greek NT class
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nDemonstrating the Greek NT class…" )

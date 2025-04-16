@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # InternalBibleBook.py
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -54,9 +55,11 @@ CHANGELOG:
     2023-08-15 make more robust for handling uW encoding errors
     2023-10-14 allow more footnote and xref internal markers
     2024-01-24 add getContextVerseDataRange() function
+    2024-11-13 Added a warning if text is appended to an existing line with no apparent space between words
+    2025-02-25 Don't add 'intro' section if 'iex' occurs under 'c'
+    2025-03-04 Insert space if it appears that we might be appending text to the end of a verse number
 """
 from gettext import gettext as _
-from typing import Dict, List, Tuple, Optional, Union
 import os
 from pathlib import Path
 import logging
@@ -82,7 +85,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2024-07-20' # by RJH
+LAST_MODIFIED_DATE = '2025-03-04' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -128,8 +131,8 @@ def hasClosingPunctuation( text:str ) -> bool:
 # end of hasClosingPunctuation
 
 
-def cleanUWalignments( workAbbreviation:str, BBB:str, originalAlignments:List[Tuple[str,str,str,str,str]] ) \
-                        -> List[Tuple[str,str,List[Tuple[str,str,str,str,str,str,str]],str,List[Tuple[str,str,str]]]]:
+def cleanUWalignments( workAbbreviation:str, BBB:str, originalAlignments:list[tuple[str,str,str,str,str]] ) \
+                        -> list[tuple[str,str,list[tuple[str,str,str,str,str,str,str]],str,list[tuple[str,str,str]]]]:
     """
     Cleans up the unfoldingWord alignment info for the given book
 
@@ -159,7 +162,7 @@ cleanUWalignmentsL 144 TI1 1:11 'x-strong="G35880" x-lemma="ὁ" x-morph="Gr,EA,
     assert isinstance( originalAlignments, list )
 
     maxOriginalWords = maxTranslatedWords = 0
-    cleanedAlignmentList:List[Tuple[str,str,str,str]] = []
+    cleanedAlignmentList:list[tuple[str,str,str,str]] = []
     for j, (C,V, originalLanguageTextString,translatedWordsString) in enumerate( originalAlignments, start=1 ):
         if C == '1':
             dPrint( 'Never', debuggingThisFunction, f"cleanUWalignmentsL {j} {BBB} {C}:{V} '{originalLanguageTextString}'\n    = '{translatedWordsString}'" )
@@ -385,7 +388,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.__iter__
 
 
-    def addNotice( self, priority:int, message:str, C:str, V:str, options:Dict[str,any] ) -> None:
+    def addNotice( self, priority:int, message:str, C:str, V:str, options:dict[str,any] ) -> None:
         """
         Adds a notice to self.notices and then logs it at an appropriate level.
 
@@ -524,7 +527,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addLine
 
 
-    def appendToLastLine( self, additionalText:str, expectedLastMarker:Optional[str]=None ) -> None:
+    def appendToLastLine( self, additionalText:str, expectedLastMarker:str|None=None ) -> None:
         """
         Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
@@ -546,20 +549,30 @@ class InternalBibleBook:
             if additionalText: assert '\n' not in additionalText and '\r' not in additionalText
             if expectedLastMarker: assert isinstance( expectedLastMarker, str )
 
-        marker, text = self._rawLines[-1]
+        marker, text = self._rawLines[-1] # Get the current existing line
+        insertSpace = False
+        if text and text[-1] not in ' *“‘(—/' \
+        and additionalText[0] not in ' .,?!;:”’ )/\\':
+            if marker=='v' and text and text.isdigit(): # Must be a verse number
+                # TODO: Should we ALWAYS be inserting that space??? Probably better to fix at source
+                #   Also, remember, might be appending a closing quote mark or an em dash or something that SHOULD be attached
+                logging.critical( f"InternalBibleBook.appendToLastLine() inserted space where appears to be joining text after verse number {marker} {text=} plus {additionalText=}" )
+                insertSpace = True
+            else:
+                logging.critical( f"InternalBibleBook.appendToLastLine() appears to be joining words {marker} {text=} plus {additionalText=}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "additionalText for {} {!r} is {!r}".format( marker, text, additionalText ) )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
         if expectedLastMarker and BibleOrgSysGlobals.debugFlag: assert marker == expectedLastMarker
         #if marker in ('v','c') and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
-        text += additionalText
+        text = f"{text}{' ' if insertSpace else ''}{additionalText}"
         if forceDebugHere: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  newText for {!r} is {!r}".format( marker, text ) )
         #if 'there is no longer any that is' in text: halt
         self._rawLines[-1] = (marker, text)
     # end of InternalBibleBook.appendToLastLine
 
 
-    def addVerseSegments( self, V:str, text:str, location:Optional[str]=None ) -> None:
+    def addVerseSegments( self, V:str, text:str, location:str|None=None ) -> None:
         """
         Takes a text line that might optionally include
             \\NL** markers to indicate a new line.
@@ -682,7 +695,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addVerseSegments
 
 
-    def _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] ) -> Tuple[str,str,InternalBibleExtraList]:
+    def _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:list[str] ) -> tuple[str,str,InternalBibleExtraList]:
         """
         Does character fixes on a specific line and moves the following out of the main text:
             footnotes, cross-references, and figures, Strongs numbers.
@@ -1427,8 +1440,8 @@ class InternalBibleBook:
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"_addNestingMarkers() for {self.BBB}" )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    _addNestingMarkers for {self.BBB} started with {len(self._rawLines)=:,} {len(self._processedLines)=:,}" )
-        newLines:List[InternalBibleEntry] = InternalBibleEntryList()
-        openMarkers:List[str] = []
+        newLines:list[InternalBibleEntry] = InternalBibleEntryList()
+        openMarkers:list[str] = []
 
         def _openMarker( newMarker:str ) -> None:
             """
@@ -1439,7 +1452,7 @@ class InternalBibleBook:
             openMarkers.append( newMarker )
         # end of _addNestingMarkers._openMarker
 
-        def _getLastOpenMarker() -> Optional[str]:
+        def _getLastOpenMarker() -> str|None:
             """
             Return the last open marker if there's any
                 otherwise return None.
@@ -1447,7 +1460,7 @@ class InternalBibleBook:
             if openMarkers: return openMarkers[-1]
             return None # if no open markers
 
-        def _closeLastOpenMarker( endMarker:Optional[str]=None, withText:Optional[str]='' ) -> None:
+        def _closeLastOpenMarker( endMarker:str|None=None, withText:str|None='' ) -> None:
             """
             Close the last marker (with the ¬ "not" sign) and pop it off our list
 
@@ -1537,7 +1550,7 @@ class InternalBibleBook:
                 Determines if any future lines start a new section or are still in this section?
                 """
                 assert currentSectionMarker
-                otherPossibilities:List[str] = []
+                otherPossibilities:list[str] = []
                 if currentSectionMarker[-1] in '234':
                     for z in range( 1, int(currentSectionMarker[-1]) ):
                         otherPossibilities.append( f'{currentSectionMarker[:-1]}{z}' )
@@ -1570,7 +1583,7 @@ class InternalBibleBook:
                 return True # at end of file
             # end of _addNestingMarkers._paragraphHasEnded
 
-            def _findNextRelevantMarker( currentIndex:int ) -> Optional[str]:
+            def _findNextRelevantMarker( currentIndex:int ) -> str|None:
                 """
                 Returns the next v, v~ or p~ marker or heading markers or paragraph markers
                     but skips c markers.
@@ -1588,7 +1601,7 @@ class InternalBibleBook:
                 return None
             # end of _addNestingMarkers._findNextRelevantMarker
 
-            def _findNextRelevantListMarker( currentIndex:int ) -> Optional[str]:
+            def _findNextRelevantListMarker( currentIndex:int ) -> str|None:
                 """
                 Returns the next c, v=, v, v~ or p~ marker.
 
@@ -1633,7 +1646,9 @@ class InternalBibleBook:
                 if 'headers' not in openMarkers:
                     _openMarker( 'headers' )
 
-            if marker in USFM_ALL_INTRODUCTION_MARKERS and 'intro' not in openMarkers:
+            if marker in USFM_ALL_INTRODUCTION_MARKERS \
+            and 'intro' not in openMarkers \
+            and (marker != 'iex' or 'c' not in openMarkers): # iex can also occur under c
                 if 'headers' in openMarkers:
                     # for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                     #     # print(f"1 {lMarker=}")
@@ -1888,7 +1903,7 @@ class InternalBibleBook:
             # Check the results of this function
             #if 1: # Display indented markers
                 #from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
-                ##markerList:List[str] = []
+                ##markerList:list[str] = []
                 #indentLevel = maxNestingLevel = 0
                 #for j in range( len(newLines) ):
                     #entry = newLines[j]
@@ -1911,8 +1926,8 @@ class InternalBibleBook:
             # TODO: Try to get it right first time so doesn't need correcting!!!
             from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
             indentLevel = maxNestingLevel = 0
-            markerContext:List[str] = []
-            newLines2:List[InternalBibleEntry] = []
+            markerContext:list[str] = []
+            newLines2:list[InternalBibleEntry] = []
             C, V = '-1', '0'
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nChecking marker hierarchy…" )
             for j in range( len(newLines) ):
@@ -2036,7 +2051,7 @@ class InternalBibleBook:
             # Check the results of this function
             if 0: # Display indented markers
                 from BibleOrgSys.Internals.InternalBibleInternals import BOS_NESTING_MARKERS
-                #markerList:List[str] = []
+                #markerList:list[str] = []
                 indentLevel = 0
                 for j in range( len(newLines) ):
                     entry = newLines[j]
@@ -2082,7 +2097,7 @@ class InternalBibleBook:
         #    1/ p = ''
         #    2/ v = 17
         #    3/ q1 = Text of verse 17.
-        newLines:List[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines:list[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         lastMarker = lastText = None
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for j,(marker,text) in enumerate( self._rawLines ):
@@ -2112,7 +2127,7 @@ class InternalBibleBook:
         #    2/ p = ''
         #    2/ v = 3
         #    3/ v~ = Text of verse 3.
-        newLines:List[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines:list[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
@@ -2158,7 +2173,7 @@ class InternalBibleBook:
         #    2/ v~ = Some text
         #    3/ p = '' (last line in file)
         # to remove that last line.
-        newLines:List[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
+        newLines:list[InternalBibleEntry] = [] # Contains more-processed tuples which contain the actual Bible text -- see below
         #lastJ = len(self._rawLines) - 1
         lastMarker = lastText = None
         #skip = False
@@ -2300,7 +2315,7 @@ class InternalBibleBook:
                 logging.error( f"_processLine-check: unknown {self.objectTypeString} originalMarker = {originalMarker}" )
                 adjustedMarker = originalMarker # temp……
 
-            def _splitChapterNumber( inputString:str ) -> List[str]:
+            def _splitChapterNumber( inputString:str ) -> list[str]:
                 """
                 Splits a chapter number and returns a list of bits (normally 1, maximum 2 if there's a foonote on the chapter number))
                 """
@@ -2322,7 +2337,7 @@ class InternalBibleBook:
                 return [bit1,bit2] if bit2 else [bit1]
             # end of _splitChapterNumber
 
-            def _splitVerseNumber( inputString:str ) -> List[str]:
+            def _splitVerseNumber( inputString:str ) -> list[str]:
                 """
                 Splits a verse number and returns a list of bits (normally 2, maximum 3 if there's a foonote on the verse number)
                 """
@@ -2414,6 +2429,10 @@ class InternalBibleBook:
                     #     assert V == '0', f"_processLine expected V=='0' with {originalMarker}='{text}' @ {self.BBB}_{C}:{V}" # coz this should precede the first c, or follow the c and precede the v
                 if C == '-1': # it's before the first c
                     adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
+            elif originalMarker in ('d','iex') and text and haveWaitingC:
+                # Add a false chapter number at the place where we normally want it printed
+                self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, None, haveWaitingC) ) # Write the additional chapter number
+                haveWaitingC = False
             elif originalMarker=='v' and text:
                 vBits = _splitVerseNumber( text )
                 V = vBits[0] # Get the actual verse number
@@ -2640,7 +2659,7 @@ class InternalBibleBook:
 
         # This is the main processLines code
         if self.objectTypeString == 'OSIS': self.reorderRawOsisLines()
-        fixErrors:List[str] = []
+        fixErrors:list[str] = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         C, V = '-1', '-1' # So first/id line starts at -1:0
         haveWaitingC = False
@@ -2763,7 +2782,7 @@ class InternalBibleBook:
             self.processLines()
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
             assert self._processedLines
-        validationErrors:List[str] = []
+        validationErrors:list[str] = []
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for j, entry in enumerate(self._processedLines):
@@ -2870,7 +2889,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.setField
 
 
-    def getAssumedBookNames( self ) -> List[str]:
+    def getAssumedBookNames( self ) -> list[str]:
         """
         Attempts to deduce a bookname and book abbreviations from the loaded book.
         Use the English name as a last resort.
@@ -2970,7 +2989,7 @@ class InternalBibleBook:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getVersification'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
-        versificationErrors:List[str] = []
+        versificationErrors:list[str] = []
 
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '-1', -1, -1
@@ -3372,7 +3391,7 @@ class InternalBibleBook:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook '{self.workName}' {self.BBB}: processing lines called from 'getAddedUnits'" )
             self.processLines()
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
-        addedUnitErrors:List[str] = []
+        addedUnitErrors:list[str] = []
 
         paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences, wordsOfJesus = [], [], [], [], [], [], []
         chapterNumberStr = verseNumberStr = '0'
@@ -3658,9 +3677,9 @@ class InternalBibleBook:
 
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = {}, {}, {}
         #newlineMarkerCounts['Total'], internalMarkerCounts['Total'], noteMarkerCounts['Total'] = 0, 0, 0 # Put these first in the ordered dict
-        newlineMarkerErrors:List[str] = []; internalMarkerErrors:List[str] = []; noteMarkerErrors:List[str] = []
+        newlineMarkerErrors:list[str] = []; internalMarkerErrors:list[str] = []; noteMarkerErrors:list[str] = []
         functionalCounts = {}
-        modifiedMarkerList:List[str] = []
+        modifiedMarkerList:list[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         section, lastMarker, lastModifiedMarker = '', '', None
         lastMarkerEmpty = True
@@ -4171,7 +4190,7 @@ class InternalBibleBook:
 
         haveNonAsciiChars = False
         simpleCharacterCounts, unicodeCharacterCounts, letterCounts, punctuationCounts = {}, {}, {}, {} # We don't care about the order in which they appeared
-        characterErrors:List[str] = []
+        characterErrors:list[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
@@ -4480,7 +4499,7 @@ class InternalBibleBook:
         Runs a number of checks on the words used.
         """
 
-        def countWordsForCheck( marker:str, segment:str, lastWordTuple:Optional[Tuple[str,str]]=None ) -> Tuple[str,str]:
+        def countWordsForCheck( marker:str, segment:str, lastWordTuple:tuple[str,str]|None=None ) -> tuple[str,str]:
             """
             Breaks the segment into words and counts them.
                 Also checks for repeated words.
@@ -4538,7 +4557,7 @@ class InternalBibleBook:
 
         # Count all the words
         wordCounts, caseInsensitiveWordCounts = {}, {}
-        wordErrors:List[str] = []; repeatedWordErrors:List[str] = []
+        wordErrors:list[str] = []; repeatedWordErrors:list[str] = []
         lastTextWordTuple = ('','')
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
@@ -4627,7 +4646,7 @@ class InternalBibleBook:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList = [], [], [], []
-        headingErrors:List[str] = []
+        headingErrors:list[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
@@ -4707,7 +4726,7 @@ class InternalBibleBook:
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag: assert self._processedLines
 
         mainTitleList, headingList, titleList, outlineList = [], [], [], []
-        introductionErrors:List[str] = []
+        introductionErrors:list[str] = []
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
             marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
@@ -4791,7 +4810,7 @@ class InternalBibleBook:
 
         footnoteList, xrefList = [], []
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
-        footnoteErrors:List[str] = []; xrefErrors:List[str] = []; noteMarkerErrors:List[str] = []
+        footnoteErrors:list[str] = []; xrefErrors:list[str] = []; noteMarkerErrors:list[str] = []
         leaderCounts = {}
         C, V = '-1', '-1' # So first/id line starts at -1:0
         for entry in self._processedLines:
@@ -5112,7 +5131,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumChapters
 
 
-    def getNumVerses( self, C:Union[str,int] ) -> int:
+    def getNumVerses( self, C:str|int ) -> int:
         """
         Returns the number of verses (int) in the given chapter.
 
@@ -5144,7 +5163,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getContextVerseData( self, BCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict:Optional[bool]=False, complete:Optional[bool]=False ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getContextVerseData( self, BCVReference:SimpleVerseKey|tuple[str,str,str,str], strict:bool|None=False, complete:bool|None=False ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Returns an InternalBibleEntryList plus a list containing the context of the verse.
 
@@ -5200,7 +5219,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getContextVerseData
 
 
-    def getContextVerseDataRange( self, startBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], endBCVReference:Union[SimpleVerseKey,Tuple[str,str,str,str]], strict=True ) -> Tuple[InternalBibleEntryList,List[str]]:
+    def getContextVerseDataRange( self, startBCVReference:SimpleVerseKey|tuple[str,str,str,str], endBCVReference:SimpleVerseKey|tuple[str,str,str,str], strict=True ) -> tuple[InternalBibleEntryList,list[str]]:
         """
         Returns an InternalBibleEntryList for an inclusive range of consecutive verses
             plus a list containing the context of the verses.

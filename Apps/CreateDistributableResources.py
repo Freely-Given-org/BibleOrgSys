@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # CreateDistributableResources.py
 #
@@ -71,7 +72,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 BIBLES_FOLDERPATH = Path( '/mnt/SSDs/Bibles/' )
-OPEN_SCRIPTURES_INPUT_RESOURCES_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/' )
+OPEN_SCRIPTURES_INPUT_RESOURCES_FOLDERPATH = Path( '/srv/Programming/WebDevelopment/OpenScriptures/' )
 
 WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH = BibleOrgSysGlobals.BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'BOSDistributableResources/' )
 TEST_OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_Test_DistributableResources/' )

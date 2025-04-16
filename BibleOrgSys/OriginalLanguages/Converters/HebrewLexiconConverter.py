@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # HebrewLexiconConverter.py
 #
@@ -53,7 +54,7 @@ DEBUGGING_THIS_MODULE = False
 
 
 # Hebrew lexicon folder
-DEFAULT_LEXICON_FOLDERPATH = Path( '/home/robert/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' )
+DEFAULT_LEXICON_FOLDERPATH = Path( '/srv/Programming/WebDevelopment/OpenScriptures/HebrewLexicon/' )
 
 
 

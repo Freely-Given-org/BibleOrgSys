@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -\*- coding: utf-8 -\*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # ESFMBible.py
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,7 +53,6 @@ CHANGELOG:
     2023-08-07 Handle numbers in word regex, e.g. 'feeding 5,000 men'
     2024-03-21 Add code to handle two word tables (OT and NT) from different source folders
 """
-from typing import List, Tuple, Optional
 from gettext import gettext as _
 import os
 from pathlib import Path
@@ -75,7 +75,7 @@ from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList,
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2024-06-14' # by RJH
+LAST_MODIFIED_DATE = '2025-01-14' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
 PROGRAM_VERSION = '0.76'
@@ -680,7 +680,7 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadESFMWordFile
 
 
-    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:Optional[str]=None ) -> Tuple[InternalBibleEntryList,Optional[List[str]]]:
+    def livenESFMWordLinks( self, BBB:str, verseList:InternalBibleEntryList, linkTemplate:str, titleTemplate:str|None=None ) -> tuple[InternalBibleEntryList,list[str]|None]:
         """
         The link template can be a filename like 'Word_{n}.htm' or an entire link like 'https://SomeSite/words/page_{n}.html'
             The '{n}' gets substituted with the actual word link string of digits.
@@ -728,6 +728,8 @@ class ESFMBible( Bible ):
                     for cc,columnName in enumerate( self.ESFMColumnNameList[wordFileName] ):
                         titleHTML = titleHTML.replace( f'«{columnName}»', rowColumns[cc] )
                     # print( f"  {titleHTML=}")
+                # assert '<br>' not in titleHTML, f"{titleTemplate=} {titleHTML=}"
+                # assert '\n' not in titleHTML, f"{titleTemplate=} {titleHTML=}"
                 originalText = f'''{originalText[:match.start()]}<a {titleHTML}href="{linkTemplate.replace('{W}',word).replace('{BBB}',BBB).replace('{n}', digits)}">{word}</a>{originalText[match.end():]}'''
                 searchStartIndex = match.end() + len(linkTemplate) + len(titleHTML) + 4 # We've added at least that many characters
                 count += 1
@@ -735,7 +737,7 @@ class ESFMBible( Bible ):
             if count > 0:
                 # print( f"  Now '{originalText}'")
                 vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  Made {count:,} {self.abbreviation} {BBB} ESFM words into live links." )
-                # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:List[str] )
+                # adjText, cleanText, extras = _processLineFix( self, C:str,V:str, originalMarker:str, text:str, fixErrors:list[str] )
                 # newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras(), originalText )
                 # Since we messed up many of the fields, set them to blank/null entries so that the old/wrong/outdated values can't be accidentally used
                 newEntry = InternalBibleEntry( entry.getMarker(), entry.getOriginalMarker(), '', '', None, originalText )
