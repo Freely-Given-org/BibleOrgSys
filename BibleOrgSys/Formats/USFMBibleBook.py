@@ -225,7 +225,7 @@ class USFMBibleBook( BibleBook ):
                 """
                 Finds self-closed \\zaln-s alignment start markers that may occur inside the line.
 
-                Removes the markers, and incrementes variables['level']
+                Removes the markers, and increments variables['level']
                     and appends the enclosed text to the variables['text'] variable
                 Thus alters variables dict as a side-effect.
 
