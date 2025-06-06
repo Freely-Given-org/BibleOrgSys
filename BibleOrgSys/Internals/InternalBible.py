@@ -1493,6 +1493,8 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         Runs self.discover() first if necessary.
 
         Creates an index for each book of the Bible.
+
+        Most of the time it's straightforward, but we also consolidate some of the headings.
         """
         # Get our recommendations for added units -- only load this once per Bible
         fnPrint( DEBUGGING_THIS_MODULE, f"makeSectionIndex() for {self.name} Bible" )

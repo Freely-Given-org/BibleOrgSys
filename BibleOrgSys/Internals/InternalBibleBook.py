@@ -551,15 +551,15 @@ class InternalBibleBook:
 
         marker, text = self._rawLines[-1] # Get the current existing line
         insertSpace = False
-        if text and text[-1] not in ' *“‘(—/' \
-        and additionalText[0] not in ' .,?!;:”’ )/\\':
+        if text and text[-1] not in ' *“‘(⌊—/' \
+        and additionalText[0] not in ' .,?!;:”’ )⌋/\\':
             if marker=='v' and text and text.isdigit(): # Must be a verse number
                 # TODO: Should we ALWAYS be inserting that space??? Probably better to fix at source
                 #   Also, remember, might be appending a closing quote mark or an em dash or something that SHOULD be attached
-                logging.critical( f"InternalBibleBook.appendToLastLine() inserted space where appears to be joining text after verse number {marker} {text=} plus {additionalText=}" )
+                logging.critical( f"InternalBibleBook.appendToLastLine() inserted space where appears to be joining text after {self.BBB} verse number {marker} {text=} plus {additionalText=}" )
                 insertSpace = True
             else:
-                logging.critical( f"InternalBibleBook.appendToLastLine() appears to be joining words {marker} {text=} plus {additionalText=}" )
+                logging.critical( f"InternalBibleBook.appendToLastLine() appears to be joining words {self.BBB} {marker} {text=} plus {additionalText=}" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "additionalText for {} {!r} is {!r}".format( marker, text, additionalText ) )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
@@ -567,7 +567,6 @@ class InternalBibleBook:
         #if marker in ('v','c') and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text = f"{text}{' ' if insertSpace else ''}{additionalText}"
         if forceDebugHere: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  newText for {!r} is {!r}".format( marker, text ) )
-        #if 'there is no longer any that is' in text: halt
         self._rawLines[-1] = (marker, text)
     # end of InternalBibleBook.appendToLastLine
 
@@ -2243,7 +2242,8 @@ class InternalBibleBook:
 
         def __doAppendEntry( adjMarker:str, originalMarker:str, text:str, originalText:str ) -> None:
             """
-            Append the entry to self._processedLines
+            Calls self._processLineFix to split out notes and other extras from the text.
+                then append the entry (with multilple components) to self._processedLines
             """
             #nonlocal self.sahtCount
 
@@ -2735,6 +2735,8 @@ class InternalBibleBook:
 
         Works by calling makeBookSectionIndex in InternalBibleIndexes.py
             to update self._SectionIndex
+
+        Most of the time it's straightforward, but we also consolidate some of the headings.
         """
         from BibleOrgSys.Bible import Bible
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBook._makeBookSectionIndex() for {self.BBB}" )
@@ -3228,6 +3230,8 @@ class InternalBibleBook:
                         # '<p ' is for commentary with HTML entries
                         if not segment.startswith('<p ') \
                         and (BibleOrgSysGlobals.strictCheckingFlag or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE)):
+                            # LEB MAT 1:3 word='2:9|link-href="None' segment='1:3 Although the Greek text reads “Aram,” many English versions substitute the Old Testament form of the name, “Ram” (cf.  1 Chr 2:9|link-href="None"; Ruth 4:19|link-href="None" ), here and in the following verse'
+                            print( f"{self.workName} {self.BBB} {C}:{V} {word=} {segment=}" )
                             halt # word processing errors with | or x-
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):

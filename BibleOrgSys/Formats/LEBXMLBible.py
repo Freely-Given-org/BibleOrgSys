@@ -29,6 +29,8 @@ Module handling the reading and import of LEB XML Bibles.
 CHANGELOG:
     2024-11-13 Fix missing spaces between words, and improve C:V handling esp. for footnotes
     2025-03-04 Fixed bug where idiom text wasn't being included and some li tails
+    2025-05-14 Put floor characters around idioms
+    2025-05-23 Fix space before Selah inside list items in Psalms, fix bug inserting tails that were None 
 """
 from gettext import gettext as _
 import logging
@@ -49,10 +51,10 @@ from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2025-03-04' # by RJH
+LAST_MODIFIED_DATE = '2025-05-24' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.16'
+PROGRAM_VERSION = '0.25'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -288,69 +290,70 @@ class LEBXMLBible( Bible ):
         self.lang = self.language = None
 
 
-        # Do a preliminary check on the readability of our file(s)
-        self.possibleFilenames = []
-        self.possibleFilenameDict = {}
-        if os.path.isdir( self.sourceFileOrFolder ): # We've been given a folder -- see if we can find the files
-            self.sourceFolder = self.sourceFilepath
-            # There's no standard for LEB XML file naming
-            fileList = os.listdir( self.sourceFilepath )
-            # First try looking for LEB book names
-            BBBList = []
-            for filename in fileList:
-                if 'VerseMap' in filename: continue # For WLC
-                if filename.lower().endswith('.xml'):
-                    self.sourceFilepath = os.path.join( self.sourceFolder, filename )
-                    if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Trying {}…".format( self.sourceFilepath ) )
-                    if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
-                        self.possibleFilenames.append( filename )
-                        foundBBB = None
-                        upperFilename = filename.upper()
-                        for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
-                            # osisBkCodes are all UPPERCASE
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
-                            if osisBkCode in upperFilename:
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "LEBXMLBible.__init__ found {!r} in {!r}".format( osisBkCode, upperFilename ) )
-                                if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
-                                if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
-                                assert not foundBBB # Don't expect duplicates
-                                foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  FoundBBB1 = {!r}".format( foundBBB ) )
-                        if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
-                            for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
-                                # returned bkCodes are all UPPERCASE
-                                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
-                                if bkCode in upperFilename:
-                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LEBXMLBible.__init__ ' + _("found {!r} in {!r}").format( bkCode, upperFilename ) )
-                                    if foundBBB: # already -- don't expect doubles
-                                        logging.warning( 'LEBXMLBible.__init__: ' + _("Found a second possible book abbreviation for {} in {}").format( foundBBB, filename ) )
-                                    foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
-                                    #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  FoundBBB2 = {!r}".format( foundBBB ) )
-                        if foundBBB:
-                            if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
-                            assert isinstance( foundBBB, str )
-                            BBBList.append( foundBBB )
-                            self.availableBBBs.add( foundBBB )
-                            self.possibleFilenameDict[foundBBB] = filename
-            # Now try to sort the booknames in self.possibleFilenames to a better order
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Was", len(self.possibleFilenames), self.possibleFilenames )
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  have", len(BBBList), BBBList )
-            assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
-                    or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
-            newCorrectlyOrderedList = []
-            for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes: # ordered by reference number
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
-                if BBB in BBBList:
-                    ix = BBBList.index( BBB )
-                    newCorrectlyOrderedList.append( self.possibleFilenames[ix] )
-            self.possibleFilenames = newCorrectlyOrderedList
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now", self.possibleFilenames ); halt
-        else: # it's presumably a file name
-            if not os.access( self.sourceFilepath, os.R_OK ):
-                logging.critical( 'LEBXMLBible: ' + _("File {!r} is unreadable").format( self.sourceFilepath ) )
-                return # No use continuing
-            vPrint( 'Never', DEBUGGING_THIS_MODULE, f"LEBXMLBible possibleFilenames: {self.possibleFilenames}" )
+        # # Do a preliminary check on the readability of our file(s)
+        # self.possibleFilenames = []
+        # self.possibleFilenameDict = {}
+        # if os.path.isdir( self.sourceFileOrFolder ): # We've been given a folder -- see if we can find the files
+        #     halt
+        #     self.sourceFolder = self.sourceFilepath
+        #     # There's no standard for LEB XML file naming
+        #     fileList = os.listdir( self.sourceFilepath )
+        #     # First try looking for LEB book names
+        #     BBBList = []
+        #     for filename in fileList:
+        #         if 'VerseMap' in filename: continue # For WLC
+        #         if filename.lower().endswith('.xml'):
+        #             self.sourceFilepath = os.path.join( self.sourceFolder, filename )
+        #             if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE:
+        #                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Trying {}…".format( self.sourceFilepath ) )
+        #             if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
+        #                 self.possibleFilenames.append( filename )
+        #                 foundBBB = None
+        #                 upperFilename = filename.upper()
+        #                 for osisBkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllOSISBooksCodes():
+        #                     # osisBkCodes are all UPPERCASE
+        #                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'obc', osisBkCode, upperFilename )
+        #                     if osisBkCode in upperFilename:
+        #                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "LEBXMLBible.__init__ found {!r} in {!r}".format( osisBkCode, upperFilename ) )
+        #                         if 'JONAH' in upperFilename and osisBkCode=='NAH': continue # Handle bad choice
+        #                         if 'ZEPH' in upperFilename and osisBkCode=='EPH': continue # Handle bad choice
+        #                         assert not foundBBB # Don't expect duplicates
+        #                         foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromOSISAbbreviation( osisBkCode, strict=True )
+        #                         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  FoundBBB1 = {!r}".format( foundBBB ) )
+        #                 if not foundBBB: # Could try a USFM/Paratext book code -- what writer creates these???
+        #                     for bkCode in BibleOrgSysGlobals.loadedBibleBooksCodes.getAllUSFMBooksCodes( toUpper=True ):
+        #                         # returned bkCodes are all UPPERCASE
+        #                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'bc', bkCode, upperFilename )
+        #                         if bkCode in upperFilename:
+        #                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'LEBXMLBible.__init__ ' + _("found {!r} in {!r}").format( bkCode, upperFilename ) )
+        #                             if foundBBB: # already -- don't expect doubles
+        #                                 logging.warning( 'LEBXMLBible.__init__: ' + _("Found a second possible book abbreviation for {} in {}").format( foundBBB, filename ) )
+        #                             foundBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromUSFMAbbreviation( bkCode, strict=True )
+        #                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  FoundBBB2 = {!r}".format( foundBBB ) )
+        #                 if foundBBB:
+        #                     if isinstance( foundBBB, list ): foundBBB = foundBBB[0] # Take the first option
+        #                     assert isinstance( foundBBB, str )
+        #                     BBBList.append( foundBBB )
+        #                     self.availableBBBs.add( foundBBB )
+        #                     self.possibleFilenameDict[foundBBB] = filename
+        #     # Now try to sort the booknames in self.possibleFilenames to a better order
+        #     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Was", len(self.possibleFilenames), self.possibleFilenames )
+        #     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  have", len(BBBList), BBBList )
+        #     assert (len(BBBList)==0 and len(self.possibleFilenames)==1) \
+        #             or len(BBBList) == len(self.possibleFilenames) # Might be no book files (if all in one file)
+        #     newCorrectlyOrderedList = []
+        #     for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes: # ordered by reference number
+        #         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, BBB )
+        #         if BBB in BBBList:
+        #             ix = BBBList.index( BBB )
+        #             newCorrectlyOrderedList.append( self.possibleFilenames[ix] )
+        #     self.possibleFilenames = newCorrectlyOrderedList
+        #     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Now", self.possibleFilenames ); halt
+        # else: # it's presumably a file name
+        if not os.access( self.sourceFilepath, os.R_OK ):
+            logging.critical( 'LEBXMLBible: ' + _("File {!r} is unreadable").format( self.sourceFilepath ) )
+            return # No use continuing
+        # vPrint( 'Never', DEBUGGING_THIS_MODULE, f"LEBXMLBible possibleFilenames: {self.possibleFilenames}" )
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
         self.workNames, self.workPrefixes = [], {}
@@ -368,28 +371,28 @@ class LEBXMLBible( Bible ):
         fnPrint( DEBUGGING_THIS_MODULE, "LEBXMLBible.loadBooks()" )
 
         loadErrors:list[str] = []
-        if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
-            # if BibleOrgSysGlobals.maxProcesses > 1 \
-            # and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
-            #     # Load all the books as quickly as possible
-            #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {len(self.possibleFilenames)} LEB books using {BibleOrgSysGlobals.maxProcesses} processes…" )
-            #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
-            #     BibleOrgSysGlobals.alreadyMultiprocessing = True
-            #     with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-            #         results = pool.map( self._loadBookFileMP, self.possibleFilenames ) # have the pool do our loads
-            #         assert len(results) == len(self.possibleFilenames)
-            #         for bBook,bookLoadErrors in results:
-            #             self.stashBook( bBook ) # Saves them in the correct order
-            #             loadErrors += bookLoadErrors
-            #     BibleOrgSysGlobals.alreadyMultiprocessing = False
-            # else: # Just single threaded
-                for filename in self.possibleFilenames:
-                    pathname = os.path.join( self.sourceFolder, filename )
-                    loadedBooks = self.__loadFile( pathname )
-                    for loadedBook,bookLoadErrors in loadedBooks:
-                        self.stashBook( loadedBook )
-                        loadErrors += bookLoadErrors
-        elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
+        # if self.possibleFilenames and len(self.possibleFilenames) > 1: # then we possibly have multiple files, probably one for each book
+        #     # if BibleOrgSysGlobals.maxProcesses > 1 \
+        #     # and not BibleOrgSysGlobals.alreadyMultiprocessing: # Get our subprocesses ready and waiting for work
+        #     #     # Load all the books as quickly as possible
+        #     #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Loading {len(self.possibleFilenames)} LEB books using {BibleOrgSysGlobals.maxProcesses} processes…" )
+        #     #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed.") )
+        #     #     BibleOrgSysGlobals.alreadyMultiprocessing = True
+        #     #     with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
+        #     #         results = pool.map( self._loadBookFileMP, self.possibleFilenames ) # have the pool do our loads
+        #     #         assert len(results) == len(self.possibleFilenames)
+        #     #         for bBook,bookLoadErrors in results:
+        #     #             self.stashBook( bBook ) # Saves them in the correct order
+        #     #             loadErrors += bookLoadErrors
+        #     #     BibleOrgSysGlobals.alreadyMultiprocessing = False
+        #     # else: # Just single threaded
+        #         for filename in self.possibleFilenames:
+        #             pathname = os.path.join( self.sourceFolder, filename )
+        #             loadedBooks = self.__loadFile( pathname )
+        #             for loadedBook,bookLoadErrors in loadedBooks:
+        #                 self.stashBook( loadedBook )
+        #                 loadErrors += bookLoadErrors
+        if os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             loadedBooks = self.__loadFile( self.sourceFilepath )
             for loadedBook,bookLoadErrors in loadedBooks:
                 self.stashBook( loadedBook )
@@ -463,17 +466,20 @@ class LEBXMLBible( Bible ):
         Extra shim function to help debugging.
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"addLine( {marker=}, {rest=}, ... )" )
+        assert isinstance( marker, str ) and marker
+        assert isinstance( rest, str ) and rest != 'None', f"{marker=}, {rest=}"
         dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding line {marker}='{rest}'")
         alObject.addLine( marker, rest )
     # end of addLine
 
-    def appendToLastLine( self, rest, alObject ) -> None:
+    def appendToLastLine( self, appendage, alObject ) -> None:
         """
         Extra shim function to help debugging.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLine( {rest=}, ... )" )
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending line '{rest}'")
-        alObject.appendToLastLine( rest )
+        fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLine( {appendage=}, ... )" )
+        assert isinstance( appendage, str ) and appendage
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending line '{appendage}'")
+        alObject.appendToLastLine( appendage )
     # end of appendToLastLine
 
 
@@ -563,6 +569,7 @@ class LEBXMLBible( Bible ):
                 logging.error( "kg63 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(kg63)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
     # end of processBook
 
 
@@ -603,27 +610,6 @@ class LEBXMLBible( Bible ):
                     if sub2element.tag == 'note':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'gdf3', loadErrors )
                         self.processNote( sub2element, thisBook, loadErrors )
-                        # self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\f + \\fr {C}:{V} \\ft {sub2element.text}", thisBook )
-                        # for sub3element in sub2element:
-                        #     print( sub3element.tag )
-                        #     if sub3element.tag == 'supplied':
-                        #         BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, location, 'kcf8', loadErrors )
-                        #         BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, location, 'fjg4', loadErrors )
-                        #         text = sub3element.text
-                        #         assert text
-                        #         hadOutstandingSpace = haveOutstandingSpace # Remember
-                        #         if text[-1] == ' ':
-                        #             text = text[:-1]
-                        #             haveOutstandingSpace = True
-                        #         self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
-                        #         if tail := clean( sub3element.tail, loadErrors, location ):
-                        #             hadOutstandingSpace = haveOutstandingSpace # Remember
-                        #             if tail[-1] == ' ':
-                        #                 tail = tail[:-1]
-                        #                 haveOutstandingSpace = True
-                        #             else: haveOutstandingSpace = False
-                        #             if tail: # still
-                        #                 self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     else:
                         logging.error( "jk42 Unprocessed {!r} sub2element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(jk42)".format( sub2element.tag, sub2element.text, location ) )
@@ -639,18 +625,30 @@ class LEBXMLBible( Bible ):
                 logging.error( "mas9 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(mas9)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
     # end of processChapter
 
 
     def processParagraph( self, element, thisBook, loadErrors ):
         """
+        Note: We also get blank paragraphs like "<p />" (which we change to /b's).
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"processParagraph( {element}, ..., {len(loadErrors)} ) for {thisBook.BBB}" )
         assert isinstance( thisBook, BibleBook )
 
         location = 'processParagraph'
+        # print( f"{location=} {element.text=} {len(element)=} {element.tail=}")
         BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'jkh9', loadErrors )
         BibleOrgSysGlobals.checkXMLNoTail( element, location, 'adq3', loadErrors )
+
+
+        # Check for an empty paragraph (which we implement as USFM /b)
+        if not element.text and len(element) == 0: # No text and no subelements
+            self.addLine( 'b', None, thisBook )
+            if element.tail:
+                tail = clean( element.tail, loadErrors, location )
+                if tail.strip(): print( f"{tail=}"); halt
+            return
 
         haveOutstandingSpace = False
         text = element.text
@@ -683,7 +681,8 @@ class LEBXMLBible( Bible ):
                 self.addLine( 'v', f'{self.state['V']} ', thisBook )
                 # assert haveOutstandingSpace == False # Why not???
                 haveOutstandingSpace = False
-                if tail := clean( subelement.tail, loadErrors, location ):
+                if subelement.tail:
+                    tail = clean( subelement.tail, loadErrors, location )
                     if tail[-1] == ' ':
                         tail = tail[:-1]
                         haveOutstandingSpace = True
@@ -694,7 +693,8 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'gd63', loadErrors )
                 self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {subelement.text}\\add*", thisBook )
                 haveOutstandingSpace = False
-                if tail := clean( subelement.tail, loadErrors, location ):
+                if subelement.tail:
+                    tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember it
                     if tail[-1] == ' ':
                         tail = tail[:-1]
@@ -715,7 +715,8 @@ class LEBXMLBible( Bible ):
                 assert not haveOutstandingSpace
                 self.appendToLastLine( '//', thisBook ) # This is the USFM code for an optional line break
                 # TODO: See if this is the correct way to handle the two <br /> in LEB
-                if tail := clean( subelement.tail, loadErrors, location ):
+                if subelement.tail:
+                    tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember it
                     if tail[-1] == ' ':
                         tail = tail[:-1]
@@ -728,13 +729,23 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'k6g7', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jd52', loadErrors )
                 assert subelement.text
-                self.appendToLastLine( f"\\it {subelement.text}\\it*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\it {subelement.text}\\it*{subelement.tail if subelement.tail else ''}", thisBook )
+                haveOutstandingSpace = False
             elif subelement.tag in ('idiom-start','idiom-end'): # should be self-closing
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'sd31', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'bnd4', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jhw4', loadErrors )
-                # TODO: We don't currently save this information
-                if tail := clean( subelement.tail, loadErrors, location ):
+
+                if subelement.tag == 'idiom-start':
+                    self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
+                    haveOutstandingSpace = False
+                elif subelement.tag == 'idiom-end':
+                    self.appendToLastLine( '⌋', thisBook ) # '⌋'
+
+                if subelement.tail:
+                    assert subelement.tail is not None
+                    tail = clean( subelement.tail, loadErrors, location )
+                    assert tail is not None
                     hadOutstandingSpace = haveOutstandingSpace # Remember
                     if tail[-1] == ' ':
                         tail = tail[:-1]
@@ -746,6 +757,7 @@ class LEBXMLBible( Bible ):
                 logging.error( "bvd3 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(bvd3)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
     # end of processParagraph
 
 
@@ -902,7 +914,8 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, location, 'gdf3', loadErrors )
                         assert sub2element.text
-                        self.appendToLastLine( f"\\it {sub2element.text}\\it*", thisBook )
+                        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\qs {sub2element.text}\\qs*" if sub2element.text=='Selah' else f"{' ' if haveOutstandingSpace else ''}\\it {sub2element.text}\\it*", thisBook )
+                        haveOutstandingSpace = False
                     elif sub2element.tag == 'span':
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, location, 'gdf3', loadErrors )
@@ -911,21 +924,30 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'df13', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, location, 'dsfg', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'jf56', loadErrors )
-                        # TODO: USFM has no marker for an idiom
-                        # if tail := clean( sub2element.tail, loadErrors, location ):
-                        #     hadOutstandingSpace = haveOutstandingSpace # Remember
-                        #     if tail[-1] == ' ':
-                        #         tail = tail[:-1]
-                        #         haveOutstandingSpace = True
-                        #     else: haveOutstandingSpace = False
-                        #     if tail: # still
-                        #         self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+
+                        if subelement.tag == 'idiom-start':
+                            self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
+                            haveOutstandingSpace = False
+                        elif subelement.tag == 'idiom-end':
+                            self.appendToLastLine( '⌋', thisBook ) # '⌋'
+
+                        if subelement.tail:
+                            tail = clean( subelement.tail, loadErrors, location )
+                            hadOutstandingSpace = haveOutstandingSpace # Remember
+                            if tail[-1] == ' ':
+                                tail = tail[:-1]
+                                haveOutstandingSpace = True
+                            else: haveOutstandingSpace = False
+                            if tail: # still
+                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     else:
                         logging.error( "hsg3 Unprocessed {!r} sub2element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(hsg3)".format( sub2element.tag, sub2element.text, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                        halt
                     if sub2element.tail and sub2element.tag != 'note': # coz processNote handles tails
-                        if tail := clean( sub2element.tail, loadErrors, location ):
+                        if sub2element.tail:
+                            tail = clean( sub2element.tail, loadErrors, location )
                             hadOutstandingSpace = haveOutstandingSpace # Remember it
                             if tail[-1] == ' ':
                                 tail = tail[:-1]
@@ -936,6 +958,7 @@ class LEBXMLBible( Bible ):
                 logging.error( "lfg3 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(lfg3)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
     # end of processList
 
     def processNote( self, noteElement, thisBook, loadErrors ):
@@ -975,7 +998,8 @@ class LEBXMLBible( Bible ):
                                 haveOutstandingSpace = True
                         if text: # still
                             self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
-                        if tail := clean( sub2element.tail, loadErrors, location ):
+                        if sub2element.tail:
+                            tail = clean( sub2element.tail, loadErrors, location )
                             hadOutstandingSpace = haveOutstandingSpace # Remember
                             if tail[-1] == ' ':
                                 tail = tail[:-1]
@@ -988,7 +1012,8 @@ class LEBXMLBible( Bible ):
                         loadErrors.append( "Unprocessed {!r} sub3element ({}) in {}(nfg4)".format( sub2element.tag, sub2element.text, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                         halt
-                if tail := clean( subelement.tail, loadErrors, location ):
+                if subelement.tail:
+                    tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember
                     if tail[-1] == ' ':
                         tail = tail[:-1]
@@ -1029,7 +1054,8 @@ class LEBXMLBible( Bible ):
                                 haveOutstandingSpace = True
                         if text: # still
                             self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
-                        if tail := clean( sub2element.tail, loadErrors, location ):
+                        if sub2element.tail:
+                            tail = clean( sub2element.tail, loadErrors, location )
                             hadOutstandingSpace = haveOutstandingSpace # Remember
                             if tail[-1] == ' ':
                                 tail = tail[:-1]
@@ -1051,7 +1077,7 @@ class LEBXMLBible( Bible ):
                                 logging.warning( "b4s6 Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                                 loadErrors.append( "Unprocessed {} attribute ({}) in {} (b4s6)".format( attrib, value, location ) )
                                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                        assert sub2element.text
+                                halt
                         # print( f"{ref=} {title=} {sub2element.text=}")
                         #assert title == sub2element.text # ref=None title='1 Ch 2:9' sub2element.text='1 Chr 2:9'
                         self.appendToLastLine( f'\\+jmp {sub2element.text}|link-href="{ref}"\\+jmp*', thisBook )
@@ -1059,7 +1085,9 @@ class LEBXMLBible( Bible ):
                         logging.error( "nfg4 Unprocessed {!r} sub3element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub3element ({}) in {}(nfg4)".format( sub2element.tag, sub2element.text, location ) )
                         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
-                if tail := clean( subelement.tail, loadErrors, location ):
+                        halt
+                if subelement.tail:
+                    tail = clean( subelement.tail, loadErrors, location )
                     hadOutstandingSpace = haveOutstandingSpace # Remember
                     if tail[-1] == ' ':
                         tail = tail[:-1]
@@ -1100,9 +1128,11 @@ class LEBXMLBible( Bible ):
                 logging.error( "fvc3 Unprocessed {!r} sub2element ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(fvc3)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
         # Why fails ??? assert not haveOutstandingSpace
         self.appendToLastLine( '\\f*', thisBook )
-        if tail := clean( noteElement.tail, loadErrors, location ):
+        if noteElement.tail:
+            tail = clean( noteElement.tail, loadErrors, location )
             hadOutstandingSpace = haveOutstandingSpace # Remember it
             # if tail[-1] == ' ':
             #     tail = tail[:-1]
@@ -1135,7 +1165,7 @@ class LEBXMLBible( Bible ):
         assert spanStyle
         spanMarker = 'it' # TODO: Could maybe adjust this according to the style ???
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"processSpan {spanElement.text=} {spanStyle=} {spanMarker=}" )
-        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\{spanMarker} {spanElement.text}", thisBook )
+        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\{spanMarker} {spanElement.text if spanElement.text else ''}", thisBook )
         for subelement in spanElement:
             if subelement.tag == 'note':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'kf93', loadErrors )
@@ -1145,8 +1175,10 @@ class LEBXMLBible( Bible ):
                 logging.error( "kj21 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(kj21)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
+                halt
         self.appendToLastLine( f'\\{spanMarker}*', thisBook )
-        if tail := clean( spanElement.tail, loadErrors, location ):
+        if spanElement.tail:
+            tail = clean( spanElement.tail, loadErrors, location )
             hadOutstandingSpace = haveOutstandingSpace # Remember it
             if tail[-1] == ' ':
                 tail = tail[:-1]

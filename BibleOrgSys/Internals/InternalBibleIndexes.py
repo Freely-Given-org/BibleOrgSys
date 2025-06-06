@@ -67,12 +67,13 @@ Some notes about internal formats:
     Books (like FRT) that don't have chapters (or verses) store the information in chapter '0'.
 
 CHANGELOG:
-    2022-06-05 quieten makeBookCVIndex print statement
-    2022-07-31 added items() methods to indexes
-    2023-02-03 improved indexing of non-chapter books
-    2023-03-02 improved section index
-    2023-04-13 put verse ranges and suffixes back into CV index entries -- this might be a breaking change for some applications???
-    2023-06-02 allow finding all verses and verse ranges (esp. for notes, commentaries)
+    2022-06-05 Quieten makeBookCVIndex print statement
+    2022-07-31 Added items() methods to indexes
+    2023-02-03 Improved indexing of non-chapter books
+    2023-03-02 Improved section index
+    2023-04-13 Put verse ranges and suffixes back into CV index entries -- this might be a breaking change for some applications???
+    2023-06-02 Allow finding all verses and verse ranges (esp. for notes, commentaries)
+    2025-05-21 Combine c/ms1/s1 section headings in section heading index for Psalms
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -89,10 +90,10 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 
 
-LAST_MODIFIED_DATE = '2024-09-04' # by RJH
+LAST_MODIFIED_DATE = '2025-05-22' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
-PROGRAM_VERSION = '0.93'
+PROGRAM_VERSION = '0.94'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1155,9 +1156,9 @@ class InternalBibleBookSectionIndex:
     # end of InternalBibleBookSectionIndex.getVerseEntriesWithContext
 
 
-    def makeBookSectionIndex( self, givenBibleEntries ) -> None:
+    def makeBookSectionIndex( self, givenBibleEntries:InternalBibleEntryList ) -> None:
         """
-        Index the Bible book lines for faster reference.
+        Index the Bible book sections for faster reference.
 
         The parameter is a InternalBibleEntryList(), i.e., self._processedLines (from InternalBibleBook)
             i.e., a specialised list of InternalBibleEntry objects.
@@ -1169,12 +1170,24 @@ class InternalBibleBookSectionIndex:
                 Often this contains only the 'c' entry.
                 Section headings are put with the following text / verse.
 
+        Most of the time it's straightforward, but we also consolidate some of the headings.
+
         The created dictionary entries are (ix,indexEntryLineCount,contextMarkerList) 3-tuples where
             ix is the index into self.bookObject._processedLines,
             indexEntryLineCount is the number of entries for this verse, and
             contextMarkerList is a list containing contextual markers which still apply to this entry.
+
+        For BSB PSA was
+            0: PSA_('-1', '0') object: (inclusive) endCV=-1:7 ix=0–7 (cnt=8) Headers='PSA'
+            1: PSA_('1', '0') object: (inclusive) endCV=1:0 ix=8–8 (cnt=1) c='Psalms 1'
+            2: PSA_('1', '1') object: (inclusive) endCV=1:6 ix=9–77 (cnt=69) ms1/s1='BOOK I/The Two Paths'
+            3: PSA_('2', '1') object: (inclusive) endCV=2:12 ix=78–201 (cnt=124) c/s1='Psalms 2/The Triumphant Messiah'
+            4: PSA_('3', '1') object: (inclusive) endCV=3:8 ix=202–288 (cnt=87) c/s1='Psalms 3/Deliver Me, O LORD!'
         """
         from BibleOrgSys.Bible import Bible
+
+        # DEBUGGING_THIS_MODULE = 99 if self.workName=='BSB' and self.BBB=='PSA' else False
+
         fnPrint( DEBUGGING_THIS_MODULE, f"InternalBibleBookSectionIndex.makeBookSectionIndex( {len(givenBibleEntries)} ) for {self.BBB}" )
         assert isinstance( self.BibleObject, Bible )
         assert givenBibleEntries, f"{self.workName} {self.BBB} {givenBibleEntries=}"
@@ -1195,6 +1208,8 @@ class InternalBibleBookSectionIndex:
                                 or not BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)
         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} needToSaveByChapter={needToSaveByChapter} since haveSectionHeadingsForBook={haveSectionHeadingsForBook} continuesThroughChapters={BibleOrgSysGlobals.loadedBibleBooksCodes.continuesThroughChapters(self.BBB)}" )
         bookName = self.bookObject.getAssumedBookNames()[0]
+        # TODO: The following line is a hack! (We should use the \cl field if there is one)
+        if bookName in ('Psalms','Songs'): bookName = bookName[:-1] # Drop the plural
         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Got '{bookName}' for {self.BBB}" )
 
         # def _printIndexEntry( ie ):
@@ -1249,6 +1264,7 @@ class InternalBibleBookSectionIndex:
                     assert getLeadingInt(endV) >= getLeadingInt(startV), f"Expected a higher ending verse number: {self.workName} {self.BBB} {startC}:{startV} {endV=} {reasonMarker=} {sectionName=}" # Verse ranges shouldn't go backwards
 
             # If the last entry was very small, we might need to combine it with this one
+            #   e.g., if a section heading immediately follows a chapter break
             if tempIndexData:
                 lastIndexEntryKey = list(tempIndexData.keys())[-1]
                 lastIndexEntry = tempIndexData[lastIndexEntryKey]
@@ -1258,12 +1274,13 @@ class InternalBibleBookSectionIndex:
                     lStartC, lStartV, lEndC, lEndV, lStartIx, lEndIx, lReasonMarker, lSectionName, lContext = lastIndexEntry
                     if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
                         assert lStartC == lEndC, f"Expected to be in the same chapter: {self.workName} {self.BBB} {lStartC=} {lEndC=} {reasonMarker=} {sectionName=}"
-                    if reasonMarker == 's1' and lastIndexEntry[6] in ('c','ms1'):
+                    if (reasonMarker == 'ms1' and lastIndexEntry[6] == 'c') \
+                    or (reasonMarker == 's1' and lastIndexEntry[6] in ('c','ms1','ms1/c')):
                         if DEBUGGING_THIS_MODULE:
                             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "           COMBINING index entries" )
                         startV, startIx = lastIndexEntry[1], lastIndexEntry[4]
-                        reasonMarker = f'{lastIndexEntry[6]}/{reasonMarker}'
-                        sectionName = f'{lastIndexEntry[7]}/{sectionName}'
+                        reasonMarker = f'{reasonMarker}/{lastIndexEntry[6]}' if reasonMarker=='ms1' and lastIndexEntry[6]=='c' else f'{lastIndexEntry[6]}/{reasonMarker}'
+                        sectionName = f'{sectionName}/{lastIndexEntry[7]}' if reasonMarker=='ms1/c' and lastIndexEntry[6]=='c' else f'{lastIndexEntry[7]}/{sectionName}'
                         del tempIndexData[lastIndexEntryKey] # Just to be sure
 
             # Since startV is the current verse number when a section heading or something is encountered,
@@ -1486,7 +1503,9 @@ class InternalBibleBookSectionIndex:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"We got {len(tempIndexData)} index entries for {self.BBB}." )
             for j, (key,value) in enumerate(self.__indexData.items(), start=1):
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {j:2}/ {key} = {value}" )
-        #dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  makeBookSectionIndex() for {self.BBB} finished." )
+        # if self.workName=='BSB' and self.BBB=='PSA':
+        #     dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  makeBookSectionIndex() for {self.BBB} finished." )
+        #     halt
         return
 
         # if errorData: # We got some overwriting errors
