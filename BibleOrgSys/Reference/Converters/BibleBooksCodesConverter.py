@@ -6,7 +6,7 @@
 #
 # Module handling BibleBooksCodes.xml to produce various derived export formats
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -43,10 +43,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-06-30' # by RJH
+LAST_MODIFIED_DATE = '2025-05-26' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodesConverter"
 PROGRAM_NAME = "Bible Books Codes converter"
-PROGRAM_VERSION = '0.93'
+PROGRAM_VERSION = '0.94'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -502,7 +502,9 @@ class BibleBooksCodesConverter:
                 for possibleAlternativeAbbreviation in possibleAlternativeAbbreviations:
                     # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "here654", possibleAlternativeAbbreviation, referenceAbbreviation )
                     assert possibleAlternativeAbbreviation.upper() == possibleAlternativeAbbreviation
-                    assert possibleAlternativeAbbreviation not in myPossAltBooksDict
+                    # assert possibleAlternativeAbbreviation not in myPossAltBooksDict, f"{referenceAbbreviation=} {sequenceNumber=} {possibleAlternativeAbbreviation=}"
+                    if possibleAlternativeAbbreviation in myPossAltBooksDict:
+                        logging.warning( f"Possible alternative abbreviation '{possibleAlternativeAbbreviation}' for '{referenceAbbreviation}' {sequenceNumber=} is a duplicate" )
                     myPossAltBooksDict[possibleAlternativeAbbreviation] = referenceAbbreviation
         for BBB in myRefAbbrDict: # Do some cross-checking
             if myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
@@ -547,7 +549,9 @@ class BibleBooksCodesConverter:
         for abbreviation,BBB in myPossAltBooksDict.items(): # Add these entries (esp. for VPL Bibles)
             if abbreviation in initialAllAbbreviationsDict: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ohoh", abbreviation, BBB )
             assert ' ' not in abbreviation
-            assert abbreviation not in initialAllAbbreviationsDict
+            # assert abbreviation not in initialAllAbbreviationsDict
+            if abbreviation in initialAllAbbreviationsDict:
+                logging.critical( f"Didn't properly handle duplicate '{abbreviation}' possible abbreviation" )
             initialAllAbbreviationsDict[abbreviation] = BBB
 
         adjAllAbbreviationsDict = {}

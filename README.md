@@ -79,3 +79,7 @@ We are also investigating ways of speeding up the system including:
 1. C or Rust functions for CPython
 2. Python compilers such as PyPy or Py2Exe or PyInstaller
 3. A stand-alone Rust or Golang (Go) Bible compiler (to build to our internal Bible format)
+
+## To Do (May 2025)
+
+1. We have some functions beginning with 'make' and others with 'create'. We probably need to choose one.

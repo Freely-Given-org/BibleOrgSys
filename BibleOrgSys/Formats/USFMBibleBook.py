@@ -6,7 +6,7 @@
 #
 # Module handling the importation of USFM Bible books
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,6 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 CHANGELOG:
     2022-06-10 Make uw alignment loading more robust to handle formatting errors
+    2025-05-30 Handled /tc1 on new line (after /tr) which was being completely lost
 """
 from gettext import gettext as _
 from typing import Any
@@ -46,10 +47,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2024-03-10' # by RJH
+LAST_MODIFIED_DATE = '2025-05-30' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.64'
+PROGRAM_VERSION = '0.65'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -90,6 +91,7 @@ class USFMBibleBook( BibleBook ):
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
+        # DEBUGGING_THIS_MODULE = 99 if filename=='16-EZReng-t4t.usfm' else False
         fnPrint( DEBUGGING_THIS_MODULE, f"USFMBibleBook.load( filename={filename}, folder={folder}, encoding={encoding} )…" )
 
 
@@ -589,7 +591,17 @@ class USFMBibleBook( BibleBook ):
                     else:
                         #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
                         logging.critical( f"Programming error ¬ZALN: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
-                        if self.doExtraChecking: halt
+                        if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
+                elif marker in ('tc1','tc2','tc3','tc4','tc5'):
+                    # and (lastMarker in ('v', 'p~', 'q','pi','qm','li') or lastMarker in BibleOrgSysGlobals.USFMParagraphMarkers):
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"HereTC with {lastMarker}='{lastText}' now {marker}='{text}'" )
+                    lastText = f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text.strip()}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
+                    dPrint( 'Info', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} AppendedTC {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
+                    marker = text = None # Seems to make no difference
+                else:
+                    #dPrint( 'Never', debuggingThisFunction, 'USFM Para Markers', BibleOrgSysGlobals.USFMParagraphMarkers )
+                    logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
+                    if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -599,8 +611,7 @@ class USFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, C, V, marker ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, C, V ) )
                 self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
-                if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
-                lastText +=  '\\' + marker + ' ' + text
+                lastText =  f"{lastText}{'' if lastText.endswith(' ') else ' '}\\{marker} {text}" # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 dPrint( 'Never', DEBUGGING_THIS_MODULE, f"{self.BBB} {C} {V} Appended2 {marker}='{text}' to get combined line {lastMarker}='{lastText}'" )
             else: # the line begins with an unknown marker
                 # if lastMarker:

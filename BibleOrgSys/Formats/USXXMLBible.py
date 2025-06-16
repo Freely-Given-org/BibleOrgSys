@@ -6,7 +6,7 @@
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012-2023 Robert Hunt
+# Copyright (C) 2012-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,6 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 CHANGELOG:
     2023-09-28 Add test for USFMAllExpandedCharacterMarkers in main()
+    2025-06-01 Handle missing book file
 """
 from gettext import gettext as _
 import os
@@ -48,10 +49,10 @@ from BibleOrgSys.Formats.USXXMLBibleBook import USXXMLBibleBook
 from BibleOrgSys.Bible import Bible
 
 
-LAST_MODIFIED_DATE = '2023-10-12' # by RJH
+LAST_MODIFIED_DATE = '2025-06-01' # by RJH
 SHORT_PROGRAM_NAME = "USXXMLBibleHandler"
 PROGRAM_NAME = "USX XML Bible handler"
-PROGRAM_VERSION = '0.43'
+PROGRAM_VERSION = '0.44'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -226,7 +227,13 @@ class USXXMLBible( Bible ):
         self.triedLoadingBook[BBB] = True
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  USXXMLBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
-        if filename is None: filename = self.possibleFilenameDict[BBB]
+        if filename is None:
+            try: filename = self.possibleFilenameDict[BBB]
+            except KeyError:
+                logging.critical( f"USX XML Bible was unable to discover a filename for {self.name} {BBB} -- skipping" )
+                self.bookNeedsReloading[BBB] = False
+                return
+
         UBB = USXXMLBibleBook( self, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
         UBB.validateMarkers()

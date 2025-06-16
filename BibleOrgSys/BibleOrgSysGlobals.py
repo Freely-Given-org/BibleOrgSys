@@ -6,7 +6,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -61,9 +61,10 @@ Contains functions:
     getFlattenedXML( element, locationString, idString=None, level=0 )
     isBlank( elementText )
 
-    applyStringAdjustments( originalText, adjustmentList )
-    stripWordEndsPunctuation( wordToken )
-    removeStringEndings( originalText, endingsList )
+    applyStringAdjustments( originalText:str, adjustmentList )
+    stripWordEndsPunctuation( wordToken:str )
+    removeStringEndings( originalText:str, endingsList )
+    rreplace( s:str, old:str, new:str, num:int ) -> str
 
     pickleObject( theObject, filename, folderName=None )
     unpickleObject( filename, folderName=None )
@@ -90,6 +91,7 @@ CHANGELOG:
     2023-09-28 Fixed preloadCommonData() to not create new variables
     2023-10-11 Raised XMLError on XML errors (rather than halt)
     2024-06-14 Print more info for failed pickles
+    2025-05-31 Add useful rreplace function
 """
 from gettext import gettext as _
 import sys
@@ -114,10 +116,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2024-06-14' # by RJH
+LAST_MODIFIED_DATE = '2025-05-31' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.92'
+PROGRAM_VERSION = '0.93'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1300,6 +1302,17 @@ def removeStringEndings( originalText:str, endingsList:list[str] ) -> str:
             newText = newText[:-len(ending)]
     return newText
 # end of BibleOrgSysGlobals.stripWordEndsPunctuation
+
+
+def rreplace( s:str, old:str, new:str, num:int ) -> str:
+    """
+    reverse replace, i.e., replace num times starting from the end of the given string.
+
+    Adapted from https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
+    """
+    li = s.rsplit( old, num )
+    return new.join( li )
+# end of spellCheckEnglish.rreplace
 
 
 ##########################################################################################################

@@ -6,7 +6,7 @@
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -45,10 +45,10 @@ from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.BibleWriter import BibleWriter
 
 
-LAST_MODIFIED_DATE = '2022-06-03' # by RJH
+LAST_MODIFIED_DATE = '2025-05-15' # by RJH
 SHORT_PROGRAM_NAME = "BibleObjects"
 PROGRAM_NAME = "Bible object handler"
-PROGRAM_VERSION = '0.15'
+PROGRAM_VERSION = '0.16'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -58,62 +58,7 @@ logger = logging.getLogger(SHORT_PROGRAM_NAME)
 
 
 
-#class BibleExtra:
-    #"""
-    #Class for handling Bible front and back matter.
-    #"""
-
-    #def __init__( self ) -> None:
-        #"""
-        #Constructor: creates an empty Bible extra object.
-        #"""
-        #self.sections = []
-    ## end of __init__
-
-    #def __str__( self ) -> str:
-        #"""
-        #This method returns the string representation of a Bible extra section.
-
-        #@return: the name of a Bible object formatted as a string
-        #@rtype: string
-        #"""
-        #result = _("BibleExtra object")
-        #result += ('\n' if result else '') + "  " + _("Number of sections = {:,}").format(len(self.sections) )
-        #return result
-    ## end of __str__
-## end of class BibleExtra
-
-
-#class BibleDivision:
-    #"""
-    #Class for handling Bible divisions (like Old Testament and New Testament).
-    #"""
-
-    #def __init__( self ) -> None:
-        #"""
-        #Constructor: creates an empty Bible extra object.
-        #"""
-        #self.shortName, self.longName = '', ''
-        #self.inputAbbreviations = []
-        #self.bookCodes = []
-    ## end of __init__
-
-    #def __str__( self ) -> str:
-        #"""
-        #This method returns the string representation of a Bible division.
-
-        #@return: the name of a Bible object formatted as a string
-        #@rtype: string
-        #"""
-        #result = _("BibleDivision object")
-        #result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
-        #return result
-    ## end of __str__
-## end of class BibleDivision
-
-
-
-class BibleBook ( InternalBibleBook ):
+class BibleBook( InternalBibleBook ):
     """
     Class for handling a single Bible book.
         A Bible book consists of a list of tuples.
@@ -139,13 +84,6 @@ class BibleBook ( InternalBibleBook ):
             else: assert isinstance( containerBibleObject, Bible )
 
         super().__init__( containerBibleObject, BBB )
-
-        # Define our added data stores
-        #self.shortName, self.longName = '', ''
-        #self.inputAbbreviations = []
-        #self.text = []
-        #self.index = {}
-        #self.textCodes = ( "ID", "RH1", "MT1", "MT2", "MS1", "MS2", "IOT", "IO1", "IO2", "IS1", "IS2", "InP", "SH1", "SH2", "SXR", "Pgr", "Chp", "Vrs", "Txt", "Qu1", "Qu2", "Qu3", "Qu4", "Blk", "Mar", "FNt", "XRf", "MR" )
     # end of __init__
 
     def __str__( self ) -> str:
@@ -156,33 +94,8 @@ class BibleBook ( InternalBibleBook ):
         @rtype: string
         """
         result = _("BibleBook object")
-        #result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
-        #for line in self.text: result += ('\n' if result else '') + "  {}".format(repr(line) )
         return result
     # end of __str__
-
-    #def append( self, stuff ):
-        #"""
-        #Append the stuff tuple to a Bible book.
-        #"""
-        #if BibleOrgSysGlobals.debugFlag: assert len(stuff) == 2
-        #if BibleOrgSysGlobals.debugFlag: assert stuff[0] in self.textCodes
-        #self.text.append( stuff )
-    ## end of append
-
-    #def createIndex( self ):
-        #""" Create the chapter verse index for this book. """
-        #self.index = {}
-        #C, V = '0', '0'
-        #for j,(code,text) in enumerate(self.text):
-            #if code == 'Chp':
-                #C, V = text, '0'
-                #self.index[ (C,V) ] = j, 0
-            #elif code == 'Vrs':
-                #V = text
-                #self.index[ (C,V) ] = j, 0
-        ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.index )
-    ## end of createIndex
 # end of class BibleBook
 
 
