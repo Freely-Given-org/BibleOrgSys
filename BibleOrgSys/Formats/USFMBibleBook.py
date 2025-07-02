@@ -29,6 +29,7 @@ Module for defining and manipulating USFM Bible books.
 CHANGELOG:
     2022-06-10 Make uw alignment loading more robust to handle formatting errors
     2025-05-30 Handled /tc1 on new line (after /tr) which was being completely lost
+    2025-06-24 Improved some error handling for invalid markers
 """
 from gettext import gettext as _
 from typing import Any
@@ -47,10 +48,10 @@ from BibleOrgSys.InputOutput.USFMFile import USFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2025-05-30' # by RJH
+LAST_MODIFIED_DATE = '2025-06-24' # by RJH
 SHORT_PROGRAM_NAME = "USFMBibleBook"
 PROGRAM_NAME = "USFM Bible book handler"
-PROGRAM_VERSION = '0.65'
+PROGRAM_VERSION = '0.66'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -552,7 +553,7 @@ class USFMBibleBook( BibleBook ):
                 if gotUWEncoding:
                     marker, text = handleUWEncoding( marker, text, alignmentVariables )
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
+            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isInternalMarker(marker[:-1]) ): # the line begins with an internal marker -- append it to the previous line
                 if issueLinePositioningErrors \
                 and (not gotUWEncoding or marker!='w'):
                     if text:
@@ -603,7 +604,7 @@ class USFMBibleBook( BibleBook ):
                     logging.critical( f"Programming error: USFMBibleBook.load() lost '{self.workName}' {self.BBB}_{C}:{V} text after {lastMarker}='{lastText}': {marker}='{text}'" )
                     if self.doExtraChecking or DEBUGGING_THIS_MODULE: halt
             elif BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker ) \
-            or marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+            or (marker and marker.endswith('*') and BibleOrgSysGlobals.loadedUSFMMarkers.isNoteMarker(marker[:-1]) ): # the line begins with a note marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {!r}").format( self.BBB, C, V, marker, text ) )
                     logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {!r}").format( marker, self.BBB, C, V, text ) )
@@ -660,14 +661,14 @@ class USFMBibleBook( BibleBook ):
                     self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
                     # TODO: Should the following code be disabled by the 'strict' flag????
                     for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
-                        if marker.startswith( tryMarker ): # Let's try changing it
+                        if marker and marker.startswith( tryMarker ): # Let's try changing it
                             if lastMarker:
                                 #  dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Add3")
                                 doaddLine( lastMarker, lastText )
                                 lastMarker = lastText = None
                             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"TM={tryMarker} LM={lastMarker!r} LT={lastText!r} M={marker!r} T={text!r}")
                             # Move the extra appendage to the marker into the actual text
-                            marker, text = tryMarker, marker[len(tryMarker):] + ' ' + text
+                            marker, text = tryMarker, f"{marker[len(tryMarker):]} {text}"
                             if text:
                                 loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
                                 logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
@@ -676,6 +677,9 @@ class USFMBibleBook( BibleBook ):
                                 logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of otherwise empty line").format( marker, tryMarker, self.BBB, C, V ) )
                             break
                     # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+                        loadErrors.append( f"{self.BBB} {C}:{V} Found Bad USFM line with {marker=} {text=}" )
+                        logging.critical( f"Bad USFM line at {self.BBB} {C}:{V} with {marker=} {text=}" )
+                    self.addPriorityError( 100, C, V, f"Found bad USFM line in file with {marker=} {text=}" )
             if marker and not lastMarker:
                 lastMarker, lastText = marker, text
 
