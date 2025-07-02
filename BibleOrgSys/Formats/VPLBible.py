@@ -6,7 +6,7 @@
 #
 # Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2014-2024 Robert Hunt
+# Copyright (C) 2014-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -86,11 +86,21 @@ vplType 5
     4 And God sawe the lyght that it was good: and God deuided the lyght from the
     darknes.
 
+or
+vplType 6 (from BibleHub.com)
+    SLT
+    Smith's Literal Translation
+    Genesis 1:1	In the beginning God formed the heavens and the earth.
+    Genesis 1:2	And the earth was desolation and emptiness, and darkness over the face of the deep: and the spirit of God moved over the face of the waters.
+    Genesis 1:3	And God will say there shall be light, and there shall be light.
+
+
 CHANGELOG:
     2022-06-04 correctly tested for Bible instance in full and brief demos
     2023-02-01 Allowed for multiple files as well as one single file for the whole Bible
                 TODO: It hasn't been fully tested, and filecheck has not yet been updated to reflect this
-    2023-02-28 Add vplType 5 file handling
+    2023-02-28 Added vplType 5 file handling
+    2025-06-29 Added vplType 6 file handing for SLT
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -110,10 +120,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2024-06-05' # by RJH
+LAST_MODIFIED_DATE = '2025-06-30' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.41'
+PROGRAM_VERSION = '0.42'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -379,11 +389,14 @@ class VPLBible( Bible ):
                 if line == 'Chapter 1':
                     vplType = 5
                     break
+                if line.startswith( 'Genesis 1:1\t'):
+                    vplType = 6
+                    break
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Set VPL type to {vplType}" )
 
         # Now process the file
-        bookCodeText = lastBookCodeText = BBB = lastBBB = None
-        chapterNumber = verseNumber = 0
+        bookCodeText = lastBookCodeText = BBB = lastBBB = lastChapterNumberString = None
+        chapterNumber = verseNumber = blankLineCount = 0
         lastChapterNumber = lastVerseNumber = -1
         lastVerseText = ''
         thisBook = None
@@ -666,7 +679,7 @@ class VPLBible( Bible ):
                         if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookCodeText )  # Try to guess
                         if lastBBB and not BBB:
-                            logging.critical( f"VPL Bible: Unable to determine book code from text '{bookCodeText}' after '{lastBookCodeText}' -> '{lastBBB}'" )
+                            logging.critical( f"VPL5 Bible: Unable to determine book code from text '{bookCodeText}' after '{lastBookCodeText}' -> '{lastBBB}'" )
                         # if BBB:
                         #     print( f"Got {BBB=}" )
                     elif line and line[0].isdigit():
@@ -698,6 +711,57 @@ class VPLBible( Bible ):
                                 lastChapterNumber = lastVerseNumber = -1
                     continue # We've done all our VPL type #5 processing above
 
+
+                elif vplType == 6:
+                    # print( f"{lineNumber:,}: {blankLineCount=} {lastBBB} {lastChapterNumber}:{lastVerseNumber}\n  {line=}")
+                    if line.count( '\t' ) != 1:
+                        if lineNumber == 1: # This is probably the work abbreviation
+                            blankLineCount = 0
+                            self.abbreviation = line
+                        elif lineNumber == 2: # This is probably the work name
+                            blankLineCount = 0
+                            self.workName = line
+                        else: dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Ignoring {line=}" )
+                    else:
+                        ref, text = line.split( '\t' )
+                        refB, refCV = ref.rsplit( ' ', 1 )
+                        newBBB = BOS66.getBBBFromText( refB )  # Try to guess
+                        if not newBBB: newBBB = BOS81.getBBBFromText( refB )  # Try to guess
+                        if not newBBB: newBBB = BOSx.getBBBFromText( refB )  # Try to guess
+                        if not newBBB: newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( refB )  # Try to guess
+                        if not newBBB:
+                            logging.critical( f"VPL6 Bible: Unable to determine book code from text '{refB}' after '{lastBBB}'" )
+                            halt
+                        if newBBB != lastBBB:
+                            if lastBBB is not None:
+                                vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
+                                self.stashBook( thisBook )
+                            BBB = newBBB
+                            assert BBB
+                            thisBook = BibleBook( self, BBB )
+                            thisBook.objectNameString = 'VPL Bible Book object'
+                            thisBook.objectTypeString = 'VPL'
+                            verseList = BOSx.getNumVersesList( BBB )
+                            numChapters, numVerses = len(verseList), verseList[0]
+                            lastBBB, lastChapterNumberString, lastChapterNumber = BBB, None, 0
+
+                        chapterNumberString, verseNumberString = refCV.split( ':' )
+                        if chapterNumberString != lastChapterNumberString:
+                            chapterNumber = int( chapterNumberString )
+                            assert chapterNumber==lastChapterNumber or chapterNumber==lastChapterNumber+1, f"{chapterNumber=} {lastChapterNumber=} {line=}"
+                            if chapterNumber == 0:
+                                logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString ) )
+                            elif chapterNumber > numChapters:
+                                logging.error( "Have high chapter number in {} {} {} {}:{} (expected max of {})".format( self.givenName, BBB, bookCodeText, chapterNumberString, verseNumberString, numChapters ) )
+                            thisBook.addLine( 'c', chapterNumberString )
+                            lastChapterNumberString, lastChapterNumber, lastVerseNumber = chapterNumberString, chapterNumber, 0
+
+                        verseNumber = int( verseNumberString )
+                        assert verseNumber == lastVerseNumber+1
+                        thisBook.addLine( 'v', f'{verseNumberString} {text}' )
+                        lastVerseNumber = verseNumber
+                    continue # We've done all our VPL type #6 processing above
+
                 else:
                     logging.critical( f"Unknown VPL type {vplType} while processing line {lineNumber}: '{line}'" )
                     if BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE: halt
@@ -708,6 +772,7 @@ class VPLBible( Bible ):
                 # Do the processing for vplTypes 1-4
                 dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"About to process {BBB} {chapterNumber}:{verseNumber} line {lineNumber:,}: '{line}'…" )
                 if bookCodeText and chapterNumber and verseNumber:
+                    lastChapterNumber = lastVerseNumber = -1
                     if bookCodeText != lastBookCodeText: # We've started a new book
                         if lastBookCodeText is not None: # Better save the last book
                             self.stashBook( thisBook )
@@ -763,7 +828,9 @@ class VPLBible( Bible ):
                     logging.warning( "VPLBible.load{} is skipping unknown pre-book line: {}".format( vplType, line ) )
 
         # Save the final book
-        if thisBook is not None: self.stashBook( thisBook )
+        if thisBook is not None:
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  Saving {BBB} book…" )
+            self.stashBook( thisBook )
     # end of VPLBible._loadFile
 
     def load( self ):
