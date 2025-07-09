@@ -755,7 +755,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tn/' )
+    testFolderpath = Path( '/srv/Bibles/unfoldingWordHelps/en_tn/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -849,23 +849,23 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tn/' )
+    testFolderpath = Path( '/srv/Bibles/unfoldingWordHelps/en_tn/' )
 
     # Demo our YAML loading
     for j, testFilepath in enumerate( (
-                        '/mnt/SSDs/Bibles/Original languages/UHB/manifest.yaml',
-                        '/mnt/SSDs/Bibles/Original languages/UGNT/manifest.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/manifest.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/intro/toc.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_ta/intro/config.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tn/manifest.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordHelps/en_tw/manifest.yaml',
-                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ult/manifest.yaml',
-                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ult/media.yaml',
-                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ust/manifest.yaml',
-                        '/mnt/SSDs/Bibles/English translations/unfoldingWordVersions/en_ust/media.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordLexicons/en_ugl/manifest.yaml',
-                        '/mnt/SSDs/Bibles/unfoldingWordLexicons/en_uhal/manifest.yaml',
+                        '/srv/Bibles/Original languages/UHB/manifest.yaml',
+                        '/srv/Bibles/Original languages/UGNT/manifest.yaml',
+                        '/srv/Bibles/unfoldingWordHelps/en_ta/manifest.yaml',
+                        '/srv/Bibles/unfoldingWordHelps/en_ta/intro/toc.yaml',
+                        '/srv/Bibles/unfoldingWordHelps/en_ta/intro/config.yaml',
+                        '/srv/Bibles/unfoldingWordHelps/en_tn/manifest.yaml',
+                        '/srv/Bibles/unfoldingWordHelps/en_tw/manifest.yaml',
+                        '/srv/Bibles/English translations/unfoldingWordVersions/en_ult/manifest.yaml',
+                        '/srv/Bibles/English translations/unfoldingWordVersions/en_ult/media.yaml',
+                        '/srv/Bibles/English translations/unfoldingWordVersions/en_ust/manifest.yaml',
+                        '/srv/Bibles/English translations/unfoldingWordVersions/en_ust/media.yaml',
+                        '/srv/Bibles/unfoldingWordLexicons/en_ugl/manifest.yaml',
+                        '/srv/Bibles/unfoldingWordLexicons/en_uhal/manifest.yaml',
                         ), start=1 ):
         yamlResult = loadYAML( testFilepath )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Y{j}/ {testFilepath} gave ({len(yamlResult)}) {yamlResult.keys()}")

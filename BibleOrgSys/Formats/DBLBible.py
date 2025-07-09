@@ -1679,7 +1679,7 @@ def briefDemo() -> None:
             break
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Open access Bibles from DBL
         sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/DBL Open Access Bibles/' )
         foundFolders, foundFiles = [], []
@@ -1860,7 +1860,7 @@ def fullDemo() -> None:
             DBL_Bible.load()
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Open access Bibles from DBL
         sampleFolder = BiblesFolderpath.joinpath( 'DBL Bibles/DBL Open Access Bibles/' )
         foundFolders, foundFiles = [], []

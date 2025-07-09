@@ -199,7 +199,7 @@ def briefDemo() -> None:
     # end of doTest
 
     if 1: # Test some OpenSong Bibles
-        testFolder = Path( '/mnt/SSDs/Bibles//OpenSong Bibles/' )
+        testFolder = Path( '/srv/Bibles//OpenSong Bibles/' )
         single = ( "KJV.xmm", )
         good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
             "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
@@ -212,7 +212,7 @@ def briefDemo() -> None:
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
-        testFolder = Path( '/mnt/SSDs/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
+        testFolder = Path( '/srv/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )
@@ -248,7 +248,7 @@ def fullDemo() -> None:
     # end of doTest
 
     if 1: # Test some OpenSong Bibles
-        testFolder = Path( '/mnt/SSDs/Bibles//OpenSong Bibles/' )
+        testFolder = Path( '/srv/Bibles//OpenSong Bibles/' )
         single = ( "KJV.xmm", )
         good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
             "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
@@ -261,7 +261,7 @@ def fullDemo() -> None:
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
-        testFolder = Path( '/mnt/SSDs/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
+        testFolder = Path( '/srv/Bibles/Formats/OSIS/kjvxml from DMSmith/' )
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)…" )
         doTest( testFolder, testNames )

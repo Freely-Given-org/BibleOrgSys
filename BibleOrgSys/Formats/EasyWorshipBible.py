@@ -667,7 +667,7 @@ class EasyWorshipBible( Bible ):
 def testEWB( TEWBfilename ):
     # Crudely demonstrate the EasyWorship Bible class
     from BibleOrgSys.Reference import VerseReferences
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
@@ -716,7 +716,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
@@ -820,7 +820,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 

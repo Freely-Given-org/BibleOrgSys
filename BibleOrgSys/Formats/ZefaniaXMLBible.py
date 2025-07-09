@@ -764,15 +764,15 @@ def briefDemo() -> None:
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
-        #testFolder = Path( '/mnt/SSDs/Bibles/Zefania modules/' )
+        #testFolder = Path( '/srv/Bibles/Zefania modules/' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # demo the file checking code
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
-        #testFolder = Path( '/mnt/SSDs/Bibles/Zefania modules/' )
+        #testFolder = Path( '/srv/Bibles/Zefania modules/' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
@@ -814,7 +814,7 @@ def briefDemo() -> None:
                         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, testFilename, reference, "doesn't exist" )
             break
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1:
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         fileList = []
@@ -859,15 +859,15 @@ def fullDemo() -> None:
 
     if 1: # demo the file checking code
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ZefaniaTest/' )
-        #testFolder = Path( '/mnt/SSDs/Bibles/Zefania modules/' )
+        #testFolder = Path( '/srv/Bibles/Zefania modules/' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestA3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # demo the file checking code
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
-        #testFolder = Path( '/mnt/SSDs/Bibles/Zefania modules/' )
+        #testFolder = Path( '/srv/Bibles/Zefania modules/' )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB1", ZefaniaXMLBibleFileCheck( testFolder ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Z TestB3", ZefaniaXMLBibleFileCheck( testFolder, autoLoadBooks=True ) )
@@ -908,7 +908,7 @@ def fullDemo() -> None:
                         try: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, reference, svk.getShortText(), zb.getVerseText( svk ) )
                         except KeyError: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, testFilename, reference, "doesn't exist" )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1:
         testFolder = BiblesFolderpath.joinpath( 'Zefania modules/' )
         fileList = []

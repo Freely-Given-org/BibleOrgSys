@@ -483,7 +483,7 @@ def briefDemo() -> None:
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA3", result3 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Open access Bibles from SB
         sampleFolder = BiblesFolderpath.joinpath( 'Scripture Burrito Bibles/' )
         foundFolders, foundFiles = [], []
@@ -625,7 +625,7 @@ def fullDemo() -> None:
         result3 = ScriptureBurritoBibleFileCheck( testFolder, autoLoadBooks=True )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "SB TestA3", result3 )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Open access Bibles from SB
         sampleFolder = BiblesFolderpath.joinpath( 'Scripture Burrito Bibles/' )
         foundFolders, foundFiles = [], []

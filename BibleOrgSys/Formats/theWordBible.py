@@ -1345,7 +1345,7 @@ def testtWB( indexString, twBfolder, twBfilename ):
     Crudely demonstrate the theWord Bible class.
     """
     from BibleOrgSys.Reference import VerseReferences
-    #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' ) # Must be the same as below
+    #testFolder = Path( '/srv/Bibles/theWord modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( twBfolder, twBfilename )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the theWord Bible class {}…").format( indexString) )
@@ -1398,7 +1398,7 @@ def briefDemo() -> None:
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
+        #testFolder = Path( '/srv/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
@@ -1437,7 +1437,7 @@ def briefDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1: # all discovered modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
+        testFolder = Path( '/srv/Bibles/theWord modules/' )
         foundFolders, foundFiles = [], []
         if os.access( testFolder, os.R_OK ):
             for something in sorted( os.listdir( testFolder ) ):
@@ -1479,7 +1479,7 @@ def fullDemo() -> None:
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        #testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
+        #testFolder = Path( '/srv/Bibles/theWord modules/' )
         testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'theWordTest/' )
         result1 = theWordBibleFileCheck( testFolder )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "TestA1", result1 )
@@ -1518,7 +1518,7 @@ def fullDemo() -> None:
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' is not readable on this computer." )
 
     if 1: # all discovered modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/theWord modules/' )
+        testFolder = Path( '/srv/Bibles/theWord modules/' )
         foundFolders, foundFiles = [], []
         if os.access( testFolder, os.R_OK ):
             for something in sorted( os.listdir( testFolder ) ):

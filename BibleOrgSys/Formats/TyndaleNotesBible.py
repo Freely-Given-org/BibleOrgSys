@@ -416,7 +416,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/TyndaleHelps/en_tn/' )
+    testFolderpath = Path( '/srv/Bibles/TyndaleHelps/en_tn/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -510,7 +510,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/DataSets/Tyndale Open Study Notes/' )
+    testFolderpath = Path( '/srv/Bibles/DataSets/Tyndale Open Study Notes/' )
 
     if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTyndale Notes TestA1" )

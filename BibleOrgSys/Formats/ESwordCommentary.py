@@ -1111,8 +1111,8 @@ def testeSwC( indexString, eSwCfolder, eSwCfilename ):
     Crudely demonstrate the e-Sword Bible commentary class
     """
     from BibleOrgSys.Reference import VerseReferences
-    #BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
-    #testFolder = Path( '/mnt/SSDs/Bibles/e-Sword modules/' ) # Must be the same as below
+    #BiblesFolderpath = Path( '/srv/Bibles/' )
+    #testFolder = Path( '/srv/Bibles/e-Sword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( eSwCfolder, eSwCfilename )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the e-Sword Bible class {}…").format( indexString) )
@@ -1192,7 +1192,7 @@ def briefDemo() -> None:
                 logging.error( "{} File '{}' doesn't exist in folder '{}'".format( indexString, fullname, testFolder ) )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # individual modules in the same test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/Commentaries/' )
         names = ('darby(2)','clarke(2)','Darby-John-Synopsis-of-the-New-Testament',)
@@ -1203,7 +1203,7 @@ def briefDemo() -> None:
             testeSwC( indexString, testFolder, fullname )
             break
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # all discovered modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/Commentaries/' ) # Put your test folder here
 
@@ -1268,7 +1268,7 @@ def fullDemo() -> None:
                 logging.error( "{} File '{}' doesn't exist in folder '{}'".format( indexString, fullname, testFolder ) )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # individual modules in the same test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/Commentaries/' )
         names = ('darby(2)','clarke(2)','Darby-John-Synopsis-of-the-New-Testament',)
@@ -1317,7 +1317,7 @@ def fullDemo() -> None:
                 #testeSwC( indexString, testFolder, someFile )
                 ##break # only do the first one…temp
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # all discovered modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/Commentaries/' ) # Put your test folder here
 

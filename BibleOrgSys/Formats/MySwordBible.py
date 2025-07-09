@@ -663,7 +663,7 @@ def testMySwB( indexString, MySwBfolder, MySwBfilename ):
     """
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "tMSB", MySwBfolder )
     from BibleOrgSys.Reference import VerseReferences
-    #testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' ) # Must be the same as below
+    #testFolder = Path( '/srv/Bibles/MySword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the MySword Bible class {}…").format( indexString) )
@@ -720,7 +720,7 @@ def briefDemo() -> None:
 
 
     if 1: # individual modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' )
+        testFolder = Path( '/srv/Bibles/MySword modules/' )
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
@@ -773,7 +773,7 @@ def briefDemo() -> None:
                 #break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' )
+        testFolder = Path( '/srv/Bibles/MySword modules/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -816,7 +816,7 @@ def fullDemo() -> None:
 
 
     if 1: # individual modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' )
+        testFolder = Path( '/srv/Bibles/MySword modules/' )
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
@@ -866,7 +866,7 @@ def fullDemo() -> None:
                 #break # only do the first one…temp
 
     if 1: # all discovered modules in the test folder
-        testFolder = Path( '/mnt/SSDs/Bibles/MySword modules/' )
+        testFolder = Path( '/srv/Bibles/MySword modules/' )
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )

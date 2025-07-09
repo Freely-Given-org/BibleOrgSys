@@ -932,7 +932,7 @@ def briefDemo() -> None:
             #errorDictionary = thisBible.getCheckResults()
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
                     BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
                     BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),
@@ -1095,7 +1095,7 @@ def fullDemo() -> None:
             #errorDictionary = thisBible.getCheckResults()
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     testFolders = ( os.path.join( os.path.expanduser('~'), 'Logs/'), # Shouldn't have any Bibles here
                     BiblesFolderpath.joinpath( 'Biola Unbound modules/' ),
                     BiblesFolderpath.joinpath( 'EasyWorship Bibles/' ),

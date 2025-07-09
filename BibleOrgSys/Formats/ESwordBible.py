@@ -1660,8 +1660,8 @@ def testeSwB( indexString, eSwBfolder, eSwBfilename ):
     Crudely demonstrate the e-Sword Bible class
     """
     from BibleOrgSys.Reference import VerseReferences
-    #BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
-    #testFolder = Path( '/mnt/SSDs/Bibles/e-Sword modules/' ) # Must be the same as below
+    #BiblesFolderpath = Path( '/srv/Bibles/' )
+    #testFolder = Path( '/srv/Bibles/e-Sword modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the e-Sword Bible class {}…").format( indexString) )
@@ -1731,7 +1731,7 @@ def briefDemo() -> None:
             break
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # individual modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' )
         names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
@@ -1782,7 +1782,7 @@ def briefDemo() -> None:
                 #testeSwB( indexString, testFolder, someFile )
                 ##break # only do the first one…temp
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # all discovered modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' ) # Put your test folder here
 
@@ -1836,7 +1836,7 @@ def fullDemo() -> None:
             #halt
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # individual modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' )
         names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
@@ -1886,7 +1886,7 @@ def fullDemo() -> None:
                 #testeSwB( indexString, testFolder, someFile )
                 ##break # only do the first one…temp
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # all discovered modules in the test folder
         testFolder = BiblesFolderpath.joinpath( 'e-Sword modules/' ) # Put your test folder here
 

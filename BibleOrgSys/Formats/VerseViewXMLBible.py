@@ -546,7 +546,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    #testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' ) # These are quite similar
+    #testFolder = Path( '/srv/Bibles/OpenSong Bibles/' ) # These are quite similar
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' )
 
     if 1: # demo the file checking code
@@ -605,7 +605,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    #testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' ) # These are quite similar
+    #testFolder = Path( '/srv/Bibles/OpenSong Bibles/' ) # These are quite similar
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' )
 
     if 1: # demo the file checking code

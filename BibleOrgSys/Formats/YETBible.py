@@ -455,7 +455,7 @@ class YETBible( Bible ):
 def testYB( TUBfilename ):
     # Crudely demonstrate the YET Bible class
     from BibleOrgSys.Reference import VerseReferences
-    TUBfolder = Path( '/mnt/SSDs/Bibles/YET modules/' ) # Must be the same as below
+    TUBfolder = Path( '/srv/Bibles/YET modules/' ) # Must be the same as below
 
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the YET Bible class…") )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
@@ -489,7 +489,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = Path( '/mnt/SSDs/Bibles/YET modules/' )
+    testFolder = Path( '/srv/Bibles/YET modules/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -549,7 +549,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolder = Path( '/mnt/SSDs/Bibles/YET modules/' )
+    testFolder = Path( '/srv/Bibles/YET modules/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder

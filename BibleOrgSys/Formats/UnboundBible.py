@@ -386,7 +386,7 @@ class UnboundBible( Bible ):
 def testUB( TUBfilename ):
     # Crudely demonstrate the Unbound Bible class
     from BibleOrgSys.Reference import VerseReferences
-    testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../mnt/SSDs/Bibles/Biola Unbound modules/' ) # Must be the same as below
+    testFolder = BibleOrgSysGlobals.BOS_LIBRARY_BASE_FOLDERPATH.joinpath( '../../../../../../srv/Bibles/Biola Unbound modules/' ) # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the Unbound Bible class…") )
@@ -427,7 +427,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesPath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesPath = Path( '/srv/Bibles/' )
     testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
 
 
@@ -491,7 +491,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesPath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesPath = Path( '/srv/Bibles/' )
     testFolder = os.path.join( BiblesPath, 'Biola Unbound modules/' )
 
 

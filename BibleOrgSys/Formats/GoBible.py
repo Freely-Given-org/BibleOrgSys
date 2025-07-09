@@ -651,7 +651,7 @@ def briefDemo() -> None:
 
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     testFolders =  (
         BiblesFolderpath.joinpath( 'GoBible modules/Haiola GoBible test versions/' ),
         BiblesFolderpath.joinpath( 'GoBible modules/' ),
@@ -710,7 +710,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     testFolders =  (
         BiblesFolderpath.joinpath( 'GoBible modules/Haiola GoBible test versions/' ),
         BiblesFolderpath.joinpath( 'GoBible modules/' ),

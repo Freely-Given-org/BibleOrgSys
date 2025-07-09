@@ -1013,7 +1013,7 @@ def briefDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB2", resultB2 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1:
         testData = (
                     ('ASV', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFXTest1/') ),
@@ -1059,7 +1059,7 @@ def fullDemo() -> None:
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TestB2", resultB2 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1:
         testData = (
                     ('GLW', BiblesFolderpath.joinpath( '/USFX Bibles/Haiola USFX test versions/eng-glw_usfx/') ),

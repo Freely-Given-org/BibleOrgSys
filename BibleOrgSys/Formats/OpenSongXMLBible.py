@@ -566,7 +566,7 @@ def briefDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ) # These are very similar
-    testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' )
+    testFolder = Path( '/srv/Bibles/OpenSong Bibles/' )
     single1 = ( "KJV.xmm", )
     single2 = ( "BIBLIA warszawska", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "MKJV", \
@@ -630,7 +630,7 @@ def fullDemo() -> None:
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'VerseViewXML/' ) # These are very similar
-    testFolder = Path( '/mnt/SSDs/Bibles/OpenSong Bibles/' )
+    testFolder = Path( '/srv/Bibles/OpenSong Bibles/' )
     single1 = ( "KJV.xmm", )
     single2 = ( "BIBLIA warszawska", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "MKJV", \

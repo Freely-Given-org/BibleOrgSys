@@ -3597,7 +3597,7 @@ def briefDemo() -> None:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Test OSISXMLBible object
         testFilepaths = (
             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample
@@ -3679,7 +3679,7 @@ def fullDemo() -> None:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "OSIS TestA3", result3 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Test OSISXMLBible object
         testFilepaths = (
             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample

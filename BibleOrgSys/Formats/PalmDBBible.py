@@ -842,7 +842,7 @@ class PalmDBBible( Bible ):
 def testPB( TUBfilename ):
     # Crudely demonstrate the PDB Bible class
     from BibleOrgSys.Reference import VerseReferences
-    #TUBfolder = Path( '/mnt/SSDs/Bibles/PalmBiblePlus/' ) # Must be the same as below
+    #TUBfolder = Path( '/srv/Bibles/PalmBiblePlus/' ) # Must be the same as below
     TUBfolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' )
 
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the PDB Bible class…") )
@@ -875,7 +875,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    #testFolder = Path( '/mnt/SSDs/Bibles/PalmBiblePlus/' )
+    #testFolder = Path( '/srv/Bibles/PalmBiblePlus/' )
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -929,7 +929,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    #testFolder = Path( '/mnt/SSDs/Bibles/PalmBiblePlus/' )
+    #testFolder = Path( '/srv/Bibles/PalmBiblePlus/' )
     testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PDBTest/' )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder

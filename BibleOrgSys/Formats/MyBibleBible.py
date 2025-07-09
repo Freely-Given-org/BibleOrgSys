@@ -1332,7 +1332,7 @@ def testMyBB( indexString:str, MyBBfolder, MyBBfilename:str ) -> None:
     """
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "tMSB", MyBBfolder )
     from BibleOrgSys.Reference import VerseReferences
-    #testFolder = Path( '/mnt/SSDs/Bibles/MyBible modules/' ) # Must be the same as below
+    #testFolder = Path( '/srv/Bibles/MyBible modules/' ) # Must be the same as below
 
     #TUBfolder = os.path.join( MyBBfolder, MyBBfilename )
     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Demonstrating the MyBible Bible class {}…").format( indexString) )
@@ -1406,7 +1406,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
 
 
     if 1: # A: demo the file checking code
@@ -1580,7 +1580,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
 
 
     if 1: # A: demo the file checking code

@@ -1209,7 +1209,7 @@ def briefDemo() -> None:
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, "LEB TestA3", result3 )
 
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
     if 1: # Test LEBXMLBible object
         testFilepaths = (
             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'OSISTest1/' ), # Matigsalug test sample

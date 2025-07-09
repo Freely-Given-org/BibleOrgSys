@@ -56,7 +56,7 @@ DEBUGGING_THIS_MODULE = False
 
 ID_LINE = "Free Bible Version New Testament Version 2.1.1"
 
-BIBLES_FOLDERPATH = Path( '/mnt/SSDs/Bibles/' )
+BIBLES_FOLDERPATH = Path( '/srv/Bibles/' )
 
 #INPUT_FILEPATH = '/home/robert/FBVNT2.1.1.LOExport.txt'
 #INPUT_FILEPATH = '/Users/Robert/Desktop/FBVNT2.1.1.LOExport.txt'

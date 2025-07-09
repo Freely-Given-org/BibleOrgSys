@@ -10209,7 +10209,7 @@ def briefDemo() -> None:
 
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
@@ -10437,7 +10437,7 @@ def fullDemo() -> None:
 
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    BiblesFolderpath = Path( '/mnt/SSDs/Bibles/' )
+    BiblesFolderpath = Path( '/srv/Bibles/' )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()

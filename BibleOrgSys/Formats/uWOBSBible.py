@@ -466,7 +466,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_obs/' )
+    testFolderpath = Path( '/srv/Bibles/unfoldingWordHelps/en_obs/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -560,7 +560,7 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    testFolderpath = Path( '/mnt/SSDs/Bibles/unfoldingWordHelps/en_obs/' )
+    testFolderpath = Path( '/srv/Bibles/unfoldingWordHelps/en_obs/' )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder

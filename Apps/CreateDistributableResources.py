@@ -71,7 +71,7 @@ PROGRAM_NAME_VERSION_DATE = f'{PROGRAM_NAME_VERSION} {_("last modified")} {LAST_
 DEBUGGING_THIS_MODULE = False
 
 
-BIBLES_FOLDERPATH = Path( '/mnt/SSDs/Bibles/' )
+BIBLES_FOLDERPATH = Path( '/srv/Bibles/' )
 OPEN_SCRIPTURES_INPUT_RESOURCES_FOLDERPATH = Path( '/srv/Programming/WebDevelopment/OpenScriptures/' )
 
 WRITEABLE_DISTRIBUTABLE_RESOURCES_FOLDERPATH = BibleOrgSysGlobals.BOS_DEFAULT_WRITEABLE_BASE_FOLDERPATH.joinpath( 'BOSDistributableResources/' )
