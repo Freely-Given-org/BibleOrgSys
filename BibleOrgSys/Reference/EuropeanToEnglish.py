@@ -39,6 +39,12 @@ main calls fullDemo()
 CHANGELOG:
     2025-03-20 Moved into BOS from OBD (OpenBibleData)
 """
+if __name__ == '__main__':
+    import os.path
+    import sys
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
@@ -404,7 +410,7 @@ GERMAN_WORD_MAP = (
             (' erquicken',' refresh'),(' erquickest',' refreshed'),(' erquicket',' refreshed'), ('Erquicke','Refresh'),(' erquicke',' refresh'),
             (' erregte',' excited'),
                 ('Errette ','Save/Rescue '),(' errette ',' save/rescue '),('erretten','save/rescue'), ('Erretter','saviour/rescuer'), ('errettete','saved/rescued'),('errettet','saved/rescued'),('errettest','save/rescue'),
-            ('  ersäufte',' drowned'),
+            (' ersäufte',' drowned'),
                 (' erscheine',' appear'),
                     (' erschien',' appeared'),
                     ('Erschlagenen','slain_(one)'),(' erschlagen',' slain'),
@@ -1755,7 +1761,7 @@ for wordMapEntry in GERMAN_WORD_MAP:
     if GermanWord.startswith(' ') or EnglishWord.startswith(' '): assert GermanWord.startswith(' '), f"Mismatched leading space: {GermanWord=} {EnglishWord=}"
     if GermanWord.endswith(' ') or EnglishWord.endswith(' '): assert GermanWord.endswith(' '), f"Mismatched trailing space: {GermanWord=} {EnglishWord=}"
     # assert GermanWord not in EnglishWord, f"Recursive substitution of '{GermanWord}' into '{EnglishWord}'"
-    assert '  ' not in GermanWord
+    assert '  ' not in GermanWord, f"{GermanWord=} {EnglishWord=}"
     GermanWords.append( GermanWord ); strippedGermanWords.append( GermanWord.strip() )
     if GermanWord.startswith(' '): assert EnglishWord.startswith(' '), f"Mismatched leading space:  {GermanWord=} {EnglishWord=}"
     if GermanWord.endswith(' '): assert EnglishWord.endswith(' '), f"Mismatched trailing space: {GermanWord=} {EnglishWord=}"
@@ -2063,7 +2069,7 @@ LATIN_WORD_MAP = (
                 (' conservatæ',' preserved'),
                     ('Considerans','Considering'),('considerare','to_consider'),
                         ('consilio','by_design/by_the_advice'), ('consilium','advice'),
-                    ('consolari','to_be_comforted'), ('consolati',' consoled'), ('consoletur','be_comforted'),
+                    ('consolari','to_be_comforted'), (' consolati',' consoled'), ('consoletur','be_comforted'),
                     ('conspectum','view'),('conspectu','in_sight'), ('consperserunt','gathered_together'),
                     ('Constitue','Set_up'),
                     (' consuendi',' to_sew'),
@@ -2221,7 +2227,7 @@ LATIN_WORD_MAP = (
         (' doceat',' let_him_teach'),(' docebis',' you_will_teach'),(' docebo ',' I_will_teach '), (' docet',' teaches'),(' doce',' teach'),
                 (' docta',' learnt'), (' doctissimi',' most_learned'), (' doctrinam',' teaching'), (' doctrina',' teaching/instruction'),
             (' dolo ',' trickery '),
-                (' dolorem',' pain'),(' dolores',' pains'),(' doloribus',' pains'),(' doloris',' of_pain'),v(' dolor',' pain'),
+                (' dolorem',' pain'),(' dolores',' pains'),(' doloribus',' pains'),(' doloris',' of_pain'), (' dolor',' pain'),
                 (' dolosa',' deceitful'),(' dolosi',' deceitful'),(' dolos',' tricks'),
                 (' dolus',' trick/hoax/guile'),
             ('domestici','domestic'),
@@ -3046,7 +3052,7 @@ LATIN_WORD_MAP = (
             ('quoque','too'),
             ('quos','which'),
             ('quousque','how_long'),
-            (' quo ',' where'),
+            (' quo ',' where '),
     (' radix',' root'),
             (' rami',' branches'),
             ('rapiemur','we_will_be_raptured/snatched'), (' raptus',' raptured/abducted'),
