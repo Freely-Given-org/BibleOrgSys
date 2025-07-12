@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-07-11' # by RJH
+LAST_MODIFIED_DATE = '2025-07-12' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -130,6 +130,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
 
     # Three words to three words
     ((' claue the rockes',),' cracked the rocks'),(('cloaue the hard ',),'cracked the hard '),((' cloued the harde ',),' cracked the hard '), # Psa 78:15
+    (('eate the bred ',),'eat the bread '), # Cvdl Psa 127:3
     (('get the hense',),'get thee hence'), # Mrk 2:11
     (('is a thurste',),'is athirst'), # Psa 42:1
     (('Slaye the not,',),'Slay them not,'), # Psa 59:11
@@ -408,7 +409,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Auoyde',),'Avoid'),((' auoyd',' auoid'),' avoid'),
         (('Awaye ',),'Away '),((' awaye',' awaie',' awei',' awey'),' away'),
     (('Baalim','Baalym'),'Baals'),
-            ((' backes',' backis'),' backs'),((' backe ',' bak '),' back '),((' backe,',),' back,'),((' backe.',),' back.'),((' backe?',),' back?'),((' backe:',),' back:'),
+            ((' backes',' backis'),' backs'),((' backe ',' bak '),' back '),((' backe,',),' back,'),((' backe.',),' back.'),((' backe?',),' back?'),((' backe:',),' back:'),((' bak;',),' back;'),
                 (('bacbitiden',),'backbiting'), (('backewarde','backeward','backwarde','bacward'),'backward'),
             ((' bagge ',),' bag '),
             ((' bakere',),' baker'), ((' bakynge',' bakun'),' baking'),
@@ -772,7 +773,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' defieth',' defyeth'),' defieth/defies'),
                 ((' defraude ',),' defraud '),
             ((' degre ',),' degree '),
-            ((' delaied',),' delayed'),
+            ((' delaied',),' delayed'),((' delayes',),' delays'),
                 ((' delicatelye',' delicatly'),' delicately'),
                     ((' delitiden',' delitide',' delited',' delyted'),' delighted'), ((' delightest',' delytest',' delitest'),' delightest/delight'),((' delighteth',' delyghteth',' delyteth',' deliteth'),' delighteth/delights'), ((' delites',),' delights'), (('Delite ','Delyte '),'Delight '),((' delyght ',' delyte ',' delite '),' delight '),((' delite,',),' delight,'),((' delyght.',' delyte.',' delite.'),' delight.'),((' delyght:',),' delight:'),
                 (('delyueraunce','delyuerauce','deliueraunce','deliuerance'),'deliverance'), ((' delyuerer',' deliuerer'),' deliverer'),
@@ -1087,7 +1088,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     (('gentlenesse',),'gentleness'),(('gentlenes:',),'gentleness:'), ((' getly',),' gently'),
             (('Gett ',),'Get '),((' gett ',),' get '),
         ((' goost',),' ghost'),
-        (('Gyant','Giante'),'Giant'),((' giaunti',' giaunte',' giaunt',' gyant'),' giant'),
+        (('Gyant','Giante'),'Giant'),((' giaunti',' giaunte',' giaunt',' giaute',' gyant'),' giant'),
             (('giddines.',),'giddiness.'),
             ((' giftes',' gyftes',' yiftis'),' gifts'),((' gifte ',' yifte ',' gyft '),' gift '),
             ((' ginne ',),' gin '),
@@ -1536,7 +1537,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' offende ',),' offend '),((' offende,',),' offend,'),((' offende.',),' offend.'),
                     (('offryngis','offeringes'),'offerings'),((' offerynge',' offeryng',' offeringe',' offringe',' offring',' offryng',' offren'),' offering'), ((' offriden',' offride',' offred'),' offered'),((' offereth',' offreth'),' offereth/offers'), (('Offre ',),'Offer '),((' offre ',),' offer '),((' offre,',),' offer,'),
                 ((' offycer',),' officer'),
-            ((' oft ',),' often '),
+            (('Ofte ','Oft '),'Often '),((' oft ',),' often '),
         ((' oyle ',' oile '),' oil '),((' oyle,',' oile,'),' oil,'),((' oyle.',' oile.'),' oil.'),((' oyle:',' oile:'),' oil:'),((' oile;',' oyle;'),' oil;'), ((' oyled',),' oiled'),
             ((' oynementi',' ointmente',' oyntmente',' oynement',' oyntment'),' ointment'),
         ((' eeld ',' elde ',' eld ',' olde '),' old '),((' eeld,',' olde,'),' old,'),((' olde.',),' old.'),((' olde:',),' old:'),((' olde?',),' old?'),
@@ -2264,7 +2265,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' vyce ',),' vice '), ((' victorie ',),' victory '),((' victorie,',' victorye,',),' victory,'),
                 ((' victuall',),' victual'),
             ((' vyllages',),' villages'), ((' vileny',),' villainy'),
-            ((' vynes',),' vines'), (('Uine',),'Vine'),((' vyne ',' vyn '),' vine '),((' vyne,',),' vine,'),((' vyne.',),' vine.'),((' vyne:',),' vine:'),
+            ((' vynes',),' vines'), (('Uine',),'Vine'),((' vyne ',' vyn '),' vine '),((' vyne,',),' vine,'),((' vyne.',),' vine.'),((' vyne:',),' vine:'),((' vyne;',),' vine;'),
                 ((' vineger',),' vinegar'),
                 ((' vyneris',),' vineries/vineyards'),(('vyneyerdis','vinyardes','vynyaydes'),'vineyards'),(('vineyarde','vyneyarde','vynyarde','vyniarde','vinyarde','vynyerd','vyner','vnieyarde'),'vineyard'),
             (('Uirgin','Virgine'),'Virgin'),((' virgine',' virgyn',' vyrgin',' vergyn'),' virgin'),
@@ -2412,7 +2413,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Ioseph',),'Yoseph'), (('Ioses','Joses'),'Yoses'), (('Iosuah','Iosua'),'Yoshua'),
             ((' yongere',' yonger'),' younger'),((' yongest',' yogest'),' youngest'), (('Yonge ','Yong '),'Young '),((' yonge ',' yong ',' yoge '),' young '),((' yonge,',' yong,',' yoge,'),' young,'),((' yong:',' yoge:'),' young:'),
                 ((' yor ',),' your '),((' youre ',),' your(pl) '),
-                ((' yongthe',),' youth'),
+                ((' yongthe',' yongth'),' youth'),
         (('Iudas','Ivdas','Judas'),'Yudas'), (('Iudah','Iuda','Judah','Juda'),'Yudah'), (('Iudea','Judee','Judaea','Judæa'),'Yudea'), (('Iude',),'Yude'), (('Iury','Iurie'),'Yury/Yudea'),
         (('Ia',),'Ya'),(('Ie',),'Ye'),(('Iu',),'Yu'), # Left-over proper nouns, e.g., Iabes → Yabes
     ((' zeale ',' zele '),' zeal '), ((' zelous ',),' zealous '),
