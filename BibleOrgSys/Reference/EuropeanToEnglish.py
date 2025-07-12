@@ -2392,7 +2392,7 @@ LATIN_WORD_MAP = (
                 ('Flucht','escape(n)'), ('fluctuum','of_waves'),('fluctus ','wave '),
                 (' flumen',' the_river'), ('flumina','rivers'),('flumine','by_the_river'),('fluminis','of_the_river'),
                 ('fluxerunt','they_flowed'),
-        (' fœdus',' covenant'), (' fœnerator',' lender'),(' fœnum',' grass'),v (' fœtæ',' fetuses'),
+        (' fœdus',' covenant'), (' fœnerator',' lender'),(' fœnum',' grass'), (' fœtæ',' fetuses'),
             (' foris',' outside'),
             ('formaretur','would_be_formed'), ('formidabunt','they_will_be_afraid'), (' formosa',' beautiful'),
             (' fons',' source/spring'),(' fontes',' sources/springs'),
@@ -2824,7 +2824,7 @@ LATIN_WORD_MAP = (
                 ('Nos ','We '),(' nos',' we/us'),#(' nos,',' us,'),(' nos.',' us.'),(' nos?',' us?'),(' nos;',' us;'),
             (' notam',' mark'), (' nota',' note'),
             (' novam',' new'),(' nova',' new'),
-                (' novellæ',' new(pl)'), v(' noverat',' he_knew'),(' noverunt',' they_know'),
+                (' novellæ',' new(pl)'), (' noverat',' he_knew'),(' noverunt',' they_know'),
                 ('novissimis','the_latest'),('novissimo','the_last'),
                 (' novit',' he_knows'), ('Novi ','I_know '),
                 (' novum ',' new '),
@@ -2916,7 +2916,7 @@ LATIN_WORD_MAP = (
                 (' pauperem',' the_poor'),(' pauperes',' the_poor'),(' pauperibus',' to_the_poor'),(' pauperi',' to_the_poor'),(' paupertatem',' poverty'),(' paupertatis',' of_poverty'),(' pauperum',' of_the_poor'), (' pauper',' poor'),
             ('Pax','Peace'),
         (' peccare',' to_sin'),
-                    ('Peccata ','Sins '),(' peccata','sins '),
+                    ('Peccata ','Sins '),(' peccata',' sins'),
                         (' peccatis',' sins'),(' peccati',' of_sin'),
                     ('peccatorem','a_sinner'),('peccatores','sinners'),('Peccatori','To_the_sinner'), ('peccatoris','sinner'),('peccatori','sinner'), ('peccatorum','sinners'),('Peccator','Sinner'),(' peccato',' sin'), ('peccatum','sin'),
                         ('peccaverunt','they_sinned'), ('peccavimus','we_have_sinned'), ('peccavit','he_sinned'),('peccavi','I_have_sinned'),
@@ -3562,7 +3562,7 @@ for wordMapEntry in LATIN_WORD_MAP:
 del LatinWords, EnglishWords
 
 # Now check in case a word got into the wrong list
-knownCommonWords = ('bis','Da','da','die','Dies','dies','es','es,','es.','es:','es;','esse','Evangelium','lege','Tu','tu','tu.')
+knownCommonWords = ('bis','Da','da','die','Dies','dies','es','es,','es.','es:','es;','esse','esset','Evangelium','lege','Tu','tu','tu.')
 for strippedGermanWord in strippedGermanWords:
     if strippedGermanWord not in knownCommonWords:
         assert strippedGermanWord not in strippedLatinWords, f"{strippedGermanWord=}"
