@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-07-13' # by RJH
+LAST_MODIFIED_DATE = '2025-07-16' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -360,7 +360,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' altare',' aulter',' auteri',' auter'),' altar'), ((' alltogether',),' altogether'),
         (('amased',),'amazed'),
             ((' amendyng',),' amending'),((' amede',),' amend'),
-            ((' amisse',),' amiss'),
+            ((' amisse',' amysse'),' amiss'),
             (('Amonge ',),'Among '),((' amonge ',' amoge ',' amog '),' among '),(('(amonge ',),'(among '),
         ((' auncient',),' ancient'),
             ((' ad ',),' and '), (('Andrewe',),'Andrew'),
@@ -438,12 +438,12 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' beames',),' beams'),((' beame ',),' beam '),((' beame,',),' beam,'),((' beame.',),' beam.'),
             ((' beanes',),' beans'),
                 (('Beares','Beeres'),'Bears'),((' beares',' beeris'),' bears'), (('Beare ',),'Bear '),(('Beare,','Bere,'),'Bear,'),((' beare ',' beere ',' bere '),' bear '),((' beare,',' bere,',),' bear,'),((' beare.',),' bear.'),
-                    ((' beerdes',),' beards'),((' bearde,',' beerde,',' beerd,'),' beard,'), ((' berith',),' beareth'), ((' bearinge',' bearynge',' beringe',' berynge'),' bearing'),
+                    ((' beerdes',),' beards'),((' beerd',),' beard'),((' bearde,',' beerde,'),' beard,'), ((' berith',),' beareth'), ((' bearinge',' bearynge',' beringe',' berynge'),' bearing'),
                 (('Beasts ','Beastes ','Beestis '),'Beasts/Animals '),(('beasts','beastes','beestes','beestis'),'beasts/animals'),((' beesti',' beeste',' beest'),' beast/animal'),
                 ((' betun',),' beaten'), (('Beate ','Beete '),'Beat '),((' beate ',' beete '),' beat '),
                 (('Beautifull ',),'Beautiful '),((' beautifull ',' beutifull ',),' beautiful '),((' beautifull,',' beutyfull,'),' beautiful,'), ((' beautifie ',),' beautify '), (('Beautie,',),'Beauty,'),((' beautie ',' beutie ',' bewtie ',' bewty '),' beauty '),((' beautie,',' beutie,'),' beauty,'),((' beautie.',),' beauty.'),((' beautie:',),' beauty:'),((' beautie?',),' beauty?'),((' beautie!',),' beauty!'),
             ((' becometh',' becommeth',' bicometh'),' becometh/becomes'), ((' becomme',),' become'),
-            ((' beddes',' beddis'),' beds'),((' beed ',' bedde '),' bed '),((' bedde,',' bedd,'),' bed,'),
+            ((' beddes',' beddis'),' beds'),((' beed ',' bedde '),' bed '),((' bedde,',' bedd,'),' bed,'),((' bedde.',),' bed.'),
             (('Beerseba','Bersaba'),'Beer-sheba'), ((' beene ',' bene ',' ben ',' bin '),' been '),((' beene,',' bene,',' ben,'),' been,'),((' bene.',),' been.'),
             (('Bifore ',),'Before '),((' bifore ',' byfore ',' bifor '),' before '),((' bifor,',),' before,'),((' bifore;',),' before;'),
             ((' beganne',' begane',' bigunnen',' bigan'),' began'), ((' bigat ',' begate '),' begat '),
@@ -638,7 +638,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' cocke ',' cok '),' cock '),
             ((' coffyn',),' coffin'),
             ((' coold ',' colde '),' cold '),((' coold;',),' cold;'),
-                ((' colledge',),' college'),
+                ((' coler ',),' collar '),((' colledge',),' college'),
                 ((' coloure ',),' colour '),
                 ((' coolte ',),' colt '),
             (('Comest ','Commest '),'Comest/Come '),((' comest ',' commest '),' comest/come '),((' comest,',' commest,'),' comest/come,'),
@@ -1563,7 +1563,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' outlandishe',' outladish'),' outlandish'),
                 ((' outragious',),' outrageous'),
                 ((' outwarde',),' outward'),
-                ((' oute ',),' out '),((' oute.',),' out.'),((' oute:',),' out:'),
+                (('Ovt ',),'Out '),((' oute ',),' out '),((' oute.',),' out.'),((' oute:',),' out:'),
         ((' ouene,',' oue,'),' oven,'),((' ouene',' oueny',' ouen'),' oven'), # includes plural
                 ((' ouere ',),' over '),((' ouer',),' over'),
                     ((' overcomere',),' overcomer'), (('overcometh','overcommeth'),'overcometh/overcomes'), ((' overcomyng',),' overcoming'), ((' ouercomun',),' overcome'),
@@ -2473,7 +2473,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' gotte ',' gete '),' gotten '), # Psa 118:15, Hos 2:1
         ((' gobetis',),' fragments'),
         ((' goteris',),' rain-drops'), # Psa 71:6
-        ((' grecis',),' steps/stairs'), # Psa 123:1
+        ((' greces',' grecis',),' steps/stairs'), # Psa 123:1
         ((' grutchide',),' groutched/grumbled'), # Lam 3:39
     ((' hantch',),' haunch/butcher'), # Psa 7:2
         (('Herie ',),'Praise '),((' herie ',' herye '),' praise '), # Psa 148:2
