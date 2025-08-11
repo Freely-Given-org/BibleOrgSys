@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-09' # by RJH
+LAST_MODIFIED_DATE = '2025-08-11' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -792,7 +792,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' defeate ',),' defeat '),
                 (('defendere',),'defender'), (('defendide','defendid'),'defended'),(('defendeth','defendith'),'defendeth/defends'), (('Defende ',),'Defend '),((' defende ',),' defend '),
                 ((' deferrid',),' deferred'),((' deferre ',),' defer '),
-                ((' defouliden',' defoulide',' defoulid',' defyled'),' defiled'),((' defileth',' defyleth',' defoulith'),' defileth/defiles'),
+                ((' defouliden',' defoulide',' defoulid'),' defiled'),((' defileth',' defyleth',' defoulith'),' defileth/defiles'),((' defyle',),' defile'), # includes defyled, defyles
                 ((' defieth',' defyeth'),' defieth/defies'),
                 ((' defraude ',),' defraud '),
             ((' degre ',),' degree '),
@@ -2515,6 +2515,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' departyngis',),' departings'), # Lam 3:48
         (('dereworthe','derworth'),'dear/precious'), # Lam 1:2, Luk 3:22
         ((' dom ',),' judgement '),((' dom,',),' judgement,'),((' dom;',),' judgement;'), # Lam 3:35,36, Psa 111:5
+            ((' doomes',),' judgements'), # Eze 20:11
         ((' dred.',),' dreaded/feared.'), # Ecc 3:14
     ((' ententif',),' attentive'), # Lam 4:17
         ((' erid ',),' ploughed '), # Hos 10:13
