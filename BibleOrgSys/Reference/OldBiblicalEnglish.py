@@ -53,7 +53,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 LAST_MODIFIED_DATE = '2025-08-13' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
-PROGRAM_VERSION = '0.96'
+PROGRAM_VERSION = '0.97'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -858,7 +858,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' dychis',),' ditches'),
             ((' dyuerse ',' diverse ',' divers ',' dyvers ',' diuerse ',' diuers '),' diverse/various '), ((' dyuersitee',' dyuersite'),' diversity'),
                 (('devided','deuided','deuyded','diuided'),'divided'),(('Diuide ',),'Divide '),((' diuid',' devid',' deuyd'),' divid'),
-                    ((' diuinatios',),' divinations'), ((' dyuynyd',),' divined'),((' dyuynyngi',),' divining'), ((' diuin',' deuin',' dyuyn'),' divin'),
+                    ((' diuinatios',),' divinations'), ((' dyuynyd',),' divined'),((' dyuynyngi',),' divining'), ((' diuin',' devin',' dyuyn'),' divin'), # u is already changed to v at ' deui'
                     ((' diuis',),' divis'),
                 (('devorsement','deuorcemet','diuorcement'),'divorcement'),
         ((' doere',),' doer'), ((' doth',' doeth',' doith'),' doth/does'), (('Doe ',),'Do '),((' doe ',),' do '),((' doe,',),' do,'),((' doe.',),' do.'),((' doe?',),' do?'),((' doe:',),' do:'),
@@ -988,7 +988,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' faynted',),' fainted'),((' fainteth',' faynteth'),' fainteth/faints'),((' faynte ',' faynt '),' faint '),((' faynt,',),' faint,'),((' faynt.',),' faint.'),
                 ((' fairenesse',' fairnesse'),' fairness'),((' fairere ',' feirere ',' fayrer '),' fairer '),((' faireste',' fayrest'),' fairest'), ((' faire ',' fayre '),' fair '),((' faire,',' fayre,'),' fair,'),((' faire:',),' fair:'),((' faire;',),' fair;'),
                 ((' feith',' fayth'),' faith'), ((' faithfull ',),' faithful '),((' faithfull,',),' faithful,'),((' faithfull.',),' faithful.'),((' faithfull:',),' faithful:'), (('faithfulnesse',),'faithfulness'),(('faythfulnes ','faithfulnes '),'faithfulness '),(('faithfulnes,',),'faithfulness,'),(('faithfulnes.',),'faithfulness.'),
-            ((' falle:',),' fallen:'),((' fallinge',' fallyng'),' falling'), (('Falle ',),'Fall '),((' falle ',' fal '),' fall '),((' falle,',' fal,'),' fall,'),
+            ((' falle:',),' fallen:'),((' fallinge',' fallyng'),' falling'), ((' falles',),' falls'), (('Falle ',),'Fall '),((' falle ',' fal '),' fall '),((' falle,',' fal,'),' fall,'),
                     ((' fallow ',' fallowe '),' fallow/ploughed '),
                 (('falshoode','falshood'),'falsehood'), ((' falslye',' falsly'),' falsely'), ((' falsifie ',),' falsify '), (('Fals ',),'False '),((' fals ',),' false '),
             ((' familiarite',),' familiarity'), ((' familier ',),' familiar '),
@@ -1480,7 +1480,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' mette.',),' met.'),
         (('Michah ','Micha '),'Micah '),
             (('Madianites',),'Midianites'),
-                ((' myddil',),' middle'), ((' myddest ',' myddis ',' middest ',' mydst ',' middes ',' mids '),' midst '),
+                ((' myddil',),' middle'), ((' myddest ',' myddis ',' middest ',' mydst ',' middes ',' middis ',' mids '),' midst '),
                 ((' mydnight',),' midnight'),
             (('mightynesse',),'mightiness'),(('myytili',),'mightily'), (('myytieste',),'mightiest'), ((' myghty ',' mightie ',' myghtie ',' myyti ',' myyty ',' miyti '),' mighty '),((' mightie,',' miyti,'),' mighty,'),((' myyti.',' mightie.'),' mighty.'),((' mightie:',),' mighty:'),((' miyti;',),' mighty;'),
                 ((' mightest',' myghtest'),' mightest/might'),((' myyten ',' miyten ',' myyte ',' myght ',' mighte '),' might '),
@@ -1957,7 +1957,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     (('shortlye',),'shortly'), (('shortned',),'shortened'), ((' shorte ',),' short '),
                 ((' shooteth',),' shooteth/shoots'), (('Shoote','Shute','Schete'),'Shoot'),((' shoote ',' shute ',' shote '),' shoot '), ((' shott ',),' shot '),
                 ((' shulders',' schuldris'),' shoulders'),((' shulder',),' shoulder'),
-                    (('Shulde ',),'Should '),(('shouldest','shouldst','shuldest','schuldist'),'shouldest/should'),((' schulden ',' schulen ',' schulde ',' shulde ',' shuld ',' shoulde '),' should '),
+                    (('Shoulde ','Shulde '),'Should '),(('shouldest','shouldst','shuldest','schuldist'),'shouldest/should'),((' schulden ',' schulen ',' schulde ',' shulde ',' shuld ',' shoulde '),' should '),
                     ((' showt',),' shout'),(('shoute ','showte '),'shout '),(('shoute,',),'shout,'),
                 ((' shouel',),' shovel'),
                 ((' shewest',),' shewest/show'),((' sheweth',),' sheweth/shows'),(('shewyng','shewinge','shewing'),'showing'),(('schewide','schewid','shewed'),'showed'),(('Schewe ','Shewe ','Shew '),'Show '),((' schewe ',' shewe ',' shew '),' show '),((' shewe,',),' show,'),
@@ -2718,7 +2718,7 @@ def briefDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    # Demo the html object
+    # Demo the spelling converter
     pass
 # end of OldBiblicalEnglish.briefDemo
 
@@ -2728,8 +2728,37 @@ def fullDemo() -> None:
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
 
-    # Demo the html object
-    pass
+    # Demo the spelling converter
+    allowOptions = True
+    originalString = ' deuine '
+
+    newString = lastString = originalString
+    for oldWords,newWord in ENGLISH_WORD_MAP:
+        if not allowOptions and '/' in newWord:
+            assert newWord.count( '/' ) == 1, f'Too many forward slashes: {oldWords=} {newWord=}'
+            newWord = newWord.split( '/' )[1].replace('_or_','/') # Eliminate the first option and the forward slash (but maybe add a new forward slash)
+        for oldWord in oldWords:
+            newString = newString.replace( oldWord, newWord )
+            if newString != lastString:
+                print( f"  AA After {oldWord=} to {newWord=} with {lastString=} from {originalString=}, got {newString=}")
+                lastString = newString
+            # if a word is enclosed by space(s), also try angle brackets in case it's in a <span>word<span> sequence
+            if newWord[0] == ' ':
+                newString = newString.replace( f'>{oldWord[1:]}', f'>{newWord[1:]}' )
+                if newString != lastString:
+                    print( f"  BB After {oldWord=} to {newWord=} with {lastString=} from {originalString=}, got {newString=}")
+                    lastString = newString
+            if newWord[-1] == ' ':
+                newString = newString.replace( f'{oldWord[:-1]}<', f'{newWord[:-1]}<' )
+                if newString != lastString:
+                    print( f"  CC After {oldWord=} to {newWord=} with {lastString=} from {originalString=}, got {newString=}")
+                    lastString = newString
+                if newWord[0] == ' ': # then it has a space at both ends
+                    newString = newString.replace( f'>{oldWord[1:-1]}<', f'>{newWord[1:-1]}<' )
+                    if newString != lastString:
+                        print( f"  DD After {oldWord=} to {newWord=} with {lastString=} from {originalString=}, got {newString=}")
+                        lastString = newString
+    print( f"Started with {originalString} ({allowOptions=}) and finished with {newString=}\n")
 # end of OldBiblicalEnglish.fullDemo
 
 if __name__ == '__main__':
