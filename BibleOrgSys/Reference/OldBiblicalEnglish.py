@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-13' # by RJH
+LAST_MODIFIED_DATE = '2025-08-14' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -888,7 +888,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('drinkest','drynkest'),'drinkest/drink'),(('drinketh','drynketh','drinkith'),'drinketh/drinks'),(('drynkynge','drynken'),'drinking'),((' dryncke ',' drynke ',' drynk ',' drincke ',' drinke '),' drink '),((' drincke,',' drinke,',' drynke,'),' drink,'),((' drinke.',' drynke.',' drike.'),' drink.'),((' drinke?',' drynke?'),' drink?'),((' drynke:',),' drink:'),((' drynke;',),' drink;'),
                 ((' dryuun',),' driven'),((' driveth',' driueth'),' driveth/drives'), (('Driue','Dryue'),'Drive'),((' driu',' dryu'),' driv'),
             ((' droppinge',),' dropping'),((' droppes',),' drops'),((' droppe ',),' drop '),
-                ((' dross,',' drosse,'),' dross/slag,'),((' dross:',' drosse:'),' dross/slag:'),
+                ((' dross ',' drosse '),' dross/slag '),((' dross,',' drosse,'),' dross/slag,'),((' dross:',' drosse:'),' dross/slag:'),
                 ((' draue',' drave',' droue'),' drove'),
                 ((' drowne ',),' drown '),
             (('dronckarde','drunkarde'),'drunkard'), (('dronckennesse','dronckenesse','drunkennesse','drunkenesse'),'drunkenness'),(('drunkennes ',),'drunkenness '), ((' droncken ',),' drunken '), ((' druncke ',' drunke '),' drunk '),
@@ -1055,7 +1055,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('fluddes','floudes','flouds','floodes','floodis','flodis'),'floods'),((' floude ',' fludde ',' flud '),' flood '),(('floude,',),'flood,'), ((' floore',),' floor'),#(('floore,',),'floor,'),(('floore.',),'floor.'),
                 (('florischynge','florishinge','florishyng'),'flourishing'), (('florische ','florishe '),'flourish '),(('florishe,',),'flourish,'),(('florishe:',),'flourish:'),(('floorish','florish'),'flourish'),
                 (('flowre ','floure '),'flour '),((' flowre,',' floure,'),' flour,'),
-                (('flouride','flourid'),'flowered'), (('Flouris ',),'Flowers '),((' flowres ',' floures ',' flouris '),' flowers '),
+                (('flouride','flourid'),'flowered'), (('Flouris ',),'Flowers '),((' flowres ',' floures ',' flouris '),' flowers '),((' floures.',),' flowers.'),
                     (('flowen ',),'flown '),((' flowiden',),' flowed'),(('flowith ','floweth '),'floweth/flows '),((' flowe ',),' flow '),((' flowe.',),' flow.'),
                 ((' flieth',' flyeth'),' flieth/flies'),((' flyenge',' fliynge'),' flying'),((' flyes',),' flies'),((' flie ',' fley '),' fly '),((' flie:',),' fly:'),
         ((' foale ',),' foal '), ((' fome ',),' foam '),
@@ -1181,7 +1181,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' ghestes',),' guests'), ((' ghest',' geest',' gest'),' guest'),
             ((' guyde',' gyde'),' guide'),
                 ((' gilefuli',),' guilefully'),((' gileful',),' guileful'), ((' guyle ',' gile ',' gyle '),' guile '),((' gile,',),' guile,'),((' gile.',' guyle.',' gyle.'),' guile.'),
-                    (('guiltlesse','giltlesse'),'guiltless'), ((' guiltie',),' guilty'),
+                    (('guiltlesse','giltlesse'),'guiltless'), ((' guiltie',' gilty'),' guilty'),
             ((' gusshed',),' gushed'),((' gusshe ',' gu?she ',' gushe '),' gush '),
     (('habitaciouns','habitacios'),'habitations'),(('habitacion','habitacio'),'habitation'),
             ((' hadden ',' hadde '),' had '),((' hadde;',),' had;'), ((' hadst ',' haddest ',' haddist '),' hadst/had '),
@@ -1311,7 +1311,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('inuention','invencion','inuencion','ynuencio'),'invention'), ((' inuent',),' invent'), ((' inuite',),' invite'),
                 ((' inuocation',),' invocation'),
             (('inwardli',),'inwardly'),((' inwarde ',' ynward '),' inward '),
-        ((' yron ',' yrun ',' yro ',' irun '),' iron '),((' yron,',),' iron,'),((' yron.',),' iron.'),((' yron:',),' iron:'),
+        ((' yron ',' yrun ',' yro ',' irun '),' iron '),((' yron,',' irun,'),' iron,'),((' yron.',),' iron.'),((' yron:',),' iron:'),
         (('Ys ',),'Is '),((' ys ',),' is '),
             (('Ysaie',),'Isaiah'),
             (('Iles ',),'Isles '),((' yles',' ilis'),' isles'),
@@ -1371,7 +1371,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' lauer',),' laver'),
             ((' leeueful',' leueful',' laufull',' lawfull'),' lawful'),
                 ((' lawes',' lawis'),' laws'),(('Lawe',),'Law'),((' lawe',),' law'),
-        ((' leeder',),' leader'), (('leadest','laddest','leedist','ledest'),'leadest/lead'),(('leadeth','ledith','ledeth'),'leadeth/leads'), (('Leade ','Lede '),'Lead '),((' leade ',' leede ',' lede '),' lead '),
+        ((' leeder',),' leader'), (('leadest','laddest','leedist','ledest'),'leadest/lead'),(('leadeth','ledith','ledeth'),'leadeth/leads'), (('Leade ','Lede '),'Lead '),((' leade ',' leede ',' lede '),' lead '),((' leade,',' leed,'),' lead,'),
                 ((' leafe ',),' leaf '),
                 ((' leannesse ',),' leanness '),((' leaneth',' leeneth',' lenith'),' leaneth/leans'),((' leane ',' lene '),' lean '),((' leane,',),' lean,'),
                 ((' leapinge',' leepynge'),' leaping'),((' lept ',),' leapt '),((' leape ',),' leap '),((' leape,',),' leap,'),
@@ -1943,7 +1943,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' schauynge',),' shaving'),((' shaue',),' shave'),
             (('Sche ','Shee '),'She '),((' sche ',' shee '),' she '),
                 ((' sheaues',' sheues'),' sheaves'),((' sheafe,',),' sheaf,'),((' sheafe;',),' sheaf;'),
-                (('sheddinge','schedinge'),'shedding'),((' schedden ',' shead ',' sched '),' shed '),((' shedde:',),' shed:'),
+                (('sheddeth','sheadeth'),'sheddeth/sheds'),(('sheddinge','schedinge'),'shedding'),((' schedden ',' shead ',' schede ',' sched '),' shed '),((' shedde:',),' shed:'),
                 (('sheepefolde','sheepfolde','shepefolde','shepefold'),'sheepfold'), ((' scheep ',' sheepe ',' shepe '),' sheep '),((' scheep,',' sheepe,',' shepe,'),' sheep,'),((' sheepe.',' scheep.',' shepe.'),' sheep.'),((' shepe?',),' sheep?'),((' sheepe:',' shepe:'),' sheep:'),((' sheepe;',),' sheep;'),((' scheep)',' sheepe)',' shepe)'),' sheep)'),((' sheepe-',),' sheep-'),
                 (('Sycle',),'Shekel'),(('shekell','sicle'),'shekel'),
                 (('scheepherdis',),'shepherds'),(('Shepheard',),'Shepherd'),(('scheepherde','shepeherde','shepherde','sheephearde','shephearde','shepheard'),'shepherd'),
@@ -2220,6 +2220,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Tikuah',),'Tikvah'),
             ((' tiel ',),' tile '), ((' tyll ',' til '),' till '),
             ((' tymber',' tymbre'),' timber'), ((' timbrelles',' tymbrels'),' timbrels'),((' timbrell ',),' timbrel '),((' timbrell:',),' timbrel:'), ((' tyme',),' time'),
+            ((' tinne,',' tynne,',' tyn,'),' tin,'),
             ((' tithis',),' tithes'),((' tythe',),' tithe'), ((' titil ',),' title '),
         (('togidir','togidere','togydere','togidre','togedder'),'together'),
             ((' tokene ',),' token '),
@@ -2273,7 +2274,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' vnbynde',),' unbind/untie'),
             ((' vnborne',),' unborn'),
         (('vncerteyn',),'uncertain'),
-                (('vncleannesse ','vncleannes '),'uncleanness '),(('vncleannesse.',),'uncleanness.'),(('vncleane','vncleene','vnclene'),'unclean'),
+                (('vncleannesse ','vnclennesse ','vncleannes '),'uncleanness '),(('vncleannesse.',),'uncleanness.'),(('vncleane','vncleene','vnclene'),'unclean'),
                 (('vncover','vncouer'),'uncover'),
                 (('vnkunnynge','vnkunnyng'),'uncunning/uneducated'),
             (('vndefyled',),'undefiled'),
@@ -2491,6 +2492,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' alway ',' allwaie ',' allwaye '),' always '),((' allwaye,',' alway,'),' always,'),((' alway.',),' always.'),((' allwaye:',' alwaye:',' alway:'),' always:'),((' alway;',),' always;'),
         ((' arettid',),' reckoned/counted'), # Hos 8:12
         (('aseelid',),'sealed'), # Sng 4:12
+        ((' aueryce',),' averice/greed'), # Wycl Eze 22:13
         (('avaricious','auerouse'),'avaricious/greedy_for_wealth'), # Ecc 5:9
         (('ayenbiere',),'redeemer/saviour'),(('ayenbouyte',),'bought_back/redeemed'), # Lam 3:58, Hos 7:13
         ((' axyngis',),' askings'),
@@ -2584,8 +2586,9 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('schedde ',),'separated/poured '), # Lam 4:11
         (('schenschipis','schenshipis'),'harm/troubles'),(('schenschipe',),'harm/trouble'),(('schenschipfuli',),'disgracefully/ruinously'),(('schenschip',),'disgrace/ruin'), # Psa 56:4, 78:12
         ((' schent',),' harmed/shamed'),
-        ((' schynyngere',),' more_shiny'),
+        (('schynyngere',),'more_shiny'),
         ((' settiden ',),' set/placed '),((' settidist ',),' set/place '), # Joel 3:3, Psa 49:18
+        (('schamefulere',),'more_shameful'), # Eze 22:10
         ((' shawmes',),' shawm_instruments'),((' shaume ',),' shawm_instrument '), # Hos 5:8
         (('shewtoken',),'sign'), # Eze 12:11
         (('syngeressis',),'female_singers'), # Ecc 2:8
@@ -2601,6 +2604,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         (('troublous',),'troubled'), # Psa 46:3
         (('twystinge',),'tweeting'), # Sng 2:12
     # 'v' is already changed to 'u' above
+    ((' unhiliden',),' unhid/discovered'), # Wycl Eze 22:10
     ((' unschamefast',),' shameless'), # Wycl Eze 3:7
         (('unobedient',),'disobedient'), # Cvdl Eze 12:3
         ((' unpitee',),' unpity/not_pity'), # Wycl Eze 7:11
@@ -2731,6 +2735,7 @@ def fullDemo() -> None:
     # Demo the spelling converter
     allowOptions = True
     originalString = ' deuine '
+    expectedResultString = ' divine '
 
     newString = lastString = originalString
     for oldWords,newWord in ENGLISH_WORD_MAP:
@@ -2759,6 +2764,7 @@ def fullDemo() -> None:
                         print( f"  DD After {oldWord=} to {newWord=} with {lastString=} from {originalString=}, got {newString=}")
                         lastString = newString
     print( f"Started with {originalString} ({allowOptions=}) and finished with {newString=}\n")
+    assert newString == expectedResultString
 # end of OldBiblicalEnglish.fullDemo
 
 if __name__ == '__main__':
