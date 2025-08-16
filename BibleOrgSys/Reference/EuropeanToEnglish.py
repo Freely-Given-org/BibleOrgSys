@@ -49,7 +49,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-15' # by RJH
+LAST_MODIFIED_DATE = '2025-08-16' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -130,7 +130,7 @@ GERMAN_WORD_MAP = (
         ('Arbeitens','working'),(' arbeitet',' works(v)'),(' arbeite',' work(v)'),('Arbeit','work/job'),
             ('Arche','ark'),
             ('Ärgernis','annoyance'),('ärgerte','annoyed'),(' ärgert',' annoys'),(' ärger',' aggravation'),
-            ('Armen','poor_(one)'),('Arm','arm'),
+            ('Armen','poor_(one)'),('Arme','arms/poor/unfortunate_(one)'), ('Arm','arm'),
             ('Arztes','doctor'),
         ('Asche','ash'), (' aß ',' ate '),(' aßen',' ate'),(' äße,',' eat,'),
             ('Assaphs','of_Asaph'),('Assaph','Asaph'),
@@ -390,7 +390,7 @@ GERMAN_WORD_MAP = (
         (' edel',' precious/fine'),(' edlen',' precious/fine'),
         (' eggen',' harrow'),
         ('Ehe ','Before/marriage '),(' ehe ',' before '),('Ehe,','marriage,'),
-                ('Ehebrecherinnen','adulteresses'),('Ehebrecherin','adulteress'),('Ehebrecher','adulterer'), ('ehebrecherische','adulterous'),
+                ('Ehebrecherei','adultery'),('Ehebrecherinnen','adulteresses'),('Ehebrecherin','adulteress'),('Ehebrecher','adulterer'), ('ehebrecherische','adulterous'),
                 (' ehernen',' brazen'),(' eherne',' brazen'),
             ('Ehren','honour(n)'),('Ehre','honour(n)'),(' ehren',' honour(v)'),(' ehre',' honour(v)'),
         ('Eichen','oaks'),
@@ -558,7 +558,7 @@ GERMAN_WORD_MAP = (
             (' frech',' cheeky'),
                 ('Fremde ','strangers '), (' fremden',' strangers'),(' fremde',' strangers'), ('Fremdling','stranger'),
                 (' fressen',' eat'), ('Fressend','Eating'),
-                ('Freuden','pleasures/delights'),('Freude','joy/pleasure/delight'),('freudige','happy/joyful'),
+                ('Freudengeschrei','shouts_of_joy'),('Freuden','pleasures/delights'),('Freude','joy/pleasure/delight'),('freudige','happy/joyful'),
                     (' freuen',' be_happy'),(' freuete',' rejoiced'), ('Freuet','Pleased'),(' freuet',' is_happy'),(' freue',' am_happy'),
                     ('Freunden','friends'),('Freundes','friend'),('Freunde','friends'),('Freundin','girlfriend'),('Freund','friend'), ('freundlich','friendly'), ('Frevels','wickedness'),
                 ('frevelböser','wickedly_evil'),('freveln','outrage'),
@@ -732,7 +732,7 @@ GERMAN_WORD_MAP = (
                     (' gewendet',' turned'),
                     (' gewesen',' been'),
                 (' gewichen',' evaded'), (' gewickelt',' wrapped'), (' gewissen',' conscience'), (' gewiß',' certainly'),
-                (' gewöhnte',' accustomed'),(' gewöhnt',' used_to'),
+                (' gewöhnte',' accustomed'),(' gewöhnt',' used_to'),(' gewohnt',' used_to'),
                     (' gewonnen',' won/gained'),
                     (' geworfen',' thrown'),
                 (' gewürget',' choked'),
@@ -996,7 +996,7 @@ GERMAN_WORD_MAP = (
                 (' kraus',' curly/frizzy'),
             (' kriegen',' get'), ('Krieger','warrior'),('Krieg','war/battle'),
                 (' kriegten',' got'),(' kriegt',' gets'),
-            ('Krone ','crown '),
+            ('Kronen','crown'),('Krone','crown'),
                 ('Kröten','toads'),
             (' krummen',' crooked'),(' krümmet',' bends'),('Krumm','Bent/Crooked'),
         (' kühle',' cool'),
@@ -2005,6 +2005,7 @@ def translateGerman( htmlStr:str ) -> str:
                 .replace('conyur','conjur')
                 .replace('deyect','deject')
                 .replace('inyur','injur')
+                .replace('yew','jew') # jewel
                 .replace('/yob','/job')
                 .replace('yoy','joy')
                 .replace('eyoice','ejoice')
@@ -2060,7 +2061,7 @@ LATIN_WORD_MAP = (
             (' addat',' he_adds'),
                 (' addere',' to_add'),(' addet',' he_will_add'),
                 (' addit',' adds'),
-                (' adducam',' I_will_bring'),(' adducet',' will_bring'),
+                (' adducam',' I_will_bring'),(' adducebantur',' were_being_led'),(' adducet',' will_bring'),
                     (' adduxisti',' you_brought'),(' adduxit',' he_brought'),
             (' adeo',' so_much'),
             ('Adhæsit','It_stuck'),(' adhæsit',' stuck'), (' adhuc',' still'),
@@ -2071,7 +2072,7 @@ LATIN_WORD_MAP = (
                     ('Adjuva','Help_me'),
             (' adolescente',' young_man'),('adolescentiæ','of_adolescence'),('adolescentia','adolescence'),
                 ('adorabunt','they_will_worship'),('adoravit','he_adored'),
-            ('adulterarum','adulterous'),(' adultera',' adulteress'),
+            ('adulterarum','adulterous'),(' adultera',' adulteress'),(' adulteriis',' adulteries'),
                 (' adunata',' united'),
             (' advenit',' he_arrived'),(' adventum',' arrival'),
                 (' adversa',' adverse'),(' adverso',' on_the_contrary'),(' adversum',' against'), ('Adversus','Against'),(' adversus',' against'),
@@ -2154,7 +2155,7 @@ LATIN_WORD_MAP = (
             (' arentia',' aridity'), (' arescat',' dry_up'),
             (' argenti',' silver'),(' argento',' with_silver'), ('Argentum','Silver'),(' argentum',' silver'),
             (' aridum',' dry'), (' arietes',' rams'),
-            (' arma',' weapons'), (' armenta',' herds'),
+            (' arma',' weapons'), (' armenta',' herds'), ('armillas','bracelets'),
             (' aromata',' spices'),(' aromatum',' spices'),
             (' arrogante',' arrogantly'),
             (' aruit', ' arid'),
@@ -2403,7 +2404,7 @@ LATIN_WORD_MAP = (
                 ('Coram ','My_face/personally '),(' coram ',' before '),
                 (' corda',' hearts'),(' corde',' heart'),(' cordibus',' hearts'),(' cordis',' of_the_heart'),
                 (' cornua',' horns'),(' cornu',' horn'),
-                (' coronam',' crown'),(' coronavit',' crowned'),
+                (' coronam',' crown'),(' coronas',' crowns'),(' coronavit',' crowned'),
                 (' corporali',' bodily'),(' corpus',' body'),
                 (' corrigere',' to_correct'), (' corrigit ',' corrects '),
                         ('corripiam','I_will_correct'), ('corripiemur','we_will_be_punished'), ('corripientur','they_will_be_punished'),
@@ -2698,7 +2699,7 @@ LATIN_WORD_MAP = (
             ('exquirant','let_them_search'), (' exquisita',' searched'), ('exquisivi','I_searched'),
             (' exspectantes',' waiting'),(' exspectant',' they_are_waiting'),
                     (' exspecto',' I_expect/wait'), ('exspectabo','I_will_wait'),
-                ('Exsultabo','I_will_rejoice'), ('exsultabunt','they_will_rejoice'),('exsultant','they_rejoice'),('exsultastis','you_rejoiced'),('exsultatione','with_exultation/elation'),('exsultationis','of_exultation/elation'), ('exsultaverunt','they_rejoiced'),('exsultavimus','we_rejoiced'),
+                ('Exsultabo','I_will_rejoice'), ('exsultabunt','they_will_rejoice'),('exsultantis','exultant/triumphant'),('exsultant','they_rejoice'),('exsultastis','you_rejoiced'),('exsultatione','with_exultation/elation'),('exsultationis','of_exultation/elation'), ('exsultaverunt','they_rejoiced'),('exsultavimus','we_rejoiced'),
                     (' exsurgam',' I_will_get_up'), (' exsurgent',' rise_up'),(' exsurgeret',' would_arise'), ('Exsurge','Arise/Get_up'),(' exsurge',' get_up'),
             (' extabuerunt',' they_came_out'),
                 (' extendam',' I_will_extend'),(' extendant',' extend'), ('extendes','you_extend'),('extendens','extending'), ('Extendit','He_stretched_out'),
@@ -2766,8 +2767,8 @@ LATIN_WORD_MAP = (
             (' fons',' source/spring'),(' fontes',' sources/springs'),
             (' foribus',' at_the_door'),
             ('Formido','I\'m_afraid'),(' formido',' I\'m_afraid'),
-            (' fornicatæ',' fornicated'),(' fornacis',' furnace'),
-                ('fornicationem','fornication'),('fornicationes','fornications'),(' fornicationum',' fornication'),(' fornicatio ',' fornication '),
+            (' fornicabitur',' will_fornicate'),(' fornicatæ',' fornicated'),(' fornacis',' furnace'),
+                ('fornicationem','fornication'),('fornicationes','fornications'),(' fornicatione',' fornication'),(' fornicationum',' fornication'),(' fornicatio ',' fornication '),
                 (' fortes',' strong'), (' forte',' perhaps'),
                     ('fortissimis','the_strongest'),(' fortis',' strong/powerful'),
                         (' fortiter',' bravely/strongly'), ('Fortitudinem','Strength'),('fortitudinis','of_strength'),('fortitudo','strength'),(' forti',' brave'),
@@ -3272,7 +3273,7 @@ LATIN_WORD_MAP = (
         (' mulierem',' woman'),(' mulieres',' women'),(' muliere',' woman'),(' mulierum',' of_women'),(' mulier',' woman'),
             (' multæ ',' many '), (' multamque',' and_much'), ('Multas','Many'),(' multas',' fines'), ('Multa','Many'),(' multa',' fine'),
                 ('multiplicat','multiplies'),('multiplicavit','multiplied'), ('multipliciter','in_many_ways'),
-                        ('multitudinem','multitude'),('multitudinis','multitude'),
+                        ('multitudinem','multitude'),('multitudine','multitude'),('multitudinis','multitude'),
                     (' multis',' many'),
                 (' multoque',' and_much'),(' multorum',' of_many'),(' multo',' much'),
                 (' multum',' a_lot'),
@@ -3906,7 +3907,7 @@ LATIN_WORD_MAP = (
                 ('Sortem','Lot'),(' sortem',' lot'),
         (' spargendi',' to_sprinkle'),
                 (' spatiis',' spaces'),('spatioso','spacious'),
-            (' speciosa',' beautiful'),
+            (' speciosas',' beautiful'),(' speciosa',' beautiful'),
                 (' spei',' hope'),
                 (' spelunca',' cave'),
                 (' spem',' hope'),
@@ -4155,7 +4156,7 @@ LATIN_WORD_MAP = (
                 (' vendidit',' sold'),(' vendit',' sells'),
                 (' venefici',' poisoned'), (' venerit',' will_have_placed'), ('Veneruntque','And_they_came'),('venerunt','they_came'),
                 (' veniat ',' let_him_come '),
-                    (' veniebat',' he_was_coming'),(' venient',' they_will_come'),(' veniet',' will_come'),
+                    (' veniebant',' they_were_coming'),(' veniebat',' he_was_coming'),(' venient',' they_will_come'),(' veniet',' will_come'),
                     (' veniret',' would_come'),
                     (' venissent',' they_would_have_come'),(' venisset',' had_come'),
                     ('Venite','Come'),(' venite',' come'), ('Venit','He_came'),(' venit',' he_came'), ('Veni','I_came'),(' veni',' I_came'),
@@ -4228,7 +4229,7 @@ LATIN_WORD_MAP = (
                     (' violaverit',' violated'),('violaverunt','they_violated'),
                 (' violenta',' violent'), (' violentiæ',' of_violence(pl)'),
             ('Vir ','Man '),(' vir ',' man '),
-                (' viride',' green'),(' viriliter',' manly'),(' viri',' men'),
+                (' viride',' green'),(' viriliter',' manly'),(' viris',' men'),(' viri',' men'),
                 ('Virgam','Rod/Staff'),(' virgam',' rod/staff'), (' virga',' rod/staff'), ('virgines','virgins'),('virginis','virgin'),
                     ('Virgo ','girl/damsel '),(' virgo',' virgin'),
                     (' virgula',' wand'),
