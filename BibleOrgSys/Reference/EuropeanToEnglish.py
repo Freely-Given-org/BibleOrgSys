@@ -49,7 +49,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-17' # by RJH
+LAST_MODIFIED_DATE = '2025-08-18' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -2238,7 +2238,7 @@ LATIN_WORD_MAP = (
         (' brachii',' arms'),(' brachio',' arm'),
         ('Buccinate','Trumpet'),
     ('Cadent ','They_fall '),
-            (' cæci',' blind'),
+            (' cæcitas',' blindness'),(' cæci',' blind'),
             (' cædam',' some'),(' cædem',' murder'),(' cæde',' kill'),
             (' cælis',' the_heavens'),(' cæli',' heavens'),
                     ('cælos','the_skies/heavens'),('cælo','the_sky'),
@@ -2899,7 +2899,7 @@ LATIN_WORD_MAP = (
                 (' ignis',' fire'),('Igni ','Fire '),(' igni',' fire'),
                 ('ignominiam','disgrace'),(' ignominia',' disgrace'),
                     ('ignorantiis','ignorance'),(' ignoravit',' he_ignored'),
-                        (' ignoret',' ignore'),
+                        (' ignorare',' to_ignore'),(' ignoret',' ignore'),
                         (' ignoro',' I_don\'t_know'),
         (' iis',' to_them'),
         (' illam',' her'),(' illa',' that'),#(' illa:',' that:'),
@@ -2997,6 +2997,7 @@ LATIN_WORD_MAP = (
                         (' inter ',' between '), # Take care not to translate English words
                 ('intrabat','he_was_entering'),
                         (' intrant',' they_enter'),
+                        (' intraret',' would_enter'),
                         ('intraverit','entered'),('intraverunt','they_entered'),
                             ('intravit','he_entered'),
                     (' intremuit',' he_shuddered'), ('intrem','meanwhile'),
@@ -3019,7 +3020,7 @@ LATIN_WORD_MAP = (
                         (' invocarem',' I_would_call_upon'),
                         ('invocaverunt','they_invoked'), ('Invocavi','I_called_out'),(' invocavi',' I_called'),
                     (' involuta',' wrapped'),(' involvens',' involving'),
-        (' ipsa ',' herself '),
+        ('Ipsa ','Itself '),(' ipsa ',' herself '),
             ('Ipse ','Exactly_that '),(' ipse ',' exactly_that/himself '),('(ipse ','(exactly_that/himself '),
             ('Ipsi ','Himself '),(' ipsis',' themselves'), (' ipsi',' themselves'),
             (' ipsorum',' their_own'), (' ipsos ',' themselves '),(' ipso',' himself'),
@@ -3121,7 +3122,7 @@ LATIN_WORD_MAP = (
             (' lebes',' pots'),
             (' lectulo',' bed'),(' lectulum',' bed'), (' lectum',' bed'), (' lectus',' bed'),
             (' legem ',' the_law '),(' leges ',' laws '),(' lege',' lawfully'),
-                (' legitur',' it_is_read'),
+                ('Legis','Law'),(' legis',' law'),(' legitur',' it_is_read'),
                 (' legum ',' laws '),
             (' leo ',' lion '),
             (' leunculis',' little_lions'),
@@ -3291,6 +3292,7 @@ LATIN_WORD_MAP = (
                 (' muros',' the_walls'),
                 (' murus',' the_wall'),
             (' mutatur',' changes'), (' mutatus',' changed'), (' mutuo',' mutually'),
+        (' mysterium',' mystery'),
     ('Nam ','For/Surely '),(' nam ',' for/surely '),
             ('Narrabo','I_will_tell'), ('narrabimus','we_will_tell'),('narrabunt','they_will_tell'), ('narrantes','telling'), (' narrantur',' are_told'),
             ('nascentur','be_born'),
@@ -3323,7 +3325,7 @@ LATIN_WORD_MAP = (
             (' nocere',' to_harm'),
                 (' noctem',' the_night'),(' nocte',' at_night'),(' noctibus',' at_night'),(' noctis',' of_the_night'), ('nocturnos','nocturnal'),
             ('Noli ','Don\'t '),(' noli ',' don\'t '), ('Nolite ','Don\'t '),(' nolite ',' don\'t '),
-                (' nolo',' I_don\'t_want_to'),
+                ('Nolo','I_don\'t_want_to'),(' nolo',' I_don\'t_want_to'),
                 ('noluerunt','they_didn\'t_want'), (' nolui',' I_didn\'t_want_to'),
             (' nomen',' name'),
                 ('Nomina','Names'),(' nomina',' names'),
@@ -3805,7 +3807,7 @@ LATIN_WORD_MAP = (
                     (' sanguinibus',' with_blood'),(' sanguinis',' blood'),(' sanguini',' blood'),
                     ('Sanguis','Blood'),(' sanguis',' blood'),
             (' sapiens',' wise'),
-                    ('sapientem','wise'),('sapienter','wisely'),
+                    ('sapientem','wise'),('sapienter','wisely'),('sapientes','wise_people'),
                         ('sapientiæ','of_wisdom'),('sapientiam','wisdom'), ('Sapientia','Wisdom'),('sapientia','wisdom'),
                             ('Sapientis','Of_the_wise'),(' sapientum',' wise_men'),
                 ('sapphiro','sapphire'),('sapphirus','sapphire'),

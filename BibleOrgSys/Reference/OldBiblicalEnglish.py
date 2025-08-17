@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-17' # by RJH
+LAST_MODIFIED_DATE = '2025-08-18' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -507,7 +507,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' blemishe',),' blemish'),
                 (('Blessid ','Blissid '),'Blessed '),(('blessiden','blesside','blessid','blissid','blissed'),'blessed'), (('blessinge','blessynge','blessyngi','blessyng'),'blessing'), (('Blesse ',),'Bless '),((' blesse ',),' bless '),((' blesse,',),' bless,'),((' blesse:',),' bless:'),
                 ((' blewe ',),' blew '),
-            (('blindnesse','blyndnes'),'blindness'), ((' blynded',),' blinded'), (('Blynde ',),'Blind '),(('blynde','blynd','blinde'),'blind'),
+            (('blindnesse','blyndnesse','blyndnes'),'blindness'), ((' blynded',),' blinded'), (('Blynde ',),'Blind '),(('blynde','blynd','blinde'),'blind'),
             (('blood-guiltinesse','bloudegyltynesse','bloodguiltiness'),'blood-guiltiness'), (('bloudthurstie','bloodthirstie'),'bloodthirsty'), ((' bloodie ',),' bloody '),((' bloudie,',),' bloody,'), (('bloodis',),'bloods'),(('bloude','bloud'),'blood'),
                 ((' blossomes',),' blossoms'),((' blossome,',),' blossom,'),
                 ((' blowen',),' blown'), (('Blowe ',),'Blow '),((' blowe ',),' blow '),((' blowe,',),' blow,'),((' blowe:',),' blow:'),
@@ -646,7 +646,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' clawes',),' claws'),
                 ((' claye ',' cley '),' clay '),((' clei,',' cley,',' claye,'),' clay,'),((' claye.',),' clay.'),((' claye?',' clei?'),' clay?'),((' claye:',),' clay:'),
             (('cleannesse ','cleannes ','clenesse '),'cleanness '), (('clensiden','clensed','clensid'),'cleansed'),(('clensyng',),'cleansing'),((' clense',),' cleanse'), ((' cleane ',' cleene ',' clene '),' clean '),((' cleane,',' clene,'),' clean,'),((' cleane.',' clene.'),' clean.'),((' cleane?',' clene?'),' clean?'),((' cleane:',' clene:'),' clean:'),
-                    ((' cleare ',),' clear '),((' cleare,',),' clear,'),((' cleer.',),' clear.'),((' cleare?',),' clear?'),((' cleare:',),' clear:'),
+                    ((' cleare ',' cleer '),' clear '),((' cleare,',),' clear,'),((' cleer.',),' clear.'),((' cleare?',),' clear?'),((' cleare:',),' clear:'),
                     ((' cleaued',' cleuyde',' cleued'),' cleaved/clung'),((' cleaveth',' cleaueth',' cleueth'),' cleaveth/cleaves_or_clings'),((' cleave ',' cleaue ',' cleue '),' cleave_or_cling '),
                 ((' cleftes',),' clefts'),
             (('climbeth','clymmeth','clymeth','climeth'),'climbeth/climbs'), ((' clymme ',' climbe ',' clime '),' climb '),
@@ -1503,7 +1503,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' mysery',),' misery'),((' miserie ',),' misery '),((' miserie,',),' misery,'),((' miserie.',),' misery.'),((' miserie:',),' misery:'),
                 ((' mysfortune',),' misfortune'),
                 ((' myssed',),' missed'),
-                ((' myist,',),' mist,'), ((' mistresse ',),' mistress '),((' mistresse,',' mistres,'),' mistress,'),((' mastresse:',),' mistress:'),
+                ((' myist,',),' mist,'),
+                    ((' mistresse ',),' mistress '),((' mistresse,',' mistres,'),' mistress,'),((' mastresse:',),' mistress:'),
             ((' medlide',' mixte'),' mixed'),((' mixt ',),' mixed '),((' mixt,',),' mixed,'),
         ((' mocke ',),' mock '),
             ((' moysture',),' moisture'),
@@ -1532,6 +1533,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' musynge',' musyng'),' musing'),
                 (('Mustre ',),'Muster '),
         (('Mi ',),'My '),#((' mi '),' my '),
+            ((' mysterie ',),' mystery '),((' misterie,',' mysterie,'),' mystery,'),
     ((' nailis',' nailes'),' nails'),((' naile ',' nale '),' nail '),((' naile,',),' nail,'),
             ((' nakid',),' naked'), (('nakednesse','nakidnesse'),'nakedness'),
             ((' nameli',),' namely'),
