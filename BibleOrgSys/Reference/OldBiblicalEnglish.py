@@ -292,6 +292,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('Aswell ',),'As well '),((' aswell ',),' as well '), # Psa 87:7
     ((' assoone ',' assone '),' as soon '),
     (('broughtforth',),'brought forth'), # KJB-1611 Psa 90:2
+    (('couchingplace','couching place'),'couching-place/pen'), # Eze 25:5
     (('dounggate','doung gate'),'dung gate'),(('Donggate',),'Dung Gate'), # KJB-1611 NEH 12:31
     (('dwellingplaces',),'dwelling places'),
     ((' eated',),' were eating'), # Psa 53:4
@@ -818,7 +819,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' desireth',' desirith'),' desireth/desires'), ((' desiriden',' desiride',' disired',),' desired'), ((' desiris',),' desires'),((' desyre',' desier'),' desire'),((' desijr ',' desir '),' desire '),
                 (('desolacioun',),'desolation'), ((' desolat ',),' desolate '),((' desolat,',),' desolate,'),((' desolat.',),' desolate.'),((' desolat;',),' desolate;'),
                 ((' despaire ',),' despair '),
-                    ((' despisinge',' dispisyng',' dispising'),' despising'),((' dispisiden',' dispiseden',' dispiside',' despysed',' dispisid'),' despised'),((' despyse',' dispise'),' despise'),
+                    ((' despisinge',' dispisyng',' dispising'),' despising'),((' dispisiden',' dispiseden',' dispiside',' despysed',' dispisid'),' despised'),((' despyse',' dispise'),' despise'), ((' despyte',),' despite'),
                 ((' distriede',' destriede',' destroied',' destried',' distried'),' destroyed'), (('destroyethe',),'destroyeth'),(('distriyng','destrien'),'destroying'), (('Destroie ',),'Destroy '),((' distrie ',' destrie ',' destroye ',' distroye ',' distruye ',' destroie '),' destroy '),((' destroye,',' distrie,'),' destroy,'),
                     (('destruccios',),'destructions'),(('destruccion','distruction'),'destruction'),(('destruccio ',),'destruction '),
             ((' determyne',),' determine'),
@@ -1047,7 +1048,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Fiue',),'Five'),((' fyue',' fyve',' fiue'),' five'),
         ((' flamyng',),' flaming'), ((' flambes ',' flammes '),' flames '),((' flawme',' flambe',' flamme'),' flame'),
                 ((' flaxe ',),' flax '),((' flaxe,',),' flax,'),
-            ((' fleddest',' fleddist'),' fleddest/fled'),((' fledden ',' fledde '),' fled '), ((' fleynge',),' fleeing'), (('Fle ',),'Flee '),((' flye ',' fleen ',' fle '),' flee '),((' fle,',),' flee,'),((' fle)',),' flee)'),
+            ((' fleddest',' fleddist'),' fleddest/fled'),((' fledden',' fledde'),' fled'), ((' fleynge',),' fleeing'), (('Fle ',),'Flee '),((' flye ',' fleen ',' fle '),' flee '),((' fle,',),' flee,'),((' fle)',),' flee)'),
                     ((' fleeteth',' fletith'),' fleeteth/fleets'),
                 ((' fleischli ',),' fleshly '),((' fleischis',' flesshe',' fleshe',' fleische',' fleisch'),' flesh'),
             (('Fliyt ','Flyt '),'Flight '),((' flyght ',),' flight '),
@@ -2657,7 +2658,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('& ',),'and '),
 
     # Generalised left-overs
-    (('edist ',),'ed '),(('edst ',),'ed '), # e.g., washedist, paintedst, deckedst from Eze 23:40
+    (('edist ','idist '),'ed '),(('edst ',),'ed '), # e.g., washedist, paintedst, deckedst from Eze 23:40
     (('nesse ',),'ness '),(('nesse,',),'ness,'),(('nesse.',),'ness.'),(('nesse:',),'ness:'),(('nesse;',),'ness;'),
     (('ynge ','yng '),'ing '),(('ynge,','yng,'),'ing,'),(('ynge.','yng.'),'ing.'),(('ynge:','yng:'),'ing:'),(('ynge;','yng;'),'ing;'),
     )
