@@ -49,7 +49,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-08-18' # by RJH
+LAST_MODIFIED_DATE = '2025-08-20' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -1187,6 +1187,7 @@ GERMAN_WORD_MAP = (
         ('Odem','breath'), ('Oder','Or'), (' oder',' or'), (' öde',' dull'),
         ('Ofen','oven'),
             (' offenbart',' revealed'),(' offenbaren',' reveal'),(' offenbare',' reveal'),(' offenbar',' apparently'), (' offene ',' open '),
+                (' öffnen',' open(v)'),
             (' oftmals',' often'),
         (' ohne ',' without '),
                 (' ohngefähr ',' about '),
@@ -2885,7 +2886,7 @@ LATIN_WORD_MAP = (
                 (' hostiæ',' victims'),(' hostiam',' victim'),(' hostis',' the_enemy'), (' hos ',' these '),
         (' hujuscemodi ',' of_this_kind '),(' hujus',' of_this'),
             (' humanæ',' human'),
-                (' humeros ',' shoulders '),
+                (' humeros ',' shoulders '),(' humerum',' shoulder'),
                 (' humilem',' humble'),(' humile',' humble'),
                     (' humiliatum',' humiliated'),(' humiliatus',' humiliated'),(' humiliat ',' humiliate '), # Needs a final space
                     (' humiliaverunt',' they_humiliated'),(' humiliavi',' I_humbled'),
@@ -2947,7 +2948,7 @@ LATIN_WORD_MAP = (
                         (' incipiam',' I_will_begin'), ('Incipit','It_begins'),
                 (' inclinate',' incline/lean'),('Inclinavit','He_leaned'),(' inclinavit',' he_leaned'), ('Inclina','Lean'),(' inclina',' incline/lean'),
                         ('inclinentur','they_are_inclined/leaing'),
-                    (' inclyti',' famous'),
+                    (' inclytas',' famous'),(' inclyti',' famous'),
                 ('Incola','Inhabitant'),
                 ('increpatione','rebuke'),('increpationibus','reprimands'),
             (' inde ',' hence '),
