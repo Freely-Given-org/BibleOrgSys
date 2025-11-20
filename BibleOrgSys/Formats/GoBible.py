@@ -366,8 +366,8 @@ class GoBible( Bible ):
             self.bookList = []
             for n in range( numBooks ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Got '{self.bookNames[n]}' and '{self.filenameBases[n]}'" )
-                BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.bookNames[n] )
-                BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( self.filenameBases[n] )
+                BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( self.bookNames[n] )
+                BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( self.filenameBases[n] )
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{n+1}/{numBooks}: Found {BBB1} and {BBB2}" )
                 if BBB1 and (BBB2==BBB1 or BBB2 is None): BBB = BBB1
                 elif BBB2 and BBB1 is None: BBB = BBB2
@@ -764,7 +764,8 @@ def fullDemo() -> None:
 # end of GoBible.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up

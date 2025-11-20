@@ -1,0 +1,16 @@
+[package]
+name = "bible_organisational_system"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "bible_organisational_system"
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.27.1", features = ["extension-module", "abi3-py38"] }
+
+#[dependencies.pyo3]
+#pyo3 = { version = "0.27.1", features = ["extension-module", "abi3-py38"] }
+#optional = true
+

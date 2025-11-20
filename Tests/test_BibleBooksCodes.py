@@ -428,12 +428,12 @@ class BibleBooksCodesTests( unittest.TestCase ):
     # end of test_2215_getBBBFromUnboundBibleCode
 
     def test_2220_getBBBFromText( self ):
-        """ Test the getBBBFromText function. """
-        self.assertEqual( self.bbc.getBBBFromText('Gen'), 'GEN' )
-        self.assertEqual( self.bbc.getBBBFromText('1Co'), 'CO1' )
-        self.assertEqual( self.bbc.getBBBFromText('Rev'), 'REV' )
+        """ Test the getBBBFromEnglishText function. """
+        self.assertEqual( self.bbc.getBBBFromEnglishText('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromEnglishText('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromEnglishText('Rev'), 'REV' )
         for badCode in ('XYZ','Abc',':)','WXYZ',):
-            self.assertEqual( self.bbc.getBBBFromText( badCode ), None )
+            self.assertEqual( self.bbc.getBBBFromEnglishText( badCode ), None )
     # end of test_2220_getBBBFromText
 
     def test_300_getExpectedChaptersList( self ):
@@ -674,7 +674,8 @@ def fullDemo() -> None:
 # end of fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up

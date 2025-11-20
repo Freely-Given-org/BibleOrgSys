@@ -92,6 +92,7 @@ CHANGELOG:
     2023-10-11 Raised XMLError on XML errors (rather than halt)
     2024-06-14 Print more info for failed pickles
     2025-05-31 Add useful rreplace function
+    2025-11-19 Add mission critical flag to global parameters
 """
 from gettext import gettext as _
 import sys
@@ -116,10 +117,10 @@ if __name__ == '__main__':
         sys.path.insert( 0, aboveFolderpath )
 
 
-LAST_MODIFIED_DATE = '2025-05-31' # by RJH
+LAST_MODIFIED_DATE = '2025-11-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.93'
+PROGRAM_VERSION = '0.94'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -140,7 +141,7 @@ PICKLED_BIBLE_VERSION = '1' # Must be incremented if Bible internals get changed
 programStartTime = datetime.now()
 commandLineArguments = Namespace()
 
-strictCheckingFlag = debugFlag = False
+strictCheckingFlag = debugFlag = missionCriticalFlag = False
 prependBOMFlag = True
 maxProcesses = 1
 alreadyMultiprocessing = False # Not used in this module, but set to prevent multiple levels of multiprocessing (illegal)
@@ -1512,7 +1513,7 @@ def setDebugFlag( newValue=True ) -> None:
     """
     global debugFlag
     debugFlag = newValue
-    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  debugFlag =', debugFlag )
+    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {debugFlag=}' )
 # end of BibleOrgSysGlobals.setDebugFlag
 
 
@@ -1522,7 +1523,17 @@ def setStrictCheckingFlag( newValue=True ):
     """
     global strictCheckingFlag
     strictCheckingFlag = newValue
-    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  strictCheckingFlag =', strictCheckingFlag )
+    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {strictCheckingFlag=}' )
+# end of BibleOrgSysGlobals.setStrictCheckingFlag
+
+
+def setMissionCriticalFlag( newValue=True ):
+    """
+    See the strict checking flag.
+    """
+    global missionCriticalFlag
+    missionCriticalFlag = newValue
+    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {missionCriticalFlag=}')
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
@@ -1584,8 +1595,11 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     EWgroup.add_argument( '-e', '--errors', action='store_true', dest='errors', default=False, help="log errors to console" )
     EWgroup.add_argument( '-w', '--warnings', action='store_true', dest='warnings', default=False, help="log warnings and errors to console" )
     verbosityGroup.add_argument( '-d', '--debug', action='store_true', dest='debug', default=False, help="output even more information for the programmer/debugger" )
-    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that's the digit one)" )
-    parserObject.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
+    parserObject.add_argument( '-1', '--single', action='store_true', dest='single', default=False, help="don't use multiprocessing (that’s the digit one)" )
+    continuationGroup = parserObject.add_argument_group( 'Continuation Group', 'Program continuation controls' )
+    maincontinuationGroup = continuationGroup.add_mutually_exclusive_group()
+    maincontinuationGroup.add_argument( '-c', '--strict', action='store_true', dest='strict', default=False, help="perform very strict checking of all input" )
+    maincontinuationGroup.add_argument( '-m', '--mission-critical', action='store_true', dest='missionCritical', default=False, help="try to keep going despite any formatting or other errors" )
     if exportAvailable:
         parserObject.add_argument('-x', '--export', action='store_true', dest='export', default=False, help="export the data file(s)")
     commandLineArguments = parserObject.parse_args()
@@ -1600,6 +1614,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ) -> None:
     elif commandLineArguments.errors: addConsoleLogging( logging.ERROR )
     else: addConsoleLogging( logging.CRITICAL ) # default
     if commandLineArguments.strict: setStrictCheckingFlag()
+    if commandLineArguments.missionCritical: setMissionCriticalFlag()
 
     # Determine multiprocessing strategy
     global maxProcesses
@@ -1776,7 +1791,8 @@ def fullDemo() -> None:
 # end of BibleOrgSysGlobals.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

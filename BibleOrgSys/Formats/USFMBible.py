@@ -58,8 +58,8 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'ESFM', 'HTM','HTML',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'ESFM', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
@@ -107,10 +107,10 @@ def USFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
             #somethingUpper = something.upper()
             #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             #ignore = False
-            #for ending in filenameEndingsToIgnore:
+            #for ending in FILENAME_ENDINGS_TO_IGNORE:
                 #if somethingUpper.endswith( ending): ignore=True; break
             #if ignore: continue
-            #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
+            #if somethingUpperExt[1:] in EXTENSION_TO_IGNORE: continue # Compare without the first dot
             #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 #firstLine = BibleOrgSysGlobals.peekIntoFile( something, givenFolderName )
                 ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'U1', repr(firstLine) )
@@ -176,10 +176,10 @@ def USFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
                     #somethingUpper = something.upper()
                     #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     #ignore = False
-                    #for ending in filenameEndingsToIgnore:
+                    #for ending in FILENAME_ENDINGS_TO_IGNORE:
                         #if somethingUpper.endswith( ending): ignore=True; break
                     #if ignore: continue
-                    #if somethingUpperExt[1:] in extensionsToIgnore: continue # Compare without the first dot
+                    #if somethingUpperExt[1:] in EXTENSION_TO_IGNORE: continue # Compare without the first dot
                     #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                         #firstLine = BibleOrgSysGlobals.peekIntoFile( something, tryFolderName )
                         ##dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'U2', repr(firstLine) )

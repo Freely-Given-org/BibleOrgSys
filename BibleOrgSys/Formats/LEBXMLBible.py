@@ -51,10 +51,10 @@ from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2025-05-24' # by RJH
+LAST_MODIFIED_DATE = '2025-09-29' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.25'
+PROGRAM_VERSION = '0.26'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -644,7 +644,7 @@ class LEBXMLBible( Bible ):
 
         # Check for an empty paragraph (which we implement as USFM /b)
         if not element.text and len(element) == 0: # No text and no subelements
-            self.addLine( 'b', None, thisBook )
+            self.addLine( 'b', '', thisBook )
             if element.tail:
                 tail = clean( element.tail, loadErrors, location )
                 if tail.strip(): print( f"{tail=}"); halt

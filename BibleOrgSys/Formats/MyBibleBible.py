@@ -269,7 +269,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             for stuff in FILENAME_PARTS_TO_REJECT:
                 if stuff in somethingUpper: ignore=True; break
             if ignore: continue
-            #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            #if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
             if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
 
@@ -311,7 +311,7 @@ def MyBibleBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
                     for stuff in FILENAME_PARTS_TO_REJECT:
                         if stuff in somethingUpper: ignore=True; break
                     if ignore: continue
-                    #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    #if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                     if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder

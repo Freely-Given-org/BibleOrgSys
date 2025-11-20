@@ -6,7 +6,7 @@
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2022 Robert Hunt
+# Copyright (C) 2010-2025 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -67,10 +67,12 @@ BibleVersificationSystem class:
 
 CHANGELOG:
     2024-09-20 Made BibleVersificationSystem iterable
+    2025-08-29 Major change to use Copenhagen JSON versification files
 """
 from gettext import gettext as _
 import os
 import logging
+import json
 
 if __name__ == '__main__':
     import sys
@@ -82,14 +84,13 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2024-09-30' # by RJH
+LAST_MODIFIED_DATE = '2025-08-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleVersificationSystems"
 PROGRAM_NAME = "Bible Versification Systems handler"
-PROGRAM_VERSION = '0.62'
+PROGRAM_VERSION = '0.63'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
-
 
 
 
@@ -117,46 +118,61 @@ class BibleVersificationSystems:
         """
         if not self.__DataDict: # Don't do this unnecessarily
             if XMLFolder is None:
-                # See if we can load from the pickle file (faster than loading from the XML)
-                standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems.xml' )
-                standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems_Tables.pickle' )
-                try:
-                    pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
-                                and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
-                except FileNotFoundError as e:
-                    pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
-                # if os.access( standardPickleFilepath, os.R_OK ) \
-                # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
-                # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
-                if pickleIsNewer:
-                    import pickle
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
-                    with open( standardPickleFilepath, 'rb') as pickleFile:
-                        self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-                    return self # So this command can be chained after the object creation
-                elif DEBUGGING_THIS_MODULE:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystems pickle file can't be loaded!" )
-                standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems_Tables.json' )
-                if os.access( standardJsonFilepath, os.R_OK ) \
-                and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
-                and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
-                    import json
-                    vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
-                    with open( standardJsonFilepath, 'rb') as JsonFile:
-                        self.__DataDict = json.load( JsonFile )
-                    # # NOTE: We have to convert str referenceNumber keys back to ints
-                    # self.__DataDict['referenceNumberDict'] = { int(key):value \
-                    #             for key,value in self.__DataDict['referenceNumberDict'].items() }
-                    return self # So this command can be chained after the object creation
-                elif DEBUGGING_THIS_MODULE:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystems JSON file can't be loaded!" )
-            # else: # We have to load the XML (much slower)
-            from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
-            if XMLFolder is not None:
-                logging.warning( _("Bible versification systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
-            bvsc = BibleVersificationSystemsConverter( XMLFolder )
-            bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
-            self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
+                if 0: # New system
+                    # Load our JSON versification files
+                    for someFilepath in BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'VersificationSystems/' ).iterdir():
+                        if someFilepath.suffix == '.json':
+                            filenameBits  = someFilepath.stem.split( '_' )
+                            if filenameBits[0] == 'BibleVersificationSystem':
+                                versificationName = filenameBits[1]
+                                print( f"Loading {versificationName=}…")
+                                with open( someFilepath, 'rt', encoding='utf-8' ) as JsonFile:
+                                    versificationData = json.load( JsonFile )
+                                    # print( f"{versificationName} {versificationData=}" )
+                                if self.__DataDict is None: self.__DataDict = {}
+                                self.__DataDict[versificationName] = versificationData
+    
+                if not self.__DataDict:
+                    # See if we can load from the pickle file (faster than loading from the XML)
+                    standardXMLFileOrFilepath = BibleOrgSysGlobals.BOS_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems.xml' )
+                    standardPickleFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems_Tables.pickle' )
+                    try:
+                        pickleIsNewer = os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                                    and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime
+                    except FileNotFoundError as e:
+                        pickleIsNewer = 'xml' in str(e) # Couldn't find xml file -- these aren't included in PyPI package
+                    # if os.access( standardPickleFilepath, os.R_OK ) \
+                    # and os.stat(standardPickleFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                    # and os.stat(standardPickleFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                    if pickleIsNewer:
+                        import pickle
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading pickle file {standardPickleFilepath}…" )
+                        with open( standardPickleFilepath, 'rb') as pickleFile:
+                            self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                        return self # So this command can be chained after the object creation
+                    elif DEBUGGING_THIS_MODULE:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystems pickle file can't be loaded!" )
+                    standardJsonFilepath = BibleOrgSysGlobals.BOS_DERIVED_DATAFILES_FOLDERPATH.joinpath( 'BibleVersificationSystems_Tables.json' )
+                    if os.access( standardJsonFilepath, os.R_OK ) \
+                    and os.stat(standardJsonFilepath).st_mtime > os.stat(standardXMLFileOrFilepath).st_mtime \
+                    and os.stat(standardJsonFilepath).st_ctime > os.stat(standardXMLFileOrFilepath).st_ctime: # There's a newer pickle file
+                        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"Loading json file {standardJsonFilepath}…" )
+                        with open( standardJsonFilepath, 'rb') as JsonFile:
+                            self.__DataDict = json.load( JsonFile )
+                        # # NOTE: We have to convert str referenceNumber keys back to ints
+                        # self.__DataDict['referenceNumberDict'] = { int(key):value \
+                        #             for key,value in self.__DataDict['referenceNumberDict'].items() }
+                        return self # So this command can be chained after the object creation
+                    elif DEBUGGING_THIS_MODULE:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BibleVersificationSystems JSON file can't be loaded!" )
+
+                if not self.__DataDict: # We have to load the XML (much slower)
+                    from BibleOrgSys.Reference.Converters.BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
+                    if XMLFolder is not None:
+                        logging.warning( _("Bible versification systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFolder) )
+                    bvsc = BibleVersificationSystemsConverter( XMLFolder )
+                    bvsc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
+                    self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
         #     # See if we can load from the pickle file (faster than loading from the XML)
         #     picklesGood = False
@@ -1036,14 +1052,14 @@ def fullDemo() -> None:
             testSystem = bvss.getVersificationSystem( systemName )
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
             bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
-    #bvss.compareVersificationSystems( "Septuagint", "SeptuagintBE" )
-    #bvss.compareVersificationSystems( "SeptuagintBE", "Septuagint" )
-    #bvss.compareVersificationSystems( "NRSV", "NRS89" )
-    #bvss.compareVersificationSystems( "NRS89", "NRSV" )
-    bvss.compareVersificationSystems( "Vulgate", ["Vulgate1","Vulgate2"] )
-    #bvss.compareVersificationSystems( "Vulgate1", ["Vulgate","Vulgate2"] )
-    #bvss.compareVersificationSystems( "Vulgate2", ["Vulgate","Vulgate1"] )
-    #bvss.compareVersificationSystems( "NRSV" )
+        #bvss.compareVersificationSystems( "Septuagint", "SeptuagintBE" )
+        #bvss.compareVersificationSystems( "SeptuagintBE", "Septuagint" )
+        #bvss.compareVersificationSystems( "NRSV", "NRS89" )
+        #bvss.compareVersificationSystems( "NRS89", "NRSV" )
+        bvss.compareVersificationSystems( "Vulgate", ["Vulgate1","Vulgate2"] )
+        #bvss.compareVersificationSystems( "Vulgate1", ["Vulgate","Vulgate2"] )
+        #bvss.compareVersificationSystems( "Vulgate2", ["Vulgate","Vulgate1"] )
+        #bvss.compareVersificationSystems( "NRSV" )
 
     # Demo a BibleVersificationSystem object -- this is the one most likely to be wanted by a user
     bvs = BibleVersificationSystem( 'KJV' )
@@ -1068,7 +1084,8 @@ def fullDemo() -> None:
 # end of BibleVersificationSystem.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

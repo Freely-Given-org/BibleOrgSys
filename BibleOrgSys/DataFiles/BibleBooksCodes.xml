@@ -42,6 +42,12 @@ and then these optional fields (optional because not all systems handle the less
     The 2-4 character Bible abbreviation used for the Robinson-Pierpont Byzantine Greek text
     Alternative abbreviations (upper case, separated by commas, optional)
         These abbreviations might typically be used in VPL (verse per line) Bibles
+          but they're also likely to be used in section references and cross-references,
+          basically any name or shortened name which might be used to name an English book
+          (and mispellings may even be included)
+        These also automatically have spaces removed
+          and get shortened versions during processing
+          (but not shortened so far as to be ambiguous, e.g., GEN and GAL could be shortened to GE and GA but not G)
     Possible alternative book codes (separated by commas)
         This is not precise but roughly shows which book this book might be confused with.
         It is used for automatic mapping of book codes (also using the expected number of chapters)
@@ -140,8 +146,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.91</version>
-      <date>2025-05-26</date>
+      <version>0.92</version>
+      <date>2025-11-01</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">https://ubsicap.github.io/usfm/identification/books.html</identifier>
@@ -184,7 +190,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Gen</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Gen</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>GEN</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>GN,GNS,1MOS,1MO,1MS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>GENE,GNSS,1 MSS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Pentateuch</typicalSubsection>
   </BibleBookCodes>
@@ -211,7 +217,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Exo</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Exo</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EXO</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>EXD,2MOS,2MO,2MS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>EXDS,2 MSS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Pentateuch</typicalSubsection>
   </BibleBookCodes>
@@ -238,7 +244,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Lev</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Lev</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>LEV</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>LV,3MOS,3MO,3MS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>LVT,3 MSS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Pentateuch</typicalSubsection>
   </BibleBookCodes>
@@ -265,7 +271,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Num</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Num</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NUM</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>NM,NMB,4MOS,4MO,4MS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>NMBRS,4 MSS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Pentateuch</typicalSubsection>
   </BibleBookCodes>
@@ -292,7 +298,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Deu</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Deu</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>DEU</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>5MOS,5MO,5MS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>DTRN,5 MSS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Pentateuch</typicalSubsection>
   </BibleBookCodes>
@@ -347,7 +353,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Jdg</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jug</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JDG</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>JG</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>JG,JDGS</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>JGB</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -375,7 +381,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Rut</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Rut</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>RUT</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>RT</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>RTH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -402,6 +408,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>1Sa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Sm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1SA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>1 SML,1 KNGDMS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -428,6 +435,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>2Sa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Sm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2SA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>2 SML,2 KNGDMS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -454,7 +462,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>1Ki</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Kg</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1KI</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>1K</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>1 KINGS,1 KING,1 KIN,1 KNGS,3 KNGDMS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -481,7 +489,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>2Ki</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Kg</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2KI</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>2K</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>2 KINGS,2 KING,2 KIN,2 KNGS,4 KNGDMS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -508,6 +516,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>1Ch</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>1Ch</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1CH</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>1 CHRN</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -534,6 +543,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>2Ch</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>2Ch</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2CH</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>2 CHRN</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
@@ -561,6 +571,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ezr</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EZR</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>EZRA</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -588,7 +599,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Neh</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Neh</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NEH</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>NH,NHM</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>NHMH</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -616,6 +627,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Est</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Est</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EST</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ESTHR,ESTER,ESTR</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>ESG,ESA,ESC</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -669,7 +681,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ps</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PSA</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>PSLM</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>PSAL,PSALM,PSLMS</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>PB1,PB2,PB3,PB4,PB5</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Poetry-Wisdom</typicalSubsection>
@@ -698,7 +710,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Pro</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Pro</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PRO</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>PRV</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>PRVB</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Poetry-Wisdom</typicalSubsection>
   </BibleBookCodes>
@@ -726,6 +738,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Ecc</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Ecc</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ECC</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ECCLE,ECCLS,ECCLES,ECCLST,ECCLESS,ECCLESI,ECCLSTS</possibleAlternativeAbbreviations> <!--Manually give ECC priority over Ecclesiasticus-->
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Poetry-Wisdom</typicalSubsection>
   </BibleBookCodes>
@@ -752,7 +765,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Sos</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Son</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>SOL</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>SL,SS,CANT,CAN,</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>SL,SS,CANT,CNT</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Poetry-Wisdom</typicalSubsection>
   </BibleBookCodes>
@@ -805,7 +818,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Jer</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JER</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>JR,JRM</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>JRMH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Major Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -832,7 +845,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Lam</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Lam</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>LAM</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>LM</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>LMTTS</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Poetry-Wisdom</typicalSubsection>
   </BibleBookCodes>
@@ -859,7 +872,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Eze</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Eze</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EZE</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>EZ</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>EZKL</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Major Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -995,7 +1008,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Oba</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Oba</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>OBA</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>OBD</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>OBDH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1049,7 +1062,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Mic</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mic</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MIC</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>MC,MCH</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>MCH,MICH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1076,6 +1089,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Nah</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Nah</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>NAH</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>NHM</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1102,7 +1116,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Hab</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Hab</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HAB</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>HBK</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>HBKK</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1129,7 +1143,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Zep</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Zep</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ZEP</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>ZP,ZPH</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>ZPH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1156,7 +1170,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Hag</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Hag</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HAG</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>HG,HGG</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>HGG</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1183,7 +1197,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Zec</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Zec</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ZEC</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>ZC</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>ZCRH</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1210,7 +1224,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Mal</NETBibleAbbreviation>
     <DrupalBibleAbbreviation>Mal</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MAL</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>ML</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>MLC</possibleAlternativeAbbreviations>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Minor Prophets</typicalSubsection>
   </BibleBookCodes>
@@ -1240,7 +1254,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Mat</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>MAT</BibleWorksAbbreviation>
     <ByzantineAbbreviation>MT</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>MTT</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>MTT,MATHEW</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Gospels</typicalSubsection>
   </BibleBookCodes>
@@ -1378,7 +1392,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Rom</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>ROM</BibleWorksAbbreviation>
     <ByzantineAbbreviation>RO</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>RM,RMN</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>RMNS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1460,7 +1474,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Gal</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>GAL</BibleWorksAbbreviation>
     <ByzantineAbbreviation>GA</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>GL</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>GL,GLT</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1488,7 +1502,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Eph</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>EPH</BibleWorksAbbreviation>
     <ByzantineAbbreviation>EPH</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>EP</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>EPHS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1516,7 +1530,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Phl</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PHI</BibleWorksAbbreviation>
     <ByzantineAbbreviation>PHP</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>PH,PP</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>PPS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1544,7 +1558,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Col</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>COL</BibleWorksAbbreviation>
     <ByzantineAbbreviation>COL</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>CL,CLS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>CLS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1572,6 +1586,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>1Ts</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1TH</BibleWorksAbbreviation>
     <ByzantineAbbreviation>1TH</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>1 THSS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1599,6 +1614,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>2Ts</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2TH</BibleWorksAbbreviation>
     <ByzantineAbbreviation>2TH</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>2 THSS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1626,6 +1642,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>1Tm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1TI</BibleWorksAbbreviation>
     <ByzantineAbbreviation>1TI</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>1 TMT</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1653,6 +1670,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>2Tm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2TI</BibleWorksAbbreviation>
     <ByzantineAbbreviation>2TI</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>2 TMT</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1680,7 +1698,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Tit</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>TIT</BibleWorksAbbreviation>
     <ByzantineAbbreviation>TIT</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>TI</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>TTS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1708,6 +1726,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Phm</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>PHM</BibleWorksAbbreviation>
     <ByzantineAbbreviation>PHM</ByzantineAbbreviation>
+    <possibleAlternativeAbbreviations>PHLMN</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Paul's Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1735,7 +1754,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Heb</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>HEB</BibleWorksAbbreviation>
     <ByzantineAbbreviation>HEB</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>HB</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>HBRWS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1763,7 +1782,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Jam</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>JAM</BibleWorksAbbreviation>
     <ByzantineAbbreviation>JAS</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>JM,JMS</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>JMS</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1791,7 +1810,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>1Pe</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1PE</BibleWorksAbbreviation>
     <ByzantineAbbreviation>1PE</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>1P</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>1 PTR</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1819,7 +1838,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>2Pe</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2PE</BibleWorksAbbreviation>
     <ByzantineAbbreviation>2PE</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>2P</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>2 PTR</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1847,7 +1866,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>1Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>1JO</BibleWorksAbbreviation>
     <ByzantineAbbreviation>1JO</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>1J</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>1 JHN</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1875,7 +1894,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>2Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>2JO</BibleWorksAbbreviation>
     <ByzantineAbbreviation>2JO</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>2J</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>2 JHN</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1903,7 +1922,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>3Jn</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>3JO</BibleWorksAbbreviation>
     <ByzantineAbbreviation>3JO</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>3J</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>3 JHN</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>General Letters</typicalSubsection>
   </BibleBookCodes>
@@ -1959,7 +1978,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <DrupalBibleAbbreviation>Rev</DrupalBibleAbbreviation>
     <BibleWorksAbbreviation>REV</BibleWorksAbbreviation>
     <ByzantineAbbreviation>RE</ByzantineAbbreviation>
-    <possibleAlternativeAbbreviations>RV</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>RVL</possibleAlternativeAbbreviations>
     <typicalSection>NT</typicalSection>
     <typicalSubsection>Revelation</typicalSubsection>
   </BibleBookCodes>
@@ -1984,6 +2003,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <BibleditNumber>72</BibleditNumber>
     <LogosNumber>42</LogosNumber>
     <LogosAbbreviation>GkEs</LogosAbbreviation>
+    <possibleAlternativeAbbreviations>ADD ESTHER</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
     <typicalSection>OT</typicalSection>
     <typicalSubsection>Historical</typicalSubsection>
@@ -2008,7 +2028,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSubsection>Historical</typicalSubsection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <originalLanguageCode>hbo, el-x-koine</originalLanguageCode>
+    <originalLanguageCode>hbo,el-x-koine</originalLanguageCode>
     <bookName>אֶסְתֵר</bookName>
     <bookNameEnglishGuide>Combined Hebrew/Greek Esther / Esther (combined)</bookNameEnglishGuide>
     <referenceAbbreviation>ESC</referenceAbbreviation>
@@ -2065,7 +2085,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSubsection>Major Prophets</typicalSubsection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <originalLanguageCode>hbo, el-x-koine</originalLanguageCode>
+    <originalLanguageCode>hbo,el-x-koine</originalLanguageCode>
     <bookName>דָּנִיֵּאל</bookName>
     <bookNameEnglishGuide>Combined Hebrew/Greek Daniel / Daniel (combined)</bookNameEnglishGuide>
     <referenceAbbreviation>DNC</referenceAbbreviation>
@@ -2198,6 +2218,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>44</LogosNumber>
     <LogosAbbreviation>Sir</LogosAbbreviation>
     <BibleWorksAbbreviation>SIR</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>ECCLU,ECCLUS,ECCLSTU,ECCLSTC,ECCLSTCU,ECCLSTCS,ECCLSTCUS</possibleAlternativeAbbreviations> <!--Mustn't be confused with Ecclesiastes-->
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2233,7 +2254,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>40</LogosNumber>
     <LogosAbbreviation>Tob</LogosAbbreviation>
     <BibleWorksAbbreviation>TOB</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>TB,TBT</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>TBT,TOBI</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>TBS</possibleAlternativeBooks>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
@@ -2258,6 +2279,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>43</LogosNumber>
     <LogosAbbreviation>Wis</LogosAbbreviation>
     <BibleWorksAbbreviation>WIS</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>WISD,WISDO,WISDM</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2336,7 +2358,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>56</LogosNumber>
     <LogosAbbreviation>2Esd</LogosAbbreviation>
     <BibleWorksAbbreviation>4ES</BibleWorksAbbreviation>
-    <possibleAlternativeAbbreviations>4ESDR,4ESD,3ESDR,3ESD,2ESDR,2ESD</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>4ESDR,3ESDR,2ESDR</possibleAlternativeAbbreviations>
     <possibleAlternativeBooks>GES</possibleAlternativeBooks>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
@@ -2371,7 +2393,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USFMAbbreviation>5Ez</USFMAbbreviation>
     <USFMNumber>A5</USFMNumber>
     <LogosNumber>200</LogosNumber>
-    <possibleAlternativeAbbreviations>5ESDR,5ESD,3ESDR,3ESD</possibleAlternativeAbbreviations>
+    <possibleAlternativeAbbreviations>5ESDR,3ESDR</possibleAlternativeAbbreviations>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2610,6 +2632,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>50</LogosNumber>
     <LogosAbbreviation>1Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>1MA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>1 MCB</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2633,6 +2656,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>51</LogosNumber>
     <LogosAbbreviation>2Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>2MA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>2 MCB</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2657,6 +2681,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>55</LogosNumber>
     <LogosAbbreviation>3Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>3MA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>3 MCB</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2681,6 +2706,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <LogosNumber>57</LogosNumber>
     <LogosAbbreviation>4Mac</LogosAbbreviation>
     <BibleWorksAbbreviation>4MA</BibleWorksAbbreviation>
+    <possibleAlternativeAbbreviations>4 MCB</possibleAlternativeAbbreviations>
     <typicalSection>DC</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -2693,6 +2719,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <shortAbbreviation>5Ma</shortAbbreviation>
     <OSISAbbreviation>5Macc</OSISAbbreviation>
     <SwordAbbreviation>5Macc</SwordAbbreviation>
+    <possibleAlternativeAbbreviations>5 MCB</possibleAlternativeAbbreviations>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
 
@@ -4294,10 +4321,11 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <BibleBookCodes>
     <originalLanguageCode>(None)</originalLanguageCode>
     <bookName>(Strong's Database)</bookName>
-    <bookNameEnglishGuide>Strong's Database</bookNameEnglishGuide>
+    <bookNameEnglishGuide>Strongs Database / Strong's Database</bookNameEnglishGuide>
     <referenceAbbreviation>STR</referenceAbbreviation>
     <referenceNumber>888</referenceNumber>
     <sequenceNumber>988</sequenceNumber>
+    <possibleAlternativeAbbreviations>STRNGS</possibleAlternativeAbbreviations>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>

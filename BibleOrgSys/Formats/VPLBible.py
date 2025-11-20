@@ -101,6 +101,7 @@ CHANGELOG:
                 TODO: It hasn't been fully tested, and filecheck has not yet been updated to reflect this
     2023-02-28 Added vplType 5 file handling
     2025-06-29 Added vplType 6 file handing for SLT
+    2025-09-26 Improved vplType 6 file handling for BLB and MSB
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -120,10 +121,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2025-06-30' # by RJH
+LAST_MODIFIED_DATE = '2025-10-30' # by RJH
 SHORT_PROGRAM_NAME = "VPLBible"
 PROGRAM_NAME = "VPL Bible format handler"
-PROGRAM_VERSION = '0.42'
+PROGRAM_VERSION = '0.44'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -131,8 +132,8 @@ DEBUGGING_THIS_MODULE = False
 
 BOS66 = BOS81 = BOSx = None
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA', '.PICKLE') # Must be UPPERCASE
+EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX',
                       'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', 'SAV', 'SAVE', ) # Must be UPPERCASE
 
 
@@ -174,10 +175,10 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if somethingUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
 
     # See if there's an VPLBible project here in this given folder
@@ -191,7 +192,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=4 )
                 dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Check 1: {firstLines=}" )
                 if firstLines is None: continue # seems we couldn't decode the file
-                if firstLines and firstLines[0][0]==BibleOrgSysGlobals.BOM:
+                if firstLines and firstLines[0] and firstLines[0][0]==BibleOrgSysGlobals.BOM:
                     logging.info( "VPLBibleFileCheck: Detected Unicode Byte Order Marker (BOM) in {}".format( thisFilename ) )
                     firstLines = firstLines[0][1:] # Remove the Unicode Byte Order Marker (BOM)
                 for line in firstLines:
@@ -245,10 +246,10 @@ def VPLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                     somethingUpper = something.upper()
                     somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     ignore = False
-                    for ending in filenameEndingsToIgnore:
+                    for ending in FILENAME_ENDINGS_TO_IGNORE:
                         if somethingUpper.endswith( ending): ignore=True; break
                     if ignore: continue
-                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
 
@@ -305,7 +306,7 @@ class VPLBible( Bible ):
         """
         Constructor: just sets up the Bible object.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"VPLBible.__init__( '{sourceFileOrFolder}', gN='{givenName}', gA='{givenAbbreviation}', e='{encoding}' )" )
         # self.doExtraChecking = DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag
         assert givenName != 'utf-8'
         assert givenAbbreviation != 'utf-8'
@@ -325,21 +326,46 @@ class VPLBible( Bible ):
             self.sourceFilename = self.sourceFilepath.name
         elif os.path.isdir( sourceFileOrFolder ):
             self.sourceFolder = sourceFileOrFolder
+            self.sourceFilepath = self.sourceFilename = None
             # NOTE: The following code assumes one file for the entire work
             #           but load() can also handle one file per book
-            for self.sourceFilename in (f'{self.givenName}.vpl', f'{self.givenName}.VPL',
-                                        f'{self.givenName}.txt', f'{self.givenName}.TXT',
-                                        self.givenName,
-                                        f'{self.abbreviation}.vpl', f'{self.abbreviation}.VPL',
-                                        f'{self.abbreviation}.txt', f'{self.abbreviation}.TXT',
-                                        self.abbreviation,):
-                self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
-                # Do a preliminary check on the readability of our file
-                if os.access( self.sourceFilepath, os.R_OK ): # great -- found it
-                    break
-            else:
-                logging.critical( _("VPLBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
-                self.sourceFilename = self.sourceFilepath = None
+
+            # First check if there's only one file in the entire folder
+            for someName in os.listdir( self.sourceFolder ):
+                bad = False
+                for someEnding in FILENAME_ENDINGS_TO_IGNORE:
+                    if someName.upper().endswith( someEnding ):
+                        bad = True
+                        break
+                if bad: continue
+                for someExtension in EXTENSION_TO_IGNORE:
+                    if someName.upper().endswith( f'.{someExtension}' ):
+                        bad = True
+                        break
+                if bad: continue
+                somePath = os.path.join( self.sourceFolder, someName )
+                if os.path.isfile( somePath ):
+                    if self.sourceFilepath is None:
+                        self.sourceFilepath = somePath
+                        self.sourceFilename = someName
+                    else: # there's more than one file
+                        self.sourceFilepath = None
+                        break
+        
+            if not self.sourceFilepath: # Presumably there was more than one file in the folder
+                for self.sourceFilename in (f'{self.givenName}.vpl', f'{self.givenName}.VPL',
+                                            f'{self.givenName}.txt', f'{self.givenName}.TXT',
+                                            self.givenName,
+                                            f'{self.abbreviation}.vpl', f'{self.abbreviation}.VPL',
+                                            f'{self.abbreviation}.txt', f'{self.abbreviation}.TXT',
+                                            self.abbreviation,):
+                    self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
+                    # Do a preliminary check on the readability of our file
+                    if os.path.isfile( self.sourceFilepath ): # We would expect any/all of these to be files, not folders, but double-check
+                        break
+                else:
+                    logging.critical( _("VPLBible: Unable to discover a single filename in {}".format( self.sourceFolder )) )
+                    self.sourceFilename = self.sourceFilepath = None
 
         if self.sourceFilepath: # Do a preliminary check on the readability of our file
             if not os.access( self.sourceFilepath, os.R_OK ):
@@ -516,7 +542,7 @@ class VPLBible( Bible ):
                             BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                             if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                            if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookCodeText )  # Try to guess
+                            if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookCodeText )  # Try to guess
                         if not BBB:
                             logging.critical( "VPL Bible: Unable to determine book code from text {!r} after {!r}={}".format( bookCodeText, lastBookCodeText, lastBBB ) )
                             halt
@@ -677,7 +703,7 @@ class VPLBible( Bible ):
                         BBB = BOS66.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB: BBB = BOS81.getBBBFromText( bookCodeText )  # Try to guess
                         if not BBB: BBB = BOSx.getBBBFromText( bookCodeText )  # Try to guess
-                        if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookCodeText )  # Try to guess
+                        if not BBB: BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookCodeText )  # Try to guess
                         if lastBBB and not BBB:
                             logging.critical( f"VPL5 Bible: Unable to determine book code from text '{bookCodeText}' after '{lastBookCodeText}' -> '{lastBBB}'" )
                         # if BBB:
@@ -713,7 +739,7 @@ class VPLBible( Bible ):
 
 
                 elif vplType == 6:
-                    # print( f"{lineNumber:,}: {blankLineCount=} {lastBBB} {lastChapterNumber}:{lastVerseNumber}\n  {line=}")
+                    # print( f"{lineNumber:,}: {line.count('\t')=} {blankLineCount=} {lastBBB} {lastChapterNumber=} {lastVerseNumber=}\n  {line=}")
                     if line.count( '\t' ) != 1:
                         if lineNumber == 1: # This is probably the work abbreviation
                             blankLineCount = 0
@@ -724,11 +750,17 @@ class VPLBible( Bible ):
                         else: dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Ignoring {line=}" )
                     else:
                         ref, text = line.split( '\t' )
+                        if ':' not in ref or len(ref) > 30:
+                            if chapterNumber==0 and verseNumber==0:
+                                dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Ignoring supposedly bad {line=}" )
+                                continue
+                            else:
+                                raise ValueError( f"Ignoring unexpected{line=} from {filepath}" )
                         refB, refCV = ref.rsplit( ' ', 1 )
                         newBBB = BOS66.getBBBFromText( refB )  # Try to guess
                         if not newBBB: newBBB = BOS81.getBBBFromText( refB )  # Try to guess
                         if not newBBB: newBBB = BOSx.getBBBFromText( refB )  # Try to guess
-                        if not newBBB: newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( refB )  # Try to guess
+                        if not newBBB: newBBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( refB )  # Try to guess
                         if not newBBB:
                             logging.critical( f"VPL6 Bible: Unable to determine book code from text '{refB}' after '{lastBBB}'" )
                             halt
@@ -878,7 +910,7 @@ class VPLBible( Bible ):
             # print( f"  {filename=}" )
             if filename.endswith('.txt') or filename.endswith('.TXT') or filename.endswith('.vpl') or filename.endswith('.VPL'):
                 filenameStart = filename[:-4]
-                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( filenameStart )
+                BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( filenameStart )
                 # print( f"  Got {BBB=} from {filenameStart=}")
                 self._loadFile( os.path.join( self.sourceFolder, filename ), settingsDict )
 

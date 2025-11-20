@@ -90,7 +90,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
 
 
-LAST_MODIFIED_DATE = '2025-05-22' # by RJH
+LAST_MODIFIED_DATE = '2025-09-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.94'
@@ -1193,7 +1193,7 @@ class InternalBibleBookSectionIndex:
         assert givenBibleEntries, f"{self.workName} {self.BBB} {givenBibleEntries=}"
         self._givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
         #dPrint( 'Info', DEBUGGING_THIS_MODULE, "makeBookSectionIndex-BibleObject", self.BBB, self.BibleObject.getAName(), len(self.BibleObject.books) )
-        assert 'discoveryResults' in self.BibleObject.__dict__
+        assert 'discoveryResults' in self.BibleObject.__dict__, f"No discoveryResults in {self.workName} while trying to makeBookSectionIndex for {self.BBB}"
 
         tempIndexData:dict[tuple[str,str],tuple[str,str,str,str,int,int,str,str,str]] = {}
         errorData = []
@@ -1857,7 +1857,8 @@ def fullDemo() -> None:
 # end of InternalBibleIndexes.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

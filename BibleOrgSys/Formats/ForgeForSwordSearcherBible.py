@@ -82,8 +82,8 @@ DEBUGGING_THIS_MODULE = False
 
 BOS66 = BOS81 = BOSx = None
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+EXTENSION_TO_IGNORE = ('ZIP', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX',
                       'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', 'SAV', 'SAVE', ) # Must be UPPERCASE
 
 
@@ -124,10 +124,10 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if somethingUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
 
     # See if there's an ForgeForSwordSearcherBible project here in this given folder
@@ -180,10 +180,10 @@ def ForgeForSwordSearcherBibleFileCheck( givenFolderName, strictCheck:bool=True,
                     somethingUpper = something.upper()
                     somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     ignore = False
-                    for ending in filenameEndingsToIgnore:
+                    for ending in FILENAME_ENDINGS_TO_IGNORE:
                         if somethingUpper.endswith( ending): ignore=True; break
                     if ignore: continue
-                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
 
@@ -643,7 +643,8 @@ def fullDemo() -> None:
 # end of ForgeForSwordSearcherBible.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up

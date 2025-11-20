@@ -73,8 +73,8 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
@@ -117,10 +117,10 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck:bool=True, autoLoad:bool=Fa
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if somethingUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ff', foundFiles )
 
@@ -164,10 +164,10 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck:bool=True, autoLoad:bool=Fa
                     somethingUpper = something.upper()
                     somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     ignore = False
-                    for ending in filenameEndingsToIgnore:
+                    for ending in FILENAME_ENDINGS_TO_IGNORE:
                         if somethingUpper.endswith( ending): ignore=True; break
                     if ignore: continue
-                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'fsf', foundSubfiles )
@@ -246,10 +246,10 @@ class USFXXMLBible( Bible ):
                 somethingUpper = something.upper()
                 somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                 ignore = False
-                for ending in filenameEndingsToIgnore:
+                for ending in FILENAME_ENDINGS_TO_IGNORE:
                     if somethingUpper.endswith( ending): ignore=True; break
                 if ignore: continue
-                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                     foundFiles.append( something )
             else:
                 logging.error( "Not sure what {!r} is in {}!".format( somepath, self.sourceFolder ) )
@@ -347,10 +347,10 @@ class USFXXMLBible( Bible ):
                     #somethingUpper = something.upper()
                     #somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     #ignore = False
-                    #for ending in filenameEndingsToIgnore:
+                    #for ending in FILENAME_ENDINGS_TO_IGNORE:
                         #if somethingUpper.endswith( ending): ignore=True; break
                     #if ignore: continue
-                    #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    #if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         #foundFiles.append( something )
             #for thisFilename in foundFiles:
                 ## Look for BBB in the ID line (which should be the first line in a USFX file)

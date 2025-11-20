@@ -10701,6 +10701,7 @@ def fullDemo() -> None:
 # end of BibleWriter.fullDemo
 
 if __name__ == '__main__':
+    multiprocessing.set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

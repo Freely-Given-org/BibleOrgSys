@@ -51,9 +51,9 @@ DEBUGGING_THIS_MODULE = False
 
 # All of the following must be all UPPER CASE
 filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
 # NOTE: Extensions ending in ~ are also ignored
-extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
+EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'USFM', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
@@ -93,10 +93,10 @@ class USXFilenames:
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, pFUpperProper, pFUpperExt )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if pFUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     self.fileList.append( possibleFilename )
@@ -298,13 +298,13 @@ class USXFilenames:
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                 ignore = False
-                for ending in filenameEndingsToIgnore:
+                for ending in FILENAME_ENDINGS_TO_IGNORE:
                     if pFUpper.endswith( ending): ignore=True; break
                 if ignore: continue
                 checkString = pFUpperProper[3:] if self.pattern == 'dddBBB' else pFUpperProper
                 # Otherwise 051COL.usx gets confused between 1Co and Col
                 if USFMBookCode.upper() in checkString:
-                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                             firstLines = BibleOrgSysGlobals.peekIntoFile( possibleFilename, self.givenFolderName, numLines=3 )
                             if not firstLines or len(firstLines)<3:
@@ -400,7 +400,8 @@ def fullDemo() -> None:
 # end of fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up

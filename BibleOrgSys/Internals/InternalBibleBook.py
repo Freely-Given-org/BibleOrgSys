@@ -58,6 +58,7 @@ CHANGELOG:
     2024-11-13 Added a warning if text is appended to an existing line with no apparent space between words
     2025-02-25 Don't add 'intro' section if 'iex' occurs under 'c'
     2025-03-04 Insert space if it appears that we might be appending text to the end of a verse number
+    2025-11-19 Give better error info for an invalid chapter number
 """
 from gettext import gettext as _
 import os
@@ -85,7 +86,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2025-03-04' # by RJH
+LAST_MODIFIED_DATE = '2025-11-19' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -3010,7 +3011,12 @@ class InternalBibleBook:
                     vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Unexpected space in USFM chapter number field {!r} after chapter {} of {}").format( chapterText, lastChapterNumber, self.BBB ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} chapter {}".format( self.BBB, chapterText ) )
-                chapterNumber = int( chapterText)
+                try: chapterNumber = int( chapterText )
+                except ValueError:
+                    logging.critical( f"getVersification() found invalid chapter number: {chapterText=} in {self.workName} {self.BBB} " )
+                    if BibleOrgSysGlobals.missionCriticalFlag:
+                        chapterNumber = 1 if chapterNumber==-1 else (chapterNumber+1)
+                    else: halt
                 if chapterNumber != lastChapterNumber+1 \
                 and (lastChapterNumber!=-1 or chapterNumber!=1): # It's usual for chapter 1 to follow the introduction (chapter -1) without any chapter 0
                     versificationErrors.append( _("{} ('{}' after '{}') USFM chapter numbers out of sequence in {} Bible book").format( self.BBB, chapterNumber, lastChapterNumber, self.workName ) )
@@ -5448,7 +5454,8 @@ def fullDemo() -> None:
 # end of InternalBibleBook.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

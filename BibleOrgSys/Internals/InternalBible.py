@@ -1031,7 +1031,7 @@ class InternalBible:
             Return None if unsuccessful.
         """
         if BibleOrgSysGlobals.debugFlag: assert referenceString and isinstance( referenceString, str )
-        result = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( referenceString )
+        result = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -1212,7 +1212,7 @@ class InternalBible:
 
 
     """ The following is disabled until we solve this:
- File "/srv/Documents/FreelyGiven/OpenBibleData/createPages/../../BibleOrgSys/BibleOrgSys/Internals/InternalBible.py", line 1239, in discover
+ File "/srv/FreelyGiven/OpenBibleData/createPages/../../BibleOrgSys/BibleOrgSys/Internals/InternalBible.py", line 1239, in discover
     results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/multiprocessing/pool.py", line 367, in map

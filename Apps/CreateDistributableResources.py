@@ -81,7 +81,7 @@ HAIOLA_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'USFM Bibles/Haiola USFM 
 DOOR43_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Door43CatalogVersions/' )
 OPEN_BIBLE_SOURCE_FOLDERPATH = BIBLES_FOLDERPATH.joinpath( 'Biblica_Open.Bible_Versions/' )
 
-FG_REPOS_FOLDERPATH = Path( '/srv/Documents/FreelyGiven/' )
+FG_REPOS_FOLDERPATH = Path( '/srv/FreelyGiven/' )
 OET_REPO_FOLDERPATH = FG_REPOS_FOLDERPATH.joinpath( 'OpenEnglishTranslation--OET/' )
 
 
@@ -1083,7 +1083,9 @@ def main() -> None:
 # end of CreateDistributableResources.main
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
+    freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )

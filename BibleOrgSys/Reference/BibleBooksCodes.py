@@ -40,6 +40,7 @@ BibleOrgSys uses a three-character book code to identify books.
 
 CHANGELOG:
     2025-03-07 Add hasPsalmTitle function
+    2025-09-18 Allow insertChar in tidyBBB function
 """
 from gettext import gettext as _
 import os
@@ -55,10 +56,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-03-07' # by RJH
+LAST_MODIFIED_DATE = '2025-10-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
-PROGRAM_VERSION = '0.96'
+PROGRAM_VERSION = '0.98'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -143,7 +144,7 @@ class BibleBooksCodes:
                 logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFileOrFilepath) )
             bbcc = BibleBooksCodesConverter()
             bbcc.loadAndValidate( XMLFileOrFilepath ) # Load the XML (if not done already)
-            self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
+            self.__DataDicts = bbcc.importDataToPythonIfNecessary() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
     # end of BibleBooksCodes.loadData
 
@@ -422,9 +423,9 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getBBBFromDrupalBibleCode
 
 
-    def getBBBFromText( self, someText:str ) -> str:
+    def getBBBFromEnglishText( self, someText:str ) -> str:
         """
-        Attempt to return the BBB reference abbreviation string for the given book information (text).
+        Attempt to return the BBB reference abbreviation string for the given book information (English text).
 
         Only works for English.
         TODO: This DEFINITELY NEEDS IMPROVING !!!
@@ -432,50 +433,27 @@ class BibleBooksCodes:
 
         Returns BBB or None.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "BibleBooksCodes.getBBBFromText( {} )".format( someText ) )
+        fnPrint( DEBUGGING_THIS_MODULE, "BibleBooksCodes.getBBBFromEnglishText( {} )".format( someText ) )
         if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             assert someText and isinstance( someText, str )
 
         SomeUppercaseText = someText.upper()
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
-        if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
-            return SomeUppercaseText # it's already a BBB code
-        #if someText.isdigit() and 1 <= int(someText) <= 999:
-            #return self.__DataDicts['referenceNumberDict'][int(someText)]['referenceAbbreviation']
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
-        #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
-        if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
-            return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
-
-        # TODO: We need to find a way to add these into the table
-        if SomeUppercaseText == 'EPJER': return 'LJE' # Fails below because both 'LJE' and 'PJE' are valid BBBs
-        if SomeUppercaseText == 'DEUTERONOMY': return 'DEU' # Fails below because 'EUT' is also a valid BBB
-        if SomeUppercaseText == 'JUDGES': return 'JDG' # Fails below because 'GES' is also a valid BBB
-        if SomeUppercaseText == '1 SAMUEL': return 'SA1' # Fails below because 'SAM' is also a valid BBB
-        if SomeUppercaseText == '2 SAMUEL': return 'SA2' # Fails below because 'SAM' is also a valid BBB
-        if SomeUppercaseText == '1 CHRONICLES': return 'CH1' # Fails below because 'CHR' is also a valid BBB
-        if SomeUppercaseText == '2 CHRONICLES': return 'CH2' # Fails below because 'CHR' is also a valid BBB
-        if SomeUppercaseText == 'ECCLESIASTES': return 'ECC' # Fails below because 'LES' is also a valid BBB
-        if SomeUppercaseText == 'LAMENTATIONS': return 'LAM' # Fails below because 'TAT' is also a valid BBB
-        if SomeUppercaseText == 'HABAKKUK': return 'HAB' # Fails below because 'BAK' is also a valid BBB
-        if SomeUppercaseText == 'ZEPHANIAH': return 'ZEP' # Fails below because 'EPH' is also a valid BBB
-        if SomeUppercaseText == 'ZECHARIAH': return 'ZEC' # Fails below because 'ARI' is also a valid BBB
-        if SomeUppercaseText == 'ROMANS': return 'ROM' # Fails below because 'MAN' is also a valid BBB
-        if SomeUppercaseText == '1 CORINTHIANS': return 'CO1' # Fails below because 'INT' is also a valid BBB
-        if SomeUppercaseText == '2 CORINTHIANS': return 'CO2' # Fails below because 'INT' is also a valid BBB
-        if SomeUppercaseText == '1 TIMOTHY': return 'TI1' # Fails below because 'OTH' is also a valid BBB
-        if SomeUppercaseText == '2 TIMOTHY': return 'TI2' # Fails below because 'OTH' is also a valid BBB
-        if SomeUppercaseText == '1 KINGS': return 'KI1'
-        if SomeUppercaseText == '2 KINGS': return 'KI2'
-        if SomeUppercaseText == 'SONG OF SONGS' or SomeUppercaseText == 'SONG OF SOLOMON': return 'SNG'
-        if SomeUppercaseText == 'MK': return 'MRK'
-        if SomeUppercaseText == 'PHILIPPIANS': return 'PHP'
-        if SomeUppercaseText == '1 THESSALONIANS' or SomeUppercaseText == '1THS': return 'TH1'
-        if SomeUppercaseText == '2 THESSALONIANS' or SomeUppercaseText == '2THS': return 'TH2'
-        if SomeUppercaseText == 'PHILEMON': return 'PHM'
-        if SomeUppercaseText == '1 PETER': return 'PE1'
-        if SomeUppercaseText == '2 PETER': return 'PE2'
-        if SomeUppercaseText == 'PS151': return 'PS2' # Special case
+        # if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
+        #     return SomeUppercaseText # it's already a BBB code
+        if SomeUppercaseText in self.__DataDicts['allEnglishAbbreviationsDict']:
+            return self.__DataDicts['allEnglishAbbreviationsDict'][SomeUppercaseText]
+        
+        # Handle alternative numbers or punctuation
+        for s1,s2 in (
+                        ('1.','1'),('I ','1'),('I.','1'),
+                        ('2.','2'),('II ','2'),('II.','2'),
+                        ('3.','3'),('III ','3'),('III.','3'),
+                        ('4.','4'),('IV ','4'),('IV.','4'),
+                        ('5.','5'),('V ','5'),('V.','5'),
+                        ('6.','6'),('VI ','6'),('VI.','6'),
+                        ):
+            if SomeUppercaseText.startswith( s1 ):
+                return self.__DataDicts['allEnglishAbbreviationsDict'][f'{s2}{SomeUppercaseText[len(s1):]}']
 
         # Ok, let's try guessing
         matchCount, foundBBB = 0, None
@@ -486,8 +464,8 @@ class BibleBooksCodes:
                 foundBBB = BBB
         dPrint( 'Never', DEBUGGING_THIS_MODULE, f"getBBB2: {someText=} {matchCount=} {foundBBB=}" )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        dPrint( 'Never', DEBUGGING_THIS_MODULE, sorted(self.__DataDicts['allAbbreviationsDict']) )
-    # end of BibleBooksCodes.getBBBFromText
+        dPrint( 'Never', DEBUGGING_THIS_MODULE, sorted(self.__DataDicts['allEnglishAbbreviationsDict']) )
+    # end of BibleBooksCodes.getBBBFromEnglishText
 
 
     def getExpectedChaptersList( self, BBB:str ) -> list[str]:
@@ -831,57 +809,79 @@ class BibleBooksCodes:
 
 
     @staticmethod
-    def tidyBBB( BBB:str, titleCase:bool|None=False, allowFourChars:bool|None=True ) -> str:
+    def tidyBBB( BBB:str, titleCase:bool|None=False, allowFourChars:bool|None=True, insertChar:str|None=None ) -> str:
         """
         Change book codes like SA1 to the conventional 1SA
-            (or 1Sa using the titleCase flag).
+            (or 1Sa using the titleCase flag or 1 SAM using the allowFourChars and with a space for insertChar).
 
         BBB is always three characters starting with an UPPERCASE LETTER.
+
+        insertChar prevents 1SA (becomes 1-SA or whatever) from being mistaken for ISA
         """
         assert BBB in BibleBooksCodes(), f"BibleBooksCodes.tidyBBB {BBB=}"
+        if insertChar is None: insertChar = ''
+
         if titleCase:
             if allowFourChars:
                 if BBB == 'RUT': return 'Ruth'
+                if BBB == 'SA1': return f'1{insertChar}Sam'
+                if BBB == 'SA2': return f'2{insertChar}Sam'
+                if BBB == 'CH1': return f'1{insertChar}Chr'
+                if BBB == 'CH2': return f'2{insertChar}Chr'
                 if BBB == 'EZR': return 'Ezra'
+                if BBB == 'PRO': return 'Prov'
                 if BBB == 'JOL': return 'Joel'
                 if BBB == 'AMO': return 'Amos'
+                if BBB == 'MA1': return f'1{insertChar}Mac'
+                if BBB == 'MA2': return f'2{insertChar}Mac'
+                if BBB == 'MA3': return f'3{insertChar}Mac'
+                if BBB == 'MA4': return f'4{insertChar}Mac'
                 if BBB == 'MRK': return 'Mark'
                 if BBB == 'LUK': return 'Luke'
                 if BBB == 'JHN': return 'John'
                 if BBB == 'ACT': return 'Acts'
-                if BBB == 'CO1': return '1Cor'
-                if BBB == 'CO2': return '2Cor'
-                if BBB == 'TI1': return '1Tim'
-                if BBB == 'TI2': return '2Tim'
-                if BBB == 'PE1': return '1Pet'
-                if BBB == 'PE2': return '2Pet'
-                if BBB == 'JN1': return '1Jhn'
-                if BBB == 'JN2': return '2Jhn'
-                if BBB == 'JN3': return '3Jhn'
+                if BBB == 'CO1': return f'1{insertChar}Cor'
+                if BBB == 'CO2': return f'2{insertChar}Cor'
+                if BBB == 'TI1': return f'1{insertChar}Tim'
+                if BBB == 'TI2': return f'2{insertChar}Tim'
+                if BBB == 'PE1': return f'1{insertChar}Pet'
+                if BBB == 'PE2': return f'2{insertChar}Pet'
+                if BBB == 'JN1': return f'1{insertChar}Jhn'
+                if BBB == 'JN2': return f'2{insertChar}Jhn'
+                if BBB == 'JN3': return f'3{insertChar}Jhn'
                 if BBB == 'JDE': return 'Jude'
-            return f'{BBB[2]}{BBB[0]}{BBB[1].lower()}' if BBB[2].isdigit() else f'{BBB[0]}{BBB[1:].lower()}'
+            return f'{BBB[2]}{insertChar}{BBB[0]}{BBB[1].lower()}' if BBB[2].isdigit() else f'{BBB[0]}{BBB[1:].lower()}'
         
         # else: # not titeCase so leave as UPPERCASE
         if allowFourChars:
             if BBB == 'RUT': return 'RUTH'
+            if BBB == 'SA1': return f'1{insertChar}SAM'
+            if BBB == 'SA2': return f'2{insertChar}SAM'
+            if BBB == 'CH1': return f'1{insertChar}CHR'
+            if BBB == 'CH2': return f'2{insertChar}CHR'
             if BBB == 'EZR': return 'EZRA'
+            if BBB == 'PRO': return 'PROV'
             if BBB == 'JOL': return 'JOEL'
             if BBB == 'AMO': return 'AMOS'
+            if BBB == 'MA1': return f'1{insertChar}MAC'
+            if BBB == 'MA2': return f'2{insertChar}MAC'
+            if BBB == 'MA3': return f'3{insertChar}MAC'
+            if BBB == 'MA4': return f'4{insertChar}MAC'
             if BBB == 'MRK': return 'MARK'
             if BBB == 'LUK': return 'LUKE'
             if BBB == 'JHN': return 'JOHN'
             if BBB == 'ACT': return 'ACTS'
-            if BBB == 'CO1': return '1COR'
-            if BBB == 'CO2': return '2COR'
-            if BBB == 'TI1': return '1TIM'
-            if BBB == 'TI2': return '2TIM'
-            if BBB == 'PE1': return '1PET'
-            if BBB == 'PE2': return '2PET'
-            if BBB == 'JN1': return '1JHN'
-            if BBB == 'JN2': return '2JHN'
-            if BBB == 'JN3': return '3JHN'
+            if BBB == 'CO1': return f'1{insertChar}COR'
+            if BBB == 'CO2': return f'2{insertChar}COR'
+            if BBB == 'TI1': return f'1{insertChar}TIM'
+            if BBB == 'TI2': return f'2{insertChar}TIM'
+            if BBB == 'PE1': return f'1{insertChar}PET'
+            if BBB == 'PE2': return f'2{insertChar}PET'
+            if BBB == 'JN1': return f'1{insertChar}JHN'
+            if BBB == 'JN2': return f'2{insertChar}JHN'
+            if BBB == 'JN3': return f'3{insertChar}JHN'
             if BBB == 'JDE': return 'JUDE'
-        return f'{BBB[2]}{BBB[:2]}' if BBB[2].isdigit() else BBB
+        return f'{BBB[2]}{insertChar}{BBB[:2]}' if BBB[2].isdigit() else BBB
     # end of BibleBooksCodes.tidyBBB
 
     @staticmethod
@@ -896,7 +896,42 @@ class BibleBooksCodes:
 # end of BibleBooksCodes class
 
 
-
+EXPECTED_BBB_NAMES_LIST = (
+    ('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'),  ('2.Pet','PE2'),
+    ('Job','JOB'), ('Jude','JDE'), 
+    ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2'),
+    ('EPJER', 'LJE'),
+    ('DEUTERONOMY', 'DEU'),
+    ('Gene','GEN'),
+    ('JUDGES', 'JDG'),
+    ('1 SAMUEL', 'SA1'),
+    ('2 SAMUEL', 'SA2'),
+    ('1 CHRONICLES', 'CH1'),
+    ('2 CHRONICLES', 'CH2'),
+    ('ECCLESIASTES', 'ECC'),
+    ('EZEKIEL', 'EZE'),
+    ('LAMENTATIONS', 'LAM'),
+    ('HABAKKUK', 'HAB'),
+    ('ZEPHANIAH', 'ZEP'),
+    ('ZECHARIAH', 'ZEC'),
+    ('ROMANS', 'ROM'),
+    ('1 CORINTHIANS', 'CO1'),
+    ('2 CORINTHIANS', 'CO2'),
+    ('1 TIMOTHY', 'TI1'),
+    ('2 TIMOTHY', 'TI2'),
+    ('1 KINGS', 'KI1'),
+    ('2 KINGS', 'KI2'),
+    ('SONG OF SONGS','SNG'), ('SONG OF SOLOMON', 'SNG'),
+    ('MK', 'MRK'),
+    ('PHILIPPIANS', 'PHP'),
+    ('1 THESSALONIANS', 'TH1'), ('1THS', 'TH1'),
+    ('2 THESSALONIANS', 'TH2'), ('2THS', 'TH2'),
+    ('PHILEMON', 'PHM'),
+    ('1 PETER', 'PE1'),
+    ('2 PETER', 'PE2'),
+    ('PS151', 'PS2'),
+    ('EZT','EZT'),
+    )
 def briefDemo() -> None:
     """
     Main program to handle command line parameters and then run what they want.
@@ -929,8 +964,8 @@ def briefDemo() -> None:
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Jude','JDE'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
-        BBB = bbc.getBBBFromText( someString )
+    for someString,expectedBBB in EXPECTED_BBB_NAMES_LIST:
+        BBB = bbc.getBBBFromEnglishText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
@@ -984,8 +1019,8 @@ def fullDemo() -> None:
     assert bbc.getLogosNumStr( 'MAT' ) == '61'
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
-    for someString,expectedBBB in (('PE2','PE2'), ('2Pe','PE2'), ('2 Pet','PE2'), ('2Pet','PE2'), ('Job','JOB'), ('Jude','JDE'), ('Deut','DEU'), ('Deuteronomy','DEU'), ('EpJer','LJE'), ('1 Kings','KI1'), ('2 Samuel','SA2')):
-        BBB = bbc.getBBBFromText( someString )
+    for someString,expectedBBB in EXPECTED_BBB_NAMES_LIST:
+        BBB = bbc.getBBBFromEnglishText( someString )
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{someString=} -> {BBB=} ({expectedBBB=})" )
         assert BBB==expectedBBB, f"{someString=} -> {BBB=} ({expectedBBB=})"
     myOSIS = ( 'Gen', '1Kgs', 'Ps', 'Mal', 'Matt', '2John', 'Rev', 'EpLao', '3Meq', )
@@ -1006,7 +1041,8 @@ def fullDemo() -> None:
 # end of BibleBooksCodes.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic Bible Organisational System (BOS) set-up

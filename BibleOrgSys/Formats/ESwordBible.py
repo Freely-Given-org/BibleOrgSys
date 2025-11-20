@@ -118,10 +118,10 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             #ignore = False
-            #for ending in filenameEndingsToIgnore:
+            #for ending in FILENAME_ENDINGS_TO_IGNORE:
                 #if somethingUpper.endswith( ending): ignore=True; break
             #if ignore: continue
-            #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            #if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
             if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                 foundFiles.append( something )
 
@@ -161,10 +161,10 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                     somethingUpper = something.upper()
                     somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     #ignore = False
-                    #for ending in filenameEndingsToIgnore:
+                    #for ending in FILENAME_ENDINGS_TO_IGNORE:
                         #if somethingUpper.endswith( ending): ignore=True; break
                     #if ignore: continue
-                    #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    #if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                     if somethingUpperExt in FILENAME_ENDINGS_TO_ACCEPT:
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder

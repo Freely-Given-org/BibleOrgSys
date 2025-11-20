@@ -556,7 +556,7 @@ class BibleBooksNamesSystem:
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Possibility list is", myList )
 
-        return BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookNameOrAbbreviation )
+        return BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookNameOrAbbreviation )
     # end of BibleBooksNamesSystem.getBBBFromText
 
 
@@ -676,7 +676,8 @@ def fullDemo() -> None:
 # end of BibleBooksNames.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
 

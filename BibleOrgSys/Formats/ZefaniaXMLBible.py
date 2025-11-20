@@ -93,8 +93,8 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+EXTENSION_TO_IGNORE = ( 'ASC', 'BAK', 'BAK2', 'BAK3', 'BAK4', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML',
                     'JAR', 'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'SAV', 'SAVE', 'STY', 'SSF', 'TXT', 'USFM', 'USFX', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
@@ -137,10 +137,10 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if somethingUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'ff', foundFiles )
 
@@ -195,10 +195,10 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:b
                     somethingUpper = something.upper()
                     somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                     ignore = False
-                    for ending in filenameEndingsToIgnore:
+                    for ending in FILENAME_ENDINGS_TO_IGNORE:
                         if somethingUpper.endswith( ending): ignore=True; break
                     if ignore: continue
-                    if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if not somethingUpperExt[1:] in EXTENSION_TO_IGNORE: # Compare without the first dot
                         foundSubfiles.append( something )
         except PermissionError: pass # can't read folder, e.g., system folder
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'fsf', foundSubfiles )
@@ -497,8 +497,8 @@ class ZefaniaXMLBible( Bible ):
             BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             dPrint( 'Never', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB}' from {bookNumber}" )
         else:
-            BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookName )
-            BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromText( bookShortName )
+            BBB1 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookName )
+            BBB2 = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookShortName )
             if BBB1 == BBB2: BBB = BBB1
             else:
                 dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Zefania got '{BBB1}' from '{bookName}' and '{BBB2}' from '{bookShortName}'" )
@@ -944,7 +944,8 @@ def fullDemo() -> None:
 # end of ZefaniaXMLBible.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import freeze_support
+    from multiprocessing import set_start_method, freeze_support
+    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
     freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
