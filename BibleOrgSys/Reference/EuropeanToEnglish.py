@@ -49,7 +49,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-11-20' # by RJH
+LAST_MODIFIED_DATE = '2025-12-02' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -465,7 +465,7 @@ GERMAN_WORD_MAP = (
                 ('entweihet','descrated'), ('entwöhnet','weaned'),
                 (' entzwei',' in_two'),
         (' er‘s',' he\'s'), ('Er ','He '),(' er ',' he '),(' er,',' he,'),(' er!',' he!'),(' er:',' he:'),
-            ('erbarmen','mercy'),('erbarmet','mercy'),('erbarme','have_mercy'),(' erbarm',' have_mercy'), 
+            ('erbarmen','mercy'),('erbarmet','mercy'),('erbarme','have_mercy'),(' erbarm',' have_mercy'),
                 (' erbeben',' earthquake(v)'), ('Erben','inheritance'),(' erben',' inherit'), ('Erbe','heritage'),
                     ('Erbteil ','inheritance '),(' erbte',' inherited'),
             ('Erdbebens','earthquake'), ('Erdboden','ground'),
@@ -792,6 +792,7 @@ GERMAN_WORD_MAP = (
                 (' gezückt',' drawn'),
                 (' gezwungen',' forced'),
         ('Gib ','Give '),(' gib ',' give '), (' gibst',' give'), (' gibt',' gives'),
+            (' gießest',' pour'),
             (' giftig',' poisonous'),
             (' gingen',' went'),(' ging',' went'),#(' ging.',' went.'),
             ('Gitter','lattice/grid'),
@@ -1562,7 +1563,7 @@ GERMAN_WORD_MAP = (
                 ('Sprüchen','sayings'),('Sprüche','sayings'),
             (' spürete',' felt'),
         ('Städten','cities'),('Städte','cities'), ('Stadt','city'),#('Stadt,','city,'),('Stadt.','city.'),('Stadt?','city?'),('Stadt!','city!'),
-                ('Stämmen','tribes'),('Stämme','tribes'), ('Stamms','tribe'),('Stamm','tribe'), 
+                ('Stämmen','tribes'),('Stämme','tribes'), ('Stamms','tribe'),('Stamm','tribe'),
                 (' starben',' died'),(' starb',' died'),#(' starb.',' died.'),
                     ('Stärke','strength'), (' starkem',' strong'), ('Starken','strong_(ones)'),(' starken',' strengthen'),(' stärken',' strengthen'), (' starker ',' stronger/thicker '),(' stärker ',' stronger '), ('stärkete','strengthened'), ('Starke ','strength '),(' starke ',' strength '),(' stärke ',' strengthen '),
                 ('Stätte','site/place'), ('Statt','instead_of'),
@@ -2538,7 +2539,7 @@ LATIN_WORD_MAP = (
                 ('coluerunt','they_worshipped'),(' coluit',' worshipped'), ('columba','dove'), ('columnarum','of_columns'),('columnas','columns'),
             (' comæ',' hair_loss'),
                 (' combinari',' to_combine'), (' combussit',' burnt'),
-                (' comedat',' to_eat'),
+                (' comedas',' eat'),(' comedat',' to_eat'),
                     (' comedent',' they_will_eat'),(' comedere',' to_eat'),(' comederit',' will_eat'),(' comederunt',' they_ate'), (' comedes',' you_will_eat'),(' comedet',' he_will_eat'),
                     (' comedit',' he_ate'),
                     (' comedunt',' they_eat'),
@@ -2894,7 +2895,7 @@ LATIN_WORD_MAP = (
                 (' effuderim',' I_will_pour_out'),('Effuderunt','They_poured_out'), (' effuderint',' they_poured_out'),(' effuderunt',' they_poured_out'),
                         (' effudit',' poured_out'),(' effudi',' I_poured_out'),
                     (' effugiet',' will_escape'),
-                    (' effundam',' I_will_pour_out'),('effundendum','to_be_poured_out'),(' effundens',' pouring_out'),('effundentium','pouring_out'),('effunderem','I_would_pour_out'),('Effunde','Pour_it_out'),
+                    (' effundam',' I_will_pour_out'),('effundendum','to_be_poured_out'),(' effundens',' pouring_out'),('effundentium','pouring_out'),('effunderem','I_would_pour_out'),(' effundes',' you_will_pour_out'),('Effunde','Pour_it_out'),
                     (' effusi',' poured_out'),(' effuso',' outpouring'),(' effusum',' spilled'),(' effusus',' poured_out'),
         (' egenorum',' of_they_needy'),(' egeno',' I_need'), (' egerint',' they_did'),(' egerit',' did'), (' egestate',' poverty'),
             (' egimus',' we_did'),
@@ -3772,7 +3773,7 @@ LATIN_WORD_MAP = (
             ('Obscuriora','Darker'),(' obscuratum',' darkened'),
                 (' obsecravit',' begged'),('Obsecro','Please'),
                     ('obsederunt','besieged'),
-                    (' observabant',' they_were_observing'),('observantes','observing'),('observaveris','you_will_observe'), (' observo',' observe'),
+                    (' observabant',' they_were_observing'),(' observabis',' you_will_observe'),('observantes','observing'),('observaveris','you_will_observe'), (' observo',' observe'),
                     (' obsessi ',' obsessed '), # Take care with 'obsession'
                 ('obsidebant','they_invested'),('obsidebat','was_besieging'),
                 ('obstupescere','to_be_astonished'),('obstupescunt','they_are_astonished'),
@@ -4443,7 +4444,7 @@ LATIN_WORD_MAP = (
                     (' solium',' only'),(' solius',' alone'),
                     (' soli ',' alone '), # protect 'solitary'
                 ('sollicitudine','anxiety'),(' sollicitudo',' anxiety'),(' sollicitus',' worried'),
-                (' solus',' alone'),
+                (' solum',' only'),(' solus',' alone'),
                 (' sol ',' the_sun '), # protect English words like 'solemn'
             (' somnia',' dreams'),(' somnium',' a_dream/sleep'),(' somnum',' sleep'),(' somnus',' sleep'),
             (' sonitus',' noise'),(' sonitu',' with_sound'),
