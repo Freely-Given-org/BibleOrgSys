@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-12-02' # by RJH
+LAST_MODIFIED_DATE = '2025-12-03' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -1331,7 +1331,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' hornes',),' horns'),((' horne ',),' horn '),((' horne,',),' horn,'),((' horne.',),' horn.'), ((' hornettes',),' hornets'),
                 ((' orrible',' orible'),' horrible'), (('Horrour',),'Horror'),((' horrour',),' horror'),
                 (('horsebacke','horsbacke',),'horseback'),(('horsmen',),'horsemen'),((' horsis',),' horses'),((' horese',),' horse'),((' hors;',),' horse;'),
-            (('Hoastes',),'Hosts/Armies'),((' hosts',' hoostes',' hoastes',' hostes',' oostis'),' hosts/armies'),((' host ',' hoste ',' hoast ',' hoost ',' oost '),' host/army '),((' host,',' hoste,',' hoost,',' hoast,',' oost,'),' host/army,'),((' host.',' hoast.',' hoost.',' oost.'),' host/army.'),((' host?',' hoste?',' hoast?',' hoost?'),' host/army?'),((' host:',' hoast:',' hoste:',' hoose:'),' host/army:'),((' host;',' oost;'),' host/army;'),
+            (('Hoastes',),'Hosts/Armies'),((' hosts',' hoostes',' hoastes',' hostes',' oostis'),' hosts/armies'),((' host ',' hooste ',' hoste ',' hoast ',' hoost ',' oost '),' host/army '),((' host,',' hoste,',' hoost,',' hoast,',' oost,'),' host/army,'),((' host.',' hoast.',' hoost.',' oost.'),' host/army.'),((' host?',' hoste?',' hoast?',' hoost?'),' host/army?'),((' host:',' hoast:',' hoste:',' hoose:'),' host/army:'),((' host;',' oost;'),' host/army;'),
             ((' hotte ',' hote '),' hot '),((' hoot?',),' hot?'),
             ((' houres',),' hours'),((' houre ',),' hour '),((' houre,',),' hour,'),((' houre.',),' hour.'),
                 ((' housholder',),' householder'),
@@ -1581,7 +1581,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' molte ',),' molten '),((' moulten',),' molten'),
             ((' moneye',' mony',' monei'),' money'),
                 ((' monethis',),' months'), (('Moneth',),'Month'),((' monethe',' moneth'),' month'),
-            (('Moones','Mones'),'Moons'),((' moones',),' moons'),(('Moone ','Mone '),'Moon '),((' moone ',' mone '),' moon '),(('Moone,',),'Moon,'),((' moone,',),' moon,'),(('Moone:',),'Moon:'),((' moone:',),' moon:'),((' moone;',' mone;'),' moon;'),
+            (('Moones','Mones'),'Moons'),((' moones',),' moons'),(('Moone','Mone'),'Moon'),((' moone ',' mone '),' moon '),(('Moone,',),'Moon,'),((' moone,',),' moon,'),(('Moone:',),'Moon:'),((' moone:',),' moon:'),((' moone;',' mone;'),' moon;'),
             (('Mardochee','Mardocheus'),'Mordecai'),
                 (('Moreover','Moreouer','Morouer'),'Moreover/What’s_more'),(('moreover','moreouer','morouer','moreuer'),'moreover/what’s_more'), ((' moare ',' mowe ',' moe ',' mo '),' more '),
                 ((' morninge',' mornynge',' mornyng',' morewe'),' morning'),
