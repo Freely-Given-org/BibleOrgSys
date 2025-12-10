@@ -629,8 +629,9 @@ class ESFMBible( Bible ):
                 assert bookObject.ESFMWordTableFilename.endswith( '.tsv' )
                 if bookObject.ESFMWordTableFilename not in self.ESFMWordTables:
                     self.ESFMWordTables[bookObject.ESFMWordTableFilename] = None
-                    filepath = os.path.join( self.sourceFolder, bookObject.ESFMWordTableFilename )
-                    if not os.path.isfile( filepath ):
+                    try: filepath = os.path.join( self.sourceFolder, bookObject.ESFMWordTableFilename )
+                    except TypeError: filepath = None
+                    if filepath is None or not os.path.isfile( filepath ):
                         logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORD TABLE file at {filepath}")
                         if '_OT_' in bookObject.ESFMWordTableFilename:
                             try: filepath = os.path.join( self.OTsourceFolder, bookObject.ESFMWordTableFilename )
@@ -647,6 +648,7 @@ class ESFMBible( Bible ):
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
             print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
+        assert len(self.ESFMWordTables) <= 2, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT 
     # end of ESFMBible.lookForAuxilliaryFilenames
 
 
