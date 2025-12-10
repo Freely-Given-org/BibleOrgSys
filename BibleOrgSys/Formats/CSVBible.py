@@ -68,15 +68,16 @@ if __name__ == '__main__':
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
+from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 
 
-LAST_MODIFIED_DATE = '2025-11-20' # by RJH
+LAST_MODIFIED_DATE = '2025-12-09' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.44'
+PROGRAM_VERSION = '0.48'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
-DEBUGGING_THIS_MODULE = 99
+DEBUGGING_THIS_MODULE = False
 
 
 FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
@@ -142,7 +143,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
                 if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,') \
                 and not firstLine.startswith( 'Book|Chapter|Verse|' ) \
-                and not '\tBSB Sort\t' in firstLine:
+                and not '\tBSB Sort\t' in firstLine and not '\tMSB Sort\t' in firstLine:
                     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
@@ -416,7 +417,7 @@ class CSVBible( Bible ):
 
                 if bookNumber != lastBookNumber: # We've started a new book
                     if lastBookNumber != -1: # Better save the last book
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing last book: {thisBook.BBB=}…" )
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
                         if temporaryBookStore is not None: temporaryBookStore[thisBook.BBB] = thisBook
                         else: self.stashBook( thisBook )
                         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
@@ -488,7 +489,7 @@ class CSVBible( Bible ):
             return self._loadBereanSpreadsheetTable( filepath ) # Use a separate loading function
         
         # Save the final book
-        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final book: {thisBook.BBB=}…" )
+        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
         if temporaryBookStore is None: self.stashBook( thisBook )
         else: temporaryBookStore[thisBook.BBB] = thisBook
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"    Now have {len(temporaryBookStore)=} books: {temporaryBookStore.keys()=}." )
@@ -500,6 +501,7 @@ class CSVBible( Bible ):
         Does the work of loading a Berean word table TSV (exported from a downloaded Excel spreadsheet) file into memory.
         """
         from csv import DictReader
+        from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook
 
         fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable( {filepath} )")
         vPrint( 'Info', DEBUGGING_THIS_MODULE, _("  Loading Berean word table from {}…").format( filepath ) )
@@ -507,6 +509,30 @@ class CSVBible( Bible ):
         WORD_TABLE_FILENAMES = ('OET-LV_OT_word_table.tsv', 'OET-LV_NT_word_table.tsv')
         self.ESFMWordTables, self.ESFMColumnNameList = {}, {}
 
+        def removeHebrewAccents( hebText:str ) -> str:
+            """
+            Return the text with cantillation marks and Meteg removed.
+            """
+            h = Hebrew.Hebrew( hebText )
+            return h.removeCantillationMarks( removeMetegOrSiluq=True )
+        # end of apply_Clear_Macula_OT_glosses.removeHebrewAccents
+
+        def removeGreekAccents( grkText:str ) -> str:
+            """
+            Return the text with accents removed.
+            """
+            h = Greek.Greek( grkText )
+            return h.removeAccents()
+        # end of apply_Clear_Macula_OT_glosses.removeHebrewAccents
+
+        # def removeHebrewMarks( text:str ) -> str:
+        #     """
+        #     Return the text with accents removed.
+        #     """
+        #     h = Hebrew.Hebrew( text )
+        #     # resultA = h.removeCantillationMarks( removeMetegOrSiluq=True )
+        #     return h.removeOtherMarks( removeSinShinDots=False )
+        # # end of apply_Clear_Macula_OT_glosses.removeHebrewMarks
 
         def _loadPossibleWordTables( folderpath:Path ) -> int:
             """
@@ -516,7 +542,8 @@ class CSVBible( Bible ):
             """
             fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables( {folderpath} )")
 
-            loadedWordTable = []
+            # loadedWordTable = []
+            self.abbreviatedWordTables = {}
             for filename in WORD_TABLE_FILENAMES:
                 filepath = folderpath.joinpath( filename )
                 print( f"_loadPossibleWordTables looking for {filepath}…" )
@@ -533,6 +560,15 @@ class CSVBible( Bible ):
                 vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded {len(self.ESFMWordTables[filename]):,} total rows from {filename}" )
                 self.ESFMColumnNameList[filename] = self.ESFMWordTables[filename][0].split( '\t' )
                 dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables for {self.abbreviation} loaded column names were: ({len(self.ESFMColumnNameList[filename])}) {self.ESFMColumnNameList[filename]}" )
+
+                self.abbreviatedWordTables[filename] = []
+                for tableRow in self.ESFMWordTables[filename]:
+                    bits = tableRow.split( '\t' )
+                    
+                    selectedBits = (bits[0],removeHebrewAccents(bits[6].replace(',',''))) \
+                                        if '_OT_' in filename else \
+                                   (bits[0],removeGreekAccents(bits[1]))
+                    self.abbreviatedWordTables[filename].append( selectedBits )
 
             #     # Get the headers before we start
             #     tsv_column_headers = [header for header in tsv_lines[0].strip().split('\t')]
@@ -587,13 +623,14 @@ class CSVBible( Bible ):
             """
             """
             nonlocal lastMarker, lastText
-            if ref.startswith( 'GEN_1:' ):
-                print( f"{ref} addLine( {marker=}, {text=} )" )
+            # if ref.startswith( 'GEN_1:' ):
+            #     print( f"{ref} addLine( {marker=}, {text=} )" )
             assert '  ' not in text, f"{ref} addLine( {marker=}, {text=} )"
             bookObject.addLine( marker, text )
             lastMarker, lastText = marker, text
             if marker=='v' and text.rstrip().isdigit(): # no text
                 lastText = None # To force appendToLastLine() to do an lstrip()
+            # if ref.startswith( 'MAT_1:3' ): halt
         # end of addLine
             
         def appendToLastLine( extraText:str, ref:str, bookObject):
@@ -601,8 +638,8 @@ class CSVBible( Bible ):
             """
             nonlocal lastText
             if not lastText: extraText = extraText.lstrip()
-            if ref.startswith( 'GEN_1:' ):
-                print( f"{ref} {lastMarker=} appendToLastLine( {extraText=} ) with {lastText=}" )
+            # if ref.startswith( 'GEN_1:' ):
+            #     print( f"{ref} {lastMarker=} appendToLastLine( {extraText=} ) with {lastText=}" )
             assert '  ' not in extraText, f"{ref} appendToLastLine( {extraText=} )"
             bookObject.appendToLastLine( extraText )
             lastText = extraText
@@ -618,7 +655,7 @@ class CSVBible( Bible ):
             # Now clean up the line
             thisVerseText = ( thisVerseText
                                 .replace( '“', ' “' ).replace( '‘', ' ‘' )
-                                # Haven't figured out yet what the follow two fields are supposed to mean
+                                # Haven't figured out yet what the following two fields are supposed to mean
                                 .replace( 'vvv', '' ) # Sometimes we have something like ' vvv him' (Gen 35:18) so it gets in this far
                                 .replace( '...', '…' )
                                 .replace( '. . .', '' ) # Sometimes we have something like ' . . . 40,500' (Num 26:18) so it gets in this far
@@ -633,8 +670,10 @@ class CSVBible( Bible ):
                             .replace( ' \\add*', '\\add*' ).replace( ' \\wj*', '\\wj*' ).replace( ' \\qs*', '\\qs*' ).replace( ' \\it*', '\\it*' )
                             .replace( ' —', '—' ).replace( '— ', '—' )
                                 .replace( '\\+it—', '\\+it —' ) # Repairs the above
-                            .replace( '\\qs\\qs* His loving devotion endures forever.', '\\qs His loving devotion endures forever.\\qs*' ) # Response in Psa 136
+                            # .replace( '\\qs\\qs* His loving devotion endures forever.', '\\qs His loving devotion endures forever.\\qs*' ) # Response in Psa 136
                             )
+            if '\\qs\\qs* His¦' in thisVerseText and thisVerseText.endswith('.') and thisVerseText.count('.')==1:
+                thisVerseText = thisVerseText.replace( '\\qs\\qs* His¦', '\\qs His¦').replace( '.', '.\\qs*' )
             for punctuation in ',.?!;:':
                 thisVerseText = thisVerseText.replace( f' {punctuation}', punctuation )
             # thisVerseText = thisVerseText.replace( '\\ft.', '\\ft .' ) # Fix an overzealous correction from the above loop at 1Chr 17:19 footnote with '...'
@@ -654,29 +693,102 @@ class CSVBible( Bible ):
             assert '|' not in thisVerseText and '<' not in thisVerseText and '>' not in thisVerseText, f"{fgRef} {thisVerseText=}"
             assert '{}' not in thisVerseText and '[]' not in thisVerseText, f"{fgRef} {thisVerseText=}"
             assert '. .' not in thisVerseText and 'vvv' not in thisVerseText, f"{fgRef} {thisVerseText=}"
+            assert ' ¦' not in thisVerseText and ',¦' not in thisVerseText, f"{fgRef} {thisVerseText=}"
             # print( f"cleanAndCheckVerseText is returning {thisVerseText=}" )
             return thisVerseText
         # end of cleanAndCheckVerseText
 
-        def findWordNumber( fgWRef:str, originalLanguageWord:str ) -> str:
+        def appendWordNumber( fgWRef:str, originalLanguageWord:str, text:str ) -> str:
             """
             Also uses word_table_filename
             """
-            # print( f"{fgWRef} {originalLanguageWord=} got {text=}")
-            wordNumber = ''
+            # print( f"  appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} ) for {self.abbreviation}" )
+            assert fgWRef and fgWRef.count('w')==1, f"appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} )"
+            assert originalLanguageWord and originalLanguageWord.strip()==originalLanguageWord, f"appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} )"
+            # return '' # Uncomment this line to disable word numbers
+
+            if text in (' . . .',' -',' vvv',' ( -',' ( vvv'): # this word is untranslated so don't bother with a word number
+                return text
+            if not text.strip(): # Nothing to do for an empty field (occurs in MSB NT)
+                return text
+            
+            adjustedOriginalLanguageWord = removeHebrewAccents( originalLanguageWord.removesuffix('־').removesuffix('פ').removesuffix('ס').removesuffix('׀') ) \
+                                            if isOT else \
+                                           removeGreekAccents( originalLanguageWord.replace('’','ʼ') )
+
+            text = ( text.replace( ' ”', '”' ).replace( ' ,', ',' ).replace( ' [,', '[,' ).replace( ' — ', '—' ).replace( ' —', '—' ).replace( '‘ ', '‘' ) # Remove extra space
+                         .replace( '1 ,700', '1,700' ) # Jdg 8:26 w7
+                         .replace( '. . .', '' ) # Sometimes we have something like ' . . . 40,500' (Num 26:18) so it gets in this far
+                         .replace( 'vvv', '' )
+                         .replace( '...', '…' )
+                         .replace( '  ', ' ' )
+                )
+            assert text and not text.endswith(' '), f"{fgWRef} {originalLanguageWord=} {text=}"
+            
+            # if isNT: print( f"{fgWRef} {originalLanguageWord=} got {text=}")
             try: startIndex,count = word_table_indexes[word_table_filename][fgRef]
             except KeyError:
-                logging.critical( f"Why couldn't Berean findWordNumber( {fgWRef}, {originalLanguageWord=} ) find a table entry ???" )
-                return ''
-            for n,tableRow in enumerate( self.ESFMWordTables[word_table_filename][startIndex:startIndex+count] ):
-                # print( f"  {n} {tableRow=}" )
-                bits = tableRow.split( '\t' )
-                # print( f"    {bits=}")
-                if fgWRef==bits[0] and (originalLanguageWord==bits[6].replace(',','') or originalLanguageWord==bits[7].replace(',','')):
-                    return f'¦{startIndex+n}'
-                    break
-            return ''
-        # end of findWordNumber
+                logging.critical( f"Why couldn't Berean {self.abbreviation} appendWordNumber( {fgWRef}, {originalLanguageWord=} ) find a table entry ???" )
+                return text
+            # This code was too slow and inefficient
+            # for n,tableRow in enumerate( self.ESFMWordTables[word_table_filename][startIndex:startIndex+count] ):
+            #     print( f"  {n} {tableRow=}" )
+            #     bits = tableRow.split( '\t' )
+            #     print( f"    {bits=}")
+            #     if fgWRef==bits[0] and (originalLanguageWord==bits[6].replace(',','') or originalLanguageWord==bits[7].replace(',','')):
+            #         return f'¦{startIndex+n}'
+            #         break
+            fgwRefWordNumber = int( fgWRef.split('w')[1] )
+            # print( f"{fgWRef=} {fgwRefWordNumber=} {originalLanguageWord=}" )
+            for n,tableRowBits in enumerate( self.abbreviatedWordTables[word_table_filename][startIndex:startIndex+count] ):
+                # print( f"    {startIndex=} {count=} {n=} {tableRowBits=}")
+                if fgWRef==tableRowBits[0]:
+                    if adjustedOriginalLanguageWord==tableRowBits[1] \
+                    or (isOT and adjustedOriginalLanguageWord==tableRowBits[1].removesuffix('ס')) \
+                    or (isNT and adjustedOriginalLanguageWord.lower() == tableRowBits[1].lower()):
+                        # We have to insert one or more word numbers into the text
+                        result = text
+                        insertionIndex = len(result)
+                        while insertionIndex > 0:
+                            insertionIndex -= 1
+                            if insertionIndex < 1: break
+                            # print( f"        {insertionIndex=} {result[insertionIndex]=} from ({len(result)}) {result=}")
+                            if insertionIndex==len(result)-1: # it's the final character of the string
+                                if result[insertionIndex] in ']}': # then it's an added word and we don't want a word number on it
+                                    continue
+                                if result[insertionIndex] in ',.?!’)—': # then it's a final punctuation
+                                    insertionIndex -= 1
+                                if result[insertionIndex] in ']}': # then it's an added word and we don't want a word number on it
+                                    continue
+                                assert result[insertionIndex].isalpha() or result[insertionIndex].isdigit()
+                                result = f'{result[:insertionIndex+1]}¦{startIndex+n}{result[insertionIndex+1:]}'
+                            # Else we're not at the final character of the string
+                            elif not result[insertionIndex].isalpha() and not result[insertionIndex].isdigit():
+                                if result[insertionIndex] in '[{(“‘': # then it's an opening punctuation and we don't want a word number on it
+                                    continue
+                                insertionIndex -= 1
+                                if result[insertionIndex] in ']}[{': # then it's an added word or a free-standing opening bracket and we don't want a word number on it
+                                    continue
+                                while result[insertionIndex] in ',.?!’”[(-…': # then it's word-ending punctuation character(s) or stand=alone punctuation
+                                    insertionIndex -= 1
+                                if result[insertionIndex] in ']}) ': # then it's an added word or stand-alone punctuation (with space), and we don't want a word number on it
+                                    continue
+                                assert result[insertionIndex].isalpha() or result[insertionIndex].isdigit()
+                                result = f'{result[:insertionIndex+1]}¦{startIndex+n}{result[insertionIndex+1:]}'
+                        # if fgRef.startswith( 'MAT_1:'):
+                        #     print( f"    Found {startIndex+n} for {text=} so returning {result=}" )
+                        return result
+                    else: # didn't match
+                        print( f"    Failed comparing {self.abbreviation} {fgWRef} {originalLanguageWord=} {adjustedOriginalLanguageWord=} with {tableRowBits[1]=}")
+                if 'w' in tableRowBits[0]:
+                    thisWordNumber = int( tableRowBits[0].split('w')[1] )
+                    # print( f"    {thisWordNumber}/{fgwRefWordNumber} {tableRowBits=}")
+                    if thisWordNumber >  fgwRefWordNumber:
+                        # print( "  Gone too far" )
+                        break
+            logging.error( f"appendWordNumber() {self.abbreviation} failed to match {fgWRef=} {originalLanguageWord=} {text=}" )
+            return text
+        # end of appendWordNumber
 
 
         # Read each row and convert groups of rows into our pseudo-USFM internal format
@@ -691,11 +803,18 @@ class CSVBible( Bible ):
             # print( f"\n{n}: {row}" )
             # if fgRef == 'GEN_1:2': halt
 
-            if row['WLC / Nestle Base TR RP WH NE NA SBL']:
-                originalLanguageWord = row['WLC / Nestle Base TR RP WH NE NA SBL']
-            else: # it's one of those nine blank rows between each verse
-                wordBSBOffset = int( row['BSB Sort'] )
-        
+            try: # BSB
+                if row['WLC / Nestle Base TR RP WH NE NA SBL']:
+                    originalLanguageWord = row['WLC / Nestle Base TR RP WH NE NA SBL'].replace('׃','')
+                else: # it's one of those nine blank rows between each verse
+                    try: wordBSBOffset = int( row['Heb Sort' if isOT else 'Greek Sort'] ) + (1 if isNT else 0)
+                    except ValueError: wordBSBOffset = int( float( row['Heb Sort' if isOT else 'Greek Sort'] ) )
+            except KeyError: # Must be MSB NT
+                if row['MT']:
+                    originalLanguageWord = row['MT']
+                else: # it's one of those nine blank rows between each verse
+                    wordBSBOffset = int( row['Greek Sort'] )
+
             if qs and thisVerseText: # Close the last verse
                 # thisBook.appendToLastLine( '\\qs*' )
                 thisVerseText = f'{thisVerseText}\\qs*'
@@ -719,6 +838,7 @@ class CSVBible( Bible ):
                 # print( f"  {BBB} {C}:{V}")
                 assert BBB, f"{n} {row['Verse']=}"
                 fgRef = f'{BBB}_{C}:{V}'
+                if fgRef == 'MAT_1:1': wordBSBOffset = 0 # Special case for start of NT
                 chapterNumber, verseNumber = int(C), int(V)
                 isOT = BibleOrgSysGlobals.loadedBibleBooksCodes.isOldTestament_NR( BBB )
                 isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
@@ -729,17 +849,19 @@ class CSVBible( Bible ):
 
                 if BBB != lastBBB: # We've started a new book
                     if lastBBB: # Better save the last book
-                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing last book: {thisBook.BBB=}…" )
+                        dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing previous {self.abbreviation} book: {thisBook.BBB=}…" )
                         self.stashBook( thisBook )
-                    thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = 'CSV Bible Book object'
-                    thisBook.objectTypeString = 'CSV'
+                    thisBook = (ESFMBibleBook if self.ESFMWordTables else BibleBook)( self, BBB )
+                    # thisBook.objectNameString = 'CSV Bible Book object'
+                    # thisBook.objectTypeString = 'CSV'
                     # lastBookNumber = bookNumber
                     lastChapterNumber = lastVerseNumber = -1
                     lastBBB = BBB
                     if self.ESFMWordTables:
                         addLine( 'rem', f'ESFM v0.6 {BBB}', fgRef, thisBook )
-                        addLine( 'rem', f"WORDTABLE OET-LV_{'OT' if isOT else 'NT'}_word_table.tsv", fgRef, thisBook )
+                        wordTableFilename = f"OET-LV_{'OT' if isOT else 'NT'}_word_table.tsv"
+                        addLine( 'rem', f'WORDTABLE {wordTableFilename}', fgRef, thisBook )
+                        thisBook.ESFMWordTableFilename = wordTableFilename
                     addLine( 'h', bookName, fgRef, thisBook )
                     addLine( 'toc1', bookName, fgRef, thisBook )
                     addLine( 'toc2', bookName, fgRef, thisBook )
@@ -919,8 +1041,17 @@ class CSVBible( Bible ):
             if ' BSB version ' in row and row[' BSB version ']:
                 # We'll remove this other stuff later, coz we sometimes need the final punctuation after them
                 # and row[' BSB version '] != ' . . . ' and row[' BSB version '] != ' - ' and row[' BSB version '] != ' vvv ':
-                wordNumberInVerse = int(row['BSB Sort']) - wordBSBOffset
+                try: thisSortNumber = int(row['Heb Sort' if isOT else 'Greek Sort'])
+                except ValueError: thisSortNumber = int( float( row['Heb Sort' if isOT else 'Greek Sort'] ) )
+                wordNumberInVerse = thisSortNumber - wordBSBOffset
+                if fgRef not in ('NUM_26:1','SA1_21:15','NEH_7:68',
+                                ) and BBB not in ('MAT','MRK','LUK','JHN','ACT','ROM','GAL','EPH'):
+                                #  'MAT_7:20','MAT_12:48','MAT_17:22','MAT_17:26','MAT_18:12','MAT_23:15',
+                                #  'MRK_1:14','MRK_3:4','MRK_7:17','MRK_9:8','MRK_9:45','MRK_9:47','MRK_10:24',
+                                #  'LUK_2:48','ACT_8:38','ROM_16:25','GAL_1:1'):
+                    assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalText=}"
                 originalText = row[' BSB version ']
+                # print( f"From {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalLanguageWord=} {originalText=}" )
                 assert originalText.count( '[' ) == originalText.count( ']' ), f"    {n} {BBB} {C}:{V} {originalText=}"
                 assert originalText.count( '<i>' ) == originalText.count( '</i>' ), f"    {n} {BBB} {C}:{V} {originalText=}"
                 # print( f"    {n} {BBB} {C}:{V}w{wordNumberInVerse} {originalText=}" ); halt
@@ -937,8 +1068,8 @@ class CSVBible( Bible ):
                             text = text[18:]
                         if wJ and text.endswith('</span>'): text = text[:-7]
                         assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
-                        wordNumber = findWordNumber( fgWRef, originalLanguageWord )
-                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{text}{wordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
+                        textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
+                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry and '/' not in textEntry
                         # print( f"      {n} {BBB} {C}:{V} {textEntry=}" )
                         if textEntry:
@@ -984,8 +1115,8 @@ class CSVBible( Bible ):
                     elif row['End text'] == '</div>': # Mat 27:37
                         assert fgRef in ('MAT_27:37','MRK_15:26','LUK_23:38','JHN_19:19','ACT_17:23','REV_17:5','REV_19:16') # inscriptions
                         row['End text'] = ''
-                    wordNumber = findWordNumber( fgWRef, originalLanguageWord )
-                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{text}{wordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
+                    textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
+                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
                     # print( f"      {n} {BBB} {C}:{V} whole {textEntry=}" )
                     if textEntry:
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry, f"{BBB} {C}:{V} {textEntry=}\n from {row}"
@@ -994,12 +1125,17 @@ class CSVBible( Bible ):
                         # thisBook.appendToLastLine( textEntry )
                     if '\\wj*' in textEntry:
                         wJ = False
-            elif 'MSB' in row and row['MSB'] and row['MSB'] != ' . . . ' and row['MSB'] != ' - ' and row['MSB'] != ' vvv ':
+            elif 'MSB' in row and row['MSB'] and row['MSB'] != ' ': # and row['MSB'] != ' . . . ' and row['MSB'] != ' - ' and row['MSB'] != ' vvv ':
+                thisSortNumber = int( row['Greek Sort'] )
+                wordNumberInVerse = thisSortNumber - wordBSBOffset
+                assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalText=}"
                 originalText = row['MSB']
                 assert originalText.count( '[' ) == originalText.count( ']' ), f"    {n} {BBB} {C}:{V} {originalText=}"
                 assert originalText.count( '<i>' ) == originalText.count( '</i>' ), f"    {n} {BBB} {C}:{V} {originalText=}"
                 # print( f"    {n} {BBB} {C}:{V} {originalText=}" )
+                fgWRef = f'{fgRef}w{wordNumberInVerse}'
                 if '<' in originalText: # e.g., a q2 in the middle of a verse
+                    halt
                     for tt, textBit in enumerate( originalText.split( '<' ) ):
                         # print( f"      {n} {BBB} {C}:{V} {tt} {textBit=}" )
                         text = textBit.rstrip()
@@ -1011,7 +1147,8 @@ class CSVBible( Bible ):
                             text = text[18:]
                         if wJ and text.endswith('</span>'): text = text[:-7]
                         assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
-                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{text}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
+                        textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
+                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry and '/' not in textEntry
                         # print( f"      {n} {BBB} {C}:{V} {textEntry=}" )
                         if textEntry:
@@ -1053,7 +1190,8 @@ class CSVBible( Bible ):
                     elif row['End text'] == '</div>': # Mat 27:37
                         assert fgRef in ('MAT_27:37','MRK_15:26','LUK_23:38','JHN_19:19','ACT_17:23','REV_17:5','REV_19:16') # inscriptions
                         row['End text'] = ''
-                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{text}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
+                    textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
+                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
                     # print( f"      {n} {BBB} {C}:{V} whole {textEntry=}" )
                     if textEntry:
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry
@@ -1063,7 +1201,7 @@ class CSVBible( Bible ):
                         wJ = False
 
         if lastBBB: # Save the final book
-            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"Stashing final book: {thisBook.BBB=}…" )
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"Stashing final {self.abbreviation} book: {thisBook.BBB=}…" )
             self.stashBook( thisBook )
     # end of CSVBible._loadBereanWoordTable
 
@@ -1113,7 +1251,7 @@ class CSVBible( Bible ):
         # Now save the books in the right Biblical order
         for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
             if BBB in tempBookStore:
-                self.stashBook( tempBookStore[BBB] )
+                self.vBook( tempBookStore[BBB] )
 
         self.doPostLoadProcessing()
     # end of VPLBible.loadBooks
