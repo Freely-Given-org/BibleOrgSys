@@ -43,10 +43,10 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-02-11' # by RJH
+LAST_MODIFIED_DATE = '2025-12-10' # by RJH
 SHORT_PROGRAM_NAME = "GreekLanguageHandler"
 PROGRAM_NAME = "Greek language handler"
-PROGRAM_VERSION = '0.11'
+PROGRAM_VERSION = '0.12'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -122,8 +122,9 @@ ALL_LETTERS = NORMAL_LETTERS + FINAL_CONSONANTS
 GREEK_ACCENT_DICT = { 
     # Lowercase composed-Unicode accented characters
     '᾽':'', # Koronis -- not strictly an accent
+    '́':'', # Combining accute accent
     'Ἀ':'Α', 'Ἄ':'Α', 'Ἆ':'Α', 'Ἁ':'Α', 'Ἅ':'Α', 'Ἃ':'Α', 'ᾍ':'Α',
-    'ά':'α', 'ὰ':'α', 'ἀ':'α', 'ἁ':'α', 'ᾳ':'α', 'ἄ':'α', 'ᾶ':'α', 'ἅ':'α', 'ἃ':'α', 'ἆ':'α', 'ἂ':'α', 'ᾷ':'α',
+    'ά':'α', 'ά':'α', 'ὰ':'α', 'ἀ':'α', 'ἁ':'α', 'ᾳ':'α', 'ἄ':'α', 'ᾶ':'α', 'ἅ':'α', 'ἃ':'α', 'ἆ':'α', 'ἂ':'α', 'ᾷ':'α',
              'ᾅ':'α', 'ᾴ':'α', 'ᾄ':'α',
     'έ':'ε', 'ὲ':'ε', 'ἐ':'ε', 'ἑ':'ε', 'ἔ':'ε', 'ἓ':'ε', 'ἕ':'ε',
     'ή':'η', 'ὴ':'η', 'ἡ':'η', 'ῆ':'η', 'ἦ':'η', 'ῇ':'η', 'ἤ':'η', 'ῃ':'η', 'ἠ':'η', 'ἥ':'η', 'ᾔ':'η', 'ἢ':'η',
