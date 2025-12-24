@@ -40,10 +40,6 @@ from pathlib import Path
 from xml.etree.ElementTree import ElementTree, ParseError
 import multiprocessing
 
-if __name__ == '__main__':
-    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderpath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
@@ -1275,7 +1271,7 @@ def fullDemo() -> None:
 
 
     # Path is done like this so it still works when called from different levels
-    standardTestFile = Path( aboveAboveFolderpath ).joinpath( '../OpenBibleData/copiedBibles/English/LogosBibleSoftware/LEB/LEB.xml' )
+    standardTestFile = Path( __file__ ).parent.parent.parent.parent.joinpath( 'OpenBibleData/copiedBibles/English/LogosBibleSoftware/LEB/LEB.xml' )
     oB = LEBXMLBible( standardTestFile )
     oB.loadBooks()
 

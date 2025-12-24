@@ -33,12 +33,6 @@ TODO: Check if we really need this class at all???
 from gettext import gettext as _
 import logging
 
-if __name__ == '__main__':
-    import os.path
-    import sys
-    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderpath not in sys.path:
-        sys.path.insert( 0, aboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook

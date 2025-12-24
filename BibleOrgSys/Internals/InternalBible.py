@@ -75,10 +75,6 @@ import re
 import multiprocessing
 import copy
 
-if __name__ == '__main__':
-    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderpath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderpath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
