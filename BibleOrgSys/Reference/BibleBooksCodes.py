@@ -56,7 +56,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-10-19' # by RJH
+LAST_MODIFIED_DATE = '2025-12-14' # by RJH
 SHORT_PROGRAM_NAME = "BibleBooksCodes"
 PROGRAM_NAME = "Bible Books Codes handler"
 PROGRAM_VERSION = '0.98'
@@ -78,6 +78,10 @@ BOOKLIST_DC15 = ['GES','LES', 'TOB', 'JDT', 'ESA', 'WIS', 'SIR', 'BAR', 'LJE', '
 assert len( BOOKLIST_DC15 ) == 15
 BOOKLIST_81 = BOOKLIST_OT39 + BOOKLIST_DC15 + BOOKLIST_NT27
 assert len( BOOKLIST_81 ) == 81
+BOOKLIST_DC22 = ['GES','LES', 'ES1','ES2','ESG', 'TOB', 'JDT', 'ESA', 'WIS', 'SIR', 'BAR', 'LJE', 'PAZ', 'SUS', 'BEL', 'MAN', 'MA1','MA2','MA3','MA4', 'DAG', 'PS2' ]
+assert len( BOOKLIST_DC22 ) == 22
+BOOKLIST_88 = BOOKLIST_OT39 + BOOKLIST_DC22 + BOOKLIST_NT27
+assert len( BOOKLIST_88 ) == 88
 
 
 @singleton # Can only ever have one instance

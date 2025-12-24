@@ -12,7 +12,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn local_lib_add_function_works() {
         let result = add(2, 2);
         assert_eq!(result, 4);
     }
