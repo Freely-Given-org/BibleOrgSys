@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2025-12-24' # by RJH
+LAST_MODIFIED_DATE = '2025-12-25' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -345,6 +345,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' noman,',),' no man,'), # Lam 4:4
     ((' nomore',),' no more'), # Hos 9:15
     (('Northwinde',),'North wind'),(('northwynde',),'north wind'), # Sng 4:16
+    (('oketrees',),'oak trees'), # Isa 1:29
     (('Palme-tree',),'Palm tree'), # Eze 41:19
     (('riythond','riythalf'),'right hand'),
     (('selfsame','selfe same'),'self-same'), # Eze 40:1
@@ -450,7 +451,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' arte ',),' art '),
         (('ascencioun',),'ascension'), ((' ascende ',),' ascend '),((' ascende,',),' ascend,'),
                 (('Asscribe','Ascrybe'),'Ascribe'),((' ascrybe',),' ascribe'),
-            (('aschamed',),'ashamed'), ((' asshes',' aischis'),' ashes'),((' aische.',),' ash.'),
+            (('aschamed','aschamid'),'ashamed'), ((' asshes',' aischis'),' ashes'),((' aische.',),' ash.'),
             ((' asyde',),' aside'),
             ((' asleepe',' aslepe'),' asleep'),
              ((' askeden',' axiden',' axide',' axed'),' asked'), (('Askest','Axist'),'Askest/Ask'),((' askest',' axist'),' askest/ask'), (('Aske ',),'Ask '),((' aske ',),' ask '),((' aske.',' axen.',' axe.'),' ask.'),((' aske:',),' ask:'), ((' to axe ',),' to ask '),
@@ -694,7 +695,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     (('childes',),'child’s'), (('childe ','chylde '),'child '),(('chylde,','childe,'),'child,'),(('chylde.','childe.'),'child.'),(('childe:',),'child:'),
                 (('chymney','chymenei'),'chimney'),
                 (('chinkes',),'chinks'),
-            (('Chese ','Chuse '),'Choose '),((' chese ',' chuse '),' choose '),((' chuse,',),' choose,'),((' chuse.',),' choose.'), (('chosun',),'chosen'),((' chees ',),' chose '),
+            (('Chese ','Chuse '),'Choose '),((' chese ',' chuse '),' choose '),((' chuse,',),' choose,'),((' chuse.',),' choose.'), (('chesiden','chosun'),'chosen'),((' chees ',),' chose '),
             (('Christes',),'Christ’s'),(('Christe','Crist'),'Christ'), (('Cronicles',),'Chronicles'),(('cronyclis',),'chronicles'),
             (('chirchis',),'churches'),(('chirche',),'church'),(('Churche ',),'Church '),(('Churche,',),'Church,'),
         ((' cerclis',),' circles'),((' sercle',),' circle'), ((' circuites',),' circuits'),((' circuite ',),' circuit '),
@@ -1263,7 +1264,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('groaue','groue',),'grove'),
                 (('growinge',),'growing'), (('growne','growen'),'grown'), ((' grouth',),' growth'), ((' growe ',),' grow '),((' growe,',),' grow,'),
         ((' guardeth',' gardeth'),' guardeth/guards'),((' garde ',),' guard '),
-                ((' gardyn',),' garden'), ((' garlande',),' garland'),
+                ((' gardes',),' gardens'),((' gardyn',),' garden'), ((' garlande',),' garland'),
             ((' gessiden',' gesside'),' guessed'), ((' gessinge',),' guessing'), (('Gessist',),'Guess'),
                 ((' ghestes',),' guests'), ((' ghest',' geest',' gest'),' guest'),
             ((' guyde',' gyde'),' guide'),
