@@ -19,6 +19,7 @@ build/
 dist/
 myVEnv/
 snap/
+target/
 
 #Extras/
 ExtraStuff/

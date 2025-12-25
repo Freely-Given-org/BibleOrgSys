@@ -1,0 +1,24 @@
+version = 1
+revision = 2
+requires-python = "==3.13.*"
+
+[manifest]
+members = [
+    "bibleorgsys",
+    "bibleorgsys-rust",
+]
+
+[[package]]
+name = "bibleorgsys"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "bibleorgsys-rust" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "bibleorgsys-rust", editable = "Rust/bible_organisational_system" }]
+
+[[package]]
+name = "bibleorgsys-rust"
+source = { editable = "Rust/bible_organisational_system" }

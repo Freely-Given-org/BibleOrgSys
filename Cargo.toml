@@ -1,0 +1,15 @@
+[workspace]
+resolver = "3"
+members = [
+    "Rust/bible_organisational_system",
+    "Rust/bos-internals",
+]
+
+[workspace.package]
+edition = "2024"
+license = "GPL-3.0-or-later"
+authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
+
+[workspace.dependencies]
+thiserror = "2.0"
+pyo3 = { version = "0.27", features = ["extension-module", "abi3-py38", "generate-import-lib"] }
