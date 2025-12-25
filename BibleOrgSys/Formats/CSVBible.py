@@ -71,10 +71,10 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 
 
-LAST_MODIFIED_DATE = '2025-12-09' # by RJH
+LAST_MODIFIED_DATE = '2025-12-23' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
-PROGRAM_VERSION = '0.48'
+PROGRAM_VERSION = '0.49'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1251,7 +1251,7 @@ class CSVBible( Bible ):
         # Now save the books in the right Biblical order
         for BBB in BibleOrgSysGlobals.loadedBibleBooksCodes:
             if BBB in tempBookStore:
-                self.vBook( tempBookStore[BBB] )
+                self.stashBook( tempBookStore[BBB] )
 
         self.doPostLoadProcessing()
     # end of VPLBible.loadBooks
@@ -1406,15 +1406,12 @@ def fullDemo() -> None:
 # end of CSVBible.fullDemo
 
 if __name__ == '__main__':
-    from multiprocessing import set_start_method, freeze_support
-    set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
-    freeze_support() # Multiprocessing support for frozen Windows executables
+    multiprocessing.set_start_method('fork') # The default was changed on POSIX systems from 'fork' to 'forkserver' in Python3.14
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( SHORT_PROGRAM_NAME, PROGRAM_VERSION, LAST_MODIFIED_DATE )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
-
-    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     fullDemo()
 
