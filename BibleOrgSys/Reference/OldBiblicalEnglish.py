@@ -40,6 +40,12 @@ main calls fullDemo()
 CHANGELOG:
     2025-03-20 Moved into BOS from OBD (OpenBibleData)
 """
+if __name__ == '__main__':
+    import os.path
+    import sys
+    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
+    if aboveAboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveAboveFolderpath )
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 

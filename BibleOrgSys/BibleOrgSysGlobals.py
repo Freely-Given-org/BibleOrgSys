@@ -111,6 +111,12 @@ except ImportError:
     pwd = None
     import getpass
 
+if __name__ == '__main__':
+    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
+    if aboveFolderpath not in sys.path:
+        sys.path.insert( 0, aboveFolderpath )
+
+
 LAST_MODIFIED_DATE = '2025-11-19' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
