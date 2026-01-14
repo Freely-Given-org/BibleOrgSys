@@ -22,7 +22,7 @@ pub enum ExtraType {
     /// Semantic/translation info (`sem` -> USFM marker `\sem`)
     Semantic,
     /// Word wrapper with full attributes (`ww` -> USFM marker `\ww`)
-    WordAttributes,
+    WordWithAttributes,
     /// Published verse number (`vp` -> USFM marker `\vp`)
     VersePublished,
 }
@@ -38,7 +38,7 @@ impl ExtraType {
             Self::Figure => "fig",
             Self::Strongs => "str",
             Self::Semantic => "sem",
-            Self::WordAttributes => "ww",
+            Self::WordWithAttributes => "ww",
             Self::VersePublished => "vp",
         }
     }
@@ -53,7 +53,7 @@ impl ExtraType {
             Self::Figure => "fig",
             Self::Strongs => "str",
             Self::Semantic => "sem",
-            Self::WordAttributes => "ww",
+            Self::WordWithAttributes => "ww",
             Self::VersePublished => "vp",
         }
     }
@@ -67,7 +67,7 @@ impl ExtraType {
             "fig" => Some(Self::Figure),
             "str" => Some(Self::Strongs),
             "sem" => Some(Self::Semantic),
-            "ww" => Some(Self::WordAttributes),
+            "ww" => Some(Self::WordWithAttributes),
             "vp" => Some(Self::VersePublished),
             _ => None,
         }
@@ -82,7 +82,7 @@ impl ExtraType {
             "fig" => Some(Self::Figure),
             "str" => Some(Self::Strongs),
             "sem" => Some(Self::Semantic),
-            "ww" => Some(Self::WordAttributes),
+            "ww" => Some(Self::WordWithAttributes),
             "vp" => Some(Self::VersePublished),
             _ => None,
         }
@@ -97,7 +97,7 @@ impl ExtraType {
             Self::Figure,
             Self::Strongs,
             Self::Semantic,
-            Self::WordAttributes,
+            Self::WordWithAttributes,
             Self::VersePublished,
         ]
     }
@@ -239,7 +239,7 @@ pub mod paragraph_markers {
 }
 
 /// Major section markers.
-pub mod section_markers {
+pub mod major_section_markers {
     pub const MS1: &str = "ms1";
     pub const MS2: &str = "ms2";
     pub const MS3: &str = "ms3";
@@ -249,7 +249,7 @@ pub mod section_markers {
 
 /// Generate an end marker for a given marker.
 ///
-/// End markers are prefixed with `¬` (not sign).
+/// End markers are prefixed with `¬` ('not' sign).
 #[inline]
 pub fn end_marker(marker: &str) -> CompactString {
     let mut end = CompactString::from("¬");
@@ -275,7 +275,7 @@ pub fn all_nesting_markers() -> Vec<&'static str> {
     markers.extend_from_slice(regular_nesting::ALL);
     markers.extend_from_slice(custom_nesting::ALL);
     markers.extend_from_slice(paragraph_markers::ALL);
-    markers.extend_from_slice(section_markers::ALL);
+    markers.extend_from_slice(major_section_markers::ALL);
     markers
 }
 
@@ -307,7 +307,7 @@ mod tests {
     #[test]
     fn test_end_marker() {
         assert_eq!(end_marker("v"), "¬v");
-        assert_eq!(end_marker("p"), "¬p");
+        assert_eq!(end_marker("pc"), "¬pc");
         assert_eq!(end_marker("chapters"), "¬chapters");
     }
 
@@ -316,7 +316,7 @@ mod tests {
         assert!(is_end_marker("¬v"));
         assert!(is_end_marker("¬chapters"));
         assert!(!is_end_marker("v"));
-        assert!(!is_end_marker("p"));
+        assert!(!is_end_marker("pc"));
     }
 
     #[test]

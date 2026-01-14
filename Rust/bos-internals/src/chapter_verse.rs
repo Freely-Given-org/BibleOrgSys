@@ -59,7 +59,7 @@ impl ChapterVerse {
     ///
     /// The verse_line parameter indicates which line of the introduction.
     #[inline]
-    pub fn intro(verse_line: u32) -> Self {
+    pub fn intro(verse_line: u16) -> Self {
         Self {
             chapter: CompactString::from("-1"),
             verse: CompactString::from(verse_line.to_string()),
@@ -92,14 +92,14 @@ impl ChapterVerse {
     /// Get the leading integer from the chapter.
     ///
     /// This handles negative numbers (like -1 for intro).
-    pub fn chapter_int(&self) -> Result<i32, ParseError> {
+    pub fn chapter_int(&self) -> Result<i16, ParseError> {
         get_leading_int(&self.chapter)
     }
 
     /// Get the leading integer from the verse.
     ///
     /// This handles suffixed verses like `17a` and ranges like `17-25`.
-    pub fn verse_int(&self) -> Result<i32, ParseError> {
+    pub fn verse_int(&self) -> Result<i16, ParseError> {
         get_leading_int(&self.verse)
     }
 
@@ -139,7 +139,7 @@ impl ChapterVerse {
     /// Parse a verse range into (start, end) integers.
     ///
     /// Returns None if this is not a verse range.
-    pub fn parse_verse_range(&self) -> Option<(i32, i32)> {
+    pub fn parse_verse_range(&self) -> Option<(i16, i16)> {
         if !self.is_verse_range() {
             return None;
         }
@@ -157,7 +157,7 @@ impl ChapterVerse {
     /// Check if this reference contains the given verse number.
     ///
     /// This handles ranges and lists properly.
-    pub fn contains_verse(&self, verse_num: i32) -> bool {
+    pub fn contains_verse(&self, verse_num: i16) -> bool {
         if let Some((start, end)) = self.parse_verse_range() {
             return verse_num >= start && verse_num <= end;
         }
@@ -201,8 +201,8 @@ impl From<(&str, &str)> for ChapterVerse {
     }
 }
 
-impl From<(i32, i32)> for ChapterVerse {
-    fn from((chapter, verse): (i32, i32)) -> Self {
+impl From<(i8, i8)> for ChapterVerse {
+    fn from((chapter, verse): (i8, i8)) -> Self {
         Self::new(chapter.to_string(), verse.to_string())
     }
 }

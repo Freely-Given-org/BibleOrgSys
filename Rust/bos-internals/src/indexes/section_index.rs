@@ -8,7 +8,7 @@ use compact_str::CompactString;
 use indexmap::IndexMap;
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_list::InternalBibleEntryList;
+use crate::entry_extra_list::InternalBibleEntryList;
 use crate::error::LookupError;
 
 /// Markers that define section boundaries.
@@ -25,13 +25,13 @@ const SECTION_MARKERS: &[&str] = &[
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SectionIndexEntry {
     /// Chapter where this section ends.
-    end_chapter: CompactString,
+    end_chapter_num_str: CompactString,
     /// Verse where this section ends.
-    end_verse: CompactString,
+    end_verse_num_str: CompactString,
     /// Index of the first entry for this section.
-    start_index: usize,
+    start_index: u16,
     /// Index of the last entry for this section (inclusive).
-    end_index: usize,
+    end_index: u16,
     /// The marker that started this section (e.g., "s1", "c").
     reason_marker: CompactString,
     /// The section name/heading text.
@@ -45,15 +45,15 @@ impl SectionIndexEntry {
     pub fn new(
         end_chapter: impl Into<CompactString>,
         end_verse: impl Into<CompactString>,
-        start_index: usize,
-        end_index: usize,
+        start_index: u16,
+        end_index: u16,
         reason_marker: impl Into<CompactString>,
         section_name: impl Into<CompactString>,
         context: Vec<CompactString>,
     ) -> Self {
         Self {
-            end_chapter: end_chapter.into(),
-            end_verse: end_verse.into(),
+            end_chapter_num_str: end_chapter.into(),
+            end_verse_num_str: end_verse.into(),
             start_index,
             end_index,
             reason_marker: reason_marker.into(),
@@ -64,37 +64,37 @@ impl SectionIndexEntry {
 
     /// Get the ending chapter:verse as a ChapterVerse.
     pub fn end_cv(&self) -> ChapterVerse {
-        ChapterVerse::new(self.end_chapter.as_str(), self.end_verse.as_str())
+        ChapterVerse::new(self.end_chapter_num_str.as_str(), self.end_verse_num_str.as_str())
     }
 
-    /// Get the ending chapter.
+    /// Get the ending chapter number.
     #[inline]
-    pub fn end_chapter(&self) -> &str {
-        &self.end_chapter
+    pub fn end_chapter_num_str(&self) -> &str {
+        &self.end_chapter_num_str
     }
 
-    /// Get the ending verse.
+    /// Get the ending verse number.
     #[inline]
-    pub fn end_verse(&self) -> &str {
-        &self.end_verse
+    pub fn end_verse_num_str(&self) -> &str {
+        &self.end_verse_num_str
     }
 
     /// Get the starting entry index.
     #[inline]
     pub fn start_index(&self) -> usize {
-        self.start_index
+        self.start_index as usize
     }
 
     /// Get the ending entry index (inclusive).
     #[inline]
     pub fn end_index(&self) -> usize {
-        self.end_index
+        self.end_index as usize
     }
 
     /// Get the count of entries in this section.
     #[inline]
     pub fn entry_count(&self) -> usize {
-        self.end_index + 1 - self.start_index
+        (self.end_index + 1 - self.start_index) as usize
     }
 
     /// Get the marker that started this section.
@@ -221,7 +221,7 @@ impl InternalBibleBookSectionIndex {
             .get(cv)
             .ok_or_else(|| LookupError::SectionNotFound(cv.clone()))?;
 
-        Ok(self.entries.slice(entry.start_index, entry.end_index + 1))
+        Ok(self.entries.slice(entry.start_index as usize, (entry.end_index + 1) as usize))
     }
 
     /// Get section entries with context markers.
@@ -238,7 +238,7 @@ impl InternalBibleBookSectionIndex {
             .get(cv)
             .ok_or_else(|| LookupError::SectionNotFound(cv.clone()))?;
 
-        let entries = self.entries.slice(entry.start_index, entry.end_index + 1);
+        let entries = self.entries.slice(entry.start_index as usize, (entry.end_index + 1) as usize);
         Ok((entries, entry.context.clone()))
     }
 
@@ -273,9 +273,9 @@ impl InternalBibleBookSectionIndex {
         self.entries = entries;
         self.index_data.clear();
 
-        let mut current_chapter = CompactString::from("0");
-        let mut current_verse = CompactString::from("0");
-        let mut section_start: Option<(ChapterVerse, usize, CompactString, CompactString)> = None;
+        let mut current_chapter_num_str = CompactString::from("0");
+        let mut current_verse_num_str = CompactString::from("0");
+        let mut section_start: Option<(ChapterVerse, u16, CompactString, CompactString)> = None;
         let mut context: Vec<CompactString> = Vec::new();
 
         for (i, entry) in self.entries.iter().enumerate() {
@@ -283,12 +283,12 @@ impl InternalBibleBookSectionIndex {
 
             // Track current chapter/verse
             if marker == "c" {
-                current_chapter = CompactString::from(entry.clean_text());
-                current_verse = CompactString::from("0");
+                current_chapter_num_str = CompactString::from(entry.clean_text());
+                current_verse_num_str = CompactString::from("0");
             } else if marker == "v" {
                 let verse_text = entry.clean_text();
                 let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
-                current_verse = CompactString::from(verse_num);
+                current_verse_num_str = CompactString::from(verse_num);
             }
 
             // Check for section markers
@@ -296,10 +296,10 @@ impl InternalBibleBookSectionIndex {
                 // Close previous section
                 if let Some((start_cv, start_idx, reason, name)) = section_start.take() {
                     let entry = SectionIndexEntry::new(
-                        current_chapter.as_str(),
-                        current_verse.as_str(),
+                        current_chapter_num_str.as_str(),
+                        current_verse_num_str.as_str(),
                         start_idx,
-                        i.saturating_sub(1),
+                        (i as u16).saturating_sub(1),
                         reason,
                         name,
                         context.clone(),
@@ -309,10 +309,10 @@ impl InternalBibleBookSectionIndex {
 
                 // Start new section
                 let section_name = entry.clean_text().to_string();
-                let start_cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
+                let start_cv = ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str());
                 section_start = Some((
                     start_cv,
-                    i,
+                    i.try_into().unwrap(),
                     CompactString::from(marker),
                     CompactString::from(section_name),
                 ));
@@ -331,10 +331,10 @@ impl InternalBibleBookSectionIndex {
         // Close final section
         if let Some((start_cv, start_idx, reason, name)) = section_start {
             let entry = SectionIndexEntry::new(
-                current_chapter.as_str(),
-                current_verse.as_str(),
+                current_chapter_num_str.as_str(),
+                current_verse_num_str.as_str(),
                 start_idx,
-                self.entries.len() - 1,
+                (self.entries.len() as u16).saturating_sub(1),
                 reason,
                 name,
                 context,

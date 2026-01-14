@@ -9,6 +9,7 @@ use std::collections::HashMap;
 
 use regex::Regex;
 use std::sync::LazyLock;
+// use compact_str::CompactString;
 
 use crate::error::ParseError;
 
@@ -31,7 +32,7 @@ static LEADING_INT_RE: LazyLock<Regex> =
 /// assert_eq!(get_leading_int("-1").unwrap(), -1);
 /// assert!(get_leading_int("abc").is_err());
 /// ```
-pub fn get_leading_int(s: &str) -> Result<i32, ParseError> {
+pub fn get_leading_int(s: &str) -> Result<i16, ParseError> {
     LEADING_INT_RE
         .find(s)
         .and_then(|m| m.as_str().parse().ok())
@@ -40,7 +41,7 @@ pub fn get_leading_int(s: &str) -> Result<i32, ParseError> {
 
 /// Result of parsing word attributes from USFM3 `\w` field.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct WordAttributes {
+pub struct WordWithAttributes {
     /// The word itself (before the pipe).
     pub word: String,
     /// The lemma (dictionary form).
@@ -51,8 +52,8 @@ pub struct WordAttributes {
     pub extra: HashMap<String, String>,
 }
 
-impl WordAttributes {
-    /// Create a new WordAttributes with just a word.
+impl WordWithAttributes {
+    /// Create a new WordWithAttributes with just a word.
     pub fn new(word: impl Into<String>) -> Self {
         Self {
             word: word.into(),
@@ -86,7 +87,7 @@ impl WordAttributes {
 /// assert_eq!(attrs.lemma, Some("test".to_string()));
 /// assert_eq!(attrs.strong, Some("H1234".to_string()));
 /// ```
-pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordAttributes, ParseError> {
+pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordWithAttributes, ParseError> {
     // Split on first pipe
     let pipe_pos = word_attribute_string
         .find('|')
@@ -95,7 +96,7 @@ pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordAttribut
     let word = &word_attribute_string[..pipe_pos];
     let attribute_string = &word_attribute_string[pipe_pos + 1..];
 
-    let mut result = WordAttributes::new(word);
+    let mut result = WordWithAttributes::new(word);
 
     // If no equals sign, assume it's a single unnamed lemma
     if !attribute_string.contains('=') {
@@ -170,7 +171,7 @@ enum ParserState {
     ReadingValue,
 }
 
-fn store_attribute(result: &mut WordAttributes, name: &str, value: &str) {
+fn store_attribute(result: &mut WordWithAttributes, name: &str, value: &str) {
     // Strip x- prefix for convenience
     let clean_name = name.strip_prefix("x-").unwrap_or(name);
 
@@ -184,10 +185,10 @@ fn store_attribute(result: &mut WordAttributes, name: &str, value: &str) {
 }
 
 /// Figure attribute names in USFM3 format.
-const FIGURE_ATTR_NAMES_3: [&str; 6] = ["alt", "src", "size", "loc", "copy", "ref"];
+const FIGURE_ATTR_NAMES_USFM3: [&str; 6] = ["alt", "src", "size", "loc", "copy", "ref"];
 
 /// Better (more descriptive) names for figure attributes.
-const BETTER_ATTR_NAMES_3: [&str; 6] = [
+const BETTER_ATTR_NAMES_USFM3: [&str; 6] = [
     "altDescription",
     "sourceFilename",
     "relativeSize",
@@ -197,7 +198,7 @@ const BETTER_ATTR_NAMES_3: [&str; 6] = [
 ];
 
 /// Figure attribute names for USFM2 (determined by position).
-const FIGURE_ATTR_NAMES_2: [&str; 7] = [
+const FIGURE_ATTR_NAMES_USFM2: [&str; 7] = [
     "altDescription",
     "sourceFilename",
     "relativeSize",
@@ -209,7 +210,7 @@ const FIGURE_ATTR_NAMES_2: [&str; 7] = [
 
 /// Result of parsing figure attributes.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct FigureAttributes {
+pub struct UsfmFigureAttributes {
     /// USFM version (2 or 3).
     pub usfm_version: u8,
     /// Figure caption.
@@ -228,7 +229,7 @@ pub struct FigureAttributes {
     pub reference_cv: Option<String>,
 }
 
-impl Default for FigureAttributes {
+impl Default for UsfmFigureAttributes {
     fn default() -> Self {
         Self {
             usfm_version: 3,
@@ -264,8 +265,8 @@ impl Default for FigureAttributes {
 /// assert_eq!(attrs.usfm_version, 2);
 /// assert_eq!(attrs.alt_description, Some("desc".to_string()));
 /// ```
-pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<FigureAttributes, ParseError> {
-    let mut result = FigureAttributes::default();
+pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<UsfmFigureAttributes, ParseError> {
+    let mut result = UsfmFigureAttributes::default();
 
     // Detect USFM3 vs USFM2
     // USFM3 has exactly one pipe and contains '='
@@ -334,8 +335,8 @@ pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<FigureAt
 
         let parts: Vec<&str> = figure_attribute_string.split('|').collect();
         for (i, part) in parts.iter().enumerate() {
-            if i < FIGURE_ATTR_NAMES_2.len() {
-                store_figure_attribute_by_name(&mut result, FIGURE_ATTR_NAMES_2[i], part);
+            if i < FIGURE_ATTR_NAMES_USFM2.len() {
+                store_figure_attribute_by_name(&mut result, FIGURE_ATTR_NAMES_USFM2[i], part);
             }
         }
     }
@@ -343,18 +344,18 @@ pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<FigureAt
     Ok(result)
 }
 
-fn store_figure_attribute(result: &mut FigureAttributes, name: &str, value: &str) {
+fn store_figure_attribute(result: &mut UsfmFigureAttributes, name: &str, value: &str) {
     // Convert short USFM3 names to better names
-    let better_name = FIGURE_ATTR_NAMES_3
+    let better_name = FIGURE_ATTR_NAMES_USFM3
         .iter()
         .position(|&n| n == name)
-        .map(|i| BETTER_ATTR_NAMES_3[i])
+        .map(|i| BETTER_ATTR_NAMES_USFM3[i])
         .unwrap_or(name);
 
     store_figure_attribute_by_name(result, better_name, value);
 }
 
-fn store_figure_attribute_by_name(result: &mut FigureAttributes, name: &str, value: &str) {
+fn store_figure_attribute_by_name(result: &mut UsfmFigureAttributes, name: &str, value: &str) {
     let value = if value.is_empty() {
         None
     } else {

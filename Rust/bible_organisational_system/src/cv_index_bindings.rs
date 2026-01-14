@@ -59,9 +59,9 @@ impl PyChapterVerse {
 
     /// Create an introduction reference (chapter -1).
     #[staticmethod]
-    fn intro(verse_line: u32) -> Self {
+    fn intro(verse_line: usize) -> Self {
         Self {
-            inner: ChapterVerse::intro(verse_line),
+            inner: ChapterVerse::intro(verse_line.try_into().unwrap()),
         }
     }
 
@@ -86,14 +86,14 @@ impl PyChapterVerse {
     }
 
     /// Get the leading integer from the chapter.
-    fn chapter_int(&self) -> PyResult<i32> {
+    fn chapter_int(&self) -> PyResult<i16> {
         self.inner
             .chapter_int()
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
     /// Get the leading integer from the verse.
-    fn verse_int(&self) -> PyResult<i32> {
+    fn verse_int(&self) -> PyResult<i16> {
         self.inner
             .verse_int()
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -125,12 +125,12 @@ impl PyChapterVerse {
     }
 
     /// Parse a verse range into (start, end) integers.
-    fn parse_verse_range(&self) -> Option<(i32, i32)> {
+    fn parse_verse_range(&self) -> Option<(i16, i16)> {
         self.inner.parse_verse_range()
     }
 
     /// Check if this reference contains the given verse number.
-    fn contains_verse(&self, verse_num: i32) -> bool {
+    fn contains_verse(&self, verse_num: i16) -> bool {
         self.inner.contains_verse(verse_num)
     }
 

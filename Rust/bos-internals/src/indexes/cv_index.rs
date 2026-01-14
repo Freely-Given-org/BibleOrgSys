@@ -8,7 +8,7 @@ use compact_str::CompactString;
 use indexmap::IndexMap;
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_list::InternalBibleEntryList;
+use crate::entry_extra_list::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
 use crate::markers::{is_end_marker, custom_nesting, regular_nesting};
 
@@ -458,7 +458,7 @@ fn is_nesting_marker(marker: &str) -> bool {
     regular_nesting::ALL.contains(&marker)
         || custom_nesting::is_custom_nesting(marker)
         || crate::markers::paragraph_markers::is_paragraph(marker)
-        || crate::markers::section_markers::ALL.contains(&marker)
+        || crate::markers::major_section_markers::ALL.contains(&marker)
 }
 
 impl std::fmt::Display for InternalBibleBookCVIndex {

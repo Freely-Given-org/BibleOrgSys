@@ -6,7 +6,7 @@
 //! The core internals are provided by the `bos-internals` crate.
 
 pub mod cv_index_bindings;
-pub mod python_bindings;
+pub mod parsing_bindings;
 
 // Re-export everything from bos-internals for convenience
 pub use bos_internals::*;

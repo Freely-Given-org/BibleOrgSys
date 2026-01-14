@@ -6,7 +6,7 @@
 
 use compact_str::CompactString;
 
-use crate::entry_list::InternalBibleExtraList;
+use crate::entry_extra_list::InternalBibleExtraList;
 use crate::error::ValidationError;
 use crate::markers::{custom_content, custom_nesting, is_end_marker, ExtraType};
 
