@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-01-15' # by RJH
+LAST_MODIFIED_DATE = '2026-01-16' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -229,7 +229,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('healthoffrynge','healthoffringe'),'health-offering'),
     (('heaue offerynge','heaueoffringe'),'heave-offering'),
     (('hence forth','hece forth','hencefoorth','hensforth'),'henceforth'),
-    ((' her selfe',' her self',' hir silf',' hir selfe',' hir self',' hirselfe',' herselfe',' hirself'),' herself'),
+    ((' her selfe',' her silfe',' her self',' hir silf',' hir selfe',' hir self',' hirselfe',' herselfe',' hirself'),' herself'),
     ((' hid things',),' hidden things'),
     ((' hill’s side',' hilles side',' hilles syde'),' hillside'),
     ((' hym silf',' hym selfe',' him selfe',' him sylfe',' him silf',' hem silf',' himsilfe',' himselfe',' hymselfe'),' himself'),
@@ -1001,7 +1001,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('Aegles','Egles'),'Eagles'),((' eglis',),' eagles'), (('Aegle','Egle'),'Eagle'),((' egle ',),' eagle '),((' egle,',),' eagle,'),
             (('Eerli ',),'Early '),((' eerli',' earely',' earlie',' erly'),' early'),
                 ((' eares',' eeris',' eris'),' ears'),#((' eares,',' eeris,'),' ears,'),((' eares.',' eeris.'),' ears.'),((' eares:',),' ears:'),((' eeris;',),' ears;'),
-                    ((' eare ',' eere '),' ear '),((' eare,',' eere,'),' ear,'),((' eare.',' eere.'),' ear.'),((' eare:',),' ear:'),((' eare;',),' ear;'),
+                    ((' eare ',' eere '),' ear '),((' eare,',' eere,'),' ear,'),((' eare.',' eere.'),' ear.'),((' eare:',),' ear:'),((' eare;',),' ear;'),((' eare)',),' ear)'),
                 ((' erthene',' erthen',' erthun'),' earthen'), (('Erthe',),'Earth'),((' erthe',' erth',),' earth'),((' earthe.',),' earth.'),
             (('Eastwarde',),'Eastward'),(('eastwarde',),'eastward'), ((' easyer',),' easier'), ((' eest ',),' east '),((' eest,',),' east,'),((' eest.',),' east.'),
             ((' eeten',' eten'),' eaten'),((' eateth',' etith'),' eateth/eats'),((' eatinge',' etynge',' eatyng',' etyng'),' eating'),
