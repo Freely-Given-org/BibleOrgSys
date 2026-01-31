@@ -49,7 +49,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-01-28' # by RJH
+LAST_MODIFIED_DATE = '2026-01-29' # by RJH
 SHORT_PROGRAM_NAME = "EuropeanToEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.96'
@@ -1740,7 +1740,7 @@ GERMAN_WORD_MAP = (
             (' setzen',' set/put/place'),(' setzest',' set'),(' setzet ',' sets '), ('Setzen','Put/Set'),(' setzten',' put/set/sat'), (' setzte ',' sat '), ('Setze','Set/Put'),(' setze',' set/put'),(' setz',' set/put'),
             ('Seufzen','sigh'),(' seufzen',' sigh(v)'),(' seufzet',' sighs(v)'),(' seufze',' sigh(v)'),
         ('Sicheln','sickles'),('Sichel','sickle'),
-                    ('Sicheren','secure_(one)'),(' sichere',' safe'),(' sicher',' secure'), 
+                    ('Sicheren','secure_(one)'),(' sichere',' safe'),(' sicher',' secure'),
                     ('sichten','sight'),('sichtet','sights'),
                 (' sich‘s',' itself'),
                 (' sich',' itself/yourself/themselves'), #(' sich ',' itself/yourself/themselves '),(' sich,',' itself/yourself/themselves,'),(' sich.',' itself/yourself/themselves.'),(' sich;',' itself/yourself/themselves;'),(' sich<',' itself/yourself/themselves<'),
@@ -2957,7 +2957,7 @@ LATIN_WORD_MAP = (
                         (' collo',' neck'),
                 (' color',' colour'),
                 ('coluerunt','they_worshipped'),
-                    (' coluit',' worshipped'), 
+                    (' coluit',' worshipped'),
                     ('columbæ','pigeons'),('columba','dove'), ('columnarum','of_columns'),('columnas','columns'),
             (' comæ',' hair_loss'),
                 (' combinari',' to_combine'), (' combussit',' burnt'),
@@ -3006,7 +3006,7 @@ LATIN_WORD_MAP = (
                 ('confessionem','confession'),('Confessio ','Confession '),(' confessio ',' confession '),
                         (' confestim',' immediately'),
                     (' confidat',' trust'),
-                            (' confidenter',' confidently'),('confidere','to_trust'), 
+                            (' confidenter',' confidently'),('confidere','to_trust'),
                             ('confidit','he_trusts'),
                             ('confidunt','they_trust'),
                         (' confinio',' border'),
@@ -3130,7 +3130,7 @@ LATIN_WORD_MAP = (
                 (' cubitis',' cubits/elbows'),(' cubiti',' cubit/elbow'), (' cubitorum',' cubits/elbows'),(' cubitos',' cubits/elbows'),
             ('cuicunque','to_whomever'),('Cui ','To_whom '),(' cui ',' to_whom '),
             (' cujusquam',' anyone\'s'),(' cujusque',' each_one'),(' cujus',' whose'),
-            ('culinarum','kitchens'), 
+            ('culinarum','kitchens'),
                 (' culmen',' summit'),
                 (' culpam',' guilt'),(' culpa',' guilt'),
                 (' cultum',' worship'),(' cultus',' culture'),(' cultura',' culture'),
@@ -3942,7 +3942,7 @@ LATIN_WORD_MAP = (
             ('Iniit','Started'),('inimica','hostile'), ('inimicis','enemies'), ('Inimici','Enemies'),('inimici','enemies'), ('inimicorum','of_enemies'),('inimicos','enemies'),('inimicus','the_enemy'),
                 (' iniqua',' unfair'),(' inique',' unjust'),
                     ('iniquitas','iniquity'),('iniquitatem','iniquity'),('iniquitates','iniquities'),('iniquitate','iniquity'), ('iniquitatis','iniquity'),
-                        ('Iniquitas','Iniquity'),('Iniquitates','Iniquities'),('iniquitatibus','iniquities'),('iniquitatum','of_iniquities'), (' iniqui ',' unjust '), (' iniquo',' unfair'),
+                        ('Iniquitas','Iniquity'),('Iniquitates','Iniquities'),('iniquitatibus','iniquities'),('iniquitatum','of_iniquities'), (' iniqui ',' unjust '),(' iniqui.',' unjust.'), (' iniquo',' unfair'),
                     (' iniquos',' unrighteous'),
                     (' iniquus',' unjust'),
                 ('initio','at_first/in_the_beginning'),
@@ -4608,7 +4608,7 @@ LATIN_WORD_MAP = (
                     (' pascebantur',' they_were_grazing'),(' pascebant',' they_were_feeding'),(' pascebatis',' you(pl)_were_feeding'),(' pascentur',' they_will_feed'),(' pascerent',' they_would_feed'),(' pasces',' you_will_feed'),(' pascet',' he_will_feed'),
                     (' paschæ',' passover'), ('Pascha','Passover'),(' pascha',' passover'),
                     (' pascitur',' is_fed'),(' pascit',' feeds'), (' pascuæ',' pastures'),(' pascuas',' pastures'),(' pascua',' pasture'),(' pascuntur',' they_feed'),
-                (' passer',' sparrow'), 
+                (' passer',' sparrow'),
                     (' passibilis',' passable'), (' passionem',' passion'),(' passione',' passionately'),('passionis','passion'),(' passio ',' passion '),
                     (' passum',' suffered'),(' passuros',' will_suffer'),(' passus',' suffered'),
                 (' pastorem',' shepherd'),(' pastores',' shepherds'),('pastoribus','shepherds'),
@@ -5453,7 +5453,7 @@ LATIN_WORD_MAP = (
                     ('superposuit','placed_on_top'),
                     ('supervacue','needlessly'), ('superveniet','will_arrive'),('supervenit','came_over'),
                     ('Super ','Above/Over '),(' super ',' over '), # Needs a trailing space coz some English words start with 'super'
-                ('supplicia','punishments'), ('supportabant','they_supported'),
+                ('supplantantur','are_supplanted'),('supplicia','punishments'), ('supportabant','they_supported'),
                 ('Supra','Above'),(' supra',' above'),
             (' surdæ',' deaf(pl)'), (' surdos',' the_deaf'),
                 ('Surgam','I_will_get_up'),
@@ -5848,7 +5848,7 @@ LATIN_WORD_MAP = (
                     ('Voluitque','And_he_wanted_to'),(' voluit',' wanted'),
                     ('volumus','we_want'),
                     (' voluntas',' will/desire(n)'),
-                            (' voluntatem',' will'),(' voluntates',' wishes'),(' voluntate',' willingly'), 
+                            (' voluntatem',' will'),(' voluntates',' wishes'),(' voluntate',' willingly'),
                             ('Voluntatis','Of_will'),(' voluntatis',' of_will'), (' voluntati',' to_the_will'),
                         (' volunt ',' they_want '),(' volunt,',' they_want,'),(' volunt.',' they_want.'), # Protect 'voluntary'
                     (' voluptas',' pleasure'),(' voluptate',' pleasure'),(' voluptatibus',' pleasures'),(' voluptatis',' pleasure'),('voluptatum','of_pleasures'),('voluptuose','voluptuously/delightfully'),

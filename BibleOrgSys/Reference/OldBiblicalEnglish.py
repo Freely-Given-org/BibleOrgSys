@@ -50,7 +50,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-01-28' # by RJH
+LAST_MODIFIED_DATE = '2026-01-29' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -314,7 +314,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' whorle winde',' whirle winde'),' whirlwind'),
     (('Whoso ','Who so '),'Whoso/Whoever '),((' whoso ',' who so '),' whoso/whoever '), # Dan 3:6
     (('whom soeuer ',),'whomsoever '),
-    
+
     (('wood offering',),'wood-offering'),
     ((' you silf',),' yourself'),
     (('yourselues','youre selues','your selues','yor selues'),'yourselves'),
@@ -1753,7 +1753,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     ((' overflowe ',),' overflow '),((' overflowe,',),' overflow,'),((' overflowe:',),' overflow:'),
                     ((' overlaide',' overlayde',' overlayed',' overlayd'),' overlaid'), # ouer is fixed just above
                     ((' overranne',),' overran'),
-                    ((' overthrowen',),' overthrown'),((' overthrewe',),' overthrew'), ((' overthroweth',' overthrowth'),' overthroweth/overthrew'),((' overthrowe',),' overthrow'), ((' overtooke',),' overtook'),
+                    ((' overthrowen',),' overthrown'),((' overthrewe',),' overthrew'), ((' overthroweth',' overthrowth'),' overthroweth/overthrew'),((' overthrowe ',),' overthrow '), ((' overtooke',),' overtook'),
         ((' owid ',),' owed '), ((' owest',' owist'),' owest/owe'),
             (('Owle ','Oule '),'Owl '),((' owle',),' owl'), ((' awne ',' owne '),' own '),((' owne,',),' own,'),((' owne.',),' own.'),((' owne:',),' own:'),((' owne;',),' own;'),
         (('Oxen','Ochsen',),'Oxes'),((' oxen',' oxun',' oxis',),' oxes'), ((' oxe ',),' ox '),((' oxe,',),' ox,'), #((' oxun',),' oxen'),
@@ -1894,7 +1894,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' publique ',),' public '), (('Publicane',),'Publican'), (('puplischid','publysshed'),'published'),(('Publishe',),'Publish'),(('puplishe ','publishe '),'publish '),
             ((' puft',),' puffed'),
             ((' punyshedst',' punyschid'),' punished'),((' punishe ',),' punish '),((' punishe,',),' punish,'),((' punysh',),' punish'),
-            ((' pureste',),' purest'), 
+            ((' pureste',),' purest'),
                 ((' purgeth',' purgith'),' purgeth/purges'),
                 (('purificacion',),'purification'), ((' purifie ',),' purify '),((' purifie,',),' purify,'),((' purifie.',),' purify.'),
                 ((' purpur',),' purple'), ((' purposide',),' purposed'),
@@ -2638,7 +2638,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' worldis',),' worlds'),((' worlde',),' world'),
                 ((' wormes ',),' worms '),((' worme ',),' worm '),
                 ((' worne ',),' worn '),
-                (('worschiper',),'worshipper'), (('worschipfuli',),'worshipfully'), 
+                (('worschiper',),'worshipper'), (('worschipfuli',),'worshipfully'),
                         (('worschipiden','worschipide','worschipid','worshypped','worshiped'),'worshipped'), (('worshippeth','worschipith'),'worshippeth/worships'), (('worschipe ','worshippe ','worshipe '),'worship '),(('worshipe,',),'worship,'),((' worschip',' worshyp'),' worship'),
                     ((' worste ',),' worst '),
                 (('Worthi ',),'Worthy '),((' worthie ',' worthi '),' worthy '),
