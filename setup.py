@@ -8,8 +8,8 @@ https://github.com/pypa/sampleproject
 from setuptools import setup # Always prefer setuptools over distutils
 # from os import path
 
-VERSION = '0.0.21'
-LAST_MODIFIED_DATE = '2021-04-28' # by RJH — when setup.py was modified below
+VERSION = '0.0.22'
+LAST_MODIFIED_DATE = '2026-02-13' # by RJH — when setup.py was modified below
 
 
 # NOTE: The package doesn't include the XML data files, only the derived pickles
@@ -371,10 +371,9 @@ This library forms the basis of the experimental
         # that you indicate whether you support Python 2, Python 3 or both.
         # These classifiers are *not* checked by 'pip install'. See instead
         # 'python_requires' below.
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
 
         'Operating System :: OS Independent',
     ],
@@ -384,7 +383,7 @@ This library forms the basis of the experimental
     # and refuse to install the project if the version does not match. If you
     # do not support Python 2, you can simplify this to '>=3.5' or similar, see
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires='>=3.7',
+    python_requires='>=3.11',
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow

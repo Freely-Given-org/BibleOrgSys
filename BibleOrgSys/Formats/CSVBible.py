@@ -6,7 +6,7 @@
 #
 # Module handling comma-separated-values and tab-separated_values text Bible files
 #
-# Copyright (C) 2014-2025 Robert Hunt
+# Copyright (C) 2014-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -51,6 +51,7 @@ CHANGELOG:
     2025-09-02 Handle CSV folder with books in separate files
     2025-09-27 Added (exported) BibleHub TSV spreadsheet/table format
     2025-11-20 Added our wordtables for BibleHub TSV spreadsheet/table format
+    2026-02-03 Updated for changes in BibleHub TSV spreadsheet format with improved column names
 """
 from gettext import gettext as _
 from pathlib import Path
@@ -71,7 +72,7 @@ from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.OriginalLanguages import Hebrew, Greek
 
 
-LAST_MODIFIED_DATE = '2025-12-23' # by RJH
+LAST_MODIFIED_DATE = '2026-02-03' # by RJH
 SHORT_PROGRAM_NAME = "CSVBible"
 PROGRAM_NAME = "CSV Bible format handler"
 PROGRAM_VERSION = '0.49'
@@ -538,7 +539,7 @@ class CSVBible( Bible ):
             """
             Some code copied from ESFMBible.py loadESFMWordFile()
 
-            Returns the number of tables loaded
+            Returns the number of tables loaded into self.abbreviatedWordTables
             """
             fnPrint( DEBUGGING_THIS_MODULE, f"CSVBible._loadBereanSpreadsheetTable._loadPossibleWordTables( {folderpath} )")
 
@@ -700,9 +701,9 @@ class CSVBible( Bible ):
 
         def appendWordNumber( fgWRef:str, originalLanguageWord:str, text:str ) -> str:
             """
-            Also uses word_table_filename
+            Also uses word_table_filename and self.abbreviatedWordTables
             """
-            # print( f"  appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} ) for {self.abbreviation}" )
+            # if fgWRef.startswith('MRK'): print( f"  appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} ) for {self.abbreviation}" )
             assert fgWRef and fgWRef.count('w')==1, f"appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} )"
             assert originalLanguageWord and originalLanguageWord.strip()==originalLanguageWord, f"appendWordNumber( {fgWRef=} {originalLanguageWord=} {text=} )"
             # return '' # Uncomment this line to disable word numbers
@@ -725,7 +726,7 @@ class CSVBible( Bible ):
                 )
             assert text and not text.endswith(' '), f"{fgWRef} {originalLanguageWord=} {text=}"
             
-            # if isNT: print( f"{fgWRef} {originalLanguageWord=} got {text=}")
+            # if fgWRef.startswith('MRK'): print( f"{fgWRef} {originalLanguageWord=} got {text=}")
             try: startIndex,count = word_table_indexes[word_table_filename][fgRef]
             except KeyError:
                 logging.critical( f"Why couldn't Berean {self.abbreviation} appendWordNumber( {fgWRef}, {originalLanguageWord=} ) find a table entry ???" )
@@ -739,9 +740,9 @@ class CSVBible( Bible ):
             #         return f'¦{startIndex+n}'
             #         break
             fgwRefWordNumber = int( fgWRef.split('w')[1] )
-            # print( f"{fgWRef=} {fgwRefWordNumber=} {originalLanguageWord=}" )
+            # if fgWRef.startswith('MRK'): print( f"{fgWRef=} {fgwRefWordNumber=} {originalLanguageWord=}" )
             for n,tableRowBits in enumerate( self.abbreviatedWordTables[word_table_filename][startIndex:startIndex+count] ):
-                # print( f"    {startIndex=} {count=} {n=} {tableRowBits=}")
+                # if fgWRef.startswith('MRK'): print( f"    {startIndex=} {count=} {n=} {tableRowBits=}")
                 if fgWRef==tableRowBits[0]:
                     if adjustedOriginalLanguageWord==tableRowBits[1] \
                     or (isOT and adjustedOriginalLanguageWord==tableRowBits[1].removesuffix('ס')) \
@@ -775,18 +776,20 @@ class CSVBible( Bible ):
                                     continue
                                 assert result[insertionIndex].isalpha() or result[insertionIndex].isdigit()
                                 result = f'{result[:insertionIndex+1]}¦{startIndex+n}{result[insertionIndex+1:]}'
-                        # if fgRef.startswith( 'MAT_1:'):
+                        # if fgWRef.startswith( 'MRK'):
                         #     print( f"    Found {startIndex+n} for {text=} so returning {result=}" )
                         return result
                     else: # didn't match
                         print( f"    Failed comparing {self.abbreviation} {fgWRef} {originalLanguageWord=} {adjustedOriginalLanguageWord=} with {tableRowBits[1]=}")
                 if 'w' in tableRowBits[0]:
                     thisWordNumber = int( tableRowBits[0].split('w')[1] )
-                    # print( f"    {thisWordNumber}/{fgwRefWordNumber} {tableRowBits=}")
+                    # if fgWRef.startswith('MRK'): print( f"    {thisWordNumber}/{fgwRefWordNumber} {tableRowBits=}")
                     if thisWordNumber >  fgwRefWordNumber:
                         # print( "  Gone too far" )
                         break
+            # logger = logging.critical if fgWRef.startswith('MRK') else logging.error
             logging.error( f"appendWordNumber() {self.abbreviation} failed to match {fgWRef=} {originalLanguageWord=} {text=}" )
+            # if fgWRef.startswith('MRK_1:5'): halt
             return text
         # end of appendWordNumber
 
@@ -807,7 +810,7 @@ class CSVBible( Bible ):
                 if row['WLC / Nestle Base TR RP WH NE NA SBL']:
                     originalLanguageWord = row['WLC / Nestle Base TR RP WH NE NA SBL'].replace('׃','')
                 else: # it's one of those nine blank rows between each verse
-                    try: wordBSBOffset = int( row['Heb Sort' if isOT else 'Greek Sort'] ) + (1 if isNT else 0)
+                    try: wordBSBOffset = int( row['Heb Sort' if isOT else 'Greek Sort'] ) #+ (1 if isNT else 0)
                     except ValueError: wordBSBOffset = int( float( row['Heb Sort' if isOT else 'Greek Sort'] ) )
             except KeyError: # Must be MSB NT
                 if row['MT']:
@@ -820,7 +823,10 @@ class CSVBible( Bible ):
                 thisVerseText = f'{thisVerseText}\\qs*'
                 qs = False
 
-            if row['Verse']: # Occurs on the first word in the verse
+            # BibleHub improved some column names around December 2025
+            verseIdColumnName, openQuoteColumnName, closeQuoteColumnName = ('VerseId','begQ','endQ') if ' BSB version ' in row else ('Verse','“','”')
+
+            if row[verseIdColumnName]: # Occurs on the first word in the verse
                 if vStr: # Write the last verse number
                     addLine( 'v', f'{vStr.strip()} ', fgRef, thisBook )
                     vStr = None
@@ -830,13 +836,13 @@ class CSVBible( Bible ):
                 # if fgRef == 'JHN_3:13': halt
                 thisVerseText = ''
 
-                bits = row['Verse'].split( ' ' )
+                bits = row[verseIdColumnName].split( ' ' )
                 bookName, CV = ' '.join( bits[:-1] ), bits[-1]
                 C, V = CV.split( ':', 1 )
                 vStr = V # Tells us that we need to print it
                 BBB = BibleOrgSysGlobals.loadedBibleBooksCodes.getBBBFromEnglishText( bookName )
                 # print( f"  {BBB} {C}:{V}")
-                assert BBB, f"{n} {row['Verse']=}"
+                assert BBB, f"{n} {row[verseIdColumnName]=}"
                 fgRef = f'{BBB}_{C}:{V}'
                 if fgRef == 'MAT_1:1': wordBSBOffset = 0 # Special case for start of NT
                 chapterNumber, verseNumber = int(C), int(V)
@@ -1039,18 +1045,38 @@ class CSVBible( Bible ):
                 else: raise ValueError( f"Bad Par: {row['Par']=} from {row}")
 
             if ' BSB version ' in row and row[' BSB version ']:
-                # We'll remove this other stuff later, coz we sometimes need the final punctuation after them
-                # and row[' BSB version '] != ' . . . ' and row[' BSB version '] != ' - ' and row[' BSB version '] != ' vvv ':
+                # TODO: We need to fix NT word numbers here I think
                 try: thisSortNumber = int(row['Heb Sort' if isOT else 'Greek Sort'])
                 except ValueError: thisSortNumber = int( float( row['Heb Sort' if isOT else 'Greek Sort'] ) )
                 wordNumberInVerse = thisSortNumber - wordBSBOffset
-                if fgRef not in ('NUM_26:1','SA1_21:15','NEH_7:68',
-                                ) and BBB not in ('MAT','MRK','LUK','JHN','ACT','ROM','GAL','EPH'):
+                if fgRef.startswith( 'MAT' ): print( f"{row=}\n  {fgRef} {thisSortNumber=} {wordBSBOffset=} -> {wordNumberInVerse=}" )
+                if ( fgRef not in ('NUM_26:1','SA1_21:15','NEH_7:68', 'MRK_10:24')
+                # and BBB not in ('MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL')
+                ):
                                 #  'MAT_7:20','MAT_12:48','MAT_17:22','MAT_17:26','MAT_18:12','MAT_23:15',
                                 #  'MRK_1:14','MRK_3:4','MRK_7:17','MRK_9:8','MRK_9:45','MRK_9:47','MRK_10:24',
                                 #  'LUK_2:48','ACT_8:38','ROM_16:25','GAL_1:1'):
                     assert wordNumberInVerse >= 1, f"From {fgRef} {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalText=}"
-                originalText = row[' BSB version ']
+
+                originalText = ( row[' BSB version ']
+                                    # I just guessed at these BSB fixes, so they really need checking out properly
+                                    # (I presume that having different opening and closing [] and {} is a human error and not some code for something special ???)
+                                    .replace( '{He did this]', '{He did this}' ) # Josh 4:24
+                                    .replace( '[the Israelites learned', '[the] Israelites learned' ) # Josh 9:16
+                                    .replace( '[Is [it] because', '[Is it] because' ) # 2 Kings 1:3
+                                    .replace( 'as his garment [could hold', 'as his garment [could] hold' ) # 2 Kings 4:39
+                                    .replace( '{Amaziah]', '{Amaziah}' ) # 2 Kings 14:19
+                                    .replace( 'to [Baruch}', 'to [Baruch]' ) # Jer 45:4
+                                    .replace( '[as though they were rams', '[as though] they were rams' ) # Eze 39:18
+                                    .replace( '{does] this', '{does} this' ) # Mrk 8:12
+                                    .replace( '[Do} not', '[Do] not' ) # Luk 9:50
+                                    .replace( '{do] not', '{do} not' ) # Luk 10:20
+                                    .replace( '{did] His', '{did} His' ) # Act 2:31
+                                    .replace( '{After] the', '{After} the' ) # Act 16:6
+                                    .replace( '[the week[', '[the week]' ) # Act 28:14
+                                    .replace( '[When}', '[When]' ) # Act 28:15
+                                    .replace( '{Let] the', '{Let} the' ) # Col 3:15
+                                )
                 # print( f"From {thisSortNumber=} ({wordBSBOffset=}) got {wordNumberInVerse=} for {originalLanguageWord=} {originalText=}" )
                 assert originalText.count( '[' ) == originalText.count( ']' ), f"    {n} {BBB} {C}:{V} {originalText=}"
                 assert originalText.count( '<i>' ) == originalText.count( '</i>' ), f"    {n} {BBB} {C}:{V} {originalText=}"
@@ -1069,7 +1095,7 @@ class CSVBible( Bible ):
                         if wJ and text.endswith('</span>'): text = text[:-7]
                         assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
                         textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
-                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
+                        textEntry = f"{'\\wj ' if wJ and row[openQuoteColumnName] else ''}{row[openQuoteColumnName]}{textWithWordNumber}{row['pnc']}{row[closeQuoteColumnName]}{'\\wj*' if wJ and row[closeQuoteColumnName] else ''}"
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry and '/' not in textEntry
                         # print( f"      {n} {BBB} {C}:{V} {textEntry=}" )
                         if textEntry:
@@ -1077,8 +1103,11 @@ class CSVBible( Bible ):
                             # thisBook.appendToLastLine( textEntry )
                     if '\\wj*' in textEntry:
                         wJ = False
-                    footnoteText = row['footnotes'].replace('<i>','\\+it ').replace('</i>','\\+it*') \
+                    footnoteText = ( row['footnotes']
+                                        .replace( ' for Elihu</i>', ' for <i>Elihu</i>' ) # 1 Chr 6:27 x2
+                                        .replace('<i>','\\+it ').replace('</i>','\\+it*')
                                         .replace( '<span class=|fnv|>', '\\xt ', ).replace( '</span>', '\\ft ', )
+                                    )
                     assert '|' not in footnoteText and '<' not in footnoteText and '>' not in footnoteText and '/' not in footnoteText, f"{BBB} {C}:{V} {footnoteText=}\n from {row['footnotes']}"
                     footnote = f'\\f + \\fr {C}:{V} \\ft {footnoteText}\\f*' if row['footnotes'] else ''
                     assert '|' not in footnote and '<' not in footnote and '>' not in footnote and '/' not in footnote, f"{BBB} {C}:{V} {footnote=} from {row['footnotes']}"
@@ -1092,22 +1121,26 @@ class CSVBible( Bible ):
                     text = originalText.rstrip()
                     assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
 
-                    footnoteText = row['footnotes'].replace('<i>','\\+it ').replace('</i>','\\+it*') \
+                    footnoteText = ( row['footnotes']
+                                        .replace( ' for Elihu</i>', ' for <i>Elihu</i>' ) # 1 Chr 6:27 x2
+                                        .replace( '</i>Gaza</i>', '<i>Gaza</i>' ) # 1 Chr 7:28
+                                        .replace('<i>','\\+it ').replace('</i>','\\+it*')
                                         .replace( '<span class=|fnv|>', '\\xt ', ).replace( '</span>', '\\ft ', )
+                                    )
                     assert '|' not in footnoteText and '<' not in footnoteText and '>' not in footnoteText, f"{BBB} {C}:{V} {footnoteText=}\n from {row['footnotes']}"
                     footnote = f'\\f + \\fr {C}:{V} \\ft {footnoteText}\\f*' if row['footnotes'] else ''
                     assert '|' not in footnote and '<' not in footnote and '>' not in footnote, f"{BBB} {C}:{V} {footnote=} from {row['footnotes']}"
-                    if row['“'].startswith( '<span class=|reftext|><a href=|#|><b>' ) and row['“'].endswith( '</b></a></span>' ): # A verse number after a d in PSA
+                    if row[openQuoteColumnName].startswith( '<span class=|reftext|><a href=|#|><b>' ) and row[openQuoteColumnName].endswith( '</b></a></span>' ): # A verse number after a d in PSA
                         assert BBB == 'PSA'
-                        row['“'] = ''
+                        row[openQuoteColumnName] = ''
                     if '</span>' in row['pnc']: # Mat 17:20
                         assert BBB in ('MAT','MRK','LUK','JHN','CO1')
                         assert wJ
                         row['pnc'] = row['pnc'].replace( '</span>', '\\wj*' )
-                    if '</span>' in row['”']: # Luk 17:14
+                    if '</span>' in row[closeQuoteColumnName]: # Luk 17:14
                         assert BBB in ('LUK','JHN')
                         assert wJ
-                        row['”'] = row['”'].replace( '</span>', '\\wj*' )
+                        row[closeQuoteColumnName] = row[closeQuoteColumnName].replace( '</span>', '\\wj*' )
                     if '</span>' in row['End text']: # Mat 3:14
                         assert BBB in ('MAT','MRK','LUK','JHN','ACT','CO1','CO2','HEB','REV')
                         # assert wJ # Do we have this wrong then at Mat 19:6 ????
@@ -1116,7 +1149,7 @@ class CSVBible( Bible ):
                         assert fgRef in ('MAT_27:37','MRK_15:26','LUK_23:38','JHN_19:19','ACT_17:23','REV_17:5','REV_19:16') # inscriptions
                         row['End text'] = ''
                     textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
-                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
+                    textEntry = f"{'\\wj ' if wJ and row[openQuoteColumnName] else ''}{row[openQuoteColumnName]}{textWithWordNumber}{row['pnc']}{row[closeQuoteColumnName]}{'\\wj*' if wJ and row[closeQuoteColumnName] else ''}{footnote}{row['End text']}"
                     # print( f"      {n} {BBB} {C}:{V} whole {textEntry=}" )
                     if textEntry:
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry, f"{BBB} {C}:{V} {textEntry=}\n from {row}"
@@ -1148,7 +1181,7 @@ class CSVBible( Bible ):
                         if wJ and text.endswith('</span>'): text = text[:-7]
                         assert '|' not in text and '<' not in text and '>' not in text and '/' not in text
                         textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
-                        textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}"
+                        textEntry = f"{'\\wj ' if wJ and row[openQuoteColumnName] else ''}{row[openQuoteColumnName]}{textWithWordNumber}{row['Pnc']}{row[closeQuoteColumnName]}{'\\wj*' if wJ and row[closeQuoteColumnName] else ''}"
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry and '/' not in textEntry
                         # print( f"      {n} {BBB} {C}:{V} {textEntry=}" )
                         if textEntry:
@@ -1179,10 +1212,10 @@ class CSVBible( Bible ):
                         assert BBB in ('MAT','MRK','LUK','JHN','CO1')
                         assert wJ
                         row['Pnc'] = row['Pnc'].replace( '</span>', '\\wj*' )
-                    if '</span>' in row['”']: # Mat 17:21
+                    if '</span>' in row[closeQuoteColumnName]: # Mat 17:21
                         assert BBB in ('MAT','MRK','LUK','JHN')
                         assert wJ
-                        row['”'] = row['”'].replace( '</span>', '\\wj*' )
+                        row[closeQuoteColumnName] = row[closeQuoteColumnName].replace( '</span>', '\\wj*' )
                     if '</span>' in row['End text']: # Mat 3:15
                         assert BBB in ('MAT','MRK','LUK','JHN','ACT','CO1','CO2','HEB','REV')
                         # assert wJ # Do we have this wrong then at Mat 19:6 ????
@@ -1191,7 +1224,7 @@ class CSVBible( Bible ):
                         assert fgRef in ('MAT_27:37','MRK_15:26','LUK_23:38','JHN_19:19','ACT_17:23','REV_17:5','REV_19:16') # inscriptions
                         row['End text'] = ''
                     textWithWordNumber = appendWordNumber( fgWRef, originalLanguageWord, text )
-                    textEntry = f"{'\\wj ' if wJ and row['“'] else ''}{row['“']}{textWithWordNumber}{row['Pnc']}{row['”']}{'\\wj*' if wJ and row['”'] else ''}{footnote}{row['End text']}"
+                    textEntry = f"{'\\wj ' if wJ and row[openQuoteColumnName] else ''}{row[openQuoteColumnName]}{textWithWordNumber}{row['Pnc']}{row[closeQuoteColumnName]}{'\\wj*' if wJ and row[closeQuoteColumnName] else ''}{footnote}{row['End text']}"
                     # print( f"      {n} {BBB} {C}:{V} whole {textEntry=}" )
                     if textEntry:
                         assert '|' not in textEntry and '<' not in textEntry and '>' not in textEntry
