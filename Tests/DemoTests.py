@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 # -\*- coding: utf-8 -\*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -46,16 +46,9 @@ import os.path
 from datetime import datetime
 from pathlib import Path
 
-if __name__ == '__main__':
-    aboveFolderPath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderPath not in sys.path:
-        sys.path.insert( 0, aboveFolderPath )
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Formats import USFMBible # Has to be here for unpickling in TestBib5 to work
-
-# Some Misc and Apps modules imported below are up a level
-sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # Some Misc and Apps modules imported below are up a level
 #dPrint( 'Info', DEBUGGING_THIS_MODULE, sys.path )
 
 LAST_MODIFIED_DATE = '2022-06-07' # by RJH
@@ -1357,8 +1350,6 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
 
     # And the actual interactive programs (which have a main() function but we just run the demo() function)
     # In Apps folder
-    sys.path.insert( 0, '../BibleOrgSys/Apps/' )
-
     moduleName = 'CreateDistributableResources'
     try:
         import CreateDistributableResources
@@ -1426,8 +1417,6 @@ def doAll( testType:str, failures:list[str], failureDetails:list[str],
 
     # Biblelator
     ############
-    sys.path.insert( 0, '../Biblelator/' )
-
     # Biblelator programs
     moduleName = 'Biblelator'
     try:

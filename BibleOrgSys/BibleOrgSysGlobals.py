@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 # -\*- coding: utf-8 -\*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -110,11 +110,6 @@ try: import pwd
 except ImportError:
     pwd = None
     import getpass
-
-if __name__ == '__main__':
-    aboveFolderpath = os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) )
-    if aboveFolderpath not in sys.path:
-        sys.path.insert( 0, aboveFolderpath )
 
 
 LAST_MODIFIED_DATE = '2025-11-19' # by RJH

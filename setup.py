@@ -233,7 +233,7 @@ and this is not planned until after the release of v1.0.0.
 Here is the code for a simple **Bible (e.g., USFM) to USX converter** using BibleOrgSys:
 
 ```
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 #
 # myBible2USX.py (minimal version)
 #
