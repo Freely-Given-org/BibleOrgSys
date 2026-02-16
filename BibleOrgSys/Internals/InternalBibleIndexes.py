@@ -97,66 +97,8 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK = 4
 
 
 
-class InternalBibleBookCVIndexEntry:
-    """
-    Holds the following information:
-        1/ entryIndex: the index into the BibleEntryList
-            REMOVED: indexNext: the index of the next BibleEntry
-        2/ entryCount: the number of BibleEntries
-        3/ context: a list containing contextual markers which still apply to this entry.
-    """
-    __slots__ = ('entryIndex','entryCount','context') # Define allowed self variables (more efficient than a dict when have many instances)
-
-
-    def __init__( self, entryIndex:str, entryCount:int, context:list[str]|None=None ) -> None:
-        """
-        """
-        #if context: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "XXXXXXXX", entryIndex, entryCount, context )
-        if context is None: context:list[str] = []
-        self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
-        #self.indexNext = self.entryIndex + entryCount
-    # end of InternalBibleBookCVIndexEntry.__init__
-
-
-    def __repr__( self ) -> str:
-        return self.__str__()
-    def __str__( self ) -> str:
-        """
-        Just display a simplified view of the index entry.
-        """
-        result = "InternalBibleBookCVIndexEntry object: ix={} cnt={} ixE={}{}" \
-            .format( self.entryIndex, self.entryCount, self.entryIndex + self.entryCount,
-                    " ctxt={}".format(self.context) if self.context else '' )
-        return result
-    # end of InternalBibleBookCVIndexEntry.__str__
-
-
-    def __len__( self ) -> int:
-        return 3
-    def __getitem__( self, keyIndex ):
-        if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
-            halt # not done yet
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ki2", keyIndex )
-            #assert keyIndex.step is None
-            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "param", *keyIndex.indices(len(self)) )
-            #return InternalBibleEntryList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
-        # Otherwise assume keyIndex is an int
-        if keyIndex == 0: return self.entryIndex
-        elif keyIndex == 1: return self.entryCount
-        #elif keyIndex == 2: return self.indexNext
-        elif keyIndex == 2: return self.context
-        else: raise IndexError
-    # end of InternalBibleBookCVIndexEntry.__getitem__
-
-    def getEntryIndex( self ) -> int:
-        return self.entryIndex
-    def getNextEntryIndex( self ) -> int:
-        return self.entryIndex + self.entryCount # exclusive
-    def getEntryCount( self ) -> int:
-        return self.entryCount
-    def getContextList( self ) -> list[str]:
-        return self.context
-# end of class InternalBibleBookCVIndexEntry
+# Rust implementation for better memory usage and speed (drop-in replacement with camelCase API)
+from bible_organisational_system import CVIndexEntry as InternalBibleBookCVIndexEntry  # type: ignore[assignment]
 
 
 
