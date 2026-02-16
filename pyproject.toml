@@ -1,10 +1,32 @@
 [project]
 name = "bibleorgsys"
 version = "0.1.0"
-description = "Bible Organisational System (BOS) Python package"
+description = "Bible Organisational System — load, check, and/or export Bible files/folders"
 readme = "README.md"
 requires-python = ">=3.13"
+license = "GPL-3.0-or-later"
+authors = [
+    { name = "Robert Hunt", email = "Freely.Given.org+BOS@gmail.com" },
+]
+keywords = ["Bible", "Scripture", "check", "import", "export", "index", "book", "chapter", "verse", "USFM", "USX"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Religion",
+    "Topic :: Religion",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
+]
 dependencies = ["bibleorgsys-rust>=0.1.0"]
+
+[project.urls]
+Homepage = "https://Freely-Given.org/Software/BibleOrganisationalSystem/"
+Source = "https://github.com/openscriptures/BibleOrgSys/"
+
+[project.scripts]
+Bible2USX = "BibleOrgSys.Apps.Bible2USX:run"
 
 [build-system]
 requires = ["hatchling"]
@@ -13,9 +35,15 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
+[tool.hatch.build.targets.wheel]
+packages = ["BibleOrgSys"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"BibleOrgSys/DataFiles/DerivedFiles" = "BibleOrgSys/DataFiles/DerivedFiles"
+"BibleOrgSys/DistributedFiles" = "BibleOrgSys/DistributedFiles"
+
 [tool.uv.workspace]
 members = [".", "Rust/bible_organisational_system"]
-
 
 [tool.uv.sources]
 bibleorgsys-rust = { workspace = true }
