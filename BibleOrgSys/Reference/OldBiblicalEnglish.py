@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 # -\*- coding: utf-8 -\*-
 # SPDX-FileCopyrightText: © 2023 Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -40,12 +40,6 @@ main calls fullDemo()
 CHANGELOG:
     2025-03-20 Moved into BOS from OBD (OpenBibleData)
 """
-if __name__ == '__main__':
-    import os.path
-    import sys
-    aboveAboveFolderpath = os.path.dirname( os.path.dirname( os.path.dirname( os.path.abspath( __file__ ) ) ) )
-    if aboveAboveFolderpath not in sys.path:
-        sys.path.insert( 0, aboveAboveFolderpath )
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 

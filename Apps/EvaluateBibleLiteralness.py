@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
 # -\*- coding: utf-8 -\*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -82,11 +82,6 @@ from csv import DictReader
 from collections import defaultdict
 import logging
 
-# Allow the system to find the BibleOrgSys even when the app is down in its own folder
-if __name__ == '__main__':
-    import os, sys
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../BibleOrgSys/') ) ) # So we can run it from the folder above and still do these imports
-    sys.path.insert( 0, os.path.abspath( os.path.join(os.path.dirname(__file__), '../') ) ) # So we can run it from the folder above and still do these imports
 import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27, BOOKLIST_66

@@ -1,8 +1,7 @@
-BOS README.md
-
 # Bible Organisational System (BibleOrgSys or BOS)
 
 Python library for processing Bibles in various formats
+
 
 <table>
     <tr>
@@ -34,6 +33,28 @@ Python library for processing Bibles in various formats
         <td><img src='https://img.shields.io/pypi/pyversions/BibleOrgSys.svg'></td>
     </tr>
 </table>
+
+## Getting started
+
+BibleOrgSys requires Python 3.13+ and uses [uv](https://docs.astral.sh/uv/) for project management.
+
+```bash
+# Clone and set up
+git clone https://github.com/Freely-Given-org/BibleOrgSys.git
+cd BibleOrgSys
+uv sync
+
+# Run the included Bible2USX converter
+uv run Bible2USX path/to/BibleFileOrFolder
+
+# Run tests
+uv run python -m pytest Tests/
+
+# Use as a library
+uv run python -c "from BibleOrgSys import BibleOrgSysGlobals"
+```
+
+The project includes a Rust extension (`bibleorgsys-rust`) built with [maturin](https://www.maturin.rs/) and [PyO3](https://pyo3.rs/) for performance-critical internals. `uv sync` handles building and linking it automatically via the workspace configuration.
 
 ## Introduction
 
@@ -116,10 +137,9 @@ Eventually the BibleOrgSys became the basis for the Freely-Given.org [Bible Drop
 1. The BibleOrgSys is designed to make good use multicore CPUs using the Python multiprocessing library. If, for example, a certain Bible format has each Bible ‘book’ in a separate file, it will try to use all the cores to load them simultaneously. (This can cause any warning messages from processing various ‘books’ to be interspersed.)
 2. The --single (-1) flag is given, then only a single CPU core will be used. This is commonly used for debugging (and is also forced on by the --debug flag) so that progress and warning & error messages are output to the console in a sensible order in order to track down where a fault is occurring.
 
-## To Do (May 2025)
+## To Do
 
-1. Make API more consistent: We have some functions beginning with 'make' and others with 'create'. We probably need to choose only one of those.
-
-## To Do (February 2026)
-
-1. Implement some internal functions in Rust: The main reason to convert some of the internals from Python to Rust is to save memory. Every Python string (and there's a lot of them stored in the internal represenation of a Bible) has a large memory overhead. Any speed improvements coming from using Rust are also an advantage, but saving memory is the main goal. With Claude's help, we already have some of the internals written in Rust with PyO3 interfaces. However, the Python code is not yet making use of those Rust functions, and so they haven't yet been tested or debugged.
+1. **Rust internals**: Some internals have been written in Rust with PyO3 interfaces to save memory and improve speed, but the Python code is not yet using those Rust functions. They need testing and integration.
+2. **API consistency**: Some functions begin with 'make' and others with 'create' — should be standardised.
+3. **Versification mapping**: The package will not reach v1.0.0 until versification mapping is completed.
+4. **Codebase modernisation**: Migrate `os.path` calls to `pathlib`, convert `.format()` to f-strings, break up the monolithic `BibleWriter.py` into separate exporter modules.
