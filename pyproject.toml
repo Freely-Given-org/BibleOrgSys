@@ -21,9 +21,15 @@ classifiers = [
 ]
 dependencies = ["bibleorgsys-rust>=0.1.0"]
 
+[tool.uv]
+environments = [
+    "python_version == '3.13'",
+    "python_version == '3.14'"
+]
+
 [project.urls]
 Homepage = "https://Freely-Given.org/Software/BibleOrganisationalSystem/"
-Source = "https://github.com/openscriptures/BibleOrgSys/"
+Source = "https://github.com/Freely-Given-org/BibleOrgSys"
 
 [project.scripts]
 Bible2USX = "BibleOrgSys.Apps.Bible2USX:run"
@@ -47,3 +53,8 @@ members = [".", "Rust/bible_organisational_system"]
 
 [tool.uv.sources]
 bibleorgsys-rust = { workspace = true }
+
+[tool.setuptools]
+py-modules = ["BibleOrgSysGlobals"] 
+# This explicitly tells Python: "Treat this file as a top-level module"
+

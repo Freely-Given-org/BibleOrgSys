@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "bibleorgsys-rust"
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
