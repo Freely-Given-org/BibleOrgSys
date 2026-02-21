@@ -7,6 +7,7 @@ use bos_internals::parsing;
 
 use crate::cv_index_bindings::register_cv_index_types;
 use crate::extra_bindings::register_extra_types;
+use crate::section_index_bindings::register_section_index_types;
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -17,6 +18,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Register types
     register_extra_types(m)?;
     register_cv_index_types(m)?;
+    register_section_index_types(m)?;
 
     Ok(())
 }

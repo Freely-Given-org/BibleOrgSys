@@ -8,6 +8,7 @@
 pub mod cv_index_bindings;
 pub mod extra_bindings;
 pub mod parsing_bindings;
+pub mod section_index_bindings;
 
 // Re-export everything from bos-internals for convenience
 pub use bos_internals::*;
