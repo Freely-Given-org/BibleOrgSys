@@ -1,12 +1,15 @@
-//! Python bindings for InternalBibleBookSectionIndexEntry.
+//! Python bindings for section index types.
 //!
-//! Provides a backward-compatible API matching the Python class,
-//! including camelCase method names and index-based field access.
+//! Provides backward-compatible APIs matching the Python classes:
+//! - `InternalBibleBookSectionIndexEntry` — a single section entry
+//! - `InternalBibleBookSectionIndex` — the section index collection
 
-use pyo3::exceptions::PyIndexError;
+use pyo3::exceptions::{PyIndexError, PyKeyError, PyValueError};
 use pyo3::prelude::*;
 
-use bos_internals::SectionIndexEntry;
+use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEntry};
+
+use crate::cv_index_bindings::PyInternalBibleEntryList;
 
 // ============================================================================
 // PySectionIndexEntry
@@ -102,11 +105,7 @@ impl PySectionIndexEntry {
 
     #[getter]
     fn contextList(&self) -> Vec<String> {
-        self.inner
-            .context()
-            .iter()
-            .map(|s| s.to_string())
-            .collect()
+        self.inner.context().iter().map(|s| s.to_string()).collect()
     }
 
     // --- camelCase getter methods (Python backward compat) ---
@@ -136,11 +135,7 @@ impl PySectionIndexEntry {
 
     /// Get context markers list.
     fn getContextList(&self) -> Vec<String> {
-        self.inner
-            .context()
-            .iter()
-            .map(|s| s.to_string())
-            .collect()
+        self.inner.context().iter().map(|s| s.to_string()).collect()
     }
 
     /// Get section name and reason marker as (str, str) tuple.
@@ -194,12 +189,7 @@ impl PySectionIndexEntry {
                 .into_any()
                 .unbind()),
             6 => {
-                let ctx: Vec<String> = self
-                    .inner
-                    .context()
-                    .iter()
-                    .map(|s| s.to_string())
-                    .collect();
+                let ctx: Vec<String> = self.inner.context().iter().map(|s| s.to_string()).collect();
                 Ok(ctx.into_pyobject(py)?.into_any().unbind())
             }
             _ => Err(PyIndexError::new_err("Index out of range")),
@@ -219,12 +209,7 @@ impl PySectionIndexEntry {
             if self.inner.context().is_empty() {
                 String::new()
             } else {
-                let ctx: Vec<String> = self
-                    .inner
-                    .context()
-                    .iter()
-                    .map(|s| s.to_string())
-                    .collect();
+                let ctx: Vec<String> = self.inner.context().iter().map(|s| s.to_string()).collect();
                 format!(" ctxt={:?}", ctx)
             }
         )
@@ -249,8 +234,176 @@ impl From<&SectionIndexEntry> for PySectionIndexEntry {
     }
 }
 
+// ============================================================================
+// PyInternalBibleBookSectionIndex
+// ============================================================================
+
+/// Section index for a Bible book.
+///
+/// Maps section starting points (C:V) to section entries.
+/// Accepts (str, str) tuples for keys.
+#[pyclass(name = "InternalBibleBookSectionIndex")]
+pub struct PyInternalBibleBookSectionIndex {
+    inner: InternalBibleBookSectionIndex,
+}
+
+#[pymethods]
+#[allow(non_snake_case)]
+impl PyInternalBibleBookSectionIndex {
+    /// Create a new empty section index.
+    #[new]
+    fn new(work_name: &str, book_code: &str) -> Self {
+        Self {
+            inner: InternalBibleBookSectionIndex::new(work_name, book_code),
+        }
+    }
+
+    // === Properties ===
+
+    #[getter(workName)]
+    fn work_name(&self) -> &str {
+        self.inner.work_name()
+    }
+
+    #[getter(BBB)]
+    fn bbb(&self) -> &str {
+        self.inner.book_code()
+    }
+
+    #[getter(_indexedFlag)]
+    fn indexed_flag(&self) -> bool {
+        self.inner.is_indexed()
+    }
+
+    #[getter(givenBibleEntries)]
+    fn given_bible_entries(&self) -> PyInternalBibleEntryList {
+        PyInternalBibleEntryList::from(self.inner.entries().clone())
+    }
+
+    // === Python protocol methods ===
+
+    fn __len__(&self) -> usize {
+        self.inner.len()
+    }
+
+    fn __contains__(&self, key: (String, String)) -> bool {
+        let cv = ChapterVerse::new(&key.0, &key.1);
+        self.inner.contains(&cv)
+    }
+
+    fn __getitem__(&self, key: (String, String)) -> PyResult<PySectionIndexEntry> {
+        let cv = ChapterVerse::new(&key.0, &key.1);
+        self.inner
+            .get_index_entry(&cv)
+            .map(PySectionIndexEntry::from)
+            .ok_or_else(|| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))
+    }
+
+    fn __iter__(slf: PyRef<'_, Self>) -> PySectionIndexIter {
+        let keys: Vec<(String, String)> = slf
+            .inner
+            .iter()
+            .map(|(cv, _)| (cv.chapter().to_string(), cv.verse().to_string()))
+            .collect();
+        PySectionIndexIter { keys, index: 0 }
+    }
+
+    fn items(&self) -> Vec<((String, String), PySectionIndexEntry)> {
+        self.inner
+            .iter()
+            .map(|(cv, entry)| {
+                (
+                    (cv.chapter().to_string(), cv.verse().to_string()),
+                    PySectionIndexEntry::from(entry),
+                )
+            })
+            .collect()
+    }
+
+    // === camelCase methods (Python backward compat) ===
+
+    /// Build the section index from processed entries.
+    fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
+        self.inner
+            .build(entries.inner.clone())
+            .map_err(|e| PyValueError::new_err(e.to_string()))
+    }
+
+    /// Get entries for a section by (C,V) key.
+    fn getSectionEntries(&self, key: (String, String)) -> PyResult<PyInternalBibleEntryList> {
+        let cv = ChapterVerse::new(&key.0, &key.1);
+        self.inner
+            .get_section_entries(&cv)
+            .map(PyInternalBibleEntryList::from)
+            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))
+    }
+
+    /// Get section entries with context markers.
+    fn getSectionEntriesWithContext(
+        &self,
+        key: (String, String),
+    ) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
+        let cv = ChapterVerse::new(&key.0, &key.1);
+        self.inner
+            .get_section_entries_with_context(&cv)
+            .map(|(entries, context)| {
+                (
+                    PyInternalBibleEntryList::from(entries),
+                    context.into_iter().map(|s| s.to_string()).collect(),
+                )
+            })
+            .map_err(|_| PyKeyError::new_err(format!("({:?}, {:?})", key.0, key.1)))
+    }
+
+    fn __repr__(&self) -> String {
+        if self.inner.is_indexed() {
+            format!(
+                "InternalBibleBookSectionIndex object for {}:\n  {} index entries created from {} data entries",
+                self.inner.book_code(),
+                self.inner.len(),
+                self.inner.entries().len(),
+            )
+        } else {
+            format!(
+                "InternalBibleBookSectionIndex object for {}:\n  Index is empty",
+                self.inner.book_code(),
+            )
+        }
+    }
+
+    fn __str__(&self) -> String {
+        self.__repr__()
+    }
+}
+
+// ============================================================================
+// Section Index Iterator
+// ============================================================================
+
+/// Iterator for PyInternalBibleBookSectionIndex, yields (C, V) string tuples.
+#[pyclass]
+pub struct PySectionIndexIter {
+    keys: Vec<(String, String)>,
+    index: usize,
+}
+
+#[pymethods]
+impl PySectionIndexIter {
+    fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
+        slf
+    }
+
+    fn __next__(&mut self) -> Option<(String, String)> {
+        let key = self.keys.get(self.index)?.clone();
+        self.index += 1;
+        Some(key)
+    }
+}
+
 /// Register section index types with the Python module.
 pub fn register_section_index_types(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySectionIndexEntry>()?;
+    m.add_class::<PyInternalBibleBookSectionIndex>()?;
+    m.add_class::<PySectionIndexIter>()?;
     Ok(())
 }
