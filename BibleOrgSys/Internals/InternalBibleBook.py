@@ -2747,7 +2747,7 @@ class InternalBibleBook:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Indexing {} {!r} {} text…").format( self.objectNameString, self.workName, self.BBB ) )
         assert isinstance( self.containerBibleObject, Bible )
         assert len(self.containerBibleObject.books)
-        self._SectionIndex = InternalBibleBookSectionIndex( self, self.containerBibleObject )
+        self._SectionIndex = InternalBibleBookSectionIndex( self.workName, self.BBB )
         self._SectionIndex.makeBookSectionIndex( self._processedLines )
 
         self._indexedSectionsFlag = True
