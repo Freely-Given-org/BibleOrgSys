@@ -3,6 +3,8 @@ import unittest
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
+DEBUGGING_THIS_MODULE = False
+
 
 class BOSGlobalsTestCase(unittest.TestCase):
 

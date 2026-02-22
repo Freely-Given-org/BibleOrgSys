@@ -27,13 +27,6 @@
 """
 Module testing ISO_639_3_Languages.py.
 """
-
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
-PROGRAM_NAME = "ISO-639-3 language code tests"
-PROGRAM_VERSION = '0.85'
-PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-
 import os.path
 import unittest
 import sys
@@ -42,6 +35,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.Converters import ISO_639_3_LanguagesConverter
 from BibleOrgSys.Reference import ISO_639_3_Languages
+
+
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+PROGRAM_NAME = "ISO-639-3 language code tests"
+PROGRAM_VERSION = '0.85'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+DEBUGGING_THIS_MODULE = False
 
 
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):

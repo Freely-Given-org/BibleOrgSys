@@ -26,13 +26,6 @@
 """
 Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
-
-LAST_MODIFIED_DATE = '2022-07-31' # by RJH
-PROGRAM_NAME = "Bible Books Codes tests"
-PROGRAM_VERSION = '0.73'
-PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-
 import os.path
 import unittest
 import sys
@@ -41,6 +34,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.Converters import BibleBooksCodesConverter
 from BibleOrgSys.Reference import BibleBooksCodes
+
+
+LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+PROGRAM_NAME = "Bible Books Codes tests"
+PROGRAM_VERSION = '0.73'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+DEBUGGING_THIS_MODULE = False
 
 
 class BibleBooksCodesConverterTests( unittest.TestCase ):

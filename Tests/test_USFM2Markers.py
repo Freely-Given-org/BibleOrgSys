@@ -26,13 +26,6 @@
 """
 Module testing USFM2Markers.py.
 """
-
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
-PROGRAM_NAME = "USFM2 Markers tests"
-PROGRAM_VERSION = '0.62'
-PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-
 import os.path
 import unittest
 import sys
@@ -41,6 +34,14 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.Converters import USFM2MarkersConverter
 from BibleOrgSys.Reference import USFM2Markers
+
+
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+PROGRAM_NAME = "USFM2 Markers tests"
+PROGRAM_VERSION = '0.62'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+DEBUGGING_THIS_MODULE = False
 
 
 class USFM2MarkersConverterTests( unittest.TestCase ):

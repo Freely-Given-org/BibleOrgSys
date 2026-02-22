@@ -27,13 +27,6 @@
 """
 Suite testing BibleOrgSys.
 """
-
-LAST_MODIFIED_DATE = '2020-04-06' # by RJH
-PROGRAM_NAME = "Bible Organisational System test suite"
-PROGRAM_VERSION = '0.13'
-PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-
 import os.path
 import sys
 import unittest
@@ -47,6 +40,14 @@ import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
 from BibleOrgSys import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganisationalSystemsTests
 from BibleOrgSys import BibleReferencesTests
 import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
+
+
+LAST_MODIFIED_DATE = '2020-04-06' # by RJH
+PROGRAM_NAME = "Bible Organisational System test suite"
+PROGRAM_VERSION = '0.13'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+DEBUGGING_THIS_MODULE = False
 
 
 # Handle command line parameters (for compatibility)
