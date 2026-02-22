@@ -54,6 +54,11 @@ members = [".", "Rust/bible_organisational_system"]
 [tool.uv.sources]
 bibleorgsys-rust = { workspace = true }
 
+[dependency-groups]
+dev = [
+    "ty>=0.0.18",
+]
+
 [tool.setuptools]
 py-modules = ["BibleOrgSysGlobals"] 
 # This explicitly tells Python: "Treat this file as a top-level module"
