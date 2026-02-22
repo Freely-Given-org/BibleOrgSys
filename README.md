@@ -52,6 +52,9 @@ uv run python -m pytest Tests/
 
 # Use as a library
 uv run python -c "from BibleOrgSys import BibleOrgSysGlobals"
+
+# Run type checking. currently this produces alot of errors
+uv run ty 
 ```
 
 The project includes a Rust extension (`bibleorgsys-rust`) built with [maturin](https://www.maturin.rs/) and [PyO3](https://pyo3.rs/) for performance-critical internals. `uv sync` handles building and linking it automatically via the workspace configuration.
