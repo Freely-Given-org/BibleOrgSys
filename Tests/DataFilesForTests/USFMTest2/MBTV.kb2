@@ -1,0 +1,750 @@
+<ScriptureChecksProject>
+<LexicalItems>
+<Item ItemId="Aaron">
+<Status>1</Status>
+<Renderings>Aarun</Renderings>
+</Item>
+<Item ItemId="Aaron1_1_1">
+<Status>0</Status>
+<Renderings>Aarun</Renderings>
+</Item>
+<Item ItemId="Abba">
+<Status>0</Status>
+<Renderings>Ame</Renderings>
+</Item>
+<Item ItemId="Adam">
+<Status>0</Status>
+<Renderings>Adan</Renderings>
+</Item>
+<Item ItemId="Agrippa">
+<Status>1</Status>
+<Renderings>Agripa</Renderings>
+</Item>
+<Item ItemId="Altar">
+<Status>0</Status>
+<Renderings>altar</Renderings>
+</Item>
+<Item ItemId="Altar1_1">
+<Status>0</Status>
+<Renderings>altar</Renderings>
+</Item>
+<Item ItemId="Angel">
+<Status>0</Status>
+<Renderings>panalihan, Panalihan, panalihan te Magbebaye, panalihan te Manama</Renderings>
+</Item>
+<Item ItemId="Angel1_1">
+<Status>0</Status>
+<Renderings>panalihan, Panalihan, panalihan te Magbebaye, panalihan te Manama</Renderings>
+</Item>
+<Item ItemId="Angel1_2">
+<Status>0</Status>
+<Renderings>panalihan</Renderings>
+</Item>
+<Item ItemId="Anna">
+<Status>1</Status>
+<Renderings>Ana</Renderings>
+</Item>
+<Item ItemId="Authority">
+<Status>0</Status>
+<Renderings>upisyalis, pangulu</Renderings>
+</Item>
+<Item ItemId="Authority1_1_2">
+<Status>0</Status>
+<Renderings>upisyalis, pangulu</Renderings>
+</Item>
+<Item ItemId="Authority1_1_5">
+<Status>1</Status>
+<Renderings>pangulu</Renderings>
+</Item>
+<Item ItemId="Believe">
+<Status>0</Status>
+<Renderings>migpalintutuu, Migpalintutuu, egpakapalintutuu, egpalintutuu, migmalintutuu, palintutuuwa, Egpalintutuu, egkasalihan, Egkasalihan, matinumanen, Matinumanen, insalihan, kamalehetan</Renderings>
+</Item>
+<Item ItemId="Believe1_1_1">
+<Status>0</Status>
+<Renderings>migpalintutuu, Migpalintutuu, egpakapalintutuu, egpalintutuu, migmalintutuu, palintutuuwa, Egpalintutuu</Renderings>
+<Denied>JHN 5:44</Denied>
+</Item>
+<Item ItemId="Believe1_2_2">
+<Status>0</Status>
+<Renderings>egkasalihan, Egkasalihan, matinumanen, migpalintutuu, Matinumanen, insalihan</Renderings>
+</Item>
+<Item ItemId="Believe1_3_4">
+<Status>0</Status>
+<Renderings>kamalehetan</Renderings>
+</Item>
+<Item ItemId="Benjamin">
+<Status>1</Status>
+<Renderings>Binhamin</Renderings>
+</Item>
+<Item ItemId="Bless">
+<Status>0</Status>
+<Renderings>egpanalanginan, Egpanalanginan, impanalanginan, panalanginan</Renderings>
+</Item>
+<Item ItemId="Bless1_4_1">
+<Status>0</Status>
+<Renderings>egpanalanginan, Egpanalanginan, impanalanginan, panalanginan</Renderings>
+</Item>
+<Item ItemId="Blood">
+<Status>0</Status>
+<Renderings>migpangimatey, umul, Umul, kamatayen, peggimatey, etew</Renderings>
+</Item>
+<Item ItemId="Blood1_2">
+<Status>0</Status>
+<Renderings>migpangimatey, umul, Umul, kamatayen, peggimatey</Renderings>
+</Item>
+<Item ItemId="Blood1_3">
+<Status>0</Status>
+<Renderings>etew</Renderings>
+</Item>
+<Item ItemId="Body">
+<Status>0</Status>
+<Renderings>lawa, minatey</Renderings>
+</Item>
+<Item ItemId="Body1_1_1">
+<Status>0</Status>
+<Renderings>lawa</Renderings>
+</Item>
+<Item ItemId="Body1_2">
+<Status>0</Status>
+<Renderings>lawa</Renderings>
+</Item>
+<Item ItemId="Body1_3">
+<Status>1</Status>
+<Renderings>lawa</Renderings>
+</Item>
+<Item ItemId="Body1_4">
+<Status>0</Status>
+<Renderings>minatey</Renderings>
+</Item>
+<Item ItemId="Brother">
+<Status>0</Status>
+<Renderings>suled, tahasuled, talaari, taltalaari, atebey, Suled</Renderings>
+</Item>
+<Item ItemId="Brother1_1_1">
+<Status>0</Status>
+<Renderings>suled, tahasuled</Renderings>
+</Item>
+<Item ItemId="Brother1_1_2">
+<Status>0</Status>
+<Renderings>suled, talaari, taltalaari</Renderings>
+</Item>
+<Item ItemId="Brother1_1_3">
+<Status>0</Status>
+<Renderings>atebey</Renderings>
+</Item>
+<Item ItemId="Brother1_2_1">
+<Status>0</Status>
+<Renderings>Suled, suled</Renderings>
+</Item>
+<Item ItemId="Brother1_2_4">
+<Status>0</Status>
+<Renderings>suled</Renderings>
+</Item>
+<Item ItemId="Brother1_4">
+<Status>0</Status>
+<Renderings>suled</Renderings>
+</Item>
+<Item ItemId="Brother1_5">
+<Status>0</Status>
+<Renderings>suled</Renderings>
+</Item>
+<Item ItemId="Church">
+<Status>0</Status>
+<Renderings>simbaan, langun ne migmalintutuu, migmalintutuu ki Hisus, me etew ne migpalintutuu, migmalintutuu, langun ne migpalintutuu, egmalintutuu ki Hisus, egmalintutuu, etew te Manama, punduk te migmalintutuu, simbaan ne migpalintutuu te Manama, migpalintutuu ki Hisus, me migpalintutuu, nalibulung, langun ne egsimba, libulung, kalibulungan, inlibulung</Renderings>
+</Item>
+<Item ItemId="Church1_1">
+<Status>0</Status>
+<Renderings>simbaan, langun ne migmalintutuu, migmalintutuu ki Hisus, me etew ne migpalintutuu, migmalintutuu, langun ne migpalintutuu, egmalintutuu ki Hisus, egmalintutuu, etew te Manama, punduk te migmalintutuu, simbaan ne migpalintutuu te Manama</Renderings>
+</Item>
+<Item ItemId="Church1_3">
+<Status>0</Status>
+<Renderings>punduk te migmalintutuu, egmalintutuu ki Hisus, migpalintutuu ki Hisus, me migpalintutuu, migmalintutuu</Renderings>
+</Item>
+<Item ItemId="Church1_4">
+<Status>1</Status>
+<Renderings>nalibulung, langun ne egsimba</Renderings>
+</Item>
+<Item ItemId="Church1_5">
+<Status>1</Status>
+<Renderings>libulung, nalibulung, kalibulungan, inlibulung</Renderings>
+</Item>
+<Item ItemId="Clean">
+<Status>0</Status>
+<Renderings>egmalinis, ware degma nasewuhi te mareet, malinis, nalinisan, inlinisan, Balaud ne pegpamanihus, miglinisan, peglinis, peggimu ka tuluuwen ney te pegpamanihus, Malinis, egkalinisi, egkalinisan, eggimuwen dan te peglinis, eglinisan, pegpamanihus, egkeyimu ne malinis</Renderings>
+</Item>
+<Item ItemId="Clean1_2">
+<Status>2</Status>
+<Renderings>egmalinis, ware degma nasewuhi te mareet</Renderings>
+<Denied>ROM 14:20</Denied>
+</Item>
+<Item ItemId="Clean1_3">
+<Status>0</Status>
+<Renderings>malinis, nalinisan</Renderings>
+</Item>
+<Item ItemId="Clean1_5_1">
+<Status>1</Status>
+<Renderings>malinis, inlinisan</Renderings>
+</Item>
+<Item ItemId="Clean1_5_2">
+<Status>0</Status>
+<Renderings>Balaud ne pegpamanihus, miglinisan, peglinis, peggimu ka tuluuwen ney te pegpamanihus, Malinis, egkalinisi, egkalinisan, eggimuwen dan te peglinis</Renderings>
+</Item>
+<Item ItemId="Clean1_7_1">
+<Status>0</Status>
+<Renderings>eglinisan, peglinis, pegpamanihus, egkeyimu ne malinis</Renderings>
+</Item>
+<Item ItemId="Covenant">
+<Status>0</Status>
+<Renderings>kasabutan</Renderings>
+</Item>
+<Item ItemId="Covenant1_1">
+<Status>0</Status>
+<Renderings>kasabutan</Renderings>
+</Item>
+<Item ItemId="Cross">
+<Status>0</Status>
+<Renderings>krus, kamatayen, pegpalansang, pegpeyimatey, inlansang, Inlansang, warad e karuan, iglansang</Renderings>
+</Item>
+<Item ItemId="Cross1_1">
+<Status>0</Status>
+<Renderings>krus</Renderings>
+</Item>
+<Item ItemId="Cross1_2_1">
+<Status>1</Status>
+<Renderings>kamatayen, pegpalansang, krus</Renderings>
+</Item>
+<Item ItemId="Cross1_2_2">
+<Status>1</Status>
+<Renderings>kamatayen, krus, pegpeyimatey</Renderings>
+</Item>
+<Item ItemId="Cross1_2_3">
+<Status>1</Status>
+<Renderings>krus</Renderings>
+</Item>
+<Item ItemId="Cross1_4_1">
+<Status>1</Status>
+<Renderings>inlansang, krus, Inlansang, kamatayen, warad e karuan</Renderings>
+</Item>
+<Item ItemId="Cross1_4_2">
+<Status>1</Status>
+<Renderings>iglansang, krus</Renderings>
+</Item>
+<Item ItemId="Elder">
+<Status>0</Status>
+<Renderings>igbuyag te me Hudiyu</Renderings>
+</Item>
+<Item ItemId="Elder1_1">
+<Status>0</Status>
+<Renderings>igbuyag te me Hudiyu</Renderings>
+</Item>
+<Item ItemId="Flesh">
+<Status>0</Status>
+<Renderings>lawa ta ne makasesale, lawa ku ne makasesale, makasesale ne lawa ta, makasesale ne lawa ran, lawa rin ne makasesale, lawa ran ne makasesale, lawa niyu ne makasesale, mareet ne igkeupii te lawa niyu, igkeupii te lawa niyu, lawa rin, kalibutanen</Renderings>
+</Item>
+<Item ItemId="Flesh1_3">
+<Status>0</Status>
+<Renderings>lawa ta ne makasesale, lawa ku ne makasesale, makasesale ne lawa ta, makasesale ne lawa ran, lawa rin ne makasesale, lawa ran ne makasesale, lawa niyu ne makasesale, mareet ne igkeupii te lawa niyu, igkeupii te lawa niyu, lawa rin, kalibutanen</Renderings>
+</Item>
+<Item ItemId="Gentiles">
+<Status>0</Status>
+<Renderings>kene ne me Hudiyu, Grigu se linalahan, Grigu ka linalahan, Grigu</Renderings>
+</Item>
+<Item ItemId="Gentiles1_1">
+<Status>0</Status>
+<Renderings>kene ne me Hudiyu</Renderings>
+</Item>
+<Item ItemId="Gentiles1_2">
+<Status>0</Status>
+<Renderings>Grigu se linalahan, Grigu ka linalahan, kene ne me Hudiyu, Grigu</Renderings>
+</Item>
+<Item ItemId="Glory">
+<Status>0</Status>
+<Renderings>amane e ne datu wey mabantug, karatuan, katelesan, datu ne subla si Hari Salumun wey subla ne meupiya ka me kumbale din, kateles, nalayahan, layag, Miglayag, kabantug wey karesen, geem, karesen, maresen, masil-ew, kabantug, keupiya, geem wey katelesan, egmabantug, egbantuhen, igpakapeggasal</Renderings>
+</Item>
+<Item ItemId="Glory1_1_1">
+<Status>0</Status>
+<Renderings>amane e ne datu wey mabantug, karatuan, katelesan, datu ne subla si Hari Salumun wey subla ne meupiya ka me kumbale din</Renderings>
+</Item>
+<Item ItemId="Glory1_1_2">
+<Status>0</Status>
+<Renderings>kateles</Renderings>
+</Item>
+<Item ItemId="Glory1_2_1">
+<Status>0</Status>
+<Renderings>nalayahan, layag, Miglayag</Renderings>
+</Item>
+<Item ItemId="Glory1_2_2">
+<Status>0</Status>
+<Renderings>kabantug wey karesen, geem, karesen, maresen, katelesan, masil-ew, kabantug, keupiya</Renderings>
+</Item>
+<Item ItemId="Glory1_2_3">
+<Status>1</Status>
+<Renderings>katelesan, geem wey katelesan</Renderings>
+</Item>
+<Item ItemId="Glory1_3_2">
+<Status>0</Status>
+<Renderings>egmabantug, kabantug, egbantuhen, katelesan, maresen</Renderings>
+</Item>
+<Item ItemId="Glory1_4">
+<Status>0</Status>
+<Renderings>igpakapeggasal</Renderings>
+</Item>
+<Item ItemId="Glory1_5_1">
+<Status>0</Status>
+<Renderings>kateles, katelesan</Renderings>
+</Item>
+<Item ItemId="God">
+<Status>0</Status>
+<Renderings>Manama, Tiyupilu, Maresen ne Manama</Renderings>
+</Item>
+<Item ItemId="God1_1">
+<Status>0</Status>
+<Renderings>Manama</Renderings>
+</Item>
+<Item ItemId="God1_2">
+<Status>0</Status>
+<Renderings>Manama</Renderings>
+</Item>
+<Item ItemId="God1_5_1">
+<Status>0</Status>
+<Renderings>Manama</Renderings>
+</Item>
+<Item ItemId="God1_5_2">
+<Status>1</Status>
+<Renderings>Tiyupilu</Renderings>
+</Item>
+<Item ItemId="God1_5_3">
+<Status>1</Status>
+<Renderings>Manama</Renderings>
+</Item>
+<Item ItemId="God1_6_1">
+<Status>0</Status>
+<Renderings>Maresen ne Manama</Renderings>
+</Item>
+<Item ItemId="Gospel">
+<Status>0</Status>
+<Renderings>Meupiya ne Panugtulen</Renderings>
+</Item>
+<Item ItemId="Gospel1_1">
+<Status>0</Status>
+<Renderings>Meupiya ne Panugtulen</Renderings>
+</Item>
+<Item ItemId="Gospel1_2">
+<Status>0</Status>
+<Renderings>Meupiya ne Panugtulen</Renderings>
+</Item>
+<Item ItemId="Grace">
+<Status>0</Status>
+<Renderings>grasya, meupiya</Renderings>
+</Item>
+<Item ItemId="Grace1_1">
+<Status>0</Status>
+<Renderings>grasya</Renderings>
+</Item>
+<Item ItemId="Grace1_6_1">
+<Status>1</Status>
+<Renderings>meupiya</Renderings>
+</Item>
+<Item ItemId="Holy">
+<Status>0</Status>
+<Renderings>Matulus, matulus, keet-etawan te Manama, keet-etawan nu, in-andam, in-alam, immatulus, namatulus, egmatulusen, inlinisan, malinis, nalinisan, nakalinis, peglinis, nakamatulus</Renderings>
+</Item>
+<Item ItemId="Holy1_1">
+<Status>0</Status>
+<Renderings>Matulus, matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_2_2">
+<Status>1</Status>
+<Renderings>Matulus, matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_2_3">
+<Status>0</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_2_4">
+<Status>1</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_2_5">
+<Status>1</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_3_1">
+<Status>0</Status>
+<Renderings>keet-etawan te Manama, keet-etawan nu</Renderings>
+</Item>
+<Item ItemId="Holy1_4">
+<Status>0</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_5">
+<Status>0</Status>
+<Renderings>in-andam, in-alam, immatulus, namatulus, egmatulusen, matulus, inlinisan, malinis, nalinisan, nakalinis, peglinis, nakamatulus</Renderings>
+</Item>
+<Item ItemId="Holy1_6">
+<Status>0</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="Holy1_7">
+<Status>0</Status>
+<Renderings>matulus</Renderings>
+</Item>
+<Item ItemId="In_Christ">
+<Status>0</Status>
+<Renderings>ki Kristu, pegsabeka niyu ki Kristu, pegsabeka ta ki Kristu, nasabeke e ki Kristu, tenged ki Kristu, impabaye din ki Kristu, nasabeka ad ki Kristu, nasabeka kid diye te ki Kristu, pegsabeka ki Kristu, migpamakey ki Kristu, migpalintutuu ki Kristu, migsabeka kaniyu diye ki Kristu, ni Kristu, si Kristu, nasabeka due ki Kristu</Renderings>
+</Item>
+<Item ItemId="Just">
+<Status>0</Status>
+<Renderings>matareng, Matareng, egkamatareng, immatareng, ware sale, meupiya, eleg, malehet, Eleg, Tul-ira, migpamalehet, eggukuman, neila ne malehet, eg-ileen ne eleg, Meupiya, migpasabut ne warad iya sale ku, impamalehet, maheteng, impasaylu te Manama, eg-isipen e te Manama ne ware sale din, in-isip ne matareng, egkeyimu ne matareng, in-isip ki nikandin ne matareng, eg-isipen ne matareng, egpekeisip ne matareng, in-isip kid ne matareng, in-isip kid te Manama ne matareng, kenad eg-utengan, in-isip din ne matareng, mig-isip ne matareng, in-isip kew e te Manama ne matareng, egkamatareng ka etew, ka etew, egmatarengen, nakamatareng, eg-isipen te Manama ne matareng, in-isip te Manama ne matareng, In-isip sikandin te Manama ne matareng, namatareng, peggukum, inggukuman, hukum, pegkamatareng, katareng, igkeupii te Manama, igkeupii rin, matareng ne peg-ugpe, peggimu te, keupiya, pegtuman te Balaud, nekey ka meupiya, meupiya ne peg-ugpe, In-isip ne, peg-isip ne matareng, eg-isip ne, eg-isip ne matareng, In-isip ne matareng, in-isip sikandin ne matareng, eg-isipen sikandin ne matareng, eg-isipen ki ne matareng, eg-isipen degma te Manama ne matareng, eg-isipen ded ne matareng, egkeisip ne matareng, in-isip sikandin te Manama ne matareng, in-isip a nikandin ne matareng, in-isip mule ne matareng</Renderings>
+</Item>
+<Item ItemId="Just1_1_1">
+<Status>1</Status>
+<Renderings>matareng, Matareng</Renderings>
+</Item>
+<Item ItemId="Just1_1_2">
+<Status>0</Status>
+<Renderings>matareng, Matareng, egkamatareng, immatareng, ware sale</Renderings>
+</Item>
+<Item ItemId="Just1_1_3">
+<Status>0</Status>
+<Renderings>matareng</Renderings>
+</Item>
+<Item ItemId="Just1_1_4">
+<Status>1</Status>
+<Renderings>matareng</Renderings>
+</Item>
+<Item ItemId="Just1_1_5">
+<Status>0</Status>
+<Renderings>meupiya, eleg, matareng, malehet, Eleg, Matareng</Renderings>
+</Item>
+<Item ItemId="Just1_1_6">
+<Status>0</Status>
+<Renderings>meupiya</Renderings>
+</Item>
+<Item ItemId="Just1_1_7">
+<Status>0</Status>
+<Renderings>Tul-ira</Renderings>
+</Item>
+<Item ItemId="Just1_2_1">
+<Status>0</Status>
+<Renderings>migpamalehet, eggukuman, neila ne malehet, eg-ileen ne eleg, Meupiya, matareng, migpasabut ne warad iya sale ku, impamalehet, maheteng</Renderings>
+</Item>
+<Item ItemId="Just1_2_2">
+<Status>1</Status>
+<Renderings>impasaylu te Manama, eg-isipen e te Manama ne ware sale din, in-isip ne matareng, egkeyimu ne matareng, in-isip ki nikandin ne matareng, eg-isipen ne matareng, egpekeisip ne matareng, in-isip kid ne matareng, in-isip kid te Manama ne matareng, kenad eg-utengan, in-isip din ne matareng, mig-isip ne matareng, in-isip kew e te Manama ne matareng, egkamatareng ka etew, ka etew, egkamatareng, egmatarengen, nakamatareng, matareng, eg-isipen te Manama ne matareng, in-isip te Manama ne matareng, In-isip sikandin te Manama ne matareng, namatareng</Renderings>
+</Item>
+<Item ItemId="Just1_3_1">
+<Status>0</Status>
+<Renderings>peggukum, inggukuman, hukum, eggukuman, pegkamatareng, katareng, matareng, Matareng</Renderings>
+</Item>
+<Item ItemId="Just1_3_2">
+<Status>0</Status>
+<Renderings>igkeupii te Manama, igkeupii rin, matareng ne peg-ugpe, matareng, katareng, meupiya, peggimu te, pegkamatareng, keupiya, pegtuman te Balaud, nekey ka meupiya, meupiya ne peg-ugpe, egkamatareng</Renderings>
+</Item>
+<Item ItemId="Just1_3_3">
+<Status>1</Status>
+<Renderings>matareng, In-isip ne, peg-isip ne matareng, eg-isip ne, eg-isip ne matareng, In-isip ne matareng, in-isip sikandin ne matareng, egpekeisip ne matareng, eg-isipen sikandin ne matareng, eg-isipen ki ne matareng, in-isip ne matareng, eg-isipen degma te Manama ne matareng, eg-isipen ne matareng, katareng, eg-isipen ded ne matareng, egkeisip ne matareng, pegkamatareng, egkamatareng, egmatarengen, in-isip sikandin te Manama ne matareng, in-isip a nikandin ne matareng, in-isip mule ne matareng</Renderings>
+</Item>
+<Item ItemId="Just1_3_4">
+<Status>0</Status>
+<Renderings>matareng</Renderings>
+<Denied>ROM 1:32</Denied>
+</Item>
+<Item ItemId="Kingdom">
+<Status>0</Status>
+<Renderings>egkasakup, egpekeugpe, egpakaseled, sakup, nasakup, pegseled, paselera, egseled, egdawaten, egpakaapil</Renderings>
+</Item>
+<Item ItemId="Kingdom1_1">
+<Status>0</Status>
+<Renderings>egkasakup, egpekeugpe, egpakaseled, sakup, nasakup, pegseled, paselera, egseled, egdawaten, egpakaapil</Renderings>
+</Item>
+<Item ItemId="Law">
+<Status>0</Status>
+<Renderings>balaud, Balaud, Balaud te Manama, Balaud ni Muwisis, Balaud te Magbebaye, insulat ni Muwisis, Muwisis, suhu ni Muwisis</Renderings>
+</Item>
+<Item ItemId="Law1_1">
+<Status>1</Status>
+<Renderings>balaud, Balaud</Renderings>
+</Item>
+<Item ItemId="Law1_2_1">
+<Status>1</Status>
+<Renderings>Balaud, Balaud te Manama, Balaud ni Muwisis, Balaud te Magbebaye, insulat ni Muwisis, Muwisis, suhu ni Muwisis</Renderings>
+</Item>
+<Item ItemId="Law1_2_2">
+<Status>1</Status>
+<Renderings>Balaud, balaud</Renderings>
+</Item>
+<Item ItemId="Law1_2_3">
+<Status>0</Status>
+<Renderings>Balaud</Renderings>
+</Item>
+<Item ItemId="Occupations">
+<Status>0</Status>
+<Renderings>tuked, lubid, bulbul te karniru, eggabas, lana</Renderings>
+</Item>
+<Item ItemId="Occupations1_12_4">
+<Status>1</Status>
+<Renderings>eggabas</Renderings>
+</Item>
+<Item ItemId="Occupations1_13_1">
+<Status>0</Status>
+<Renderings>lana</Renderings>
+</Item>
+<Item ItemId="Occupations1_2_4">
+<Status>0</Status>
+<Renderings>tuked</Renderings>
+</Item>
+<Item ItemId="Occupations1_3_4">
+<Status>0</Status>
+<Renderings>lubid</Renderings>
+</Item>
+<Item ItemId="Occupations1_5_3_6">
+<Status>0</Status>
+<Renderings>bulbul te karniru</Renderings>
+</Item>
+<Item ItemId="Parable">
+<Status>0</Status>
+<Renderings>panunggilingan, katuenan</Renderings>
+</Item>
+<Item ItemId="Parable1_1">
+<Status>0</Status>
+<Renderings>panunggilingan</Renderings>
+</Item>
+<Item ItemId="Parable1_2">
+<Status>1</Status>
+<Renderings>panunggilingan</Renderings>
+</Item>
+<Item ItemId="Parable1_3">
+<Status>1</Status>
+<Renderings>katuenan</Renderings>
+</Item>
+<Item ItemId="Passover">
+<Status>0</Status>
+<Renderings>Sahakeen te Peglihad te Panalihan</Renderings>
+</Item>
+<Item ItemId="Passover1_1">
+<Status>0</Status>
+<Renderings>Sahakeen te Peglihad te Panalihan</Renderings>
+</Item>
+<Item ItemId="Peace">
+<Status>0</Status>
+<Renderings>duma te kahale, meupiye e ka isip din, malinawun, Ayad-ayad kew, ware samuk, Panalanginan ka te Manama, kalinaw, eggusey, nekeg-uli e ka meupiya ne geyinawa, keupianan, egkewusey, egpakaawe te kabelu, Keupianan, Peeneng-enengen</Renderings>
+</Item>
+<Item ItemId="Peace1_1_1">
+<Status>0</Status>
+<Renderings>duma te kahale, meupiye e ka isip din, malinawun, Ayad-ayad kew, ware samuk, Panalanginan ka te Manama</Renderings>
+</Item>
+<Item ItemId="Peace1_1_2">
+<Status>0</Status>
+<Renderings>kalinaw</Renderings>
+</Item>
+<Item ItemId="Peace1_1_3">
+<Status>0</Status>
+<Renderings>eggusey, nekeg-uli e ka meupiya ne geyinawa, keupianan, egkewusey, egpakaawe te kabelu</Renderings>
+</Item>
+<Item ItemId="Peace1_1_4">
+<Status>0</Status>
+<Renderings>kalinaw</Renderings>
+</Item>
+<Item ItemId="Peace1_1_5">
+<Status>0</Status>
+<Renderings>kalinaw</Renderings>
+</Item>
+<Item ItemId="Peace1_1_6">
+<Status>0</Status>
+<Renderings>keupianan, Keupianan</Renderings>
+</Item>
+<Item ItemId="Peace1_2_2">
+<Status>1</Status>
+<Renderings>Peeneng-enengen</Renderings>
+</Item>
+<Item ItemId="Sabbath">
+<Status>0</Status>
+<Renderings>Aldew te Peggimeley, Aldew seeye te Peggimeley, Aldew kuntee te Peggimeley</Renderings>
+</Item>
+<Item ItemId="Sabbath1_1">
+<Status>0</Status>
+<Renderings>Aldew te Peggimeley, Aldew seeye te Peggimeley, Aldew kuntee te Peggimeley</Renderings>
+<Denied>ACT 1:12</Denied>
+</Item>
+<Item ItemId="Samaritan">
+<Status>0</Status>
+<Renderings>matig-Samariya, Samariya</Renderings>
+</Item>
+<Item ItemId="Samaritan1_1">
+<Status>1</Status>
+<Renderings>matig-Samariya, Samariya</Renderings>
+</Item>
+<Item ItemId="Samaritan1_3">
+<Status>1</Status>
+<Renderings>Samariya, matig-Samariya</Renderings>
+</Item>
+<Item ItemId="Satan">
+<Status>0</Status>
+<Renderings>Meibulan, Bilsibul, pangulu te me busew, kuntere, Kuntere</Renderings>
+</Item>
+<Item ItemId="Satan1_1_1">
+<Status>0</Status>
+<Renderings>Meibulan</Renderings>
+</Item>
+<Item ItemId="Satan1_1_2">
+<Status>0</Status>
+<Renderings>Meibulan</Renderings>
+</Item>
+<Item ItemId="Satan1_1_3">
+<Status>0</Status>
+<Renderings>Bilsibul</Renderings>
+</Item>
+<Item ItemId="Satan1_2_1">
+<Status>1</Status>
+<Renderings>pangulu te me busew</Renderings>
+</Item>
+<Item ItemId="Satan1_2_5">
+<Status>1</Status>
+<Renderings>kuntere, Kuntere</Renderings>
+</Item>
+<Item ItemId="Scribe">
+<Status>0</Status>
+<Renderings>talagpanulu te Balaud te Manama, siklitari diye te siyudad</Renderings>
+</Item>
+<Item ItemId="Scribe1_1_1">
+<Status>0</Status>
+<Renderings>talagpanulu te Balaud te Manama</Renderings>
+</Item>
+<Item ItemId="Scribe1_1_2">
+<Status>0</Status>
+<Renderings>talagpanulu te Balaud te Manama</Renderings>
+</Item>
+<Item ItemId="Scribe1_1_3">
+<Status>0</Status>
+<Renderings>talagpanulu te Balaud te Manama</Renderings>
+</Item>
+<Item ItemId="Scribe1_2">
+<Status>1</Status>
+<Renderings>siklitari diye te siyudad</Renderings>
+</Item>
+<Item ItemId="Scripture">
+<Status>0</Status>
+<Renderings>Kasulatan, Balaud, diye te Kasulatan, kayi te Kasulatan, lalag te Manama, lalag te Magbebaye</Renderings>
+</Item>
+<Item ItemId="Scripture1_1">
+<Status>0</Status>
+<Renderings>Kasulatan</Renderings>
+</Item>
+<Item ItemId="Scripture1_2">
+<Status>0</Status>
+<Renderings>Balaud</Renderings>
+</Item>
+<Item ItemId="Scripture1_3">
+<Status>0</Status>
+<Renderings>diye te Kasulatan, kayi te Kasulatan</Renderings>
+</Item>
+<Item ItemId="Scripture1_4">
+<Status>0</Status>
+<Renderings>Kasulatan</Renderings>
+</Item>
+<Item ItemId="Scripture1_5">
+<Status>0</Status>
+<Renderings>lalag te Manama, lalag te Magbebaye</Renderings>
+</Item>
+<Item ItemId="Serve">
+<Status>0</Status>
+<Renderings>neuripen, eg-uripen, peuripen, uripen</Renderings>
+</Item>
+<Item ItemId="Serve1_3_2">
+<Status>1</Status>
+<Renderings>neuripen, eg-uripen, peuripen, uripen</Renderings>
+</Item>
+<Item ItemId="Tabernacle">
+<Status>0</Status>
+<Renderings>balungbalung</Renderings>
+</Item>
+<Item ItemId="Tabernacle1_3">
+<Status>1</Status>
+<Renderings>balungbalung</Renderings>
+</Item>
+<Item ItemId="Temple">
+<Status>0</Status>
+<Renderings>timplu</Renderings>
+</Item>
+<Item ItemId="Temple1_1">
+<Status>0</Status>
+<Renderings>timplu</Renderings>
+</Item>
+<Item ItemId="Truth">
+<Status>0</Status>
+<Renderings>egkasalihan, kene ne ubaten</Renderings>
+</Item>
+<Item ItemId="Truth1_2_2">
+<Status>0</Status>
+<Renderings>egkasalihan, kene ne ubaten</Renderings>
+</Item>
+<Item ItemId="World">
+<Status>0</Status>
+<Renderings>kalibutan, inged, ka langit wey ka tane, te langit wey te tane, diye te langit wey kayi te tane, langit wey tane, diye te langit wey kayi te ampew te tane, te langit, te tane, kene ne tane de, ke kene, ka langit degma, iyam ne langit wey iyam ne tane, ka tane wey ka langit, tane, kamet, ampew te tane, langun ne me inged, langun ne inged, me etew kayi te kalibutan, kayi te ampew te tane, kayi te kalibutan, ne me etew, langun ne etew, langun ne me etew, intiru ne kalibutan, langun ne keet-etawan ne sakup din, egbatasanen te me etew, seeye se ware migpalintutuu, etew ne ware nekeila te Manama, langun ne tahu kayi te ampew te tane, katammanan te timpu, timpu, langun ne kayi te ampew te tane</Renderings>
+</Item>
+<Item ItemId="World1_1_1">
+<Status>0</Status>
+<Renderings>kalibutan, inged</Renderings>
+</Item>
+<Item ItemId="World1_1_2">
+<Status>0</Status>
+<Renderings>ka langit wey ka tane, te langit wey te tane, diye te langit wey kayi te tane, langit wey tane, diye te langit wey kayi te ampew te tane, te langit, te tane, kene ne tane de, ke kene, ka langit degma, iyam ne langit wey iyam ne tane, ka tane wey ka langit</Renderings>
+</Item>
+<Item ItemId="World1_1_3">
+<Status>2</Status>
+<Renderings>tane, kalibutan</Renderings>
+<Denied>ACT 9:4,8 REV 13:13</Denied>
+</Item>
+<Item ItemId="World1_1_4">
+<Status>0</Status>
+<Denied>MAT 14:24</Denied>
+</Item>
+<Item ItemId="World1_1_6">
+<Status>0</Status>
+<Renderings>tane, kamet</Renderings>
+</Item>
+<Item ItemId="World1_2_1">
+<Status>0</Status>
+<Renderings>ampew te tane, kalibutan, langun ne me inged, langun ne inged</Renderings>
+<Denied>1CO 1:27-28 2CO 1:12 1JN 3:17</Denied>
+</Item>
+<Item ItemId="World1_2_2">
+<Status>2</Status>
+<Renderings>kalibutan, ampew te tane, inged, tane</Renderings>
+<Denied>MAT 12:42; 23:35; 27:51 REV 9:4 ACT 22:22</Denied>
+</Item>
+<Item ItemId="World1_3_1">
+<Status>1</Status>
+<Renderings>kalibutan</Renderings>
+</Item>
+<Item ItemId="World1_3_2">
+<Status>1</Status>
+<Renderings>kalibutan</Renderings>
+</Item>
+<Item ItemId="World1_3_3">
+<Status>1</Status>
+<Renderings>me etew kayi te kalibutan, kayi te ampew te tane, kayi te kalibutan, kalibutan, ne me etew, langun ne etew, langun ne me etew, intiru ne kalibutan</Renderings>
+</Item>
+<Item ItemId="World1_3_5">
+<Status>1</Status>
+<Renderings>langun ne keet-etawan ne sakup din</Renderings>
+</Item>
+<Item ItemId="World1_4">
+<Status>2</Status>
+<Renderings>kalibutan, egbatasanen te me etew, seeye se ware migpalintutuu, etew ne ware nekeila te Manama, kayi te ampew te tane</Renderings>
+<Denied>JAS 3:6</Denied>
+</Item>
+<Item ItemId="World1_5">
+<Status>0</Status>
+<Renderings>langun ne tahu kayi te ampew te tane</Renderings>
+<Denied>MAT 13:22 MRK 4:19</Denied>
+</Item>
+<Item ItemId="World1_6">
+<Status>0</Status>
+<Renderings>katammanan te timpu, kalibutan, timpu, langun ne kayi te ampew te tane</Renderings>
+<Denied>MAT 12:32 1CO 10:11 2CO 4:4 JHN 12:25</Denied>
+</Item>
+</LexicalItems>
+</ScriptureChecksProject>

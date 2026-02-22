@@ -1,0 +1,715 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usx version="2.0">
+  <book code="NEH" style="id">Matigsalug Version</book>
+  <para style="ide">UTF-8</para>
+  <para style="h">Nihimiyas</para>
+  <para style="toc1">Nihimiyas</para>
+  <para style="toc2">Nihimiyas</para>
+  <para style="toc3">Nih</para>
+  <para style="mt2">Ka baseen ni</para>
+  <para style="mt1">Nihimiyas</para>
+  <para style="is">Igpewun-a</para>
+  <para style="ip">
+    <char style="bk">Ka baseen ni Nihimiyas</char> nabaad te hep-at ne baad: 1) Ka suhu te gubirnadur te Pirsya ne igpeuli si Nihimiyas diye te Hirusalim eyew egmandu diye te Huda. 2) Ka pegbalew-balew te alad te Hirusalim. 3) Ka pegbasa ni Nihimiyas te balaud te Manama wey ka peg-angken te keet-etawan te me sale dan. 4) Ka duma ne himu ni Nihimiyas isip sabeka ne gubirnadur te Huda.</para>
+  <para style="ip">Ka amana ne impurtanti ne tahu te seini ne baseen iyan ka guhuren meyitenged te dakel ne pegsalig ni Nihimiyas te Manama wey ka peg-ampu din layun.</para>
+  <para style="iot">Ka nenasulat te seini ne baseen</para>
+  <para style="io1">Ka peg-uli si Nihimiyas diye te Hirusalim 1:1–2:20</para>
+  <para style="io1">Ka pegbalew-balew te alad te Hirusalim 3:1–7:73</para>
+  <para style="io1">Ka pegbasa te balaud wey ka pegbalew-balew te kasabutan 8:1–10:39</para>
+  <para style="io1">Ka duma ne me himu ni Nihimiyas 11:1–13:31</para>
+  <chapter number="1" style="c" />
+  <para style="p">
+    <verse number="1" style="v" />Seini ka guhuren ni Nihimiyas ne anak ni Hakaliyas.</para>
+  <para style="s">Ka peg-ampu ni Nihimiyas para te Hirusalim</para>
+  <para style="p">Te bulan te Kislib te ikarangeb ne pulu (20) ne leg-un te peghari ni Artasirsis taheed te diya a te Susa, ka iney ne siyudad, <verse number="2" style="v" />migginguma si Hanani ne sabeka te me suled ku duma te pila ne me etew puun te Huda eyew te pegleuy keddi. Ne mig-insaan ku sikandan meyitenged te me Hudiyu ne nenekeuli puun te pegkeuripen wey meyitenged te Hirusalim. <verse number="3" style="v" />Ne migtabak sikandan keddi, “Ka seeye se nenakatiis te pegkeuripen ne nenakalibed e diye te me prubinsya ran, nenakasalerep te kalised wey indeeg-deeg sikandan te me lapu ne nangugpe diye te marani ran. Nenaddeetan pad ka me matikang wey makepal ne alad te siyudad te Hirusalim, wey ka me gumawan, ware pad naay-ayari puun te pegsilab kayi.”</para>
+  <para style="p">
+    <verse number="4" style="v" />Te pegkarineg ku te kayi, migpinnuu a wey migsinehew. Ne miglungku a, migpuasa, wey mig-ampu te Manama te langit te pila ne aldew. <verse number="5" style="v" />Ne migkahi a, “E, Magbebaye ne Manama, maresen ka wey igkaaldek ne Manama. Intuman nu ka me saad nu wey indakelan nu te geyinawa seeye se miggeyinawa keykew wey migtuman te me suhu nu. <verse number="6" style="v" />Tengtengi a nikeykew wey pammineha nu ka peg-ampu ku te aldew wey marusilem para te me suluhuanen nu ne iyan ka keet-etawan te Israil. Eg-angkenen ku ka me sale ney. Nakasala a wey ka kabuybuyahan ku. <verse number="7" style="v" />Mareet amana ka hinimuwan ney diye te keykew. Ware ney tumana ka me suhu nu, me balaud, wey me tulumanen ne imbehey nu kanami pinaahi te suluhuanen nu ne si Muwisis. <verse number="8" style="v" /><note caller="-" style="x"><char style="xo" closed="false">1:8: </char><char style="xt" closed="false">Lib 26:33.</char></note> Sumsumana nu ka ingkahi nu te suluhuanen nu ne si Muwisis ne miggenendue, ‘Ke kene kew egmatinumanen keddiey, egmegsusuwayen ku sikaniyu diye te nalein-lein ne me nasud. <verse number="9" style="v" /><note caller="-" style="x"><char style="xo" closed="false">1:9: </char><char style="xt" closed="false">Diy 30:1-5.</char></note> Piru ke eg-inniyug kew te me sale niyu wey egtuman te me suhu ku, minsan ke nenekegsuwey-suwey kew te minsan hendei kayi te ampew te tane, eg-uyanen ku red sikaniyu te inged ne in-alam ku eyew egsimbeen ka ngaran ku.’</para>
+  <para style="p">
+    <verse number="10" style="v" />“Me suluhuanen wey keet-etawan nu sikandan ne in-luwas nu pinaahi te dakel ne geem wey te makeseg ne belad nu. <verse number="11" style="v" />E Magbebaye ne Manama, pamineha nu ubag ka me peg-ampu ku wey ka peg-ampu te me suluhuanen ne egkeupian ne egtahud keykew. Ituhut nu ne eglampus a te seini ne aldew wey egkeyid-u ka Hari keddi.”</para>
+  <para style="p">Te seeye ne timpu talagsendad a te inumen te Hari.</para>
+  <chapter number="2" style="c" />
+  <para style="s">Ka peggendiye ni Nihimiyas te Hirusalim</para>
+  <para style="p">
+    <verse number="1" style="v" />Te sabeka ne aldew te bulan ne egngaranan te Nisan, te igkarangeb ne pulu (20) ne leg-un te peghari ni Artasirsis, te timpu ne igsendad e ka binu diye te kandin, inggen-genan ku ka ubab wey imbehey ku seini te Hari. Ne seeye e pad nakita nikandin ne miglungku. <verse number="2" style="v" />Sikan naa ka nekeinse sikandin keddi, “Mania te hendue te miglungku ka amana ne ware ke ma perem migderalu? Nekey ka ingkalagew nu?”</para>
+  <para style="p">Ne naaldek a amana dutu. <verse number="3" style="v" /><note caller="-" style="x"><char style="xo" closed="false">2:3: </char><char style="xt" closed="false">2Har 25:8-10; 2Kru 36:19; Hir 52:12-14.</char></note> Ne intabak ku ka Hari, “Mahal ne Hari, egkeuyag ka te ware egtamanan! Mania te kene e naa egkalaggew te nalundus man-e ka siyudad ne inlebengan te me kabuybuyahan ku, wey nenasilaban e ka me gumawan kayi.” <verse number="4" style="v" />Ne mig-insaan a te Hari, “Nekey naa ka igkeupii nu?”</para>
+  <para style="p">Ne mig-ampu a te Manama ne diye te Langit. <verse number="5" style="v" />Ne intabak ku ka Hari, “Ke igkahale a nikeykew wey ke igkeupii nu, Mahal ne Hari, tuhuti a ne eggendiye te Huda te siyudad ne inlebengan te me kabuybuyahan ku eyew egbalbalawan ku seini.”</para>
+  <para style="p">
+    <verse number="6" style="v" />Ne mig-inse man-e keddi ka Hari taheed te migpinnuu diye te kakiliran din ka Rayna, “Egkapilaan ka a riye wey ken-u ka a eglibed?” Te nakakekerew ad ke ken-u a eglibed, intuhutan e te Hari ka inhangyu ku.</para>
+  <para style="p">
+    <verse number="7" style="v" />Ne migkahiyan ku man-e ka Hari, “Ke igkahale a nikeykew wey ke igkeupii nu, Mahal ne Hari, behayi a te me sulat para te me gubirnadur ne diye te prubinsya ne talipag te Iyupratis,<note caller="+" style="f"><char style="fr" closed="false">2:7 </char><char style="ft" closed="false">Te Hibruwanen: Weyig.</char></note> su eyew egtuhutan a nikandan ne egpakaleus diye te Huda. <verse number="8" style="v" />Ne behayi e naa ubag degma te sulat para ki Asap, ne migpangulu te puwalas te Hari, eyew egbehayan a nikandin te me kayu ne egkahamit ku para te gumawan te timplu, te peg-alad te siyudad wey te pegpasasindeg te baley ne eg-ugpaan ku.” Ne intuhutan te Hari ka inhangyu ku su migdumaan e ma te Manama.</para>
+  <para style="p">
+    <verse number="9" style="v" />Ne imparumaan a te Hari te me upisyal te me sundalu ne migmangudde. Te pegginguma ku diye te prubinsya ne talipag te Iyupratis, imbehey kud te me gubirnadur ka sulat te Hari. <verse number="10" style="v" />Piru te pegkanengneng ni Sanbalat ne Hurunihanun wey ni Tubiyas ne suluhuanen din ne Amunihanun, nabelu amana sikandan su kene ma sikandan egkeupian ne due egpangabang te me matig-Israil.</para>
+  <para style="p">
+    <verse number="11" style="v" />Ne miggendiya a te Hirusalim wey mig-uugpa a diye seled te tatelu ne aldew. <verse number="12" style="v" />Miggipanew a te pegkamarusilem duma te pila ne etew. Ne ware ku ipangguhud te minsan hentew ke nekey ka igpeyimu te Manama keddi diye te Hirusalim. Ne ware lein ne mananap ne in-uyan ku, angin e te asnu ne in-unturan ku. <verse number="13" style="v" />Ne diyaa migbaye te Gumawan te Bangalug ne egpakalihad te Belun te Salimbaweng wey diye te Gumawan te Basuraan, wey impitew ku ka me matikang wey makepal ne alad te siyudad ne nenewugnak pad wey ka me gumawan kayi ne nenasilaban. <verse number="14" style="v" />Innendiyaan ku degma ka Gumawan te Sebseb wey ka Lanew te Hari piru ware egkabayaan te asnu ne in-unturan ku. <verse number="15" style="v" />Purisu miggendiya a te Bangalug te Kidrun wey impitew ku ka matikang wey makepal ne alad te siyudad diye. Ne puun diye miglibed a diye te imbayaan ku ne Gumawan te Bangalug.</para>
+  <para style="p">
+    <verse number="16" style="v" />Ne ware nakanengneng ka me upisyal ke hendei a migpuun wey ke nekey ka innimu ku, su ware e mam pad migpanugtul te me pangulu te me Hudiyu meyitenged te me planu ku, minsan ka me talagpanubad, me talahuren ne me etew, me upisyal, wey te duma pad ne due labet te pegbulig te himu. <verse number="17" style="v" />Ne ingkahiyan ku sikandan, “Nakita niyu ka kalised ne neula-ula ta. Nalundus ka siyudad te Hirusalim wey nenasilaban ka me gumawan kayi. Purisu egbalbalawan ta ka me matikang wey makepal ne alad kayi eyew egkaawe e ka pegkeyilew ne in-antus ta. <verse number="18" style="v" />Ne impangguhuran ku sikandan meyitenged te keyid-u te Manama keddi wey te ingkahi te Hari keddi.</para>
+  <para style="p">Ne migkahi sikandan, “Uya, egbal-balawan ta ka alabat.” Purisu migpangandam e sikandan ka egbunsud te himu. <verse number="19" style="v" />Piru te pegkanengneng kayi ni Sanbalat ne Hurunihanun wey ni Tubiyas ne suluhuanen din ne Amunihanun, wey ni Gisim ne Arabihanun, inlemetan wey in-ayu-ayu key nikandan te migkahi, “Nekey-a seini se innimu niyu? Iyan niyu naa igpasabut ne egkuntere kew te Hari?”</para>
+  <para style="p">
+    <verse number="20" style="v" />Ne migtabak a kandan, “Ka Manama te Langit ka egbulig ne eglampus key se me suluhuanen din. Piru ware labet niyu, wey ke katenged naa, wey ke egkeiman-iman naa kayi te Hirusalim.”</para>
+  <chapter number="3" style="c" />
+  <para style="s">Ka pegbalew-balew te alad te Hirusalim</para>
+  <para style="p">
+    <verse number="1" style="v" />Ne iyan migbalew-balew te Gumawan te Karniru, si Iliyasib ne ahalen ne talagpanubad wey ka me duma<note caller="+" style="f"><char style="fr" closed="false">3:1 </char><char style="ft" closed="false">Te Hibruwanen: Me suled din ka me talagpanubad. </char></note> rin ne talagpanubad. Inhalad dan seini wey intangen dan ka me gumawan kayi. Imbalbalawan dan degma ka alad ne matikang wey makepal, puun te Matikang ne Baley te Sabeka ne Gatus wey te Matikang ne Baley ni Hananil.</para>
+  <para style="p">
+    <verse number="2" style="v" />Ne ka keet-etawan te Hiriku iyan migbalew-balew te migsinundul ne baad,</para>
+  <para style="p">wey si Sakur iyan migbalew-balew te lein pad man-e ne baad kayi.</para>
+  <para style="p">
+    <verse number="3" style="v" />Ne ka me anak ni Hasina iyan migbalew-balew te Gumawan te Isda. Intangen dan ka me suley, me gumawan, me lekeb wey me balabag ne igpagul kayi.</para>
+  <para style="p">
+    <verse number="4" style="v" />Ne si Mirimut ne anak ni Uriyas wey apu ni Hakus iyan mig-ayad-ayad te migsinundul ne baad. Ne si Misulam ne anak ni Birikiyas wey apu ni Misisabil iyan mig-ayad-ayad te migsinundul man-e ne baad.</para>
+  <para style="p">Ne ka seup pad man-e ne mig-ayad-ayad iyan si Saduk ne anak ni Baana. <verse number="5" style="v" />Ne ka keet-etawan te Tikuwa ka mig-ayad-ayad te migsinundul ne baad. Piru ware migbulig te igpeyimu kandan ka me pangulu ran.</para>
+  <para style="p">
+    <verse number="6" style="v" />Ne iyan mig-ayad-ayad te gumawan ne ingngaranan te Gumawan ni Hisana si Huyada ne anak ni Pasiya wey si Misulam ne anak ni Bisudiyas. Intangenan dan seini te me suley, me lekeb wey me balabag ne igpagul kayi.</para>
+  <para style="p">
+    <verse number="7" style="v" />Ne iyan migsinundul kandan mig-ayad-ayad ka me etew te Gibiyun wey Mispa ne ensi Milatiyas ne matig-Gibiyun, si Hadun ne matig-Mirunut, wey ka me inged ne sakup te gubirnadur te prubinsya ne talipag te Iyupratis.</para>
+  <para style="p">
+    <verse number="8" style="v" />Ne iyan migsinundul kandan mig-ayad-ayad te baad si Usil ne anak ni Harayas ne talagdekdek te bulawan.</para>
+  <para style="p">Migsinundul kandin ne mig-ayad-ayad, si Hananiyas ne sabeka te me talaggimu te me peemut. Ne naay-ayaran ka Hirusalim taman diye te Maluag ne matikang wey makepal ne alad.</para>
+  <para style="p">
+    <verse number="9" style="v" />Ne iyan migsinundul kandan mig-ayad-ayad si Ripayas ne anak ni Hur ne pangulu te katenge ne distritu te Hirusalim.</para>
+  <para style="p">
+    <verse number="10" style="v" />Ne migsinundul kandan mig-ayad-ayad diye te tangkaan te baley rin si Hidayas ne anak ni Harumap.</para>
+  <para style="p">Ne migsinuldul kandin mig-ayad-ayad si Hatus ne anak ni Hasabniyas.</para>
+  <para style="p">
+    <verse number="11" style="v" />Ne iyan migsinundul kandan ne mig-ayad-ayad te lein ne baad wey te Matikang ne Baley ne Dulukanan si Malkiyas ne anak ni Harim wey si Hasub ne anak ni Pahatmuwab.</para>
+  <para style="p">
+    <verse number="12" style="v" />Ne iyan migsinundul kandin mig-ayad-ayad si Salum ne anak ni Haluhis, ne pangulu te katenge ne distritu te Hirusalim duma te anak din ne malitan.</para>
+  <para style="p">
+    <verse number="13" style="v" />Ne si Hanun wey ka matig-Sanuy iyan mig-ayad-ayad te Gumawan te Napu. Migbalbalawan dan seini wey migtangenan te me gumawan, me lekeb, wey me balabag ne igpagul kayi. Nakaayad-ayad sikandan te 440 ne mitrus taman te Gumawan te Basuraan.</para>
+  <para style="p">
+    <verse number="14" style="v" />Ne si Malkiyas ne anak ni Rikab ne pangulu te distritu te Bitakirim, iyan mig-ayad-ayad te Gumawan te Basuraan. Imbalbalawan din seini wey intangenan te din me gumawan, me lekeb, wey me balabag ne igpagul kayi.</para>
+  <para style="p">
+    <verse number="15" style="v" />Ne iyan mig-ayad-ayad te Gumawan te Sebseb si Salum ne anak ni Kulhusi, ne pangulu te distritu te Mispa. Imbalbalawan din seini, in-atepan wey intangenan te me gumawan, me lekeb, wey me balabag ne igpagul kayi wey ka matikang wey makepal ne alad te Linew te Sila diye te pinamulaan te Hari. Taman te haheran ne peendiye te siyudad ni Hari Dabid.</para>
+  <para style="p">
+    <verse number="16" style="v" />Ne migsinundul kandin si Nihimiyas ne anak ni Asbuk, ne pangulu te katenge ne distritu te Bitsur. In-ay-ayaran din ka egkatalipag te lebenganan ni Dabid, taman te innimu-himu ne linew wey ka Baley te me Bahani.</para>
+  <para style="p">
+    <verse number="17" style="v" />Ne iyan migsinundul kandin mig-ayad-ayad ka me Libita:</para>
+  <para style="p">Si Rihum ne anak ni Bani.</para>
+  <para style="p">Ne migsinundul mig-ayad-ayad para te distritu rin, si Hasabiyas ne pangulu te katenge ne distritu te Kila.</para>
+  <para style="p">
+    <verse number="18" style="v" />Ne migsinundul kandin mig-ayad-ayad ka me karumaan<note caller="+" style="f"><char style="fr" closed="false">3:18 </char><char style="ft" closed="false">Te Hibruwanen: Me suled.</char></note> dan ne impanguluwan ni Binuy ne anak ni Hinadad, ne pangulu te katenge ne distritu te Kila.</para>
+  <para style="p">
+    <verse number="19" style="v" />Ne si Isir ne anak ni Hiswa ne pangulu te Mispa ka migsinundul mig-ayad-ayad te lein ne baad ne talipag te tahuanan te me panganiban taman te pikungan te alad ne matikang wey makepal.</para>
+  <para style="p">
+    <verse number="20" style="v" />Ne si Baruk ne anak ni Sabay ka migsinundul mig-ayad-ayad te lein ne baad, puun te pikungan peendiye te gumawan te baley ni Iliyasib, ka pangulu te talagpanubad.</para>
+  <para style="p">
+    <verse number="21" style="v" />Ne si Mirimut ne anak ni Uriyas ne apu ni Hakus, ka migsinundul mig-ayad-ayad te lein ne baad, puun te gumawan te baley ni Iliyasib taman te patamanan kayi.</para>
+  <para style="s">Ka me talagpanubad ne migbulig te peg-ayad-ayad te alad</para>
+  <para style="p">
+    <verse number="22" style="v" />Ka mig-ayad-ayad ne migsinundul kandin iyan ka me talagpanubad ne migpuun te me siyudad ne nakalingut te Hirusalim.</para>
+  <para style="p">
+    <verse number="23" style="v" />Ne migsinundul kandan ne mig-ayad-ayad te tangkaan te baley ran, si Binhamin wey si Hasub.</para>
+  <para style="p">Ne migsinundul man-e kandan ne mig-ayad-ayad te lenged te baley rin si Asariyas ne anak ni Maasiyas ne apu ni Ananiyas.</para>
+  <para style="p">
+    <verse number="24" style="v" />Migsinundul kandin ne mig-ayad-ayad te lein ne baad, si Binuy ne anak ni Hinadad, puun te baley ni Asariyas taman te pikungan te alad,</para>
+  <para style="p">
+    <verse number="25-26" style="v" />ne si Palal ne anak ni Usay iyan mig-ayad-ayad te lein ne baad, puun te talipag te pikungan te alad peendiye te eggimuwen ne matikang ne baley ne diye te ampew te palasyu ne marani te lama te ugpaan te talagbantey.</para>
+  <para style="p">Ne migsinundul kandin si Pidayas ne anak ni Parus ne suluhuanen te timplu ne mig-ugpe te bubungan te Upil, ne iyan mig-ayad-ayad puun te talipag te Gumawan te Weyig peendiye te igsile wey diye te eggimuwen ne matikang ne baley.</para>
+  <para style="s">Ka me etew ne migbulig te peg-ayad-ayad te alad</para>
+  <para style="p">
+    <verse number="27" style="v" />Ne due nanginguma ne matig-Tikuwa, ne iyan mig-ayad-ayad te lein ne baad, puun te dakel ne eggimuwen ne matikang ne baley taman te matikang wey makepal ne alad te Upil.</para>
+  <para style="p">
+    <verse number="28" style="v" />Ne iyan mig-ayad-ayad te Gumawan te Kude ka me talagpanubad. Ne masi-ayad-ayad e ka tagse sabeka te tangkaan te baley rin.</para>
+  <para style="p">
+    <verse number="29" style="v" />Ne migsinundul kandan mig-ayad-ayad si Saduk ne anak ni Imir te katangkaan te baley rin.</para>
+  <para style="p">Ne migsinundul kandin mig-ayad-ayad te lein ne baad si Simayas ne anak ni Sikanyas, ne talagbantey te Gumawan te Igsile.</para>
+  <para style="p">
+    <verse number="30" style="v" />Ne migsinundul kandin mig-ayad-ayad te lein ne baad si Hananiyas ne anak ni Silimiyas wey si Hanun, ka igkeen-em ne anak ni Salap.</para>
+  <para style="p">Ne migsinundul kandan, si Misulam ne anak ni Birikiyas ne mig-ayad-ayad te katangkaan te sinabeng din.</para>
+  <para style="p">
+    <verse number="31" style="v" />Ne migsinundul kandin si Malkiyas, ne sabeka ne talagdekdek te bulawan, ne iyan mig-ayad-ayad peendiye te baley te talagbantey te timplu wey te me nigusyanti, te talipag te Pitawanan ne Gumawan wey te sinabeng ne diye te dibabew te pikungan.</para>
+  <para style="p">
+    <verse number="32" style="v" />Ne iyan mig-ayad-ayad te katammanan ne baad, puun te sinabeng ne diye te dibabew te pikungan wey te Gumawan te me Karniru, ka me talagdekdek te bulawan wey ka me nigusyanti.</para>
+  <chapter number="4" style="c" />
+  <para style="s">Ka pegkuntere ki Nihimiyas</para>
+  <para style="p">
+    <verse number="1" style="v" />Ne pegkarineg ni Sanbalat, ne gubirnadur te Samariya, ne egbalbalawan ney ka matikang wey makepal ne alad, nabelu sikandin wey nalanglangetan, wey inlemetan din ka me Hudiyu. <verse number="2" style="v" />Ne diye te tangkaan te me duma<note caller="+" style="f"><char style="fr" closed="false">4:2 </char><char style="ft" closed="false">Te Hibruwanen: Me suled din.</char></note> rin wey te me sundalu te Samariya, migkahi sikandin, “Nekey-a ka eggimuwen te seini se luyeg ne me Hudiyu? Egbalbalawan dan naa ka matikang wey makepal ne alad? Migsuman-suman buwa sikandan ne pinaahi te peghalad, egkeimpusan dan ka pegbalew-balew te senge kaaldew re? Migsuman-suman buwa sikandan ne egkalibulung dan pad ka nenasilaban wey nallupet e ne me batu?”</para>
+  <para style="p">
+    <verse number="3" style="v" />Ne si Tubiyas ne Amunihanun ne migpinnuu diye te dulug ni Sanbalat, migkahi, “Malehet sika, egkatempag ka innimu ran ne matikang wey makepal ne alad ne batu, minsan ke laku re ka egpamaneyik!”</para>
+  <para style="p">
+    <verse number="4" style="v" />Ne mig-ampu a, “Pamineha key, Manama ney, su imbaley-baley key. Ipalibed nu perem kandan ka pegbaley-baley ran kanami. Egkaamin perem ka me kasangkapan dan wey egkeuripen sikandan diye te lein ne inged. <verse number="5" style="v" />Kene nu pasayluwa ka mareet ne hinimuwan dan, wey kene nu lingawi ka me sale dan. Su inlemetan ka nikandan diye te tangkaan te me panday.”</para>
+  <para style="p">
+    <verse number="6" style="v" />Sikan naa, imbalbalwan ney ka matikang wey makepal ne alad taman te natenge ka kalayat kayi, su amana ne maahet-ahet ka me etew ne eggimu.</para>
+  <para style="p">
+    <verse number="7" style="v" />Piru te pegkarineg ni Sanbalat wey ni Tubiyas ne matig-Arabiya wey te me Amunihanun, wey te me matig-Asdud ne nakapabulus ka peg-ayad-ayad te matikang wey makepal ne alad te Hirusalim, wey nenasengsengan e ka me lungag, nenabbelu sikandan. <verse number="8" style="v" />Sikan naa, migplanu sikandan ne eggendiye wey eglusud te Hirusalim, wey eggimu te samuk diye. <verse number="9" style="v" />Piru mig-ampu key te Manama ney wey migtahu key te me talagbantey, maaldew wey marusilem te pegtameng kanami.</para>
+  <para style="p">
+    <verse number="10" style="v" />Ne migkahi ka keet-etawan te Huda, “Migmagguye e ka me trabahanti, ne miglatambu pad ka nenatempag wey kene key e egpakabalew-balew te matikang wey makepal ne alad.”</para>
+  <para style="p">
+    <verse number="11" style="v" />Ne migkahi degma ka me kuntere ney, “Te kene te kene pad sikandan egpakanengneng wey ke egpakakita naa kanta, egtigkan-tigkan ki eggendiye wey egpangimatayan ta sikandan eyew egpakapeeneng-eneng ka peggimu ran.” <verse number="12" style="v" />Ne ka me Hudiyu ne mig-ugpe diye te marani ran miggendiye te kanami wey kamasulug key pangguhuri nikandan ne eglusuran<note caller="+" style="f"><char style="fr" closed="false">4:12 </char><char style="ft" closed="false">Te Hibruwanen: Kene ne klaru.</char></note> key kun te me kuntere ney. <verse number="13" style="v" />Purisu migtahu a te talagbantey diye te liyu te kinariraleman ne baad te matikang wey makepal ne alad ne ware pad neimpusi. Impabantey ku sikandan diye, sumale te pamilya ran, ne due me kampilan, me delreg, wey me pane.</para>
+  <para style="p">
+    <verse number="14" style="v" />Ne nakita ku ka keet-etawan ne nallagew, sikan naa, ingkahiyan ku sikandan wey ka me pangulu wey me upisyal ran, “Kene kew kaaldek kandan. Tantanuri niyu ke mamenu karakel wey makaliyas-liyas ka Magbebaye ne Manama. Pakig-ehet kew para te me suled niyu ne me lukes, anak niyu ne me lukes, anak niyu ne me malitan, asawa niyu ne me malitan, wey te me ugpaanan niyu.” <verse number="15" style="v" />Ne nakarineg ka me kuntere ne nanengnengan ney ka implanu ran wey imbalabahan sikandan te Manama.</para>
+  <para style="p">Ne nakalibed key ka egbalew-balew te matikang wey makepal ne alad.</para>
+  <para style="p">
+    <verse number="16" style="v" />Puun te seeye ne timpu, katenge te me suluhuanen ku ka migtrabahu te matikang wey makepal ne alad, ne ka katenge nasangkap te me delreg, me kalasag, wey me piet wey migsaluub te putew ne dingding te kumeng. Ne intetamengan te me pangulu ka langun ne keet-etawan te Huda, <verse number="17" style="v" />ne migbalew-balew te matikang wey makepal ne alad. Ne innimu te seeye se egpangganuy te me kasangkapan ka himu ran ne ka limang ne belad miggengen te panganiban, <verse number="18" style="v" />ne ka tagse trabahanti migsinsiniket de due te kampilan. Ne diye te dulug ku migsesasindeg ka etew ne talagparahing te trumpita. <verse number="19" style="v" />Ne migkahiyan ku ka me pangulu, ka me upisyal wey ka langun ne keet-etawan, “Dakel wey maluag ka himu wey nekegdiyu-diyu ki. <verse number="20" style="v" />Ke egkarineg niyu ka dahing te trumpita, dagdahew kew naa hengkayi te keddi. Ne ka Manama ta ka egpakig-ehet para kanta.” <verse number="21" style="v" />Purisu migpabulus key ka miggimu duma te katenge te me etew ne miggehengen te delreg, puun te pegkaliwas-was taman te pegkamarusilem.</para>
+  <para style="p">
+    <verse number="22" style="v" />Te seeye ne timpu migkahiyan ku degma ka keet-etawan, “Keilangan ne ka langun ne etew, kayi eglipereng te Hirusalim tagse marusilem eyew egkabantayan ka siyudad, wey te maaldew egpekeyimu e man-e sikandan.” <verse number="23" style="v" />Sikan naa, sikeddi, ka me suled ku, ka me suluhuanen ku wey ka me talagbantey ne mig-ikul keddi, ware sabeka kanami ne migluluung te kumbale ney minsan te marusilem. Miggehengen te panganiban ka tagse sabeka.</para>
+  <chapter number="5" style="c" />
+  <para style="s">Ka peggusey ni Nihimiyas te prublima te keet-etawan</para>
+  <para style="p">
+    <verse number="1" style="v" />Ne migsagsahukul ka me lukes wey ka me asawa ran diye te duma ran ne me Hudiyu.<note caller="+" style="f"><char style="fr" closed="false">5:1 </char><char style="ft" closed="false">Te Hibruwanen: Me suled dan ka me Hidiyu.</char></note> <verse number="2" style="v" />Ne due migkahi, “Masulug ka me anak ney ne me lukes wey me malitan wey migkeilangan key te egkakeen eyew egkeuyag key.”</para>
+  <para style="p">
+    <verse number="3" style="v" />Ne migkahi ka duma, “Impamirinda ney e ka me kamet ney, me pamulaan te me paras, wey ka me baley ney eyew due egkakeen ney te timpu te bitil.”</para>
+  <para style="p">
+    <verse number="4" style="v" />Ne due man-e migkahi, “Nakapanambey key te seleppi ne igbayad ney te buhis te migharian, ne para te me kamet ney wey me pinamulaan te me paras. <verse number="5" style="v" />Ne kuntee, minsan nenekeg-iling ka langesa ney te tagtahasuled, wey ka anak dan ne me lukes iling ded degma te anak ney ne me lukes, piru napehes key ne igpeuripen ka me anak ney ne me lukes wey me malitan. Ne ka duma ne me anak ney ne me malitan neneuripen e. Piru ware egkeyimu ney su ka me kamet ney wey ka me pinamulaan ney te paras naangken man-e te lein ne etew.”</para>
+  <para style="p">
+    <verse number="6" style="v" />Te pegkarineg ku te pegsagsahukul ran, nabelu-belu a. <verse number="7" style="v" /><note caller="-" style="x"><char style="xo" closed="false">5:7: </char><char style="xt" closed="false">Iks 22:25; Lib 25: 35-37; Diy 23:19-20.</char></note> Te naay-ay-ayaran kud seini te egsuman-suman, in-apul ku ka me pangulu wey upisyal te keet-etawan wey migkahiyan ku, “Indeeg-deeg niyu ka me suled niyu pinaahi te pegpatubu niyu te impasambayan niyu ne seleppi kandan.”</para>
+  <para style="p">Ne migpeumew a te dakel ne peglibulung eyew te peggusey te prublima. <verse number="8" style="v" />Ne ingkahiyan ku sikandan, “Inggimu ney ka langun ne egkeyimu ney eyew te pegpangabang te me karumaan ta ne me Hudiyu ne nakabelegye diye te lein ne nasud, piru tenged te innimu niyu, napehes e man-e sikandan ne egbelegye te pegkeetew ran diye mismu te kaniyu.” Nenakapeeneng-eneng de sikandan su ware igpakatabak dan.</para>
+  <para style="p">
+    <verse number="9" style="v" />Sikan naa, migpabulus-bulus a, “Kene ne meupiya ka innimu niyu. Keilangan perem ne egkaaldek kew te Manama, eyew kene ki egkeyilawan te me kuntere ta ne me lapu? <verse number="10" style="v" />Timul pad, sikeddi, ka suled ku ne me lukes, wey ka me suluhuanen ku migpasambey degma te seleppi wey te egkakeen kandan. Ne kuntee igpeen-eneng tad ka pegsukut te bayad. <verse number="11" style="v" />Ne kuntee ilibed niyu ka me kamet dan, pamulaan dan te paras, ka me pamulaan dan te ulibu, ka me baley ran, wey ka nenasambayan dan ne me seleppi, kakeen, binu, wey lana te ulibu.</para>
+  <para style="p">
+    <verse number="12" style="v" />Ne migtabak ka me pangulu, “Iglibed ney ka me karatuan dan wey kene key e egsukut kandan. Eggimuwen ney e ka ingkahi nu.”</para>
+  <para style="p">Ne impeumew ku ka me talagpanubad, wey impepanaad ku diye te tangkaan dan ka me talahuren wey me upisyal ne egtumanen dan ka impanaad dan. <verse number="13" style="v" />Ne imbukelasan ku ka inlupi ne intetabed ku wey migkahi a, “Iling te seini ka eggimuwen te Manama kaniyu, te me baley niyu, wey te me karatuan niyu ke kene niyu egtumanen ka impanaad niyu.” Ne migkahi ka langun, “Malehet iya,” wey indeyrey ran ka Magbebaye ne Manama. Ne intuman te keet-etawan ka impanaad dan.</para>
+  <para style="p">
+    <verse number="14" style="v" />Ne timul pad, puun te igkadaruwa ne pulu ne leg-un te peghari ni Artasirsis, te naalam a ne egkeyimu ne gubirnadur te Huda taman te igkatatelu ne pulu wey daruwa ne leg-un te peghari ni Artasirsis. Sikeddi wey ka suled ku ne me lukes, ware migkeen te igpakeen te gubirnadur. <verse number="15" style="v" />Piru imbaybayaran te me gubirnadur ne nekewun-a keddi ka keet-etawan, wey impanguwa ka egkakeen dan wey ka me binu ran, ware labet ka 40 ne malisen ne pelata. Minsan ka me suluhuanen dan migdeeg-deeg degma te keet-etawan. Piru ware ku himuwa seini su naaldek a te Manama. <verse number="16" style="v" />Ne migpabulus a te pegbalew-balew te matikang wey makepal ne alad wey wara a mig-kuwa te minsan nekey ne karatuan. Ne iling ded degma ka innimu te tagse sabeka ne migbulig keddi. <verse number="17" style="v" />Ne timul pad kayi, wara a migbuyu te minsan nekey minsan tagse aldew ne impakeen ku ka 150 ne upisyal te me Hudiyu, ware pad labet te me mahaliyug ne egpuun te nakalingut ne me nasud. <verse number="18" style="v" />Ne tagse aldew, miglapa a te sabeka ne malisen ne baka wey hen-em ne malisen ne mallambeg ne me karniru wey me manuk. Ne tagse sapulu ne aldew migbehey degma te iyam ne binu. Ne nakanengneng a ne mabehat amana seini para te me etew purisu wara a migkuwa te minsan nekey ne pegkeen ne ig-pakeen te gubirnadur.</para>
+  <para style="p">
+    <verse number="19" style="v" />Sumsumana a, E Manama ku, is-isipa nu ka langun ne neyimu ku te seini ne keet-etawan.</para>
+  <chapter number="6" style="c" />
+  <para style="s">Ka planu te peggimatey ki Nihimiyas</para>
+  <para style="p">
+    <verse number="1" style="v" />Te pegkanengneng enni Sanbalat, Tubiyas wey Gisim ne matig-Arabya wey te duma pad ne me kuntere ney, ne neimpusan ney e ka pegbalew-belew te matikang wey makepal ne alad wey warad e me lungag kayi--minsan ke ware ney pad nakatangen ka me lekeb kayi. <verse number="2" style="v" />Migpeuyan ensi Sanbalat wey Gisim te seini ne lalag keddi, “Egkeupian key ne egpakigkita keykew diye te sabeka ne bariyu te napu te Unu.” Piru ka malehet, mareet bes ka tuyu dan keddi. <verse number="3" style="v" />Purisu migpeuyanan ku degma sikandan te lalag te pegkahi, “Dakel ka himu ku purisu kena a egpekeendue. Kene egkaayun ne egkeengkeran ku ka himu eyew re egpakigkita kaniyu.”</para>
+  <para style="p">
+    <verse number="4" style="v" />Keep-at a nikandan peuyani te iling ded ne lalag, wey iling ded degma ka tabak ku.</para>
+  <para style="p">
+    <verse number="5" style="v" />Te igkalalimma ne timpu, impeuyanan a ni Sanbalat te imbukelasan ne sulat te iling ded ne lalag, ne in-uyan te suluhuanen din. <verse number="6" style="v" />Ne seini ka insulat, “Due me salupet ne egpuun te me nasud ne nakalingut wey migguhud si Gisim ne malehet iya seini, ne sikeykew wey ka me Hudiyu migplanu ne egsukul, sikan naa ka imbalbalawan niyu himuwa ka matikang wey makepal ne alad. Sumale te guhud din, egkeupian ke kun ne egkeyimu ne Hari dan. <verse number="7" style="v" />Ne mig-alam ke kun te me prupita ne egpataha<note caller="+" style="f"><char style="fr" closed="false">6:7 </char><char style="ft" closed="false">Te Hibruwanen: Umew.</char></note> te Hirusalim meyitenged keykew, ‘Due Hari kayi te Huda!’ Ne egkarineg e te Hari ka seini ne salupet. Ne hendini ke naa su egpasabsabutey ki meyitenged kayi.”</para>
+  <para style="p">
+    <verse number="8" style="v" />Ne impeuyanan ku sikandin te seini ne tabak, “Ubat sika se ingkahi nu. Himu-himu nu re sika ne puun te suman-suman nu.”</para>
+  <para style="p">
+    <verse number="9" style="v" />Igkeupii ran ne egginalatan key, te suman-suman dan ne egpeeneng-eneng key te eggimuwen ney. Piru mig-ampu a te Manama ne egbehayan e pad ni kandin te kanekal.</para>
+  <para style="p">
+    <verse number="10" style="v" />Te sabeka ne aldew miggendiya a te baley ni Simayas ne anak ni Dilayas wey apu ni Mihitabil, ne kene egpekeengked te baley rin. Migkahi si Simayas keddi, “Eglibulung ki diye te seled te Timplu te Manama wey eglekeban ta ka me gumawan kayi su eggengkayi ka me kuntere nu ne eggimatey keykew kuntee te marusilem.”</para>
+  <para style="p">
+    <verse number="11" style="v" />Piru migtabak a, “Kene egkaayun ne egpaliliyas a. Migsuman-suman ke naa ne egluwas ku ka umul ku pinaahi te peggeles diye te Timplu? Kena a eggendiye!”</para>
+  <para style="p">
+    <verse number="12" style="v" />Ne nasabut ku ne ware suhua sikandin te Manama, piru impanpanayan a nikandin su imbayaran ma ni Sanbalat wey ni Tubiyas eyew iglalag din keddi seeye. <verse number="13" style="v" />Imbayaran dan sikandin te pegginaaldek keddi su eyew egpakasala a pinaahi te peggimu te ingkahi ni Simayas eyew egkareetan ka ngaran ku wey egkeyilawan a.</para>
+  <para style="p">
+    <verse number="14" style="v" />Ne mig-ampu a, “Sumsumana nu, E Manama ku ka langun ne mareet ne hinimuwan ni Tubiyas wey Sanbalat. Ne tantanuri nu degma ka malitan ne prupita ne si Nuwadiyas wey ka me duma ne prupita ne migpanginaldek keddiey.”</para>
+  <para style="p">
+    <verse number="15" style="v" />Peglihad te lalimma ne pulu wey daruwa (52) ne aldew ne pegbalew-balew, neimpusan e ka intiru ne matikang wey makepal ne alad te igkadaruwa ne pulu wey lalimma (25) ne aldew te bulan te Ilul. <verse number="16" style="v" />Te pegkarineg te me kuntere ney meyitenged kayi wey te nenakalingut ne me nasud nenaaldek sikandan wey neneyilew. Nasabut dan ne neimpusan ka seini ne himu pinaahi te bulig te Manama. <verse number="17" style="v" />Te seeye se intiru ne lalimma ne pulu wey daruwa (52) ne aldew, migmasulsulatey ka me igbuyag te Huda ki Tubiyas. <verse number="18" style="v" />Masulug nenadduma rin ne matig-Huda su mekaamung ma sikandin ni Sikaniyas ne anak ni Ara. Ka anak din degma ne si Diyuhanan migpangasawa te anak ni Misulam ne anak ni Birikiyas. <verse number="19" style="v" />Impangguhud dan keddi ka me meupiya ne neyimu ni Tubiyas, wey impangguhud dan kandin ka langun ne impangahi ku. Ne impanulatan a nikandin eyew te peglelalis wey pegginaldek keddiey.</para>
+  <chapter number="7" style="c" />
+  <para style="p">
+    <verse number="1" style="v" />Te nabalbalawan e ka matikang wey makepal ne alad te siyudad, wey te nenakatangen e ka me gumawan, impanahuan e te me talagbantey te gumawan te siyudad, me mangngulahing wey me Libita. <verse number="2" style="v" />Imbehey ku ka katenged te pegbantey te Hirusalim diye te suled ku ne si Hanani duma ki Hananiyas ne sinalihan te malig-en, matikang wey makepl ne alad te Hirusalim su si Hananiyas kasalihan ma wey due kaaldek te Manama labew te duma. <verse number="3" style="v" />Ingkahiyan ku sikandan, “Kene niyu lukati ka gumawan te siyudad te kene pad egsile ka aldew wey lekebi niyu seini te kene pad eglineb ka aldew. Tinuru kew degma te me talagbantey ne mahinged te Hirusalim wey ipanahu niyu ka tagse sabeka te tangkaan te baley rin.”</para>
+  <para style="s">Ka listaan te nenekeuli puun te pegkeuripen</para>
+  <para style="r">(Isd. 2:1-70)</para>
+  <para style="p">
+    <verse number="4" style="v" />Maluag wey dakel ka siyudad te Hirusalim piru deisek de ka nangugpe kayi wey ware pad nenakapes-ek ne me baley.</para>
+  <para style="p">
+    <verse number="5" style="v" />Ne innibagget a te Manama<note caller="+" style="f"><char style="fr" closed="false">7:5 </char><char style="ft" closed="false">Te Hibruwanen: Intahu te Manama te pusung ku. </char></note> ne eglibulungen ka me talahuren wey me pangulu, wey ka lerew ne me etew eyew egpalista sumale te kabuhalan dan. Ne nakita ku ka listaan te hun-a ne nanginguma ne kabuhalan. Seini ka nakita ku ne nakasulat diye.</para>
+  <para style="p">
+    <verse number="6" style="v" />Seini ka nenaddakep ne keet-etawan te prubinsya ne impanguyan ni Hari Nibukadnisar, ka Hari diye te Babilunya. Ne kuntee nekeuli e ka tagse sabeka diye te siyudad dan, ne sakup te Hirusalim wey Huda. <verse number="7" style="v" />Iyan migmangulu kandan si Sirubabil, Hiswa, Nihimiyas, Asariyas, Raamiyas, Nahamani, Mardukiyu, Bilsan, Mispirit, Bigbay, Nihum wey si Baana. Seini ka kasuluhan te me lukes ne keet-etawan te Israil:</para>
+  <para style="p">
+    <verse number="8-25" style="v" />
+  </para>
+  <para style="li">Due me 2,172 ne kabuhalan ni Parus</para>
+  <para style="li">Due me 372 ne kabuhalan ni Sipatiyas</para>
+  <para style="li">Due me 652 ne kabuhalan ni Ara</para>
+  <para style="li">Due me 2,818 ne kabuhalan ni Pahatmuwab ne kabuhalan ni Hiswa wey Huwab</para>
+  <para style="li">Due me 1,254 ne kabuhalan ni Ilam</para>
+  <para style="li">Due me 845 ne kabuhalan ni Satu</para>
+  <para style="li">Due me 760 ne kabuhalan ni Sakay</para>
+  <para style="li">Due me 648 ne kabuhalan ni Binuy</para>
+  <para style="li">Due me 628 ne kabuhalan ni Bibay</para>
+  <para style="li">Due me 2,322 ne kabuhalan ni Asgad</para>
+  <para style="li">Due me 667 ne kabuhalan ni Adunikam</para>
+  <para style="li">Due me 2,067 ne kabuhalan ni Bigbay</para>
+  <para style="li">Due me 655 ne kabuhalan ni Adin</para>
+  <para style="li">Due me 98 ne kabuhalan ni Atir (ne ingngaranan degma ki Hisikiyas)</para>
+  <para style="li">Due me 328 ne kabuhalan ni Hasum</para>
+  <para style="li">Due me 324 ne kabuhalan ni Bisay</para>
+  <para style="li">Due me 112 ne kabuhalan ni Harip</para>
+  <para style="li">Due me 95 ne kabuhalan ni Gibiyun</para>
+  <para style="b" />
+  <para style="m">
+    <verse number="26-38" style="v" />Seini ka kasuluhan te me etew, ne ka kabuybuyahan dan diye nangugpe te seini ne me lungsud:</para>
+  <para style="li">Diye te Bitlihim wey Nitupa 188</para>
+  <para style="li">Diye te Anatut 128</para>
+  <para style="li">Diye te Bit-asmabit hep-at ne pulu wey daruwa (42)</para>
+  <para style="li">Diye te Kiriyatiyarim, Sipira, wey Birut 743</para>
+  <para style="li">Diye te Rama wey Giba 621</para>
+  <para style="li">Diye te Mikmas 122</para>
+  <para style="li">Diye te Bitil wey Ay 123</para>
+  <para style="li">Diye te lein ne Nibu lalimma ne pulu wey daruwa (52)</para>
+  <para style="li">Diye te Ilam ne lein 1,254</para>
+  <para style="li">Diye te Harim 320</para>
+  <para style="li">Diye te Lud, Hadid wey Unu 721</para>
+  <para style="li">Diye te Hiriku 345</para>
+  <para style="li">Diye te Sinaa 3,930</para>
+  <para style="b" />
+  <para style="m">
+    <verse number="39-42" style="v" />Seini ka me kabuhalan te me talagpanubad ne nenekeuli puun te pegkeuripen:</para>
+  <para style="li">Due me 973 ne me kabuhlan ni Hidayas ne kabuhalan ni Hiswi</para>
+  <para style="li">Due me 1,052 ne me kabuhalan ni Imir</para>
+  <para style="li">Due me 1,247 ne me kabuhalan ni Pasur</para>
+  <para style="li">Due me 1,017 ne me kabuhalan ni Harim</para>
+  <para style="b" />
+  <para style="m">
+    <verse number="43-45" style="v" />Seini ka kabuhalan ni Libi ne nekeuli puun te pegkeuripen:</para>
+  <para style="li">Due pitu ne pulu wey hep-at (74) ne me kabuhalan ni Hiswa wey ni Kadmiil, ne me kabuhalan ni Hudiba.</para>
+  <para style="li">Due 148 ne mangngulahing diye te Timplu, ne me kabuhalan ni Asap.</para>
+  <para style="li">Due 138 ne me talagbantey te gumawan te timplu ne me kabuhalan enni Salmun, Atir, Talmun, Akub, Hatita, wey Subay.</para>
+  <para style="b" />
+  <para style="m">
+    <verse number="46-56" style="v" />Seini ka kabuhalan te me suluhuanen te timplu ne nekeuli puun te pegkeuripen:</para>
+  <para style="li">me kabuhalan enni Siha, Hasupa, wey ni Tabaut,</para>
+  <para style="li">me kabuhalan enni Kirus, Siya, wey ni Padun,</para>
+  <para style="li">me kabuhalan enni Libana, Hagaba, wey ni Salmay,</para>
+  <para style="li">me kabuhalan enni Hanan, Gidil wey ni Gahar,</para>
+  <para style="li">me kabuhalan enni Riyahas, Risin, wey ni Nikuda,</para>
+  <para style="li">me kabuhalan enni Gasam, Usa, wey ni Pasiya,</para>
+  <para style="li">me kabuhalan enni Bisay, Miyunim, wey ni Nipusisim,</para>
+  <para style="li">me kabuhalan enni Bakbuk, Hakupa, wey ni Harhur,</para>
+  <para style="li">me kabuhalan enni Baslit, Mihida, wey ni Harsa,</para>
+  <para style="li">me kabuhalan enni Barkus, Sisira, Tima,</para>
+  <para style="li">me kabuhalan enni Nisiya, wey Hatipa.</para>
+  <para style="b" />
+  <para style="m">
+    <verse number="57-59" style="v" />Seini ka kabuhalan te me suluhuanen ni Sulumun ne nekeuli puun te pegkeuripen:</para>
+  <para style="li">me kabuhalan enni Sutay, Supirit, wey Pirida,</para>
+  <para style="li">me kabuhalan enni Haala, Darkun, wey Gidil,</para>
+  <para style="li">me kabuhalan enni Sipatiyas, Hatiil, Pukirit-Hasibaim, wey Amun.</para>
+  <para style="p">
+    <verse number="60" style="v" />Migginguma te 392 ka langun ne suluhuanen diye te timplu wey ka me kabuhalan te suluhuanen ni Sulumun.</para>
+  <para style="p">
+    <verse number="61" style="v" />Seini ka mig-uli diye te Hirusalim puun te me lungsud te Tilmila, Tilharsa, Kirub, Adun, wey Imir. Piru kene egpakapamalehet sikandan ke kabuhalan naa sikandan te Israil. <verse number="62" style="v" />Sikandan seeye se me kabuhalan enni Dilyas, Tubiyas, wey Nikuda. Migginguma sikandan te 642 ne me etew.</para>
+  <para style="p">
+    <verse number="63" style="v" />Seini degma ka me kabuhalan te me talagpanubad: ka me anak enni Habayas, Hakus, wey Barsilay, ne mig-asawa te me anak ni Barsilay ne matig-Gilyad, wey puun dutu in-uyan din e ka ngaran te anuhang din. <verse number="64" style="v" />Migpamitew sikandan te listahan isip pegmemalehet ne naapil ka kaap-apuan dan, piru ware nakita ran, sikan naa, ware sikandan dawata ne talagpanubad, wey in-isip ne mallindit. <verse number="65" style="v" /><note caller="-" style="x"><char style="xo" closed="false">7:65: </char><char style="xt" closed="false">Iks 28:30; Diy 33:8.</char></note>Ingkahiyan sikandan te gubirnadur ne kene egpakeenen te amana ne matulus ne me pegkeen taman te duen e talagpanubad ne egpekeinse te Magbebaye ne Manama pinaahi<note caller="+" style="f"><char style="fr" closed="false">7:65 </char><char style="ft" closed="false">Te Hibruwanen: Sasindeg.</char></note> te Urim wey te Tumim, ke malehet naa ne talagpanubad sikandan.</para>
+  <para style="m">
+    <verse number="66-69" style="v" />Ne migginguma te 42,360 ka langun ne keet-etawan ne nekeuli puun te pegkeuripen,</para>
+  <para style="li">Ware pad labet te 7,337 ne suluhuanen ne me lukes wey me malitan</para>
+  <para style="li">Ka me mangngulahing ne me lukes wey me malitan 245</para>
+  <para style="li">Me kudde dan ne 736</para>
+  <para style="li">Me mula ran ne 245</para>
+  <para style="li">Me kamilyu ran ne 435</para>
+  <para style="li">Me asnu ran ne 6,720.</para>
+  <para style="p">
+    <verse number="70-72" style="v" />Ne migdasag ka duma ne pangulu te kabuhalan para te himu.</para>
+  <para style="li">Migbehey ka gubirnadur te walu (8) ne kilu te bulawan diye te tahuanan te karatuan, lalimma ne pulu (50) ne bulawan ne pelenggana, wey 530 ne kumbale te me talagpanubad.</para>
+  <para style="li">Migbehey degma ka pangulu te kabuhalan, te 168 ne kilu te bulawan wey 1,250 ne kilu te pelata diye te tahuanan te karatuan ne para te himu.</para>
+  <para style="li">Ne ka nasame ne keet-etawan migbehey te 168 ne kilu te bulawan, 1,142 ne kilu te pelata, wey hen-em wey pitu (67) ne kumbale te me talagpanubad.</para>
+  <para style="p">
+    <verse number="73" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">7:73: </char>
+      <char style="xt" closed="false">1Kru 9:2; Nih 11:3.</char>
+    </note> Ne diye nangugpe te Hirusalim wey diye te marani ne inged ka me talagpanubad, me kabuhalan ni Libi, wey ka duma ne etew. Ne diye nangugpe te lungsud dan ka me mangngulahing, me talagbantey te gumawan te siyudad, wey me suluhuanen te timplu. Ne diye nangugpe ka duma ne matig-Israil te lungsud ne impuunan te kabuybuyahan dan.</para>
+  <chapter number="8" style="c" />
+  <para style="s">Ka pegbasa ni Isdras te balaud diye te keet-etawan</para>
+  <para style="p">
+    <verse number="1" style="v" />Ne miglibulung ka langun ne keet-etawan diye te plasa ne egkatangkaan te Gumawan te Weyig. Ne migkahiyan dan si Isdras, ka talagpanubad wey iskriba, te igpeuyan ka Libru te Balaud ne imbehey te Magbebaye ne Manama te Israil pinaahi ki Muwisis. <verse number="2" style="v" />Sikan naa, te an-anayan ne aldew te ikapitu ne bulan in-uyan ni Isdras ne talagpanubad ka balaud diye te tangkaan te miglibulung ne me lukes wey me malitan, wey te langun ne me bate ne egtulik e. <verse number="3" style="v" />Ne imbasa rin te meemen ka Libru te Balaud diye te tangkaan dan, puun te maselem taman te meudtu. Ne amana sikandan migpammineg kayi.</para>
+  <para style="p">
+    <verse number="4" style="v" />Ne migsasindeg si Isdras ne mangngateu te balaud diye te dibabew te kayu ne pulpitu<note caller="+" style="f"><char style="fr" closed="false">8:4 </char><char style="ft" closed="false">Te Hibruwanen: matikang ne lantawan ne kayu.</char></note> ne innimu para re te seeye ne himu. Ne migsasindeg diye te dangdang din ne dapit te igkakawanan: si Matitiyas, si Sima, si Ananiyas, si Uriyas, si Hilkiyas, wey si Maasiyas wey ka diye te igkahibang din si Pidayas, si Misail, si Malkiyas, si Hasum, si Hasbaddana, si Sakariyas wey si Misulam.</para>
+  <para style="p">
+    <verse number="5" style="v" />Nakita sikandin te langun ne me etew te pegbelat din te libru su diye ma sikandin migsasindeg te dibdibabew ran wey nanasindeg ka langun ne me etew te pegbelat din e kayi. <verse number="6" style="v" />Ne indeyrey ni Isdras ka Magbebaye ne Manama, ka maresen ne Manama. Ne ingkayew te langun me etew ka me belad dan wey migtabak, “Malehet iya! Malehet iya!” wey miglangkeb sikandan wey migsimba te Magbebaye ne Manama.</para>
+  <para style="p">
+    <verse number="7" style="v" />Impasabut te me Libita ne ensi Hiswa, si Bani, si Siribiyas, si Hamin, si Akub, si Sabitay, si Hudiyas, si Maasiyas, si Kilita, si Pilayas, ka keet-etawan te balaud taheed te diye dan pad te migsasasindehan dan. <verse number="8" style="v" />Imbasa ran ka Libru te Balaud te Manama wey impasabut seini su eyew egpakasabut ka keet-etawan.</para>
+  <para style="p">
+    <verse number="9" style="v" />Naninehew ka keet-etawan te pegkarineg dan dutu. Ne si Nihimiyas ne gubinadur, si Isdras ne talagpanubad ne mangngateu te balaud wey ka me Libita ne migpasabut te keet-etawan te migkahi, “Matulus ne aldew seini diye te Magbebaye ne Manama. Kene kew lungku wey ke pandalawit naa.” <verse number="10" style="v" />Ne migkahi si Nihimiyas diye te kandan, “Hendiye kew e wey keen kew te me mateles ne egkakeen wey inum kew te me meemis ne binu, wey pamehayi niyu te egkakeen ka ware egkeyimu. Su matulus para te Magbebaye ne Manama ta ka seini aldew. Kene kew lungku su ka kahale ne egpuun te Magbebaye ne Manama iyan kanekal niyu.”</para>
+  <para style="p">
+    <verse number="11" style="v" />Ne impape-eneng-eneng degma te me Libita ka langun ne keet-etawan te migkahi, “Kene kew lungku su matulus seini ne aldew.” <verse number="12" style="v" />Ne nangipanew e ka langun ne keet-etawan eyew te egkeen wey eg-inum, wey te egpamehey te egkakeen. Miggale-gale sikandan tenged su nakasabut e sikandan te lalag ne impanengneng kandan.</para>
+  <para style="s">Ka pegsahakeen te balung-balung</para>
+  <para style="p">
+    <verse number="13" style="v" />Te ikarangeb ne aldew miglibulung diye ki Isdras ne mangngateu te balaud, ka langun ne me pangulu te kabuhalan, duma te me talagpanubad wey te me Libita, eyew te peg-ugsi-ugsi te balaud. <verse number="14" style="v" /><note caller="-" style="x"><char style="xo" closed="false">8:14-15: </char><char style="xt" closed="false">Lib 23:33-36,39-43; Diy 16.13-15.</char></note> Ne nanengnengan dan diye te nasulat te balaud te Magbebaye ne Manama pinaahi ki Muwisis, ne insuhu ka me matig-Israil ne eg-ugpe diye te balung-balung te timpu te sahakeen te ikapitu ne bulan. <verse number="15" style="v" />Keilangan ne ig-empet dan igpanengneng te intiru ne lungsud wey diye te Hirusalim ka seini: “Hendiye kew te me bubungan wey panguwa kew naa te me sugpang te ulibu, le-ew ne ulibu, mirtul, palmira, wey duma pad ne kayu ne malapung se dewun ne eyew egkeyimu ne balung-balung, sumale te nasulat.”</para>
+  <para style="p">
+    <verse number="16" style="v" />Sikan naa, nangendiyad e ka keet-etawan wey nanguyan te me sugpang wey nangimu e te balung-balung diye te me atep dan, diye te lama ran, diye te lama te timplu te Manama wey diye te plasa ne marani te gumawan te weyig, wey diye te plasa ne marani te gumawan ni Ipraim. <verse number="17" style="v" />Ne nangimu te me balung-balung ka langun ne nenekeuli puun te pegkeuripen, wey seini ka in-ugpaan dan te timpu te sahakeen. Nahale amana sikandan su puun te timpu ni Huswi ne anak ni Nun taman te seeye ne aldew, ware pad miggimu te iling kayi. <verse number="18" style="v" />Tagse aldew puun te hun-a ne aldew taman te katammanan, imbasa ni Isdras <note caller="+" style="f"><char style="fr" closed="false">8:18 </char><char style="ft" closed="false">Te Hibruwanen: Sikandin.</char></note> ka baseen te balaud te Manama. Migsahakeen sikandan seled te pitu ne aldew, wey te igkawalu e ne aldew, miglibulung sikandan eyew te pegsimba te Magbebaye ne Manama sumale te balaud.</para>
+  <chapter number="9" style="c" />
+  <para style="s">Ka peg-angken te keet-etawan te me sale dan</para>
+  <para style="p">
+    <verse number="1" style="v" />Ne miglibulung ka me matig-Israil te igkarangeb ne pulu wey hep-at (24) ne aldew te sikan ded ne bulan, wey migpuasa ne migsaluub te saku wey migbubukbuk te abu te me ulu ran. <verse number="2" style="v" />Ne miglein-lein ka me matig-Israil puun te me lapu, in-ila wey in-angken dan ka me sale dan wey ka me sale te kabuybuyahan dan. <verse number="3" style="v" />Ne migmanasindeg sikandan wey migbasa te baseen te balaud te Magbebaye ne Manama, ne Manama ran, seled te tatelu ne uras,<note caller="+" style="f"><char style="fr" closed="false">9:3 </char><char style="ft" closed="false">Te Hibruwanen: Ikeep-at te senge kaaldew.</char></note> wey te seup ne tatelu ne uras, in-angken dan e ka me sale dan wey migsimba te Magbebaye ne Manama ne Manama ran. <verse number="4" style="v" />Ne due haheran para te me Libita, wey iyan migmanasindeg kayi ensi Hiswa, si Bani, si Kadmiil, si Sibaniyas, wey ka lein ne Bani, wey si Kinani, mig-ampu/migpandalawit sikandan te meemen diye te Magbebaye ne Manama ran.</para>
+  <para style="p">
+    <verse number="5" style="v" />Ne migkahi ka me Libita ne ensi Hiswa, si Kadmiil, si Bani, si Hasabniyas, wey si Pitahiyas,</para>
+  <para style="q1">“Sasindeg kew wey deyraya niyu ka Magbebaye ne Manama ne Manama niyu ne ware egtamanan!”<note caller="+" style="f"><char style="fr" closed="false">9:5 </char><char style="ft" closed="false">Te Hibruwanen: Puun te ware tamanan peendiye te ware tamanan.</char></note> Ne mig-ampu sikandan:</para>
+  <para style="q1">“Egdayanen ka mabantug ne ngaran nu! Ne kene egkatepengan/egkeilingan te pegdayan ney.”</para>
+  <para style="s">Ka pegpangguhud te sale</para>
+  <para style="p">
+    <verse number="6" style="v" />Ne migkahi si Isdras, “Sikeykew re ka Magbebaye ne Manama ne miggimu te langit wey te langun ne me bituen diye te aw-awangan. Inggimu nu ka kalibutan, ka dahat wey ka langun ne tahu kayi. Ne intamengan nu sikandan langun, wey migsimba keykew ka me panalihan diye te langit.</para>
+  <para style="q1">
+    <verse number="7" style="v" />“Sikeykew ka Magbebaye ne Manama ne mig-alam ki Abram</para>
+  <para style="q2">wey mig-uyan/mig-umew kandin puun te Ur ne sakup te Babilunya<note caller="+" style="f"><char style="fr" closed="false">9:7 </char><char style="ft" closed="false">Te Hibruwanen: Kaldiya.</char></note></para>
+  <para style="q2">wey ingngaranan nu ki Abraham.</para>
+  <para style="q1">
+    <verse number="8" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:8: </char>
+      <char style="xt" closed="false">Hin 15:18-21.</char>
+    </note> Te napamalehetan nu ne matinumanen sikandin, miggimu kad te kasabutan ne igbehey nu te kabuhalan din ka tane te me Kanaanhun, Hitihanun, Amunihanun, Pirisihanun, Hibusihanun wey me Girgasihanun. Ne intuman nu ka saad nu su matinumanen ke ma.</para>
+  <para style="q1">
+    <verse number="9" style="v" />“Nakita nu ka peg-antus/kalised/keyirapan te me kaap-apuan ney diye te Ihiptu,</para>
+  <para style="q2">narineg nu ka pegpangananey ran diye te Malalab ne Dahat.<note caller="+" style="f"><char style="fr" closed="false">9:9 </char><char style="ft" closed="false">Te Hibruwanen: Dahat ne tikeg.</char></note></para>
+  <para style="q1">
+    <verse number="10" style="v" />Miggimu ka te me palinneu wey me kein-inuwan te pegkuntere ki Paraun, te langun ne me upisyal rin wey te keet-etawan te tane din,</para>
+  <para style="q2">su nanengnengan nu ka pegdeeg-deeg te me Ihiptuhanen kandan.</para>
+  <para style="q2">Ne tenged te seini migmabantug ka ngaran nu taman kuntee.</para>
+  <para style="q1">
+    <verse number="11" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:11: a </char>
+      <char style="xt" closed="false">Iks 14:21-29; </char>
+      <char style="xo" closed="false">b </char>
+      <char style="xt" closed="false">Iks 15:4-5.</char>
+    </note> Impabusisi nu ka dahat</para>
+  <para style="q2">diye te tangkaan dan,</para>
+  <para style="q2">seeye naa ka nakabaye sikandan diye te elat te dahat ne migmammare e;</para>
+  <para style="q1">ne nenatanled ka me kuntere dan iling te batu ne natanled diye te dahat.</para>
+  <para style="q1">
+    <verse number="12" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:12: </char>
+      <char style="xt" closed="false">Iks 13:21-22.</char>
+    </note> Ne miggun- a ka kandan te timpu te maaldew, pinaahi te gapun ne egpekeiling te sungkaleg,</para>
+  <para style="q2">wey te hapuy ne egpekeiling te sungkaleg te timpu te marusilem</para>
+  <para style="q2">eyew egteng-ew te egbayaan dan.</para>
+  <para style="q1">
+    <verse number="13" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:13-14: </char>
+      <char style="xt" closed="false">Iks 19:18—23:33.</char>
+    </note> Migpamaneug ka diye te bubungan te Sinay;</para>
+  <para style="q2">miglalag ka kandan puun te langit. Migbehey ka te matareng wey meupiya ne me balaud kandan.</para>
+  <para style="q1">
+    <verse number="14" style="v" />Impeila nu kandan ka pegkamatulus te Aldew te Peggimeley, wey imbehayan nu sikandan te me balaud pinaahi te suluhuanen nu ne si Muwisis.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="15" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:15: a </char>
+      <char style="xt" closed="false">Iks 16:4-15; </char>
+      <char style="xo" closed="false">b </char>
+      <char style="xt" closed="false">Iks 17:1-7; </char>
+      <char style="xo" closed="false">c </char>
+      <char style="xt" closed="false">Diy 1:21.</char>
+    </note> “Imbehayan nu sikandan te egkakeen puun te langit te impanggutasan sikandan</para>
+  <para style="q2">wey weyig puun te batu te nammaraan sikandan.</para>
+  <para style="q1">Insuhu nu sikandan te peg-ahew eyew egkaangken ka tane ne insaad nu ne igbehey kandan.</para>
+  <para style="q1">
+    <verse number="16" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:16-17: </char>
+      <char style="xt" closed="false">Num 14:1-4; Diy 1:26-33.</char>
+    </note> Piru me hambuhen sikandan, makehal se me ulu<note caller="+" style="f"><char style="fr" closed="false">9:16 </char><char style="ft" closed="false">Te Hibruwanen: Impakeleg te lieg.</char></note></para>
+  <para style="q2">wey ware migtuman te me suhu nu.</para>
+  <para style="q1">
+    <verse number="17" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:17: </char>
+      <char style="xt" closed="false">Iks 34:6; Num 14:18.</char>
+    </note> Ware migpamineg sikandan keykew, wey nalingawan dan ka me kein-inuwan ne innimu nu kandan. Migmakehal/dengel e ka me ulu ran wey migkuntere keykew</para>
+  <para style="q1">pinaahi te peg-alam dan te me pangulu</para>
+  <para style="q2">ne nekeuyan kandan te pegkeuripen diye te Ihiptu.</para>
+  <para style="q1">Piru mapasayluwen ka ne Manama, hiid-uwen, hiimenawen, mananey egkabelu,</para>
+  <para style="q2">wey dakel se geyinawa.</para>
+  <para style="q2">Sikan naa ka ware nu balahara sikandan,</para>
+  <para style="q1">
+    <verse number="18" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:18: </char>
+      <char style="xt" closed="false">Iks 32:1-4.</char>
+    </note> minsan ke miggimu sikandan te diyus-diyus ne egpekeiling te turu ne nati ne baka wey migkahi,</para>
+  <para style="q2">‘Seini ka manama ne migluwas kanta puun te Ihiptu.’</para>
+  <para style="q1">Amana ka pegbaleybaley ran keykew.</para>
+  <para style="q1">
+    <verse number="19" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:19-21: </char>
+      <char style="xt" closed="false">Diy 8:2-4.</char>
+    </note> Ware nu balahara sikandan diye te mammara ne inged ne kene egkeugpaan</para>
+  <para style="q2">tenged te dakel ne himenew nu.</para>
+  <para style="q2">Ne ware mig-engked ka gapun ne eg-inahak/panulu/tuus/tulitu egpekeiling te sungkaleg ne miggun-a kandan te timpu te maaldew,</para>
+  <para style="q2">wey hapuy ne egpekeiling te sungkaleg te timpu te marusilem,</para>
+  <para style="q1">eyew egteng-ew te egbayaan dan.</para>
+  <para style="q1">
+    <verse number="20" style="v" />Ne impeuyan nu ka meupiya ne panisingan nu eyew egpanulu kandan</para>
+  <para style="q1">wey ware ka migpeeneng-eneng ka migbehey kandan te mana ne egpuun te langit</para>
+  <para style="q2">wey weyig para te kandan ne mara.</para>
+  <para style="q1">
+    <verse number="21" style="v" />Intanggu nu sikandan diye te mammara ne inged ne kene egkeugpaan seled te hep-at ne pulu</para>
+  <para style="q2">ne leg-un ne warad egpamitawen.</para>
+  <para style="q1">Ware nalledak ka me kumbale dan</para>
+  <para style="q2">wey ware nallupangi ka me paa ran.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:22: </char>
+      <char style="xt" closed="false">Num 21:21-35.</char>
+    </note> “Ne imbulihan nu ka me kaap-apuan ney te pegtalu te me migharian wey te me nasud</para>
+  <para style="q2">wey imbehey nu kandan langun seini.</para>
+  <para style="q2">Naangken dan e ka tane ni Hari Sihun te Hisbun</para>
+  <para style="q2">wey ka tane ni Hari Ug te Basan.</para>
+  <para style="q1">
+    <verse number="23" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:23: a </char>
+      <char style="xt" closed="false">Hin 15:5; 22:17; </char>
+      <char style="xo" closed="false">b </char>
+      <char style="xt" closed="false">Huswi 3:14-17.</char>
+    </note> Impamasalig nu ka me kabuhalan dan iling te me bituen ne diye te aw-awangan</para>
+  <para style="q2">wey in-uyan nu diye te tane ne insaaad nu te me kabuybuyahan dan.</para>
+  <para style="q1">
+    <verse number="24" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:24: </char>
+      <char style="xt" closed="false">Huswi 11:23.</char>
+    </note> Sikan naa ka nangendiye wey naangken dan ka tane.</para>
+  <para style="q2">Intalu nu ka me Kanaanhun ne mahinged/mig-ugpe te tane.</para>
+  <para style="q1">Imbehey nu sikandan kandan,</para>
+  <para style="q2">duma te me Hari dan eyew egkeyimu ran ka igkeupii ran.</para>
+  <para style="q1">
+    <verse number="25" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:25: </char>
+      <char style="xt" closed="false">Diy 6:10-11.</char>
+    </note> Naahew ran ka nalig-enan ne siyudad te makepal wey matikang ne alad</para>
+  <para style="q2">wey ka meupiya ne tane;</para>
+  <para style="q2">naangken dan ka me baley ne napenu-penu te langun ne klasi te kasangkapan,</para>
+  <para style="q2">me belun, me parasan, me kayu ne ulibu, wey me kayu ne masulug se behas.</para>
+  <para style="q1">Sikan naa ka nangeen sikandan taman te nabbulung,</para>
+  <para style="q2">immalambeg wey nahale tenged te keupiya nu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="26" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:26-28: </char>
+      <char style="xt" closed="false">Tal 2:11-16.</char>
+    </note> “Piru migsupak sikandan wey migkuntere keykew;</para>
+  <para style="q2">imbalahad dan ka balaud nu.</para>
+  <para style="q1">Impangimatayan dan ka me prupita nu, ne iyan migpaneypaney kandan eyew egpakalibed sikandan diye te keykew.</para>
+  <para style="q2">Amana ka pegbaley-baley ran keykew.</para>
+  <para style="q1">
+    <verse number="27" style="v" />Sikan naa, imbehey nu sikandan diye te me kuntere dan wey iyan migpaantus/bayad-bayad kandan.</para>
+  <para style="q2">Piru migpangananey sikandan keykew te timpu te peg-antus/nabaybayaran dan e</para>
+  <para style="q2">wey migpamineg ka kandan;</para>
+  <para style="q1">wey tenged te dakel ne himenew nu,</para>
+  <para style="q2">impeuyanan nu sikandan te talagpangabang ne migpangabang kandan puun te me kuntere dan.</para>
+  <para style="q1">
+    <verse number="28" style="v" />Piru te migmalinawen e sikandan, miggimu e man-e sikandan te mareet diye te tangkaan nu.</para>
+  <para style="q2">Ne intuhutan nud e man-e ne egkatalu sikandan te me kuntere dan.</para>
+  <para style="q2">Ne emun ke egpangananey e man-e sikandan</para>
+  <para style="q1">wey egsinehew keykew ne egbulihan nud man-e,</para>
+  <para style="q2">ne egpaminehen nud man-e sikandan.</para>
+  <para style="q1">
+    <verse number="29" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:29: </char>
+      <char style="xt" closed="false">Lib 18:5.</char>
+    </note> Impanpanayan nu sikandan ne igpatuman ka me balaud nu,</para>
+  <para style="q2">piru nasi migpaambug sikandan wey ware migtuman te me suhu nu.</para>
+  <para style="q2">Nakasale sikandan te me tulumanen/suhu nu ne egpakabehey te malehet ne umul te egtuman kayi. Te kakehal te me ulu ran mig-inniyug sikandan keykew wey ware migpammineg.</para>
+  <para style="q1">
+    <verse number="30" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:30: </char>
+      <char style="xt" closed="false">2Har 17:13-18; 2Kru 36:15-16.</char>
+    </note> Migpariralem ka kandan seled te masulug ne me leg-un.</para>
+  <para style="q2">Impanpanayan nu sikandan te keykew ne panisingan pinaahi te me prupita nu;</para>
+  <para style="q2">piru ware migpammineg sikandan.</para>
+  <para style="q1">Sikan naa ka intuhutan nu ne egkatalu sikandan te keet-etawan te duma ne nasud.</para>
+  <para style="q1">
+    <verse number="31" style="v" />Piru te dakel ne hid-u nu, ware nu dereeti sikandan wey ke engkeri naa te ware egkatamanan.</para>
+  <para style="q2">Su hiid-uwen ka wey hihimenawen ne Manama.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="32" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">9:32: </char>
+      <char style="xt" closed="false">2Har 15:19-29; 17:3-6; Isd 4:2,10.</char>
+    </note> “Ne kuntee, E Manama, mabantug ka wey eleg ne egkaaldekan.</para>
+  <para style="q2">Ne egtuman te saad wey kene egkapalin se geyinawa.</para>
+  <para style="q1">Kene nu sumsumana ne deisek de ka keyirapan ne migginguma kanami</para>
+  <para style="q2">te me Hari, me pangulu, me talagpanubad, me prupita, me kabubuyahan ney,</para>
+  <para style="q2">wey te langun ne keet-etawan nu,</para>
+  <para style="q2">puun pad te timpu te me Hari te Asirya taman te seini ne aldew.</para>
+  <para style="q1">
+    <verse number="33" style="v" />Piru eleg ka innimu nu ne peglegpad kanami;</para>
+  <para style="q2">matinumanen ka minsan ke makasesale key.</para>
+  <para style="q1">
+    <verse number="34" style="v" />Ware mig-ikul te me balaud nu ka me Hari, ka me pangulu, ka me talagpanubad ney, wey ka kabuybuyahan ney;</para>
+  <para style="q2">ware mig-linga-linga sikandan te me suhu nu</para>
+  <para style="q2">wey ke me paneypaney naa ne imbehey nu kandan.</para>
+  <para style="q1">
+    <verse number="35" style="v" />Minsan ke due migharian dan. Ware migpamakey sikandan</para>
+  <para style="q2">minsan ke impapitew nud ka keupiya nu.</para>
+  <para style="q1">Imbahayan nud sikandan te maluag</para>
+  <para style="q2">wey meupiya ne tane, piru ware dan inniyuhi ka maddeet ne hinimuwan dan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="36" style="v" />“Ne kuntee, neuripen key e te seini ne tane ne imbehey nu te kaap-apuan ney,</para>
+  <para style="q2">eyew egpakakeen te meupiya ne uma kayi wey te duma pad ne me keupianan kayi.</para>
+  <para style="q1">
+    <verse number="37" style="v" />Tenged te me sale ney,</para>
+  <para style="q2">nenekeendiyad e ka egkahaani ney te me Hari ne impahari nu kanami.</para>
+  <para style="q1">Innimu ran kanami ka igkeupii ran wey te me ayam ney.</para>
+  <para style="q2">Amana ka peg-antus ney.”</para>
+  <para style="s">Ka peggimu te kasabutan</para>
+  <para style="p">
+    <verse number="38" style="v" />Ne tenged kayi, miggimu key te sabeka ne mapahetpet ne kasabutan wey insulat ney seini wey impalinneuwan/pirma te me igbuyag ney, me Libita wey te me talagpanubad.</para>
+  <chapter number="10" style="c" />
+  <para style="p">
+    <verse number="1" style="v" />Ka hun-a ne migpirma, iyan ka gubinadur ne si Nihimiyas ne anak ni Hakaliyas, ne insinundulan ni Sidikiyas. <verse number="2-8" style="v" />Ne ka me talagpanubad ne migpirma degma iyan ensi:</para>
+  <para style="li">Sirayas, Asariyas, Hirimiyas,</para>
+  <para style="li">Pasur, Amariyas, Malkiyas,</para>
+  <para style="li">Hatus, Sibaniyas, Maluk,</para>
+  <para style="li">Harim, Mirimut, Ubadiyas,</para>
+  <para style="li">Danyil, Ginitun, Baruk,</para>
+  <para style="li">Misulam, Abiyas, Mihamin,</para>
+  <para style="li">Maasiyas, Bilgay, wey Simayas.</para>
+  <para style="s3">
+    <verse number="9-13" style="v" />Ne ka me Libita migpirma degma iyan ensi: Hiswa ne anak ni Asaniyas, Binuy te kabuhalan ni Hinadad, Kadmiil, Sibanyas, Hudiyas, Kilita, Pilayas, Hanan, Mika, Rihub, Hasabiyas, Sakur, Siribiyas, Sibaniyas, Hudiyas, Bani, wey Bininu.</para>
+  <para style="s3">
+    <verse number="14-27" style="v" />Ne ka me pangulu ne migpirma degma iyan ensi: Parus, Pahatmuwab, Ilam, Satu, Bani, Buni, Asgad, Bibay, Aduniyas, Bigbay, Adin, Atir, Isikiyas, Asur, Hudiyas, Hasum, Bisay, Harip, Anatut, Nibay, Magpiyas, Misulam, Hisir, Misisabil, Saduk, Haduwa, Pilatiyas, Hanan, Anayas, Husiyas, Hananiyas, Hasub, Haluhis, Pilha, Subik, Rihum, Hasabna, Maasiyas, Ahiyas, Hanan, Anan, Maluk, Harim, wey Baana.</para>
+  <para style="s">Ka kasabutan</para>
+  <para style="p">
+    <verse number="28" style="v" />Sikanami se keet-etawan, me talagpanubad, me Libita, me talagtameng te gumawan, me mangngulahing, me suluhuanen te timplu, wey te langun ne keet-etawan ne miglein-lein puun te me lapu, eyew te pegtuman te balaud te Manama. Sikanami duma te me asawa ney ne me malitan, me anak ney ne me lukes, me anak ney ne me malitan, wey te langun ne bate egtulik e, <verse number="29" style="v" />egpanaad key duma te langun ne me suled ney, wey te me pangulu ney. Ne egkarilus key ke kene ney egkatuman ka balaud te Manama ne imbehey rin pinaahi te suluhuanen din ne si Muwisis. Eg-ikulen ney iya ka langun ne suhu, me tulumanen, wey me balaud te Magbebaye ne Manama, ne Manama ney.</para>
+  <para style="p">
+    <verse number="30" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">10:30: </char>
+      <char style="xt" closed="false">Iks 34:16; Diy 7:3.</char>
+    </note> Kene ney e egtuhutan ne eg-asawa pad ka me anak ney ne me lukes wey me malitan te me lapu ne nangugpe te tane ney.</para>
+  <para style="p">
+    <verse number="31" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">10:31: a </char>
+      <char style="xt" closed="false">Iks 23:10-11; Lib 25:1-7; </char>
+      <char style="xo" closed="false">b </char>
+      <char style="xt" closed="false">Diy 15:1-2.</char>
+    </note> Egpanaad key man-e ne kene key egbebeli ke egpamelegye ka me lapu te minsan nekey wey ke egkakeen naa, te aldew te peggimeley wey ke duma ne matulus ne me aldew. Ne kene ney egtrabahuwen ka tane ney te tagse igkapitu ne leg-un, wey kene ney e egsukuten ka me utang te duma.</para>
+  <para style="p">
+    <verse number="32" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">10:32: </char>
+      <char style="xt" closed="false">Iks 30:11-16.</char>
+    </note> Timul pad, egpanaad key man-e ne egbehey key tagse leg-un te hep-at ne gramu te pelata para te galastuwen te timplu. <verse number="33" style="v" />Egbehey key pad man-e te paan ne ighalad, inaldew-aldew ne halad ne egkakeen wey igpanubad ne me ayam, te matulus ne halad para te Aldew te Peggimeley, me Sahakeen te Iyam ne Bulan, wey te duma ne me sahakeen, ka duma ne matulus ne me halad, me halad ne ig-awe te me sale te matig-Israil, wey te duma pad ne egkeilanganen para te timplu.</para>
+  <para style="p">
+    <verse number="34" style="v" />Egpintut-pintut key se me talagpanubad, me Libita, me keet-etawan ke hentew ne pamilya ka eg-uyan te kayu ne igtemeg diye te altar te timplu te Magbebaye ne Manama, ne Manama ney, te intahahe ne timpu tagse leg-un sumale te nasulat diye te balaud.</para>
+  <para style="p">
+    <verse number="35" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">10:35: </char>
+      <char style="xt" closed="false">Iks 23:19; 34:26; Diy 26:2.</char>
+    </note> Egpanaad key ne eg-uyan te an-anayan ne behas te pinamula ney wey te behas te kayu, diye te timplu te Magbebaye ne Manama te tagse leg-un. <verse number="36" style="v" /><note caller="-" style="x"><char style="xo" closed="false">10:36: </char><char style="xt" closed="false">Iks 13:2.</char></note> Eg-uyanen ney degma diye te me talagpanubad ne migpamakey diye te timplu te Manama ka kinakakayan ne anak ney ne me lukes, lagkes ka kinakakayan te anak te baka, me karniru, wey me kambing, sumale te nasulat diye te balaud.</para>
+  <para style="p">
+    <verse number="37" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">10:37: </char>
+      <char style="xt" closed="false">Num 18:21.</char>
+    </note> Ne eg-uyanen ney pad man-e ka an-anayan ne linuyan ne harina, trigu, langun ne behas te kayu, iyam ne binu, wey lana te ulibu diye te talagpanubad diye te sinabeng ne tinesanan diye te timplu te Manama ney.</para>
+  <para style="p">Ne eg-uyanen ney man-e diye te me Libita ka igkasapulu te langun ne behas te pinamula ney, su ka me Libita ma ka eg-angey te igkasapulu puun te langun ne me lungsud ne intrabahuwan ney. <verse number="38" style="v" /><note caller="-" style="x"><char style="xo" closed="false">10:38: </char><char style="xt" closed="false">Num 18:26.</char></note> Ne egdumaan te talagpanubad ne kabuhalan ni Aarun ka me Libita ne egpanlimud te igkasapulu. Ne ka me sikandan e ka eg-uyan kayi diye te sinabeng ne tinesanan te karatuan diye te timplu te Manama. <verse number="39" style="v" />Ne ka keet-etawan te Israil, lagkes ka me Libita, egmanguyan te igkabulig ne egkakeen, iyam ne binu wey lana te ulibu diye te sinabeng ne tinesanan, wey igtines diye te sinabeng ne tinesanan ne egpaninesan te me kasangkapan ne matulus lenged te talagtanggu ne me talagpanubad, me talagbantey te me gumawan wey te me mangngulahing.</para>
+  <para style="p">“Ne kene ney egbalaharen ka timplu te Manama ney.”</para>
+  <chapter number="11" style="c" />
+  <para style="s">Ka keet-etawan ne nangugpe te Hirusalim</para>
+  <para style="p">
+    <verse number="1" style="v" />Te seeye ne timpu, diye nangugpe te Hirusalim ka me pangulu te me matig-Israil. Ne migpintut-pintut ka duma ne me etew eyew eg-alam te sabeka ne pamilya puun te tagse sapulu ne pamilya eyew diye eg-ugpe te Hirusalim, ka matulus ne siyudad. Ne ka siyam diye eg-ugpe te me lungsud dan. <verse number="2" style="v" />Indayan te keet-etawan ka langun ne egkeupian ne eg-ugpe diye te Hirusalim. <verse number="3" style="v" /><note caller="-" style="x"><char style="xo" closed="false">11:3-4: </char><char style="xt" closed="false">Nih 7:73.</char></note>Ne seini ka me pangulu<note caller="+" style="f"><char style="fr" closed="false">11:3 </char><char style="ft" closed="false">Te Hibruwanen: me ulu.</char></note> te prubinsya ne diye nangugpe te Hirusalim.</para>
+  <para style="p">Taheed te ka duma ne me matig-Israil, ka me talagpanubad, ka me Libita, ka me suluhuanen te timplu, wey ka me kabuhalan te me suluhuanen ni Sulumun diye nangugpe te me lungsud te Huda te kandan mismu ne tane.</para>
+  <para style="s3">
+    <verse number="4" style="v" />Ka duma ne me kabuhalan ni Huda wey ni Binhamin diye nangugpe te Hirusalim.</para>
+  <para style="p">Puun te kabuhalan ni Huda: Si Atayas ne anak ni Usiyas wey apu ni Sakariyas. Ka duma ne me kabuybuyahan din, si Amariyas, si Sipatiyas wey si Mahalalil, ne me kabuhalan ni Piris ne anak ni Huda.</para>
+  <para style="p">
+    <verse number="5" style="v" />Si Maasiyas ne anak ni Baruk wey apu ni Kulhusi. Ka duma ne me kabuybuyahan din, si Hasayas, si Adayas, si Huwiyarib wey si Sakariyas ne me kabuhalan ni Sila ne anak ni Huda.</para>
+  <para style="p">
+    <verse number="6" style="v" />Ne due 468 ne me kabuhalan ni Piris ne mabbulut ne me etew ne nangugpe diye te Hirusalim.</para>
+  <para style="s3">
+    <verse number="7" style="v" />Puun te kabuhalan ni Binhamin:</para>
+  <para style="p">Si Salu ne anak ni Misulam wey apu ni Huwid. Ka duma ne me kabuybuyahan din si Pidayas, si Kulayas, si Maasiyas, si Itil wey si Hisayas.</para>
+  <para style="p">
+    <verse number="8" style="v" />Ne migsinundul kandin si Gabay wey si Salay ne amana pad iya ne me suled ni Salu.</para>
+  <para style="p">Ne due 928 ne me sakup ni Binhamin ne nangugpe diye te Hirusalim. <verse number="9" style="v" />Si Huwil ne anak ni Sikri ka pangulu ran. Ne si Hudas ne anak ni Hasinuwa ka igkarangeb ne pangulu te siyudad.</para>
+  <para style="s3">
+    <verse number="10" style="v" />Puun te me talagpanubad:</para>
+  <para style="p">Si Hidayas ne anak ni Huwiyarib wey si Hakin.</para>
+  <para style="p">
+    <verse number="11" style="v" />Si Sirayas ne anak ni Hilkiyas wey apu ni Misulam. Ka me kabuybuyahan din si Saduk, si Mirayut wey si Ahitub, ka ahalen ne talagpanubad. <verse number="12" style="v" />Migginguma sikandan langun te 822 ne me sakup te seini ne kabuhalan te migtrabahu diye te timplu.</para>
+  <para style="p">Si Adayas ne anak ni Hihuram wey apu ne Pilayas ne anak ni Amsi ne anak ni Sakariyas ne anak ni Pasur ne anak ni Malkiyas. <verse number="13" style="v" />Migginguma sikandan langun te 242 ne me pangulu te seini ne kabuhalan<note caller="+" style="f"><char style="fr" closed="false">11:13 </char><char style="ft" closed="false">Te Hibruwanen: Me ulu te Amey.</char></note> ran. <verse number="14" style="v" />Migginguma te 128 ka me suled dan ne bahani ne me etew. Ne iyan dan kumandir si Sabdiil ne anak ni Hagidulim.</para>
+  <para style="s3">
+    <verse number="15" style="v" />Puun te me Libita:</para>
+  <para style="p">Si Simayas ne anak ni Hasub wey apu ni Asrikam, ne anak ni Hasabiyas ne anak ni Buni.</para>
+  <para style="p">
+    <verse number="16" style="v" />Ne si Sabitay wey si Husabad ne me pangulu te me Libita, iyan impiyalan te me himu diye te lihawangan te timplu te Manama.</para>
+  <para style="p">
+    <verse number="17" style="v" />Si Mataniyas ne anak ni Mika, wey apu ni Sabdi, ne kabuhalan ni Asap, ka pangulu te pegsaye, ne iyan migpangulu te pegpasalamat wey peg-ampu.</para>
+  <para style="p">Si Bakbukiyas ka talagbulig kandin.</para>
+  <para style="p">Si Abda, anak ni Samuwa wey apu ni Galal, ne me kabuhalan ni Hidutun.</para>
+  <para style="p">
+    <verse number="18" style="v" />Migginguma te 284 ka me Libita diye te matulus ne siyudad.</para>
+  <para style="s3">
+    <verse number="19" style="v" />Ka me talagtameng te gumawan te timplu:</para>
+  <para style="p">Si Akub, si Talmun wey ka me kabuhalan dan, 172 sikandan langun.</para>
+  <para style="p">
+    <verse number="20" style="v" />Ne ka nenasame ne me matig-Israil duma te me talagpanubad, me Libita, diyad e te me lungsud te Huda, te tane ne napanunud dan. <verse number="21" style="v" />Piru ka me suluhuanen te timplu, diye de mig-ugpe te bubungan te Upil, te pegpangulu enni Siha wey Gispa.</para>
+  <para style="p">
+    <verse number="22" style="v" />Ne iyan pangulu te me Libita diye te Hirusalim si Usi ne anak ni Bani wey apu ni Hasabiyas, ne anak ni Mataniyas ne anak ni Mika ne sabeka ne kabuhalan ni Asap, ne me mangngulahing diye te timplu te Manama.</para>
+  <para style="p">
+    <verse number="23" style="v" />Nariralem sikandan te suhu<note caller="+" style="f"><char style="fr" closed="false">11:23 </char><char style="ft" closed="false">Te Hibruwanen: Ka suhu te Hari diye te ampew ran.</char></note> te Hari te pegpanengneng ke nekey ka eggimuwen dan te tagse aldew.<note caller="+" style="f"><char style="fr" closed="false">11:23 </char><char style="ft" closed="false">Te Hibruwanen: Kasangkapan te aldew te tagse aldew.</char></note></para>
+  <para style="p">
+    <verse number="24" style="v" />Si Pitahiyas ne anak ni Misisabil, ne sabeka te me kabuhalan ni Sira ne anak ni Huda, talagtambag te Hari<note caller="+" style="f"><char style="fr" closed="false">11:24 </char><char style="ft" closed="false">Te Hibruwanen: Diye te belad te Hari.</char></note> te langun-langun meyitenged te keet-etawan te Israil.</para>
+  <para style="p">
+    <verse number="25" style="v" />Masulug ka me etew ne mig-ugpe diye te me bariyu ne due me kamet. Ka duma ne me etew te Huda mig-ugpe diye te Kiriyat-Arba wey te me bariyu<note caller="+" style="f"><char style="fr" closed="false">11:25 </char><char style="ft" closed="false">Te Hibruwanen: Me anak kayi ne malitan.</char></note> kayi, diye te Dibun wey te me bariyu kayi, diye te Hikabsiil wey te me bariyu kayi, <verse number="26" style="v" />diye te Hiswa, diye te Mulada, diye te Bitpilit, <verse number="27" style="v" />diye te Hasarsuwal, diye te Birsiba, wey te me bariyu kayi, <verse number="28" style="v" />diye te Siklag, diye te Mikuna, wey te me bariyu kayi, <verse number="29" style="v" />diye te Inrimun, diye te Sura, diye te Harmut, <verse number="30" style="v" />diye te Sanuwa, diye te Adulam wey te me bariyu ran, diye te Lakis wey te me kamet kayi, wey diye te Asika wey te me bariyu kayi. Purisu migmangekampu sikandan puun te Biirsiba taman diye napu te Hinum. <verse number="31" style="v" />Ne ka duma ne me kabuhalan ni Binhamin mig-ugpe diye te Giba,<note caller="+" style="f"><char style="fr" closed="false">11:31 </char><char style="ft" closed="false">Te Hibruwanen: Puun te Giba.</char></note> te Mikmas, Ai, Bitil, wey te me bariyu kayi, <verse number="32" style="v" />diye te Anatut, Nub, wey diye te Ananiyas, <verse number="33" style="v" />diye te Hasur, Rama, wey Gitaim, <verse number="34" style="v" />diye te Hadid, Sabuim, wey Nibalat, <verse number="35" style="v" />diye te Lud, Unu, wey ka napu te talaggimu te minsan nekey. <verse number="36" style="v" />Ne ka baad te me Libita miglemung mig-ugpe te keet-etawan diye te Binhamin.</para>
+  <chapter number="12" style="c" />
+  <para style="s">Ka listaan te me talagpanubad wey me Libita</para>
+  <para style="p">
+    <verse number="1" style="v" />Seini ka me talagpanubad ne nakalibed<note caller="+" style="f"><char style="fr" closed="false">12:1 </char><char style="ft" closed="false">Te Hibruwanen: Ne migpamaneyik.</char></note> duma ki Sirubabil ne anak ni Salatiil wey duma ki Hiswa: si Sirayas, si Hirimiyas, si Isdras, <verse number="2" style="v" />si Amariyas, si Maluk, si Hatus, <verse number="3" style="v" />si Sikaniyas, si Rihum, si Mirimut, <verse number="4" style="v" />si Idu, si Ginituy, si Abiyas, <verse number="5" style="v" />si Mihamin, si Maadiyas, si Bilga, <verse number="6" style="v" />si Simayas, si Huwiyarib, si Hidayas, <verse number="7" style="v" />si Salu, si Amuk, si Hilkiyas, wey si Hidayas. Sikandan ka me pangulu<note caller="+" style="f"><char style="fr" closed="false">12:7 </char><char style="ft" closed="false">Te Hibruwanen: Me ulu.</char></note> te me talagpanubad wey me duma<note caller="+" style="f"><char style="fr" closed="false">12:7 </char><char style="ft" closed="false">Te Hibruwanen: Me suled.</char></note> ran te timpu ni Hiswa.</para>
+  <para style="s3">
+    <verse number="8" style="v" />Ka me Libita: Si Hiswa, si Binuy, si Kadmiil, si Siribiyas, si Huda, wey si Mataniyas wey ka me duma rin ne migpangulu te me peg-ulahing te pegpasalamat.</para>
+  <para style="p">
+    <verse number="9" style="v" />Si Bakbukiyas, si Uni, wey ka me duma ran, migmanasindeg diye te tangkaan dan te migmamakey.</para>
+  <para style="s">Ka me kabuhalan ni Hiswa ne ahalen ne talagpanubad</para>
+  <para style="p">
+    <verse number="10" style="v" />Si Hiswa ka amey ni Huwiyakim wey si Huwiyakim ka amey ni Iliyasib wey si Iliyasib ka amey ni Huwiyada. <verse number="11" style="v" />Si Huwiyada ka amey ni Diyunatan wey si Diyunatan ka amey ni Haduwa.</para>
+  <para style="s">Ka me pangulu te me kabuhalan te me talagpanubad</para>
+  <para style="p">
+    <verse number="12" style="v" />Te timpu ni Huwiyakim, ka Labew ne talagpanubad, ka me pangulu te me kabuhalan te me talagpanubad ensi Mirayas ka pangulu te kabuhalan ni Sirayas, si Hananiyas ka pangulu te kabuhalan ni Hirimiyas, <verse number="13" style="v" />si Misulam ka pangulu te kabuhalan ni Isdras, si Dihuhanan ka pangulu te kabuhalan ni Amariyas, <verse number="14" style="v" />si Diyunatan ka pangulu te kabuhalan ni Malukay, si Husi ka pangulu te kabuhalan ni Sibaniyas, <verse number="15" style="v" />si Adna ka pangulu te kabuhalan ni Harim, si Hilkay ka pangulu te kabuhalan ni Mirayut, <verse number="16" style="v" />si Sakariyas ka pangulu te kabuhalan ni Idu, si Misulam ka pangulu te kabuhalan ni Ginitun, <verse number="17" style="v" />si Sikri ka pangulu te kabuhalan ni Abiyas, si Piltay ka pangulu te kabuhalan ni Miniyamin, wey<note caller="+" style="f"><char style="fr" closed="false">12:17 </char><char style="ft" closed="false">Te Hibruwanen: Duen pad ngaran kayi ne ware nasulat.</char></note> ni Muwadiyas, <verse number="18" style="v" />si Samuwa ka pangulu te kabuhalan ni Bilga, si Hihunatan ka pangulu te kabuhalan ni Simayas, <verse number="19" style="v" />si Matinay ka pangulu te kabuhalan ni Huwiyarib, si Usi ka pangulu te kabuhalan ni Hidayas, <verse number="20" style="v" />si Kalay ka pangulu te kabuhalan ni Salay, si Ibir ka pangulu te kabuhalan ni Amuk, <verse number="21" style="v" />si Hasabiyas ka pangulu te kabuhalan ni Hilkiyas, si Nitanil ka pangulu te kabuhalan ni Hidayas.</para>
+  <para style="s">Ka me kabuhalan te me talagpanubad wey me Libita</para>
+  <para style="p">
+    <verse number="22" style="v" />Ka listaan te me pangulu te kabuhalan te me Libita ne natines te me leg-un ne ensi Iliyasib, si Huwiyada, si Diyuhanan, wey si Haduwa ka migmamakey isip Labew ne me talagpanubad. Ne due lein ne listaan te me talagpanubad ne natines te timpu te peghari ni Daryu ne matig-Pirsya. <verse number="23" style="v" />Ne nenalista ka me pangulu te me kabuhalan te me Libita diye te libru te me pangguhuren taman te me timpu ni Diyuhanan, ne apu ni Iliyasib.</para>
+  <para style="s">Ka pegbaad-baad te me himu diye te timplu</para>
+  <para style="p">
+    <verse number="24" style="v" />Ne seini ka me pangulu te me kabuhalan te me Libita: si Hasabiyas, si Siribiyas, si Hiswa, si Binuy, si Kadmiil, wey ka me duma ran ne migmanasindeg diye te talipag dan. Egmatabtabakey sikandan ka eg-ulahing, sumale te suhu ni Dabid ne suluhuanen te Manama.</para>
+  <para style="p">
+    <verse number="25" style="v" />Ne iyan me talagbantey te gumawan te me sinabeng ne tinesanan ensi Mataniyas, Bakbukiyas, Ubadiyas, Misulam, Talmun wey si Akub.</para>
+  <para style="p">
+    <verse number="26" style="v" />Migmamakey ka me seini te me timpu ni Huwakim ne anak ni Hiswa ne anak ni Husadak wey te me timpu ni Nihimiyas ne gubirnadur wey ni Isdras ne talagpanubad ne mangngateu te balaud.</para>
+  <para style="s">Ka peghalad te alad te Hirusalim</para>
+  <para style="p">
+    <verse number="27" style="v" />Te peghalad te matikang wey makepal ne alad te Hirusalim, impamitew ran<note caller="+" style="f"><char style="fr" closed="false">12:27 </char><char style="ft" closed="false">Te Hibruwanen: Keet-etawan.</char></note> ka me Libita diye te me inged ne in-ugpaan dan wey impeendiye te Hirusalim te pegsahakeen wey peggale-gale te peghalad kayi duma te me ulahingen te pegpasalamat wey ulahingen, duma te me putew ne basalan, me alpa, wey me lira. <verse number="28" style="v" />Impeendiye degma ka me mangngulahing<note caller="+" style="f"><char style="fr" closed="false">12:28 </char><char style="ft" closed="false">Te Hibruwanen: Me anak te me mangngulahing.</char></note> puun te me inged ne marani te Hirusalim wey ka nangugpe diye te Nitupa, <verse number="29" style="v" />wey puun degma te Bitgilgal, wey puun te inged te Giba wey te Asmabit, su migmambebariyu ka me mangngulahing diye te nakalingut te Hirusalim. <verse number="30" style="v" />Te namatulus e te me talagpanubad wey me Libita ka pegkeetew ran, immatulus dan e degma ka me etew, ka me gumawan, wey ka matikang wey makepal ne alad.</para>
+  <para style="p">
+    <verse number="31" style="v" />Ne induma ku ka me pangulu te Huda diye te dibabew te matikang wey makepal ne alad wey mig-alam a te daruwa ne punduk ne egmangulahing eyew egbehey te pegpasalamat. Ka sabeka ne punduk migpeendiye te igkakawanan ne balabahan ne migpabulus diye te Gumawan te Basuraan.</para>
+  <para style="p">
+    <verse number="32" style="v" />Ne migsinundul kandan si Husayas duma te katenge te me pangulu te Huda. <verse number="33" style="v" />Ne migsinundul degma ensi Asariyas, si Isdras, si Misulam, <verse number="34" style="v" />si Huda, si Binhamin, si Simayas, wey si Hirimiyas. <verse number="35" style="v" />Ne due degma pila ne kabuhalan te me talagpanubad ne migparahing te me trumpita. Si Sakariyas ne anak ni Diyunatan ne anak ni Simayas ne anak ni Mataniyas ne anak ni Mikayas ne anak ni Sakur ne anak ni Asap, <verse number="36" style="v" />wey ka me suled din ne ensi Asaril, Simayas, si Milalay, si Gilalay, si Maay, si Nitanil, wey si Hanani ne mig-uyan te kasangkapan ni Hari Dabid ne egmarahingen, ka etew te Manama. Ne si Isdras ka migpangulu kandan. <verse number="37" style="v" />Te pegginguma ran diye te Gumawan te Sebseb, migpabulus-bulus sikandan ne migpatakereg diye te haheran te matikang wey makepal ne alad te siyudad peendiye te Siyudad ni Dabid. Miglihad sikandan te baley ni Dabid wey migpabulus diye te Gumawan te Weyig dapit te igsile.</para>
+  <para style="p">
+    <verse number="38" style="v" />Ka ikarangeb ne punduk te masulug ne egkanta, migpeendiye te ikahibang. Migsinudul a kandan, duma te katenge te keet-etawan diye te ampew te matikang wey makepal ne alad, miglihad key diye te titikangi ne Baley te Dulukanan peendiye te Maluag ne Alad, <verse number="39" style="v" />diye te dibabew te gumawan ni Ipraim, te Daan ne Gumawan wey te Gumawan te Isda, te Titikangi ne Baley ni Hananil wey te Titikangi ne Baley te Mahatus, taman te Gumawan te me Karniru. Migheneng<note caller="+" style="f"><char style="fr" closed="false">12:39 </char><char style="ft" closed="false">Te Hibruwanen: Nanasindeg sikandan.</char></note> sikandan diye te Gumawan te Talagtameng. <verse number="40" style="v" />Sikan naa, ka daruwa ne punduk te masulug ne egkanta ne egbehey te pegpasalamat, nakasasindeg e diye te baley te Manama. Diya a degma, duma te katenge te me pangulu ran ne me duma ku. <verse number="41" style="v" />Diye degma ka me talagpanubad ne ensi Iliyakim, si Maasiyas, si Minyamin, si Mikayas, si Iliyuwinay, si Sakariyas wey si Hananiyas duma te me trumpita ran, <verse number="42" style="v" />wey ensi Maasiya, si Simaya, si Ilisar, si Usi, si Malkiyas, si Ilam, wey si Isir. Ne nangeepad ka mangngulahing te pegpangulu ni Hisriyas.</para>
+  <para style="p">
+    <verse number="43" style="v" />Te seeye ne aldew migpanubad sikandan te dakel wey miggale-gale, su ka Manama ka migbehey kandan te kahalaan. Miggale-gale degma ka me malitan wey ka me bate. Egkarineg ka peggale-gale dan diye te mariyu te Hirusalim.</para>
+  <para style="p">
+    <verse number="44" style="v" />Te seeye ne aldew naalam ka me lukes ne egpabantayen te sinabeng ne tinesanan te me amut, te an-anayan ne me behas, wey me igkasapulu. Eg-uyan sikandan te baad puun te me kamet ne nakalingut te lungsud, diye te tinesanan sumale te balaud para te me talagpanubad wey te me Libita, su nahale ka keet-etawan te Huda te pegpamakey ran, <verse number="45" style="v" /><note caller="-" style="x"><char style="xo" closed="false">12:45: a </char><char style="xt" closed="false">1Kru 25:1-8; </char><char style="xo" closed="false">b </char><char style="xt" closed="false">1Kru 26:12.</char></note> su innimu ran ka insuhu te Manama, wey ka tuluuwen ne peglinis. Ne ka me mangngulahing wey ka me talagtameng te gumawan miggimu te himu ran sumale te insuhu ni Dabid wey te anak din ne si Sulumun. <verse number="46" style="v" />Te dengan ne timpu, te timpu ni Dabid wey ni Asap, duen e me pangulu te me mangngulahing, wey te me eparen te pegdeyrey wey pegpasalmat te Manama. <verse number="47" style="v" />Su te timpu ni Sirubabil, wey ni Nihimiyas, migbehey te me dasag ka langun ne matig-Israil para te aldew-aldew ne igbulig te me mangngulahing wey te me talagtameng te gumawan. Ne migdapig sikandan te lein ne baad ne para te me Libita, wey ka me Libita migdapig te lein ne baad para te me kabuhalan ni Aarun.</para>
+  <chapter number="13" style="c" />
+  <para style="s">Ka pegdeldrel te me lapu</para>
+  <para style="p">
+    <verse number="1" style="v" />Te seeye ne aldew imbasa te meemen ka baseen te balaud ni Muwisis diye te tangkaan te keet-etawan. Nanengnengan dan ne nasulat kayi ne ware tuhuti ka me Amunihanun wey ke me Muwabihanun naa ne eg-apil te keet-etawan te Manama, <verse number="2" style="v" /><note caller="-" style="x"><char style="xo" closed="false">13:2: </char><char style="xt" closed="false">Num 22:1-6.</char></note> su ware dan ma behayi ka me matig-Israil te egkakeen wey egkeinum diye te inged ne mammara wey kene egkeugpaan, su nasi insuul ki Balaam eyew te pegdilus kandan. Piru innimu mule te Manama ney ne panalangin ka dilus. <verse number="3" style="v" />Te pegkarineg dan te balaud, impegsuwey ran e puun te matig-Israil ka langun ne nasewuhan te me lapu se kabuhalan.</para>
+  <para style="s">Ka pegdelrel ki Tubiyas wey ka peglinis te timplu</para>
+  <para style="p">
+    <verse number="4" style="v" />Te ware pad seini neyitabu, ka talagpanubad ne si Iliyasib, ne karumaan ni Tubiyas, ne naalam isip talagbantey te sinabeng ne tinesanan diye te timplu te Manama ney. <verse number="5" style="v" />Imbehey rin ki Tubiyas ka dakel ne sinabeng ne tinesanan dengan te me halad ne egkakeen, me insinsu, me kasangkapan te timplu, me igkasapulu te sibada, me egkakeen, binu, wey te lana, sumale te balaud para te me Libita, te me mangngulahing, te me talagtameng te timplu, wey me amut ne para te me talagpanubad. <verse number="6" style="v" />Wara-a diye te Hirusalim te seeye ne me timpu, su te igkatatelu ne pulu wey daruwa ne leg-un te peghari ni Artsirsis diye te Babilunya, miglibed a diye te Hari. Te ware naluhey migpataha a kandin <verse number="7" style="v" />wey miglibed ad e diye te Hirusalim. Ne nanengnengan ku ka mareet ne neyimu ni Iliyasib ne iyan ka pegbehey ki Tubiyas te sinabeng ne tinesanan diye te lama te timplu te Manama. <verse number="8" style="v" />Amana a nabelu, wey impandegpak ku ka langun ne kasangkapan ni Tubiyas diye te lihawangan te sinabeng ne tinesanan. <verse number="9" style="v" />Ne insuhu a ne keilangan ne eglinisan ka me sinabeng ne tinesanan, ne immalibed ku ka langun ne me kasangkapan duma te egkengakeen wey insinsu.</para>
+  <para style="p">
+    <verse number="10" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">13:10: </char>
+      <char style="xt" closed="false">Diy 12:19.</char>
+    </note> Ne nanengnengan ku degma ne ware nakabehey ka baad ne para te me Libita, sikan naa, sikandan wey ka me mangngulahing ne eggimu te pegsimba, nanlibed e migtrabahu diye te me kamet dan. <verse number="11" style="v" />Sikan naa, indew-ey ku ka me pangulu te migkahi, “Mania te imbalahad niyu ka timplu te Manama?” Ne impalibulung ku sikandan wey immalibed te me himu ran. <verse number="12" style="v" /><note caller="-" style="x"><char style="xo" closed="false">13:12: </char><char style="xt" closed="false">Mal 3:10.</char></note> Ne ka langun ne keet-etawan nanguyan te igkasapulu ne egkakeen, me iyam ne binu, wey lana diye te sinabeng ne tinesanan. <verse number="13" style="v" />Ne mig-alam a te me etew ne egtameng te me tinesanan: si Sirimiyas ne talagpanubad, si Saduk ne mangngateu te balaud wey si Pidayas ne Libita wey in-alam ku si Hanan ne anak ni Sakur wey apu ni Mataniyas eyew egbulig kandan. Su egkasalihan sikandan, wey imbehayan ku te katenged te pegpamehey te me duma ran. <verse number="14" style="v" />Ne mig-ampu a, “E Manama ku, tantanuri a ubag wey kene nu lingawi ka langun ne neyimu ku te timplu nu wey te me himu kayi.”</para>
+  <para style="p">
+    <verse number="15" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">13:15: </char>
+      <char style="xt" closed="false">Iks 20:8-10; Diy 5:12-14; Hir 17:21-22.</char>
+    </note> Te seeye ne me aldew nakakita a te me matig-Huda ne migtetamisak diye te kelesanan te ubas te Aldew te Peggimeley. Ne ka duma migmandulan te me asnu te egkakeen, duma te me binu, me ubas, me igira wey te langun ne kalasi te me dulan. Ne impanguyan dan seini diye te Hirusalim. Sikan naa, insaparan ku sikandan ka egmamelegye te egkengakeen te seeye ne aldew. <verse number="16" style="v" />Ne nanguyan te me isda wey te langun ne kalasi te me belegye ka keet-etawan puun te Tiru ne nangugpe te Hirusalim wey impamelegye dan seini diye te kabuhalan ni Huda, diye te Hirusalim, te Aldew te Peggimeley. <verse number="17" style="v" />Ne indew-ey ku ka me pangulu te Huda te migkahi, “Nekey a seini se mareet ne innimu niyu, insupak niyu ka Aldew te Peggimeley? <verse number="18" style="v" />Ne seini ka egpuunan ne impeuyanan te Manama te karereetan ka me kaap-apuan ta wey ka seini ne siyudad! Ne mania te insupak niyud man-e ka Aldew te Peggimeley? Intimulan niyu ka langet te Manama te Israil!”</para>
+  <para style="p">
+    <verse number="19" style="v" />Te pegkamaapun e te kene pad ka Aldew te Peggimeley, migsuhu a ne eglekeban ka me gumawan te Hirusalim wey kene eglukatan taman te kene pad egkeimpusan ka Aldew te Peggimeley. Ne impatamengan ku te duma ne me suluhuanen ku ka me gumawan su eyew ware inuyanan ne egkeuyan te Aldew te Peggimeley. <verse number="20" style="v" />Ne nangekampu diye te lihawangan te Hirusalim ka me nigusyanti wey ka egmamelegye te langun ne kalasi te me belegye, kasabeka wey ke kararuwa te timpu te marusilem. <verse number="21" style="v" />Piru impanpanayan ku sikandan wey migkahiyan, “Mania te nangekampu kew due te dulug te matikang wey makepal ne alad te timpu te marusilem? Ke eg-abayan niyu seini te eggimu igmarakep ku sikaniyu.”<note caller="+" style="f"><char style="fr" closed="false">13:21 </char><char style="ft" closed="false">Te Hibruwanen: Egketengan ku sikaniyu te belad.</char></note> Ne puun dutu warad e sikandan nanlibed te Aldew te Peggimeley. <verse number="22" style="v" />Ne insuhu ku ka me Libita ne eglinis te pegkeetew ran wey egtamengan ka me gumawan eyew egkeila ne matulus ka Aldew te Peggimeley.</para>
+  <para style="p">Ne mig-ampu a man-e, “E Manama ku, tantanuri a ubag te seini se inhimu ku wey ipapitew nu ka dakel ne himenew nu.” <verse number="23" style="v" />Te seeye ded ne me aldew, due degma nakita ku ne me Hudiyu ne migmangasawa te me malitan ne me matig-Asdud, matig-Amun, wey matig-Muwab. <verse number="24" style="v" />Ne timul pad, katenge te me anak dan ka egpakalalag te linalahan te Asdud wey ke linalahan naa te lein ne me etew, wey kenad iya egpakalalag te linalahan te Huda. <verse number="25" style="v" />Ne indew-ey ku sikandan wey indilus ku. Ne impanlampesan ku ka duma wey impanlagnut ka me bulbul ran, wey impepanaad te ngaran te Manama, te pegkahi, “Kene niyu ipaasawa ka me anak niyu ne me malitan te me anak dan ne me lukes wey ke igpaasawa niyu naa ka me anak dan ne me malitan para te me anak niyu ne me lukes wey ke sikaniyu naa mismu. <verse number="26" style="v" />Ware bes naa nakasale si Sulumun ne Hari te Israil tenged te me malitan? Ware Hari ne iling kandin te langun ne me nasud, wey inggeyinawaan sikandin te Manama rin wey innimu sikandin ne Hari te intiru ne Israil, piru minsan pad due nakasale sikandin tenged te me lapu ne me malitan. <verse number="27" style="v" />Egbalaharen ney naande seini se dereeti ne himu wey pegsupak niyu te Manama ta pinaahi te pegpangasawa niyu te me lapu ne me malitan?”</para>
+  <para style="p">
+    <verse number="28" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">13:28: </char>
+      <char style="xt" closed="false">Nih 4:1.</char>
+    </note> Ne sabeka te anak ni Huwiyada ka ahalen ne talagpanubad, ne si Iliyasib, nakamekaamung ki Sanbalat ne matig-Hurun. Purisu indelrel ku sikandin puun te tangkaan ku.</para>
+  <para style="p">
+    <verse number="29" style="v" />Ne mig-ampu a, “Sumsumana nu sikandan, E Manama ku tenged te inlinditan dan ka pegkatalagpanubad dan wey ka me panaad dan isip me talagpanubad wey te me Libita.</para>
+  <para style="p">
+    <verse number="30" style="v" />Purisu inlinisan ku sikandan puun te minsan nekey ne lapu, wey immalibed ku ka tagse sabeka te me katungdanan dan, ka me talagpanubad wey ka me Libita. <verse number="31" style="v" />Ne immamehayan ku te me kayu ne igtemeg, te intahahe ne me timpu, wey te hun-a ne me behas te me pinamula.</para>
+  <para style="p">Ne mig-ampu a, “Sumsumana a, E Manama ku, ka langun ne neyimu ku ne meupiya.”</para>
+</usx>

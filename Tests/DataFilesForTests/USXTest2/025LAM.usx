@@ -1,0 +1,669 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usx version="2.0">
+  <book code="LAM" style="id">Matigsalug Version</book>
+  <para style="ide">UTF-8</para>
+  <para style="h">Pegkalange</para>
+  <para style="toc1">Pegkalange ni Hirimiyas</para>
+  <para style="toc2">Pegkalange</para>
+  <para style="toc3">Peg</para>
+  <para style="mt1">Pegkalange</para>
+  <para style="mt2">ni Hirimiyas</para>
+  <para style="is">Igpewun-a</para>
+  <para style="ip">Ka egbaseen te <char style="bk">Me pegkalange </char> iyan seini ka me nalimud ne egbaseen meyitenged te pegkalange tenged te dakel ne karereetan ne neyitabu te Hirusalim wey te pegkeuripen te me mahinged te 586 ne leg-un te ware pad neetew ka Magbebaye ne si Hisus. Ne minsan pad te pegkalagew ne naheraman ne impapitew te seini ne egbaseen, due regma impapitew meyitenged te pegsalig diye te Magbebaye ne Manama wey ka egkapallateng te egginguma ne me timpu. Ka seini ne me balak inggamit te me Hudiyu diye te me pegsimba te timpu te tagse tuig ne pegpuasa wey peglange eyew te pegtanud-tanud te karereetan ne neyitabu te Hirusalim.</para>
+  <para style="iot">Ka nenasulat te seini ne baseen</para>
+  <para style="io1">Ka me peglungku te Hirusalim 1:1-22</para>
+  <para style="io1">Ka pegparusa te Hirusalim2:1-22</para>
+  <para style="io1">Ka pegparusa wey ka egkapallateng 3:1-66</para>
+  <para style="io1">Ka pegkahuhus te Hirusalim4:1-22</para>
+  <para style="io1">Ka peg-ampu te pegpabulig 5:1-22</para>
+  <chapter number="1" style="c" />
+  <para style="s">Ka me peglungku te Hirusalim</para>
+  <para style="q1">
+    <verse number="1" style="v" />Amane e ne makaal-alimengew ka Hirusalim,</para>
+  <para style="q2">ne mig-ugpaan pad dengan te susuluhi amana ne me etew!</para>
+  <para style="q1">Sikandin ka subla ne mabantug te langun ne me nasud,</para>
+  <para style="q2">piru kuntee nekeiling e sikandin te balu!</para>
+  <para style="q1">Ka amana ne mabantug te langun ne siyudad,</para>
+  <para style="q2">wey maresen te langun ne siyudad ne kuntee neuripen e.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="2" style="v" />Egpanaman-taman egsinehew sikandin te egkapawaan,</para>
+  <para style="q2">wey egpanihis ka luwe din.</para>
+  <para style="q1">In-engkeran e sikandin te langun ne miggeyinawa kandin</para>
+  <para style="q2">wey warad egliwang kandin,</para>
+  <para style="q1">in-akalan sikandin te langun ne me alukuy rin,</para>
+  <para style="q2">wey kunte e neyimu e sikandan ne me kuntere din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Ne neyimu ne neneuripen diye te duma ne inged ka keet-etawan te Huda,</para>
+  <para style="q2">wey impehes sikandan te me kuntere dan ne eg-engked te me ugpaanan dan,</para>
+  <para style="q2">diyad e sikandan nenekeugpe te duma ne me nasud,</para>
+  <para style="q2">wey warad iya egkeyimmelayan dan</para>
+  <para style="q1">inlingutan sikandan te me kuntere dan</para>
+  <para style="q2">ne amana ne nakasalerep te makaliyas-liyas wey te kabulut.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Miglungku ka dalan ne peendiye te Siyun su warad e egpangendiye te timplu te timpu te aldew te pegsahakeen,</para>
+  <para style="q2">warad me etew te me gumawan te siyudad te Siyun</para>
+  <para style="q2">wey migdeg-uy ka me talagpanubad,</para>
+  <para style="q1">wey imbaybayaran ka me mengebay.</para>
+  <para style="q2">Amana iya ne masumpit ka natamanan te Siyun!</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Iyan e migpangulu kandin ka me kuntere din,</para>
+  <para style="q2">migmatubung ka me kuntere dan.</para>
+  <para style="q1">Impaantus sikandan te Magbebaye ne Manama</para>
+  <para style="q2">tenged te dakel ne sale dan.</para>
+  <para style="q1">Impandakep ka me anak dan</para>
+  <para style="q2">wey impanguyan e te kuntere diye te mariyu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Naawe e ka langun ne katelesan te Siyun.</para>
+  <para style="q1">Ka me pangulu kayi egmekeiling e te usa ne warad e egkapanabtaban,</para>
+  <para style="q2">ne inlupug te mangnganup wey warad e keseg.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Kuntee te nabaybayaran e wey egkaleleug e ka matig-Hirusalim,</para>
+  <para style="q2">natanuran din ka katelesan din dengan.</para>
+  <para style="q1">te natalu e sikandin te me kuntere din,</para>
+  <para style="q2">warad iya migpangabang kandin,</para>
+  <para style="q2">pigngingisiyan wey indeeg-deeg sikandin te me nakatalu kandin.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="8" style="v" />Tenged te subla ne dakel ne sale te matig-Hirusalim,</para>
+  <para style="q2">sikan naa ka inlemetan sikandin.</para>
+  <para style="q1">Ka migdayan kandin dengan</para>
+  <para style="q2">miglemet e kandin kuntee,</para>
+  <para style="q1">su nakakita ma sikandan te migpalawas din.</para>
+  <para style="q1">Migdeg-uy sikandin</para>
+  <para style="q2">wey imbubunbun te ulaula.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Kenad igkeeles ka kalindit<note caller="+" style="f"><char style="fr" closed="false">1:9 </char><char style="ft" closed="false">Te Hibruwanen: Ka kalindit din diyad te kumbale din.</char></note> din,</para>
+  <para style="q2">piru ware din linglingaa ke nekey ka egkeumaan din.</para>
+  <para style="q1">Sikan naa ka amana ne makabayad-bayad ne neyitabu kandin</para>
+  <para style="q2">wey ware minsan sabeka ne migparani ne egliwang kandin.</para>
+  <para style="q1">Ne migpangananey sikandin! “Eh Magbebaye ne Manama, keyid-u ka keddi</para>
+  <para style="q2">su natalu a te me kuntere ku!”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Inlimud te me kuntere ka langun ne mahal ne me karatuan din.</para>
+  <para style="q1">Nakita rin ka me etew ne kene ne likes ne egseled te timplu,</para>
+  <para style="q2">ka ware tuhuti ne egpakaseled kayi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Ne migdeg-uy ka langun ne keet-etawan ne migpamitew te egkakeen.</para>
+  <para style="q2">Impasaliyuwan dan te egkakeen ka me karatuan dan</para>
+  <para style="q2">eyew kene ded egkengammatey sikandan.</para>
+  <para style="q1">Ne migpangananey sikandan, “Pitawa key, E Magbebaye ne Manama, su neyilawan key.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="12" style="v" />“Egbalaharen e naan de nikahiyu?</para>
+  <para style="q1">Pitew kew se langun ne eglihad keddi,</para>
+  <para style="q2">duen naa nekeiling te keyirapan ne in-antus ku?</para>
+  <para style="q1">Imbayad-bayad keddi seini te Magbebaye ne Manama</para>
+  <para style="q2">tenged te mangebel-ebel ne langet din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />“In-uluhan a nikandin te hapuy puun te aw-awangan ne mig-ugseb te tul-an ku.</para>
+  <para style="q1">Insahilut a nikandin wey nakalangkeb a</para>
+  <para style="q2">wey nabalahad ad e ka migsabsabeka, wey amana egkabaybayaran.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="14" style="v" />“Inlimud din ka me sale ku wey nekeiling e te yugu,</para>
+  <para style="q2">ne insangen din seini te lieg ku,</para>
+  <para style="q1">wey in-awe din ka keseg ku.</para>
+  <para style="q2">Ne imbehey a te Magbebaye ne Manama te me kuntere ku wey ware neyimu ku te pegsukul kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="15" style="v" />“Immeg-ampew-ampew te Magbebaye ne Manama ka langun ne me sundalu ku,</para>
+  <para style="q2">migsuhu sikandin te sesalihi eyew te peglusud keddi,</para>
+  <para style="q2">wey eyew te peggule te me kankanakan ne me sundalu ku,</para>
+  <para style="q1">impandi-diekan din ka keet-etawan<note caller="+" style="f"><char style="fr" closed="false">1:15 </char><char style="ft" closed="false">Te Hubruwanen: Mengebay ne ware pad neyilabeti.</char></note> te Huda ne iling te ubas ne ingkeles diye te kelesanan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="16" style="v" />“Sikan naa ka nakasinehew a tenged kayi, wey migpanulayas ka me luwe ku.</para>
+  <para style="q2">Ne warad iya nakita ku ne egpakaliwang wey egpakabagget keddi.</para>
+  <para style="q1">Nareetan ka keet-etawan ku</para>
+  <para style="q2">su iyan ma migpanalu ka me kuntere ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="17" style="v" />“Migpabulig a <note caller="+" style="f"><char style="fr" closed="false">1:17 </char><char style="ft" closed="false">Te Hibruwanen: Intapaye te Siyun ka belad din.</char></note></para>
+  <para style="q2">piru warad iya migbulig<note caller="+" style="f"><char style="fr" closed="false">1:17 </char><char style="ft" closed="false">Te Hibruwanen: Liwang</char></note> keddi,</para>
+  <para style="q1">impalusuran a te Magbebaye ne Manama te me kuntere ku,</para>
+  <para style="q2">sikan naa ka nekeiling ad e te igpunas ne malindit diye te kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="18" style="v" />“Eleg ka Magbebaye ne Manama, su insupak ku ma sikandin te inlalag din.</para>
+  <para style="q2">Piru pammineha a nikaniyu, sikaniyu langun se keet-etawan,</para>
+  <para style="q2">wey pitawa niyu ka peg-antus ku.</para>
+  <para style="q1">Immandakep ka me mengebay wey me kanakan kayi te keddi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="19" style="v" />“Migpangumew a te me duma<note caller="+" style="f"><char style="fr" closed="false">1:19 </char><char style="ft" closed="false">Te Hibruwanen: Miggeyinawaan.</char></note> ku eyew egbulihan a</para>
+  <para style="q2">piru nasi a akali nikandan.</para>
+  <para style="q1">nenammatey ka me talagpanubad wey ka me pangulu ku diye te siyudad,</para>
+  <para style="q2">te sasangan sikandan ne egpammitew te egkakeen eyew egkeuyag ded sikandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="20" style="v" />“Pitawa a Magbebaye ne Manama, se egkabaybayaran e.</para>
+  <para style="q1">Kene egkateuteu ka gimukud ku, wey amana ne masakit ka geyinawa ku<note caller="+" style="f"><char style="fr" closed="false">1:20 </char><char style="ft" closed="false">Te Hibruwanen: Migkeles ka pusung ku ne kayi te diralem ku.</char></note></para>
+  <para style="q2">puun su masinupaken a.</para>
+  <para style="q1">Egmekeepus de te deralanen ka egmatibtibbasey,</para>
+  <para style="q2">wey minsan diye te me baley due egpatey.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="21" style="v" />Pammineha nu<note caller="+" style="f"><char style="fr" closed="false">1:21 </char><char style="ft" closed="false">Te karaan ne hubad pammineha: Diye te duma ne sinulat: nakarineg sikandan.</char></note> ka pegdeg-uy ku</para>
+  <para style="q2">ne warad iya migliwang keddi.</para>
+  <para style="q1">Ne nanengnengan te langun ne me kuntere ku ne egkabaybayarana ad</para>
+  <para style="q2">wey ingkahale dan ka pegpaantus nu keddi.</para>
+  <para style="q1">Mahaana nud e ka aldew ne insaad nu,<note caller="+" style="f"><char style="fr" closed="false">1:21 </char><char style="ft" closed="false">Te Hibruwanen: Ipeuyan nud ka aldew ne ingkahi nu.</char></note> wey paantusa nud degma sikandan iling keddi. XXX Is this meant to be one or two footnotes? It's really messed up! [RJH]</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />“Pitawa nu ka maddeet ne hinimuwan dan</para>
+  <para style="q1">wey duseyi nu degma sikandan iling te pegdusa nu keddi tenged te me sale ku,</para>
+  <para style="q2">piglalag ku seini te pegdeg-uy tenged te me peg-antus ku</para>
+  <para style="q2">wey amana nasakitan ka pusung ku.” /ALT Hukumi nu sikandan te maddeet ne me himu ran; Paruseyi nu sikandan iling te pegparusa nu keddi tenged te me sale ku. Su nabaybayaran a amana te masumpit,<note caller="+" style="f"><char style="fr" closed="false">1:22 </char><char style="ft" closed="false">Te Hibruwanen: Masulug ka pegdug-uy ku.</char></note> wey egkabugtus e ka geyinawa ku ne nasakitan.</para>
+  <chapter number="2" style="c" />
+  <para style="s">Ka pegparusa te Manama te Hirusalim</para>
+  <para style="q1">
+    <verse number="1" style="v" />Tenged te mangebel-ebel ne langet te Magbebaye ne Manama</para>
+  <para style="q2">inbunbunan din te delem ka Siyun tenged te kabelu din.</para>
+  <para style="q1">Indereetan din ka katelesan te Hirusalim,<note caller="+" style="f"><char style="fr" closed="false">2:1 </char><char style="ft" closed="false">Te Hibruwanen: Puun te langit peendiye te tane.</char></note></para>
+  <para style="q1">wey imbalahad din e minsan ka timplu rin</para>
+  <para style="q2">tenged te langet din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="2" style="v" />Warad iya hid-u rin te migdereet te langun ne ugpaan te kabuhalan ni Hakub.</para>
+  <para style="q1">Nabelu-belu sikandin ka miglundus te maresen ne kute te Huda,</para>
+  <para style="q2">wey newulus e wey neyilawan e ka migharian dan,</para>
+  <para style="q2">wey ka me pangulu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Te mangune-kune ne langet din,</para>
+  <para style="q2">inggule din ka me bahani te Israil</para>
+  <para style="q1">wey ware key din bulihi te timpu ne inlusuran te me kuntere dan.</para>
+  <para style="q2">Amana sikandin ne nabelu-belu kanami iling te hapuy ne migkanlab-kanlab wey migsilab te langun ne diye te marani.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Egpekeiling sikandin te kuntere ne migbengat te pane din,</para>
+  <para style="q2">wey innimatayan din ka langun ne ingkatelesi ney wey igpakapeggasal ney ne me kanakan.</para>
+  <para style="q1">Ne kayi te Siyun</para>
+  <para style="q2">Impasalerep din te Siyun ka langet din iling te hapuy ne migtutung te langun.<note caller="+" style="f"><char style="fr" closed="false">2:4 </char><char style="ft" closed="false">Te Hibruwanen: Balung-balung te anak ne malitan te Siyun.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Egpekeiling te kuntere ka Magbebaye ne Manama</para>
+  <para style="q2">ne migdereet te Israil.</para>
+  <para style="q1">Ingguhus din ka me palasyu wey ka me kute.</para>
+  <para style="q1">Ware katamanan ne peglungku wey pegkalange</para>
+  <para style="q2">Impasalerep din ka keet-etawan te Huda te ware tamanan ne peglungku wey pegpandalawit. <note caller="+" style="f"><char style="fr" closed="false">2:5 </char><char style="ft" closed="false">Te Hibruwanen: Impamasulug din ka peglungku wey pegkalange para te anak ne malitan te Huda.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Inlundus din ka timplu rin<note caller="+" style="f"><char style="fr" closed="false">2:6 </char><char style="ft" closed="false">Te Hibruwanen: leeb</char></note> ne iling te pinamulaan,</para>
+  <para style="q2">imbalahad din ka keet-etawan te Siyun ne egkalingew te aldew te pegsahakeen,</para>
+  <para style="q2">wey me aldew te peggimeley.</para>
+  <para style="q1">Imbalahad din e ka me Hari wey ka talagpanubad tenged te mangebel-ebel ne langet.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Ne imbalahad e te Magbebaye ne Manama ka altar din,</para>
+  <para style="q2">wey mig-inniyuhan din e ka matulus ne timplu rin,</para>
+  <para style="q2">wey impahuhus din te me kuntere ka me alad kayi.</para>
+  <para style="q1">Migmanguleyi sikandan diye te seled te timplu su migpanalu sikandan</para>
+  <para style="q2">iling te aldew te pegsahakeen.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="8" style="v" />Mapahet-pet ka Magbebaye ne Manama te pegtempag te alad te Siyun,</para>
+  <para style="q2">migpangandam sikandin te peglundus kayi, wey inggimu rin iya seini.</para>
+  <para style="q2">Ware din peen-enengi te eglundus, sikan naa ka natamtamanan en iya nahuhus ka kute wey ka alad ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Nenapeled e diye te tane ka me lekeb te gumawan,</para>
+  <para style="q2">su nenaggepu man-e ka me balabag ne iyan impaggul te lekeb.</para>
+  <para style="q2">Impandakep ka me Hari wey ka me pangulu;</para>
+  <para style="q1">warad balaud ne eg-ikulen dan,</para>
+  <para style="q2">wey warad igmapitew te Magbebaye ne Manama diye te me prupita rin.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Ne naminpinnuu ka me igbuyag te Siyun diye te tane ne ware lalahan,</para>
+  <para style="q2">imbukbukan dan te abu ka me ulu ran wey migpanaluub sikandan te saku.</para>
+  <para style="q2">Nanguunduk diye te tane ka me mengebay te Hirusalim.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Migpanlebag ka me mata ku te pegsinsinehew,</para>
+  <para style="q2">kene egkateu-teu ka gimukud ku, wey amana ne masakit ka geyinawa ku,</para>
+  <para style="q2">su impangimatayan ka keet-etawan te Hirusalim,</para>
+  <para style="q1">wey nenallepu diye te me deralanen te siyudad</para>
+  <para style="q2">ka me bate ne egsusu pad wey ka me bate ne dedderakel e.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="12" style="v" />Sasangan de due sikandan ne egmaninehew ka egpangumew te me iney ran ka egbuyu te egkakeen wey egkeinum</para>
+  <para style="q2">tenged te gutas wey mara ran,</para>
+  <para style="q1">nekeiling e sikandan te me sundalu ne nenapalian ne egkengalepu e diye te deralanen</para>
+  <para style="q2">Egkahan-ganaran e egkabigtew ka geyinawa ran taheed te insalulu sikandan te me iney ran.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />Nekey naan e ka igpakalalag ku keykew E Hirusalim? Nekey naan e ka egpeilingan ku keykew?</para>
+  <para style="q1">Nekey buwa ka egpeilingan ku keykew eyew egkaliwang ke red,</para>
+  <para style="q2">te iling ma kaluag te dahat ka karereetan ne neyitabu keykew?</para>
+  <para style="q1">Ware mig-antus iling te in antus nu.</para>
+  <para style="q2">Hentew naan de iya ka egpakabulig keykew?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="14" style="v" />Neelin ne ubat ka inlalag te me prupita nu, ne impakita kun kandan</para>
+  <para style="q2">ware dan ipanengneng keykew ka me sale nu</para>
+  <para style="q2">eyew egpakasalerep ka iya te karereetan,</para>
+  <para style="q1">inggimu ka nikandan ne egsuman-suman ka ne kene kad ne keilangan ne egbuyu te pasaylu diye te Magbebaye ne Manama. ALT Kene ne malehet ka inlalag dan keykew ne iyan egpuunan ne egpakasalerep ka te karereetan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="15" style="v" />Egmegtagpi ka langun ne me etew ne eglihad keykew ka egbaley-baley,</para>
+  <para style="q2">egmakalengey-lengey sikandan wey egngingisiyan ka nikandan te natamanan nu.</para>
+  <para style="q1">Migkahi sikandan,</para>
+  <para style="q1">“Seini bes iya ka siyudad ne egkahuhud ne amana ne tetelesi,</para>
+  <para style="q2">wey egpuunan te kahale te langun ne inged?”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="16" style="v" />Egsumpaliten ka te langun ne me kuntere nu wey eglemetan ka nikandan,</para>
+  <para style="q2">egpamusit-sit wey egpegkihet te ngipen dan,</para>
+  <para style="q1">wey egkahi sikandan,</para>
+  <para style="q1">“Nahuhus tad en iya sikandin!</para>
+  <para style="q2">Sein en iya ka dengan te re egtetahari. Ne kuntee natuman en iya!”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="17" style="v" />Miggimu en iya te Magbebaye ne Manama ka implanu rin ne eggimuwen</para>
+  <para style="q2">wey intuman din en iya ka naluhey e ne inlelalis<note caller="+" style="f"><char style="fr" closed="false">2:17 </char><char style="ft" closed="false">Te Hibruwanen: Suhu.</char></note> din.</para>
+  <para style="q1">Warad iya neyid-u sikandin te pegdereet din kanta.</para>
+  <para style="q2">Imbehayan din te kahalaan ka me kuntere ney,</para>
+  <para style="q2">wey indayan ka kabulut ney.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="18" style="v" />Pangananaya nu ka Magbebaye ne Manama eh Hirusalim!<note caller="+" style="f"><char style="fr" closed="false">2:18 </char><char style="ft" closed="false">Te Hibruwanen: Ka pusung dan mig-umew diye te Magbebaye ne Manama.</char></note></para>
+  <para style="q1">Sinehew ka aldew wey marusilem taman te egbagiyu ka luwe nu iling te weyig, aldew wey marusilem!</para>
+  <para style="q2">Kene ka himeley, kene ka peeneng-eneng ka egsinehew!</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="19" style="v" />Enew ka te marusilem, wey kene ka engked ka egpangananey te Magbebaye ne Manama!</para>
+  <para style="q1">Ibusbus nu ka pusung nu</para>
+  <para style="q2">diye te tangkaan te Magbebaye ne Manama iling te weyig!</para>
+  <para style="q1">Kayawa nu ka me belad nu</para>
+  <para style="q2">para te keupianan te me anak nu,</para>
+  <para style="q2">egkengalepu e diye te deralanen ka egmanggutasan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="20" style="v" />E Magbebaye ne Manama! Pitawa key ni keykew</para>
+  <para style="q2">se impaantus nu.</para>
+  <para style="q1">Igpakeen nu naa te me iney ka me anak dan ne in-anak dan ded?</para>
+  <para style="q1">Egpeyimatayan nu naa ka me talagpanubad wey me prupita</para>
+  <para style="q2">diye te timplu nu?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="21" style="v" />Nenekeyibat diye te me deralanen ka me bate-bate, wey ka me buyag e.</para>
+  <para style="q2">Nahule te kampilan ka me kanakan wey ka me mengebay,</para>
+  <para style="q2">Immangimatayan nu sikandan te nabelu-belu ka,</para>
+  <para style="q2">wey warad iya hid-u te peggule nu kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />Pigginggat nu ka me kuntere ku ne eglingutan a</para>
+  <para style="q2">eyew te peglusud keddi,</para>
+  <para style="q1">wey in-amin dan te eggimatey ka me anak ku,</para>
+  <para style="q2">wey ware nakapallahuy te timpu te langet nu. ALT Impanginggat nu ka me kuntere ku te tagse suuk ne iling de te migpanginggat ka te aldew te pegsahakeen. Te aldew ne impapitew nu ka langet nu, warad iya nakapallahuy wey ke nasame naa ne neuyag. Impangimatayan te me kuntere ku ka me anak ku ne in tanggu wey impatulin ku.</para>
+  <chapter number="3" style="c" />
+  <para style="s">Ka parusa, ka peg-iniyug te sale, wey ka egkapallateng</para>
+  <para style="q1">
+    <verse number="1" style="v" />Sikeddiey ka nakasalerep te pegbayadbayad te langet te Magbebaye ne Manama.</para>
+  <para style="q2">
+    <verse number="2" style="v" />Indeldel a nikandin wey in-uyan diye te marusilem wey warad iya malayag,</para>
+  <para style="q2">
+    <verse number="3" style="v" />Impanlampesan a nikandin patamtamani te naapunan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />In-usak din te pali ka lawa <note caller="+" style="f"><char style="fr" closed="false">3:4 </char><char style="ft" closed="false">Te Hibruwanen: laplap wey sapu.</char></note> ku,</para>
+  <para style="q2">wey impanlupet din ka me tul-an ku.</para>
+  <para style="q2">
+    <verse number="5" style="v" />Neelin ne kalasayan wey keyirapan ka impeulaula rin keddi.</para>
+  <para style="q2">
+    <verse number="6" style="v" />Impeugpa a nikandin diye te marusilem</para>
+  <para style="q2">iling te etew ne namatey te naluhey e ne timpu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Impalingutan a nikandin te alad eyew kena a egpakapallahuy,</para>
+  <para style="q2">imbaku a nikandin te sahikale.</para>
+  <para style="q2">
+    <verse number="8" style="v" />Minsan migpangumew wey migpangananey a te pegpabulig piru wara a nikandin linglingaa.</para>
+  <para style="q2">
+    <verse number="9" style="v" />Imbalabahan din ka dalan ne egbayaan ku</para>
+  <para style="q2">te batu ne immeg-untud-untud, wey malised ne egbayaan ka langun ne dalan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Egpekeiling sikandin te usu ne mig-atang keddi, wey egpekeiling sikandin te liyun ne miggepas te egdawiyen din.</para>
+  <para style="q2">
+    <verse number="11" style="v" />Inlupug a nikandin wey impasuwey te bayaanan ku, wey indeesan a wey in-engkeran a nikandin ne egkabigtawan e.</para>
+  <para style="q2">
+    <verse number="12" style="v" />Imbengat din ka piet din wey sikeddi ka egpaneen din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />Piggisuhat din te me tunud ka pusung ku.</para>
+  <para style="q2">
+    <verse number="14" style="v" />Neyimu ad ne kangisiyan te me etew,</para>
+  <para style="q2">wey egkaapunan de iya sikandan ka migmangulahing ne egsusumpalit keddi.</para>
+  <para style="q2">
+    <verse number="15" style="v" />Imbaybayaran a nikandin patamtamani wey naneem-neem kud ka kasakit. <note caller="+" style="f"><char style="fr" closed="false">3:15 </char><char style="ft" closed="false">Te Hibruwanen: Kapeit.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="16" style="v" />Impangasngas a nikandin te pantad, wey impangugngug a nikandin te abu</para>
+  <para style="q2">wey nenabingew ka me ngipen ku.</para>
+  <para style="q2">
+    <verse number="17" style="v" />Warad e keupianan te gimukud ku wey nalingew a ke mamenu ka kahalaan.</para>
+  <para style="q2">
+    <verse number="18" style="v" />Sikan naa ka migkahi a, “Naawe e ka kanekal ku,</para>
+  <para style="q2">wey naawe e ka egkapallateng ku diye te Magbebaye ne Manama.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="19" style="v" />Egpekeiling kapeit te napese ne aperu ka naneem-neem ku ne kalasayan wey keyirapan<note caller="+" style="f"><char style="fr" closed="false">3:19 </char><char style="ft" closed="false">Te Hibruwanen: Egkaleug-leug ne peg-ugpe.</char></note> ke egkasuman-suman ku seini.</para>
+  <para style="q2">
+    <verse number="20" style="v" />Layun ku seini egkasuman-suman wey egpakamahuye seini keddi.</para>
+  <para style="q2">
+    <verse number="21" style="v" />Piru egpakalibed ka pegpallateng ku ke egkasuman-suman ku ne:</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />Kene iya egkataman ka<note caller="+" style="f"><char style="fr" closed="false">3:22 </char><char style="ft" closed="false">Te Hibruwanen: Kene eg-engked.</char></note> geyinawa te Magbebaye ne Manama</para>
+  <para style="q2">wey kene egtaman ka himenew rin.</para>
+  <para style="q2">
+    <verse number="23" style="v" />Iyam te tagse aldew,</para>
+  <para style="q2">amana iya sikandin ne matinumanen.</para>
+  <para style="q2">
+    <verse number="24" style="v" />Migkahi a diye te geyinawa ku ‘Ka Magbebaye ne Manama re ka karatuan ku, diye e re te kandin egpallateng.’</para>
+  <para style="q2">
+    <verse number="25" style="v" />Amana ne meupiya ka Magbebaye ne Manama diye te egsalig kandin wey te seeye se egparani diye te kandin.</para>
+  <para style="q2">
+    <verse number="26" style="v" />Meupiya ne kene ki egkapelaan ka egtetahad te kaluwasan ne egpuun te Magbebaye ne Manama.</para>
+  <para style="q2">
+    <verse number="27" style="v" />Egpakameupiya te etew ne egkateu ne eg-antus te kalised te bate-bate pad sikandin.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="28" style="v" />Seeye se impeyirapan, keilangan ne egpeeneng-eneng de ne egsabsabeka.</para>
+  <para style="q2">
+    <verse number="29" style="v" />Keilangan ne egpariralem sikandin su kema ke duen pad egkapallateng.</para>
+  <para style="q2">
+    <verse number="30" style="v" />Egbalaharen tad ke egtapien ki wey ke egbalbalayen ki.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="31" style="v" />Su hiid-uwen ka Magbebaye ne Manama wey kene ki egbalaharen nikandin te ware egtamanan.</para>
+  <para style="q2">
+    <verse number="32" style="v" />Ne minsan egpeyirapan ki nikandin, piru kene iya egkaawe ka hid-u rin</para>
+  <para style="q2">su dakel amana ka geyinawa rin ne kene egkataman,</para>
+  <para style="q2">
+    <verse number="33" style="v" />su kene din igkeupii ka pegpaantus wey ke pegpasakit naa te me etew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="34" style="v" />Kene egkeupian ka Magbebaye ne Manama ne eglaslasayen ka me pinirisu kayi te inged,</para>
+  <para style="q2">
+    <verse number="35" style="v" />wey eg-awaan ka etew te katenged diye te tangkaan te Amana ne Mabantug ne Manama.</para>
+  <para style="q2">
+    <verse number="36" style="v" />Kene degma egkeupian sikandin ne kene eg-ikulen ka matareng ne peggukum te minsan hentew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="37" style="v" />Ware egkeyitabu ne minsan nekey, ke kene igtuhut te Magbebaye ne Manama. /NEW Hentew-a ka egpakasuhu wey egpekeyimu te nanlihad e, ke kene egtuhut ka Magbebaye ne Manama?</para>
+  <para style="q2">
+    <verse number="38" style="v" />Ka meupiya wey ka mareet egkeyitabu sumale te pegbuut te Amana ne Mabantug ne Magbebaye. /NEW Kene naa ne diye egpuun te Amana ne Mabantug ne Manama<note caller="+" style="f"><char style="fr" closed="false">3:38 </char><char style="ft" closed="false">Te Hibruwanen: Be-be te Amana ne Matikang.</char></note> ka meupiya wey mareet ne egginguma?</para>
+  <para style="q2">
+    <verse number="39" style="v" />Mania te egsagsahukul ka etew ke egparusaan sikandin te Magbebaye ne Manama tenged te sale din? /NEW Mania te egsagsahukul ka etew ke egparusaan sikandin tenged te me sale din?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="40" style="v" />Eg-ug-ugsiyen ta ka me hinimuwan ta,</para>
+  <para style="q2">wey eglibed ki diye te Magbebaye ne Manama!</para>
+  <para style="q2">
+    <verse number="41" style="v" />Eglehet-lehet ki egparani te Manama<note caller="+" style="f"><char style="fr" closed="false">3:41 </char><char style="ft" closed="false">Te Hibruwanen: Egkayawen ta ka me pusung wey me belad ta.</char></note> ne diye te langit wey egtubad-tubad ki,</para>
+  <para style="q2" />
+  <para style="q2">NEW Keilangan ne eg-ampu ki ne egpuun te me pusung ta wey egkayawen ta ka me belad ta diye te Magbebaye ne Manama ne diye te langit wey egkahiyan ta sikandin, <verse number="42" style="v" />“Migsupak key wey migsukul key keykew, wey ware key pasayluwa nikeykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="43" style="v" />“Nangebel-ebel ka langet nu kanami wey inlupug key nikeykew,</para>
+  <para style="q2">wey warad iya hid-u nu te pegpangimatey kanami.</para>
+  <para style="q2">
+    <verse number="44" style="v" />Migbubunbun ka te gapun</para>
+  <para style="q2">eyew kene egpakaleus ka peg-ampu ney keykew.</para>
+  <para style="q2">
+    <verse number="45" style="v" />Inggimu key nikeykew ne malindit iling te lapek ne maligsem diye te tangkaan te duma ne me nasud.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="46" style="v" />“Inleig-leig key te langun ne me kuntere ney,</para>
+  <para style="q2">NEW “Imbaley-baley key te langun ne me kuntere ney. <verse number="47" style="v" />Nakaheram key e te naliyasan, wey migsahap key e,</para>
+  <para style="q2">wey nalasey key e, wey nareetan se peg-ugpe.</para>
+  <para style="q2">
+    <verse number="48" style="v" />Migtulayas ka me luwe ku iling te beuhan</para>
+  <para style="q2">tenged te karereetan ne neyingumaan te keet-etawan ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="49" style="v" />Kene egkataman ka pegtulayas te luwe ku</para>
+  <para style="q2">
+    <verse number="50" style="v" />taman te egpantew e ka Magbebaye ne Manama puun te langit wey egkakita rin seini.</para>
+  <para style="q2">
+    <verse number="51" style="v" />Amana a nalagew te pegkakita ku te neyitabu te me malitan diye te siyudad. NEW Nalaggew ka pusung ku te pegkakita ku te natamanan te langun ne me malitan diye te siyudad ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="52" style="v" />Pigdakep a te me kuntere ku minsan ke ware sale ne egpekeiling te bayaku. NEW “Egpekeiling a te bayaku ne inggingutel te me kuntere ku minsan nekey ne egpuunan.</para>
+  <para style="q2">
+    <verse number="53" style="v" />Pig-ulug a nikandan ne manekal diye bitu wey pigderegpak a te batu. NEW In-ulug a nikandan ne malenggew diye te bitu wey pig-uluhan a te me batu.</para>
+  <para style="q2">
+    <verse number="54" style="v" />Nakalebleb a te weyig wey natimpaan e ka ulu ku wey kahiyen ku ne seeyad ka patammanan ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="55" style="v" />“Migpangumew a keykew, E Magbebaye ne Manama, te diya a te kinariraleman te bitu,</para>
+  <para style="q2">
+    <verse number="56" style="v" />wey te pegpangumew ku keykew,</para>
+  <para style="q2">narineg nu ka pegpabulig ku.</para>
+  <para style="q2">NEW Narineg nu ka pegpangananey ku, ‘Kene nu sagpengi ka talinga nu te egpabulig keykew!’ <verse number="57" style="v" />Pigtabak a ni keykew</para>
+  <para style="q2">wey migkahi ka, ‘Kene ka kaaldek!’ NEW Imparaniyan a nikeykew te in-umew ku sikeykew, wey migkahiyan a nikeykew ‘Kene ka kaaldek!’ ”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="58" style="v" />“Imbulihan a nikeykew, E Magbebaye ne Manama,</para>
+  <para style="q2">wey inluwas nu ka umul ku.</para>
+  <para style="q2">
+    <verse number="59" style="v" />Nakita nu, Magbebaye ne Manama, ka mareet ne innimu ran keddi</para>
+  <para style="q2">purisu behayi a te matareng ne peggukum.</para>
+  <para style="q2">
+    <verse number="60" style="v" />Nakita nu ka langun ne pegsuli dan</para>
+  <para style="q2">wey ka langun ne mareet ne implanu ran keddiey.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="61" style="v" />“Narineg nu ka pegbaley-baley ran keddiey, E Magbebaye ne Manama,</para>
+  <para style="q2">nakanengneng ka te langun ne mareet ne implanu ran te pegdereet keddi.</para>
+  <para style="q2">
+    <verse number="62" style="v" />Iyan de himu te me kuntere ku te egkaapunan ka eg-iran-ran keddi.</para>
+  <para style="q2">
+    <verse number="63" style="v" />Puun te maselem taman te marusilem, sikeddi de iya ka egsusumpaliten dan te ulahingen dan. NEW Tengtengi nu sikandan! Te pegsasindeg dan wey te pegpinuu ran, eglimbayan a nikandan te me pegkanta ran.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="64" style="v" />“Paruseyi nu sikandan, E Magbebaye ne Manama, sumale te me hinimuwan dan.</para>
+  <para style="q2">
+    <verse number="65" style="v" />Dilusa nu wey laslasaya nu sikandan. NEW Pakehala nu ka me pusung dan, wey ipaneem-neem nu ka dilus nu kandan!</para>
+  <para style="q2">
+    <verse number="66" style="v" />Panlupuha nu sikandan iling te me mananap wey pangimatayi nu. NEW Panlupuha nu sikandan tenged te langet nu wey gulaa nu sikandan kayi te ampew te tane,<note caller="+" style="f"><char style="fr" closed="false">3:66 </char><char style="ft" closed="false">Te Hibruwanen: Puun diye te diralem te langit.</char></note> E Magbebaye ne Manama.”</para>
+  <chapter number="4" style="c" />
+  <para style="s">Ka peglegpad te Siyun /NEW Ka pegparusa te Manama te Hirusalim</para>
+  <para style="q1">
+    <verse number="1" style="v" />Mania te egkabalbalawan e ka neelin ne bulawan. Natalagtag e ka me batu te timplu diye te deralanen. NEW Etuwey, naawe ka silak din, wey nabalbalawan minsan malehet ne bulawan? Natalagtag e ka matulus ne me batu te timplu.</para>
+  <para style="q2">
+    <verse number="2" style="v" />Ka me kabatbataan ne me lukes te Siyun ne iling kamahal te malehet ne bulawan,</para>
+  <para style="q2">nekeiling naan de te kuren ne innimu te talaggimu te kuren puun te basak.</para>
+  <para style="b" />
+  <para style="q1">NEW Piggeyinawan ta ka me kanakan te Siyun ne iling te bulawan, ne kuntee nekeiling naande sikandan te me kuren ne tane, ne innimu puun te belad te tiggimu te me kuren ne tane! <verse number="3" style="v" />Minsan ka me singgalung egpasusu ma te me anak dan,</para>
+  <para style="q2">piru ka keet-etawan ku ware himenew te me anak dan</para>
+  <para style="q2">iling te bayaku ne asbistrus ne diye te mammara ne inged ne kene egkeugpaan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Imbalahad dan ne egkammatey ka me anak dan te gutas wey mara,</para>
+  <para style="q2">egpakapamuyu e ka me bate te egkeenen piru ware egbehey kandan. NEW Egdeket e ka dile te egsusu pad ne me bate diye te me pelak te be-be dan tenged te mara, egpakapamuyu e ka me bate te egkeenen piru ware egpakabehey kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Ne ka langun ne egmakakeen te langun ne igkeupii ran ne egkeenen, nenammatey e diye te deralanen,</para>
+  <para style="q2">egmangalkal e te me basuraan ka me nallayam te mateles ne peg-ugpe dengan. NEW Ne nenamatey e diye te deralanen tenged te gutas ka langun dengan ne nakakeen te meupiya ne egkeenen, ka me nallayam te mateles ne peg-ugpe dengan ne kuntee egmangalkal e te me basuraan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">4:6: </char>
+      <char style="xt" closed="false">Hin 19:24.</char>
+    </note>Su ka pegparusa te Hirusalim subla pad ne makaliyas-liyas dute Suduma</para>
+  <para style="q2">ne te sahuhune ingguhus te Magbebaye ne Manama. NEW Subla pad te pegparusa te Suduma ka pegparusa ku te keet-etawan ku, ne ingguhus te sabeka re ne pegpele-pele, wey warad iya migbulig kandin.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Ka me pangulu rin malinis pad wey maangkag iling te gatas.</para>
+  <para style="q2">Malalab-lalab ka me ulaula ran iling te pelemuti ne ka katelesan egpekeiling te mahal ne batu.<note caller="+" style="f"><char style="fr" closed="false">4:7 </char><char style="ft" closed="false">Te Hibruwanen: Sapiru.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="8" style="v" />Piru kuntee migmemeitem e sikandan iling te museng,</para>
+  <para style="q2">wey kenad e egkeilaan sikandan diye te deralanen.</para>
+  <para style="q2">Migdeket e diye te me tul-an dan ka me laplap dan, wey me mammara naan de iya iling te nahangu ne kayu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Ne meupiya pad ka egkabunu du te egkekammatey te gutas,</para>
+  <para style="q2">ne egkapahan-ganaran egkamatey tenged su ware egkakeen ne me behas.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">4:10: </char>
+      <char style="xt" closed="false">Diy 28:57; Isi 5:10.</char>
+    </note> Ne makaliyas-liyas ka karereetan ne neumaan te keet-etawan ku,</para>
+  <para style="q2">ne minsan ka hiimenawen ne me iney, egsusube e te me anak dan eyew due egkakeen dan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Nabelu natamtamani ka Magbebaye ne Manama</para>
+  <para style="q2">wey impasalerep <note caller="+" style="f"><char style="fr" closed="false">4:11 </char><char style="ft" closed="false">Te Hibruwanen: In-ule.</char></note> din ka nangebel-ebel ne langet din,</para>
+  <para style="q2">insilaban din ka Siyun ne iyan nakatutung te pabunsuran din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="12" style="v" />Ne ware migpalintutuu ka me Hari te me nasud, wey minsan hentew ne mig-ugpe kayi te kalibutan te me kuntere ne egpakaseled te me gumawan te siyudad te Hirusalim. NEW Ware migpalintutuu ka me Hari te me nasud, wey minsan hentew ne mig-ugpe te kalibutan ne egpakaseled ka me kuntere te me gumawan te siyudad te Hirusalim.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />Neyitabu seini tenged te me sale te me prupita wey te maddeet ne hinimuwan te me talagpanubad,</para>
+  <para style="q2">ne migpangimatey te me matareng diye te siyudad.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="14" style="v" />Ne egleug-leug sikandan diye te me dalan ne iling te me butud.</para>
+  <para style="q2">Narihus sikandan te langesa purisu ware eg-aku ne egsamsam te me kumbale dan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="15" style="v" />Imbalukanan sikandan te me etew, “Pariyu kew, me malindit! Kene kew panggen-gen!”</para>
+  <para style="q2">Sikan naa ka egpakapalpallahuy naan de sikandan wey egkaleleug e.</para>
+  <para style="q1">Egkahi ka me etew te minsan hendei ne nasud, “Kene tad e egpalemungen sikandan kanta.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="16" style="v" />Ka Magbebaye ne Manama iyan iya migmegsuwey-suwey kandan,</para>
+  <para style="q2">kene din e eglinglingeen sikandan wey warad sikandin nakarayan te me talagpanubad wey te me pangulu. /NEW Iyan iya immegsuwey-suwey kandan ka Magbebaye ne Manama, wey egbalaharen din e. Warad nakarayan sikandin te me talagpanubad, wey ware din ikeupii ka me pangulu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="17" style="v" />Marelag naan de ka pela-an ney te egtetahad ke due egpangabang kanami, <note caller="+" style="f"><char style="fr" closed="false">4:17 </char><char style="ft" closed="false">Te Hibruwanen: Warad neyimu te mata ney.</char></note> piru warad iya. Kahiyen ney te egtetahad te sabeka ne nasud ke egpakaluwas kanami, kunaleg te kene bes. /NEW Migmahuye ka me mata ney te pegpamitew te egbulig, migtetahad key te peggimuma te sabeka ne nasud ne kene bes egpakabulig kanami.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="18" style="v" />Ne iyan de himu te me kuntere ney ka egsisilib kanami,</para>
+  <para style="q2">purisu kene key e egpakaleleug diye te me dalan.</para>
+  <para style="q2">Mahaan e ka katamanan ney, egkaseel naande ka me aldew ney, su katamanan ney en iya kuntee.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="19" style="v" />Me-meiyal pad te me banug diye te aw-awangan ka egmanlupug kanami,</para>
+  <para style="q2">inlulupug key nikandan diye te me bubungan, wey inggepasan key diye te mammara ne inged ne kene egkeugpaan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="20" style="v" />Pigdakep dan ka insalihan ney,</para>
+  <para style="q2">ka hari ne in-alam te Magbebaye ne Manama ne iyan perem egpangabang kanami puun te me kuntere ney. NEW Indakep dan ka Hari ne in-alam te Magbebaye ne Manama eyew egpangabang kanami ka egkahiyen ney ne sikandin ka egkasandihan wey egkasuladlaran ney puun te me kuntere ney.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="21" style="v" />Pangngingisi kew iya wey gale-gale kew me keet-etawan te Idum wey te Us!</para>
+  <para style="q2">Piru egpakasalerep kew red degma te langet te Magbebaye ne Manama,</para>
+  <para style="q2">egkengewubug kew hangkuwa ne egkallebasan, wey egkeyilawan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />Nakabayad e te me sale din ka Siyun, sikan naa ka egpakaawe e sikandin ka neuripen.</para>
+  <para style="q2">Piru eglegparan te Manama ka Idum puun te mareet ne me hinimuwan te me etew, wey igpanengneng din ka langun ne sale te me mahinged. /NEW Neimpusan e ka peglegpad te mareet ne neyimu te Siyun, kenad e egtuhutan te Magbebaye ne Manama ne egkekeuripen pad. Piru sikeykew Idumiya eglegparan ka te Magbebaye ne Manama, wey igpanengneng din ka langun ne me sale nu.</para>
+  <chapter number="5" style="c" />
+  <para style="s">Ka peg-ampu te pegpeyid-u-hid-u</para>
+  <para style="q1">
+    <verse number="1" style="v" />Tantanuri nu Magbebaye ne Manama ke nekey ka neyitabu kanami,</para>
+  <para style="q2">tengtengi nu wey pitawa nu ka neyingumaan ney ne keyilawan!</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="2" style="v" />Nekeendiyad e te me lapu ka me karatuan wey ka me baley ney, wey iyan e nangugpe kayi. NEW Ne impangahew e te me lapu ka me karatuan ney wey iyan e sikandan nangugpe diye te me baley ney.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Impangimatayan te me kunterte ney ka me amey ney,</para>
+  <para style="q2">wey amane e ne masulug ka nammatey wey warad e egpakabulig kanami. NEW Neyimu key e ne me ilu te amey, wey nenabalu e ka me iney ney.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Egpabayad key te weyig ne eg-inumen ney,</para>
+  <para style="q2">wey egbeliyen ney e degma ka kayu ne igtemeg ney.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Indalusung key ne iling te me asnu wey me kamilyu,</para>
+  <para style="q2">nenabeley key e amana, piru kene key egpeyimmeleyen. /NEW Miglised key ka eggipanew tenged te yugu ne intangen kanami, nenabeley key e amana, piru kene key egpeyimelayen.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Migpeuripen<note caller="+" style="f"><char style="fr" closed="false">5:6 </char><char style="ft" closed="false">Te Hibruwanen: Imbehey ka me belad.</char></note> key naande diye te me Ihiptuhanen wey te me matig-Asirya</para>
+  <para style="q2">eyew egkeuyag key. /NEW Migpamuyu key naande te egkakeen diye te me Ihiptuhanen wey te me matig-Asirya eyew egkeuyag key.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Nakasale ka me kaap-apuan ney, wey nenammatey e sikandan,</para>
+  <para style="q2">piru sikanami ka nabaybayaran tenged te me sale dan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="8" style="v" />Iyan e migmandu kanami ka me uripen,</para>
+  <para style="q2">wey ware egpakapangabang kanami puun kandan.<note caller="+" style="f"><char style="fr" closed="false">5:8 </char><char style="ft" closed="false">Te Hibruwanen: Belad.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Ne tenged te egmanleug-leug ka me mangngimatey diye te me napu,</para>
+  <para style="q2">amana key egkaliseri ka egpamitew te egkakeen piru imbalahad ney e ke nekey ka egkeyitabu te umul ney te pegpamitew te egkakeen. /NEW Nakatahu te karereetan ka umul ney te pegpamitew te egkakeen, su nekeempet ka me kuntere ney diye te me unayan.<note caller="+" style="f"><char style="fr" closed="false">5:9 </char><char style="ft" closed="false">Te Hibruwanen: Mammara ne inged ne kene egkeugpaan.</char></note></para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Me meinit naande iya ka me laplap ney iling te temehanan,</para>
+  <para style="q2">wey egpakatutung ne gulabung. /NEW Inlusungan key tenged te gutas, wey meinit naande iya ka me laplap ney iling te sugnuwanan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Impanleheng wey impamehes te eggilabet ka me asawa ney diye te Siyun,</para>
+  <para style="q2">wey ka me mengebay regma diye te me lungsud te Huda impamehes degma te eggilabet.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="12" style="v" />Impangiketan te lubid ka me belad ka me pangulu ney wey impamitin,</para>
+  <para style="q2">wey warad e tahura ka me igbuyag.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />Ne ka me bate-bate ne me lukes impehes te peggehaling iling te me uripen,</para>
+  <para style="q2">wey ka dereisek pad ne me bate ne me lukes egmakabihudbihud de te mabbehat ne kayu ne egpaniangen dan. /NEW Impepehes ka me kanakan ne egtrabahu iling te me uripen,<note caller="+" style="f"><char style="fr" closed="false">5:13 </char><char style="ft" closed="false">Te Hibruwanen: Ne eggaling diye te galingan.</char></note> wey egmakabihud-bihud ka me lukes ne me bate te kayu ne immatiang kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="14" style="v" />Warad e tuhuti ka me igbuyag ne egpaminnuu diye te gumawan te siyudad<note caller="+" style="f"><char style="fr" closed="false">5:14 </char><char style="ft" closed="false">Libulunganan dan te egmalalahey te minsan nekey.</char></note> eyew egpanulu te me etew te meupiya ne eggimuwen,</para>
+  <para style="q2">wey warad degma nangulahing ka me kanakan te me mateles ne egpamminehen eyew te peg-elit-elit te me etew. /NEW Warad e miglibulung ka me igbuyag diye te gumawan te siyudad, wey warad e degma me kanakan ne egkarineg ne eg-ulahing duma te me egkabales ne dahing.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="15" style="v" />Warad e kahale te me pusung ney,</para>
+  <para style="q2">ka pegsayew-sayew ney te pegkahale, neyimu e ne pegkalange. /NEW Naawe e ka kahale te me pusung ney, ka peggale-gale ney neyimu e nasi ne subla ne peglungku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="16" style="v" />Ne warad e nasame te minsan nekey ne impeggasal ney.</para>
+  <para style="q2">Mig-antus key tenged te me sale ney. /NEW Napunggisan key e te kuruna, su nakasale key sikan naa ka mekeyid-u-hid-u key e.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="17" style="v" />Puun due migmemaguye e ka me diralem ney</para>
+  <para style="q2">wey kene key e egmakamelegmeleg.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="18" style="v" />Su in-engkeran e ka bubungan te Siyun wey warad e mig-ugpe,</para>
+  <para style="q2">wey iyan e nangugpe ka me mahintalunan ne mananap.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="19" style="v" />Piru sikeykew, E Magbebaye ne Manama, eghari ka te ware egtamanan,</para>
+  <para style="q2">wey egpabulus ka pegmandu nu diye te langun ne me kabuhalan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="20" style="v" />Ne mania te layun key re lingawi nikeykew.</para>
+  <para style="q2">Mania te imbalahad key nikeykew te naluhey ne timpu?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="21" style="v" />Uyana key nikeykew, E Magbebaye ne Manama,</para>
+  <para style="q2">wey palibed key due te keykew.</para>
+  <para style="q1">Ipalibed nu kanami ka dengan ne katelesan ney. /NEW Ipalibed key due te keykew, E Magbebaye ne Manama, eyew egpakalibed key keykew. Himuwa nu ka me aldew ney ne iling te dengan ne timpu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="22" style="v" />Mig-engkeran key naan en iya nikeykew te ware egtamanan?</para>
+  <para style="q1">Ware bes buwad iya katamanan te subla ne kabelu nu kanami?</para>
+</usx>

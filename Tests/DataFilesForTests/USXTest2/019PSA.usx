@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usx version="2.0">
+  <book code="PSA" style="id">Matigsalug Version</book>
+  <para style="ide">UTF-8</para>
+  <para style="h">Salmu</para>
+  <para style="toc1">Me Salmu</para>
+  <para style="toc2">Salmu</para>
+  <para style="toc3">Sal</para>
+  <para style="mt">Me Salmu</para>
+  <para style="is">Igpewun-a</para>
+  <para style="ip" />
+  <para style="iot">Ka nenasulat te seini ne baseen</para>
+  <para style="io1" />
+  <chapter number="1" style="c" />
+  <para style="ms">Libru Saa</para>
+  <para style="mr">(Salmu 1-41)</para>
+  <para style="s">Ka malehet ne pegkahale</para>
+  <para style="p">
+    <verse number="1" style="v" />Keupianan te seeye se ware mig-ikul te tambag te mareet ne etew,</para>
+  <para style="q2">wey ware mig-ikul te dalan ne imbayaan te me makasesale,</para>
+  <para style="q2">wey ware mig-apil-apil te me etew ne migbaley-baley te Manama.</para>
+  <para style="q1">
+    <verse number="2" style="v" />Ne iyan din kahale ka pegtuman te Balaud te Magbebaye ne Manama,</para>
+  <para style="q2">wey eg-ay-ayaran din seini te egbasa te aldew wey marusilem.</para>
+  <para style="q1">
+    <verse number="3" style="v" />Egpekeiling sikandin te kayu ne diye nakapamula te ilis te weyig,</para>
+  <para style="q2">ne egpamehas te eleg ne timpu</para>
+  <para style="q2">wey kene egkahangu ka me dewun kayi.</para>
+  <para style="q1">Ne eglampus sikandin te langun ne eggimuwen din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Piru kene ne iling due ka maddeet ne me etew,</para>
+  <para style="q1">ke kene, egpekeiling sikandan te lahami ne eglayap de te kalamag</para>
+  <para style="q1">
+    <verse number="5" style="v" />Egdusaan iya te Manama ka maddeet ne me etew</para>
+  <para style="q2">wey kene sikandan igpalemung te me matareng.</para>
+  <para style="q1">
+    <verse number="6" style="v" />Imbantayan te Magbebaye ne Manama ka dalan te me matareng,</para>
+  <para style="q2">piru karereetan ka egpangkusan te dalan te me makasesale.</para>
+  <chapter number="2" style="c" />
+  <para style="s">Ka Hari ne impili te Magbebaye ne Manama</para>
+  <para style="q1">
+    <verse number="1" style="v" />Mania te migpakig-ehet ka me nasud?</para>
+  <para style="q2">Mania te migplanu ka me etew te ware karuan?</para>
+  <para style="q1">
+    <verse number="2" style="v" />Miglibulung ka me hari</para>
+  <para style="q2">wey me pangulu ran wey migpangandam te pegpakig-ehet te Magbebaye ne Manama wey te Hari ne in-alam din.</para>
+  <para style="q1">
+    <verse number="3" style="v" />Ne migkahi sikandan, “Kene ki egpariralem wey ke egpasakup naa kandan.” <verse number="4" style="v" />Piru inngisiyan</para>
+  <para style="q2">wey imbaley-baley re sikandan te Magbebaye ne Manama ne migpinnuu te trunu rin diye te langit.</para>
+  <para style="q1">
+    <verse number="5" style="v" />Ne tenged te langet, impanpanayan din sikandan</para>
+  <para style="q2">wey te kabelu din pigginalatan din sikandan.</para>
+  <para style="q1">
+    <verse number="6" style="v" />Ne migkahi sikandin, “Impapinnuu kud e diye te Siyun, ne iyan ka bubungan ku ne matulus,</para>
+  <para style="q2">ka hari ne in-alam ku.</para>
+  <para style="q1">
+    <verse number="7" style="v" />Ne migkahi ka hari ne in-alam te Magbebaye ne Manama, “Igpangguhud ku ka ingkahi te Magbebaye ne Manama keddi ne miggenendue,</para>
+  <para style="q2">‘Sikeykew ka anak ku,</para>
+  <para style="q2">wey te seini ne aldawa te neyimu kad ne hari amey ad e nikeykew.</para>
+  <para style="q1">
+    <verse number="8" style="v" />Buyu ka keddi, wey igbehey ku keykew ka me nasud</para>
+  <para style="q2">wey egkaangken nu ka intiru ne inged.</para>
+  <para style="q1">
+    <verse number="9" style="v" />Egmanduan nu sikandan wey warad iya egsupak te pegmandu nu.</para>
+  <para style="q2">Egpekeiling sikandan te tane ne kuren ne eglupeten nu.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Purisu, sikaniyu se me hari wey me pangulu te inged,</para>
+  <para style="q2">sabuta niyu seini ne me lalag, wey pammineha niyu ka me paney-paney due te kaniyu.</para>
+  <para style="q1">
+    <verse number="11" style="v" />Pamakaya niyu ka Magbebaye ne Manama ne due pegtahud</para>
+  <para style="q2">wey gale-gale kew due te kandin. <verse number="12" style="v" />Tahura niyu ka hari ne in-alam din,</para>
+  <para style="q2">eyew kene egkabelu sikandin kaniyu wey kene kew eggimatayan nikandin,</para>
+  <para style="q2">su mahaan lukindab ka kabelu din.</para>
+  <para style="q1">Keupianan te keet-etawan te Magbebaye ne Manama ne egparani kandin eyew egbantayan din.</para>
+  <chapter number="3" style="c" />
+  <para style="s">Ka peg-ampu te timpu te keyirapan</para>
+  <para style="q1">
+    <verse number="1" style="v" />E Magbebaye ne Manama, amana ne masulug ka eg-ehet keddi,</para>
+  <para style="q2">wey susuluhi ka eg-atu keddi.</para>
+  <para style="q1">
+    <verse number="2" style="v" />Masulug ka egkahi keddi,</para>
+  <para style="q2">“Kene egbulihan sikandin te Magbebaye ne Manama.”</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Piru sikeykew ka kalasag ne nakalingut keddi,</para>
+  <para style="q2">E Magbebaye ne Manama,</para>
+  <para style="q2">impareeg a nikeykew</para>
+  <para style="q2">wey impalibed nu ka kabulut ku.</para>
+  <para style="q1">
+    <verse number="4" style="v" />Migpabulig a keykew, E Magbebaye ne Manama</para>
+  <para style="q2">wey intabak a nikeykew puun te matulus ne bubungan nu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Miggibat, miglipereng a wey nekeyimata a</para>
+  <para style="q2">su imbantayan e ma nikeykew, E Magbebaye ne Manama.</para>
+  <para style="q1">
+    <verse number="6" style="v" />Kena a egkaaldek te sapulu ne libu ne etew</para>
+  <para style="q2">ne miglingut ne eg-ehet keddi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Dani-rani ka, Magbebaye ne Manama!</para>
+  <para style="q2">Luwasa a nikeykew, Magbebaye ne Manama ku!</para>
+  <para style="q1">Legpari nu ka langun ne me kuntere ku,</para>
+  <para style="q2">wey pangawei nu sikandan te geem eyew kenaad e egpasakitan nikandan.</para>
+  <para style="q1">
+    <verse number="8" style="v" />Ka kapanaluwan egpuun keykew,</para>
+  <para style="q2">panalangini key nikeykew se me anak nu.</para>
+  <chapter number="4" style="c" />
+  <para style="s">Ka peg-ampu te timpu te marusilem</para>
+  <para style="q1">
+    <verse number="1" style="v" />Tabaka a nikeykew, e Magbebaye ne Manama ne talagpangabang ku,</para>
+  <para style="q2">ke egpangumew a keykew!</para>
+  <para style="q1">Imbulihan a nikeykew te timpu te keyirapan.</para>
+  <para style="q1">Keyid-u ka keddi wey pamineha nu ka peg-ampu ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="2" style="v" />E keet-etawan, hendei taman ka pegpeyilew niyu keddi?</para>
+  <para style="q1">Hendei taman ka peggeyinawa niyu te me lalag ne ware karuan</para>
+  <para style="q2">wey peg-ikul te ubat?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Piru tantanuri niyu ne inlein te Magbebaye ne Manama ka matareng para kandin.</para>
+  <para style="q2">Egpamineg ka Magbebaye ne Manama te peg-umew ku kandin.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Ke egkabelu kew,</para>
+  <para style="q2">bantayi niyu ne egpakasale kew.</para>
+  <para style="q2">Ke diye ka te hibatanan nu peeneng-eneng ka</para>
+  <para style="q2">wey ug-ugsiya nu ka pusung nu.</para>
+  <para style="q1">
+    <verse number="5" style="v" />Ihalad nu ka eleg ne ighalad,</para>
+  <para style="q2">wey salig ka te Magbebaye ne Manama.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Masulug ka eg-ampu, “Egkaangken ney perem ka timul ne panalangin. Keyid-u ka ubag kanami, E Magbebaye ne Manama.” <verse number="7" style="v" />Innipenu nu te kahalaan ka pusung ku du te me-ural(ungkitin) sikandan te egkakeen wey te iyam ne eg-inumen. <verse number="8" style="v" />Eggibat a wey eglipereng ne due keupianan su sikeykew re, E Magbebaye ne Manama, ka migbantey keddiey.</para>
+  <chapter number="5" style="c" />
+  <para style="s">Ka pegpangananey ne peg-ampu</para>
+  <para style="q1">
+    <verse number="1" style="v" />Pamineha a ubag E Magbebaye ne Manama</para>
+  <para style="q2">wey sahipa-a nu ka pegdeg-uy ku.</para>
+  <para style="q1">
+    <verse number="2" style="v" />Magbebaye ne Manama ku wey Hari ku</para>
+  <para style="q2">pamineha nu ka pegpabulig ku, su mig-ampu a keykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Te maselem, E Magbebaye ne Manama,</para>
+  <para style="q2">pamineha nu ka peg-ampu ku.</para>
+  <para style="q2">Te maselem mig-andam a te me halad</para>
+  <para style="q2">wey migtetahad a keykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Sikeykew ka Magbebaye ne Manama ne kene egkahale te mareet ne himu,</para>
+  <para style="q2">wey kene ka egduma te me etew ne maddeet se hinimuwan.</para>
+  <para style="q1">
+    <verse number="5" style="v" />Kene egpakasasindeg diye te tangkaan nu ka me hambuhen.</para>
+  <para style="q2">Ingkabelu nu ka langun ne maddeet se hinimuwan.</para>
+  <para style="q1">
+    <verse number="6" style="v" />Egdereetan te Magbebaye ne Manama ka ubaten,</para>
+  <para style="q2">wey amana nu ingkalangeti ka mangimatey wey limbungen.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Piru tenged te dakel ne geyinawa nu,</para>
+  <para style="q2">egpakaseled a te baley nu.</para>
+  <para style="q2">Egpakasimba a diye te timplu nu duma te dakel ne pegtahud.</para>
+  <para style="q1">
+    <verse number="8" style="v" />Magbebaye ne Manama, amana ne masulug ka kuntere ku!</para>
+  <para style="q1">Panulua a te peggimu te igkeupii nu,</para>
+  <para style="q2">himuwa nu ne mapatag ka dalan ne eg-ikulen ku.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Ubat langun ka me lalag te me kuntere ku,</para>
+  <para style="q2">wey igkeupian de sikandan ne eggimu te karereetan;</para>
+  <para style="q2">egpekeiling te nalukatan ne sabalanan/lelebengan ka be-be dan</para>
+  <para style="q2">wey meupiya sikandan ne egpangguhud te ubat.</para>
+  <para style="q1">
+    <verse number="10" style="v" />E Manama, paruseyi nu sikandan;</para>
+  <para style="q2">egkeuney/eglibed perem kandan ka mareet ne implanu ran.</para>
+  <para style="q1">Delrela nu sikandan tenged te me sale dan</para>
+  <para style="q2">wey te pegsupak dan keykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Piru egkahale iya ka egparani keykew</para>
+  <para style="q2">wey eg-ulahing sikandan langun tenged te kahale.</para>
+  <para style="q1">Ka miggeyinawa keykew, egpangabangan nu iya</para>
+  <para style="q2">wey duen de te keykew egkahale sikandan.</para>
+  <para style="q1">
+    <verse number="12" style="v" />Impanalanginan nu E Magbebaye ne Manama, ka me matareng;</para>
+  <para style="q2">wey ka geyinawa nu egpangabang kandan iling te kalasag.</para>
+  <chapter number="6" style="c" />
+  <para style="s">Ka peg-ampu te timpu te kahubut</para>
+  <para style="q1">
+    <verse number="1" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">6:1: </char>
+      <char style="xt" closed="false">Sal 38:1.</char>
+    </note> E Magbebaye ne Manama, kena a dew-aya nikeykew ke egkabelu ka;</para>
+  <para style="q2">kena a paruseyi nikeykew ke egkalangetan ka.</para>
+  <para style="q1">
+    <verse number="2" style="v" />Keyid-u ka keddi, Magbebaye ne Manama, su migamahuya ad e;</para>
+  <para style="q2">lig-ena a nikeykew su warad e keseg te me tul-an ku.</para>
+  <para style="q1">
+    <verse number="3" style="v" />Amana a nabaybayari, E Magbebaye ne Manama,</para>
+  <para style="q2">wey ken-u naam pad seini egkataman?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="4" style="v" />Luwasa a nikeykew, E Magbebaye ne Manama,</para>
+  <para style="q2">wey tenged te geyinawa nu ne kene egkaawe,</para>
+  <para style="q2">ipaalihu a nikeykew te kamatayen.</para>
+  <para style="q1">
+    <verse number="5" style="v" />Su diye te inged te me minatey,</para>
+  <para style="q2">warad e egsuman-suman keykew,</para>
+  <para style="q2">warad e egdayan keykew diye.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Migmahuya ad e tenged te amana ne pegkalange/peglungku,</para>
+  <para style="q2">wey tagse marusilem, egkasubid-subid te luwe ka hibatanan ku.</para>
+  <para style="q1">
+    <verse number="7" style="v" />Migpanlebag e ka mata ku,</para>
+  <para style="q2">wey kenaad e pakameleg-meleg tenged te pegsinsinehew ku,</para>
+  <para style="q2">tenged te innimu te me kuntere ku. <verse number="8" style="v" />Pariyu kew keddi,</para>
+  <para style="q2">sikaniyu se maddeet se hinimuwan,</para>
+  <para style="q2">su narineg te Magbebaye ne Manama ka pegsinehew ku.</para>
+  <para style="q1">
+    <verse number="9" style="v" />Narineg te Magbebaye ne Manama ka peghangyu ku te pegpatabang kandin,</para>
+  <para style="q2">wey indawat din ka me peg-ampu ku.</para>
+  <para style="q1">
+    <verse number="10" style="v" />Egkekeyilawan ka langun ne kuntere ku</para>
+  <para style="q2">wey egkabaybayaran amana;</para>
+  <para style="q2">te sikande egpariyu e sikandan tenged te hilew.</para>
+  <chapter number="7" style="c" />
+  <para style="s">Ka peg-ampu para te matareng ne peggukum</para>
+  <para style="q1">
+    <verse number="1" style="v" />E Magbebaye ne Manama ku,</para>
+  <para style="q2">mig-aput a keykew eyew egpangabangan a nikeykew.</para>
+  <para style="q1">Luwasa a nikeykew wey ipaalihu a te migbayad-bayad keddi</para>
+  <para style="q1">
+    <verse number="2" style="v" />su kema ke eggan-ganuyen a nikandan iling wey binbindasen,</para>
+  <para style="q2">iling te eggimuwen te sabeka ne liyun</para>
+  <para style="q2">wey ware egpakaluwas keddi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />E Magbebaye ne Manama ku,</para>
+  <para style="q2">ke nekeyimu e ma te mareet diye te duma ku</para>
+  <para style="q2">
+    <verse number="4" style="v" />ke insulian ku ma te mareet ka meypia ne innimu te alukuy ku,</para>
+  <para style="q2">wey ke in-ahawan ku naa te karatuan ka me kuntere te ware malehet ne puunan,</para>
+  <para style="q1">
+    <verse number="5" style="v" />na, ipalupug wey iparakep a kandan,</para>
+  <para style="q2">eyew eggimatayan a wey eg-engkeran ne nakabahed e te tane.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="6" style="v" />Te kabelu nu, E magbebaye ne Manama, sulii nu</para>
+  <para style="q2">ka pegkamareet te me kuntere ku!</para>
+  <para style="q1">Weil kad e, E Manama ku,</para>
+  <para style="q2">wey pangabangi a,</para>
+  <para style="q1">su iyan nu ma egpamitawen ka matareng ne peggukum.</para>
+  <para style="q1">
+    <verse number="7" style="v" />Libunga nu ka keet-etawan diye te tangkaan nu.</para>
+  <para style="q2">Mandu ka kandan puun te ampew.</para>
+  <para style="q1">
+    <verse number="8" style="v" />Sikeykew, Magbebaye ne Manama, ka eggukum te keet-etawan.</para>
+  <para style="q2">Pamaleheti nu ne ware sale ku,</para>
+  <para style="q2">su nakanengneng ka ne matareng a wey ware miggimu te mareet.</para>
+  <para style="q1">
+    <verse number="9" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">7:9: </char>
+      <char style="xt" closed="false">Imp 2:23.</char>
+    </note> Egkataman e perem ka maddet ne me hinimuwan te mareet!</para>
+  <para style="q2">Piru pangabangi nu ka me matareng, E matareng ne Manama,</para>
+  <para style="q2">sikeykew ka eg-ugsi-ugsi te me pusung wey te me suman-suman.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="10" style="v" />Iyan ku kalasag ka Manama ne Amana ne Mabantug,</para>
+  <para style="q2">ne egluwas te matareng se pusung.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Egkasalihan ne talaggukum ka Manama.</para>
+  <para style="q2">Egkabelu sikandin te mareet te tagse aldew.</para>
+  <para style="q1">
+    <verse number="12" style="v" />Ke ka etew kene eg-inniyug te sale,</para>
+  <para style="q2">egkamangeen te Manama ka sundang din,</para>
+  <para style="q1">eg-andam wey eg-uyamewen din ka pane din.</para>
+  <para style="q1">
+    <verse number="13" style="v" />Eg-andamen din</para>
+  <para style="q2">ka egpakapatey ne me panganiban din</para>
+  <para style="q2">wey igpabesut din</para>
+  <para style="q2">ka egkalegleg ne me tunud din.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="14" style="v" />Pammineg ka, ka mareet ne etew egsuman-suman te mareet,</para>
+  <para style="q2">egkeupian sikandan ne eggimu te samuk, wey egpanlimbung.</para>
+  <para style="q1">
+    <verse number="15" style="v" />Eglulungag sikandan te maralem eyew te peg-ulug te duma,</para>
+  <para style="q2">ne nasi ne sikandan ka egkeulug kayi.</para>
+  <para style="q1">
+    <verse number="16" style="v" />Ka samuk ne innimu ran te duma eglibed kandan.</para>
+  <para style="q2">Ka mareet ne planu ran egkeulug te kandan mismu ne ulu.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="17" style="v" />Egpasalamat a te Magbebaye ne Manama tenged te pegkamatareng din,</para>
+  <para style="q2">wey eg-ulahingan ku ka ngaran te Magbebaye ne Manama, ka Amana ne Mabantug.</para>
+  <chapter number="8" style="c" />
+  <para style="s">Ka kabantug te Manama wey ka gulehud/pulus te etew</para>
+  <para style="q1">
+    <verse number="1" style="v" />E Magbebaye ne Manama, ne Magbebaye ne Manama ney,</para>
+  <para style="q2">egbantug ka ngaran nu kayi te intiru ne kalibutan!</para>
+  <para style="q1">Impakita nu ka katelesan nu ne mabantug pad te me langit.</para>
+  <para style="q2">
+    <verse number="2" style="v" />Impanulu nu ka me bate wey ka egmanusu pad</para>
+  <para style="q1">eyew egpanengneng te karesen nu,</para>
+  <para style="q2">pegpapepeeneng te me kuntere nu wey te langun ne egsupak keykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Ke egpitew a te maluag ne langit ne innimu te me kemel nu,</para>
+  <para style="q2">wey egkakita ku ka bulan, wey ka me bituen ne intahu nu diye te natahuan kayi,</para>
+  <para style="q2">
+    <verse number="4" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">8:4: </char>
+      <char style="xt" closed="false">Hub. 7:17-18; Sal. 144:3; Hib. 2:6-8.</char>
+    </note></para>
+  <para style="q1">egpekeinsa a, “Nekey bes ka etew,</para>
+  <para style="q2">mania te egsumsumanen nu pad?</para>
+  <para style="q2">Mania te egtangguwen nu pad ka anak te etew?</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Piru innimu nu sikandin</para>
+  <para style="q2">ne malmalepet de keykew</para>
+  <para style="q2">wey ingkurunaan nu te katelesan, wey kabantug.</para>
+  <para style="q1">
+    <verse number="6" style="v" />innimu nu sikandin ne talagmandu</para>
+  <para style="q2">ka langun ne innimu nu,</para>
+  <para style="q2">impariralem nu kandin ka langun ne butang.</para>
+  <para style="q2">
+    <verse number="7" style="v" />Ka langun ne karniru wey me baka,</para>
+  <para style="q2">wey ka me mananap diye te puwalas,/kamet,/napu,</para>
+  <para style="q2">
+    <verse number="8" style="v" />ka me bayaku diye te aw-awangan, wey ka me isda diye te dahat,</para>
+  <para style="q2">wey ka langun ne mananap ne eglumbuk diye te karagdahatan,</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />E Magbebaye ne Manama, ne Magbebaye ne Manama ney,</para>
+  <para style="q2">amana iya ne talahuren/mabantug ka ngaran nu te intiru ne kalibutan!</para>
+  <chapter number="9" style="c" />
+  <para style="s">Pegpasalamat diye te Manama te peggukum din ne matareng</para>
+  <para style="q1">
+    <verse number="1" style="v" />Egpasalamatan ku sikeykew, E Magbebaye ne Manama,</para>
+  <para style="q2">te intiru ne pusung ku!</para>
+  <para style="q1">Igpangguhud ku ka langun ne kein-inuwan ne neyimu nu.</para>
+  <para style="q1">
+    <verse number="2" style="v" />Egkahala a tenged keykew!</para>
+  <para style="q2">eg-ulahing a te pegdayan te ngaran nu, Amana ne Mabantug ne Manama.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="3" style="v" />Emun egmangisues/egmanlibed ka me kuntere ku,</para>
+  <para style="q2">egkengapeled/egkengasaligkat sikandan wey egkengammatey diye te tangkaan nu.</para>
+  <para style="q1">
+    <verse number="4" style="v" />Matareng ka wey egkasalihan te me peggukum nu,</para>
+  <para style="q2">wey miggukum ka te peglapig keddi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="5" style="v" />Inlegparan/Imparusaan/Inggukuman/Indilus nu ka me nasud</para>
+  <para style="q2">wey indereetan nu ka maddeet ne me etew/se me hinimuwan,</para>
+  <para style="q2">wey kenad en iya sikandan egkatantanuran.</para>
+  <para style="q1">
+    <verse number="6" style="v" />Ware tamanan te karereetan te me kuntere;</para>
+  <para style="q2">indereetan nu ka me siyudad dan,</para>
+  <para style="q2">warad e minsan hentew ne egpakasuman-suman kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="7" style="v" />Piru sikeykew, Magbebaye ne Manama, eghari ka te ware egtamanan;</para>
+  <para style="q2">andam andam e ka trunu nu para te peggukum.</para>
+  <para style="q1">
+    <verse number="8" style="v" />Eggukuman nu ka kalibutan duma te katareng,</para>
+  <para style="q2">eggukuman nu ka me etew duma te matareng ne peggukum/te eleg ne paahi.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="9" style="v" />Sikeykew Magbebaye ne Manama ka talagpangabang te egkengareeg-deeg/egkengaleig-leig,</para>
+  <para style="q2">ka malig-en ne aputanan te timpu te kahubut.</para>
+  <para style="q1">
+    <verse number="10" style="v" />Egsalig keykew ka nekeila te ngaran nu,</para>
+  <para style="q2">su ware nu ma engkeri Magbebaye ne Manama, ka migparani keykew.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="11" style="v" />Ulahing kew te pegdayan te Magbebaye ne Manama, ka Hari te bubungan te Siyun.</para>
+  <para style="q1">Pangguhuri niyu ka me nasud te neyimu rin.</para>
+  <para style="q1">
+    <verse number="12" style="v" />Kene egkalingawan te Manama ka nangantus/migpangantus.</para>
+  <para style="q2">Egsagmanen din iya ka migpabulig kandin;</para>
+  <para style="q2">egparusaan din ka migleig-leig kandan.</para>
+  <para style="b" />
+  <para style="q1">
+    <verse number="13" style="v" />E Magbebaye ne Manama,</para>
+  <para style="q2">pitawa nu ke immenu a te egdeeg-deeg/egleig-leig te me kuntere ku!</para>
+  <para style="q2">Keyid-u ka keddi wey ipaalihu a nikeykew te gumawan te kamatayen,</para>
+  <para style="q2">
+    <verse number="14" style="v" />eyew diye te me gumawan te Hirusalim,</para>
+  <para style="q2">igpakapangguhud ku ka neneyimu nu keddiey,</para>
+  <para style="q2">wey egkahala a tenged te pegluwas nu keddiey.</para>
+  <para style="q1">
+    <verse number="15" style="v" />Ka me nasud ne ware migpalintutuu te Manama,</para>
+  <para style="q2">iyan ded neneulug te me bitu ne immangimu ran,</para>
+  <para style="q2">wey iyan ded nanahad te me biyale ne immamunbunan dan eyew te pegsahilut perem te duma.</para>
+  <para style="q1">
+    <verse number="16" style="v" />Pinaahi te matareng ne peggukum,</para>
+  <para style="q2">impeila te Magbebaye ne Manama ke hentew sikandin.</para>
+  <para style="q2">Ka maddeet ne me etew, iyan ded nanahad te maddet ne me hinimuwan dan.</para>
+  <para style="b">
+    <verse number="17" style="v" />Ka kamatayen ka kapabulusan te maddeet ne me etew,</para>
+  <para style="q2">wey te langun ne migsamsamili/ware miglinga-linga te Manama.</para>
+  <para style="q1">
+    <verse number="18" style="v" />Ne ka ware egkekeyimu kene layun egbalaharen;</para>
+  <para style="q2">wey ka kapallatengan te egkekaayu-ayu,</para>
+  <para style="q2">ware katamanan.</para>
+  <para style="b">
+    <verse number="19" style="v" />E Magbebaye ne Manama, kene nu ituhut ne due egpaalag-alag ne egsukul keykew,</para>
+  <para style="q2">wey hukumi nu ka ware migpalintutuu keykew.</para>
+  <para style="q1">
+    <verse number="20" style="v" />Hinaaldeka nu sikandan, e Magbebaye ne Manama!</para>
+  <para style="q2">wey ipeila nu kandan ne me etew re sikandan.</para>
+  <chapter number="10" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <verse number="12" style="v" />
+  <verse number="13" style="v" />
+  <verse number="14" style="v" />
+  <verse number="15" style="v" />
+  <verse number="16" style="v" />
+  <verse number="17" style="v" />
+  <verse number="18" style="v" />
+  <chapter number="11" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <chapter number="12" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <chapter number="13" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <chapter number="14" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <chapter number="15" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <chapter number="16" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <chapter number="17" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <verse number="12" style="v" />
+  <verse number="13" style="v" />
+  <verse number="14" style="v" />
+  <verse number="15" style="v" />
+  <chapter number="18" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <verse number="12" style="v" />
+  <verse number="13" style="v" />
+  <verse number="14" style="v" />
+  <verse number="15" style="v" />
+  <verse number="16" style="v" />
+  <verse number="17" style="v" />
+  <verse number="18" style="v" />
+  <verse number="19" style="v" />
+  <verse number="20" style="v" />
+  <verse number="21" style="v" />
+  <verse number="22" style="v" />
+  <verse number="23" style="v" />
+  <verse number="24" style="v" />
+  <verse number="25" style="v" />
+  <verse number="26" style="v" />
+  <verse number="27" style="v" />
+  <verse number="28" style="v" />
+  <verse number="29" style="v" />
+  <verse number="30" style="v" />
+  <verse number="31" style="v" />
+  <verse number="32" style="v" />
+  <verse number="33" style="v" />
+  <verse number="34" style="v" />
+  <verse number="35" style="v" />
+  <verse number="36" style="v" />
+  <verse number="37" style="v" />
+  <verse number="38" style="v" />
+  <verse number="39" style="v" />
+  <verse number="40" style="v" />
+  <verse number="41" style="v" />
+  <verse number="42" style="v" />
+  <verse number="43" style="v" />
+  <verse number="44" style="v" />
+  <verse number="45" style="v" />
+  <verse number="46" style="v" />
+  <verse number="47" style="v" />
+  <verse number="48" style="v" />
+  <verse number="49" style="v" />
+  <verse number="50" style="v" />
+  <chapter number="19" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <verse number="12" style="v" />
+  <verse number="13" style="v" />
+  <verse number="14" style="v" />
+  <chapter number="20" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <chapter number="21" style="c" />
+  <verse number="1" style="v" />
+  <verse number="2" style="v" />
+  <verse number="3" style="v" />
+  <verse number="4" style="v" />
+  <verse number="5" style="v" />
+  <verse number="6" style="v" />
+  <verse number="7" style="v" />
+  <verse number="8" style="v" />
+  <verse number="9" style="v" />
+  <verse number="10" style="v" />
+  <verse number="11" style="v" />
+  <verse number="12" style="v" />
+  <verse number="13" style="v" />
+  <chapter number="22" style="c" />
+  <verse number="1" style="v" />“Manama ku, Manama ku, mania te in-engkeran a nikeykew?” Mania te subla ka ne mariyu te migpangananey a keykew ne migdeg-uy? <verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><chapter number="23" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><chapter number="24" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="25" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><chapter number="26" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="27" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><chapter number="28" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="29" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="30" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /></para><chapter number="31" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /></para><chapter number="32" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /></para><chapter number="33" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /></para><chapter number="34" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /></para><chapter number="35" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><chapter number="36" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="37" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><chapter number="38" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><chapter number="39" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="40" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><chapter number="41" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="42" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="43" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><chapter number="44" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><chapter number="45" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><chapter number="46" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="47" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="48" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><chapter number="49" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><chapter number="50" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><chapter number="51" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><chapter number="52" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="53" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><chapter number="54" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><chapter number="55" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" />Piru egpabulig a te Magbebaye ne Manama<para style="q2">wey egluwasen a iya nikandin. <verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /></para><chapter number="56" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="57" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="58" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="59" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><chapter number="60" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="61" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="62" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="63" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><chapter number="64" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="65" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="66" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><chapter number="67" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><chapter number="68" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><chapter number="69" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><chapter number="70" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><chapter number="71" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><chapter number="72" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><chapter number="73" style="c" /><para style="ms">Igkatelu ne baseen</para><para style="mr">(Salumu 73-89)</para><para style="s">Ka matareng ne peggukum te Manama</para><para style="q1"><verse number="1" style="v" />Malehet iya ne meupiya ka Manama te Israil,</para><para style="q2">te seeye se malinis se me pusung.</para><para style="q1"><verse number="2" style="v" />Piru meyitenged keddiey, hapit e egkaawe ka pegsalig ku;</para><para style="q2">hapit e egkaawe ka pegpalintutuu ku. <verse number="3" style="v" />Su neimma a te me hambuhen</para><para style="q2">te pegkakita ku ne migmeupiya ka peg-ugpe te me makasesale. <verse number="4" style="v" />Ware sikandan mig-antus te me kasakitan;</para><para style="q2">meupiya ka peglelawa ran wey manekal. <verse number="5" style="v" />Ware sikandan mig-antus iling te duma ne etew;</para><para style="q2">ware sikandan neyirapi iling te nabayaan te duma. <verse number="6" style="v" />Purisu imbebalieg dan ka hambug dan;</para><para style="q2">wey ingkukumbale dan ka kabulut dan.</para><para style="q1"><verse number="7" style="v" />Napenu ka me pusung dan te mareet;</para><para style="q2">wey napenu ka me suman-suman dan te mareet ne eggimuwen.</para><para style="q1"><verse number="8" style="v" />Inlemetan dan ka duma wey inlalahan dan te mareet;</para><para style="q2">migpaambug sikandan ka egpanginaldek te duma.</para><para style="q2"><verse number="9" style="v" />Miglalag sikandan te mareet meyitenged te Manama ne diye te langit,</para><para style="q2">wey egpaambug ne egsuhu te me etew kayi te ampew te tane.</para><para style="q1"><verse number="10" style="v" />Purisu minsan ka keet-etawan te Manama migtahud e kandan</para><para style="q2">wey egpalintutuuwan ka langun ne iglalag dan.</para><para style="q1"><verse number="11" style="v" />Ne egkahi sikandan “Egmenuwen te Manama te egpakanengneng?</para><para style="q2">Duen ded katuenan te Maresen ne Manama?” <verse number="12" style="v" />Iling due ka me mareet ne me etew,</para><para style="q2">ware igkalaggew wey migmeyaman sikandan.</para><para style="q1"><verse number="13" style="v" />Purisu ware karuan ke egmalinisen ku ka pusung ku;</para><para style="q2">wey ware karuan ke egpakannekal a ne kene egkabiluwan ka me belad ku.</para><para style="q1"><verse number="14" style="v" />Su malasi a nikeykew paantusa, Manama;</para><para style="q2">imbaybayaran a nikeykew tagse maselem.</para><para style="b" /><para style="q1"><verse number="15" style="v" />Ke nakalalag e ma te iling te inlalag te mareet ne me etew,</para><para style="q2">egkaakalan kud e perem ka me anak nu.</para><para style="q1"><verse number="16" style="v" />Piru in-el-elehan ku te egsabut ke mania te egmeyaman ka mareet ne me etew,</para><para style="q2">piru amana seini ne malised ne egsabuten.</para><para style="q2"><verse number="17" style="v" />Taman te miggendiye ad e te Timplu te Manama,</para><para style="q1">ne henduen ku pad nasabut ke nekey ka egkatamanan dan.</para><para style="b" /><para style="q1"><verse number="18" style="v" />Ka malehet, diye nu sikandan itahu te malurek ne dalan</para><para style="q2">wey igpeendiye nu sikandan te karereetan.</para><para style="q1"><verse number="19" style="v" />Mahaan egkareetan sikandan,</para><para style="q2">wey egkengamatey sikandan te makaaldek-haldek ne egkatamanan.</para><para style="q1"><verse number="20" style="v" />Egpekeiling sikandan te taheinep ne egkaawe de te pegkamaselem;</para><para style="q2">te peggimata nu, Magbebaye, egkalaag e sikandan.</para><para style="b" /><para style="q1"><verse number="21" style="v" />Te timpu ne nasakitan ka pusung ku</para><para style="q2">wey neenhenduenan a,</para><para style="q1"><verse number="22" style="v" />neungel a wey wara a nakasabut;</para><para style="q2">Nekeiling a te mananap diye te tangkaan nu.</para><para style="q1"><verse number="23" style="v" />Piru minsan pad due, duma a nikeykew layun,</para><para style="q2">wey inggen-genan nu ka kawanan ne belad ku.</para><para style="q2"><verse number="24" style="v" />Mig-inahak a nikeykew pinaahi te tambag nu,</para><para style="q2">te katamanan eg-uyanen a nikeykew diye te meupiya ne peg-ugpe.</para><para style="q1"><verse number="25" style="v" />Warad e duma due te langit ne egsalihan ku, ke kene, sikeykew re!</para><para style="q2">Ne warad e duma ne igkeupii ku kayi te ampew te tane, ke kene, sikeykew naan de iya.</para><para style="q1"><verse number="26" style="v" />Minsan egmahuye ka lawa ku wey ka pusung ku,</para><para style="q2">piru ka Manama ka kanekal ku</para><para style="q1">wey ka keilangan ku te ware egtamanan.</para><para style="q1"><verse number="27" style="v" />Seeye se egpariyu keykew egkengatarin;</para><para style="q2">wey egdereetan nu ka langun ne kene egmatinumanen keykew.</para><para style="q1"><verse number="28" style="v" />Piru meyitenged keddiey, meupiya ke egmarani a te Manama.</para><para style="q2">Innimu ku ka Maresen ne Magbebaye ne helesanan ku;</para><para style="q2">wey igpangguhud ku te minsan hentew ka meupiya ne innimu nu.</para><chapter number="74" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><chapter number="75" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="76" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="77" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><chapter number="78" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><verse number="44" style="v" /><verse number="45" style="v" /><verse number="46" style="v" /><verse number="47" style="v" /><verse number="48" style="v" /><verse number="49" style="v" /><verse number="50" style="v" /><verse number="51" style="v" /><verse number="52" style="v" /><verse number="53" style="v" /><verse number="54" style="v" /><verse number="55" style="v" /><verse number="56" style="v" /><verse number="57" style="v" /><verse number="58" style="v" /><verse number="59" style="v" /><verse number="60" style="v" /><verse number="61" style="v" /><verse number="62" style="v" /><verse number="63" style="v" /><verse number="64" style="v" /><verse number="65" style="v" /><verse number="66" style="v" /><verse number="67" style="v" /><verse number="68" style="v" /><verse number="69" style="v" /><verse number="70" style="v" /><verse number="71" style="v" /><verse number="72" style="v" /><chapter number="79" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="80" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><chapter number="81" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><chapter number="82" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="83" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><chapter number="84" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="85" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="86" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><chapter number="87" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><chapter number="88" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><chapter number="89" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><verse number="44" style="v" /><verse number="45" style="v" /><verse number="46" style="v" /><verse number="47" style="v" /><verse number="48" style="v" /><verse number="49" style="v" /><verse number="50" style="v" /><verse number="51" style="v" /><verse number="52" style="v" /><chapter number="90" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><chapter number="91" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><chapter number="92" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><chapter number="93" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><chapter number="94" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><chapter number="95" style="c" /><para style="s">Ulahingen te Pegsaye</para><para style="q1"><verse number="1" style="v" />Hendini kew, eg-ulahingan ta ka Magbebaye!</para><para style="q2">Eggulub-gulub ki te kahale due te maresen ne manluluwas ta!</para><para style="q1"><verse number="2" style="v" />Egparani ki kandin duma te pegpasalamat</para><para style="q2">wey eggulub-gulub ki te kahale ne eg-ulahing te pegsaye diye te kandin!</para><para style="q1"><verse number="3" style="v" />Su ka Magbebaye maresen ne Manama,</para><para style="q2">wey maresen ne Hari ne labew te langun ne manama.</para><para style="q1"><verse number="4" style="v" />Miggen-genan din ka kinariraleman te tane</para><para style="q2">wey ka pulu te me bubungan.</para><para style="q1"><verse number="5" style="v" />Sikandin ka kamuney te dahat su innimu rin sika,</para><para style="q2">wey kandin man-e ka tane su intumpi din sika.</para><para style="q1"><verse number="6" style="v" />Hendini kew, egpariralem wey egsimba ki,</para><para style="q2">egpanimbuel ki diye te tangkaan te Magbebaye ne miggimu kanta!</para><para style="q1"><verse number="7" style="v" />Su Manama ta sikandin</para><para style="q2">wey keet-etawan ki nikandin ne intanggu rin</para><para style="q2">iling te me karniru.</para><para style="b" /><para style="q1">Na, emun ke egkarineg niyu kuntee ka igkahi te Manama,</para><para style="q1"><verse number="8" style="v" />kene niyu pakehala ka ulu niyu iling te innimu te kabuybuyahan niyu diye te Miriba</para><para style="q2">wey diye te Masa ne diye te inged ne ware mahinged.</para><para style="q1"><verse number="9" style="v" />Kahi te Manama, “Mig-el-elehan a te kabuybuyahan niyu</para><para style="q2">minsan se nakita ran e ka innimu ku kandan.</para><para style="q1"><verse number="10" style="v" />Ingkeepes ku sikandan seled te hep-at ne pulu ne tuig.</para><para style="q2">Nakakahi a te, ‘Makehal ne egpeikulen seini ne me etew</para><para style="q2">wey ware sikandan mig-ikul te impanulu ku!’</para><para style="q1"><verse number="11" style="v" />Sikan naa ka nabelu a wey migsaad ne migkahi,</para><para style="q2">‘Kene niyud iya egkarawat ka himelayanan ligkat keddiey.’ ”</para><chapter number="96" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="97" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><chapter number="98" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="99" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="100" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><chapter number="101" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="102" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><chapter number="103" style="c" /><para style="s">Ka geyinawa te Manama</para><para style="q1"><verse number="1" style="v" />Dayana nu ka Magbebaye, gimukud ku;</para><para style="q2">ka langun ne kayi te keddiey, dayana nu ka matulus ne ngaran din.</para><para style="q1"><verse number="2" style="v" />Dayana nu ka Magbebaye, gimukud ku;</para><para style="q2">wey kene nu kalingawi ka langun ne keupiya rin.</para><para style="q1"><verse number="3" style="v" />Egpasaylu sikandin te langun ne me sale nu,</para><para style="q2">wey egbawian din ka langun ne dalu nu.</para><para style="q1"><verse number="4" style="v" />Inluwas ka nikandin puun kamatayen</para><para style="q2">wey ingkurunaan ka nikandin te geyinawa rin wey te keyid-u rin.</para><para style="q1"><verse number="5" style="v" />Imbehayan ka nikandin te langun ne meupiya</para><para style="q2">su eyew kene ka egmayansan iling te kulahu.</para><para style="b" /><para style="q1"><verse number="6" style="v" />Miglapihan te Magbebaye te miggukum ka egkaleig-leig</para><para style="q2">wey imbehayan din sikandan te katareng.</para><para style="q1"><verse number="7" style="v" />Impanengneng din diye te ki Muwisis ka me pamaahi rin,</para><para style="q2">wey impanengneng din diye te langun ne etew te Israil ka me himu rin.</para><para style="q1"><verse number="8" style="v" />Hiid-uwen ka Magbebaye wey matumpis</para><para style="q2">mananey egkabelu wey dakel ka geyinawa rin.</para><para style="q1"><verse number="9" style="v" />Kene sikandin layun egsapad,</para><para style="q2">wey mahaan de egkaawe ka kabelu din.</para><para style="q1"><verse number="10" style="v" />Kene ki nikandin eglegparan sumale te neyimu ta ne me sale</para><para style="q2">wey kene ki nikandin egbalesan te neyimu ta ne mareet.</para><para style="q1"><verse number="11" style="v" />Su egpekeiling ka kariyuan te langit wey te tane</para><para style="q2">ka dakel ne peggeyinawa rin te seeye se due pegkaaldek kandin.</para><para style="q1"><verse number="12" style="v" />Ne egpekeiling degma ka kariyuan te igsile wey te iglineb,</para><para style="q2">ka peg-awe din te me sale ta.</para><para style="q1"><verse number="13" style="v" />Egpekeiling te keyid-u te sabeka ne amey diye te me anak din,</para><para style="q2">ka keyid-u te Manama te seeye se due pegkaaldek kandin.</para><para style="q1"><verse number="14" style="v" />Su nakanengneng sikandin ke immenu ki te eggimu,</para><para style="q2">nakasuman-suman sikandin ne alinepung ki re iya.</para><para style="q1"><verse number="15" style="v" />Ka etew, egpekeiling de te hilamunen ka umul rin,</para><para style="q2">migtubu sikandin iling te me bulak diye te mabenes.</para><para style="q1"><verse number="16" style="v" />Inniyup seini te kalamag wey miglayap e,</para><para style="q2">ne nalaag e seini wey warad e nakita.</para><para style="q1"><verse number="17" style="v" />Piru ka geyinawa te Magbebaye keneg kaawe te ware egkatamanan</para><para style="q2">te seeye se due pegkaaldek kandin. Ne egpabulus ka katareng din te langun ne me keet-etawan</para><para style="q1"><verse number="18" style="v" />ne migtuman te me Balaud din,</para><para style="q2">wey migtuman te me suhu din.</para><para style="q1"><verse number="19" style="v" />Intahu te Magbebaye ka trunu rin diye te langit,</para><para style="q2">wey sikandin ka mighari te langun.</para><para style="q1"><verse number="20" style="v" />Dayana niyu ka Magbebaye, sikaniyu se me panalihan</para><para style="q2">sikaniyu se maddesen ne iyan eg-uyan te planu rin,</para><para style="q2">wey migtuman te me suhu din.</para><para style="q1"><verse number="21" style="v" />Dayana niyu ka Magbebaye, sikaniyu se me sundalu te me panalihan,</para><para style="q2">ne migpamakey kandin wey eggimu te igkeupii rin.</para><para style="q1"><verse number="22" style="v" />Dayana niyu ka Magbebaye, sikaniyu se langun ne innimu rin,</para><para style="q2">te langun ne inged ne migmanduan din.</para><para style="q2">Dayana nu ka Magbebaye, gimukud ku.</para><chapter number="104" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><chapter number="105" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><verse number="44" style="v" /><verse number="45" style="v" /><chapter number="106" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><verse number="44" style="v" /><verse number="45" style="v" /><verse number="46" style="v" /><verse number="47" style="v" /><verse number="48" style="v" /></para><chapter number="107" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><chapter number="108" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="109" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><chapter number="110" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><chapter number="111" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="112" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="113" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="114" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="115" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><chapter number="116" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><chapter number="117" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><chapter number="118" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><chapter number="119" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><verse number="27" style="v" /><verse number="28" style="v" /><verse number="29" style="v" /><verse number="30" style="v" /><verse number="31" style="v" /><verse number="32" style="v" /><verse number="33" style="v" /><verse number="34" style="v" /><verse number="35" style="v" /><verse number="36" style="v" /><verse number="37" style="v" /><verse number="38" style="v" /><verse number="39" style="v" /><verse number="40" style="v" /><verse number="41" style="v" /><verse number="42" style="v" /><verse number="43" style="v" /><verse number="44" style="v" /><verse number="45" style="v" /><verse number="46" style="v" /><verse number="47" style="v" /><verse number="48" style="v" /><verse number="49" style="v" /><verse number="50" style="v" /><verse number="51" style="v" /><verse number="52" style="v" /><verse number="53" style="v" /><verse number="54" style="v" /><verse number="55" style="v" /><verse number="56" style="v" /><verse number="57" style="v" /><verse number="58" style="v" /><verse number="59" style="v" /><verse number="60" style="v" /><verse number="61" style="v" /><verse number="62" style="v" /><verse number="63" style="v" /><verse number="64" style="v" /><verse number="65" style="v" /><verse number="66" style="v" /><verse number="67" style="v" /><verse number="68" style="v" /><verse number="69" style="v" /><verse number="70" style="v" /><verse number="71" style="v" /><verse number="72" style="v" /><verse number="73" style="v" /><verse number="74" style="v" /><verse number="75" style="v" /><verse number="76" style="v" /><verse number="77" style="v" /><verse number="78" style="v" /><verse number="79" style="v" /><verse number="80" style="v" /><verse number="81" style="v" /><verse number="82" style="v" /><verse number="83" style="v" /><verse number="84" style="v" /><verse number="85" style="v" /><verse number="86" style="v" /><verse number="87" style="v" /><verse number="88" style="v" /><verse number="89" style="v" /><verse number="90" style="v" /><verse number="91" style="v" /><verse number="92" style="v" /><verse number="93" style="v" /><verse number="94" style="v" /><verse number="95" style="v" /><verse number="96" style="v" /><verse number="97" style="v" /><verse number="98" style="v" /><verse number="99" style="v" /><verse number="100" style="v" /><verse number="101" style="v" /><verse number="102" style="v" /><verse number="103" style="v" /><verse number="104" style="v" /><verse number="105" style="v" /><verse number="106" style="v" /><verse number="107" style="v" /><verse number="108" style="v" /><verse number="109" style="v" /><verse number="110" style="v" /><verse number="111" style="v" /><verse number="112" style="v" /><verse number="113" style="v" /><verse number="114" style="v" /><verse number="115" style="v" /><verse number="116" style="v" /><verse number="117" style="v" /><verse number="118" style="v" /><verse number="119" style="v" /><verse number="120" style="v" /><verse number="121" style="v" /><verse number="122" style="v" /><verse number="123" style="v" /><verse number="124" style="v" /><verse number="125" style="v" /><verse number="126" style="v" /><verse number="127" style="v" /><verse number="128" style="v" /><verse number="129" style="v" /><verse number="130" style="v" /><verse number="131" style="v" /><verse number="132" style="v" /><verse number="133" style="v" /><verse number="134" style="v" /><verse number="135" style="v" /><verse number="136" style="v" /><verse number="137" style="v" /><verse number="138" style="v" /><verse number="139" style="v" /><verse number="140" style="v" /><verse number="141" style="v" /><verse number="142" style="v" /><verse number="143" style="v" /><verse number="144" style="v" /><verse number="145" style="v" /><verse number="146" style="v" /><verse number="147" style="v" /><verse number="148" style="v" /><verse number="149" style="v" /><verse number="150" style="v" /><verse number="151" style="v" /><verse number="152" style="v" /><verse number="153" style="v" /><verse number="154" style="v" /><verse number="155" style="v" /><verse number="156" style="v" /><verse number="157" style="v" /><verse number="158" style="v" /><verse number="159" style="v" /><verse number="160" style="v" /><verse number="161" style="v" /><verse number="162" style="v" /><verse number="163" style="v" /><verse number="164" style="v" /><verse number="165" style="v" /><verse number="166" style="v" /><verse number="167" style="v" /><verse number="168" style="v" /><verse number="169" style="v" /><verse number="170" style="v" /><verse number="171" style="v" /><verse number="172" style="v" /><verse number="173" style="v" /><verse number="174" style="v" /><verse number="175" style="v" /><verse number="176" style="v" /></para><chapter number="120" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /></para><chapter number="121" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /></para><chapter number="122" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /></para><chapter number="123" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /></para><chapter number="124" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /></para><chapter number="125" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /></para><chapter number="126" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /></para><chapter number="127" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><chapter number="128" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><chapter number="129" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="130" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="131" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><chapter number="132" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><chapter number="133" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><chapter number="134" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><chapter number="135" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><chapter number="136" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /><verse number="25" style="v" /><verse number="26" style="v" /><chapter number="137" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="138" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><chapter number="139" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" />Egdeyrayen ku sikeykew tenged su naay-ayaran a wey kein-inuwan a (subla a ne kein-inuwan) ne pegkeyimu<para style="q2">wey tenged su tetelesi/kein-inuwan ka langun ne innimu nu;</para><para style="q2">wey nanengnengan ku amana seini. <verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /></para><chapter number="140" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><chapter number="141" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="142" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><chapter number="143" style="c" /><para style="s" /><para style="q1"><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /></para><chapter number="144" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><chapter number="145" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><chapter number="146" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><chapter number="147" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><chapter number="148" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><chapter number="149" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><chapter number="150" style="c" /><verse number="1" style="v" /><verse number="2" style="v" /><verse number="3" style="v" /><verse number="4" style="v" /><verse number="5" style="v" /><verse number="6" style="v" /></usx>

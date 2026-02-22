@@ -1,0 +1,14 @@
+\c 1
+\s Title of song B
+\m \v 1 Text lines of song
+\p More text lines of song
+\q1 Chorus line(s)
+.
+.
+.
+\c 2
+\s Title of song A
+\m \v 1 Text lines of song
+\p More text lines of song
+\q1 Chorus line(s)
+
