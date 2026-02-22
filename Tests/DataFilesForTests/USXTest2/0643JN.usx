@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usx version="2.0">
+  <book code="3JN" style="id">Matigsalug Version</book>
+  <para style="ide">UTF-8</para>
+  <para style="h">3 Huwan</para>
+  <para style="toc1">3 Huwan</para>
+  <para style="toc2">3 Huwan</para>
+  <para style="toc3">3Huw</para>
+  <para style="mt2">Ka igkatelu ne sulat ni</para>
+  <para style="mt1">Huwan</para>
+  <para style="is">Igpewun-a</para>
+  <para style="ip">Seini ka igkatelu ne sulat ni Apustul Huwan ne sabeka te me hibateen ni Hisus. Igpeendiye din seini te sabeka ne alukuy rin ne migpalintutuu ne migngaranan ki Gayu. Indayan ni Huwan si Gayu tenged te pegtanggu rin te duma ne migmalintutuu ne miggiphipanew ka egpangguhud te lalag te Manama. Migpanpanayan din degma si Gayu meyitenged te sabeka ne etew ne egngaranan ki Diyutripis ne mareet se batasan.</para>
+  <para style="iot">Ka nenasulat te seini ne baseen</para>
+  <para style="io1">Pegpangemusta 1-4</para>
+  <para style="io1">Indayan si Gayu 5-8</para>
+  <para style="io1">Indew-ey si Diyutripis 9-10</para>
+  <para style="io1">Impeggasal ran si Dimitriyu 11-12</para>
+  <para style="io1">Ka katammanan 13-15</para>
+  <chapter number="1" style="c" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">1: </char>
+      <char style="xt" closed="false">Him 19:29; Rum 16:23; 1Kur 1:14.</char>
+    </note> Sikeddiey si Huwan ka igbuyag te migmalintutuu ka migpeuyan te seini ne sulat. Egpangemusta a keykew Gayu ne miggeyinawaan ku ne suled due te kamalehetan.</para>
+  <para style="p">
+    <verse number="2" style="v" />Miggeyinawaan ku ne suled, mig-ampu a ne meupiya ka peg-ugpe nu wey ka peglelawa nu iling keupiya te gimukud nu. <verse number="3" style="v" />Due nanginguma kayi ne me suled ta, ne amana a nahale te napangguhuran a nikandan meyitenged te pegtuman nu te kamalehetan, wey ke immenu nu te peg-ugpe due te kamalehetan. <verse number="4" style="v" />Iyan de amana egpakapahale keddiey ke egpakarineg a ne migtuman te kamalehetan ka me anak ku te pegpalintutuu.</para>
+  <para style="s">Ka pegdayan ki Gayu</para>
+  <para style="p">
+    <verse number="5" style="v" />Miggeyinawaan ku ne suled, egkasalihan ka su intanggu nu ka me suled ta minsan ware ka nekeila kandan. <verse number="6" style="v" />Migpangguhud sikandan kayi te tangkaan te migmalintutuu meyitenged te peggeyinawa nu kandan. Ne emun ke eglibed sikandan due, meupiya perem ke egpakapahale te Manama ka pegbulig nu kandan pinaahi te pegbehey nu te keilangan dan te pegligkat dan. <verse number="7" style="v" />Su nangipanew sikandan eyew te pegpanulu meyitenged ki Kristu wey ware sikandan migdawat te minsan nekey ne diye egpuun te me etew ne ware migpalintutuu te Manama. <verse number="8" style="v" />Purisu, keilangan ne egbulihan ta ka iling due ne me etew, su eyew egkeyimu ki ne talagduma te himu meyitenged te kamalehetan.</para>
+  <para style="s">Si Diyutripis wey si Dimitriyu</para>
+  <para style="p">
+    <verse number="9" style="v" />Migpeuyanan kud te sulat ka migmalintutuu due, piru tenged su kene egkeupian si Diyutripis ne egkalepengan, imbalahad key nikandin. <verse number="10" style="v" />Purisu ke eggenduen a, igpangguhud ku ke nekey ka innimu rin ne pegsesalupet wey peg-iran-iran kanami. Ne kene ne sikan de, kene din man-e egsagsahipeen ka me suled ta, egbalabahan din pad man-e wey egdeldelen diye te punduk te migmalintutuu seeye se egkeupian ne egsagsahipe kandan.</para>
+  <para style="p">
+    <verse number="11" style="v" />Miggeyinawaan ku ne suled, kene nu ilingi ka mareet, ke kene, sikan de se meupiya. Ka minsan hentew ne eggimu te meupiya, kandin te Manama. Ka minsan hentew ne eggimu te mareet, ware nekeila te Manama.</para>
+  <para style="p">
+    <verse number="12" style="v" />Narayan si Dimitriyu te langun wey egkakita diye te himu rin ne mig-ikul sikandin te kamalehetan. Minsan degma sikanami, nakarayan kandin wey nakataha ka degma ne malehet iya ka impangguhud ney.</para>
+  <para style="s">Ka pegpanaha-taha</para>
+  <para style="p">
+    <verse number="13" style="v" />Masulug pad perem ka iglalag ku keykew, piru kena a egkeupian ne igsulat ku pad seini. <verse number="14" style="v" />Egkeupian a perem ne egpekegkita ki pad te mahaan, wey egpekeglalag pad.</para>
+  <para style="p">
+    <verse number="15" style="v" />Ka Manama ka egbehey keykew te keupianan. Migpangemusta keykew ka me alukuy nu kayi, wey ipangemuste e re degma te langun ne me alukuy ta due.</para>
+</usx>

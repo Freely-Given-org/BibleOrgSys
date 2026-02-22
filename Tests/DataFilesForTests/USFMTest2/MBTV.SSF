@@ -1,0 +1,61 @@
+﻿<ScriptureText>
+  <AdvancedView>False</AdvancedView>
+  <AutoKeyboardSwitching>T</AutoKeyboardSwitching>
+  <CallerSequence>a b c d e f g h i j k l m n o p q r s t u v w x y z aa bb cc dd ee ff gg hh ii jj kk ll mm nn oo pp qq rr ss tt uu vv ww xx yy zz</CallerSequence>
+  <ChapterMarker>c</ChapterMarker>
+  <ClosedByParagraph>No</ClosedByParagraph>
+  <ContinueAt>p p/q p/q1</ContinueAt>
+  <ContinueInnerQuotes>Yes</ContinueInnerQuotes>
+  <ContinueQuotes>Yes</ContinueQuotes>
+  <CreatedWithPTW6>T</CreatedWithPTW6>
+  <DefaultFont>Doulos SIL</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <Editable>T</Editable>
+  <Encoding>65001</Encoding>
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNameForm>41MAT</FileNameForm>
+  <FileNamePostPart>.SCP</FileNamePostPart>
+  <FileNamePrePart>MBT</FileNamePrePart>
+  <FullName>Matigsalug Version</FullName>
+  <Guid>b979d06d34ffb375c648e5002f95a6c4f84aedb3</Guid>
+  <InitialImportBooksDirectory>C:\My Paratext Projects\MBTV</InitialImportBooksDirectory>
+  <InnerInnerQuotes>“ ”</InnerInnerQuotes>
+  <InnerQuotes>‘ ’</InnerQuotes>
+  <IntroductionOutlineStyles>io io1 io2 io3 io4</IntroductionOutlineStyles>
+  <InvalidCharacters>/</InvalidCharacters>
+  <InvalidPunctuation>/ ) -_ _-_ . “ /_ [ _/ _- _[_ : , _”_</InvalidPunctuation>
+  <InvalidSentenceFinalPunctCapitalization>. ]</InvalidSentenceFinalPunctCapitalization>
+  <Language>Phil Unicode</Language>
+  <LeftToRight>T</LeftToRight>
+  <Name>MBTV</Name>
+  <NeverShowBackupReminder>T</NeverShowBackupReminder>
+  <Pairs>(/) [/] {/}</Pairs>
+  <PoeticStyles>ib iq iq1 iq2 iq3 q q1 q2 q3 q4 qc qr qs qa qac qm qm1 qm2 qm3 b</PoeticStyles>
+  <Quotes>“ ”</Quotes>
+  <StyleSheet>usfm-color.sty</StyleSheet>
+  <ValidCharacters>H i n s K a B u r I g p e w - k l t , “ b ” . S y m N h d M : 1 ) A 2 E ( L D – 5 3 4 6 0 9 7 8 T P ; G ! ‘ ’ ? U W — R c [ ] Y X v f á Á à À â Â ä Ä ā Ā ̀ Ã C é É è È ê Ê ë Ë ē Ē ḗ ḕ Ḕ F ̱ ǥ Ǥ í Í ì Ì î Î ï Ï ī Ī ɨ j J ˈ ḻ Ḻ ñ Ñ  o O ó Ó ò Ò ô Ô ö Ö ō Ō ṑ Ṑ õ Õ ₱ q Q ṟ Ṟ ú Ú ù Ù û Û ü Ü ū Ū V x   z Z</ValidCharacters>
+  <ValidPunctuation>- ,_ _“ ”_ ._ :_ )_ _( ;_ !_ _‘ ’_ ?_ — _[ ]_</ValidPunctuation>
+  <ValidSentenceFinalPunctCapitalization>: ” , ; ) ’ ? !</ValidSentenceFinalPunctCapitalization>
+  <VerboseQuotes>No</VerboseQuotes>
+  <VerseMarker>v</VerseMarker>
+  <Versification>4</Versification>
+  <NeedsEnglishLanguageFix>No</NeedsEnglishLanguageFix>
+  <NeedsPortugueseLanguageFix>No</NeedsPortugueseLanguageFix>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <RangeIndicator>-</RangeIndicator>
+  <SequenceIndicator>,</SequenceIndicator>
+  <ChapterVerseSeparator>:</ChapterVerseSeparator>
+  <ChapterRangeSeparator>—</ChapterRangeSeparator>
+  <BookSequenceSeparator>; </BookSequenceSeparator>
+  <ChapterNumberSeparator>; </ChapterNumberSeparator>
+  <ReferenceFinalPunctuation>.</ReferenceFinalPunctuation>
+  <BookSourceForMarkerXt>Abbreviation</BookSourceForMarkerXt>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <Directory>C:\My Paratext Projects\MBTV</Directory>
+  <TextHasChanged>F</TextHasChanged>
+  <LastBackedUp>2012Nov07</LastBackedUp>
+  <StylesheetModificationDate>8/12/2011 3:31:27 AM</StylesheetModificationDate>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111000000000000000000000000000000000000000000000000000000000</BooksPresent>
+  <FileNameChapterNumberForm />
+  <Naming PrePart="MBT" PostPart=".SCP" BookNameForm="41MAT" ChapterNumberForm="" />
+</ScriptureText>

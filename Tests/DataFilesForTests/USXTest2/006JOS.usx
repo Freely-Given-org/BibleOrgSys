@@ -1,0 +1,720 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usx version="2.0">
+  <book code="JOS" style="id">Matigsalug Version</book>
+  <para style="ide">UTF-8</para>
+  <para style="h">Huswi</para>
+  <para style="toc1">Huswi</para>
+  <para style="toc2">Huswi</para>
+  <para style="toc3">Huswi</para>
+  <para style="mt">Huswi</para>
+  <para style="is">Igpewun-a</para>
+  <para style="ip" />
+  <para style="iot">Ka nenasulat te seini ne baseen</para>
+  <para style="io1" />
+  <chapter number="1" style="c" />
+  <para style="s">Ka suhu te Magbebaye ne Manama ki Huswi</para>
+  <para style="p">
+    <verse number="1" style="v" />Pegkeimpus te kamatayen ni Muwisis ne suluhuanen te Magbebaye ne Manama. Ka talagbulig ki Muwisis ne si Huswi ne anak ni Nun migkahiyan te Magbebaye ne Manama, <verse number="2" style="v" />“Migpatey e si Muwisis ne suluhuanen ku, purisu, sikeykew wey ka langun ne etew keilangan ne egpangandam te peglapas te Hurdan ne weyig peendiye te tane ne igbehey ku kaniyu te keet-etawan ku. <verse number="3" style="v" />Igbehey ku kaniyu ka langun ne inged ne egkariekan niyu sumale te insaad ku ki Muwisis. <verse number="4" style="v" />Ka eletanan niyu puun te inged ne kene egkeugpaan peendiye te Libanun, wey peendiye te dakel ne weyig ne iyan ka Iyupratis, wey ka langun ne tane te Hitihanun peendiye te dakel ne dahat ne diye dapit te iglineb. <verse number="5" style="v" />Ware egpakatalu keykew taheed te manekal ke pad. Egdumaan ku sikeykew iling te pegduma ku ki Muwisis wey kene ku iya sikeykew eg-engkeran. <verse number="6" style="v" />Pakannekal ka wey pakabbulut ka su sikeykew ka egpangulu te keet-etawan te pegpanunud te tane ne insaad ku ne igbehey te me kabuybuyahan dan. <verse number="7" style="v" />Pakannekal ke re iya wey pakabbulut ka, keilangan ne egkatuman nu ka intiru ne balaud ne imbehey keykew te suluhuanen ku ne si Muwisis. Kene nu samsamilii ka minsan nekey ne baad kayi su eyew egmalampusen ka minsan hendei ka egbaye. <verse number="8" style="v" />Kene nu iya lingawi te egbasa ka Libru te balaud. Palemlema nu seini te aldew wey marusilem, wey keilangan ne egkatuman nu ka langun ne nasulat kayi. Te iling due ne paahi, egmatubung ka wey egmalampusen. <verse number="9" style="v" />Sumsumana nu ne insuhu ku sikeykew, ‘Pakannekal ka wey pakabbulut ka, kene ka iya kaaldek wey egmahuye su ka Magbebaye ne Manama nu egduma keykew minsan hendei ka egbaye.’ ”</para>
+  <para style="p">
+    <verse number="10" style="v" />Ne insuhu ni Huswi ka pangulu te me etew te miggenendue, <verse number="11" style="v" />“Pangendiyei niyu ka kampu wey kahii niyu ka me etew te egpepangandamen sikandan te egkakeen su seled kuntee te tatelu ne aldew egpanlapas kid diye te Weyig ne Hurdan eyew te peg-angken te tane ne imbehey kanta te Magbebaye ne Manama ta.”</para>
+  <para style="p">
+    <verse number="12" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">1:12-15: </char>
+      <char style="xt" closed="false">Num 32:28-32; Diy 3:18-20; Huswi 22:1-6.</char>
+    </note> Ne ingkahiyan ni Huswi ka me kabuhalan ni Rubin, ni Gad wey ka baad te me kabuhalan ni Manasis, <verse number="13" style="v" />“Kene niyu kalingawi ka ingkahi kaniyu ni Muwisis ne suluhuanen te Magbebaye ne Manama. Ne igbehey kaniyu te Magbebaye ne Manama ka seini ne tane eyew eg-ugpaan niyu. <verse number="14" style="v" />Egpalunggat pad ka me asawa niyu, me anak niyu, wey me ayam niyu kayi te tane te igsile te Hurdan ne imbehey kaniyu ni Muwisis. Piru keilangan ne eggun-a eglapas ka me sundalu niyu ka egbulig te me duma niyu, <verse number="15" style="v" />emun ke egkaangken dan e ka tane ne igbehey kandan te Magbebaye ne Manama. Egkaayun e ne eglibed kew wey eg-ugpe kayi te tane te igsile te Hurdan ne imbehey kaniyu ni Muwisis ne suluhuanen te Magbebaye ne Manama.”</para>
+  <para style="p">
+    <verse number="16" style="v" />Ne migtabak sikandan ki Huswi, “Eggimuwen ney ka langun ne insuhu nu kanami, wey eggendiye key minsan hendei ne egpeendiya-an nu kanami. <verse number="17" style="v" />Eg-ikul key keykew iling te peg-iling ney ki Muwisis. Egdumaan ka te Magbebaye ne Manama iling te pegduma rin ki Muwisis. <verse number="18" style="v" />Eggimatayan ka minsan hentew ne egsupak wey ka kene egtuman te suhu nu. Lig-ena nu ka pegkeetew nu wey kene ka paliliyas.”</para>
+  <chapter number="2" style="c" />
+  <para style="s">Ka talag-iipat ne impeuyan ni Huswi diye te Hiriku</para>
+  <para style="p">
+    <verse number="1" style="v" />
+    <note caller="-" style="x">
+      <char style="xo" closed="false">2:1: </char>
+      <char style="xt" closed="false">Hib 11:31; Huswi 2:25.</char>
+    </note> Ne migsusuhu te heles de si Huswi ne anak ni Nun te daruwa ne talag-iipat ne egpuun diye te kampu te Sitim wey ingkahiyan din, “Nengnengi niyu taman te egkeyimu niyu ka tane te Kanaan, labi en iya ka Hiriku.” Sikan naa ka nangipanew sikandan wey te pegginguma ran e diye te siyudad, diye sikandan miggirehe te baley ni Rahab, ka malitan ne egpamelegye te lawa. <verse number="2" style="v" />Piru nakahiyan ka Hari te Hiriku, “Due me matig-Israil ne nakaseled kuntee ne marusilem kayi te inged ta eyew eg-iipat te tane ta.” <verse number="3" style="v" />Ne impakahiyan te Hari te Hiriku si Rahab, “Keilangan ne igpalihawang nu ka migtuen diye te baley nu, su miggenkayi sikandan ka eg-iipat te intiru ne tane ta.”</para>
+  <para style="p">
+    <verse number="4" style="v" />Piru inggelesan te malitan ka daruwa ne lukes wey migkahi sikandin, “Uya, malehet ne miggendini keddiey ka me lukes, piru wara a nakataha ke hendei sikandan egpuun. <verse number="5" style="v" />Te marusilem e te mahaan e eglekeban ka gumawan te siyudad, nangipanew e sikandan wey wara ad nakataha ke hendeid sikandan miggendiye. Piru egkeumaan niyu pad ke egtalukunan niyu sikandan.” <verse number="6" style="v" />Kunaleg te in-uyan bes ni Rahab ka me talag-iipat diye te atep te baley rin wey inggelesan din diye te tinempug ne pinamula ne eggimuwen ne linu ne inlimud din diye. <verse number="7" style="v" />Sikan naa ka intalukunan te me sundalu ka me talag-iipat. Te peglihawang dan inlekeban dan e ka gumawan te siyudan. Ne nekeyinguma skandan taman diye te lapasanan te weyig ne Hurdan.</para>
+  <para style="p">
+    <verse number="8" style="v" />Te ware pad miglipereng te seeye ne marusilem ka me talag-iiapat, migpamaneyik si Rahab diye te atep eyew egpakiglalag kandan. <verse number="9" style="v" />Ne ingkahiyan din sikandan, “Nakataha a ne imbehey kaniyu te Magbebaye ne Manama ka seini ne tane, wey seini ka egpuunan ne nenaliyasan key kaniyu wey amana nenaaldek kaniyu ka langun ne mahinged kayi. <verse number="10" style="v" />Nakarineg key ke immenu te pegpeeti te Magbebaye ne Manama ka Dahat ne Malalab te timpu te peglihawang niyu puun te Ihiptu. Nakarineg key degma ke immenu niyu te peggimatey ka daruwa ne Hari te Amunihanun ne si Sihun wey si Ug diye te igsile te Hurdan. <verse number="11" style="v" />Te pegkarineg ney kayi, naawaan ka tagse sabeka kanami te kabulut tenged te innimu niyu. Su ka Magbebaye ne Manama iyan iya ka Manama te langit wey te tane. <verse number="12" style="v" />Purisu kuntee, pahunlibet kew keddi pinaahi te ngaran te Magbebaye ne Manama ne egluwasen niyu ka pamilya ku iling te pegluwas ku kaniyu, wey behayi a nikaniyu te kasihuruwan ne egtumanen niyu seini. <verse number="13" style="v" />Luwasa niyu ne egkeuyag ka amey ku, iney ku, me suled ku, me atebey ku, wey ka langun ne pamilya ran, wey luwasa key nikaniyu puun te kamatayen.”</para>
+  <para style="p">
+    <verse number="14" style="v" />Ne migkahiyan sikandin te daruwa ne etew, “Emun ke kene nu igwangal-wangal ka innimu ney, egpeyimatey key para kaniyu. Ne emun ke igbehey e te Magbebaye ne Manama ka seini ne tane, eg-ay-ayaran ney sikeykew wey egmatinumanen key keykew.”</para>
+  <para style="p">
+    <verse number="15" style="v" />Purisu intuntun sikandan ni Rahab diye te bintana pinaahi te lubid, puun su diye ma ka baley rin lenged te alad te siyudad. <verse number="16" style="v" />Ne ingkahiyan din sikandan, “Pangendiye kew te bubungan su eyew kene kew egkakita te me sundalu kaniyu. Heles kew diye seled te tatelu ne aldew taman te eglibed e sikandan. Pegkeimpus, kaayun e ne egpabulus kew te hipanew niyu.”</para>
+  <para style="p">
+    <verse number="17" style="v" />Ne ingkahiyan sikandin te daruwa ne etew, “Kene key egkeyiketan te impapahunlibet nu kanami angin e ke egkatuman nu ka me seini: <verse number="18" style="v" />Te peglusud ney kayi te tane niyu, ihiket nu te bintana ka seini se malalab ne lubid ne inggamit nu te pegtuntun kanami. Ne libulunga nu diye te baley nu ka amey nu, iney nu, me suled nu wey langun ne pamilya nu. <verse number="19" style="v" />Emun ke due eglihawang diye te baley nu ne eggendiye te dalan wey egpatey sikandin, warad labet ney su seyyup din ma. Piru emun ke eggilalabetan ka diye te baley nu, sikanami ka egpanabak due. <verse number="20" style="v" />Piru emun ke igwangal-wangal nu innimu ney, kene key egpakapanabak te impapahunlibet nu kanami.” <verse number="21" style="v" />Ne migtabak sikandin, “Uya, egtumanen ku ka ingkahi niyu.” Ne impeyipanew din e sikandan. Te nekeyipanew e sikandan, inniket din e ka malalab ne lubid diye te bintana din.</para>
+  <para style="p">
+    <verse number="22" style="v" />Ne nangendiye ka me talag-iipat te bubungan wey nangeles sikandan diye taheed te impamitew sikandan te me sundalu seled te tatelu ne aldew diye te langun ne deralanen, piru ware nakita sikandan. <verse number="23" style="v" />Ne nanlibed e ka daruwa ne etew--nanupang sikandan puun diye te bubungan, nanlapas sikandan te weyig, taman te nekeyingume e sikandan diye ki Huswi ne anak ni Nun, wey ingguhud dan kandin ka langun ne neyitabu. <verse number="24" style="v" />Ingkahiyan dan si Huswi, “Malehet iya ne imbehey te Magbebaye ne Manama kanta ka intiru ne tane; wey timul pad due, nenaaldek ka langun ne etew kanta.”</para>
+  <chapter number="3" style="c" />
+  <para style="s">Ka peglapas te keet-etawan te Israil te Hurdan</para>
+  <para style="p">
+    <verse number="1" style="v" />Te seup ne aldew, migselem-selem mig-enew ensi Huswi wey ka langun ne matig-Israil. Ne migligkat/nangawe sikandan puun te Sitim wey nangendiye te Hurdan, wey nangekampu sikandan diye te ware pad sikandan miglapas. <verse number="2" style="v" />Pegkeimpus te tatelu ne aldew, imbayaan te me pangulu ka kampu, <verse number="3" style="v" />ne ingkahiyan dan ka me etew, “Emun ke egkakita niyu ka me talagpanubad ne migyayung te Tahuanan te Kasabutan te Magbebaye ne Manama ne Manama niyu, pangalaglag kew kayi wey ikul kew kandan. <verse number="4" style="v" />Ne egkatahaan niyu ke hendei kew egbaye, puun su ware kew man de due nekeengkayi ne dalan dengan. Piru me sabeka ne kilumitru ka kariyu niyu te Tahuanan te Kasabutan; kene kew danirani kayi.”</para>
+  <para style="p">
+    <verse number="5" style="v" />Ne ingkahiyan ni Huswi ka keet-etawan, “Himuwa niyu ne matulus ka pegkeetew niyu, su eggimu kaaselem te kein-inuwan ka Magbebaye ne Manama para kaniyu.” <verse number="6" style="v" />Ne ingkahiyan ni Huswi ka me talagpanubad, “Uyana niyu ka Tahuanan te Kasabutan wey hun-a kew te keet-etawan.” Sikan naa ka in-uyan dan seini wey inggun-a sikandan te keet-etawan.</para>
+  <para style="p">
+    <verse number="7" style="v" />Ne ingkahiyan te Magbebaye ne Manama si Huswi, “Kuntee ne aldew, egbantuhen ka te langun ne matig-Israil eyew egkanengnengan dan ne indumaan ku sikeykew iling te pegduma ku ki Muwisis. <verse number="8" style="v" />Suhua nu ka me talagpanubad ne migyayung te Tahuanan te Kasabutan, ‘Emun ke egpekeyinguma kew e diye te ilis te weyig ne Hurdan, diye kew pa sesasindeg te weyig.’ ”</para>
+  <para style="p">
+    <verse number="9" style="v" />Ne ingkahiyan ni Huswi ka keet-etawan te Israil, “Hendini kew wey pammineg kew te inlalag te Magbebaye ne Manama ne Manama niyu.” <verse number="10" style="v" />Ne migkahi pad man-e si Huswi, “Egkatahaan niyu kuntee ne egdumaan kew te manekal ne Manama. Eg-aminen din egdelrela due te kaniyu ka me Kanaanun, me Hitihanun, me Hibihanun, me Pirisihanun, me Girgasihanun, me Amunihanun, wey me Hibusihanun. <verse number="11" style="v" />Te peglapas niyu te Hurdan, iyan eggun-a kaniyu ka migyayung te Tahuanan te Kasabutan te Magbebaye ne Manama ne migmandu te intiru ne kalibutan. <verse number="12" style="v" />Purisu kuntee, alam kew te sapulu wey daruwa (12) ne etew puun te kabuhalan te Israil, tigsalimbeka ne etew te tagse kabuhalan. <verse number="13" style="v" />Te timpu ne egpakariek e te weyig ka me talagpanubad ne migyayung te Tahuanan te Kasabutan te Magbebaye ne Manama te intiru ne kalibutan, eg-engked e egbagiyu ka weyig. Ne egkasubung diye te sabeka ne inged ka weyig ne diye te ampew.”</para>
+  <para style="p">
+    <verse number="14-15" style="v" />Sikan naa ka nangawe e ka me etew diye te balungbalung dan su eglapas e sikandan te Hurdan. Miggun-a kandan ka me talagpanubad ne migyayung te Tahuanan te Kasabutan. Timpu seeye te tinggaani wey migbagiyu ka Hurdan. Te pegginguma te me talagpanubad ne migyayung te Tahuanan te Kasabutan diye te ilis te weyig wey te pegdiek dan te weyig, <verse number="16" style="v" />warad migdalanag ne weyig ne diye te ampew. Ne nasubung e seini diye te ampew ne siyudad te Adam ne marani te Saritan. Ne warad degma mig-tulayas ne weyig ne egpeendiye te Namatey ne Dahat. Sikan naa ka miglapas e ka me etew peendiye te marani te Hiriku. <verse number="17" style="v" />Nenasindeg ka me talagpanubad ne migyayung te Tahuanan te Kasabutan diye te taliware te Hurdan ne migmammare e. Intaharan dan taman te naamin e nakalapas ka langun ne keet-etawan diye te mammara ne tane te Hurdan.</para>
+  <chapter number="4" style="c" />
+  <para style="s">Ka me batu isip handumanan</para>
+  <para style="p">
+    <verse number="1" style="v" />Te nakalapas e te Hurdan ka langun ne keet-etawan te Israil, ingkahiyan te Magbebaye ne Manama si Huswi, <verse number="2" style="v" />“Alam ka te sapulu wey daruwa (12) ne etew puun te keet-etawan, tigsalimbeka ne etew te tagse kabuhalan. <verse number="3" style="v" />Ne suhua nu sikandan ne eg-angey te sapulu wey daruwa (12) ne batu diye te taliware te Hurdan, diye lenged te nariekan e iya te me talagpanubad. Uyana niyu seini wey itahu diye te inged ne egkampuwan niyu kangkuwa ne marusilem.”</para>
+  <para style="p">
+    <verse number="4" style="v" />Ne in-umew ni Huswi ka naalam din ne sapulu wey daruwa (12) ne etew puun te keet-etawan, tigsalimbeka tagse kabuhalan, <verse number="5" style="v" /><verse number="6" style="v" /><verse number="7" style="v" /><verse number="8" style="v" /><verse number="9" style="v" /><verse number="10" style="v" /><verse number="11" style="v" /><verse number="12" style="v" /><verse number="13" style="v" /><verse number="14" style="v" /><verse number="15" style="v" /><verse number="16" style="v" /><verse number="17" style="v" /><verse number="18" style="v" /><verse number="19" style="v" /><verse number="20" style="v" /><verse number="21" style="v" /><verse number="22" style="v" /><verse number="23" style="v" /><verse number="24" style="v" /></para>
+  <chapter number="5" style="c" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+  </para>
+  <chapter number="6" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+  </para>
+  <chapter number="7" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+  </para>
+  <chapter number="8" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+    <verse number="35" style="v" />
+  </para>
+  <chapter number="9" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+  </para>
+  <chapter number="10" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+    <verse number="35" style="v" />
+    <verse number="36" style="v" />
+    <verse number="37" style="v" />
+    <verse number="38" style="v" />
+    <verse number="39" style="v" />
+    <verse number="40" style="v" />
+    <verse number="41" style="v" />
+    <verse number="42" style="v" />
+    <verse number="43" style="v" />
+  </para>
+  <chapter number="11" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+  </para>
+  <chapter number="12" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+  </para>
+  <chapter number="13" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+  </para>
+  <chapter number="14" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+  </para>
+  <chapter number="15" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+    <verse number="35" style="v" />
+    <verse number="36" style="v" />
+    <verse number="37" style="v" />
+    <verse number="38" style="v" />
+    <verse number="39" style="v" />
+    <verse number="40" style="v" />
+    <verse number="41" style="v" />
+    <verse number="42" style="v" />
+    <verse number="43" style="v" />
+    <verse number="44" style="v" />
+    <verse number="45" style="v" />
+    <verse number="46" style="v" />
+    <verse number="47" style="v" />
+    <verse number="48" style="v" />
+    <verse number="49" style="v" />
+    <verse number="50" style="v" />
+    <verse number="51" style="v" />
+    <verse number="52" style="v" />
+    <verse number="53" style="v" />
+    <verse number="54" style="v" />
+    <verse number="55" style="v" />
+    <verse number="56" style="v" />
+    <verse number="57" style="v" />
+    <verse number="58" style="v" />
+    <verse number="59" style="v" />
+    <verse number="60" style="v" />
+    <verse number="61" style="v" />
+    <verse number="62" style="v" />
+    <verse number="63" style="v" />
+  </para>
+  <chapter number="16" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+  </para>
+  <chapter number="17" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+  </para>
+  <chapter number="18" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+  </para>
+  <chapter number="19" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+    <verse number="35" style="v" />
+    <verse number="36" style="v" />
+    <verse number="37" style="v" />
+    <verse number="38" style="v" />
+    <verse number="39" style="v" />
+    <verse number="40" style="v" />
+    <verse number="41" style="v" />
+    <verse number="42" style="v" />
+    <verse number="43" style="v" />
+    <verse number="44" style="v" />
+    <verse number="45" style="v" />
+    <verse number="46" style="v" />
+    <verse number="47" style="v" />
+    <verse number="48" style="v" />
+    <verse number="49" style="v" />
+    <verse number="50" style="v" />
+    <verse number="51" style="v" />
+  </para>
+  <chapter number="20" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+  </para>
+  <chapter number="21" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+    <verse number="35" style="v" />
+    <verse number="36" style="v" />
+    <verse number="37" style="v" />
+    <verse number="38" style="v" />
+    <verse number="39" style="v" />
+    <verse number="40" style="v" />
+    <verse number="41" style="v" />
+    <verse number="42" style="v" />
+    <verse number="43" style="v" />
+    <verse number="44" style="v" />
+    <verse number="45" style="v" />
+  </para>
+  <chapter number="22" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+    <verse number="34" style="v" />
+  </para>
+  <chapter number="23" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+  </para>
+  <chapter number="24" style="c" />
+  <para style="s" />
+  <para style="p">
+    <verse number="1" style="v" />
+    <verse number="2" style="v" />
+    <verse number="3" style="v" />
+    <verse number="4" style="v" />
+    <verse number="5" style="v" />
+    <verse number="6" style="v" />
+    <verse number="7" style="v" />
+    <verse number="8" style="v" />
+    <verse number="9" style="v" />
+    <verse number="10" style="v" />
+    <verse number="11" style="v" />
+    <verse number="12" style="v" />
+    <verse number="13" style="v" />
+    <verse number="14" style="v" />
+    <verse number="15" style="v" />
+    <verse number="16" style="v" />
+    <verse number="17" style="v" />
+    <verse number="18" style="v" />
+    <verse number="19" style="v" />
+    <verse number="20" style="v" />
+    <verse number="21" style="v" />
+    <verse number="22" style="v" />
+    <verse number="23" style="v" />
+    <verse number="24" style="v" />
+    <verse number="25" style="v" />
+    <verse number="26" style="v" />
+    <verse number="27" style="v" />
+    <verse number="28" style="v" />
+    <verse number="29" style="v" />
+    <verse number="30" style="v" />
+    <verse number="31" style="v" />
+    <verse number="32" style="v" />
+    <verse number="33" style="v" />
+  </para>
+</usx>
