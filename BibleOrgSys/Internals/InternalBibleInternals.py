@@ -912,7 +912,7 @@ def briefDemo() -> None:
     #     from BibleOrgSys.Formats.USFMBible import USFMBible
 
     #     testData = ( # name, abbreviation, folderpath for USFM files
-    #             ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+    #             ("Matigsalug", 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/') ),
     #             ) # You can put your USFM test folder here
 
     #     for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -959,7 +959,7 @@ def fullDemo() -> None:
     #     from BibleOrgSys.Formats.USFMBible import USFMBible
 
     #     testData = ( # name, abbreviation, folderpath for USFM files
-    #             ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+    #             ("Matigsalug", 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/') ),
     #             ) # You can put your USFM test folder here
 
     #     for j, (name, abbrev, testFolder) in enumerate( testData ):

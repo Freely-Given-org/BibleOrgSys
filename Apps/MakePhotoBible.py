@@ -66,7 +66,7 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # Set your own here
+inputFolder = Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # Set your own here
 
 
 from gettext import gettext as _

@@ -6,7 +6,7 @@
 #
 # Module handling EasyWorship Bible files
 #
-# Copyright (C) 2015-2023 Robert Hunt
+# Copyright (C) 2015-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -48,10 +48,10 @@ from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARK
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 
 
-LAST_MODIFIED_DATE = '2023-02-02' # by RJH
+LAST_MODIFIED_DATE = '2026-02-27' # by RJH
 SHORT_PROGRAM_NAME = "EasyWorshipBible"
 PROGRAM_NAME = "EasyWorship Bible format handler"
-PROGRAM_VERSION = '0.16'
+PROGRAM_VERSION = '0.17'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -681,7 +681,7 @@ def testEWB( TEWBfilename ):
     if BibleOrgSysGlobals.commandLineArguments.export:
         ##ewb.toDrupalBible()
         ewb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), ('OT','PSA','11','0'), \
                         ('OT','DAN','1','21'),
                         ('OT','ZEC','2','6'),('OT','ZEC','2','7'), # Bridged in MBTV and GNT
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -710,6 +710,7 @@ def briefDemo() -> None:
     Main program to handle command line parameters and then run what they want.
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Brief Demo…" )
 
     BiblesFolderpath = Path( '/srv/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
@@ -814,13 +815,14 @@ def fullDemo() -> None:
     Full demo to check class is working
     """
     BibleOrgSysGlobals.introduceProgram( __name__, PROGRAM_NAME_VERSION, LAST_MODIFIED_DATE )
+    vPrint( 'Normal', DEBUGGING_THIS_MODULE, "Full Demo…" )
 
     BiblesFolderpath = Path( '/srv/Bibles/' )
     #testFolder = BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'EasyWorshipBible/' )
     testFolder = BiblesFolderpath.joinpath( 'EasyWorship Bibles/' )
 
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = EasyWorshipBibleFileCheck( testFolder )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, "EasyWorship TestA1", result1 )
         result2 = EasyWorshipBibleFileCheck( testFolder, autoLoad=True )
@@ -856,8 +858,8 @@ def fullDemo() -> None:
         nonEnglish = (  )
         bad = ( 'aa.ewb','gkm.ewb','gnt.ewb','hcsb.ewb','msg.ewb','rsv.ewb' )
         allModules = good + bad
-        for j, testFilename in enumerate( good ): # Choose one of the above: good, nonEnglish, bad, allModules
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nEasyWorship D{}/ Trying {}".format( j+1, testFilename ) )
+        for j, testFilename in enumerate( one ): # Choose one of the above: one, good, nonEnglish, bad, allModules
+            vPrint( 'Normal', DEBUGGING_THIS_MODULE, "\nEasyWorship B{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             allModulesKeepDict[testFilename] = testEWB( testFilename )

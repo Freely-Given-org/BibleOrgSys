@@ -1941,7 +1941,7 @@ def fullDemo() -> None:
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
-                            Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                            Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'),
                             "BOSOutputFiles/BOS_USFM2_Export/",
                             "BOSOutputFiles/BOS_USFM2_Reexport/",
                             "BOSOutputFiles/BOS_USFM3_Export/",
