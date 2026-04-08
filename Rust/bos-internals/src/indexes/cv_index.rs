@@ -337,8 +337,8 @@ impl InternalBibleBookCVIndex {
         self.entries = entries;
         self.index_data.clear();
 
-        let mut current_chapter: Option<CompactString> = None;
-        let mut current_verse: Option<CompactString> = None;
+        let mut current_chapter: Option<CompactString> = Some(CompactString::from("-1"));
+        let mut current_verse: Option<CompactString> = Some(CompactString::from("0"));
         let mut current_start: usize = 0;
         let mut context: Vec<CompactString> = Vec::new();
 

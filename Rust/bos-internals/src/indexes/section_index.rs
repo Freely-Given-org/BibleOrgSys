@@ -13,8 +13,8 @@ use crate::error::LookupError;
 
 /// Markers that define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
+    "is1", // Introductory sections
     "ms1", "ms2", "ms3", // Major sections
-    // "s", "s1", "s2", "s3", "s4", // Section headings
     "s1", // Section headings
     // "c", // Chapters
 ];
@@ -274,7 +274,7 @@ impl InternalBibleBookSectionIndex {
         self.entries = entries;
         self.index_data.clear();
 
-        let mut current_chapter_num_str = CompactString::from("0");
+        let mut current_chapter_num_str = CompactString::from("-1");
         let mut current_verse_num_str = CompactString::from("0");
         let mut section_start: Option<(ChapterVerse, u16, CompactString, CompactString)> = None;
         let mut context: Vec<CompactString> = Vec::new();
@@ -282,8 +282,17 @@ impl InternalBibleBookSectionIndex {
         for (i, entry) in self.entries.iter().enumerate() {
             let marker = entry.marker();
 
+            if marker == "id" {
+                section_start = Some((
+                    ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str()),
+                    i.try_into().unwrap(),
+                    CompactString::from("Headers"),
+                    CompactString::from(entry.clean_text().chars().take(3).collect::<String>()),
+                ));
+                // print!("Starting new section at id: {:?}\n", section_start);
+            }
             // Track current chapter/verse
-            if marker == "c" {
+            else if marker == "c" {
                 current_chapter_num_str = CompactString::from(entry.clean_text());
                 current_verse_num_str = CompactString::from("0");
             } else if marker == "v" {
@@ -293,7 +302,11 @@ impl InternalBibleBookSectionIndex {
             }
 
             // Check for section markers
-            if is_section_marker(marker) {
+            else if is_section_marker(marker) {
+                // print!("  About to close {:?} section with marker {}\n", section_start, marker);
+                if current_chapter_num_str == "-1" { // then we're still in the header or intro section
+                    current_verse_num_str = i.to_string().into();
+                }
                 // Close previous section
                 if let Some((start_cv, start_idx, reason, name)) = section_start.take() {
                     let entry = SectionIndexEntry::new(
@@ -305,7 +318,9 @@ impl InternalBibleBookSectionIndex {
                         name,
                         context.clone(),
                     );
+                    // print!("   Created section entry: {:?} for {}\n\n", entry, start_cv);
                     self.index_data.insert(start_cv, entry);
+                    context.clear();
                 }
 
                 // Start new section
@@ -317,16 +332,18 @@ impl InternalBibleBookSectionIndex {
                     CompactString::from(marker),
                     CompactString::from(section_name),
                 ));
+                // print!("Starting new section at {}: {:?}\n", marker, section_start);
             }
 
             // Track context (simplified)
+            /*
             if !crate::markers::is_end_marker(marker) {
                 if crate::markers::paragraph_markers::is_paragraph(marker) {
                     // Reset paragraph context
                     context.retain(|m| !crate::markers::paragraph_markers::is_paragraph(m));
                     context.push(CompactString::from(marker));
                 }
-            }
+            }*/
         }
 
         // Close final section
@@ -386,18 +403,35 @@ mod tests {
     fn create_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
-        // Section 1
-        entries.push(InternalBibleEntry::simple("s1", "The Creation"));
-        entries.push(InternalBibleEntry::simple("c", "1"));
-        entries.push(InternalBibleEntry::simple("p", ""));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "In the beginning..."));
+        // Section 1 (Headers)
+        entries.push(InternalBibleEntry::simple("id", "GEN Test Version")); // 0
+        entries.push(InternalBibleEntry::simple("usfm", "3.0")); // 1
+        entries.push(InternalBibleEntry::simple("ide", "UTF-8")); // 2
 
-        // Section 2
-        entries.push(InternalBibleEntry::simple("s1", "The Fall"));
-        entries.push(InternalBibleEntry::simple("c", "3"));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "Now the serpent..."));
+        // Section 2 (Intro)
+        entries.push(InternalBibleEntry::simple("is1", "Introduction to Genesis")); // 3
+        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 4
+
+        // Section 3
+        entries.push(InternalBibleEntry::simple("c", "1")); // 5
+        entries.push(InternalBibleEntry::simple("s1", "The Creation")); // 6
+        entries.push(InternalBibleEntry::simple("p", "")); // 7
+        entries.push(InternalBibleEntry::simple("v", "1")); // 8
+        entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 9
+        entries.push(InternalBibleEntry::simple("v", "2")); // 10
+        entries.push(InternalBibleEntry::simple("v~", "And the earth was without form...")); // 11
+
+        // Section 4
+        entries.push(InternalBibleEntry::simple("c", "2")); // 12
+        entries.push(InternalBibleEntry::simple("nb", "")); // 13
+        entries.push(InternalBibleEntry::simple("v", "1")); // 14
+        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 2...")); // 15
+        entries.push(InternalBibleEntry::simple("s1", "The Fall")); // 16
+        entries.push(InternalBibleEntry::simple("p", "")); // 17
+        entries.push(InternalBibleEntry::simple("v", "2")); // 18
+        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 2...")); // 19
+        entries.push(InternalBibleEntry::simple("v", "3")); // 20
+        entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 2...")); // 21
 
         entries
     }
@@ -406,9 +440,9 @@ mod tests {
     fn test_build_section_index() {
         let mut index = InternalBibleBookSectionIndex::new("ESV", "GEN");
         index.build(create_test_entries()).unwrap();
-
+        print!("{}", index);
         assert!(index.is_indexed());
-        assert!(!index.is_empty());
+        assert!(index.len() == 4); // Headers, Intro, Creation, Fall
     }
 
     #[test]
