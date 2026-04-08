@@ -13,3 +13,7 @@ authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
 [workspace.dependencies]
 thiserror = "2.0"
 pyo3 = { version = "0.27", features = ["extension-module", "abi3-py38", "generate-import-lib"] }
+
+# While we're still debugging
+[profile.release]
+debug = true

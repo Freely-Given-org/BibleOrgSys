@@ -159,7 +159,7 @@ impl From<&InternalBibleExtra> for PyInternalBibleExtra {
 
 /// A list of InternalBibleExtra objects.
 #[pyclass(name = "InternalBibleExtraList")]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PyInternalBibleExtraList {
     pub(crate) inner: InternalBibleExtraList,
 }

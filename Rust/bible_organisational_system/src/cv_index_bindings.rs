@@ -175,7 +175,7 @@ impl From<&PyChapterVerse> for ChapterVerse {
 ///
 /// Supports both snake_case properties and camelCase getter methods.
 #[pyclass(name = "InternalBibleEntry")]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PyInternalBibleEntry {
     pub(crate) inner: InternalBibleEntry,
 }
@@ -201,12 +201,10 @@ impl PyInternalBibleEntry {
     ) -> PyResult<Self> {
         // If only marker and one other arg given (2-arg form: marker + clean_text)
         // The second arg is original_marker in the signature but acts as clean_text
-        if adjusted_text.is_none()
-            && clean_text.is_none()
-            && extras.is_none()
-            && original_text.is_none()
-        {
-            if let Some(text) = original_marker {
+        if adjusted_text.is_none() && extras.is_none() && original_text.is_none() {
+            if let Some(text) = original_marker
+                && (clean_text.is_none() || clean_text.unwrap().is_empty())
+            {
                 // 2-arg simple form: (marker, clean_text)
                 return Ok(Self {
                     inner: InternalBibleEntry::simple(marker, text),
@@ -227,14 +225,14 @@ impl PyInternalBibleEntry {
 
         // Full 6-arg form
         let orig_marker = original_marker.ok_or_else(|| {
-            PyValueError::new_err("originalMarker is required for regular entries")
+            PyValueError::new_err(format!("originalMarker is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text))
         })?;
         let adj_text = adjusted_text
-            .ok_or_else(|| PyValueError::new_err("adjustedText is required for regular entries"))?;
+            .ok_or_else(|| PyValueError::new_err(format!("adjustedText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
         let cln_text = clean_text
-            .ok_or_else(|| PyValueError::new_err("cleanText is required for regular entries"))?;
+            .ok_or_else(|| PyValueError::new_err(format!("cleanText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
         let orig_text = original_text
-            .ok_or_else(|| PyValueError::new_err("originalText is required for regular entries"))?;
+            .ok_or_else(|| PyValueError::new_err(format!("originalText is required for regular entries (marker={} original_marker={:?} adjusted_text={:?} clean_text={:?} extras={:?} original_text={:?})", marker, original_marker, adjusted_text, clean_text, extras, original_text)))?;
 
         let rust_extras = extras.map(|e| e.inner.clone());
 

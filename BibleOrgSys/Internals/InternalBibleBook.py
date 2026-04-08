@@ -1465,9 +1465,9 @@ class InternalBibleBook:
             #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  add", '¬'+openMarkers[-1], withText, "in _closeLastOpenMarker" )
             if endMarker:
                 assert openMarkers[-1] == endMarker, f"_addNestingMarkers._closeLastOpenMarker for {self.workName} {self.BBB} expected {openMarkers} to end with '{endMarker}'"
-            if endMarker in ('c','v'):
-                if not withText:
-                    logging.critical( f"_addNestingMarkers._closeLastOpenMarker for {self.workName} {self.BBB} expected some text with {endMarker=}" )
+                if endMarker in ('c','v'):
+                    if not withText:
+                        logging.critical( f"_addNestingMarkers._closeLastOpenMarker for {self.workName} {self.BBB} expected some text with {endMarker=}" )
             newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
         # end of _addNestingMarkers._closeLastOpenMarker
 
