@@ -39,7 +39,7 @@ dependencies = [
 
 [[package]]
 name = "bos-internals"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bincode",
  "compact_str",

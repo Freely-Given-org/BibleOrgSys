@@ -1,6 +1,6 @@
 [project]
 name = "bibleorgsys"
-version = "0.1.0"
+version = "0.1.1"
 description = "Bible Organisational System — load, check, and/or export Bible files/folders"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -19,7 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
-dependencies = ["bibleorgsys-rust>=0.1.0"]
+dependencies = ["bibleorgsys-rust>=0.1.1"]
 
 [tool.uv]
 environments = [
