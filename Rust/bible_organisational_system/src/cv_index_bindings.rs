@@ -10,6 +10,9 @@
 use pyo3::exceptions::{PyIndexError, PyKeyError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 
+// use bincode;
+// use serde::{Deserialize, Serialize};
+
 use bos_internals::{
     CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
     InternalBibleEntryList, markers::is_end_marker,
@@ -514,7 +517,7 @@ impl From<&InternalBibleEntry> for PyInternalBibleEntry {
 /// This represents the processed lines of a Bible book or a slice of entries.
 /// Backward-compatible with the Python InternalBibleEntryList class.
 #[pyclass(name = "InternalBibleEntryList")]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PyInternalBibleEntryList {
     pub(crate) inner: InternalBibleEntryList,
 }
@@ -647,6 +650,22 @@ impl PyInternalBibleEntryList {
     fn __str__(&self) -> String {
         format!("{}", self.inner)
     }
+
+    // RJH tried to implement pickling support using bincode serialization. This allows the entire list to be serialized as a byte string, which can be more efficient than converting to Python objects. However, this requires that InternalBibleEntry and all its fields are serializable with serde, and that the Python side can handle the byte string correctly. This is a more advanced feature and may require additional error handling and testing.
+    // fn __getstate__(&self, py: Python) -> Py<PyAny> {
+    //     // Serialize the Rust struct to a byte vector
+    //     let bytes = bincode::serialize(self)
+    //         .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+    //     Ok(PyBytes::new(py, &bytes).to_object(py))
+    // }
+
+    // fn __setstate__(&mut self, state: PyAny, py: Python) -> PyResult<()> {
+    //     let bytes = state.extract::<&[u8]>(py)?;
+    //     // Overwrite self with the deserialized version
+    //     *self = bincode::deserialize(bytes)
+    //         .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+    //     Ok(())
+    // }
 }
 
 impl From<InternalBibleEntryList> for PyInternalBibleEntryList {

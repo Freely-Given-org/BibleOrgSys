@@ -14,8 +14,9 @@ use crate::error::LookupError;
 /// Markers that define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
     "ms1", "ms2", "ms3", // Major sections
-    "s", "s1", "s2", "s3", "s4", // Section headings
-    "c", // Chapters
+    // "s", "s1", "s2", "s3", "s4", // Section headings
+    "s1", // Section headings
+    // "c", // Chapters
 ];
 
 /// An entry in the section index.

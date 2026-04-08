@@ -10,6 +10,8 @@ name = "bible_organisational_system"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+bincode.workspace = true
 bos-internals = { path = "../bos-internals" }
 pyo3.workspace = true
+serde.workspace = true
 thiserror.workspace = true
