@@ -19,7 +19,7 @@ use bos_internals::{ExtraType, InternalBibleExtra, InternalBibleExtraList};
 /// - index: Position in the adjusted text where this was extracted
 /// - noteText: Full text with USFM markers
 /// - cleanNoteText: Plain text without markers
-#[pyclass(name = "InternalBibleExtra")]
+#[pyclass(name = "InternalBibleExtra", from_py_object)]
 #[derive(Clone)]
 pub struct PyInternalBibleExtra {
     pub(crate) inner: InternalBibleExtra,
@@ -175,7 +175,7 @@ impl From<&InternalBibleExtra> for PyInternalBibleExtra {
 // ============================================================================
 
 /// A list of InternalBibleExtra objects.
-#[pyclass(name = "InternalBibleExtraList")]
+#[pyclass(name = "InternalBibleExtraList", from_py_object)]
 #[derive(Debug, Clone)]
 pub struct PyInternalBibleExtraList {
     pub(crate) inner: InternalBibleExtraList,

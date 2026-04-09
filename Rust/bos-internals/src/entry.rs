@@ -37,7 +37,7 @@ use crate::markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 /// assert_eq!(extra.extra_type(), ExtraType::Footnote);
 /// assert_eq!(extra.index(), 15);
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleExtra {
     extra_type: ExtraType,
     index: usize,
@@ -188,7 +188,7 @@ impl std::fmt::Display for InternalBibleExtra {
 /// let end = InternalBibleEntry::end_marker("¬v").unwrap();
 /// assert!(end.is_end_marker());
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleEntry {
     marker: CompactString,
     original_marker: Option<CompactString>,

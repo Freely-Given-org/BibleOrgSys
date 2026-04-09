@@ -9,9 +9,7 @@
 
 use pyo3::exceptions::{PyIndexError, PyKeyError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
-
-// use bincode;
-// use serde::{Deserialize, Serialize};
+use pyo3::types::PyBytes;
 
 use bos_internals::{
     CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
@@ -31,7 +29,7 @@ use crate::extra_bindings::PyInternalBibleExtraList;
 /// - Verse suffixes like `17a`
 /// - Verse ranges like `17-25`
 /// - Verse lists like `5,6,7`
-#[pyclass(name = "ChapterVerse")]
+#[pyclass(name = "ChapterVerse", from_py_object)]
 #[derive(Clone)]
 pub struct PyChapterVerse {
     inner: ChapterVerse,
@@ -177,7 +175,7 @@ impl From<&PyChapterVerse> for ChapterVerse {
 /// - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(name = "InternalBibleEntry")]
+#[pyclass(name = "InternalBibleEntry", from_py_object)]
 #[derive(Debug, Clone)]
 pub struct PyInternalBibleEntry {
     pub(crate) inner: InternalBibleEntry,
@@ -516,8 +514,8 @@ impl From<&InternalBibleEntry> for PyInternalBibleEntry {
 ///
 /// This represents the processed lines of a Bible book or a slice of entries.
 /// Backward-compatible with the Python InternalBibleEntryList class.
-#[pyclass(name = "InternalBibleEntryList")]
-#[derive(Clone, Debug)]
+#[pyclass(name = "InternalBibleEntryList", from_py_object)]
+#[derive(Clone, Debug, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleEntryList {
     pub(crate) inner: InternalBibleEntryList,
 }
@@ -651,21 +649,19 @@ impl PyInternalBibleEntryList {
         format!("{}", self.inner)
     }
 
-    // RJH tried to implement pickling support using bincode serialization. This allows the entire list to be serialized as a byte string, which can be more efficient than converting to Python objects. However, this requires that InternalBibleEntry and all its fields are serializable with serde, and that the Python side can handle the byte string correctly. This is a more advanced feature and may require additional error handling and testing.
-    // fn __getstate__(&self, py: Python) -> Py<PyAny> {
-    //     // Serialize the Rust struct to a byte vector
-    //     let bytes = bincode::serialize(self)
-    //         .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
-    //     Ok(PyBytes::new(py, &bytes).to_object(py))
-    // }
+    // Pickling support using rkyv zero-copy serialization.
+    fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        Ok(PyBytes::new(py, &bytes).into())
+    }
 
-    // fn __setstate__(&mut self, state: PyAny, py: Python) -> PyResult<()> {
-    //     let bytes = state.extract::<&[u8]>(py)?;
-    //     // Overwrite self with the deserialized version
-    //     *self = bincode::deserialize(bytes)
-    //         .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
-    //     Ok(())
-    // }
+    fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
+        let bytes = state.extract::<&[u8]>()?;
+        *self = rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        Ok(())
+    }
 }
 
 impl From<InternalBibleEntryList> for PyInternalBibleEntryList {
@@ -710,7 +706,7 @@ impl PyInternalBibleEntryListIter {
 /// - context: The context markers that were open at this point
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(name = "CVIndexEntry")]
+#[pyclass(name = "CVIndexEntry", from_py_object)]
 #[derive(Clone)]
 pub struct PyCVIndexEntry {
     inner: CVIndexEntry,

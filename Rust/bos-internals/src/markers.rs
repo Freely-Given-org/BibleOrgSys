@@ -7,7 +7,9 @@ use compact_str::CompactString;
 
 /// Types of "extra" content (footnotes, cross-references, etc.)
 /// that are extracted from the main text flow.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize,
+)]
 pub enum ExtraType {
     /// Footnote (`fn` -> USFM marker `\f`)
     Footnote,

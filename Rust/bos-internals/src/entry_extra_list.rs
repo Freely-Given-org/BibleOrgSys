@@ -30,7 +30,7 @@ use crate::entry::{InternalBibleEntry, InternalBibleExtra};
 /// assert_eq!(extras.len(), 1);
 /// assert!(!extras.is_empty());
 /// ```
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleExtraList {
     data: Vec<InternalBibleExtra>,
 }
@@ -284,7 +284,7 @@ impl std::fmt::Display for InternalBibleExtraList {
 ///
 /// assert_eq!(entries.len(), 2);
 /// ```
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleEntryList {
     data: Vec<InternalBibleEntry>,
 }
