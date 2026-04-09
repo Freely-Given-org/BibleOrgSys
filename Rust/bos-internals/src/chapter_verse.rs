@@ -164,10 +164,10 @@ impl ChapterVerse {
 
         if self.is_verse_list() {
             for part in self.verse.split(',') {
-                if let Ok(v) = get_leading_int(part.trim()) {
-                    if v == verse_num {
-                        return true;
-                    }
+                if let Ok(v) = get_leading_int(part.trim())
+                    && v == verse_num
+                {
+                    return true;
                 }
             }
             return false;

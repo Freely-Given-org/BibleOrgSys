@@ -574,7 +574,11 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "In the beginning..."));
 
-        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        println!(
+            "Test InternalBibleEntryList = ({} entries) {}",
+            list.len(),
+            list
+        );
         assert_eq!(list.len(), 3);
         assert_eq!(list[0].marker(), "c");
         assert_eq!(list[1].marker(), "v");
@@ -585,11 +589,18 @@ mod tests {
         let mut list = InternalBibleEntryList::new();
         for i in 1..=10 {
             list.push(InternalBibleEntry::simple("v", &i.to_string()));
-            list.push(InternalBibleEntry::simple("v~", "Some verse text.".to_string()));
+            list.push(InternalBibleEntry::simple(
+                "v~",
+                "Some verse text.".to_string(),
+            ));
         }
 
         let slice = list.slice(4, 10);
-        println!("Test InternalBibleEntryList slice = ({} entries) {}", slice.len(), slice);
+        println!(
+            "Test InternalBibleEntryList slice = ({} entries) {}",
+            slice.len(),
+            slice
+        );
         assert_eq!(slice.len(), 6);
         assert_eq!(slice[0].clean_text(), "3");
         assert_eq!(slice[4].clean_text(), "5");
@@ -602,7 +613,11 @@ mod tests {
         list.push(InternalBibleEntry::simple("p", ""));
         list.push(InternalBibleEntry::simple("v", "1"));
 
-        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
+        println!(
+            "Test InternalBibleEntryList = ({} entries) {}",
+            list.len(),
+            list
+        );
         assert_eq!(list.contains_marker("c", None), Some(0));
         assert_eq!(list.contains_marker("v", None), Some(2));
         assert_eq!(list.contains_marker("v", Some(2)), None); // Limited search
@@ -619,7 +634,11 @@ mod tests {
 
         let combined = list1 + list2;
 
-        println!("Test combined InternalBibleEntryList = ({} entries) {}", combined.len(), combined);
+        println!(
+            "Test combined InternalBibleEntryList = ({} entries) {}",
+            combined.len(),
+            combined
+        );
         assert_eq!(combined.len(), 2);
         assert_eq!(combined[0].marker(), "c");
         assert_eq!(combined[1].marker(), "v");

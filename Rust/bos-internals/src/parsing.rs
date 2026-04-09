@@ -87,7 +87,9 @@ impl WordWithAttributes {
 /// assert_eq!(attrs.lemma, Some("test".to_string()));
 /// assert_eq!(attrs.strong, Some("H1234".to_string()));
 /// ```
-pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordWithAttributes, ParseError> {
+pub fn parse_word_attributes(
+    word_attribute_string: &str,
+) -> Result<WordWithAttributes, ParseError> {
     // Split on first pipe
     let pipe_pos = word_attribute_string
         .find('|')
@@ -99,11 +101,12 @@ pub fn parse_word_attributes(word_attribute_string: &str) -> Result<WordWithAttr
     let mut result = WordWithAttributes::new(word);
 
     // If no equals sign, assume it's a single unnamed lemma
-    if !attribute_string.contains('=') {
-        if !attribute_string.contains('"') && !attribute_string.contains('\'') {
-            result.lemma = Some(attribute_string.to_string());
-            return Ok(result);
-        }
+    if !attribute_string.contains('=')
+        && !attribute_string.contains('"')
+        && !attribute_string.contains('\'')
+    {
+        result.lemma = Some(attribute_string.to_string());
+        return Ok(result);
     }
 
     // Parse named attributes using a state machine
@@ -179,7 +182,9 @@ fn store_attribute(result: &mut WordWithAttributes, name: &str, value: &str) {
         "lemma" => result.lemma = Some(value.to_string()),
         "strong" => result.strong = Some(value.to_string()),
         _ => {
-            result.extra.insert(clean_name.to_string(), value.to_string());
+            result
+                .extra
+                .insert(clean_name.to_string(), value.to_string());
         }
     }
 }
@@ -265,14 +270,14 @@ impl Default for UsfmFigureAttributes {
 /// assert_eq!(attrs.usfm_version, 2);
 /// assert_eq!(attrs.alt_description, Some("desc".to_string()));
 /// ```
-pub fn parse_figure_attributes(figure_attribute_string: &str) -> Result<UsfmFigureAttributes, ParseError> {
+pub fn parse_figure_attributes(
+    figure_attribute_string: &str,
+) -> Result<UsfmFigureAttributes, ParseError> {
     let mut result = UsfmFigureAttributes::default();
 
     // Detect USFM3 vs USFM2
     // USFM3 has exactly one pipe and contains '='
-    if figure_attribute_string.matches('|').count() == 1
-        && figure_attribute_string.contains('=')
-    {
+    if figure_attribute_string.matches('|').count() == 1 && figure_attribute_string.contains('=') {
         // USFM3 format
         result.usfm_version = 3;
 
@@ -421,9 +426,10 @@ mod tests {
 
     #[test]
     fn test_parse_figure_attributes_usfm3() {
-        let attrs =
-            parse_figure_attributes(r#"At once they left.|src="avnt016.jpg" size="span" ref="1.18""#)
-                .unwrap();
+        let attrs = parse_figure_attributes(
+            r#"At once they left.|src="avnt016.jpg" size="span" ref="1.18""#,
+        )
+        .unwrap();
         assert_eq!(attrs.usfm_version, 3);
         assert_eq!(attrs.caption, Some("At once they left.".to_string()));
         assert_eq!(attrs.source_filename, Some("avnt016.jpg".to_string()));
@@ -433,15 +439,17 @@ mod tests {
 
     #[test]
     fn test_parse_figure_attributes_usfm2() {
-        let attrs =
-            parse_figure_attributes("Description|file.jpg|span|loc|copyright|Caption|1:18")
-                .unwrap();
+        let attrs = parse_figure_attributes("Description|file.jpg|span|loc|copyright|Caption|1:18")
+            .unwrap();
         assert_eq!(attrs.usfm_version, 2);
         assert_eq!(attrs.alt_description, Some("Description".to_string()));
         assert_eq!(attrs.source_filename, Some("file.jpg".to_string()));
         assert_eq!(attrs.relative_size, Some("span".to_string()));
         assert_eq!(attrs.location_or_range, Some("loc".to_string()));
-        assert_eq!(attrs.copyright_or_rights_holder, Some("copyright".to_string()));
+        assert_eq!(
+            attrs.copyright_or_rights_holder,
+            Some("copyright".to_string())
+        );
         assert_eq!(attrs.caption, Some("Caption".to_string()));
         assert_eq!(attrs.reference_cv, Some("1:18".to_string()));
     }

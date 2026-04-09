@@ -3,8 +3,8 @@
 //! These provide backward-compatible APIs matching the Python classes,
 //! including camelCase method names and index-based field access.
 
-use pyo3::prelude::*;
 use pyo3::exceptions::{PyIndexError, PyValueError};
+use pyo3::prelude::*;
 
 use bos_internals::{ExtraType, InternalBibleExtra, InternalBibleExtraList};
 
@@ -48,8 +48,9 @@ impl PyInternalBibleExtra {
         let _ = location; // Not stored, matches Python API
         let extra_type = ExtraType::from_type_str(my_type)
             .ok_or_else(|| PyValueError::new_err(format!("Unknown extra type: {}", my_type)))?;
-        let inner = InternalBibleExtra::new(extra_type, index_to_adj_text, note_text, clean_note_text)
-            .map_err(|e| PyValueError::new_err(e.to_string()))?;
+        let inner =
+            InternalBibleExtra::new(extra_type, index_to_adj_text, note_text, clean_note_text)
+                .map_err(|e| PyValueError::new_err(e.to_string()))?;
         Ok(Self { inner })
     }
 
@@ -109,10 +110,26 @@ impl PyInternalBibleExtra {
 
     fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
         Python::attach(|py| match key_index {
-            0 => Ok(self.inner.extra_type().type_str().into_pyobject(py)?.into_any().unbind()),
+            0 => Ok(self
+                .inner
+                .extra_type()
+                .type_str()
+                .into_pyobject(py)?
+                .into_any()
+                .unbind()),
             1 => Ok(self.inner.index().into_pyobject(py)?.into_any().unbind()),
-            2 => Ok(self.inner.note_text().into_pyobject(py)?.into_any().unbind()),
-            3 => Ok(self.inner.clean_note_text().into_pyobject(py)?.into_any().unbind()),
+            2 => Ok(self
+                .inner
+                .note_text()
+                .into_pyobject(py)?
+                .into_any()
+                .unbind()),
+            3 => Ok(self
+                .inner
+                .clean_note_text()
+                .into_pyobject(py)?
+                .into_any()
+                .unbind()),
             _ => Err(PyIndexError::new_err("Index out of range")),
         })
     }
@@ -247,8 +264,10 @@ impl PyInternalBibleExtraList {
                 Ok(extra.into_pyobject(py)?.into_any().unbind())
             }
             _ => {
-                let list: Vec<PyInternalBibleExtra> =
-                    matches.iter().map(|e| PyInternalBibleExtra::from(*e)).collect();
+                let list: Vec<PyInternalBibleExtra> = matches
+                    .iter()
+                    .map(|e| PyInternalBibleExtra::from(*e))
+                    .collect();
                 Ok(list.into_pyobject(py)?.into_any().unbind())
             }
         })

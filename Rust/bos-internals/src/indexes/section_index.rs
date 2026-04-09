@@ -303,7 +303,9 @@ impl InternalBibleBookSectionIndex {
                     )),
                     start_index: i.try_into().unwrap(),
                     reason: CompactString::from("Headers"),
-                    name: CompactString::from(entry.clean_text().chars().take(3).collect::<String>()),
+                    name: CompactString::from(
+                        entry.clean_text().chars().take(3).collect::<String>(),
+                    ),
                     is_transition: false,
                 });
             }
@@ -315,8 +317,12 @@ impl InternalBibleBookSectionIndex {
                 if was_intro {
                     if let Some(section) = pending.take() {
                         let end_idx = (i as u16).saturating_sub(1);
-                        let (cv, entry) =
-                            section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
+                        let (cv, entry) = section.into_closed(
+                            "-1",
+                            &end_idx.to_string(),
+                            end_idx,
+                            context.clone(),
+                        );
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
@@ -335,13 +341,13 @@ impl InternalBibleBookSectionIndex {
 
                 // Resolve pending section's start_cv (but not for intro->content transitions
                 // where we want to wait for the first verse)
-                if !was_intro {
-                    if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
-                        section.start_cv = Some(ChapterVerse::new(
-                            current_chapter_num_str.as_str(),
-                            current_verse_num_str.as_str(),
-                        ));
-                    }
+                if !was_intro
+                    && let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none())
+                {
+                    section.start_cv = Some(ChapterVerse::new(
+                        current_chapter_num_str.as_str(),
+                        current_verse_num_str.as_str(),
+                    ));
                 }
             } else if marker == "v" {
                 let verse_text = entry.clean_text();
@@ -360,14 +366,18 @@ impl InternalBibleBookSectionIndex {
                     // In intro mode: close previous section with -1:(i-1) addressing
                     if let Some(section) = pending.take() {
                         let end_idx = (i as u16).saturating_sub(1);
-                        let (cv, entry) =
-                            section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
+                        let (cv, entry) = section.into_closed(
+                            "-1",
+                            &end_idx.to_string(),
+                            end_idx,
+                            context.clone(),
+                        );
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
                     // Start new intro section with -1:i addressing
                     pending = Some(PendingSection {
-                        start_cv: Some(ChapterVerse::new("-1", &i.to_string())),
+                        start_cv: Some(ChapterVerse::new("-1", i.to_string())),
                         start_index: i.try_into().unwrap(),
                         reason: CompactString::from(marker),
                         name: CompactString::from(entry.clean_text()),

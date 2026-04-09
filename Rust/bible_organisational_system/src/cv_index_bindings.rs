@@ -463,10 +463,10 @@ impl PyInternalBibleEntry {
         if self.inner.adjusted_text() != self.inner.original_text() {
             result += &format!("\n          adjusted to {:?}", abbrev_adj);
         }
-        if self.inner.has_extras() {
-            if let Some(extras) = self.inner.extras() {
-                result += &format!("\n         with {}", extras);
-            }
+        if self.inner.has_extras()
+            && let Some(extras) = self.inner.extras()
+        {
+            result += &format!("\n         with {}", extras);
         }
         result
     }

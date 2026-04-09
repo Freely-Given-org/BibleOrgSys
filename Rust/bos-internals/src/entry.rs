@@ -8,7 +8,7 @@ use compact_str::CompactString;
 
 use crate::entry_extra_list::InternalBibleExtraList;
 use crate::error::ValidationError;
-use crate::markers::{custom_content, custom_nesting, is_end_marker, ExtraType};
+use crate::markers::{ExtraType, custom_content, custom_nesting, is_end_marker};
 
 /// Represents an "extra" element that was extracted from the main text flow.
 ///
@@ -408,7 +408,7 @@ impl InternalBibleEntry {
     /// Check if this entry has extras.
     #[inline]
     pub fn has_extras(&self) -> bool {
-        self.extras.as_ref().map_or(false, |e| !e.is_empty())
+        self.extras.as_ref().is_some_and(|e| !e.is_empty())
     }
 
     // --- Mutators ---
@@ -435,7 +435,11 @@ impl InternalBibleEntry {
 impl std::fmt::Display for InternalBibleEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let abbrev = if self.clean_text.len() > 80 {
-            format!("{}...{}", &self.clean_text[..40], &self.clean_text[self.clean_text.len()-40..])
+            format!(
+                "{}...{}",
+                &self.clean_text[..40],
+                &self.clean_text[self.clean_text.len() - 40..]
+            )
         } else {
             self.clean_text.to_string()
         };
@@ -456,13 +460,8 @@ mod tests {
 
     #[test]
     fn test_internal_bible_extra_new() {
-        let extra = InternalBibleExtra::new(
-            ExtraType::Footnote,
-            15,
-            r"\fr 1:1 \ft Note",
-            "Note",
-        )
-        .unwrap();
+        let extra =
+            InternalBibleExtra::new(ExtraType::Footnote, 15, r"\fr 1:1 \ft Note", "Note").unwrap();
 
         assert_eq!(extra.extra_type(), ExtraType::Footnote);
         assert_eq!(extra.index(), 15);

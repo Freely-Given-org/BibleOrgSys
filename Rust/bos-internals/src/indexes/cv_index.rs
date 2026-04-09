@@ -10,7 +10,7 @@ use indexmap::IndexMap;
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_extra_list::InternalBibleEntryList;
 use crate::error::{IndexError, LookupError};
-use crate::markers::{is_end_marker, custom_nesting, regular_nesting};
+use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
 
 /// An entry in the CV index, representing a single Chapter:Verse reference.
 ///
@@ -198,7 +198,9 @@ impl InternalBibleBookCVIndex {
 
         // Try direct lookup first
         if let Some(entry) = self.index_data.get(cv) {
-            return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
+            return Ok(self
+                .entries
+                .slice(entry.entry_index(), entry.next_entry_index()));
         }
 
         if strict {
@@ -206,19 +208,26 @@ impl InternalBibleBookCVIndex {
         }
 
         // Non-strict: search for verse ranges containing this verse
-        let desired_v = cv.verse_int().map_err(|_| LookupError::CVNotFound(cv.clone()))?;
+        let desired_v = cv
+            .verse_int()
+            .map_err(|_| LookupError::CVNotFound(cv.clone()))?;
 
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() {
                 // Check verse ranges (e.g., "17-25")
-                if let Some((start, end)) = key.parse_verse_range() {
-                    if start <= desired_v && desired_v <= end {
-                        return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
-                    }
+                if let Some((start, end)) = key.parse_verse_range()
+                    && start <= desired_v
+                    && desired_v <= end
+                {
+                    return Ok(self
+                        .entries
+                        .slice(entry.entry_index(), entry.next_entry_index()));
                 }
                 // Check verse lists (e.g., "5,6,7")
                 if key.is_verse_list() && key.contains_verse(desired_v) {
-                    return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
+                    return Ok(self
+                        .entries
+                        .slice(entry.entry_index(), entry.next_entry_index()));
                 }
             }
         }
@@ -247,14 +256,18 @@ impl InternalBibleBookCVIndex {
 
         // Try direct lookup
         if let Some(entry) = self.index_data.get(cv) {
-            let entries = self.entries.slice(entry.entry_index(), entry.next_entry_index());
+            let entries = self
+                .entries
+                .slice(entry.entry_index(), entry.next_entry_index());
             let context = entry.context.clone();
 
             // If complete and verse is 1, prepend verse 0 entries
             if complete && cv.verse() == "1" {
                 let cv0 = ChapterVerse::new(cv.chapter(), "0");
                 if let Some(entry0) = self.index_data.get(&cv0) {
-                    let mut combined = self.entries.slice(entry0.entry_index(), entry0.next_entry_index());
+                    let mut combined = self
+                        .entries
+                        .slice(entry0.entry_index(), entry0.next_entry_index());
                     combined.extend(&entries);
                     return Ok((combined, context));
                 }
@@ -268,11 +281,15 @@ impl InternalBibleBookCVIndex {
         }
 
         // Non-strict: search for ranges
-        let desired_v = cv.verse_int().map_err(|_| LookupError::CVNotFound(cv.clone()))?;
+        let desired_v = cv
+            .verse_int()
+            .map_err(|_| LookupError::CVNotFound(cv.clone()))?;
 
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() && key.contains_verse(desired_v) {
-                let entries = self.entries.slice(entry.entry_index(), entry.next_entry_index());
+                let entries = self
+                    .entries
+                    .slice(entry.entry_index(), entry.next_entry_index());
                 return Ok((entries, entry.context.clone()));
             }
         }
@@ -285,7 +302,10 @@ impl InternalBibleBookCVIndex {
     /// # Errors
     ///
     /// Returns `LookupError::ChapterNotFound` if the chapter doesn't exist.
-    pub fn get_chapter_entries(&self, chapter: &str) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_chapter_entries(
+        &self,
+        chapter: &str,
+    ) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
@@ -351,12 +371,11 @@ impl InternalBibleBookCVIndex {
             }
 
             // Handle end markers - pop from context
-            if is_end_marker(marker) {
-                if let Some(base) = crate::markers::base_marker(marker) {
-                    if let Some(pos) = context.iter().rposition(|m| m == base) {
-                        context.remove(pos);
-                    }
-                }
+            if is_end_marker(marker)
+                && let Some(base) = crate::markers::base_marker(marker)
+                && let Some(pos) = context.iter().rposition(|m| m == base)
+            {
+                context.remove(pos);
             }
 
             // Handle chapter markers
@@ -434,7 +453,9 @@ impl InternalBibleBookCVIndex {
             if entry.entry_index() < last_end {
                 issues.push(format!(
                     "{}: entry_index {} < previous end {}",
-                    cv, entry.entry_index(), last_end
+                    cv,
+                    entry.entry_index(),
+                    last_end
                 ));
             }
             last_end = entry.next_entry_index();
@@ -530,7 +551,9 @@ mod tests {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
         index.build(create_test_entries()).unwrap();
 
-        let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true).unwrap();
+        let entries = index
+            .get_verse_entries(&ChapterVerse::new("1", "1"), true)
+            .unwrap();
         assert!(!entries.is_empty());
         assert_eq!(entries[0].marker(), "v");
     }

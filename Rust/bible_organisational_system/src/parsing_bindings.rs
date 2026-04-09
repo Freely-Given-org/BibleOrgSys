@@ -2,8 +2,8 @@
 //!
 //! This module provides PyO3 bindings to expose the Rust internals to Python.
 
-use pyo3::prelude::*;
 use bos_internals::parsing;
+use pyo3::prelude::*;
 
 use crate::cv_index_bindings::register_cv_index_types;
 use crate::extra_bindings::register_extra_types;
@@ -32,7 +32,9 @@ fn get_leading_int(s: &str) -> PyResult<i16> {
 
 /// Parse word attributes from a USFM3 \w field.
 #[pyfunction]
-fn parse_word_attributes(word_attribute_string: &str) -> PyResult<std::collections::HashMap<String, String>> {
+fn parse_word_attributes(
+    word_attribute_string: &str,
+) -> PyResult<std::collections::HashMap<String, String>> {
     let attrs = bos_internals::parsing::parse_word_attributes(word_attribute_string)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
 

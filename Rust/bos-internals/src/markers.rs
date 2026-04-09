@@ -166,7 +166,14 @@ pub mod custom_nesting {
     pub const INTRO_OUTLINE_TITLE: &str = "iot";
 
     /// All custom nesting markers as a slice.
-    pub const ALL: &[&str] = &[HEADERS, INTRO, INTRO_LIST, CHAPTERS, LIST, INTRO_OUTLINE_TITLE];
+    pub const ALL: &[&str] = &[
+        HEADERS,
+        INTRO,
+        INTRO_LIST,
+        CHAPTERS,
+        LIST,
+        INTRO_OUTLINE_TITLE,
+    ];
 
     /// Check if a marker is a custom nesting marker.
     #[inline]
