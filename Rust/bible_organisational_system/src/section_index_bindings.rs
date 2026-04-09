@@ -23,7 +23,7 @@ use crate::cv_index_bindings::PyInternalBibleEntryList;
 /// - reasonMarker: The marker that started this section (e.g., "s1", "c")
 /// - sectionName: The section heading text
 /// - contextList: Context markers active at this point
-#[pyclass(name = "InternalBibleBookSectionIndexEntry", from_py_object)]
+#[pyclass(name = "InternalBibleBookSectionIndexEntry", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone)]
 pub struct PySectionIndexEntry {
     pub(crate) inner: SectionIndexEntry,
@@ -242,7 +242,7 @@ impl From<&SectionIndexEntry> for PySectionIndexEntry {
 ///
 /// Maps section starting points (C:V) to section entries.
 /// Accepts (str, str) tuples for keys.
-#[pyclass(name = "InternalBibleBookSectionIndex")]
+#[pyclass(name = "InternalBibleBookSectionIndex", module = "bible_organisational_system")]
 pub struct PyInternalBibleBookSectionIndex {
     inner: InternalBibleBookSectionIndex,
 }
