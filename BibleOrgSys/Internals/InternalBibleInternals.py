@@ -159,7 +159,7 @@ BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
 assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
-from bible_organisational_system import getLeadingInt  # Rust implementation
+from bible_organisational_system import getSmallLeadingInt, getPositiveLeadingInt  # Rust implementation
 
 
 def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> dict[str,str]:

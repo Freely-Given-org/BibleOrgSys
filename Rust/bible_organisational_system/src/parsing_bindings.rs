@@ -19,7 +19,8 @@ use crate::section_index_bindings::{
 /// Python module for BibleOrgSys internals.
 #[pymodule]
 fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(get_leading_int, m)?)?;
+    m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
+    m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
 
     // Extra types
@@ -46,9 +47,16 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
 /// Extract leading integer from a string (e.g., "17a" -> 17).
 #[pyfunction]
-#[pyo3(name = "getLeadingInt")]
-fn get_leading_int(s: &str) -> PyResult<i16> {
-    parsing::get_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
+#[pyo3(name = "getSmallLeadingInt")]
+fn get_small_leading_int(s: &str) -> PyResult<i16> {
+    parsing::get_small_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
+}
+
+/// Extract leading integer from a string (e.g., "17a" -> 17).
+#[pyfunction]
+#[pyo3(name = "getPositiveLeadingInt")]
+fn get_positive_leading_int(s: &str) -> PyResult<u32> {
+    parsing::get_positive_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
 }
 
 /// Parse word attributes from a USFM3 \w field.

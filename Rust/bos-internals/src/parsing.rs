@@ -13,9 +13,11 @@ use std::sync::LazyLock;
 
 use crate::error::ParseError;
 
-/// Regex for extracting leading integer (including negative).
+/// Regex for extracting leading integer
 static LEADING_INT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^-?[0-9]+").expect("Invalid regex"));
+    LazyLock::new(|| Regex::new(r"^-?[0-9]+").expect("Invalid regex")); // Allows for optional leading minus sign for negative numbers
+static POSITIVE_LEADING_INT_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^[0-9]+").expect("Invalid regex"));
 
 /// Extract the leading integer from a string.
 ///
@@ -24,16 +26,23 @@ static LEADING_INT_RE: LazyLock<Regex> =
 /// # Examples
 ///
 /// ```
-/// use bos_internals::parsing::get_leading_int;
+/// use bos_internals::parsing::get_small_leading_int;
 ///
-/// assert_eq!(get_leading_int("17").unwrap(), 17);
-/// assert_eq!(get_leading_int("17a").unwrap(), 17);
-/// assert_eq!(get_leading_int("17-25").unwrap(), 17);
-/// assert_eq!(get_leading_int("-1").unwrap(), -1);
-/// assert!(get_leading_int("abc").is_err());
+/// assert_eq!(get_small_leading_int("17").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("17a").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("-1").unwrap(), -1);
+/// assert!(get_small_leading_int("abc").is_err());
 /// ```
-pub fn get_leading_int(s: &str) -> Result<i16, ParseError> {
+pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
     LEADING_INT_RE
+        .find(s)
+        .and_then(|m| m.as_str().parse().ok())
+        .ok_or_else(|| ParseError::NoLeadingInt(s.to_string()))
+}
+/// Needed for ESFM word numbers which can be larger than 32767 (e.g., "46168", "375561") but must be non-negative.
+pub fn get_positive_leading_int(s: &str) -> Result<u32, ParseError> {
+    POSITIVE_LEADING_INT_RE
         .find(s)
         .and_then(|m| m.as_str().parse().ok())
         .ok_or_else(|| ParseError::NoLeadingInt(s.to_string()))
@@ -384,15 +393,31 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_leading_int() {
-        assert_eq!(get_leading_int("17").unwrap(), 17);
-        assert_eq!(get_leading_int("17a").unwrap(), 17);
-        assert_eq!(get_leading_int("17-25").unwrap(), 17);
-        assert_eq!(get_leading_int("-1").unwrap(), -1);
-        assert_eq!(get_leading_int("0").unwrap(), 0);
-        assert_eq!(get_leading_int("123abc456").unwrap(), 123);
-        assert!(get_leading_int("abc").is_err());
-        assert!(get_leading_int("").is_err());
+    fn test_get_small_leading_int() {
+        assert_eq!(get_small_leading_int("17").unwrap(), 17);
+        assert_eq!(get_small_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_small_leading_int("-1").unwrap(), -1);
+        assert_eq!(get_small_leading_int("0").unwrap(), 0);
+        assert_eq!(get_small_leading_int("123abc456").unwrap(), 123);
+        assert!(get_small_leading_int("46168").is_err());
+        assert!(get_small_leading_int("375561").is_err());
+        assert!(get_small_leading_int("abc").is_err());
+        assert!(get_small_leading_int("").is_err());
+    }
+
+    #[test]
+    fn test_get_positive_leading_int() {
+        assert_eq!(get_positive_leading_int("17").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("46168").unwrap(), 46168);
+        assert_eq!(get_positive_leading_int("375561").unwrap(), 375561);
+        assert_eq!(get_positive_leading_int("0").unwrap(), 0);
+        assert_eq!(get_positive_leading_int("123abc456").unwrap(), 123);
+        assert!(get_positive_leading_int("-1").is_err());
+        assert!(get_positive_leading_int("abc").is_err());
+        assert!(get_positive_leading_int("").is_err());
     }
 
     #[test]

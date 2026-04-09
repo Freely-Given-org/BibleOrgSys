@@ -81,7 +81,7 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getSmallLeadingInt
 
 
 LAST_MODIFIED_DATE = '2025-09-29' # by RJH

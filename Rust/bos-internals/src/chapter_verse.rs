@@ -12,7 +12,7 @@ use compact_str::CompactString;
 use std::fmt;
 
 use crate::error::ParseError;
-use crate::parsing::get_leading_int;
+use crate::parsing::get_small_leading_int;
 
 /// Represents a chapter:verse reference in a Bible book.
 ///
@@ -93,14 +93,14 @@ impl ChapterVerse {
     ///
     /// This handles negative numbers (like -1 for intro).
     pub fn chapter_int(&self) -> Result<i16, ParseError> {
-        get_leading_int(&self.chapter)
+        get_small_leading_int(&self.chapter)
     }
 
     /// Get the leading integer from the verse.
     ///
     /// This handles suffixed verses like `17a` and ranges like `17-25`.
     pub fn verse_int(&self) -> Result<i16, ParseError> {
-        get_leading_int(&self.verse)
+        get_small_leading_int(&self.verse)
     }
 
     /// Check if this is an introduction reference (chapter -1).
@@ -149,8 +149,8 @@ impl ChapterVerse {
             return None;
         }
 
-        let start = get_leading_int(parts[0]).ok()?;
-        let end = get_leading_int(parts[1]).ok()?;
+        let start = get_small_leading_int(parts[0]).ok()?;
+        let end = get_small_leading_int(parts[1]).ok()?;
         Some((start, end))
     }
 
@@ -164,7 +164,7 @@ impl ChapterVerse {
 
         if self.is_verse_list() {
             for part in self.verse.split(',') {
-                if let Ok(v) = get_leading_int(part.trim())
+                if let Ok(v) = get_small_leading_int(part.trim())
                     && v == verse_num
                 {
                     return true;

@@ -3,7 +3,8 @@
 import typing as t
 
 __all__ = [
-    "getLeadingInt",
+    "getSmallLeadingInt",
+    "getPositiveLeadingInt",
     "parse_word_attributes",
     "InternalBibleExtra",
     "InternalBibleExtraList",
@@ -21,7 +22,10 @@ __all__ = [
 ]
 
 # Module: bible_organisational_system
-def getLeadingInt(s: str) -> int:
+def getSmallLeadingInt(s: str) -> int:
+    """Extract leading integer from a string (e.g., "17a" -> 17)."""
+
+def getPositiveLeadingInt(s: str) -> int:
     """Extract leading integer from a string (e.g., "17a" -> 17)."""
 
 def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
