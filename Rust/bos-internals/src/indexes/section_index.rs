@@ -15,8 +15,8 @@ use crate::error::LookupError;
 const SECTION_MARKERS: &[&str] = &[
     "is1", // Introductory sections
     "ms1", "ms2", "ms3", // Major sections
-    "s1", // Section headings
-    // "c", // Chapters
+    "s1",  // Section headings
+           // "c", // Chapters
 ];
 
 /// An entry in the section index.
@@ -65,7 +65,10 @@ impl SectionIndexEntry {
 
     /// Get the ending chapter:verse as a ChapterVerse.
     pub fn end_cv(&self) -> ChapterVerse {
-        ChapterVerse::new(self.end_chapter_num_str.as_str(), self.end_verse_num_str.as_str())
+        ChapterVerse::new(
+            self.end_chapter_num_str.as_str(),
+            self.end_verse_num_str.as_str(),
+        )
     }
 
     /// Get the ending chapter number.
@@ -212,7 +215,10 @@ impl InternalBibleBookSectionIndex {
     /// # Arguments
     ///
     /// * `cv` - The starting chapter:verse of the section
-    pub fn get_section_entries(&self, cv: &ChapterVerse) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_section_entries(
+        &self,
+        cv: &ChapterVerse,
+    ) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
@@ -222,7 +228,9 @@ impl InternalBibleBookSectionIndex {
             .get(cv)
             .ok_or_else(|| LookupError::SectionNotFound(cv.clone()))?;
 
-        Ok(self.entries.slice(entry.start_index as usize, (entry.end_index + 1) as usize))
+        Ok(self
+            .entries
+            .slice(entry.start_index as usize, (entry.end_index + 1) as usize))
     }
 
     /// Get section entries with context markers.
@@ -239,7 +247,9 @@ impl InternalBibleBookSectionIndex {
             .get(cv)
             .ok_or_else(|| LookupError::SectionNotFound(cv.clone()))?;
 
-        let entries = self.entries.slice(entry.start_index as usize, (entry.end_index + 1) as usize);
+        let entries = self
+            .entries
+            .slice(entry.start_index as usize, (entry.end_index + 1) as usize);
         Ok((entries, entry.context.clone()))
     }
 
@@ -266,7 +276,10 @@ impl InternalBibleBookSectionIndex {
     ///
     /// This analyzes the entry list and creates section boundaries
     /// based on section heading markers.
-    pub fn build(&mut self, entries: InternalBibleEntryList) -> Result<(), crate::error::IndexError> {
+    pub fn build(
+        &mut self,
+        entries: InternalBibleEntryList,
+    ) -> Result<(), crate::error::IndexError> {
         if entries.is_empty() {
             return Err(crate::error::IndexError::EmptyEntries);
         }
@@ -276,82 +289,117 @@ impl InternalBibleBookSectionIndex {
 
         let mut current_chapter_num_str = CompactString::from("-1");
         let mut current_verse_num_str = CompactString::from("0");
-        let mut section_start: Option<(ChapterVerse, u16, CompactString, CompactString)> = None;
+        let mut pending: Option<PendingSection> = None;
         let mut context: Vec<CompactString> = Vec::new();
 
         for (i, entry) in self.entries.iter().enumerate() {
             let marker = entry.marker();
 
             if marker == "id" {
-                section_start = Some((
-                    ChapterVerse::new(current_chapter_num_str.as_str(), current_verse_num_str.as_str()),
-                    i.try_into().unwrap(),
-                    CompactString::from("Headers"),
-                    CompactString::from(entry.clean_text().chars().take(3).collect::<String>()),
-                ));
-                // print!("Starting new section at id: {:?}\n", section_start);
+                pending = Some(PendingSection {
+                    start_cv: Some(ChapterVerse::new(
+                        current_chapter_num_str.as_str(),
+                        current_verse_num_str.as_str(),
+                    )),
+                    start_index: i.try_into().unwrap(),
+                    reason: CompactString::from("Headers"),
+                    name: CompactString::from(entry.clean_text().chars().take(3).collect::<String>()),
+                    is_transition: false,
+                });
             }
             // Track current chapter/verse
             else if marker == "c" {
+                let was_intro = current_chapter_num_str == "-1";
+
+                // Transitioning from intro to content: close the intro section
+                if was_intro {
+                    if let Some(section) = pending.take() {
+                        let end_idx = (i as u16).saturating_sub(1);
+                        let (cv, entry) =
+                            section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
+                        self.index_data.insert(cv, entry);
+                        context.clear();
+                    }
+                    // Start a transition section at this c marker (will be merged with next section heading)
+                    pending = Some(PendingSection {
+                        start_cv: None,
+                        start_index: i.try_into().unwrap(),
+                        reason: CompactString::from("c"),
+                        name: CompactString::from(""),
+                        is_transition: true,
+                    });
+                }
+
                 current_chapter_num_str = CompactString::from(entry.clean_text());
                 current_verse_num_str = CompactString::from("0");
-                if section_start.as_ref().map_or(false, |s| s.0.chapter() == "999") {
-                    if let Some(start) = section_start.as_mut() {
-                        start.0 = ChapterVerse::new(
-                            current_chapter_num_str.as_str(), 
-                            current_verse_num_str.as_str()
-                        );
+
+                // Resolve pending section's start_cv (but not for intro->content transitions
+                // where we want to wait for the first verse)
+                if !was_intro {
+                    if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
+                        section.start_cv = Some(ChapterVerse::new(
+                            current_chapter_num_str.as_str(),
+                            current_verse_num_str.as_str(),
+                        ));
                     }
                 }
             } else if marker == "v" {
                 let verse_text = entry.clean_text();
                 let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
                 current_verse_num_str = CompactString::from(verse_num);
-                if section_start.as_ref().map_or(false, |s| s.0.chapter() == "999") {
-                    if let Some(start) = section_start.as_mut() {
-                        start.0 = ChapterVerse::new(
-                            current_chapter_num_str.as_str(), 
-                            current_verse_num_str.as_str()
-                        );
-                    }
-                }
-            }
-
-            // Check for section markers
-            else if is_section_marker(marker) {
-                // print!("  About to close {:?} section with marker {}\n", section_start, marker);
-                if current_chapter_num_str == "-1" { // then we're still in the header or intro section
-                    current_verse_num_str = i.to_string().into();
-                }
-                // Close previous section
-                if let Some((start_cv, start_idx, reason, name)) = section_start.take() {
-                    let entry = SectionIndexEntry::new(
+                if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
+                    section.start_cv = Some(ChapterVerse::new(
                         current_chapter_num_str.as_str(),
                         current_verse_num_str.as_str(),
-                        start_idx,
-                        (i as u16).saturating_sub(1),
-                        reason.clone(),
-                        name,
-                        context.clone(),
-                    );
-                    // print!("   Created section entry: {:?} for {}\n\n", entry, start_cv);
-                    if start_cv.chapter() == "999" {
-                        panic!("Unexpected chapter 999 in section start CV: {:?} with reason {}\nEntries: {:#?}", start_cv, reason, self.entries);
-                    }
-                    self.index_data.insert(start_cv, entry);
-                    context.clear();
+                    ));
                 }
-
-                // Start new section
-                let section_name = entry.clean_text().to_string();
-                let start_cv = ChapterVerse::new("999", current_verse_num_str.as_str());
-                section_start = Some((
-                    start_cv, // Note: we use chapter 999 as a placeholder since we don't know the actual chapter until we see it in the entries
-                    i.try_into().unwrap(),
-                    CompactString::from(marker),
-                    CompactString::from(section_name),
-                ));
-                // print!("Starting new section at {}: {:?}\n", marker, section_start);
+            }
+            // Check for section markers
+            else if is_section_marker(marker) {
+                if current_chapter_num_str == "-1" {
+                    // In intro mode: close previous section with -1:(i-1) addressing
+                    if let Some(section) = pending.take() {
+                        let end_idx = (i as u16).saturating_sub(1);
+                        let (cv, entry) =
+                            section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
+                        self.index_data.insert(cv, entry);
+                        context.clear();
+                    }
+                    // Start new intro section with -1:i addressing
+                    pending = Some(PendingSection {
+                        start_cv: Some(ChapterVerse::new("-1", &i.to_string())),
+                        start_index: i.try_into().unwrap(),
+                        reason: CompactString::from(marker),
+                        name: CompactString::from(entry.clean_text()),
+                        is_transition: false,
+                    });
+                } else if pending.as_ref().is_some_and(|s| s.is_transition) {
+                    // Merge heading into the transition section started by the c marker
+                    let section = pending.as_mut().unwrap();
+                    section.reason = CompactString::from(marker);
+                    section.name = CompactString::from(entry.clean_text());
+                    section.is_transition = false;
+                } else {
+                    // Normal content: close previous section and start new one
+                    if let Some(section) = pending.take() {
+                        let end_idx = (i as u16).saturating_sub(1);
+                        let (cv, entry) = section.into_closed(
+                            current_chapter_num_str.as_str(),
+                            current_verse_num_str.as_str(),
+                            end_idx,
+                            context.clone(),
+                        );
+                        self.index_data.insert(cv, entry);
+                        context.clear();
+                    }
+                    pending = Some(PendingSection {
+                        start_cv: None,
+                        start_index: i.try_into().unwrap(),
+                        reason: CompactString::from(marker),
+                        name: CompactString::from(entry.clean_text()),
+                        is_transition: false,
+                    });
+                }
             }
 
             // Track context (simplified)
@@ -366,24 +414,54 @@ impl InternalBibleBookSectionIndex {
         }
 
         // Close final section
-        if let Some((start_cv, start_idx, reason, name)) = section_start {
-            let entry = SectionIndexEntry::new(
+        if let Some(section) = pending {
+            let (cv, entry) = section.into_closed(
                 current_chapter_num_str.as_str(),
                 current_verse_num_str.as_str(),
-                start_idx,
                 (self.entries.len() as u16).saturating_sub(1),
-                reason.clone(),
-                name,
                 context,
             );
-            if start_cv.chapter() == "999" {
-                panic!("Unexpected chapter 999 in final section start CV: {:?} with reason {}\nEntries: {:#?}", start_cv, reason, self.entries);
-            }
-            self.index_data.insert(start_cv, entry);
+            self.index_data.insert(cv, entry);
         }
 
         self.indexed = true;
         Ok(())
+    }
+}
+
+/// Tracks a section being built before it's finalized and inserted into the index.
+struct PendingSection {
+    /// `None` when the start CV isn't known yet (heading appeared before first verse).
+    start_cv: Option<ChapterVerse>,
+    start_index: u16,
+    reason: CompactString,
+    name: CompactString,
+    /// This section was started by a `c` marker (intro-to-content transition)
+    /// and should merge with the next section heading rather than being closed.
+    is_transition: bool,
+}
+
+impl PendingSection {
+    fn into_closed(
+        self,
+        end_chapter: &str,
+        end_verse: &str,
+        end_index: u16,
+        context: Vec<CompactString>,
+    ) -> (ChapterVerse, SectionIndexEntry) {
+        let start_cv = self
+            .start_cv
+            .expect("section closed before start CV was resolved");
+        let entry = SectionIndexEntry::new(
+            end_chapter,
+            end_verse,
+            self.start_index,
+            end_index,
+            self.reason,
+            self.name,
+            context,
+        );
+        (start_cv, entry)
     }
 }
 
@@ -432,7 +510,10 @@ mod tests {
 
         // Section 2 (Intro)
         entries.push(InternalBibleEntry::simple("is1", "Introduction to Genesis")); // 3
-        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 4
+        entries.push(InternalBibleEntry::simple(
+            "ip",
+            "An introductory paragraph.",
+        )); // 4
 
         // Section 3
         entries.push(InternalBibleEntry::simple("c", "1")); // 5
@@ -441,7 +522,10 @@ mod tests {
         entries.push(InternalBibleEntry::simple("v", "1")); // 8
         entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 9
         entries.push(InternalBibleEntry::simple("v", "2")); // 10
-        entries.push(InternalBibleEntry::simple("v~", "And the earth was without form...")); // 11
+        entries.push(InternalBibleEntry::simple(
+            "v~",
+            "And the earth was without form...",
+        )); // 11
         entries.push(InternalBibleEntry::simple("¬c", "")); // 12
 
         // Section 4
@@ -468,28 +552,66 @@ mod tests {
         assert!(index.len() == 4); // Headers, Intro, Creation, Fall
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
-        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:2"); // ID Header ends at -1:2
+        assert!(
+            index
+                .index_data
+                .get_index(0)
+                .unwrap()
+                .1
+                .end_cv()
+                .to_string()
+                == "-1:2"
+        ); // ID Header ends at -1:2
         assert!(index.index_data.get_index(0).unwrap().1.start_index() == 0); // starts at entry index 0
         assert!(index.index_data.get_index(0).unwrap().1.end_index() == 2); // ends at entry index 2
         assert!(index.index_data.get_index(0).unwrap().1.reason_marker() == "Headers");
         assert!(index.index_data.get_index(0).unwrap().1.section_name() == "GEN");
 
-        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:0"); // starts at -1:3
-        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "-1:2"); // ends at -1:4
+        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:3"); // starts at -1:3
+        assert!(
+            index
+                .index_data
+                .get_index(1)
+                .unwrap()
+                .1
+                .end_cv()
+                .to_string()
+                == "-1:4"
+        ); // ends at -1:4
         assert!(index.index_data.get_index(1).unwrap().1.start_index() == 3); // starts at entry index 3
         assert!(index.index_data.get_index(1).unwrap().1.end_index() == 4); // ends at entry index 4
         assert!(index.index_data.get_index(1).unwrap().1.reason_marker() == "is1");
-        assert!(index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis");
+        assert!(
+            index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis"
+        );
 
-        assert!(index.index_data.get_index(2).unwrap().0.to_string() == "-1:0"); // starts at 1:1
-        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "-1:2"); // ends at 2:1
+        assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:1"); // starts at 1:1
+        assert!(
+            index
+                .index_data
+                .get_index(2)
+                .unwrap()
+                .1
+                .end_cv()
+                .to_string()
+                == "2:1"
+        ); // ends at 2:1
         assert!(index.index_data.get_index(2).unwrap().1.start_index() == 5); // starts at entry index 5
         assert!(index.index_data.get_index(2).unwrap().1.end_index() == 16); // ends at entry index 16
         assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(2).unwrap().1.section_name() == "The Creation");
-        
-        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "-1:0"); // starts at 2:2
-        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "-1:2"); // ends at 2:3
+
+        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "2:2"); // starts at 2:2
+        assert!(
+            index
+                .index_data
+                .get_index(3)
+                .unwrap()
+                .1
+                .end_cv()
+                .to_string()
+                == "2:3"
+        ); // ends at 2:3
         assert!(index.index_data.get_index(3).unwrap().1.start_index() == 17); // starts at entry index 17
         assert!(index.index_data.get_index(3).unwrap().1.end_index() == 22); // ends at entry index 22
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
@@ -506,7 +628,11 @@ mod tests {
 
         // Check that section names are captured
         let names: Vec<&str> = toc.iter().map(|(_, name, _)| *name).collect();
-        assert!(names.iter().any(|n| n.contains("Creation") || n.contains("Fall") || n == &"1" || n == &"3"));
+        assert!(
+            names
+                .iter()
+                .any(|n| n.contains("Creation") || n.contains("Fall") || n == &"1" || n == &"3")
+        );
     }
 
     #[test]
