@@ -10,7 +10,7 @@ use crate::cv_index_bindings::register_cv_index_types;
 /// Python module for BibleOrgSys internals.
 #[pymodule]
 fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(get_leading_int, m)?)?;
+    m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
 
     // Register CV index types
@@ -21,8 +21,8 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
 /// Extract leading integer from a string (e.g., "17a" -> 17).
 #[pyfunction]
-fn get_leading_int(s: &str) -> PyResult<i16> {
-    parsing::get_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
+fn get_small_leading_int(s: &str) -> PyResult<i16> {
+    parsing::get_small_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
 }
 
 /// Parse word attributes from a USFM3 \w field.

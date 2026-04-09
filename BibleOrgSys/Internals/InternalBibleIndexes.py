@@ -81,7 +81,7 @@ import logging
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getLeadingInt
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getSmallLeadingInt
 
 
 LAST_MODIFIED_DATE = '2025-09-29' # by RJH
@@ -292,7 +292,7 @@ class InternalBibleBookCVIndex:
         """
         # print( f"{self.__indexData.keys()}" )
         desiredCint = int( CVkey[0] )
-        desiredVint = getLeadingInt( CVkey[1] )
+        desiredVint = getSmallLeadingInt( CVkey[1] )
         indexEntries = []
 
         if complete: # First look for all verse ranges that would match (they probably precede any specific verse entries)
@@ -303,7 +303,7 @@ class InternalBibleBookCVIndex:
                         # See if our desired verse is within the range
                         dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
                         V1,V2 = ixV.split( '-' )
-                        if getLeadingInt(V1) <= desiredVint <= getLeadingInt(V2):
+                        if getSmallLeadingInt(V1) <= desiredVint <= getSmallLeadingInt(V2):
                             dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
                             # We found a range that includes the verse we're looking for
                             indexEntries.append( self.__indexData[ixCVkey] )
@@ -315,7 +315,7 @@ class InternalBibleBookCVIndex:
                                 indexEntries.append( self.__indexData[ixCVkey] )
                     elif not ixV.isdigit(): # not a verse range, so might be something like '50a'
                         try:
-                            if desiredVint == getLeadingInt(ixV):
+                            if desiredVint == getSmallLeadingInt(ixV):
                                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextA {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
                                 # We found a partial verse that includes the verse we're looking for
                                 indexEntries.append( self.__indexData[ixCVkey] )
@@ -352,7 +352,7 @@ class InternalBibleBookCVIndex:
                             # See if our desired verse is within the range
                             dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} searching for {CVkey}: have {ixC}:{ixV}")
                             V1,V2 = ixV.split( '-' )
-                            if getLeadingInt(V1) <= desiredVint <= getLeadingInt(V2):
+                            if getSmallLeadingInt(V1) <= desiredVint <= getSmallLeadingInt(V2):
                                 dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} found {CVkey} in range {ixC}:{ixV}" )
                                 indexEntries.append( self.__indexData[ixCVkey] )
                                 break # we found a range that includes the verse we're looking for
@@ -364,7 +364,7 @@ class InternalBibleBookCVIndex:
                                     break # we found a list of verses that includes the verse we're looking for
                         elif not ixV.isdigit(): # not a verse range, so might be something like '50a'
                             try:
-                                if desiredVint == getLeadingInt(ixV):
+                                if desiredVint == getSmallLeadingInt(ixV):
                                     dPrint( 'Info', DEBUGGING_THIS_MODULE, f"getVerseEntriesWithContextC {self.workName} {self.BBB} found {CVkey} in partial {ixC}:{ixV}" )
                                     indexEntries.append( self.__indexData[ixCVkey] )
                                     break # we found a partial verse that includes the verse we're looking for
@@ -1253,9 +1253,9 @@ class InternalBibleBookSectionIndex:
                 # if self.workName != 'LEB':
                 #     assert endV != '0', f"Section index failed {self.workName} {self.BBB} _saveAnySectionOutstanding( {startC}:{startV} {endC}:{endV} {startIx=} {endIx=} {reasonMarker=} {sectionName=} ) Could this be a zero-length section???"
             if DEBUGGING_THIS_MODULE or BibleOrgSysGlobals.strictCheckingFlag:
-                assert getLeadingInt(endC) >= getLeadingInt(startC), f"Expected a higher ending chapter number: {self.workName} {self.BBB} {startC=} {endC=} {reasonMarker=} {sectionName=}"
+                assert getSmallLeadingInt(endC) >= getSmallLeadingInt(startC), f"Expected a higher ending chapter number: {self.workName} {self.BBB} {startC=} {endC=} {reasonMarker=} {sectionName=}"
                 if endC==startC:
-                    assert getLeadingInt(endV) >= getLeadingInt(startV), f"Expected a higher ending verse number: {self.workName} {self.BBB} {startC}:{startV} {endV=} {reasonMarker=} {sectionName=}" # Verse ranges shouldn't go backwards
+                    assert getSmallLeadingInt(endV) >= getSmallLeadingInt(startV), f"Expected a higher ending verse number: {self.workName} {self.BBB} {startC}:{startV} {endV=} {reasonMarker=} {sectionName=}" # Verse ranges shouldn't go backwards
 
             # If the last entry was very small, we might need to combine it with this one
             #   e.g., if a section heading immediately follows a chapter break

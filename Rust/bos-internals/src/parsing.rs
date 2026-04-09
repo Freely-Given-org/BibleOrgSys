@@ -24,15 +24,15 @@ static LEADING_INT_RE: LazyLock<Regex> =
 /// # Examples
 ///
 /// ```
-/// use bos_internals::parsing::get_leading_int;
+/// use bos_internals::parsing::get_small_leading_int;
 ///
-/// assert_eq!(get_leading_int("17").unwrap(), 17);
-/// assert_eq!(get_leading_int("17a").unwrap(), 17);
-/// assert_eq!(get_leading_int("17-25").unwrap(), 17);
-/// assert_eq!(get_leading_int("-1").unwrap(), -1);
-/// assert!(get_leading_int("abc").is_err());
+/// assert_eq!(get_small_leading_int("17").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("17a").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
+/// assert_eq!(get_small_leading_int("-1").unwrap(), -1);
+/// assert!(get_small_leading_int("abc").is_err());
 /// ```
-pub fn get_leading_int(s: &str) -> Result<i16, ParseError> {
+pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
     LEADING_INT_RE
         .find(s)
         .and_then(|m| m.as_str().parse().ok())
@@ -379,15 +379,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_leading_int() {
-        assert_eq!(get_leading_int("17").unwrap(), 17);
-        assert_eq!(get_leading_int("17a").unwrap(), 17);
-        assert_eq!(get_leading_int("17-25").unwrap(), 17);
-        assert_eq!(get_leading_int("-1").unwrap(), -1);
-        assert_eq!(get_leading_int("0").unwrap(), 0);
-        assert_eq!(get_leading_int("123abc456").unwrap(), 123);
-        assert!(get_leading_int("abc").is_err());
-        assert!(get_leading_int("").is_err());
+    fn test_get_small_leading_int() {
+        assert_eq!(get_small_leading_int("17").unwrap(), 17);
+        assert_eq!(get_small_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_small_leading_int("-1").unwrap(), -1);
+        assert_eq!(get_small_leading_int("0").unwrap(), 0);
+        assert_eq!(get_small_leading_int("123abc456").unwrap(), 123);
+        assert!(get_small_leading_int("abc").is_err());
+        assert!(get_small_leading_int("").is_err());
     }
 
     #[test]

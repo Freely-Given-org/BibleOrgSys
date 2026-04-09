@@ -75,7 +75,7 @@ from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, US
 from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_CONTENT_MARKERS, BOS_CUSTOM_NESTING_MARKERS, \
     BOS_END_MARKERS, BOS_ALL_CUSTOM_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
-    parseWordAttributes, parseFigureAttributes, getLeadingInt
+    parseWordAttributes, parseFigureAttributes, getSmallLeadingInt
 from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
@@ -5220,7 +5220,7 @@ class InternalBibleBook:
         # NOTE: The following (and more) is now done by the index get function
         # except KeyError: # Maybe V is something like '4b' so try again just with the leading digits
         #     logging.warning( f"InternalBibleBook '{self.workName}' {self.BBB} unable to find {C}:{V} in CV index (will retry by trying only taking digits from V in case there's a suffix)")
-        #     return self._CVIndex.getVerseEntriesWithContext( (C,str(getLeadingInt(V))) ) # Gives a KeyError if not found
+        #     return self._CVIndex.getVerseEntriesWithContext( (C,str(getSmallLeadingInt(V))) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 
 
@@ -5251,8 +5251,8 @@ class InternalBibleBook:
 
         # dPrint( 'Info', DEBUGGING_THIS_MODULE, f"InternalBibleBook.getContextVerseData concatenating {self.workName} {self.BBB} from {startC}:{startV} to {endC}:{endV} {strict=}" )
         intC = int(startC)
-        intV = getLeadingInt(startV) + 1 # Handles strings like '4b'
-        endVint = getLeadingInt(endV)
+        intV = getSmallLeadingInt(startV) + 1 # Handles strings like '4b'
+        endVint = getSmallLeadingInt(endV)
         for _safetyCount in range( 1000 ): # Maximum number of expected verses in this chunk -- might be something big like '1Sam 16:1–1Ki 2:11'
             # dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  InternalBibleBook.getContextVerseData looking for {intC}:{intV}" )
             if intC > int(endC) \

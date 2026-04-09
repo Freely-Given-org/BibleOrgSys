@@ -93,4 +93,4 @@ pub use entry_extra_list::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
-pub use parsing::{get_leading_int, parse_figure_attributes, parse_word_attributes, UsfmFigureAttributes, WordWithAttributes};
+pub use parsing::{get_small_leading_int, parse_figure_attributes, parse_word_attributes, UsfmFigureAttributes, WordWithAttributes};

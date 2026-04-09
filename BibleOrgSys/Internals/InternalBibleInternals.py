@@ -159,19 +159,34 @@ BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
 assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
-def getLeadingInt( someString:str ) -> int:
+def getSmallLeadingInt( someString:str ) -> int:
     """
     Especially used for verse numbers like '17a' and ranges like 17-25
 
     Raises ValueError if no int found at the beginning of the string
     """
-    # print( f"getLeadingInt( '{someString}' )…")
+    # print( f"getSmallLeadingInt( '{someString}' )…")
     reMatch = re.search( '^-?[0-9]*', someString ) # Can return None
     # print( f"{reMatch=}")
     try: return int(reMatch.group())
     except ValueError:
-        raise ValueError( f"getLeadingInt( ({len(someString)}) '{someString}' ) can't find a valid leading integer" )
-# end of getLeadingInt function
+        raise ValueError( f"getSmallLeadingInt( ({len(someString)}) '{someString}' ) can't find a valid leading integer" )
+# end of getSmallLeadingInt function
+
+
+def getPositiveLeadingInt( someString:str ) -> int:
+    """
+    Especially used for word numbers like 635236
+
+    Raises ValueError if no int found at the beginning of the string
+    """
+    # print( f"getSmallLeadingInt( '{someString}' )…")
+    reMatch = re.search( '^[0-9]*', someString ) # Can return None
+    # print( f"{reMatch=}")
+    try: return int(reMatch.group())
+    except ValueError:
+        raise ValueError( f"getSmallLeadingInt( ({len(someString)}) '{someString}' ) can't find a valid leading integer" )
+# end of getPositiveLeadingInt function
 
 
 def parseWordAttributes( workName, BBB:str, C:str, V:str, wordAttributeString, errorList=None ) -> dict[str,str]:
