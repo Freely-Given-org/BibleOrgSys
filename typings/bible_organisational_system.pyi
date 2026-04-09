@@ -440,6 +440,7 @@ class InternalBibleBookCVIndex:
         book_code: Three-letter book code (e.g., "GEN", "MAT")
         """
 
+    def __getnewargs__(self) -> tuple[str, str]: ...
     @property
     def work_name(self) -> str:
         """Get the work name."""

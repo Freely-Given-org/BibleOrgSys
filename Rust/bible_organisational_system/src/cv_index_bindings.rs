@@ -906,11 +906,21 @@ impl PyInternalBibleBookCVIndex {
     ///     book_code: Three-letter book code (e.g., "GEN", "MAT")
     #[new]
     fn new(work_name: &str, book_code: &str) -> Self {
+        print!("HERE IN new with work_name={} book_code={}", work_name, book_code);
         Self {
             inner: InternalBibleBookCVIndex::new(work_name, book_code),
         }
     }
 
+    // Pickle needs args for _new_ before it can call _setstate_
+    fn __getnewargs__(&self) -> (String, String) {
+        print!("HERE IN _getnewargs_ with work_name={} book_code={}", self.inner.work_name(), self.inner.book_code());
+        (
+            self.inner.work_name().to_string(),
+            self.inner.book_code().to_string(),
+        )
+    }
+    
     // === Properties (snake_case) ===
 
     /// Get the work name.
