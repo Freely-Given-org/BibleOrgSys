@@ -495,12 +495,24 @@ impl std::fmt::Display for InternalBibleEntryList {
                     writeln!(f, "  ... ({} total entries)", self.data.len())?;
                     break;
                 }
-                let abbrev = if entry.clean_text().len() > 60 {
-                    format!(
-                        "{}...{}",
-                        &entry.clean_text()[..30],
-                        &entry.clean_text()[entry.clean_text().len() - 30..]
-                    )
+                let text = entry.clean_text();
+                let char_count = text.chars().count();
+                let abbrev = if char_count > 60 {
+                    // Find byte offset for the 30th character from start
+                    let start_offset = text
+                        .char_indices()
+                        .map(|(i, _)| i)
+                        .nth(30)
+                        .unwrap_or(text.len());
+
+                    // Find byte offset for the 30th character from the end
+                    let end_offset = text
+                        .char_indices()
+                        .map(|(i, _)| i)
+                        .nth(char_count - 30)
+                        .unwrap_or(0);
+
+                    format!("{}…{}", &text[..start_offset], &text[end_offset..])
                 } else {
                     entry.clean_text().to_string()
                 };

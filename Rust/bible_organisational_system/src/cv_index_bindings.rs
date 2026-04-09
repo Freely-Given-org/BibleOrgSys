@@ -429,21 +429,51 @@ impl PyInternalBibleEntry {
 
     fn __repr__(&self) -> String {
         let abbrev_adj = match self.inner.adjusted_text() {
-            Some(t) if t.len() > 100 => format!("{}…{}", &t[..50], &t[t.len() - 50..]),
+            Some(t) if t.chars().count() > 100 => {
+                // Find the byte index of the 50th character from the start
+                let (start_idx, _) = t.char_indices().nth(50).unwrap_or((t.len(), ' '));
+
+                // Find the byte index of the 50th character from the end
+                // We calculate the skip amount: (Total Chars - 50)
+                let end_skip = t.chars().count() - 50;
+                let (end_idx, _) = t.char_indices().nth(end_skip).unwrap_or((0, ' '));
+
+                format!("{}…{}", &t[..start_idx], &t[end_idx..])
+            }
             Some(t) => t.to_string(),
             None => String::new(),
         };
-        let abbrev_clean = if self.inner.clean_text().len() > 100 {
+        let text = self.inner.clean_text();
+        let char_count = text.chars().count();
+        let abbrev_clean = if char_count > 100 {
             format!(
                 "{}…{}",
-                &self.inner.clean_text()[..50],
-                &self.inner.clean_text()[self.inner.clean_text().len() - 50..]
+                &text[..text
+                    .char_indices()
+                    .map(|(i, _)| i)
+                    .nth(50)
+                    .unwrap_or(text.len())],
+                &text[text
+                    .char_indices()
+                    .map(|(i, _)| i)
+                    .nth(char_count - 50)
+                    .unwrap_or(0)..]
             )
         } else {
             self.inner.clean_text().to_string()
         };
         let abbrev_orig = match self.inner.original_text() {
-            Some(t) if t.len() > 100 => format!("{}…{}", &t[..50], &t[t.len() - 50..]),
+            Some(t) if t.chars().count() > 100 => {
+                // Find the byte index of the 50th character from the start
+                let (start_idx, _) = t.char_indices().nth(50).unwrap_or((t.len(), ' '));
+
+                // Find the byte index of the 50th character from the end
+                // We calculate the skip amount: (Total Chars - 50)
+                let end_skip = t.chars().count() - 50;
+                let (end_idx, _) = t.char_indices().nth(end_skip).unwrap_or((0, ' '));
+
+                format!("{}…{}", &t[..start_idx], &t[end_idx..])
+            }
             Some(t) => t.to_string(),
             None => String::new(),
         };
@@ -918,7 +948,7 @@ impl PyInternalBibleBookCVIndex {
             self.inner.book_code().to_string(),
         )
     }
-    
+
     // === Properties (snake_case) ===
 
     /// Get the work name.
