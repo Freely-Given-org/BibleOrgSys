@@ -39,7 +39,7 @@ use crate::parsing::get_leading_int;
 /// let cv = ChapterVerse::new("1", "17a");
 /// assert_eq!(cv.verse_int().unwrap(), 17);
 /// ```
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct ChapterVerse {
     chapter: CompactString,
     verse: CompactString,

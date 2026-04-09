@@ -23,7 +23,7 @@ const SECTION_MARKERS: &[&str] = &[
 ///
 /// Each entry represents a section (usually defined by a heading)
 /// and contains the range of entries it covers.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct SectionIndexEntry {
     /// Chapter where this section ends.
     end_chapter_num_str: CompactString,
@@ -143,7 +143,7 @@ impl std::fmt::Display for SectionIndexEntry {
 ///
 /// This index maps section starting points (C:V) to section entries,
 /// useful for table of contents navigation and section-based access.
-#[derive(Debug)]
+#[derive(Debug, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleBookSectionIndex {
     /// Name of the work/Bible.
     work_name: CompactString,

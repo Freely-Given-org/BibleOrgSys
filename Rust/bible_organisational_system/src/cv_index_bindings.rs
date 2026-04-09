@@ -29,7 +29,11 @@ use crate::extra_bindings::PyInternalBibleExtraList;
 /// - Verse suffixes like `17a`
 /// - Verse ranges like `17-25`
 /// - Verse lists like `5,6,7`
-#[pyclass(name = "ChapterVerse", module = "bible_organisational_system", from_py_object)]
+#[pyclass(
+    name = "ChapterVerse",
+    module = "bible_organisational_system",
+    from_py_object
+)]
 #[derive(Clone)]
 pub struct PyChapterVerse {
     inner: ChapterVerse,
@@ -175,7 +179,11 @@ impl From<&PyChapterVerse> for ChapterVerse {
 /// - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(name = "InternalBibleEntry", module = "bible_organisational_system", from_py_object)]
+#[pyclass(
+    name = "InternalBibleEntry",
+    module = "bible_organisational_system",
+    from_py_object
+)]
 #[derive(Debug, Clone)]
 pub struct PyInternalBibleEntry {
     pub(crate) inner: InternalBibleEntry,
@@ -514,7 +522,11 @@ impl From<&InternalBibleEntry> for PyInternalBibleEntry {
 ///
 /// This represents the processed lines of a Bible book or a slice of entries.
 /// Backward-compatible with the Python InternalBibleEntryList class.
-#[pyclass(name = "InternalBibleEntryList", module = "bible_organisational_system", from_py_object)]
+#[pyclass(
+    name = "InternalBibleEntryList",
+    module = "bible_organisational_system",
+    from_py_object
+)]
 #[derive(Clone, Debug, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleEntryList {
     pub(crate) inner: InternalBibleEntryList,
@@ -706,7 +718,11 @@ impl PyInternalBibleEntryListIter {
 /// - context: The context markers that were open at this point
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(name = "CVIndexEntry", module = "bible_organisational_system", from_py_object)]
+#[pyclass(
+    name = "CVIndexEntry",
+    module = "bible_organisational_system",
+    from_py_object
+)]
 #[derive(Clone)]
 pub struct PyCVIndexEntry {
     inner: CVIndexEntry,
@@ -871,7 +887,11 @@ fn extract_chapter_verse(obj: &Bound<'_, PyAny>) -> PyResult<ChapterVerse> {
 /// - Verse ranges: e.g., `17-25` for bridged verses
 /// - Verse lists: e.g., `5,6,7` for multiple verses in one entry
 /// - Verse suffixes: e.g., `17a`, `17b`
-#[pyclass(name = "InternalBibleBookCVIndex", module = "bible_organisational_system")]
+#[pyclass(
+    name = "InternalBibleBookCVIndex",
+    module = "bible_organisational_system"
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleBookCVIndex {
     inner: InternalBibleBookCVIndex,
 }
@@ -1181,6 +1201,20 @@ impl PyInternalBibleBookCVIndex {
 
     fn __str__(&self) -> String {
         format!("{}", self.inner)
+    }
+
+    // Pickling support using rkyv zero-copy serialization.
+    fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        Ok(PyBytes::new(py, &bytes).into())
+    }
+
+    fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
+        let bytes = state.extract::<&[u8]>()?;
+        *self = rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        Ok(())
     }
 }
 

@@ -18,7 +18,7 @@ use crate::markers::{custom_nesting, is_end_marker, regular_nesting};
 /// - The index into the entry list where this CV starts
 /// - The count of entries for this CV
 /// - The context (list of open markers at this point)
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct CVIndexEntry {
     /// Index of the first entry for this C:V in the entry list.
     entry_index: usize,
@@ -95,7 +95,7 @@ impl std::fmt::Display for CVIndexEntry {
 /// // After building index...
 /// let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true)?;
 /// ```
-#[derive(Debug)]
+#[derive(Debug, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct InternalBibleBookCVIndex {
     /// Name of the work/Bible.
     work_name: CompactString,
