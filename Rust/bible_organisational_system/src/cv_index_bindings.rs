@@ -1245,15 +1245,3 @@ impl PyCVIndexIter {
         }
     }
 }
-
-/// Register the CV index types with the Python module.
-pub fn register_cv_index_types(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<PyChapterVerse>()?;
-    m.add_class::<PyInternalBibleEntry>()?;
-    m.add_class::<PyInternalBibleEntryList>()?;
-    m.add_class::<PyInternalBibleEntryListIter>()?;
-    m.add_class::<PyCVIndexEntry>()?;
-    m.add_class::<PyInternalBibleBookCVIndex>()?;
-    m.add_class::<PyCVIndexIter>()?;
-    Ok(())
-}

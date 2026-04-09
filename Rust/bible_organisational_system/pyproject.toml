@@ -14,6 +14,17 @@ dynamic = ["version"]
 [tool.maturin]
 features = ["pyo3/extension-module"]
 
+[tool.rylai]
+format = ["uvx ruff format", "uvx ruff check --select I --fix"]
+
+[tool.rylai.output]
+python_version = "3.13"
+add_header = true
+all_include_private = false
+
+[tool.rylai.fallback]
+strategy = "any"
+
 [tool.uv]
 # Rebuild the extension module if the rust code changes.
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "**/*.rs"}]

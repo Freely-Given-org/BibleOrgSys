@@ -422,11 +422,3 @@ impl PySectionIndexIter {
         Some(key)
     }
 }
-
-/// Register section index types with the Python module.
-pub fn register_section_index_types(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<PySectionIndexEntry>()?;
-    m.add_class::<PyInternalBibleBookSectionIndex>()?;
-    m.add_class::<PySectionIndexIter>()?;
-    Ok(())
-}

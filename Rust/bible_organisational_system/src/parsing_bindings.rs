@@ -5,9 +5,16 @@
 use bos_internals::parsing;
 use pyo3::prelude::*;
 
-use crate::cv_index_bindings::register_cv_index_types;
-use crate::extra_bindings::register_extra_types;
-use crate::section_index_bindings::register_section_index_types;
+use crate::cv_index_bindings::{
+    PyChapterVerse, PyCVIndexEntry, PyCVIndexIter, PyInternalBibleBookCVIndex,
+    PyInternalBibleEntry, PyInternalBibleEntryList, PyInternalBibleEntryListIter,
+};
+use crate::extra_bindings::{
+    PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter,
+};
+use crate::section_index_bindings::{
+    PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter,
+};
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -15,10 +22,24 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
 
-    // Register types
-    register_extra_types(m)?;
-    register_cv_index_types(m)?;
-    register_section_index_types(m)?;
+    // Extra types
+    m.add_class::<PyInternalBibleExtra>()?;
+    m.add_class::<PyInternalBibleExtraList>()?;
+    m.add_class::<PyInternalBibleExtraListIter>()?;
+
+    // CV index types
+    m.add_class::<PyChapterVerse>()?;
+    m.add_class::<PyInternalBibleEntry>()?;
+    m.add_class::<PyInternalBibleEntryList>()?;
+    m.add_class::<PyInternalBibleEntryListIter>()?;
+    m.add_class::<PyCVIndexEntry>()?;
+    m.add_class::<PyInternalBibleBookCVIndex>()?;
+    m.add_class::<PyCVIndexIter>()?;
+
+    // Section index types
+    m.add_class::<PySectionIndexEntry>()?;
+    m.add_class::<PyInternalBibleBookSectionIndex>()?;
+    m.add_class::<PySectionIndexIter>()?;
 
     Ok(())
 }

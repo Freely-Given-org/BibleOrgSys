@@ -337,11 +337,3 @@ impl PyInternalBibleExtraListIter {
         }
     }
 }
-
-/// Register the extra types with the Python module.
-pub fn register_extra_types(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<PyInternalBibleExtra>()?;
-    m.add_class::<PyInternalBibleExtraList>()?;
-    m.add_class::<PyInternalBibleExtraListIter>()?;
-    Ok(())
-}
