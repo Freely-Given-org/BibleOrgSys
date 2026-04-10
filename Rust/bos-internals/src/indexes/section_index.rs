@@ -664,7 +664,7 @@ mod tests {
                 .to_string()
                 == "3:2"
         ); // ends at 3:2
-        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 23); // starts at entry index 23
+        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 23); // starts at entry index 23 (the c marker)
         assert!(index.index_data.get_index(4).unwrap().1.end_index() == 30); // ends at entry index 30
         assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Chapter Three");
