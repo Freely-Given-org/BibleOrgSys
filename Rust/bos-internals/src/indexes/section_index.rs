@@ -291,6 +291,10 @@ impl InternalBibleBookSectionIndex {
         let mut current_verse_num_str = CompactString::from("0");
         let mut pending: Option<PendingSection> = None;
         let mut context: Vec<CompactString> = Vec::new();
+        // Saved state from the most recent `c` marker, cleared when a `v` absorbs it.
+        // (end_chapter, end_verse, end_index) — used so a following section marker
+        // closes the previous section before the chapter change, not after.
+        let mut pre_chapter_change: Option<(CompactString, CompactString, u16)> = None;
 
         for (i, entry) in self.entries.iter().enumerate() {
             let marker = entry.marker();
@@ -313,8 +317,8 @@ impl InternalBibleBookSectionIndex {
             else if marker == "c" {
                 let was_intro = current_chapter_num_str == "-1";
 
-                // Transitioning from intro to content: close the intro section
                 if was_intro {
+                    // Transitioning from intro to content: close the intro section
                     if let Some(section) = pending.take() {
                         let end_idx = (i as u16).saturating_sub(1);
                         let (cv, entry) = section.into_closed(
@@ -334,25 +338,24 @@ impl InternalBibleBookSectionIndex {
                         name: CompactString::from(""),
                         is_transition: true,
                     });
+                } else {
+                    // Content chapter boundary: save state so a following section marker
+                    // can close the previous section at the right point
+                    pre_chapter_change = Some((
+                        current_chapter_num_str.clone(),
+                        current_verse_num_str.clone(),
+                        (i as u16).saturating_sub(1),
+                    ));
                 }
 
                 current_chapter_num_str = CompactString::from(entry.clean_text());
                 current_verse_num_str = CompactString::from("0");
-
-                // Resolve pending section's start_cv (but not for intro->content transitions
-                // where we want to wait for the first verse)
-                if !was_intro
-                    && let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none())
-                {
-                    section.start_cv = Some(ChapterVerse::new(
-                        current_chapter_num_str.as_str(),
-                        current_verse_num_str.as_str(),
-                    ));
-                }
             } else if marker == "v" {
                 let verse_text = entry.clean_text();
                 let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
                 current_verse_num_str = CompactString::from(verse_num);
+                // A verse after a chapter change means the section spans the boundary
+                pre_chapter_change = None;
                 if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
                     section.start_cv = Some(ChapterVerse::new(
                         current_chapter_num_str.as_str(),
@@ -390,21 +393,34 @@ impl InternalBibleBookSectionIndex {
                     section.name = CompactString::from(entry.clean_text());
                     section.is_transition = false;
                 } else {
-                    // Normal content: close previous section and start new one
+                    // Normal content: close previous section and start new one.
+                    // If a `c` marker preceded this section marker without an
+                    // intervening verse, close at the pre-chapter-change point
+                    // so the `c` entry belongs to the new section.
+                    let chapter_boundary = pre_chapter_change.take();
                     if let Some(section) = pending.take() {
-                        let end_idx = (i as u16).saturating_sub(1);
-                        let (cv, entry) = section.into_closed(
-                            current_chapter_num_str.as_str(),
-                            current_verse_num_str.as_str(),
-                            end_idx,
-                            context.clone(),
-                        );
+                        let (end_ch, end_v, end_idx) = match &chapter_boundary {
+                            Some((ch, v, idx)) => (ch.as_str(), v.as_str(), *idx),
+                            None => (
+                                current_chapter_num_str.as_str(),
+                                current_verse_num_str.as_str(),
+                                (i as u16).saturating_sub(1),
+                            ),
+                        };
+                        let (cv, entry) =
+                            section.into_closed(end_ch, end_v, end_idx, context.clone());
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
+                    // New section starts at the `c` entry if there was a chapter
+                    // change, otherwise at this section marker
+                    let start_index: u16 = match &chapter_boundary {
+                        Some((_, _, idx)) => idx + 1,
+                        None => i.try_into().unwrap(),
+                    };
                     pending = Some(PendingSection {
                         start_cv: None,
-                        start_index: i.try_into().unwrap(),
+                        start_index,
                         reason: CompactString::from(marker),
                         name: CompactString::from(entry.clean_text()),
                         is_transition: false,
@@ -637,21 +653,21 @@ mod tests {
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(3).unwrap().1.section_name() == "The Fall");
 
-        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "3:1"); // starts at 3:1
+        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "3:1"); // starts at 3:1
         assert!(
             index
                 .index_data
-                .get_index(3)
+                .get_index(4)
                 .unwrap()
                 .1
                 .end_cv()
                 .to_string()
-                == "3:3"
-        ); // ends at 3:3
-        assert!(index.index_data.get_index(3).unwrap().1.start_index() == 23); // starts at entry index 23
-        assert!(index.index_data.get_index(3).unwrap().1.end_index() == 30); // ends at entry index 30
-        assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
-        assert!(index.index_data.get_index(3).unwrap().1.section_name() == "Chapter Three");
+                == "3:2"
+        ); // ends at 3:2
+        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 23); // starts at entry index 23
+        assert!(index.index_data.get_index(4).unwrap().1.end_index() == 30); // ends at entry index 30
+        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
+        assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Chapter Three");
     }
 
     #[test]
