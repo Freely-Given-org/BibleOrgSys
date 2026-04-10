@@ -44,7 +44,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-04-09' # by RJH
+LAST_MODIFIED_DATE = '2026-04-10' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -1470,7 +1470,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('enheritaunce','enheritauce','inheritaunce','inheritauce'),'inheritance'), ((' inheret ',' inherite ',' enherite ',' enheret '),' inherit '),((' inherite,',),' inherit,'),((' inherite.',),' inherit.'),
             ((' iniquites',),' iniquities'),(('iniquitie ','iniquite '),'iniquity '),(('iniquitie,','iniquyte,'),'iniquity,'),(('iniquitie.',),'iniquity.'),(('iniquitie?',),'iniquity?'),(('iniquitie:','iniquite:'),'iniquity:'),(('iniquitie;',),'iniquity;'),
             ((' iniurie:',),' injury:'), ((' iniur',),' injur'),
-            ((' ynnermer',' innermer'),' innermost'),((' ynnere ',),' inner '),
+            ((' inwardes',),' innards'),
+                ((' ynnermer',' innermer'),' innermost'),((' ynnere ',),' inner '),
                 (('ynnocence','innocencie','innocency','innocens'),'innocence'), ((' innocenti',' innocente',' innocet'),' innocent'), (('vnnoumbrable',),'innumerable'),
             ((' instaunce',),' instance'), (('instrumentis',),'instruments'),(('instrumente',),'instrument'),
             (('integritie',),'integrity'), (('interpretacion','interpretaeion'),'interpretation'),(('interprete ',),'interpret '),
@@ -1867,8 +1868,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('peruersly',),'perversely'), (('peruersnesse ',),'perverseness '),(('peruersnes,',),'perverseness,'),((' peruerse',),' perverse'),
                     (('perverteth ','peruerteth '),'perverteth/perverts '), (('peruerte ',),'pervert '),((' peruerte,',),' pervert,'),(('peruert',),'pervert'),
             (('pestylence',),'pestilence'),
-            (('Petir',),'Peter'),
-                ((' peticion',),' petition'),
+            ((' peticion',),' petition'),
         ((' fantum',),' phantom'),
             (('Pharao ','Farao '),'Pharaoh '),(('Pharao,','Farao,'),'Pharaoh,'), (('Fariseis','Farisees','Pharises','pharisees','pharises'),'Pharisees'), (('Philippe',),'Philip'), (('Philistim','Philistyne','Filistei'),'Philistine'), (('phisicians','physicions','physicias'),'physicians'),(('Physition','Physicion','Phisician'),'Physician'),(('phisition','phisicion'),'physician'),
         ((' peaces',' peeces',' peces'),' pieces'),((' peece ',' pece '),' piece '),((' peece,',),' piece,'),
@@ -2304,7 +2304,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' sprange ',' sprong ',' sproge '),' sprang '), ((' spreynt ',),' sprayed '),
                     (('spreadeth','spredeth'),'spreadeth/spreads'),(('spreadyng',),'spreading'),((' spredden ',' spredde ',' spreade ',' sprede ',' spreed ',' spred '),' spread '),
                 ((' springeth',' spryngeth'),' springeth/springs'),((' sprynginge',),' springing'), ((' springes',),' springs'),((' sprynge',' spryng'),' spring'),((' springe ',),' spring '),
-                    ((' sprinckle',),' sprinkle'),
+                    ((' sprinckle',' sprenkle'),' sprinkle'),
                 ((' sproute ',),' sprout '),
                 ((' sprongen',' sprongun',' spronge'),' sprung'),
             ((' spyed',),' spied'),((' spie ',),' spy '),
@@ -3043,10 +3043,13 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('& ',),'and '),
 
     # Proper nouns
+    (('Alpheus','Alphey','Alfey','Alphee'),'Alphaeus'), # Mrk 3:18
     (('Baalim','Baalym'),'Baals'),
         (('Babiloyne','Babilon'),'Babylon'),
     (('Barne ',),'Barnea '),
+    (('Bartholomewe','Bartlemew','Bartylmew'),'Bartholomew'), # Mrk 3:18
     (('Bethanie',),'Bethany'),
+    (('Cananite',),'Canaanite'), # Mrk 3:18
     (('Cades ',),'Kadesh '),
     (('Danyel',),'Daniel'),
     (('Idumaea','Edoma'),'Idumea'),(('Idume,',),'Idumea,'), # Mrk 3:8 ('Yd' is already changed to 'Id' above)
@@ -3061,14 +3064,17 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('IESVS',),'JESUS'), (('IEVVES',),'JEWS'), # Gnva Mat 27:37
     (('Jayrus',),'Yairus'),
     (('Kadesh Barnea',),'Kadesh-barnea'),
+    (('Matthewe','Mathew','Matheu'),'Matthew'), # Mrk 3:18
     (('Medeis',),'Medes'),
     (('Nephthali','Neptalym','Nephtali'),'Naphtali'),
         (('Nabuchodonosor','Nebukadnezar','Nabugodonosor'),'Nebuchadnezzar'),
         (('Nineueh','Niniue','Nynyue','Nineue',),'Nineveh'),(('Nineve,',),'Nineveh,'),(('Ninive.','Nineve.'),'Nineveh.'),
+    (('Petre','Petir'),'Peter'),
     (('SALOMON',),'SOLOMON'),(('Salomon',),'Solomon'),
     (('Samarie',),'Samaria'),
     (('Sare',),'Sara'),
     (('Sydon',),'Sidon'), # Mrk 7:24
+    (('Thaddeus','Taddeus','Thadee'),'Thaddaeus'), # Mrk 3:18
     (('Tigrys',),'Tigris'),
     (('IEHOVAH','IEHOUAH'),'YEHOVAH'),(('Iehouah',),'Yehovah'),
 
