@@ -96,6 +96,6 @@ pub use indexes::{
 };
 pub use markers::ExtraType;
 pub use parsing::{
-    UsfmFigureAttributes, WordWithAttributes, get_small_leading_int, parse_figure_attributes,
-    parse_word_attributes,
+    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
+    parse_figure_attributes, parse_word_attributes,
 };
