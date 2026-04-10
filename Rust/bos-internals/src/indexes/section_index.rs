@@ -550,6 +550,16 @@ mod tests {
         entries.push(InternalBibleEntry::simple("v", "3")); // 21
         entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 2...")); // 22
 
+        // Section 5
+        entries.push(InternalBibleEntry::simple("c", "3")); // 23
+        entries.push(InternalBibleEntry::simple("s1", "Chapter Three")); // 24
+        entries.push(InternalBibleEntry::simple("rem", "/s1 Alternative heading")); // 25
+        entries.push(InternalBibleEntry::simple("p", "")); // 26
+        entries.push(InternalBibleEntry::simple("v", "1")); // 27
+        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 3...")); // 28
+        entries.push(InternalBibleEntry::simple("v", "2")); // 29
+        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 3...")); // 30
+
         entries
     }
 
@@ -559,7 +569,7 @@ mod tests {
         index.build(create_test_entries()).unwrap();
         print!("{}", index);
         assert!(index.is_indexed());
-        assert!(index.len() == 4); // Headers, Intro, Creation, Fall
+        assert!(index.len() == 5); // Headers, Intro, Creation, Fall, Chapter Three
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
         assert!(
@@ -626,6 +636,22 @@ mod tests {
         assert!(index.index_data.get_index(3).unwrap().1.end_index() == 22); // ends at entry index 22
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(3).unwrap().1.section_name() == "The Fall");
+
+        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "3:1"); // starts at 3:1
+        assert!(
+            index
+                .index_data
+                .get_index(3)
+                .unwrap()
+                .1
+                .end_cv()
+                .to_string()
+                == "3:3"
+        ); // ends at 3:3
+        assert!(index.index_data.get_index(3).unwrap().1.start_index() == 23); // starts at entry index 23
+        assert!(index.index_data.get_index(3).unwrap().1.end_index() == 30); // ends at entry index 30
+        assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
+        assert!(index.index_data.get_index(3).unwrap().1.section_name() == "Chapter Three");
     }
 
     #[test]
