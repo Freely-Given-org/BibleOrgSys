@@ -4,6 +4,7 @@
 //! - Leading integers from strings (for verse numbers like "17a")
 //! - Word attributes from USFM3 `\w` fields
 //! - Figure attributes from USFM2/USFM3 `\fig` fields
+//! - Text abbreviation for display
 
 use std::collections::HashMap;
 
@@ -388,9 +389,79 @@ fn store_figure_attribute_by_name(result: &mut UsfmFigureAttributes, name: &str,
     }
 }
 
+/// Abbreviate a string to `head…tail` if it exceeds `MAX_CHARS` characters,
+/// keeping `KEEP` characters on each side. Returns the original string if short enough.
+///
+/// Uses a ring buffer to find the tail offset in a single pass over the string,
+/// handling multi-byte characters correctly.
+pub fn abbreviate<const MAX_CHARS: usize, const KEEP: usize>(s: &str) -> String {
+    let mut head_end = 0;
+    let mut count = 0;
+    let mut indexs = [0; KEEP];
+    let mut indexs_current = 0;
+    for (byte_offset, _) in s.char_indices() {
+        if count == KEEP {
+            head_end = byte_offset;
+        }
+        indexs_current = (indexs_current + 1) % KEEP;
+        indexs[indexs_current] = byte_offset;
+        count += 1;
+    }
+    if count <= MAX_CHARS {
+        return s.to_string();
+    }
+    format!(
+        "{}…{}",
+        &s[..head_end],
+        &s[indexs[(indexs_current + 1) % KEEP]..]
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_abbreviate_short_ascii() {
+        assert_eq!(abbreviate::<10, 3>("hello"), "hello");
+    }
+
+    #[test]
+    fn test_abbreviate_exact_limit() {
+        assert_eq!(abbreviate::<5, 2>("hello"), "hello");
+    }
+
+    #[test]
+    fn test_abbreviate_long_ascii() {
+        assert_eq!(
+            abbreviate::<10, 3>("abcdefghijklmnopqrstuvwxyz"),
+            "abc…xyz"
+        );
+    }
+
+    #[test]
+    fn test_abbreviate_long_french() {
+        assert_eq!(
+            abbreviate::<10, 3>("àâçéèêëïîôùûüÿœæ abcdefghij"),
+            "àâç…hij"
+        );
+    }
+
+    #[test]
+    fn test_abbreviate_mixed_english_french() {
+        assert_eq!(
+            abbreviate::<20, 5>("The café résumé naïve château fiancée entrée à la mode de jour"),
+            "The c… jour"
+        );
+    }
+
+    #[test]
+    fn test_abbreviate_all_multibyte() {
+        assert_eq!(
+            abbreviate::<10, 3>("éééééééééééééééééééééééééé"),
+            "ééé…ééé"
+        );
+    }
 
     #[test]
     fn test_get_small_leading_int() {

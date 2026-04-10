@@ -13,7 +13,7 @@ use pyo3::types::PyBytes;
 
 use bos_internals::{
     CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
-    InternalBibleEntryList, markers::is_end_marker,
+    InternalBibleEntryList, abbreviate, markers::is_end_marker,
 };
 
 use crate::extra_bindings::PyInternalBibleExtraList;
@@ -428,55 +428,17 @@ impl PyInternalBibleEntry {
     }
 
     fn __repr__(&self) -> String {
-        let abbrev_adj = match self.inner.adjusted_text() {
-            Some(t) if t.chars().count() > 100 => {
-                // Find the byte index of the 50th character from the start
-                let (start_idx, _) = t.char_indices().nth(50).unwrap_or((t.len(), ' '));
-
-                // Find the byte index of the 50th character from the end
-                // We calculate the skip amount: (Total Chars - 50)
-                let end_skip = t.chars().count() - 50;
-                let (end_idx, _) = t.char_indices().nth(end_skip).unwrap_or((0, ' '));
-
-                format!("{}…{}", &t[..start_idx], &t[end_idx..])
-            }
-            Some(t) => t.to_string(),
-            None => String::new(),
-        };
-        let text = self.inner.clean_text();
-        let char_count = text.chars().count();
-        let abbrev_clean = if char_count > 100 {
-            format!(
-                "{}…{}",
-                &text[..text
-                    .char_indices()
-                    .map(|(i, _)| i)
-                    .nth(50)
-                    .unwrap_or(text.len())],
-                &text[text
-                    .char_indices()
-                    .map(|(i, _)| i)
-                    .nth(char_count - 50)
-                    .unwrap_or(0)..]
-            )
-        } else {
-            self.inner.clean_text().to_string()
-        };
-        let abbrev_orig = match self.inner.original_text() {
-            Some(t) if t.chars().count() > 100 => {
-                // Find the byte index of the 50th character from the start
-                let (start_idx, _) = t.char_indices().nth(50).unwrap_or((t.len(), ' '));
-
-                // Find the byte index of the 50th character from the end
-                // We calculate the skip amount: (Total Chars - 50)
-                let end_skip = t.chars().count() - 50;
-                let (end_idx, _) = t.char_indices().nth(end_skip).unwrap_or((0, ' '));
-
-                format!("{}…{}", &t[..start_idx], &t[end_idx..])
-            }
-            Some(t) => t.to_string(),
-            None => String::new(),
-        };
+        let abbrev_adj = self
+            .inner
+            .adjusted_text()
+            .map(|t| abbreviate::<100, 50>(t))
+            .unwrap_or_default();
+        let abbrev_clean = abbreviate::<100, 50>(self.inner.clean_text());
+        let abbrev_orig = self
+            .inner
+            .original_text()
+            .map(|t| abbreviate::<100, 50>(t))
+            .unwrap_or_default();
 
         let mut result = format!(
             "InternalBibleEntry object:\n    {} = {:?}",
@@ -508,19 +470,10 @@ impl PyInternalBibleEntry {
     }
 
     fn __str__(&self) -> String {
-        let abbrev = if self.inner.clean_text().len() > 100 {
-            format!(
-                "{}…{}",
-                &self.inner.clean_text()[..50],
-                &self.inner.clean_text()[self.inner.clean_text().len() - 50..]
-            )
-        } else {
-            self.inner.clean_text().to_string()
-        };
         format!(
             "InternalBibleEntry object: {} = {:?}{}",
             self.inner.marker(),
-            abbrev,
+            abbreviate::<100, 50>(self.inner.clean_text()),
             if self.inner.has_extras() {
                 "+extras"
             } else {
@@ -1283,3 +1236,4 @@ impl PyCVIndexIter {
         }
     }
 }
+
