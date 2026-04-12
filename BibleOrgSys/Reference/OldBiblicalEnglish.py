@@ -44,7 +44,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-04-10' # by RJH
+LAST_MODIFIED_DATE = '2026-04-12' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -61,6 +61,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     ((' aud ',),' and '), # Cvdl Mrk 8:23, 10:50
     ((' thu s ',),' thus '), # Cvdl Isa 14:26
     (('plaged,preased',),'plagued, pressed'), # Cvdl Mrk 3:10
+    (('symilitudes:How',),'similitudes: How'), # Cvdl Mrk 3:23
 
     # Pairs of words (two words to two words)
     #((' a boot',),' a boat'), # TOO GENERAL
@@ -693,7 +694,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' carieth',' caried',' caryed'),' carried'),((' carrieth',' caryeth'),' carrieth/carries'),((' carienge',' carying'),' carrying'), (('Carie ','Cary '),'Carry '),((' carrie ',' carie ',' cary '),' carry '),
                 ((' carued',),' carved'),((' caruing',),' carving'),((' carue ',),' carve '),
             ((' caas.',),' case.'),
-                ((' castynge',' castyng',' castinge'),' casting/throwing'),((' castiden ',' kesten '),' cast/throw '),((' castedst ',' castidist ',' castide ',' caste ',' keste '),' cast/threw '),
+                ((' casteth',' castith'),' casteth/casts/throws'), ((' castynge',' castyng',' castinge'),' casting/throwing'),((' castiden ',' kesten '),' cast/throw '),((' castedst ',' castidist ',' castide ',' caste ',' keste '),' cast/threw '),
                 (('casteles','castels'),'castles'),((' castell',),' castle'),
             (('Catche ',),'Catch '),(('catche ',),'catch '),
                 (('catterpiller','caterpiller','catirpiller'),'caterpillar'),
@@ -1164,7 +1165,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' feawe ',' fewe '),' few '),((' fewe,',),' few,'),((' feawe.',' fewe.'),' few.'),((' fewe:',),' few:'),((' fewe;',),' few;'),
         ((' fidelitie ',),' fidelity '),
                 ((' feeldis',' fieldes',' feldes'),' fields'),((' fielde ',' feeld ',' felde ',' feld '),' field '),((' fielde,',' felde,',' feeld,',' fiede,'),' field,'),((' fielde.',' feeld.',' felde.'),' field.'),((' fielde:',' felde:'),' field:'),((' feeld;',),' field;'),
-                ((' fiends',' feendis',),' fiends/devils'),((' fiend ',' fiende ',' feend ',' fende '),' fiend/devil '),((' fiend,',' fiende,',' feend,'),' fiend/devil,'),
+                ((' fiends',' feendis',' fendis'),' fiends/devils'),((' fiend ',' fiende ',' feend ',' fende '),' fiend/devil '),((' fiend,',' fiende,',' feend,'),' fiend/devil,'),
                 (('fiercenesse ','fersnesse ','fiercenes '),'fierceness '), ((' fierie ',' firie ',' fyry ',' firy '),' fiery '),
             ((' fiftenthe',),' fifteenth'),((' fifteene ',' fiftene '),' fifteen '), ((' fiftithe',),' fiftieth'), ((' fyuethe ',' fyfth ',' fyft ',' fift '),' fifth '),((' fyuethe,',' fift,',' fyft,'),' fifth,'), ((' fyfties',),' fifties'),
                 ((' fyftye ',' fiftye ',' fiftie ',' fifti '),' fifty '),((' fyftye,',' fiftie,'),' fifty,'),((' fyftye.',' fiftie.',' fyftie.'),' fifty.'),((' fiftie:',' fiftye:'),' fifty:'),((' fifti;',),' fifty;'),
@@ -1544,7 +1545,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' lawes',' lawis'),' laws'),(('Lawe',),'Law'),((' lawe',),' law'),
             ((' layeth',' laieth',' laith'),' layeth/lays'),((' leiynge',),' laying'),
                 ((' layed ',' layde ',' laide ',' laied ',' leiden ',' leide ', ' leyd ',' layd '),' laid '),((' laied,',' layde,',' laide,',' layed,',),' laid,'),((' laide.',),' laid.'), ((' lyen ',),' lain '),
-                (('Laye ',),'Lay '),((' laye ',' lai '),' lay '),((' laye,',),' lay,'),((' laye.',),' lay.'),
+                (('Laye ',),'Lay '),((' laye ',' laie ',' lai '),' lay '),((' laye,',),' lay,'),((' laye.',),' lay.'),
         ((' leeder',' ledere'),' leader'), (('leadest','laddest','leedist','ledest'),'leadest/lead'),(('leadeth','ledith','ledeth'),'leadeth/leads'), (('Leade ','Lede '),'Lead '),((' leade ',' leede ',' lede '),' lead '),((' leade,',' leed,',' lede,'),' lead,'),((' leed.',),' lead.'),
                 ((' leafe ',' leef '),' leaf '),
                 ((' leannesse ',),' leanness '),((' leaneth',' leeneth',' lenith'),' leaneth/leans'),((' leane ',' lene '),' lean '),((' leane,',),' lean,'),
@@ -1613,7 +1614,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' lucke ',),' luck '),
             ((' lumpe ',),' lump '),
             ((' lustfuli',),' lustfully'), ((' lustily',' lustyly'),' lustily/vigorously'), ((' lustes',),' lusts'),
-    ((' madnesse',),' madness'),((' madnes ',),' madness '), ((' madde ',' madd '),' mad '),((' madde,',' madd,'),' mad,'),
+    ((' madnesse',),' madness'),((' madnes ',),' madness '), ((' madde ',' madd '),' mad '),((' madde,',' madd,'),' mad,'),((' madde.',),' mad.'),
                 ((' maydest',' maad',' madist',' madst',' makide'),' made'),((' maden ',),' made '),((' maden,',),' made,'),((' maden.',),' made.'),((' maden;',),' made;'),
             (('magistratis',),'magistrates'), ((' magnificall',' magnifical'),' magnificent'), (('magnefiede','magnyfied','magnefied'),'magnified'),(('Magnifie ',),'Magnify '),(('magnifie ','magnyfie ','magnefie '),'magnify '),
             (('Mayden','Mayde'),'Maiden'),((' mayden',),' maiden'), ((' maydes',' maides'),' maids'),((' mayde ',' maide ',' mayd '),' maid '),((' mayde,',' maide,'),' maid,'),
@@ -1744,7 +1745,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' nestes',),' nests'),((' neste ',),' nest '),
             ((' nettes',' nettis'),' nets'),((' nette ',' nett '),' net '),((' nette,',),' net,'), ((' netle',),' nettle'), ((' networkes',),' networks'),((' networke,',),' network,'),((' networke:',),' network:'),
             (('Neverthelesse ','Neuerthelesse ','Neuertheles ','Netheles '),'Nevertheless '),(('Neuerthelesse,','Neuertheles,','Netheles,'),'Nevertheless,'),(('neuerthelesse',),'nevertheless'),(('neuertheles ','netheles '),'nevertheless '),(('neuertheles)',),'nevertheless)'), ((' neuere',' neuer'),' never'),
-            ((' newli',),' newly'), (('Newe ',),'New '),((' newe ',),' new '),
+            ((' newli',),' newly'), (('Newe ',),'New '),((' newe ',),' new '),((' newe.',),' new.'),
             ((' nexte',),' next'),
         ((' neer ',' nyer ',' nier '),' nigher/nearer '),((' nyy ',' nye ',' niy '),' nigh/near '),((' neiye,',' niy,',' nyy,'),' nigh/near,'),((' nyy.',' nye.'),' nigh/near.'),((' nye:',),' nigh/near:'),
                 ((' nyyti',' niyti',' nyyt',' nyght',' nighte',' niyt'),' night'),
@@ -2343,7 +2344,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                     ((' stoole',),' stool'),
                     ((' stouped',' stowped'),' stooped'),((' stoupe',' stowpe'),' stoop'),
                 (('stoppid',),'stopped'),(('stoppynge',),'stopping'), ((' stoppe ',' stoope '),' stop '),
-                (('Storke',),'Stork'),(('storke',),'stork'),
+                ((' stoare',),' store'),
+                    (('Storke',),'Stork'),(('storke',),'stork'),
                     ((' stormie',),' stormy'), ((' stormes',),' storms'),((' storme ',),' storm '),((' storme,',),' storm,'),((' storme.',),' storm.'),((' storme:',),' storm:'),
                     ((' storie ',),' story '),
                 ((' stoutnes ',),' stoutness '),
@@ -2548,7 +2550,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('vnchastite',),'unchastity'),
             (('vncircumcized','vncircumcidid'),'uncircumcised'),
                     (('vnclennesses',),'uncleannesses'),
-                    (('vncleannesse ','vnclennesse ','vncleannes ','vnclennes '),'uncleanness '),(('vncleannes,','vnclennes,'),'uncleanness,'),(('vncleannesse.',),'uncleanness.'),
+                    (('vncleannesse ','vnclennesse ','vncleannes ','vnclennes '),'uncleanness '),(('vncleannes,','vnclennesse,','vnclennes,'),'uncleanness,'),(('vncleannesse.','vnclennesse.'),'uncleanness.'),
                     (('vncleane','vncleene','uncleene','vnclene'),'unclean'),
                 (('vncover','vncouer'),'uncover'),
                 (('vnkunnynge','vnkunnyng'),'uncunning/uneducated'),
@@ -2666,7 +2668,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             (('westwarde',),'westward'), ((' weste',),' west'),
             ((' wetheris',),' wethers'),((' wethir',),' wether'), ((' wette ',),' wet '),
         (('whalfishes',),'whales'),
-                ((' wha ',),' what '), (('Whatsoeuer',),'Whatsoever'),(('whatsoeuer',),'whatsoever'),
+                ((' wha ',),' what '), ((' whateuer',),' whatever'), (('Whatsoeuer',),'Whatsoever'),(('whatsoeuer',),'whatsoever'),
             ((' wheete',' wheate',' whete'),' wheat'),
                 ((' wheeles',),' wheels'),((' wheele',' whele'),' wheel'),#((' wheele,',),' wheel,'),((' wheele:',),' wheel:'),
                 ((' whelps',' whelpes',' whelpis',' welpes'),' whelps/pups_or_cubs'),((' whelp ',' whelpe '),' whelp/pup_or_cub '),
@@ -2842,6 +2844,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' departyngis',),' departings'), # Lam 3:48
         (('dereworthe','derworth'),'dear/precious'), # Lam 1:2, Luk 3:22
         ((' dight',),' prepare'), # Cvdl Eze 46:24
+        (('disparpoilid',),'scattered'), # Wycl Mrk 3:25
         ((' dom ',),' judgement '),((' dom,',),' judgement,'),((' dom;',),' judgement;'), # Lam 3:35,36, Psa 111:5
             ((' doomes',' domes'),' judgements'),((' doom',),' judgement'), # Eze 20:11,36
         ((' dred.',),' dreaded/feared.'), # Ecc 3:14
@@ -3044,11 +3047,13 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('& ',),'and '),
 
     # Proper nouns
+    (('Absolon',),'Absolom'),
     (('Alpheus','Alphey','Alfey','Alphee'),'Alphaeus'), # Mrk 3:18
     (('Baalim','Baalym'),'Baals'),
         (('Babiloyne','Babilon'),'Babylon'),
     (('Barne ',),'Barnea '),
     (('Bartholomewe','Bartlemew','Bartylmew'),'Bartholomew'), # Mrk 3:18
+    (('Belzebub','Belsabub'),'Beelzebub'), # Mrk 3:22
     (('Bethanie',),'Bethany'),
     (('Cananite',),'Canaanite'), # Mrk 3:18
     (('Cades ',),'Kadesh '),
@@ -3112,7 +3117,8 @@ for wordMapEntry in ENGLISH_WORD_MAP:
                        ' between',' burial','ed ',' can ',' cattle',' covered',' cut ',
                        ' feeding',' fragments','grape-gatherers', ' herd', 'immediately',' loved',
                        ' other', ' pasture',' power',' promised',
-                       ' reckoned/counted',' ruins','stiff-necked','stranger',
+                       ' reckoned/counted',' ruins',
+                       'scattered', 'stiff-necked', 'stranger',
                        'themselves','throughout',' towards',' turn ',' youth',
                        'whithersoever','whosoever',' hosts/armies','thyself/yourself'
                        ): # sometimes two→one and sometimes it's a single word
