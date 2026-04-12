@@ -551,7 +551,7 @@ class ESFMBible( Bible ):
         assert BBB not in self.books
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
-        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ESFMBible: Simultaneously loading {BBB} from {self.name} from {self.sourceFolder}…" )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"  ESFMBible: Simultaneously loading {BBB} from {self.name} from {self.sourceFolder}…" )
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
         EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
