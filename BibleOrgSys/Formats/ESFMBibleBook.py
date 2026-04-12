@@ -6,7 +6,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,6 +44,9 @@ See https://GitHub.com/Freely-Given-org/ESFM for more info on ESFM.
 NOTE: We've started adding coding for the ESFM v0.6 spec,
     but not yet removed the old code
     (which may or may not still be needed and may or may not still work).
+
+CHANGELOG:
+    2026-04-12 Allow for an online folder to be used
 """
 from gettext import gettext as _
 import os
@@ -57,10 +60,10 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-15' # by RJH
+LAST_MODIFIED_DATE = '2026-04-12' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.51'
+PROGRAM_VERSION = '0.52'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -574,9 +577,12 @@ class ESFMBibleBook( BibleBook ):
                 assert filePart.endswith( '.txt' )
                 if self.ESFMWorkDataFilename is None:
                     self.ESFMWorkDataFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
                 else:
                     logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
             elif rest.startswith( 'FILEDATA ' ):
@@ -585,9 +591,12 @@ class ESFMBibleBook( BibleBook ):
                 assert filePart.endswith( '.txt' )
                 if self.ESFMFileDataFilename is None:
                     self.ESFMFileDataFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
                 else:
                     logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
             if rest.startswith( 'WORDTABLE ' ):
@@ -596,9 +605,12 @@ class ESFMBibleBook( BibleBook ):
                 assert filePart.endswith( '.tsv' )
                 if self.ESFMWordTableFilename is None:
                     self.ESFMWordTableFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
                 else:
                     logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
     # end of ESFMBibleBook.load.lookForAuxilliaryFilenames

@@ -6,7 +6,7 @@
 #
 # Module handling compilations of ESFM Bible books
 #
-# Copyright (C) 2010-2025 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -52,6 +52,7 @@ CHANGELOG:
     2023-04-20 Handle word numbers for proper nouns that include a \\sup, e.g., 'Aʸsaias/(Yəshaˊə\\sup yāh\\sup*)'
     2023-08-07 Handle numbers in word regex, e.g. 'feeding 5,000 men'
     2024-03-21 Add code to handle two word tables (OT and NT) from different source folders
+    2026-04-12 Allow for an online folder to be used
 """
 from gettext import gettext as _
 import os
@@ -59,6 +60,7 @@ from pathlib import Path
 import logging
 import multiprocessing
 import re
+import requests
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
@@ -68,12 +70,13 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Formats.ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 from BibleOrgSys.Bible import Bible
+from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_88
 
 
-LAST_MODIFIED_DATE = '2025-01-14' # by RJH
+LAST_MODIFIED_DATE = '2026-04-12' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBible"
 PROGRAM_NAME = "ESFM Bible handler"
-PROGRAM_VERSION = '0.76'
+PROGRAM_VERSION = '0.77'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -263,8 +266,10 @@ class ESFMBible( Bible ):
         #   self.sourceFolder can be set to None, and we use self.OTsourceFolder and self.NTsourceFolder instead
         #       (This is mostly to handle separate word tables for OT and NT.)
         self.sourceFolder, self.givenName, self.abbreviation = sourceFolder, givenName, givenAbbreviation
-        self.dontLoadBook = []
+        if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ) and not sourceFolder.endswith( '/ '):
+            self.sourceFolder = f'{self.sourceFolder}/' # Ensure that it ends with the forward slash
 
+        self.dontLoadBook = []
         self.loadAuxilliaryFiles = False
         self.ESFMWorkData, self.ESFMFileData, self.ESFMWordTables, self.ESFMColumnNameList = {}, {}, {}, {}
         self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
@@ -276,53 +281,85 @@ class ESFMBible( Bible ):
         """
         fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.preload() from {}".format( self.sourceFolder ) )
 
-        # Do a preliminary check on the contents of our folder
-        foundFiles, foundFolders = [], []
-        for something in os.listdir( self.sourceFolder ):
-            somepath = os.path.join( self.sourceFolder, something )
-            if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.sourceFolder ) )
-        if foundFolders:
-            unexpectedFolders = []
-            for folderName in foundFolders:
-                if folderName.startswith( 'Interlinear_'): continue
-                if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
-                    continue
-                unexpectedFolders.append( folderName )
-            if unexpectedFolders:
-                logging.info( "ESFMBible.load: Surprised to see subfolders in {!r}: {}".format( self.sourceFolder, unexpectedFolders ) )
-        if not foundFiles:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
-            return # No use continuing
+        if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+            # # Attempt to load an SSF file
+            # self.ssfFilepath = f'{self.sourceFolder}Settings.xml'
+            # PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
+            # if PTXSettingsDict:
+            #     if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+            #     self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
+            #     self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+            # Attempt to load any books
+            self.maximumPossibleFilenameTuples = []
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  Checking for available ESFM files at {self.sourceFolder}…" )
+            for BBB in ['FRT','INT'] + BOOKLIST_88 + ['BAK','OTH','XXA','XXB','XXC','XXD','XXE','XXF']:
+                if BBB in ('ES1','ES2','DAG'): continue # TODO: TEMP...... Skip for now until we can fix isSingleChapterBook() function
+                bookFilename = f'{self.abbreviation}_{BBB}.ESFM'
+                bookUrl = f'{self.sourceFolder}{bookFilename}'
+                try:
+                    # Use head() to only get headers, not the file body
+                    response = requests.head( bookUrl, allow_redirects=True, timeout=5 )
+                    
+                    if response.status_code == 200:
+                        # print( f"  {self.abbreviation} {BBB} file exists.")
+                        self.maximumPossibleFilenameTuples.append( (BBB,bookFilename) )
+                    elif response.status_code == 404:
+                        # print( f"  {self.abbreviation} {BBB} file not found.")
+                        pass
+                    else:
+                        logging.error( f"preload {self.abbreviation} {BBB} file {bookFilename} status unknown: {response.status_code}")
+                except requests.exceptions.RequestException as e:
+                    logging.critical( f"An error occurred in preload() looking for {self.abbreviation} {BBB}: {e}")
 
-        self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
-        if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.USFMFilenamesObject )
+        else: # it must be on our local filesystem
+            # Do a preliminary check on the contents of our folder
+            foundFilenames, foundFoldernames = [], []
+            for something in os.listdir( self.sourceFolder ):
+                somepath = os.path.join( self.sourceFolder, something )
+                if os.path.isdir( somepath ): foundFoldernames.append( something )
+                elif os.path.isfile( somepath ): foundFilenames.append( something )
+                else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.sourceFolder ) )
+            if foundFoldernames:
+                unexpectedFolders = []
+                for folderName in foundFoldernames:
+                    if folderName.startswith( 'Interlinear_'): continue
+                    if folderName in BibleOrgSysGlobals.COMMONLY_IGNORED_FOLDERS:
+                        continue
+                    unexpectedFolders.append( folderName )
+                if unexpectedFolders:
+                    logging.info( "ESFMBible.load: Surprised to see subfolders in {!r}: {}".format( self.sourceFolder, unexpectedFolders ) )
+            if not foundFilenames:
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
+                return # No use continuing
 
-        if self.suppliedMetadata is None: self.suppliedMetadata = {}
+            self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
+            if BibleOrgSysGlobals.verbosityLevel > 3 or (BibleOrgSysGlobals.debugFlag and DEBUGGING_THIS_MODULE):
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.USFMFilenamesObject )
 
-        # Attempt to load the SSF file
-        self.ssfFilepath = None
-        ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-        if len(ssfFilepathList) == 1: # Seems we found the right one
-            self.ssfFilepath = ssfFilepathList[0]
-            PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
-            if PTXSettingsDict:
-                if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
-                self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
-                self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
+            if self.suppliedMetadata is None: self.suppliedMetadata = {}
 
-        #self.name = self.givenName
-        #if self.name is None:
-            #for field in ('FullName','Name',):
-                #if field in self.settingsDict: self.name = self.settingsDict[field]; break
-        #if not self.name: self.name = os.path.basename( self.sourceFolder )
-        #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
-        #if not self.name: self.name = "ESFM Bible"
+            # Attempt to load an SSF file
+            self.ssfFilepath = None
+            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+            if len(ssfFilepathList) == 1: # Seems we found the right one
+                self.ssfFilepath = ssfFilepathList[0]
+                PTXSettingsDict = loadPTX7ProjectData( self, self.ssfFilepath )
+                if PTXSettingsDict:
+                    if 'PTX7' not in self.suppliedMetadata: self.suppliedMetadata['PTX7'] = {}
+                    self.suppliedMetadata['PTX7']['SSF'] = PTXSettingsDict
+                    self.applySuppliedMetadata( 'SSF' ) # Copy some to BibleObject.settingsDict
 
-        # Find the filenames of all our books
-        self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+            #self.name = self.givenName
+            #if self.name is None:
+                #for field in ('FullName','Name',):
+                    #if field in self.settingsDict: self.name = self.settingsDict[field]; break
+            #if not self.name: self.name = os.path.basename( self.sourceFolder )
+            #if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+            #if not self.name: self.name = "ESFM Bible"
+
+            # Find the filenames of all our books
+            self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.availableBBBs.add( BBB )
@@ -461,7 +498,7 @@ class ESFMBible( Bible ):
         """
         Attempts to load the spelling, hyphenation, and semantic dictionaries if they exist.
         """
-        vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  " + _("Loading any dictionaries…") )
+        vPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  Checking for (and loading) any XXD and XXE dictionaries…" )
         for BBB,filename in self.maximumPossibleFilenameTuples:
             if BBB=='XXD': self.loadSemanticDictionary( BBB, filename )
             elif BBB=='XXE': self.loadStrongsDictionary( BBB, filename )
@@ -474,16 +511,16 @@ class ESFMBible( Bible ):
 
         NOTE: You should ensure that preload() has been called first.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBible.loadBook( {BBB}, {filename} )" )
         if BBB in self.books: return # Already loaded
         if BBB in self.dontLoadBook: return # Must be a dictionary that's already loaded
         if BBB in self.triedLoadingBook:
-            logging.warning( "We had already tried loading ESFM {} for {}".format( BBB, self.name ) )
+            logging.warning( f"We had already tried loading ESFM {BBB} for {self.name}" )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
 
         if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ESFMBible: Loading {BBB} from {self.name} from {self.sourceFolder}…" )
         try:
             if filename is None and BBB in self.possibleFilenameDict:
                 filename = self.possibleFilenameDict[BBB]
@@ -491,14 +528,14 @@ class ESFMBible( Bible ):
             logging.critical( f"Was a preload() done on this {self.abbreviation} ESFMBible? Or is folder {self.sourceFolder} empty? (Can't find any possible filenames.)" )
             # raise ValueError( f"ESFMBible.loadBook: Unable to load {BBB}{' '+filename if filename else ''} for {self.abbreviation} ESFM Bible" )
         if filename is None:
-            raise FileNotFoundError( "ESFMBible.loadBook: Unable to find file for {}".format( BBB ) )
+            raise FileNotFoundError( f"ESFMBible.loadBook: Unable to find file for {BBB}" )
 
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
         if EBB._rawLines:
             EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.stashBook( EBB )
-        else: logging.info( "ESFM book {} was completely blank".format( BBB ) )
+        else: logging.info( "ESFM book {BBB} was completely blank" )
     # end of ESFMBible.loadBook
 
 
@@ -514,8 +551,7 @@ class ESFMBible( Bible ):
         assert BBB not in self.books
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
-        if BibleOrgSysGlobals.verbosityLevel > 2 or BibleOrgSysGlobals.debugFlag:
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, _("  ESFMBible: Loading {} from {} from {}…").format( BBB, self.name, self.sourceFolder ) )
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  ESFMBible: Simultaneously loading {BBB} from {self.name} from {self.sourceFolder}…" )
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
         EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -541,7 +577,7 @@ class ESFMBible( Bible ):
                 # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if BibleOrgSysGlobals.verbosityLevel > 1:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "ESFMBible: Loading {} ESFM books using {} processes…".format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"ESFMBible: Loading {len(self.maximumPossibleFilenameTuples)} ESFM books using {BibleOrgSysGlobals.maxProcesses} processes…" )
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 BibleOrgSysGlobals.alreadyMultiprocessing = True
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
@@ -560,7 +596,7 @@ class ESFMBible( Bible ):
                     if BBB not in self.dontLoadBook:
                         loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( "ESFMBible: " + _("No books to load in folder '{}'!").format( self.sourceFolder ) )
+            logging.critical( f"ESFMBible: No books to load in folder '{self.sourceFolder}'!" )
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.getBookList() )
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag or DEBUGGING_THIS_MODULE:
             if 'Tag errors' in self.semanticDict:
@@ -571,7 +607,7 @@ class ESFMBible( Bible ):
         if self.semanticDict:
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSemantic dict:" )
             for someKey,someEntry in self.semanticDict.items():
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}: {}".format( someKey, someEntry ) )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{someKey}: {someEntry}" )
         if self.loadAuxilliaryFiles: self.lookForAuxilliaryFilenames()
         self.doPostLoadProcessing()
     # end of ESFMBible.loadBooks
@@ -970,6 +1006,39 @@ def fullDemo() -> None:
             if count: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{} total ESFM (partial) Bibles processed.".format( count ) )
             if totalBooks: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\nSorry, test folder '{testBaseFolder}' is not readable on this computer." )
+
+    if 1: # Test online Bible
+        folderURL = 'https://raw.githubusercontent.com/Freely-Given-org/OpenEnglishTranslation--OET/refs/heads/main/translatedTexts/ReadersVersion'
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nESFM Z1/" )
+        EsfmBib = ESFMBible( folderURL, 'Open English Translation Readers’ Version', 'OET-RV' )
+        EsfmBib.load()
+        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  {EsfmBib}" )
+        if 1: # Not for briefDemo()
+            from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
+            from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntry
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "Displaying ESFM text from some given references…" )
+            for BBB,C,V in ( ('MAT','1','1'),('MAT','1','2'),('MAT','1','3'),('MAT','1','4'),('MAT','1','5'),('MAT','1','6'),('MAT','1','7'),('MAT','1','8') ):
+                svk = SimpleVerseKey( BBB, C, V )
+                shortText = svk.getShortText()
+                verseDataList = EsfmBib.getVerseDataList( svk )
+                if BibleOrgSysGlobals.verbosityLevel > 0:
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n{}\n{}".format( shortText, verseDataList ) )
+                if verseDataList is None: continue
+                for verseDataEntry in verseDataList:
+                    # This loop is used for several types of data
+                    assert isinstance( verseDataEntry, InternalBibleEntry )
+                    marker, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                    adjustedText, originalText = verseDataEntry.getAdjustedText(), verseDataEntry.getOriginalText()
+                    fullText = verseDataEntry.getFullText()
+                    if BibleOrgSysGlobals.verbosityLevel > 0:
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "marker={} cleanText={!r}{}".format( marker, cleanText,
+                                                " extras={}".format( extras ) if extras else '' ) )
+                        if adjustedText and adjustedText!=cleanText:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "adjustedText={!r}".format( adjustedText ) )
+                        if fullText and fullText!=cleanText:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "fullText={!r}".format( fullText ) )
+                        if originalText and originalText!=cleanText:
+                            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, ' '*(len(marker)+4), "originalText={!r}".format( originalText ) )
 # end of ESFMBible.fullDemo
 
 if __name__ == '__main__':
