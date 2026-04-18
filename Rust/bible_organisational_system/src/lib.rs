@@ -6,7 +6,7 @@
 //! The core internals are provided by the `bos-internals` crate.
 
 pub mod cv_index_bindings;
-pub mod extra_bindings;
+pub mod extras_bindings;
 pub mod parsing_bindings;
 pub mod section_index_bindings;
 

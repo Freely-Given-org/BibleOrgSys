@@ -6,6 +6,7 @@ __all__ = [
     "getSmallLeadingInt",
     "getPositiveLeadingInt",
     "parse_word_attributes",
+    "set_rust_verbosity",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
@@ -30,6 +31,8 @@ def getPositiveLeadingInt(s: str) -> int:
 
 def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
     """Parse word attributes from a USFM3 \w field."""
+
+def set_rust_verbosity(level: int) -> None: ...
 
 @t.final
 class InternalBibleExtra:

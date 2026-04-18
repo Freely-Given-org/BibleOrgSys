@@ -11,6 +11,7 @@ use pyo3::types::PyBytes;
 use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEntry};
 
 use crate::cv_index_bindings::PyInternalBibleEntryList;
+use crate::verbosity_print;
 
 // ============================================================================
 // PySectionIndexEntry
@@ -333,6 +334,7 @@ impl PyInternalBibleBookSectionIndex {
 
     /// Build the section index from processed entries.
     fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
+        verbosity_print!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))

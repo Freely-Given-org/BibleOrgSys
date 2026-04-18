@@ -11,6 +11,7 @@ categories = ["text-processing", "parser-implementations"]
 [dependencies]
 compact_str.workspace = true
 indexmap.workspace = true
+num-format = "0.4.4"
 pyo3 = { workspace = true, optional = true }
 regex.workspace = true
 rkyv.workspace = true
