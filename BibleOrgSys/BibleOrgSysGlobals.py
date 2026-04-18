@@ -111,11 +111,14 @@ except ImportError:
     pwd = None
     import getpass
 
+# Rust implementations for better memory usage and speed (drop-in replacements with camelCase API)
+from bible_organisational_system import set_rust_verbosity
 
-LAST_MODIFIED_DATE = '2025-11-19' # by RJH
+
+LAST_MODIFIED_DATE = '2026-04-18' # by RJH
 SHORT_PROGRAM_NAME = "BibleOrgSysGlobals"
 PROGRAM_NAME = "BibleOrgSys (BOS) Globals"
-PROGRAM_VERSION = '0.94'
+PROGRAM_VERSION = '0.95'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -1474,6 +1477,8 @@ def setVerbosity( verbosityLevelParameter: str | int ) -> None:
             verbosityLevel = verbosityLevelParameter
             verbosityString = 'Verbose'
         else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
+
+    set_rust_verbosity( verbosityLevel ) # Set it for the Rust internals as well
 
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  Verbosity =', verbosityString )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, '  VerbosityLevel =', verbosityLevel )

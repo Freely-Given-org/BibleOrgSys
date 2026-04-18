@@ -6,10 +6,12 @@
 
 use compact_str::CompactString;
 use indexmap::IndexMap;
+use num_format::{Locale, ToFormattedString};
 
 use crate::chapter_verse::ChapterVerse;
-use crate::entry_extra_list::InternalBibleEntryList;
+use crate::entry_extras::InternalBibleEntryList;
 use crate::error::LookupError;
+use crate::verbosity_print;
 
 /// Markers that define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
@@ -283,6 +285,7 @@ impl InternalBibleBookSectionIndex {
         if entries.is_empty() {
             return Err(crate::error::IndexError::EmptyEntries);
         }
+        verbosity_print!(2, "Building section index for {} {} from {} entries…", self.work_name(), self.book_code(), entries.len().to_formatted_string(&Locale::en));
 
         self.entries = entries;
         self.index_data.clear();
@@ -362,6 +365,7 @@ impl InternalBibleBookSectionIndex {
                         current_verse_num_str.as_str(),
                     ));
                 }
+                verbosity_print!(4, "  Build {} {} section index: at entry #{} {}:{}", self.work_name(), self.book_code(), i, current_chapter_num_str, current_verse_num_str);
             }
             // Check for section markers
             else if is_section_marker(marker) {
@@ -440,6 +444,15 @@ impl InternalBibleBookSectionIndex {
         }
 
         // Close final section
+        // If there's a pending section that hasn't had its start CV resolved yet, it means we never encountered a verse marker to set the start CV. In this case, we can use the current chapter and verse (which would be the last ones seen in the entries) as the start CV for this section.
+        // This can happen if the last section in the book is defined by a heading marker and there are no verses after it. In that case, we want the section to start at the last known chapter and verse rather than being left without a start CV.
+        // This only happens in OEB MRK for an alternative special ending (but it does make this logic more robust in general).
+        if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
+            section.start_cv = Some(ChapterVerse::new(
+                current_chapter_num_str.as_str(),
+                current_verse_num_str.as_str(),
+            ));
+        }
         if let Some(section) = pending {
             let (cv, entry) = section.into_closed(
                 current_chapter_num_str.as_str(),

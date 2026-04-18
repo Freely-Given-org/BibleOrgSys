@@ -9,7 +9,7 @@ use crate::cv_index_bindings::{
     PyChapterVerse, PyCVIndexEntry, PyCVIndexIter, PyInternalBibleBookCVIndex,
     PyInternalBibleEntry, PyInternalBibleEntryList, PyInternalBibleEntryListIter,
 };
-use crate::extra_bindings::{
+use crate::extras_bindings::{
     PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter,
 };
 use crate::section_index_bindings::{
@@ -22,6 +22,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
+    m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;
 
     // Extra types
     m.add_class::<PyInternalBibleExtra>()?;
@@ -79,4 +80,13 @@ fn parse_word_attributes(
         result.insert(k, v);
     }
     Ok(result)
+}
+
+use std::sync::atomic::{Ordering};
+use bos_internals::VERBOSITY;
+
+#[pyfunction]
+pub fn set_rust_verbosity(level: u8) {
+    // Store the level (0-4) using Relaxed ordering (fastest)
+    VERBOSITY.store(level, Ordering::Relaxed);
 }

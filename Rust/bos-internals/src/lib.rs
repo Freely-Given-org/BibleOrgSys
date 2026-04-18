@@ -80,7 +80,7 @@
 // Re-export core modules
 pub mod chapter_verse;
 pub mod entry;
-pub mod entry_extra_list;
+pub mod entry_extras;
 pub mod error;
 pub mod indexes;
 pub mod markers;
@@ -89,7 +89,7 @@ pub mod parsing;
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
-pub use entry_extra_list::{InternalBibleEntryList, InternalBibleExtraList};
+pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{
     CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry,
@@ -99,3 +99,22 @@ pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
     parse_figure_attributes, parse_word_attributes,
 };
+
+use std::sync::atomic::{AtomicU8, Ordering};
+
+// A global atomic variable in Rust
+pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
+
+pub fn get_verbosity() -> u8 {
+    VERBOSITY.load(Ordering::Relaxed)
+}
+
+// Internal Rust macro for logging (convenience)
+#[macro_export]
+macro_rules! verbosity_print {
+    ($level:expr, $($arg:tt)*) => {
+        if crate::get_verbosity() >= $level {
+            println!($($arg)*);
+        }
+    };
+}
