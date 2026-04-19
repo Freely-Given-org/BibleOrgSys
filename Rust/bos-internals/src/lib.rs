@@ -105,6 +105,10 @@ use std::sync::atomic::{AtomicU8, Ordering};
 // A global atomic variable in Rust
 pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
 
+pub fn set_verbosity(level: u8) {
+    // Store the level (0-4) using Relaxed ordering (fastest)
+    VERBOSITY.store(level, Ordering::Relaxed);
+}
 pub fn get_verbosity() -> u8 {
     VERBOSITY.load(Ordering::Relaxed)
 }
