@@ -11,14 +11,14 @@ use num_format::{Locale, ToFormattedString};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_extras::InternalBibleEntryList;
 use crate::error::LookupError;
-use crate::{verbosity_print};
+use crate::verbosity_print;
 
 /// Markers that can define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
     "is1", // Introductory sections
     "ms1", "ms2", "ms3", // Major sections
     "s1",  // Section headings
-    "c", // Chapters can also define section boundaries, especially for intro-to-content transitions
+    "c",   // Chapters can also define section boundaries, especially for intro-to-content transitions
 ];
 
 /// An entry in the section index.
@@ -35,7 +35,7 @@ pub struct SectionIndexEntry {
     start_index: u16,
     /// Index of the last entry for this section (inclusive).
     end_index: u16,
-    /// The marker that started this section (e.g., "s1", "c").
+    /// The marker that started this section (e.g., "Headers", "is1", "s1", "c", "c/s1").
     reason_marker: CompactString,
     /// The section name/heading text.
     section_name: CompactString,
@@ -67,10 +67,7 @@ impl SectionIndexEntry {
 
     /// Get the ending chapter:verse as a ChapterVerse.
     pub fn end_cv(&self) -> ChapterVerse {
-        ChapterVerse::new(
-            self.end_chapter_num_str.as_str(),
-            self.end_verse_num_str.as_str(),
-        )
+        ChapterVerse::new(self.end_chapter_num_str.as_str(), self.end_verse_num_str.as_str())
     }
 
     /// Get the ending chapter number.
@@ -217,10 +214,7 @@ impl InternalBibleBookSectionIndex {
     /// # Arguments
     ///
     /// * `cv` - The starting chapter:verse of the section
-    pub fn get_section_entries(
-        &self,
-        cv: &ChapterVerse,
-    ) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_section_entries(&self, cv: &ChapterVerse) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
@@ -278,10 +272,7 @@ impl InternalBibleBookSectionIndex {
     ///
     /// This analyzes the entry list and creates section boundaries
     /// based on section heading markers.
-    pub fn build(
-        &mut self,
-        entries: InternalBibleEntryList,
-    ) -> Result<(), crate::error::IndexError> {
+    pub fn build(&mut self, entries: InternalBibleEntryList) -> Result<(), crate::error::IndexError> {
         if entries.is_empty() {
             return Err(crate::error::IndexError::EmptyEntries);
         }
@@ -315,11 +306,16 @@ impl InternalBibleBookSectionIndex {
                 current_verse_num_str = CompactString::from(verse_num);
                 // A verse after a chapter change means the section spans the boundary
                 pre_chapter_change = None;
-                if let Some(section) = pending.as_mut().filter(|s| s.start_cv.is_none()) {
-                    section.start_cv = Some(ChapterVerse::new(
-                        current_chapter_num_str.as_str(),
-                        current_verse_num_str.as_str(),
-                    ));
+                if let Some(section) = pending.as_mut() {
+                    if section.start_cv.is_none() {
+                        section.start_cv = Some(ChapterVerse::new(
+                            current_chapter_num_str.as_str(),
+                            current_verse_num_str.as_str(),
+                        ));
+                    }
+                    // A verse marker ends the "transition" state from a `c` marker;
+                    // subsequent headings should start new sections.
+                    section.is_transition = false;
                 }
                 verbosity_print!(
                     4,
@@ -338,9 +334,7 @@ impl InternalBibleBookSectionIndex {
                     )),
                     start_index: i.try_into().unwrap(),
                     reason: CompactString::from("Headers"),
-                    name: CompactString::from(
-                        entry.clean_text().chars().take(3).collect::<String>(),
-                    ),
+                    name: CompactString::from(entry.clean_text().chars().take(3).collect::<String>()),
                     is_transition: false,
                 });
             }
@@ -360,15 +354,23 @@ impl InternalBibleBookSectionIndex {
                 if marker == "c" {
                     let was_intro = current_chapter_num_str == "-1";
                     if was_intro || self.book_code() == "PSA" {
-                        // Transitioning from intro to content: close the intro section
-                        if let Some(section) = pending.take() {
+                        // Transitioning from intro to content (or new Psalm): close the previous section
+                        if let Some(mut section) = pending.take() {
+                            if section.start_cv.is_none() {
+                                section.start_cv = Some(ChapterVerse::new(
+                                    current_chapter_num_str.as_str(),
+                                    current_verse_num_str.as_str(),
+                                ));
+                            }
                             let end_idx = (i as u16).saturating_sub(1);
-                            let (cv, entry) = section.into_closed(
-                                "-1",
-                                &end_idx.to_string(),
-                                end_idx,
-                                context.clone(),
-                            );
+                            let end_v_intro;
+                            let (end_ch, end_v) = if was_intro {
+                                end_v_intro = end_idx.to_string();
+                                ("-1", end_v_intro.as_str())
+                            } else {
+                                (current_chapter_num_str.as_str(), current_verse_num_str.as_str())
+                            };
+                            let (cv, entry) = section.into_closed(end_ch, end_v, end_idx, context.clone());
                             self.index_data.insert(cv, entry);
                             context.clear();
                         }
@@ -394,14 +396,15 @@ impl InternalBibleBookSectionIndex {
                     current_verse_num_str = CompactString::from("0");
                 } else if current_chapter_num_str == "-1" {
                     // In intro mode: close previous section with -1:(i-1) addressing
-                    if let Some(section) = pending.take() {
+                    if let Some(mut section) = pending.take() {
+                        if section.start_cv.is_none() {
+                            section.start_cv = Some(ChapterVerse::new(
+                                current_chapter_num_str.as_str(),
+                                current_verse_num_str.as_str(),
+                            ));
+                        }
                         let end_idx = (i as u16).saturating_sub(1);
-                        let (cv, entry) = section.into_closed(
-                            "-1",
-                            &end_idx.to_string(),
-                            end_idx,
-                            context.clone(),
-                        );
+                        let (cv, entry) = section.into_closed("-1", &end_idx.to_string(), end_idx, context.clone());
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
@@ -416,7 +419,7 @@ impl InternalBibleBookSectionIndex {
                 } else if pending.as_ref().is_some_and(|s| s.is_transition) {
                     // Merge heading into the transition section started by the c marker
                     let section = pending.as_mut().unwrap();
-                    section.reason = CompactString::from(marker);
+                    section.reason = CompactString::from(format!("c/{}", marker));
                     section.name = CompactString::from(entry.clean_text());
                     section.is_transition = false;
                 } else {
@@ -425,7 +428,13 @@ impl InternalBibleBookSectionIndex {
                     // intervening verse, close at the pre-chapter-change point
                     // so the `c` entry belongs to the new section.
                     let chapter_boundary = pre_chapter_change.take();
-                    if let Some(section) = pending.take() {
+                    if let Some(mut section) = pending.take() {
+                        if section.start_cv.is_none() {
+                            section.start_cv = Some(ChapterVerse::new(
+                                current_chapter_num_str.as_str(),
+                                current_verse_num_str.as_str(),
+                            ));
+                        }
                         let (end_ch, end_v, end_idx) = match &chapter_boundary {
                             Some((ch, v, idx)) => (ch.as_str(), v.as_str(), *idx),
                             None => (
@@ -434,21 +443,20 @@ impl InternalBibleBookSectionIndex {
                                 (i as u16).saturating_sub(1),
                             ),
                         };
-                        let (cv, entry) =
-                            section.into_closed(end_ch, end_v, end_idx, context.clone());
+                        let (cv, entry) = section.into_closed(end_ch, end_v, end_idx, context.clone());
                         self.index_data.insert(cv, entry);
                         context.clear();
                     }
                     // New section starts at the `c` entry if there was a chapter
                     // change, otherwise at this section marker
-                    let start_index: u16 = match &chapter_boundary {
-                        Some((_, _, idx)) => idx + 1,
-                        None => i.try_into().unwrap(),
+                    let (start_index, reason): (u16, CompactString) = match &chapter_boundary {
+                        Some((_, _, idx)) => (idx + 1, CompactString::from(format!("c/{}", marker))),
+                        None => (i.try_into().unwrap(), CompactString::from(marker)),
                     };
                     pending = Some(PendingSection {
                         start_cv: None,
                         start_index,
-                        reason: CompactString::from(marker),
+                        reason,
                         name: CompactString::from(entry.clean_text()),
                         is_transition: false,
                     });
@@ -511,9 +519,7 @@ impl PendingSection {
         end_index: u16,
         context: Vec<CompactString>,
     ) -> (ChapterVerse, SectionIndexEntry) {
-        let start_cv = self
-            .start_cv
-            .expect("section closed before start CV was resolved");
+        let start_cv = self.start_cv.expect("section closed before start CV was resolved");
         let entry = SectionIndexEntry::new(
             end_chapter,
             end_verse,
@@ -562,7 +568,7 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;
-    use crate::{set_verbosity};
+    use crate::set_verbosity;
 
     fn create_test_entries_1() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
@@ -574,10 +580,7 @@ mod tests {
 
         // Section 2 (Intro)
         entries.push(InternalBibleEntry::simple("is1", "Introduction to Genesis")); // 3
-        entries.push(InternalBibleEntry::simple(
-            "ip",
-            "An introductory paragraph.",
-        )); // 4
+        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 4
 
         // Section 3
         entries.push(InternalBibleEntry::simple("c", "1")); // 5
@@ -586,10 +589,7 @@ mod tests {
         entries.push(InternalBibleEntry::simple("v", "1")); // 8
         entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 9
         entries.push(InternalBibleEntry::simple("v", "2")); // 10
-        entries.push(InternalBibleEntry::simple(
-            "v~",
-            "And the earth was without form...",
-        )); // 11
+        entries.push(InternalBibleEntry::simple("v~", "And the earth was without form...")); // 11
         entries.push(InternalBibleEntry::simple("¬c", "")); // 12
 
         // Section 4
@@ -619,92 +619,45 @@ mod tests {
 
     #[test]
     fn test_build_section_index_1() {
-        set_verbosity(4); // For debugging test output
+        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
         index.build(create_test_entries_1()).unwrap();
         verbosity_print!(4, "Index1:{}", index);
         assert!(index.is_indexed());
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
-        assert!(
-            index
-                .index_data
-                .get_index(0)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "-1:2"
-        ); // ID Header ends at -1:2
+        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:2"); // ID Header ends at -1:2
         assert!(index.index_data.get_index(0).unwrap().1.start_index() == 0); // starts at entry index 0
         assert!(index.index_data.get_index(0).unwrap().1.end_index() == 2); // ends at entry index 2
         assert!(index.index_data.get_index(0).unwrap().1.reason_marker() == "Headers");
         assert!(index.index_data.get_index(0).unwrap().1.section_name() == "GEN");
 
         assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:3"); // starts at -1:3
-        assert!(
-            index
-                .index_data
-                .get_index(1)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "-1:4"
-        ); // ends at -1:4
+        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "-1:4"); // ends at -1:4
         assert!(index.index_data.get_index(1).unwrap().1.start_index() == 3); // starts at entry index 3
         assert!(index.index_data.get_index(1).unwrap().1.end_index() == 4); // ends at entry index 4
         assert!(index.index_data.get_index(1).unwrap().1.reason_marker() == "is1");
-        assert!(
-            index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis"
-        );
+        assert!(index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis");
 
         assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:1"); // starts at 1:1
-        assert!(
-            index
-                .index_data
-                .get_index(2)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "2:1"
-        ); // ends at 2:1
+        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "2:1"); // ends at 2:1
         assert!(index.index_data.get_index(2).unwrap().1.start_index() == 5); // starts at entry index 5
         assert!(index.index_data.get_index(2).unwrap().1.end_index() == 16); // crosses chapters and ends at entry index 16
-        assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "s1");
+        assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "c/s1");
         assert!(index.index_data.get_index(2).unwrap().1.section_name() == "The Creation");
 
         assert!(index.index_data.get_index(3).unwrap().0.to_string() == "2:2"); // starts at 2:2
-        assert!(
-            index
-                .index_data
-                .get_index(3)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "2:3"
-        ); // ends at 2:3
+        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "2:3"); // ends at 2:3
         assert!(index.index_data.get_index(3).unwrap().1.start_index() == 17); // starts at entry index 17
         assert!(index.index_data.get_index(3).unwrap().1.end_index() == 22); // ends at entry index 22
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(3).unwrap().1.section_name() == "The Fall");
 
         assert!(index.index_data.get_index(4).unwrap().0.to_string() == "3:1"); // starts at 3:1
-        assert!(
-            index
-                .index_data
-                .get_index(4)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "3:2"
-        ); // ends at 3:2
+        assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "3:2"); // ends at 3:2
         assert!(index.index_data.get_index(4).unwrap().1.start_index() == 23); // starts at entry index 23 (the c marker)
         assert!(index.index_data.get_index(4).unwrap().1.end_index() == 30); // ends at entry index 30
-        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
+        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "c/s1");
         assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Chapter Three");
 
         assert!(index.len() == 5); // Headers, is1, c/s1 (1/The Creation), s1 (Fall), c/s1 (3/Chapter Three)
@@ -735,96 +688,63 @@ mod tests {
         entries.push(InternalBibleEntry::simple("v~", "Verse 4 of chapter 1...")); // 14
 
         // Section 4
-        entries.push(InternalBibleEntry::simple(
-            "s1",
-            "Alternative ending to Mark",
-        )); // 15
+        entries.push(InternalBibleEntry::simple("s1", "First alternative ending to Mark")); // 15
         entries.push(InternalBibleEntry::simple("p", "")); // 16
-        entries.push(InternalBibleEntry::simple(
-            "p~",
-            "No verses here--just text...",
-        )); // 17
+        entries.push(InternalBibleEntry::simple("p~", "No verses here--just text...")); // 17
+
+        // Section 5
+        entries.push(InternalBibleEntry::simple("s1", "Second alternative ending to Mark")); // 18
+        entries.push(InternalBibleEntry::simple("p", "")); // 19
+        entries.push(InternalBibleEntry::simple("v", "9")); // 20
+        entries.push(InternalBibleEntry::simple("v~", "Has verses here...")); // 21
 
         entries
     }
 
     #[test]
     fn test_build_section_index_2() {
-        set_verbosity(4); // For debugging test output
+        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("YSV", "MRK");
         index.build(create_test_entries_2()).unwrap();
         verbosity_print!(4, "Index2:{}", index);
         assert!(index.is_indexed());
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
-        assert!(
-            index
-                .index_data
-                .get_index(0)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "-1:2"
-        ); // ID Header ends at -1:2
+        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:2"); // ID Header ends at -1:2
         assert!(index.index_data.get_index(0).unwrap().1.start_index() == 0); // starts at entry index 0
         assert!(index.index_data.get_index(0).unwrap().1.end_index() == 2); // ends at entry index 2
         assert!(index.index_data.get_index(0).unwrap().1.reason_marker() == "Headers");
         assert!(index.index_data.get_index(0).unwrap().1.section_name() == "MRK");
 
         assert!(index.index_data.get_index(1).unwrap().0.to_string() == "1:1"); // starts at 1:1
-        assert!(
-            index
-                .index_data
-                .get_index(1)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "1:2"
-        ); // ends at 1:2
+        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "1:2"); // ends at 1:2
         assert!(index.index_data.get_index(1).unwrap().1.start_index() == 3); // starts at entry index 3
         assert!(index.index_data.get_index(1).unwrap().1.end_index() == 8); // ends at entry index 8
         assert!(index.index_data.get_index(1).unwrap().1.reason_marker() == "c");
-        assert!(
-            index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis"
-        );
+        assert!(index.index_data.get_index(1).unwrap().1.section_name() == "");
 
         assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:3"); // starts at 1:3
-        assert!(
-            index
-                .index_data
-                .get_index(2)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "1:4"
-        ); // ends at 1:4
+        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "1:4"); // ends at 1:4
         assert!(index.index_data.get_index(2).unwrap().1.start_index() == 9); // starts at entry index 9
         assert!(index.index_data.get_index(2).unwrap().1.end_index() == 14); // ends at entry index 14
         assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(2).unwrap().1.section_name() == "First section heading");
 
         assert!(index.index_data.get_index(3).unwrap().0.to_string() == "1:4"); // starts at 1:4
-        assert!(
-            index
-                .index_data
-                .get_index(3)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "1:4"
-        ); // ends at 1:4
+        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "1:4"); // ends at 1:4
         assert!(index.index_data.get_index(3).unwrap().1.start_index() == 15); // starts at entry index 15
         assert!(index.index_data.get_index(3).unwrap().1.end_index() == 17); // ends at entry index 17
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
-        assert!(
-            index.index_data.get_index(3).unwrap().1.section_name() == "Alternative ending to Mark"
-        );
+        assert!(index.index_data.get_index(3).unwrap().1.section_name() == "First alternative ending to Mark");
 
-        assert!(index.len() == 4); // Headers, c, s1, s1 (at end)
+        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "1:9"); // starts at 1:4
+        assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "1:9"); // ends at 1:4
+        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 18); // starts at entry index 18
+        assert!(index.index_data.get_index(4).unwrap().1.end_index() == 21); // ends at entry index 21
+        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
+        assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Second alternative ending to Mark");
+
+        assert!(index.len() == 5); // Headers, c, s1, s1 x2 (at end)
     }
 
     fn create_psa_test_entries() -> InternalBibleEntryList {
@@ -837,10 +757,7 @@ mod tests {
 
         // Section 2 (Intro)
         entries.push(InternalBibleEntry::simple("is1", "Introduction to Psalms")); // 3
-        entries.push(InternalBibleEntry::simple(
-            "ip",
-            "An introductory paragraph.",
-        )); // 4
+        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 4
 
         // Section 3 Chapter begins WITHOUT a section heading (should be absorbed into the first section)
         entries.push(InternalBibleEntry::simple("c", "1")); // 5
@@ -880,117 +797,61 @@ mod tests {
 
     #[test]
     fn test_build_section_index_psa() {
-        set_verbosity(4); // For debugging test output
+        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("ZSV", "PSA");
         index.build(create_psa_test_entries()).unwrap();
         verbosity_print!(4, "PSA index:{}", index);
         assert!(index.is_indexed());
 
-        assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
-        assert!(
-            index
-                .index_data
-                .get_index(0)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "-1:2"
-        ); // ID Header ends at -1:2
+        // 0: Headers
+        assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0");
+        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:2");
         assert!(index.index_data.get_index(0).unwrap().1.start_index() == 0); // starts at entry index 0
         assert!(index.index_data.get_index(0).unwrap().1.end_index() == 2); // ends at entry index 2
         assert!(index.index_data.get_index(0).unwrap().1.reason_marker() == "Headers");
         assert!(index.index_data.get_index(0).unwrap().1.section_name() == "PSA");
 
-        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:3"); // starts at -1:3
-        assert!(
-            index
-                .index_data
-                .get_index(1)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "-1:4"
-        ); // ends at -1:4
+        // 1: Intro
+        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:3");
+        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "-1:4");
         assert!(index.index_data.get_index(1).unwrap().1.start_index() == 3); // starts at entry index 3
         assert!(index.index_data.get_index(1).unwrap().1.end_index() == 4); // ends at entry index 4
         assert!(index.index_data.get_index(1).unwrap().1.reason_marker() == "is1");
-        assert!(
-            index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Psalms"
-        );
+        assert!(index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Psalms");
 
-        assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:1"); // starts at 1:1
-        assert!(
-            index
-                .index_data
-                .get_index(1)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "1:2"
-        ); // ends at 1:2
+        // 2: Chapter 1
+        assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:1");
+        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "1:2");
         assert!(index.index_data.get_index(2).unwrap().1.start_index() == 5); // starts at entry index 5
         assert!(index.index_data.get_index(2).unwrap().1.end_index() == 10); // ends at entry index 10
         assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "c");
-        assert!(
-            index.index_data.get_index(2).unwrap().1.section_name() == "Introduction to Genesis"
-        );
+        assert!(index.index_data.get_index(2).unwrap().1.section_name() == "");
 
-        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "1:3"); // starts at 1:3
-        assert!(
-            index
-                .index_data
-                .get_index(2)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "1:4"
-        ); // ends at 1:4
+        // 3: Mid-chapter heading
+        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "1:3");
+        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "1:4");
         assert!(index.index_data.get_index(3).unwrap().1.start_index() == 11); // starts at entry index 11
         assert!(index.index_data.get_index(3).unwrap().1.end_index() == 16); // ends at entry index 16
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "s1");
-        assert!(index.index_data.get_index(3).unwrap().1.section_name() == "First section heading");
+        assert!(index.index_data.get_index(3).unwrap().1.section_name() == "First section heading mid-chapter");
 
-        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "2:1"); // starts at 2:1
-        assert!(
-            index
-                .index_data
-                .get_index(3)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "2:2"
-        ); // ends at 2:2
+        // 4: Chapter 2
+        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "2:1");
+        assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "2:2");
         assert!(index.index_data.get_index(4).unwrap().1.start_index() == 17); // starts at entry index 17
         assert!(index.index_data.get_index(4).unwrap().1.end_index() == 22); // ends at entry index 22
-        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
-        assert!(
-            index.index_data.get_index(4).unwrap().1.section_name() == "Alternative ending to Mark"
-        );
+        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "c");
+        assert!(index.index_data.get_index(4).unwrap().1.section_name() == "");
 
-        assert!(index.index_data.get_index(5).unwrap().0.to_string() == "3:1"); // starts at 3:1
-        assert!(
-            index
-                .index_data
-                .get_index(3)
-                .unwrap()
-                .1
-                .end_cv()
-                .to_string()
-                == "3:2"
-        ); // ends at 3:2
+        // 5: Chapter 3 (merged c/s1)
+        assert!(index.index_data.get_index(5).unwrap().0.to_string() == "3:1");
+        assert!(index.index_data.get_index(5).unwrap().1.end_cv().to_string() == "3:2");
         assert!(index.index_data.get_index(5).unwrap().1.start_index() == 23); // starts at entry index 23
         assert!(index.index_data.get_index(5).unwrap().1.end_index() == 29); // ends at entry index 29
         assert!(index.index_data.get_index(5).unwrap().1.reason_marker() == "c/s1");
-        assert!(
-            index.index_data.get_index(5).unwrap().1.section_name() == "Psa 3 section heading"
-        );
+        assert!(index.index_data.get_index(5).unwrap().1.section_name() == "Psa 3 section heading");
 
-        assert!(index.len() == 6); // Headers, is1, c, s1, c, c/s1
+        assert!(index.len() == 6); // Headers, is1, c, s1, c, c/s1 (merged)
     }
 
     #[test]
