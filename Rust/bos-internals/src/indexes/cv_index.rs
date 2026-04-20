@@ -365,71 +365,84 @@ impl InternalBibleBookCVIndex {
         for (i, entry) in self.entries.iter().enumerate() {
             let marker = entry.marker();
 
-            // Handle nesting markers - push onto context
+            // 1. Handle section starts - close previous section if not already closed by an end marker
+            if marker == "c" || marker == "v" || marker == "intro" {
+                let was_closed = if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
+                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
+                    if !self.index_data.contains_key(&cv) {
+                        let entry_count = (i - current_start) as u16;
+                        if entry_count > 0 {
+                            self.index_data.insert(
+                                cv,
+                                CVIndexEntry::new(current_start, entry_count, context.clone()),
+                            );
+                        }
+                        true
+                    } else {
+                        false
+                    }
+                } else {
+                    true
+                };
+
+                if was_closed {
+                    current_start = i;
+                }
+
+                if marker == "c" {
+                    current_chapter = Some(CompactString::from(entry.clean_text()));
+                    current_verse = Some(CompactString::from("0"));
+                } else if marker == "v" {
+                    let verse_text = entry.clean_text();
+                    let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
+                    current_verse = Some(CompactString::from(verse_num));
+                } else if marker == "intro" {
+                    current_chapter = Some(CompactString::from("-1"));
+                    current_verse = Some(CompactString::from("0"));
+                }
+            }
+
+            // 2. Handle nesting markers - push onto context
             if is_nesting_marker(marker) && !is_end_marker(marker) {
                 context.push(CompactString::from(marker));
             }
 
-            // Handle end markers - pop from context
-            if is_end_marker(marker)
-                && let Some(base) = crate::markers::base_marker(marker)
-                && let Some(pos) = context.iter().rposition(|m| m == base)
-            {
-                context.remove(pos);
-            }
-
-            // Handle chapter markers
-            if marker == "c" {
-                // Save previous verse if any
-                if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                    let entry_count = (i - current_start) as u16;
-                    self.index_data.insert(
-                        cv,
-                        CVIndexEntry::new(current_start, entry_count, context.clone()),
-                    );
+            // 3. Handle end markers - pop from context and optionally close section
+            if is_end_marker(marker) {
+                if let Some(base) = crate::markers::base_marker(marker) {
+                    if let Some(pos) = context.iter().rposition(|m| m == base) {
+                        context.remove(pos);
+                    }
                 }
 
-                current_chapter = Some(CompactString::from(entry.clean_text()));
-                current_verse = Some(CompactString::from("0"));
-                current_start = i;
-            }
-
-            // Handle verse markers
-            if marker == "v" {
-                // Save previous verse if any
-                if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                    let entry_count = (i - current_start) as u16;
-                    self.index_data.insert(
-                        cv,
-                        CVIndexEntry::new(current_start, entry_count, context.clone()),
-                    );
+                if marker == "¬v" || marker == "¬c" {
+                    if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
+                        let cv = ChapterVerse::new(c.as_str(), v.as_str());
+                        let entry_count = (i - current_start + 1) as u16;
+                        self.index_data.insert(
+                            cv,
+                            CVIndexEntry::new(current_start, entry_count, context.clone()),
+                        );
+                        current_start = i + 1;
+                        if marker == "¬c" {
+                            current_chapter = None;
+                            current_verse = None;
+                        }
+                    }
                 }
-
-                // Start new verse - extract verse number from clean text
-                let verse_text = entry.clean_text();
-                let verse_num = verse_text.split_whitespace().next().unwrap_or(verse_text);
-                current_verse = Some(CompactString::from(verse_num));
-                current_start = i;
-            }
-
-            // Handle introduction (before chapter 1)
-            if marker == "intro" {
-                current_chapter = Some(CompactString::from("-1"));
-                current_verse = Some(CompactString::from("0"));
-                current_start = i;
             }
         }
 
-        // Save final verse
+        // Save final verse if anything is pending
         if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-            let cv = ChapterVerse::new(c.as_str(), v.as_str());
             let entry_count = (self.entries.len() - current_start) as u16;
-            self.index_data.insert(
-                cv,
-                CVIndexEntry::new(current_start, entry_count, context.clone()),
-            );
+            if entry_count > 0 {
+                let cv = ChapterVerse::new(c.as_str(), v.as_str());
+                self.index_data.insert(
+                    cv,
+                    CVIndexEntry::new(current_start, entry_count, context),
+                );
+            }
         }
 
         self.indexed = true;
@@ -511,39 +524,83 @@ impl std::fmt::Display for InternalBibleBookCVIndex {
 mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;
+    use crate::{set_verbosity, verbosity_print};
 
     fn create_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
         // Chapter 1
-        entries.push(InternalBibleEntry::simple("c", "1"));
-        entries.push(InternalBibleEntry::simple("p", ""));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "In the beginning..."));
-        entries.push(InternalBibleEntry::simple("v", "2"));
-        entries.push(InternalBibleEntry::simple("v~", "And the earth was..."));
+        entries.push(InternalBibleEntry::nesting_marker("chapters")); // 0
+        entries.push(InternalBibleEntry::simple("c", "1")); // 1
+        entries.push(InternalBibleEntry::simple("s1", "Creation")); // 2
+        entries.push(InternalBibleEntry::simple("p", "")); // 3
+        entries.push(InternalBibleEntry::simple("v", "1")); // 4
+        entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 5
+        entries.push(InternalBibleEntry::end_marker("¬v").expect("Failed to create end marker")); // 6
+        entries.push(InternalBibleEntry::simple("v", "2")); // 7
+        entries.push(InternalBibleEntry::simple("v~", "And the earth was...")); // 8
+        entries.push(InternalBibleEntry::end_marker("¬v").expect("Failed to create end marker")); // 9
+        entries.push(InternalBibleEntry::simple("p", "")); // 10
+        entries.push(InternalBibleEntry::simple("v", "3")); // 11
+        entries.push(InternalBibleEntry::simple("v~", "And the spirit...")); // 12
+        entries.push(InternalBibleEntry::end_marker("¬v").expect("Failed to create end marker")); // 13
+        entries.push(InternalBibleEntry::end_marker("¬c").expect("Failed to create end marker")); // 14
 
         // Chapter 2
-        entries.push(InternalBibleEntry::simple("c", "2"));
-        entries.push(InternalBibleEntry::simple("v", "1"));
-        entries.push(InternalBibleEntry::simple("v~", "Thus the heavens..."));
+        entries.push(InternalBibleEntry::simple("c", "2")); // 15
+        entries.push(InternalBibleEntry::simple("v", "1")); // 16
+        entries.push(InternalBibleEntry::simple("v~", "Thus the heavens...")); // 17
+        entries.push(InternalBibleEntry::end_marker("¬v").expect("Failed to create end marker")); // 18
+        entries.push(InternalBibleEntry::end_marker("¬c").expect("Failed to create end marker")); // 19
+        entries.push(InternalBibleEntry::end_marker("¬chapters").expect("Failed to create end marker")); // 20
+
 
         entries
     }
 
     #[test]
     fn test_build_index() {
+        set_verbosity(4); // Use 4 for debugging test output
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
         let entries = create_test_entries();
 
         index.build(entries).unwrap();
-
+        verbosity_print!(4, "CV index: {}", index);
         assert!(index.is_indexed());
         assert!(!index.is_empty());
+
         assert!(index.contains(&ChapterVerse::new("1", "0")));
         assert!(index.contains(&ChapterVerse::new("1", "1")));
         assert!(index.contains(&ChapterVerse::new("1", "2")));
+        assert!(index.contains(&ChapterVerse::new("1", "3")));
         assert!(index.contains(&ChapterVerse::new("2", "0")));
+        assert!(index.contains(&ChapterVerse::new("2", "1")));
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_index(), 1); // 1:0 starts at entry 1 (c marker)
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_count(), 6); // 1:0 has 6 entries c, s1, p, v, v~, ¬v
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().context(), ["chapters"]);
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_index(), 4); // 1:1 starts at entry 4
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_count(), 3); // 1:1 has 3 entries v, v~, ¬v
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().context(), ["chapters", "c", "p"]);
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().entry_index(), 7); // 1:2 starts at entry 7
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().entry_count(), 3); // 1:2 has 3 entries v, v~, ¬v
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().context(), ["chapters", "c", "p"]);
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().entry_index(), 11); // 1:3 starts at entry 11
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().entry_count(), 3); // 1:3 has 3 entries v, v~, ¬v
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().context(), ["chapters", "c", "p"]);
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_index(), 15); // 2:0 starts at entry 15 (c marker)
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_count(), 1); // 2:0 has 1 entry c
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().context(), ["chapters"]);
+
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().entry_index(), 15); // 2:1 starts at entry 15
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().entry_count(), 4); // 2:1 has 4 entries c, v, v~, ¬v
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().context(), ["chapters",]);
+
+        assert!(index.len() == 7);
     }
 
     #[test]
@@ -564,11 +621,11 @@ mod tests {
         index.build(create_test_entries()).unwrap();
 
         let entries = index.get_chapter_entries("1").unwrap();
+        verbosity_print!(4, "Chapter entries:{}", entries);
         assert!(!entries.is_empty());
-        // Chapter 1 should have: c, p, v, v~, v, v~ = 6 entries
-        assert_eq!(entries.len(), 6);
+        // Chapter 1 should have: c, s1, p, v, v~, ¬v, v, v~, ¬v, p, v, v~, ¬v = 14 entries
+        assert_eq!(entries.len(), 14);
     }
-
     #[test]
     fn test_chapters() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
