@@ -887,11 +887,11 @@ impl PyInternalBibleBookCVIndex {
     ///
     /// Args:
     ///     work_name: Name of the work/Bible (e.g., "ESV", "KJV")
-    ///     book_code: Three-letter book code (e.g., "GEN", "MAT")
+    ///     bos_book_code: Three-letter book code (e.g., "GEN", "MAT")
     #[new]
-    fn new(work_name: &str, book_code: &str) -> Self {
+    fn new(work_name: &str, bos_book_code: &str) -> Self {
         Self {
-            inner: InternalBibleBookCVIndex::new(work_name, book_code),
+            inner: InternalBibleBookCVIndex::new(work_name, bos_book_code),
         }
     }
 
@@ -899,7 +899,7 @@ impl PyInternalBibleBookCVIndex {
     fn __getnewargs__(&self) -> (String, String) {
         (
             self.inner.work_name().to_string(),
-            self.inner.book_code().to_string(),
+            self.inner.bos_book_code().to_string(),
         )
     }
 
@@ -913,8 +913,8 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get the book code.
     #[getter]
-    fn book_code(&self) -> &str {
-        self.inner.book_code()
+    fn bos_book_code(&self) -> &str {
+        self.inner.bos_book_code()
     }
 
     /// Check if the index has been built.
@@ -940,7 +940,7 @@ impl PyInternalBibleBookCVIndex {
     /// Get the book code (Python compat: BBB).
     #[getter(BBB)]
     fn bbb(&self) -> &str {
-        self.inner.book_code()
+        self.inner.bos_book_code()
     }
 
     /// Check if indexed (Python compat: _indexedFlag).
@@ -1088,7 +1088,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Build the CV index from processed entries (Python compat).
     fn makeBookCVIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_print!(2, "Building CV index for {} {}…", self.inner.work_name(), self.inner.book_code());
+        verbosity_print!(2, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -1186,7 +1186,7 @@ impl PyInternalBibleBookCVIndex {
         format!(
             "InternalBibleBookCVIndex('{}', '{}', {} entries, indexed={})",
             self.inner.work_name(),
-            self.inner.book_code(),
+            self.inner.bos_book_code(),
             self.inner.len(),
             self.inner.is_indexed()
         )

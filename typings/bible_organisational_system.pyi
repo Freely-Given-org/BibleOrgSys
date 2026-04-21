@@ -7,6 +7,7 @@ __all__ = [
     "getPositiveLeadingInt",
     "parse_word_attributes",
     "set_rust_verbosity",
+    "addNestingMarkers",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
@@ -33,6 +34,10 @@ def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
     """Parse word attributes from a USFM3 \w field."""
 
 def set_rust_verbosity(level: int) -> None: ...
+def addNestingMarkers(
+    entries: InternalBibleEntryList, work_name: str, bos_book_code: str
+) -> InternalBibleEntryList:
+    """Add nesting markers to a list of Bible entries."""
 
 @t.final
 class InternalBibleExtra:
@@ -438,13 +443,13 @@ class InternalBibleBookCVIndex:
     - Verse lists: e.g., `5,6,7` for multiple verses in one entry
     - Verse suffixes: e.g., `17a`, `17b`
     """
-    def __init__(self, work_name: str, book_code: str) -> None:
+    def __init__(self, work_name: str, bos_book_code: str) -> None:
         """
         Create a new empty CV index.
 
         Args:
         work_name: Name of the work/Bible (e.g., "ESV", "KJV")
-        book_code: Three-letter book code (e.g., "GEN", "MAT")
+        bos_book_code: Three-letter book code (e.g., "GEN", "MAT")
         """
 
     def __getnewargs__(self) -> tuple[str, str]: ...
@@ -453,7 +458,7 @@ class InternalBibleBookCVIndex:
         """Get the work name."""
 
     @property
-    def book_code(self) -> str:
+    def bos_book_code(self) -> str:
         """Get the book code."""
 
     @property
@@ -641,7 +646,7 @@ class InternalBibleBookSectionIndex:
     Maps section starting points (C:V) to section entries.
     Accepts (str, str) tuples for keys.
     """
-    def __init__(self, work_name: str, book_code: str) -> None:
+    def __init__(self, work_name: str, bos_book_code: str) -> None:
         """Create a new empty section index."""
 
     @property

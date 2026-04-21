@@ -229,9 +229,6 @@ impl InternalBibleEntry {
         }
 
         // Validate texts
-        if clean_text.contains('\\') {
-            return Err(ValidationError::BackslashInCleanText);
-        }
         if clean_text.contains('\n') || clean_text.contains('\r') {
             return Err(ValidationError::InvalidNewlineInAdjustedText);
         }

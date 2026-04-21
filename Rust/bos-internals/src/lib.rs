@@ -84,6 +84,7 @@ pub mod entry_extras;
 pub mod error;
 pub mod indexes;
 pub mod markers;
+pub mod nesting;
 pub mod parsing;
 
 // Re-export commonly used types at crate root
@@ -95,6 +96,7 @@ pub use indexes::{
     CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry,
 };
 pub use markers::ExtraType;
+pub use nesting::add_nesting_markers;
 pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
     parse_figure_attributes, parse_word_attributes,

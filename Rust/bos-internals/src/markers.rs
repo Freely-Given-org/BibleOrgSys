@@ -247,13 +247,82 @@ pub mod paragraph_markers {
     }
 }
 
+/// USFM introduction markers.
+pub mod introduction_markers {
+    pub const ALL: &[&str] = &[
+        "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im",
+        "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4",
+        "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex", "ib",
+    ];
+
+    #[inline]
+    pub fn is_introduction(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM heading markers.
+pub mod heading_markers {
+    pub const ALL: &[&str] = &[
+        "s", "s1", "s2", "s3", "s4", "sr", "is", "is1", "is2", "is3", "is4", "mr", "qa", "qc",
+    ];
+
+    #[inline]
+    pub fn is_heading(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM intro outline markers.
+pub mod intro_outline_markers {
+    pub const ALL: &[&str] = &["io", "io1", "io2", "io3", "io4"];
+
+    #[inline]
+    pub fn is_intro_outline(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM intro list markers.
+pub mod intro_list_markers {
+    pub const ALL: &[&str] = &["ili", "ili1", "ili2", "ili3", "ili4"];
+
+    #[inline]
+    pub fn is_intro_list(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// USFM main text list markers.
+pub mod main_text_list_markers {
+    pub const ALL: &[&str] = &["li", "li1", "li2", "li3", "li4"];
+
+    #[inline]
+    pub fn is_main_text_list(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
 /// Major section markers.
 pub mod major_section_markers {
+    pub const MS: &str = "ms";
     pub const MS1: &str = "ms1";
     pub const MS2: &str = "ms2";
     pub const MS3: &str = "ms3";
+    pub const MS4: &str = "ms4";
 
-    pub const ALL: &[&str] = &[MS1, MS2, MS3];
+    pub const ALL: &[&str] = &[MS, MS1, MS2, MS3, MS4];
+
+    #[inline]
+    pub fn is_major_section(marker: &str) -> bool {
+        ALL.contains(&marker)
+    }
+}
+
+/// Check if a marker has "Never" content type (like \b, \ib, \nb).
+#[inline]
+pub fn is_never_content_marker(marker: &str) -> bool {
+    matches!(marker, "b" | "ib" | "nb" | "ts")
 }
 
 /// Generate an end marker for a given marker.
