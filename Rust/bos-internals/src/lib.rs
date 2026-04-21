@@ -86,6 +86,7 @@ pub mod indexes;
 pub mod markers;
 pub mod nesting;
 pub mod parsing;
+pub mod processing;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
@@ -101,6 +102,7 @@ pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
     parse_figure_attributes, parse_word_attributes,
 };
+pub use processing::{process_lines, ObjectType, ProcessLinesOptions};
 
 use std::sync::atomic::{AtomicU8, Ordering};
 

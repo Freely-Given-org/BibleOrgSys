@@ -12,6 +12,7 @@ use crate::cv_index_bindings::{
 use crate::extras_bindings::{
     PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter,
 };
+use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines};
 use crate::section_index_bindings::{
     PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter,
 };
@@ -24,6 +25,7 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;
     m.add_function(wrap_pyfunction!(add_nesting_markers, m)?)?;
+    m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
 
     // Extra types
     m.add_class::<PyInternalBibleExtra>()?;
@@ -43,6 +45,10 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySectionIndexEntry>()?;
     m.add_class::<PyInternalBibleBookSectionIndex>()?;
     m.add_class::<PySectionIndexIter>()?;
+
+    // Processing types
+    m.add_class::<PyObjectType>()?;
+    m.add_class::<PyProcessLinesOptions>()?;
 
     Ok(())
 }
