@@ -8,6 +8,7 @@ __all__ = [
     "parse_word_attributes",
     "set_rust_verbosity",
     "addNestingMarkers",
+    "processLines",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
@@ -21,6 +22,8 @@ __all__ = [
     "InternalBibleBookSectionIndexEntry",
     "InternalBibleBookSectionIndex",
     "PySectionIndexIter",
+    "ObjectType",
+    "ProcessLinesOptions",
 ]
 
 # Module: bible_organisational_system
@@ -33,34 +36,30 @@ def getPositiveLeadingInt(s: str) -> int:
 def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
     """Parse word attributes from a USFM3 \w field."""
 
-def set_rust_verbosity(level: int) -> None: ...
-def addNestingMarkers(
-    entries: InternalBibleEntryList, work_name: str, bos_book_code: str
-) -> InternalBibleEntryList:
+def set_rust_verbosity(level: int) -> None:
+    ...
+
+def addNestingMarkers(entries: InternalBibleEntryList, work_name: str, bos_book_code: str) -> InternalBibleEntryList:
     """Add nesting markers to a list of Bible entries."""
+
+def processLines(raw_lines: list[tuple[str, str]], book_code: str, work_name: str, options: ProcessLinesOptions) -> InternalBibleEntryList:
+    ...
 
 @t.final
 class InternalBibleExtra:
     """
     An "extra" element extracted from Bible text (footnote, cross-ref, etc.).
-
+    
     Each extra contains:
     - myType: The type string ('fn', 'en', 'xr', 'fig', 'str', 'sem', 'ww', 'vp')
     - index: Position in the adjusted text where this was extracted
     - noteText: Full text with USFM markers
     - cleanNoteText: Plain text without markers
     """
-    def __init__(
-        self,
-        my_type: str,
-        index_to_adj_text: int,
-        note_text: str,
-        clean_note_text: str,
-        location: str | None = None,
-    ) -> None:
+    def __init__(self, my_type: str, index_to_adj_text: int, note_text: str, clean_note_text: str, location: str | None = None) -> None:
         """
         Create a new InternalBibleExtra.
-
+        
         Args:
         myType: Type string ('fn', 'en', 'xr', 'fig', 'str', 'sem', 'ww', 'vp')
         indexToAdjText: Position in adjusted text
@@ -97,12 +96,24 @@ class InternalBibleExtra:
     def getCleanText(self) -> str:
         """Get the clean note text (Python compat)."""
 
-    def __len__(self) -> int: ...
-    def __getitem__(self, key_index: int) -> t.Any: ...
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __eq__(self, other: InternalBibleExtra) -> bool: ...
-    def __ne__(self, other: InternalBibleExtra) -> bool: ...
+    def __len__(self) -> int:
+        ...
+
+    def __getitem__(self, key_index: int) -> t.Any:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __eq__(self, other: InternalBibleExtra) -> bool:
+        ...
+
+    def __ne__(self, other: InternalBibleExtra) -> bool:
+        ...
+
 
 @t.final
 class InternalBibleExtraList:
@@ -110,10 +121,18 @@ class InternalBibleExtraList:
     def __init__(self, initial_data: t.Any | None = None) -> None:
         """Create a new InternalBibleExtraList, optionally from existing data."""
 
-    def __len__(self) -> int: ...
-    def __getitem__(self, key_index: int) -> InternalBibleExtra: ...
-    def __iter__(self) -> PyInternalBibleExtraListIter: ...
-    def __bool__(self) -> bool: ...
+    def __len__(self) -> int:
+        ...
+
+    def __getitem__(self, key_index: int) -> InternalBibleExtra:
+        ...
+
+    def __iter__(self) -> PyInternalBibleExtraListIter:
+        ...
+
+    def __bool__(self) -> bool:
+        ...
+
     def append(self, new_extra: InternalBibleExtra) -> None:
         """Add an extra to the list."""
 
@@ -126,7 +145,7 @@ class InternalBibleExtraList:
     def checkForIndex(self, string_index: int) -> t.Any:
         """
         Check for extras at a specific string index.
-
+        
         Returns None if no extras found, a single extra if one found,
         or a list if multiple found.
         """
@@ -137,21 +156,31 @@ class InternalBibleExtraList:
     def fullSummary(self) -> str:
         """Get a full summary string with note text."""
 
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __eq__(self, other: InternalBibleExtraList) -> bool: ...
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __eq__(self, other: InternalBibleExtraList) -> bool:
+        ...
+
 
 @t.final
 class PyInternalBibleExtraListIter:
     """Iterator for PyInternalBibleExtraList."""
-    def __iter__(self) -> t.Self: ...
-    def __next__(self) -> InternalBibleExtra | None: ...
+    def __iter__(self) -> t.Self:
+        ...
+
+    def __next__(self) -> InternalBibleExtra | None:
+        ...
+
 
 @t.final
 class ChapterVerse:
     """
     A chapter:verse reference in a Bible book.
-
+    
     Both chapter and verse are stored as strings to handle special cases:
     - Chapter `-1` for introductions
     - Verse suffixes like `17a`
@@ -161,7 +190,7 @@ class ChapterVerse:
     def __init__(self, chapter: str, verse: str) -> None:
         """
         Create a new ChapterVerse reference.
-
+        
         Args:
         chapter: The chapter string (e.g., "3", "-1" for intro)
         verse: The verse string (e.g., "16", "17a", "17-25")
@@ -210,39 +239,39 @@ class ChapterVerse:
     def contains_verse(self, verse_num: int) -> bool:
         """Check if this reference contains the given verse number."""
 
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __eq__(self, other: ChapterVerse) -> bool: ...
-    def __hash__(self) -> int: ...
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __eq__(self, other: ChapterVerse) -> bool:
+        ...
+
+    def __hash__(self) -> int:
+        ...
+
 
 @t.final
 class InternalBibleEntry:
     """
     A single line/entry in the internal Bible format.
-
+    
     Backward-compatible with the Python InternalBibleEntry class.
-
+    
     Constructor accepts either:
     - Full 6-arg form: (marker, originalMarker, adjustedText, cleanText, extras, originalText)
     - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
-
+    
     Supports both snake_case properties and camelCase getter methods.
     """
-    def __init__(
-        self,
-        marker: str,
-        original_marker: str | None,
-        adjusted_text: str | None = None,
-        clean_text: str | None = None,
-        extras: InternalBibleExtraList | None = None,
-        original_text: str | None = None,
-    ) -> None:
+    def __init__(self, marker: str, original_marker: str | None, adjusted_text: str | None = None, clean_text: str | None = None, extras: InternalBibleExtraList | None = None, original_text: str | None = None) -> None:
         """
         Create a new InternalBibleEntry.
-
+        
         Matches the Python constructor signature:
         InternalBibleEntry(marker, originalMarker, adjustedText, cleanText, extras, originalText)
-
+        
         For end markers / added nesting markers, originalMarker through originalText should be None.
         """
 
@@ -306,18 +335,30 @@ class InternalBibleEntry:
     def has_extras(self) -> bool:
         """Check if this entry has extras (footnotes, cross-refs)."""
 
-    def __len__(self) -> int: ...
-    def __getitem__(self, key_index: int) -> t.Any: ...
-    def __eq__(self, other: InternalBibleEntry) -> bool: ...
-    def __ne__(self, other: InternalBibleEntry) -> bool: ...
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
+    def __len__(self) -> int:
+        ...
+
+    def __getitem__(self, key_index: int) -> t.Any:
+        ...
+
+    def __eq__(self, other: InternalBibleEntry) -> bool:
+        ...
+
+    def __ne__(self, other: InternalBibleEntry) -> bool:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
 
 @t.final
 class InternalBibleEntryList:
     """
     A list of Bible entries.
-
+    
     This represents the processed lines of a Bible book or a slice of entries.
     Backward-compatible with the Python InternalBibleEntryList class.
     """
@@ -336,7 +377,9 @@ class InternalBibleEntryList:
     def __iter__(self) -> PyInternalBibleEntryListIter:
         """Iterate over entries."""
 
-    def __bool__(self) -> bool: ...
+    def __bool__(self) -> bool:
+        ...
+
     def append(self, entry: InternalBibleEntry) -> None:
         """Add an entry to the list."""
 
@@ -361,35 +404,45 @@ class InternalBibleEntryList:
     def to_list(self) -> list[tuple[str, str]]:
         """Get all entries as a list of tuples (marker, clean_text)."""
 
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __getstate__(self) -> t.Any: ...
-    def __setstate__(self, state: t.Any) -> None: ...
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __getstate__(self) -> t.Any:
+        ...
+
+    def __setstate__(self, state: t.Any) -> None:
+        ...
+
 
 @t.final
 class PyInternalBibleEntryListIter:
     """Iterator for PyInternalBibleEntryList."""
-    def __iter__(self) -> t.Self: ...
-    def __next__(self) -> InternalBibleEntry | None: ...
+    def __iter__(self) -> t.Self:
+        ...
+
+    def __next__(self) -> InternalBibleEntry | None:
+        ...
+
 
 @t.final
 class CVIndexEntry:
     """
     An entry in the CV index, representing a single Chapter:Verse reference.
-
+    
     Each entry stores:
     - entryIndex: The index into the entry list where this CV starts
     - entryCount: The count of entries for this CV
     - context: The context markers that were open at this point
-
+    
     Supports both snake_case properties and camelCase getter methods.
     """
-    def __init__(
-        self, entry_index: int, entry_count: int, context: list[str] | None = None
-    ) -> None:
+    def __init__(self, entry_index: int, entry_count: int, context: list[str] | None = None) -> None:
         """
         Create a new CV index entry.
-
+        
         Args:
         entry_index: The starting index into the entry list
         entry_count: Number of entries for this C:V
@@ -423,19 +476,27 @@ class CVIndexEntry:
     def getContextList(self) -> list[str]:
         """Get the context list (Python compat)."""
 
-    def __len__(self) -> int: ...
-    def __getitem__(self, key_index: int) -> t.Any: ...
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
+    def __len__(self) -> int:
+        ...
+
+    def __getitem__(self, key_index: int) -> t.Any:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
 
 @t.final
 class InternalBibleBookCVIndex:
     """
     Index for fast Chapter:Verse lookup in a Bible book.
-
+    
     The index maps (Chapter, Verse) references to entry ranges.
     Accepts both (str, str) tuples and ChapterVerse objects for keys.
-
+    
     Special cases:
     - Chapter `-1`: Book introduction
     - Verse `0`: Chapter introduction / section headings before first verse
@@ -446,13 +507,15 @@ class InternalBibleBookCVIndex:
     def __init__(self, work_name: str, bos_book_code: str) -> None:
         """
         Create a new empty CV index.
-
+        
         Args:
         work_name: Name of the work/Bible (e.g., "ESV", "KJV")
         bos_book_code: Three-letter book code (e.g., "GEN", "MAT")
         """
 
-    def __getnewargs__(self) -> tuple[str, str]: ...
+    def __getnewargs__(self) -> tuple[str, str]:
+        ...
+
     @property
     def work_name(self) -> str:
         """Get the work name."""
@@ -509,14 +572,10 @@ class InternalBibleBookCVIndex:
     def contains(self, key: t.Any) -> bool:
         """Check if a CV exists in the index (accepts tuple or ChapterVerse)."""
 
-    def get_verse_entries(
-        self, cv: ChapterVerse, strict: bool = True
-    ) -> InternalBibleEntryList:
+    def get_verse_entries(self, cv: ChapterVerse, strict: bool = True) -> InternalBibleEntryList:
         """Get verse entries using a ChapterVerse object."""
 
-    def get_verse_entries_with_context(
-        self, cv: ChapterVerse, strict: bool = True, complete: bool = False
-    ) -> tuple[InternalBibleEntryList, list[str]]:
+    def get_verse_entries_with_context(self, cv: ChapterVerse, strict: bool = True, complete: bool = False) -> tuple[InternalBibleEntryList, list[str]]:
         """Get verse entries with context using a ChapterVerse object."""
 
     def get_chapter_entries(self, chapter: str) -> InternalBibleEntryList:
@@ -534,43 +593,49 @@ class InternalBibleBookCVIndex:
     def makeBookCVIndex(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries (Python compat)."""
 
-    def getVerseEntries(
-        self, cv_key: tuple[str, str], strict: bool = True
-    ) -> InternalBibleEntryList:
+    def getVerseEntries(self, cv_key: tuple[str, str], strict: bool = True) -> InternalBibleEntryList:
         """Get verse entries for a (C,V) tuple key."""
 
-    def getVerseEntriesWithContext(
-        self, cv_key: tuple[str, str], strict: bool = False, complete: bool = False
-    ) -> tuple[InternalBibleEntryList, list[str]]:
+    def getVerseEntriesWithContext(self, cv_key: tuple[str, str], strict: bool = False, complete: bool = False) -> tuple[InternalBibleEntryList, list[str]]:
         """Get verse entries with context for a (C,V) tuple key."""
 
     def getChapterEntries(self, chapter: str) -> InternalBibleEntryList:
         """Get all entries for a chapter (Python compat)."""
 
-    def getChapterEntriesWithContext(
-        self, chapter: str
-    ) -> tuple[InternalBibleEntryList, list[str]]:
+    def getChapterEntriesWithContext(self, chapter: str) -> tuple[InternalBibleEntryList, list[str]]:
         """Get chapter entries with context markers (Python compat)."""
 
     def getEntries(self) -> InternalBibleEntryList:
         """Get all entries (Python compat alias for entries property)."""
 
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __getstate__(self) -> t.Any: ...
-    def __setstate__(self, state: t.Any) -> None: ...
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __getstate__(self) -> t.Any:
+        ...
+
+    def __setstate__(self, state: t.Any) -> None:
+        ...
+
 
 @t.final
 class PyCVIndexIter:
     """Iterator for PyInternalBibleBookCVIndex, yields (C, V) string tuples."""
-    def __iter__(self) -> t.Self: ...
-    def __next__(self) -> tuple[str, str] | None: ...
+    def __iter__(self) -> t.Self:
+        ...
+
+    def __next__(self) -> tuple[str, str] | None:
+        ...
+
 
 @t.final
 class InternalBibleBookSectionIndexEntry:
     """
     A section index entry for a Bible book.
-
+    
     Each entry represents a section boundary and contains:
     - endC, endV: End chapter and verse (inclusive)
     - startIx, endIx: Start and end entry indices
@@ -578,19 +643,10 @@ class InternalBibleBookSectionIndexEntry:
     - sectionName: The section heading text
     - contextList: Context markers active at this point
     """
-    def __init__(
-        self,
-        end_c: str,
-        end_v: str,
-        start_ix: int,
-        end_ix: int,
-        reason_marker: str,
-        section_name: str,
-        context_list: list[str] | None = None,
-    ) -> None:
+    def __init__(self, end_c: str, end_v: str, start_ix: int, end_ix: int, reason_marker: str, section_name: str, context_list: list[str] | None = None) -> None:
         """
         Create a new section index entry.
-
+        
         Args:
         endC: End chapter number string
         endV: End verse number string
@@ -602,19 +658,33 @@ class InternalBibleBookSectionIndexEntry:
         """
 
     @property
-    def endC(self) -> str: ...
+    def endC(self) -> str:
+        ...
+
     @property
-    def endV(self) -> str: ...
+    def endV(self) -> str:
+        ...
+
     @property
-    def startIx(self) -> int: ...
+    def startIx(self) -> int:
+        ...
+
     @property
-    def endIx(self) -> int: ...
+    def endIx(self) -> int:
+        ...
+
     @property
-    def reasonMarker(self) -> str: ...
+    def reasonMarker(self) -> str:
+        ...
+
     @property
-    def sectionName(self) -> str: ...
+    def sectionName(self) -> str:
+        ...
+
     @property
-    def contextList(self) -> list[str]: ...
+    def contextList(self) -> list[str]:
+        ...
+
     def getEndCV(self) -> tuple[str, str]:
         """Get end chapter and verse as (str, str) tuple."""
 
@@ -633,16 +703,24 @@ class InternalBibleBookSectionIndexEntry:
     def getSectionNameReason(self) -> tuple[str, str]:
         """Get section name and reason marker as (str, str) tuple."""
 
-    def __len__(self) -> int: ...
-    def __getitem__(self, key_index: int) -> t.Any: ...
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
+    def __len__(self) -> int:
+        ...
+
+    def __getitem__(self, key_index: int) -> t.Any:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
 
 @t.final
 class InternalBibleBookSectionIndex:
     """
     Section index for a Bible book.
-
+    
     Maps section starting points (C:V) to section entries.
     Accepts (str, str) tuples for keys.
     """
@@ -650,40 +728,107 @@ class InternalBibleBookSectionIndex:
         """Create a new empty section index."""
 
     @property
-    def workName(self) -> str: ...
+    def workName(self) -> str:
+        ...
+
     @property
-    def BBB(self) -> str: ...
+    def BBB(self) -> str:
+        ...
+
     @property
-    def _indexedFlag(self) -> bool: ...
+    def _indexedFlag(self) -> bool:
+        ...
+
     @property
-    def givenBibleEntries(self) -> InternalBibleEntryList: ...
-    def __len__(self) -> int: ...
-    def __contains__(self, key: tuple[str, str]) -> bool: ...
-    def __getitem__(
-        self, key: tuple[str, str]
-    ) -> InternalBibleBookSectionIndexEntry: ...
-    def __iter__(self) -> PySectionIndexIter: ...
-    def items(
-        self,
-    ) -> list[tuple[tuple[str, str], InternalBibleBookSectionIndexEntry]]: ...
+    def givenBibleEntries(self) -> InternalBibleEntryList:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __contains__(self, key: tuple[str, str]) -> bool:
+        ...
+
+    def __getitem__(self, key: tuple[str, str]) -> InternalBibleBookSectionIndexEntry:
+        ...
+
+    def __iter__(self) -> PySectionIndexIter:
+        ...
+
+    def items(self) -> list[tuple[tuple[str, str], InternalBibleBookSectionIndexEntry]]:
+        ...
+
     def makeBookSectionIndex(self, entries: InternalBibleEntryList) -> None:
         """Build the section index from processed entries."""
 
     def getSectionEntries(self, key: tuple[str, str]) -> InternalBibleEntryList:
         """Get entries for a section by (C,V) key."""
 
-    def getSectionEntriesWithContext(
-        self, key: tuple[str, str]
-    ) -> tuple[InternalBibleEntryList, list[str]]:
+    def getSectionEntriesWithContext(self, key: tuple[str, str]) -> tuple[InternalBibleEntryList, list[str]]:
         """Get section entries with context markers."""
 
-    def __repr__(self) -> str: ...
-    def __str__(self) -> str: ...
-    def __getstate__(self) -> t.Any: ...
-    def __setstate__(self, state: t.Any) -> None: ...
+    def __repr__(self) -> str:
+        ...
+
+    def __str__(self) -> str:
+        ...
+
+    def __getstate__(self) -> t.Any:
+        ...
+
+    def __setstate__(self, state: t.Any) -> None:
+        ...
+
 
 @t.final
 class PySectionIndexIter:
     """Iterator for PyInternalBibleBookSectionIndex, yields (C, V) string tuples."""
-    def __iter__(self) -> t.Self: ...
-    def __next__(self) -> tuple[str, str] | None: ...
+    def __iter__(self) -> t.Self:
+        ...
+
+    def __next__(self) -> tuple[str, str] | None:
+        ...
+
+
+@t.final
+class ObjectType:
+    ...
+
+@t.final
+class ProcessLinesOptions:
+    @property
+    def replace_angle_brackets(self) -> bool:
+        ...
+
+    @replace_angle_brackets.setter
+    def replace_angle_brackets(self, value: bool) -> None:
+        ...
+
+    @property
+    def replace_straight_double_quotes(self) -> bool:
+        ...
+
+    @replace_straight_double_quotes.setter
+    def replace_straight_double_quotes(self, value: bool) -> None:
+        ...
+
+    @property
+    def strict_checking(self) -> bool:
+        ...
+
+    @strict_checking.setter
+    def strict_checking(self, value: bool) -> None:
+        ...
+
+    @property
+    def object_type(self) -> ObjectType:
+        ...
+
+    @object_type.setter
+    def object_type(self, value: ObjectType) -> None:
+        ...
+
+    def __init__(self, replace_angle_brackets: bool = True, replace_straight_double_quotes: bool = False, strict_checking: bool = False, object_type: ObjectType = PyObjectType :: Usfm3) -> None:
+        ...
+
+
