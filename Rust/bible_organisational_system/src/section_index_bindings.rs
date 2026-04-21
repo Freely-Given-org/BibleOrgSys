@@ -262,9 +262,9 @@ pub struct PyInternalBibleBookSectionIndex {
 impl PyInternalBibleBookSectionIndex {
     /// Create a new empty section index.
     #[new]
-    fn new(work_name: &str, book_code: &str) -> Self {
+    fn new(work_name: &str, bos_book_code: &str) -> Self {
         Self {
-            inner: InternalBibleBookSectionIndex::new(work_name, book_code),
+            inner: InternalBibleBookSectionIndex::new(work_name, bos_book_code),
         }
     }
 
@@ -277,7 +277,7 @@ impl PyInternalBibleBookSectionIndex {
 
     #[getter(BBB)]
     fn bbb(&self) -> &str {
-        self.inner.book_code()
+        self.inner.bos_book_code()
     }
 
     #[getter(_indexedFlag)]
@@ -334,7 +334,7 @@ impl PyInternalBibleBookSectionIndex {
 
     /// Build the section index from processed entries.
     fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_print!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.book_code());
+        verbosity_print!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -370,14 +370,14 @@ impl PyInternalBibleBookSectionIndex {
         if self.inner.is_indexed() {
             format!(
                 "InternalBibleBookSectionIndex object for {}:\n  {} index entries created from {} data entries",
-                self.inner.book_code(),
+                self.inner.bos_book_code(),
                 self.inner.len(),
                 self.inner.entries().len(),
             )
         } else {
             format!(
                 "InternalBibleBookSectionIndex object for {}:\n  Index is empty",
-                self.inner.book_code(),
+                self.inner.bos_book_code(),
             )
         }
     }

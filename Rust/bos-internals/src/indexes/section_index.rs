@@ -147,7 +147,7 @@ pub struct InternalBibleBookSectionIndex {
     /// Name of the work/Bible.
     work_name: CompactString,
     /// Three-letter book code.
-    book_code: CompactString,
+    bos_book_code: CompactString,
     /// The section -> entry mapping (keyed by starting C:V).
     index_data: IndexMap<ChapterVerse, SectionIndexEntry>,
     /// The processed entries this index references.
@@ -158,10 +158,10 @@ pub struct InternalBibleBookSectionIndex {
 
 impl InternalBibleBookSectionIndex {
     /// Create a new empty section index.
-    pub fn new(work_name: impl Into<CompactString>, book_code: impl Into<CompactString>) -> Self {
+    pub fn new(work_name: impl Into<CompactString>, bos_book_code: impl Into<CompactString>) -> Self {
         Self {
             work_name: work_name.into(),
-            book_code: book_code.into(),
+            bos_book_code: bos_book_code.into(),
             index_data: IndexMap::new(),
             entries: InternalBibleEntryList::new(),
             indexed: false,
@@ -176,8 +176,8 @@ impl InternalBibleBookSectionIndex {
 
     /// Get the book code.
     #[inline]
-    pub fn book_code(&self) -> &str {
-        &self.book_code
+    pub fn bos_book_code(&self) -> &str {
+        &self.bos_book_code
     }
 
     /// Check if the index has been built.
@@ -280,7 +280,7 @@ impl InternalBibleBookSectionIndex {
             2,
             "Building section index for {} {} from {} entries…",
             self.work_name(),
-            self.book_code(),
+            self.bos_book_code(),
             entries.len().to_formatted_string(&Locale::en)
         );
 
@@ -322,7 +322,7 @@ impl InternalBibleBookSectionIndex {
                     "  Build {} section index: at entry #{} {} {}:{}",
                     self.work_name(),
                     i,
-                    self.book_code(),
+                    self.bos_book_code(),
                     current_chapter_num_str,
                     current_verse_num_str
                 );
@@ -344,7 +344,7 @@ impl InternalBibleBookSectionIndex {
                     4,
                     "  Build {} {} section index: found section marker at entry #{} {}={} with {}:{}",
                     self.work_name(),
-                    self.book_code(),
+                    self.bos_book_code(),
                     i,
                     marker,
                     entry.clean_text(),
@@ -353,7 +353,7 @@ impl InternalBibleBookSectionIndex {
                 );
                 if marker == "c" {
                     let was_intro = current_chapter_num_str == "-1";
-                    if was_intro || self.book_code() == "PSA" {
+                    if was_intro || self.bos_book_code() == "PSA" {
                         // Transitioning from intro to content (or new Psalm): close the previous section
                         if let Some(mut section) = pending.take() {
                             if section.start_cv.is_none() {
@@ -543,7 +543,7 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
         writeln!(
             f,
             "InternalBibleBookSectionIndex({} {}):",
-            self.work_name, self.book_code
+            self.work_name, self.bos_book_code
         )?;
         if !self.indexed {
             writeln!(f, "  Not indexed")?;
@@ -881,5 +881,103 @@ mod tests {
             let entries = index.get_section_entries(cv).unwrap();
             assert!(!entries.is_empty());
         }
+    }
+
+    #[test]
+    fn test_oet_rv_haggai_section_index_build() {
+        let content = include_str!("OET-RV_HAG.ESFM");
+        let mut entries = InternalBibleEntryList::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            entries.push(InternalBibleEntry::simple(marker, text));
+        }
+
+        // Add structural nesting markers
+        let entries_nested = crate::nesting::add_nesting_markers(entries, "OET-RV", "HAG");
+
+        for (i, entry) in entries_nested.iter().enumerate().take(30).skip(20) {
+            println!("Entry {}: {}", i, entry);
+        }
+
+        let mut index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
+        index.build(entries_nested).unwrap();
+        verbosity_print!(2, "HAG index:{}", index);
+
+        // It should give the following seven entries:
+        //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
+        //    1 -1:13 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:22 ix=13–22 (cnt=10) is1='Introduction'
+        //    2 1:1 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:11 ix=24–69 (cnt=46) s1='God's command to rebuild the temple'
+        //    3 1:12 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=1:15 ix=70–87 (cnt=18) s1='The people start rebuilding'
+        //    4 2:1 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:9 ix=88–119 (cnt=32) s1='The splendour of the new temple'
+        //    5 2:10 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:19 ix=120–164 (cnt=45) s1='Haggai consults the priests'
+        //    6 2:20 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=2:23 ix=165–182 (cnt=18) s1='God's promise to Zerubavel'
+        assert_eq!(index.len(), 7);
+
+        // 0 -1:0 Headers='HAG'
+        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.end_cv().to_string(), "-1:12");
+        assert_eq!(entry0.start_index(), 0);
+        assert_eq!(entry0.end_index(), 12);
+        assert_eq!(entry0.reason_marker(), "Headers");
+        assert_eq!(entry0.section_name(), "HAG");
+
+        // 1 -1:13 is1='Introduction'
+        let (cv1, entry1) = index.index_data.get_index(1).unwrap();
+        assert_eq!(cv1.to_string(), "-1:13");
+        assert_eq!(entry1.end_cv().to_string(), "-1:22");
+        assert_eq!(entry1.start_index(), 13);
+        assert_eq!(entry1.end_index(), 22);
+        assert_eq!(entry1.reason_marker(), "is1");
+        assert_eq!(entry1.section_name(), "Introduction");
+
+        // 2 1:1 s1='God\'s command to rebuild the temple'
+        let (cv2, entry2) = index.index_data.get_index(2).unwrap();
+        assert_eq!(cv2.to_string(), "1:1");
+        assert_eq!(entry2.end_cv().to_string(), "1:11");
+        assert_eq!(entry2.start_index(), 24);
+        assert_eq!(entry2.end_index(), 69);
+        assert_eq!(entry2.reason_marker(), "s1");
+        assert_eq!(entry2.section_name(), "God's command to rebuild the temple");
+
+        // 3 1:12 s1='The people start rebuilding'
+        let (cv3, entry3) = index.index_data.get_index(3).unwrap();
+        assert_eq!(cv3.to_string(), "1:12");
+        assert_eq!(entry3.end_cv().to_string(), "1:15");
+        assert_eq!(entry3.start_index(), 70);
+        assert_eq!(entry3.end_index(), 87);
+        assert_eq!(entry3.reason_marker(), "s1");
+        assert_eq!(entry3.section_name(), "The people start rebuilding");
+
+        // 4 2:1 s1='The splendour of the new temple'
+        let (cv4, entry4) = index.index_data.get_index(4).unwrap();
+        assert_eq!(cv4.to_string(), "2:1");
+        assert_eq!(entry4.end_cv().to_string(), "2:9");
+        assert_eq!(entry4.start_index(), 88);
+        assert_eq!(entry4.end_index(), 119);
+        assert_eq!(entry4.reason_marker(), "s1");
+        assert_eq!(entry4.section_name(), "The splendour of the new temple");
+
+        // 5 2:10 s1='Haggai consults the priests'
+        let (cv5, entry5) = index.index_data.get_index(5).unwrap();
+        assert_eq!(cv5.to_string(), "2:10");
+        assert_eq!(entry5.end_cv().to_string(), "2:19");
+        assert_eq!(entry5.start_index(), 120);
+        assert_eq!(entry5.end_index(), 164);
+        assert_eq!(entry5.reason_marker(), "s1");
+        assert_eq!(entry5.section_name(), "Haggai consults the priests");
+
+        // 6 2:20 s1='God\'s promise to Zerubavel'
+        let (cv6, entry6) = index.index_data.get_index(6).unwrap();
+        assert_eq!(cv6.to_string(), "2:20");
+        assert_eq!(entry6.end_cv().to_string(), "2:23");
+        assert_eq!(entry6.start_index(), 165);
+        assert_eq!(entry6.end_index(), 182);
+        assert_eq!(entry6.reason_marker(), "s1");
+        assert_eq!(entry6.section_name(), "God's promise to Zerubavel");
     }
 }

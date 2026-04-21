@@ -100,7 +100,7 @@ pub struct InternalBibleBookCVIndex {
     /// Name of the work/Bible.
     work_name: CompactString,
     /// Three-letter book code (e.g., "GEN", "MAT").
-    book_code: CompactString,
+    bos_book_code: CompactString,
     /// The CV -> entry mapping.
     index_data: IndexMap<ChapterVerse, CVIndexEntry>,
     /// The processed entries this index references.
@@ -111,10 +111,10 @@ pub struct InternalBibleBookCVIndex {
 
 impl InternalBibleBookCVIndex {
     /// Create a new empty CV index.
-    pub fn new(work_name: impl Into<CompactString>, book_code: impl Into<CompactString>) -> Self {
+    pub fn new(work_name: impl Into<CompactString>, bos_book_code: impl Into<CompactString>) -> Self {
         Self {
             work_name: work_name.into(),
-            book_code: book_code.into(),
+            bos_book_code: bos_book_code.into(),
             index_data: IndexMap::new(),
             entries: InternalBibleEntryList::new(),
             indexed: false,
@@ -129,8 +129,8 @@ impl InternalBibleBookCVIndex {
 
     /// Get the book code.
     #[inline]
-    pub fn book_code(&self) -> &str {
-        &self.book_code
+    pub fn bos_book_code(&self) -> &str {
+        &self.bos_book_code
     }
 
     /// Check if the index has been built.
@@ -500,7 +500,7 @@ impl std::fmt::Display for InternalBibleBookCVIndex {
         writeln!(
             f,
             "InternalBibleBookCVIndex({} {}):",
-            self.work_name, self.book_code
+            self.work_name, self.bos_book_code
         )?;
         if !self.indexed {
             writeln!(f, "  Not indexed")?;
