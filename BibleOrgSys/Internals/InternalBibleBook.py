@@ -59,6 +59,7 @@ CHANGELOG:
     2025-02-25 Don't add 'intro' section if 'iex' occurs under 'c'
     2025-03-04 Insert space if it appears that we might be appending text to the end of a verse number
     2025-11-19 Give better error info for an invalid chapter number
+    2026-04-22 Fixed addVerse
 """
 from gettext import gettext as _
 import os
@@ -81,7 +82,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2025-11-19' # by RJH
+LAST_MODIFIED_DATE = '2026-04-22' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -1978,6 +1979,8 @@ class InternalBibleBook:
             vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    _addNestingMarkers adjusted {self.BBB} from {len(self._processedLines):,} lines to {len(newLines):,} lines" )
         self._processedLines = newLines # replace the old set
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"    _addNestingMarkers for {self.BBB} finishing with {len(self._rawLines)=:,} {len(self._processedLines)=:,}")
+        # for nn, entryWithNestingMarkers in enumerate( self._processedLines ):
+        #     vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"      {nn} {entryWithNestingMarkers=}")
     # end of InternalBibleBook.processLines._addNestingMarkers
 
 
@@ -1987,8 +1990,8 @@ class InternalBibleBook:
             (This is called AFTER _addNestingMarkers().)
 
             c       5
-            v=      1
-            s       Section heading (could also be s1)
+            v=      1 (so we know where this section heading goes)
+            s1       Section heading
             p
             c#      5 (where it should be printed)
             v       1 (where it should be printed)
@@ -2009,14 +2012,14 @@ class InternalBibleBook:
             v       7 (where it should be printed)
             v~      Verse seven text
 
-        Note: we don't number lines in the introduction (i.e., before c 1).
+        Note: we don't bother numbering lines in the introduction (i.e., before c 1) here (because it's irrelevant).
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"addVerseStartMarkers() for {self.BBB}" )
 
         newLines = InternalBibleEntryList()
         fieldsPreceded = ('s','s1','s2','s3','s4','sp')
         fieldsAlsoPreceded = USFM_ALL_BIBLE_PARAGRAPH_MARKERS \
-                                + ('c#','r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr')
+                                + ('c#','r','d','ms1','mr','sr','sp','ib','b','nb','cl¤','tr','rem')
         # NOTE: This code can add multiple v= lines if a sp follows a s1, etc.
 
         C, V = '-1', '-1' # So first/id line starts at -1:0
@@ -2026,18 +2029,21 @@ class InternalBibleBook:
             marker, text = dataEntry.getMarker(), dataEntry.getCleanText()
             if marker == 'c': C, V = text, '0'
             elif marker == 'v': V = text
+            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() processing {j} {self.BBB} {C}:{V} {marker}={text} field…" )
 
             if marker in fieldsPreceded:
-                #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Looking ahead after {} {}:{} {!r} field…".format( self.BBB, C, V, marker ) )
-                for k in range( 1, 5 ): # Number of lines to look ahead
+                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() looking ahead after {self.BBB} {C}:{V} {marker}={text} field…" )
+                for k in range( 1, 6 ): # Number of lines to look ahead
                     if j+k <= lastJ:
                         nextDataEntry = self._processedLines[j+k]
                         assert isinstance( nextDataEntry, InternalBibleEntry )
                         nextMarker = nextDataEntry.getMarker()
+                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    addVerseStartMarkers() looking ahead at {nextMarker}={nextDataEntry.getCleanText()} at {self.BBB} {C}:{V}" )
                         if nextMarker == 'v':
                             vText = nextDataEntry.getCleanText()
-                            #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Adding v= {} at {} {}:{}".format( vText, self.BBB, C, V ) )
+                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() adding v= {vText} at {self.BBB} {C}:{V}" )
                             newLines.append( InternalBibleEntry('v=', 'v', nextDataEntry.getAdjustedText(), vText, None, nextDataEntry.getOriginalText()) )
+                            break
                         #elif nextMarker in fieldsAlsoPreceded: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Noting {} line".format( nextMarker ) )
                         elif nextMarker not in fieldsAlsoPreceded: break # got something else
             newLines.append( dataEntry ) # Put pre-existing line in
@@ -2066,8 +2072,8 @@ class InternalBibleBook:
                 assert 'v= ¬v' not in markerListString
                 assert 'q1 p~ ¬v ¬q1' not in markerListString
 
-        if DEBUGGING_THIS_MODULE and (len(newLines) != len(self._processedLines)):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  addVerseStartMarkers adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
+        if len(newLines) != len(self._processedLines):
+            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  addVerseStartMarkers() adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
         self._processedLines = newLines # replace the old set
     # end of addVerseStartMarkers
 
@@ -2664,15 +2670,40 @@ class InternalBibleBook:
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from BibleOrgSys.Formats.USX files
             _processLine( marker, text ) # Saves its results in self._processedLines
         del self.pntsCount, self.nfvnCount, self.owfvnCount, self.rtsCount, self.sahtCount, self.fwmifCount, self.fswncCount
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"\n\n    processLines for {self.BBB} with {len(self._rawLines)=:,} initially got {len(self._processedLines)=:,}")
+        originalMarkerList, adjustedMarkerList = [], []
+        for nn, entryWithPreliminaryProcessing in enumerate( self._processedLines ):
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"      {nn} {entryWithPreliminaryProcessing=}")
+            originalMarkerList.append( entryWithPreliminaryProcessing.getOriginalMarker() )
+            adjustedMarkerList.append( entryWithPreliminaryProcessing.getMarker() )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(originalMarkerList)} {originalMarkerList=}" )# expected 123 for OET-RV HAG
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(adjustedMarkerList)} {adjustedMarkerList=}" )# expected 123 for OET-RV HAG
 
         # Both of the next two function calls expand self._processedLines
         if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: self.displayProcessedLines( "Before adding nesting markers" )
         # Go through the lines and add nesting markers like 'headers', 'intro', 'chapter', etc.
         self._addNestingMarkers()
         if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: self.displayProcessedLines( "After adding nesting markers" )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"\n\n    _addNestingMarkers for {self.BBB} finishing with {len(self._rawLines)=:,} {len(self._processedLines)=:,}")
+        originalMarkerList, adjustedMarkerList = [], []
+        for nn, entryWithNestingMarkers in enumerate( self._processedLines ):
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"      {nn} {entryWithNestingMarkers=}")
+            originalMarkerList.append( entryWithNestingMarkers.getOriginalMarker() )
+            adjustedMarkerList.append( entryWithNestingMarkers.getMarker() )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(originalMarkerList)} {originalMarkerList=}" )# expected 183 for OET-RV HAG
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(adjustedMarkerList)} {adjustedMarkerList=}" )# expected 183 for OET-RV HAG
+
         # Go through and add v= markers (for "logical" verses before section headings, etc.)
         self.addVerseStartMarkers()
         if DEBUGGING_THIS_MODULE and BibleOrgSysGlobals.debugFlag: self.displayProcessedLines( "After adding start markers" )
+        vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"\n\n    addVerseStartMarkers for {self.BBB} finishing with {len(self._rawLines)=:,} {len(self._processedLines)=:,}")
+        originalMarkerList, adjustedMarkerList = [], []
+        for nn, entryWithVerseStartMarkers in enumerate( self._processedLines ):
+            vPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"      {nn} {entryWithVerseStartMarkers=}")
+            originalMarkerList.append( entryWithVerseStartMarkers.getOriginalMarker() )
+            adjustedMarkerList.append( entryWithVerseStartMarkers.getMarker() )
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(originalMarkerList)} {originalMarkerList=}" )# expected 183 for OET-RV HAG
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(adjustedMarkerList)} {adjustedMarkerList=}" )# expected 183 for OET-RV HAG
 
         # Get rid of data that we don't need
         #if not BibleOrgSysGlobals.debugFlag:
@@ -2685,7 +2716,6 @@ class InternalBibleBook:
         self.makeBookCVIndex()
         #self._makeBookSectionIndex() # Not created by default
     # end of InternalBibleBook.processLines
-
 
     def makeBookCVIndex( self ) -> None:
         """
