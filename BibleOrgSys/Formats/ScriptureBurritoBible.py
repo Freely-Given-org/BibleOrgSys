@@ -237,7 +237,7 @@ class ScriptureBurritoBible( Bible ):
         #print(loadedJson.keys()) # dict_keys(['meta', 'idAuthorities', 'identification', 'confidential', 'languages', 'type', 'copyright', 'localizedNames', 'ingredients'])
         if not loadedJson:
             logging.error(f"Unable to load SB metadata from {mdFilepath}")
-            loadErrors.append(f"ERROR: Unabled to load SB metadata from {mdFilepath}")
+            loadErrors.append(f"ERROR: Unable to load SB metadata from {mdFilepath}")
         elif len(loadedJson) < 4:
             logging.warning(f"Seems that loaded SB metadata might be deficient with only keys: {loadedJson.keys()}")
             loadErrors.append(f"WARNING: Seems that loaded SB metadata might be deficient with only keys: {loadedJson.keys()}")

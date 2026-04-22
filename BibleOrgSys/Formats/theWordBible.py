@@ -390,7 +390,7 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
     """
     Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
-    Parameters are the Scripture reference (for error messsages)
+    Parameters are the Scripture reference (for error messages)
         and the line (string) containing the backslash codes.
 
     Returns a string with the backslash codes replaced by theWord formatting codes.
@@ -402,7 +402,7 @@ def theWordAdjustLine( BBB:str, C:str, V:str, originalLine:str ):
         
     The cross references are: "Ps 90:2; Jes 40:21-22; Joh 1:1-3; Hand 17:24; Kol 1:16-17; Heb 1:10; 11:3"
     
-    theWord however needs the Bible books to be converted to book numbers, which I can handle. All I realy require is that:
+    theWord however needs the Bible books to be converted to book numbers, which I can handle. All I really require is that:
         \\x - \\xo 1:1 \\xt Ps 90:2; Jes 40:21-22; Joh 1:1-3; Hand 17:24; Kol 1:16-17; Heb 1:10; 11:3\\x*
     Be replaced by:
         <RX Ps 90:2><RX Jes 40:21-22><RX Joh 1:1-3><RX Hand 17:24><RX Kol 1:16-17><RX Heb 1:10><RX Heb 11:3>"""

@@ -110,7 +110,7 @@ DEBUGGING_THIS_MODULE = False
 #     #     numFound += 1
 #     #     if strictCheck:
 #     #         for folderName in foundFolders:
-#     #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck: Suprised to find folder:", folderName )
+#     #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck: Surprised to find folder:", folderName )
 #     if numFound:
 #         vPrint( 'Info', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
 #         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -152,7 +152,7 @@ DEBUGGING_THIS_MODULE = False
 #         #     numFound += 1
 #         #     if strictCheck:
 #         #         for folderName in foundSubfolders:
-#         #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheckSuprised to find folder:", folderName )
+#         #             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheckSurprised to find folder:", folderName )
 #     if numFound:
 #         vPrint( 'Info', DEBUGGING_THIS_MODULE, "TyndaleNotesBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
 #         if numFound == 1 and (autoLoad or autoLoadBooks):

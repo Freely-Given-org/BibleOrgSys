@@ -539,7 +539,7 @@ class OpenSongXMLBible( Bible ):
                 #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, 'vText1', vText )
                 if vText: # This is the main text of the verse (follows the verse milestone)
                     #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
-                    if '\n' in vText: # This is how they represent poety
+                    if '\n' in vText: # This is how they represent poetry
                         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "vText", repr(vText), repr(element.text) )
                         for j, textBit in enumerate( vText.split( '\n' ) ):
                             if j==0:

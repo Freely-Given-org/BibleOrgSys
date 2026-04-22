@@ -113,7 +113,7 @@ def main() -> None:
     assert len(Door43CatalogULTBible) == 66, f"{len(Door43CatalogULTBible)=}"
 
     # Go through the UGNT verse by verse
-    #   and do some comparisions with the matching ULT verses
+    #   and do some comparisons with the matching ULT verses
     # NOTE: This code assumes matching versification systems
     count1 = count2 = 0
     for BBB, UGNTBook in Door43CatalogUGNTBible.books.items():

@@ -2849,7 +2849,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         OTStrongsList.sort( key=lambda x: len(x[1]), reverse=True ) # Put the Strongs' entries with the most lemmas first
         NTStrongsList.sort( key=lambda x: len(x[1]), reverse=True )
 
-        # Save the original list and all the derived dictionaries for any futher analysis/processing
+        # Save the original list and all the derived dictionaries for any further analysis/processing
         vPrint( 'Normal', debuggingThisFunction, f"  InternalBible.analyseAndExportUWoriginal writing {self.abbreviation} analysis JSON files…" )
         import json
         originalsAnalysisOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordOriginalTexts/{self.abbreviation}_Analysis/' )
@@ -2886,7 +2886,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         Aggregates all the alignments with UHB/UGNT from each translated book.
 
-        The cleaned aligments are
+        The cleaned alignments are
             list[tuple[str,str,list[tuple[str,str,str,str,str,str]],str,list[tuple[str,str,str]]]]
             i.e., list entries of 5-tuples of C,V,originalWordsList,translatedWordsString,translatedWordsList.
                     where originalWordsList contains 6-tuples: (origWord, lemma, strongs, morph, occurrence,occurrences)
@@ -3059,7 +3059,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
             isNT = BibleOrgSysGlobals.loadedBibleBooksCodes.isNewTestament_NR( BBB )
             isDC = BibleOrgSysGlobals.loadedBibleBooksCodes.isDeuterocanon_NR( BBB )
 
-            # For counting occurrences (not alignments), remove ampersand (non-continguous words joiner)
+            # For counting occurrences (not alignments), remove ampersand (non-contiguous words joiner)
             cleanedTranslatedWordsString = translatedWordsString.replace( ' & ', ' ' )
 
             if len(originalWordsList) == 1:
@@ -3245,7 +3245,7 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         self.uWalignments['origStrongsToTransAlignmentsDict'] = origStrongsToTransAlignmentsDict
         self.uWalignments['oneToOneTransToOriginalAlignmentsDict'] = oneToOneTransToOriginalAlignmentsDict
 
-        # Save the original list and all the derived dictionaries for any futher analysis/processing
+        # Save the original list and all the derived dictionaries for any further analysis/processing
         alignedAnalysisOutputFolderpath = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( f'unfoldingWordAlignedTexts/{self.abbreviation}_Analysis/' )
         try: os.makedirs( alignedAnalysisOutputFolderpath )
         except FileExistsError: pass

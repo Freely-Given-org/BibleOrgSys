@@ -548,13 +548,13 @@ class ESFMBibleBook( BibleBook ):
             halt
         #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
 
-        self.lookForAuxilliaryFilenames()
+        self.lookForAuxiliaryFilenames()
     # end of ESFMBibleBook.load
 
 
-    def lookForAuxilliaryFilenames( self ):
+    def lookForAuxiliaryFilenames( self ):
         """
-        Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxilliary filenames.
+        Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxiliary filenames.
             \\id 1JN - Matigsalug Translation v1.0.17
             \\usfm 3.0
             \\ide UTF-8
@@ -568,7 +568,7 @@ class ESFMBibleBook( BibleBook ):
             loads any unique filename into a dict with the value set to None.
         Also checks that the referred file does actually exist.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxilliaryFilenames( {self.BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxiliaryFilenames( {self.BBB} )" )
         for marker,rest in self._rawLines[:10]: # Should be within the first seven lines
             if marker != 'rem': continue
             if rest.startswith( 'WORKDATA ' ):
@@ -582,9 +582,9 @@ class ESFMBibleBook( BibleBook ):
                     else: # it's on the local filesystem
                         filepath = os.path.join( self.sourceFolder, filePart )
                         if not os.path.isfile( filepath ):
-                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the WORK DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
             elif rest.startswith( 'FILEDATA ' ):
                 filePart = rest[9:]
                 # assert filePart.rstrip().endswith( '.txt' )
@@ -596,9 +596,9 @@ class ESFMBibleBook( BibleBook ):
                     else: # it's on the local filesystem
                         filepath = os.path.join( self.sourceFolder, filePart )
                         if not os.path.isfile( filepath ):
-                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the FILE DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
             if rest.startswith( 'WORDTABLE ' ):
                 filePart = rest[10:]
                 # assert filePart.rstrip().endswith( '.tsv' )
@@ -610,10 +610,10 @@ class ESFMBibleBook( BibleBook ):
                     else: # it's on the local filesystem
                         filepath = os.path.join( self.sourceFolder, filePart )
                         if not os.path.isfile( filepath ):
-                            logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the WORD TABLE file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
-    # end of ESFMBibleBook.load.lookForAuxilliaryFilenames
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
+    # end of ESFMBibleBook.load.lookForAuxiliaryFilenames
 # end of class ESFMBibleBook
 
 

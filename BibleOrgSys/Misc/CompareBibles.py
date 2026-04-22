@@ -550,7 +550,7 @@ def compareBooksPedantic( book1, book2,
                         if contextStart > 0 and context[0]!=' ': context = '…' + context
                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
                         if tempResults and "Missing second part" in tempResults[0][-1]:
-                            # print( f"At {reference} supressing1 {tempResults[0][-1]}" )
+                            # print( f"At {reference} suppressing1 {tempResults[0][-1]}" )
                             tempResults.pop(0) # We match the number of messages, but don't check for exact matches
                         else:
                             assert not tempResults
@@ -564,7 +564,7 @@ def compareBooksPedantic( book1, book2,
                         if contextStart > 0 and context[0]!=' ': context = '…' + context
                         if contextEnd < line2len and context[-1]!=' ': context = context + '…'
                         if tempResults and "Missing second part" in tempResults[-1][-1]:
-                            # print( f"At {reference} supressing2 {tempResults[-1][-1]}" )
+                            # print( f"At {reference} suppressing2 {tempResults[-1][-1]}" )
                             tempResults.pop() # We match the number of messages, but don't check for exact matches
                         else:
                             assert not tempResults

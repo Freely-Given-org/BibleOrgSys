@@ -2209,7 +2209,7 @@ class PTX8Bible( Bible ):
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXPrintDraftChanges.
 
-        These lines use the CC (Consisent Changes) format and so use > as the main operator.
+        These lines use the CC (Consistent Changes) format and so use > as the main operator.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "loadPTX8PrintDraftChanges()" )
 

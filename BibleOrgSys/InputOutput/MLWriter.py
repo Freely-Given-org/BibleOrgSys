@@ -248,7 +248,7 @@ class MLWriter:
         elif self._sectionName == 'Main': result = '' # (not header)
         else: result= self._nl # for header
 
-        # Overrride if we've gone past the max column width
+        # Override if we've gone past the max column width
         if self._limitColumns and self._currentColumn >= self._maxColumns: result = self._nl
 
         if result == self._nl: self._currentColumn = 0

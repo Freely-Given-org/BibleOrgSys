@@ -235,7 +235,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fa
 
 
 
-# Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitions)
+# Note that single words might include a \\sup \\sup* span as in 'Aʸsaias/(Yəshaˊə\sup yāh\sup*)¦21767' (but we handle that below by substitutions)
 linkedWordRegex = re.compile( "([-¬A-za-z0-9,'’ḨŌⱤḩⱪşţʦⱱĀĒāēéīōūəʸʼˊ/()]+)¦([1-9][0-9]{0,5})" )
 
 class ESFMBible( Bible ):
@@ -251,7 +251,7 @@ class ESFMBible( Bible ):
             because ESFM is defined to only be UTF-8.
 
         After creating the class,
-            set loadAuxilliaryFiles to True if
+            set loadAuxiliaryFiles to True if
                 you want metadata and word files to be loaded along with each book.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.__init__( {!r}, {!r}, {!r} )".format( sourceFolder, givenName, givenAbbreviation ) )
@@ -270,7 +270,7 @@ class ESFMBible( Bible ):
             self.sourceFolder = f'{self.sourceFolder}/' # Ensure that it ends with the forward slash
 
         self.dontLoadBook = []
-        self.loadAuxilliaryFiles = False
+        self.loadAuxiliaryFiles = False
         self.ESFMWorkData, self.ESFMFileData, self.ESFMWordTables, self.ESFMColumnNameList = {}, {}, {}, {}
         self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
     # end of ESFMBible.__init_
@@ -608,7 +608,7 @@ class ESFMBible( Bible ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\n\nSemantic dict:" )
             for someKey,someEntry in self.semanticDict.items():
                 vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"\n{someKey}: {someEntry}" )
-        if self.loadAuxilliaryFiles: self.lookForAuxilliaryFilenames()
+        if self.loadAuxiliaryFiles: self.lookForAuxiliaryFilenames()
         self.doPostLoadProcessing()
     # end of ESFMBible.loadBooks
 
@@ -616,9 +616,9 @@ class ESFMBible( Bible ):
         self.loadBooks()
 
 
-    def lookForAuxilliaryFilenames( self ):
+    def lookForAuxiliaryFilenames( self ):
         """
-        Looks into the loaded ESFM books for WORKDATA, FILEDATA, and/or WORDTABLE auxilliary filenames.
+        Looks into the loaded ESFM books for WORKDATA, FILEDATA, and/or WORDTABLE auxiliary filenames.
             \\id 1JN - Matigsalug Translation v1.0.17
             \\usfm 3.0
             \\ide UTF-8
@@ -635,7 +635,7 @@ class ESFMBible( Bible ):
         By doing it at this Bible level,
             later we can cache any data files that are used by multiple Bible books.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.lookForAuxilliaryFilenames()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "ESFMBible.lookForAuxiliaryFilenames()" )
 
         for BBB,bookObject in self.books.items():
             if bookObject.ESFMWorkDataFilename:
@@ -644,18 +644,18 @@ class ESFMBible( Bible ):
                     self.ESFMWorkData[bookObject.ESFMWorkDataFilename] = None
                     filepath = os.path.join( self.sourceFolder, bookObject.ESFMWorkDataFilename )
                     if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORK DATA file at {filepath}")
+                        logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't find a WORK DATA file at {filepath}")
                 if len(self.ESFMWorkData) > 1:
-                    logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA files: ({len(self.ESFMWorkData)}) {[k for k in self.ESFMWorkData]}")
+                    logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't expect MULTIPLE WORK DATA files: ({len(self.ESFMWorkData)}) {[k for k in self.ESFMWorkData]}")
             if bookObject.ESFMFileDataFilename:
                 assert bookObject.ESFMFileDataFilename.endswith( '.txt' )
                 if bookObject.ESFMFileDataFilename in self.ESFMFileData:
-                    logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't expect REPEATED FILE DATA files: ({len(self.ESFMFileData)}) {[k for k in self.ESFMFileData]} now {BBB} {bookObject.ESFMFileDataFilename}")
+                    logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't expect REPEATED FILE DATA files: ({len(self.ESFMFileData)}) {[k for k in self.ESFMFileData]} now {BBB} {bookObject.ESFMFileDataFilename}")
                 else:
                     self.ESFMFileData[bookObject.ESFMFileDataFilename] = None
                     filepath = os.path.join( self.sourceFolder, bookObject.ESFMFileDataFilename )
                     if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a FILE DATA file at {filepath}")
+                        logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't find a FILE DATA file at {filepath}")
             if bookObject.ESFMWordTableFilename:
                 assert bookObject.ESFMWordTableFilename.endswith( '.tsv' )
                 if bookObject.ESFMWordTableFilename not in self.ESFMWordTables:
@@ -663,24 +663,24 @@ class ESFMBible( Bible ):
                     try: filepath = os.path.join( self.sourceFolder, bookObject.ESFMWordTableFilename )
                     except TypeError: filepath = None
                     if filepath is None or not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a WORD TABLE file at {filepath}")
+                        logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't find a WORD TABLE file at {filepath}")
                         if '_OT_' in bookObject.ESFMWordTableFilename:
                             try: filepath = os.path.join( self.OTsourceFolder, bookObject.ESFMWordTableFilename )
                             except AttributeError: filepath = bookObject.ESFMWordTableFilename
                             if not os.path.isfile( filepath ):
-                                logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find an OT WORD TABLE file at {filepath}")
+                                logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't find an OT WORD TABLE file at {filepath}")
                         elif '_NT_' in bookObject.ESFMWordTableFilename:
                             try: filepath = os.path.join( self.NTsourceFolder, bookObject.ESFMWordTableFilename )
                             except AttributeError: filepath = bookObject.ESFMWordTableFilename
                             if not os.path.isfile( filepath ):
-                                logging.critical( f"ESFMBible.lookForAuxilliaryFilenames didn't find a NT WORD TABLE file at {filepath}")
+                                logging.critical( f"ESFMBible.lookForAuxiliaryFilenames didn't find a NT WORD TABLE file at {filepath}")
 
         if DEBUGGING_THIS_MODULE:
-            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
-            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
-            print( f"lookForAuxilliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
+            print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWorkData=}" )
+            print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMFileData=}" )
+            print( f"lookForAuxiliaryFilenames {self.abbreviation} {self.ESFMWordTables=}" )
         assert len(self.ESFMWordTables) <= 2, f"Too many ESFM word tables: ({len(self.ESFMWordTables)}) {self.ESFMWordTables.keys()=}" # OT and NT 
-    # end of ESFMBible.lookForAuxilliaryFilenames
+    # end of ESFMBible.lookForAuxiliaryFilenames
 
 
     def loadESFMWordFile( self, filename ):
