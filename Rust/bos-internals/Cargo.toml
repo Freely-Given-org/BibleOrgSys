@@ -7,6 +7,7 @@ authors.workspace = true
 description = "Core internal data structures for Bible text representation, indexing, and manipulation"
 keywords = ["bible", "usfm", "scripture"]
 categories = ["text-processing", "parser-implementations"]
+publish = false
 
 [dependencies]
 thiserror.workspace = true

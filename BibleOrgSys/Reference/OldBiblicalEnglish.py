@@ -159,7 +159,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     # Three words to three words
     ((' claue the rockes',),' cracked the rocks'),(('cloaue the hard ',),'cracked the hard '),((' cloued the harde ',),' cracked the hard '), # Psa 78:15
     (('eate the bred ',),'eat the bread '), # Cvdl Psa 127:3
-    (('fill the breede',),'fill the breadth'), # Wycl Isa 8:8
+    (('fille the breede',),'fill the breadth'), # Wycl Isa 8:8
     (('for a pray ',),'for a prey '), # KJB-1611 Deu 3:7
     (('get the hense',),'get thee hence'), # Mrk 2:11
     (('in the breede',),'in the breadth'), # Wycl Jdt 1:2
@@ -1814,7 +1814,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' onne?',),' on?'),
             ((' onys,',),' once,'), ((' oon ',),' one '),((' oon.',),' one.'),((' oon,',),' one,'),((' oon;',),' one;'),
                 (('Onely ','Oneli '),'Only '),((' onely ',' onlye ',' oneli ',' oonli '),' only '),((' onely,',' oneli,'),' only,'),((' onely.',),' only.'),((' onely:',),' only:'),
-        ((' opynli',),' openly'), ((' openyden',' openede',' openyde',' openyd'),' opened'),(('openyngis',),'openings'),(('openynge',),'opening'), ((' openeth',' openith'),' openeth/opens'), ((' opene ',' opyn ',' ope '),' open '),((' opyn,',),' open,'),
+        ((' opynli',),' openly'), ((' openyden',' openede',' openyde',' openned',' openyd'),' opened'),(('openyngis',),'openings'),(('openynge',),'opening'), ((' openeth',' openith'),' openeth/opens'), ((' opene ',' opyn ',' ope '),' open '),((' opyn,',),' open,'),
                 ((' operacion',),' operation'),
             ((' opynyouns',),' opinions'),
             ((' opportunite,',' oportunitie,'),' opportunity,'),
@@ -2231,7 +2231,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' sydes',' sidis'),' sides'),((' syde ',),' side '),((' syde,',),' side,'),((' syde.',),' side.'),((' syde:',),' side:'),((' syde;',),' side;'),
             ((' sege ',),' siege '), ((' sieue',' siue',' syue'),' sieve'),
             ((' siffte ',' sifte '),' sift '),
-            ((' sighinge',),' sighing'), ((' sighes',),' sighs'),
+            ((' sighinge',),' sighing'), ((' sygthed',' syghed'),' sighed'),((' sighes',),' sighs'),
                 ((' syght ',' sighte ',' siyt '),' sight '),((' sighte,',' siyt,'),' sight,'),((' sighte.',' syght.',' siyt.'),' sight.'),((' syght:',),' sight:'),((' siyt;',),' sight;'), ((' signes',),' signs'),((' signe ',),' sign '),((' signe,',),' sign,'),((' signe:',),' sign:'),((' signe;',),' sign;'),
                 (('signefiyng',),'signifying'), ((' signifie ',),' signify '),
             ((' scilence',' sylence',' silece',' sylece'),' silence'),
@@ -2301,7 +2301,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' soone ',),' soon '),((' soone,',),' soon,'),((' soone:',),' soon:'),((' soone)',),' soon)'), (('Southsayers',),'Soothsayers'),(('soythsayers',),'soothsayers'),
             ((' sorcerie,',),' sorcery,'),
                 ((' sorrowfull ',' sorowfull ',' soroufull ',' sorewful '),' sorrowful '),((' sorrowfull,',' sorowfull,',' sorowful,',' sorewful,',' soreuful,'),' sorrowful,'),((' soroufull.',),' sorrowful.'),((' sorowfull?',),' sorrowful?'),((' sorowfull:',),' sorrowful:'),
-                    ((' sorewis',' sorrowes',' sorowes',' sorewes'),' sorrows'), (('Sorewe ',),'Sorrow '),((' sorrowe ',' sorewe ',' sorowe ',' sorow '),' sorrow '),((' sorowe,',' sorewe,',' sorow,'),' sorrow,'),((' sorewe.',' sorowe.',' sorow.'),' sorrow.'),((' sorowe?',),' sorrow?'),((' sorowe:',' sorow:'),' sorrow:'),((' sorowe;',' sorewe;'),' sorrow;'),
+                    ((' sorewide',),' sorrowed'),((' sorewis',' sorrowes',' sorowes',' sorewes'),' sorrows'), (('Sorewe ',),'Sorrow '),((' sorrowe ',' sorewe ',' sorowe ',' sorow '),' sorrow '),((' sorowe,',' sorewe,',' sorow,'),' sorrow,'),((' sorewe.',' sorowe.',' sorow.'),' sorrow.'),((' sorowe?',),' sorrow?'),((' sorowe:',' sorow:'),' sorrow:'),((' sorowe;',' sorewe;'),' sorrow;'),
                 ((' sorie ',' sory ',' sori '),' sorry '),((' sory,',),' sorry,'),((' sorie.',' sory.',' sori.'),' sorry.'),((' sory:',),' sorry:'),((' sori;',),' sorry;'),
                 ((' sortes',),' sorts'),((' sorte ',),' sort '),
             ((' souyten',' souyte',' souyt'),' sought'),
