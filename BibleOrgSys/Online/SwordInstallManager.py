@@ -277,7 +277,7 @@ class SwordInstallManager():
         """
         Ask the user to confirm the recommended disclaimer.
 
-        This function can be overriden (esp. if you have a GUI).
+        This function can be overridden (esp. if you have a GUI).
         """
         fnPrint( DEBUGGING_THIS_MODULE, "SwordInstallManager.isUserDisclaimerConfirmed()" )
 

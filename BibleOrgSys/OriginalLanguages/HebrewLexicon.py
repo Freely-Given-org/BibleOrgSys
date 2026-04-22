@@ -449,7 +449,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     However, it does also use the HebrewLexiconSimple class
-        so it can be more intelligent with coverting code systems.
+        so it can be more intelligent with converting code systems.
 
     It automagically accepts Hebrew and Greek Strong's numbers (like H123 and G532)
         plus BrDrBr (Hebrew) codes (like a.gq.ab).

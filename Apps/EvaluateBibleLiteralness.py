@@ -582,7 +582,7 @@ def preloadVersion( versionAbbreviation:str, folderOrFileLocation:str, state:Sta
     elif 'OET' in versionAbbreviation or 'ESFM' in folderOrFileLocation: # ESFM
         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Preloading ‘{versionAbbreviation}’ ESFM Bible…" )
         thisBible = ESFMBible.ESFMBible( folderOrFileLocation, givenName=versionName, givenAbbreviation=versionAbbreviation )
-        thisBible.loadAuxilliaryFiles = True
+        thisBible.loadAuxiliaryFiles = True
         # if versionAbbreviation in ('ULT','UST','UHB','UGNT','SR-GNT'):
         #     thisBible.uWencoded = True # TODO: Shouldn't be required ???
         thisBible.loadBooks() # So we can iterate through them all later

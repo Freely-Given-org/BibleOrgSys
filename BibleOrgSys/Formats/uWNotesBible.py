@@ -392,7 +392,7 @@ def uWNotesBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheck: Suprised to find folder:", folderName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -434,7 +434,7 @@ def uWNotesBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheckSuprised to find folder:", folderName )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWNotesBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):

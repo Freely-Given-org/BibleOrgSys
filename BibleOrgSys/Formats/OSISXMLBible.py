@@ -3569,7 +3569,7 @@ class OSISXMLBible( Bible ):
                 if bkLE[0].BBB == BBB: found = True; break
             assert found # book should already be in list
             # bookList.append( (thisBook,loadErrors.copy()) )
-            loadErrors.clear() # Reasy for next book
+            loadErrors.clear() # Ready for next book
     # end of OSISXMLBible.validateAndExtractBookDiv
 # end of OSISXMLBible class
 

@@ -565,7 +565,7 @@ def runCreateAll( outputFolderpath:Path, submit2BDB:bool=False ) -> None:
             metadataDict = {
                             'Abbreviation': abbreviation,
                             'WorkName': name,
-                            'About': 'The Holy Bible in French, Sainte Bible Libre pour le monde translation (2022). Il s’agit d’un brouillon de traduction. Il est en cours de relecture et d’édition. Si vous trouvez des erreurs, veuillez nous en informer à https://eBible.org/cgi-bin/contact.cgi. This is a draft translation. It is being proofread and edited. If you find errors, please let us know at https://eBible.org/cgi-bin/contact.cgi.',
+                            'About': 'The Holy Bible in French, Sainte Bible Libre pour le monde translation (2022). Il s’agit d’un brouillon de traduction. Il est en course de relecture et d’édition. Si vous trouvez des erreurs, veuillez nous en informer à https://eBible.org/cgi-bin/contact.cgi. This is a draft translation. It is being proofread and edited. If you find errors, please let us know at https://eBible.org/cgi-bin/contact.cgi.',
                             'Source': 'https://ebible.org/find/details.php?id=frasbl',
                             #'CopyrightNotice': '',
                             'Licence': 'Public Domain',
