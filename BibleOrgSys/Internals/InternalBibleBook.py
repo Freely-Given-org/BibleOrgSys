@@ -2029,19 +2029,19 @@ class InternalBibleBook:
             marker, text = dataEntry.getMarker(), dataEntry.getCleanText()
             if marker == 'c': C, V = text, '0'
             elif marker == 'v': V = text
-            dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() processing {j} {self.BBB} {C}:{V} {marker}={text} field…" )
+            dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() processing {j} {self.BBB} {C}:{V} {marker}={text} field…" )
 
             if marker in fieldsPreceded:
-                dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() looking ahead after {self.BBB} {C}:{V} {marker}={text} field…" )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() looking ahead after {self.BBB} {C}:{V} {marker}={text} field…" )
                 for k in range( 1, 6 ): # Number of lines to look ahead
                     if j+k <= lastJ:
                         nextDataEntry = self._processedLines[j+k]
                         assert isinstance( nextDataEntry, InternalBibleEntry )
                         nextMarker = nextDataEntry.getMarker()
-                        dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"    addVerseStartMarkers() looking ahead at {nextMarker}={nextDataEntry.getCleanText()} at {self.BBB} {C}:{V}" )
+                        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"    addVerseStartMarkers() looking ahead at {nextMarker}={nextDataEntry.getCleanText()} at {self.BBB} {C}:{V}" )
                         if nextMarker == 'v':
                             vText = nextDataEntry.getCleanText()
-                            dPrint( 'Normal', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() adding v= {vText} at {self.BBB} {C}:{V}" )
+                            dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"  addVerseStartMarkers() adding v= {vText} at {self.BBB} {C}:{V}" )
                             newLines.append( InternalBibleEntry('v=', 'v', nextDataEntry.getAdjustedText(), vText, None, nextDataEntry.getOriginalText()) )
                             break
                         #elif nextMarker in fieldsAlsoPreceded: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  Noting {} line".format( nextMarker ) )
@@ -2063,17 +2063,17 @@ class InternalBibleBook:
                         indentLevel += 1
                     elif marker[0] == '¬':
                         if indentLevel > 0: indentLevel -= 1
-                        else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "INDENT LEVEL PROBLEM" ); halt
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"{j:4} {'  '*indentLevel}{marker}={cleanText}" )
+                        else: dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "INDENT LEVEL PROBLEM" ); halt
+                    dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"{j:4} {'  '*indentLevel}{marker}={cleanText}" )
                     #markerList.append( marker )
             if 0:
                 markerListString = ' '.join(entry.getMarker() for entry in newLines)
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self.BBB, "aVSM markerListString", markerListString )
+                dPrint( 'Info', DEBUGGING_THIS_MODULE, self.BBB, "aVSM markerListString", markerListString )
                 assert 'v= ¬v' not in markerListString
                 assert 'q1 p~ ¬v ¬q1' not in markerListString
 
         if len(newLines) != len(self._processedLines):
-            vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "  addVerseStartMarkers() adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
+            vPrint( 'Info', DEBUGGING_THIS_MODULE, "  addVerseStartMarkers() adjusted {} from {} lines to {} lines".format( self.BBB, len(self._processedLines), len(newLines) ) )
         self._processedLines = newLines # replace the old set
     # end of addVerseStartMarkers
 
