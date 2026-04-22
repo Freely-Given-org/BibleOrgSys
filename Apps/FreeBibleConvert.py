@@ -66,7 +66,7 @@ OUTPUT_FOLDERPATH = BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinp
 def splitAndWriteBooks( entireBibleText, folderpath ):
     """
     Given a text string containing the entire Bible document,
-        split it by \id lines and write out the individual files
+        split it by /id lines and write out the individual files
         into the given folder.
 
     Also can be customized to do specific formatting corrections

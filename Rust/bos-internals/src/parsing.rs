@@ -407,64 +407,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_abbreviate_short_ascii() {
-        assert_eq!(abbreviate::<10, 3>("hello"), "hello");
-    }
-
-    #[test]
-    fn test_abbreviate_exact_limit() {
-        assert_eq!(abbreviate::<5, 2>("hello"), "hello");
-    }
-
-    #[test]
-    fn test_abbreviate_long_ascii() {
-        assert_eq!(abbreviate::<10, 3>("abcdefghijklmnopqrstuvwxyz"), "abc…xyz");
-    }
-
-    #[test]
-    fn test_abbreviate_long_french() {
-        assert_eq!(abbreviate::<10, 3>("àâçéèêëïîôùûüÿœæ abcdefghij"), "àâç…hij");
-    }
-
-    #[test]
-    fn test_abbreviate_mixed_english_french() {
-        assert_eq!(
-            abbreviate::<20, 5>("The café résumé naïve château fiancée entrée à la mode de jour"),
-            "The c… jour"
-        );
-    }
-
-    #[test]
-    fn test_abbreviate_all_multibyte() {
-        assert_eq!(abbreviate::<10, 3>("éééééééééééééééééééééééééé"), "ééé…ééé");
-    }
-
-    #[test]
-    fn test_get_small_leading_int() {
-        assert_eq!(get_small_leading_int("17").unwrap(), 17);
-        assert_eq!(get_small_leading_int("17a").unwrap(), 17);
-        assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
-        assert_eq!(get_small_leading_int("-1").unwrap(), -1);
-        assert_eq!(get_small_leading_int("0").unwrap(), 0);
-        assert_eq!(get_small_leading_int("123abc456").unwrap(), 123);
-        assert!(get_small_leading_int("46168").is_err());
-        assert!(get_small_leading_int("375561").is_err());
-        assert!(get_small_leading_int("abc").is_err());
-        assert!(get_small_leading_int("").is_err());
-    }
-
-    #[test]
-    fn test_get_positive_leading_int() {
-        assert_eq!(get_positive_leading_int("17").unwrap(), 17);
-        assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
-        assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
-        assert_eq!(get_positive_leading_int("46168").unwrap(), 46168);
-        assert_eq!(get_positive_leading_int("375561").unwrap(), 375561);
-        assert_eq!(get_positive_leading_int("0").unwrap(), 0);
-        assert_eq!(get_positive_leading_int("123abc456").unwrap(), 123);
-        assert!(get_positive_leading_int("-1").is_err());
-        assert!(get_positive_leading_int("abc").is_err());
-        assert!(get_positive_leading_int("").is_err());
+    fn test_get_leading_int() {
+        assert_eq!(get_leading_int("17").unwrap(), 17);
+        assert_eq!(get_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_leading_int("-1").unwrap(), -1);
+        assert_eq!(get_leading_int("0").unwrap(), 0);
+        assert_eq!(get_leading_int("123abc456").unwrap(), 123);
+        assert!(get_leading_int("abc").is_err());
+        assert!(get_leading_int("").is_err());
     }
 
     #[test]

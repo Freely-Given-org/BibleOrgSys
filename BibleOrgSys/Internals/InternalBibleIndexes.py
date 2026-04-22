@@ -82,6 +82,7 @@ import logging
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getSmallLeadingInt
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getSmallLeadingInt
 
 
 LAST_MODIFIED_DATE = '2025-09-29' # by RJH
@@ -128,7 +129,7 @@ def briefDemo() -> None:
         from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                ("Matigsalug", 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/') ),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData, start=1 ):
@@ -168,7 +169,7 @@ def fullDemo() -> None:
         from BibleOrgSys.Formats.USFMBible import USFMBible
 
         testData = ( # name, abbreviation, folderpath for USFM files
-                ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
+                ("Matigsalug", 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/') ),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData, start=1 ):

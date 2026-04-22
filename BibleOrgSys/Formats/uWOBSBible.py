@@ -113,7 +113,7 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
         numFound += 1
         if strictCheck:
             for folderName in foundFolders:
-                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck: Suprised to find folder:", folderName )
+                vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -156,7 +156,7 @@ def uWOBSBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=F
             numFound += 1
             if strictCheck:
                 for folderName in foundSubfolders:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheckSuprised to find folder:", folderName )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "uWOBSBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):

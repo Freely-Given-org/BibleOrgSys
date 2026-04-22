@@ -1181,7 +1181,7 @@ def briefDemo() -> None:
     testData = (
             ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
             ('Test2',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2'),),
-            ('MatigsalugUSFM',Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
+            ('MatigsalugUSFM',Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
             ("Matigsalug3", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
             ("Matigsalug4", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
             ("Matigsalug5", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),
@@ -1250,7 +1250,7 @@ def fullDemo() -> None:
             ('MS1', Path('/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV')),
             ('Test1',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest1'),),
             ('Test2',BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USXTest2'),),
-            ('MatigsalugUSFM', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
+            ('MatigsalugUSFM', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'),), # USFM not USX !
             ("Matigsalug3", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/'),),
             ("Matigsalug4", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/'),),
             ("Matigsalug5", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/'),),

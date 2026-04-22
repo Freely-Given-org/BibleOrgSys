@@ -550,7 +550,7 @@ def compareBooksPedantic( book1, book2,
                         if contextStart > 0 and context[0]!=' ': context = '…' + context
                         if contextEnd < line1len and context[-1]!=' ': context = context + '…'
                         if tempResults and "Missing second part" in tempResults[0][-1]:
-                            # print( f"At {reference} supressing1 {tempResults[0][-1]}" )
+                            # print( f"At {reference} suppressing1 {tempResults[0][-1]}" )
                             tempResults.pop(0) # We match the number of messages, but don't check for exact matches
                         else:
                             assert not tempResults
@@ -564,7 +564,7 @@ def compareBooksPedantic( book1, book2,
                         if contextStart > 0 and context[0]!=' ': context = '…' + context
                         if contextEnd < line2len and context[-1]!=' ': context = context + '…'
                         if tempResults and "Missing second part" in tempResults[-1][-1]:
-                            # print( f"At {reference} supressing2 {tempResults[-1][-1]}" )
+                            # print( f"At {reference} suppressing2 {tempResults[-1][-1]}" )
                             tempResults.pop() # We match the number of messages, but don't check for exact matches
                         else:
                             assert not tempResults
@@ -1089,8 +1089,8 @@ def briefDemo() -> None:
 
     # Load a USFM Bible and BT
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
-    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
-    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
+    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'C','c','F','f','J','j','O','o','Q','q','V','v','X','x','Z','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',
@@ -1208,8 +1208,8 @@ def fullDemo() -> None:
 
     # Load a USFM Bible and BT
     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nLoading USFM Bible…" )
-    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
-    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
+    name1, encoding1, testFolder1 = "MBTV", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+    name2, encoding2, testFolder2 = "MS-BT", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/' ) # You can put your test folder here
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_1 = ( 'c','f','j','o','q','v','x','z', ) + DEFAULT_ILLEGAL_USFM_CLEAN_TEXT_ONLY_STRINGS_VERNACULAR
     MS_ILLEGAL_CLEAN_TEXT_ONLY_STRINGS_2 = ( 'We ',' we ',' us ',' us.',' us,',' us:',' us;',' us!',' us?',' us–',' us—',
                              'Our ',' our ','You ','you ','you.','you,','you:','you;','you!','you?','you–','you—',

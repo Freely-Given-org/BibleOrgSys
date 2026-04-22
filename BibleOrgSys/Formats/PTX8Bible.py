@@ -7,7 +7,7 @@
 # Module handling UBS/SIL Paratext (PTX 8) collections of USFM Bible books
 #                                   along with XML and other metadata
 #
-# Copyright (C) 2015-2022 Robert Hunt
+# Copyright (C) 2015-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -56,7 +56,7 @@ from BibleOrgSys.Formats.USFMBibleBook import USFMBibleBook
 from BibleOrgSys.Reference.LDML import LDMLFile
 
 
-LAST_MODIFIED_DATE = '2022-12-30' # by RJH
+LAST_MODIFIED_DATE = '2026-02-27' # by RJH
 SHORT_PROGRAM_NAME = "Paratext8Bible"
 PROGRAM_NAME = "Paratext-8 Bible handler"
 PROGRAM_VERSION = '0.27'
@@ -737,7 +737,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading books names data from {}…".format( bookNamesFilepath ) )
         self.XMLTree = ElementTree().parse( bookNamesFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         booksNamesDict = {}
         #loadErrors:list[str] = []
@@ -801,7 +801,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading project lexicon data from {}…".format( lexiconFilepath ) )
         self.XMLTree = ElementTree().parse( lexiconFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         lexiconDict = { 'Entries':{} }
         #loadErrors:list[str] = []
@@ -950,7 +950,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading project user data from {}…".format( projectUsersFilepath ) )
         self.XMLTree = ElementTree().parse( projectUsersFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         projectUsersDict = {}
         #loadErrors:list[str] = []
@@ -1086,7 +1086,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading canons data from {}…".format( canonsFilepath ) )
         self.XMLTree = ElementTree().parse( canonsFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         canonsDict = {}
         #loadErrors:list[str] = []
@@ -1185,7 +1185,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading checking status data from {}…".format( checkingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( checkingStatusFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         checkingStatusByBookDict, checkingStatusByCheckDict = {}, {}
         #loadErrors:list[str] = []
@@ -1266,7 +1266,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading comment tags from {}…".format( commentTagFilepath ) )
 
         self.XMLTree = ElementTree().parse( commentTagFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag == 'TagList':
@@ -1329,7 +1329,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading derived translation status data from {}…".format( derivedTranslationStatusFilepath ) )
         self.XMLTree = ElementTree().parse( derivedTranslationStatusFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         derivedTranslationStatusByBookDict = {}
         #loadErrors:list[str] = []
@@ -1577,7 +1577,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading parallel passage status data from {}…".format( parallelPassageStatusFilepath ) )
         self.XMLTree = ElementTree().parse( parallelPassageStatusFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         parallelPassageStatusDict = {}
         #loadErrors:list[str] = []
@@ -1673,7 +1673,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Biblical terms from {}…".format( projectBiblicalTermsFilepath ) )
 
         self.XMLTree = ElementTree().parse( projectBiblicalTermsFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='BiblicalTermsList':
@@ -1769,7 +1769,7 @@ class PTX8Bible( Bible ):
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading Progress from {}…".format( projectProgressFilepath ) )
 
         self.XMLTree = ElementTree().parse( projectProgressFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag=='ProgressInfo':
@@ -2138,7 +2138,7 @@ class PTX8Bible( Bible ):
             vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading PrintConfig from {}…".format( printConfigFilepath ) )
 
             self.XMLTree = ElementTree().parse( printConfigFilepath )
-            assert self.XMLTree # Fail here if we didn't load anything at all
+            assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
             # Find the main container
             if self.XMLTree.tag == 'PrintDraftConfiguration':
@@ -2209,7 +2209,7 @@ class PTX8Bible( Bible ):
         Load the AutoCorrect.txt file (which is a text file)
             and parse it into the ordered dictionary PTXPrintDraftChanges.
 
-        These lines use the CC (Consisent Changes) format and so use > as the main operator.
+        These lines use the CC (Consistent Changes) format and so use > as the main operator.
         """
         fnPrint( DEBUGGING_THIS_MODULE, "loadPTX8PrintDraftChanges()" )
 
@@ -2382,7 +2382,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading spelling status data from {}…".format( spellingStatusFilepath ) )
         self.XMLTree = ElementTree().parse( spellingStatusFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         spellingStatusDict = {}
         #loadErrors:list[str] = []
@@ -2546,7 +2546,7 @@ class PTX8Bible( Bible ):
         TermRenderingsDict = {}
 
         self.XMLTree = ElementTree().parse( renderingTermsFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         # Find the main container
         if self.XMLTree.tag == 'TermRenderingsList':
@@ -2687,7 +2687,7 @@ class PTX8Bible( Bible ):
 
         vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "PTX8Bible.loading word analysis data from {}…".format( wordAnalysesFilepath ) )
         self.XMLTree = ElementTree().parse( wordAnalysesFilepath )
-        assert self.XMLTree # Fail here if we didn't load anything at all
+        assert self.XMLTree is not None # Fail here if we didn't load anything at all
 
         wordAnalysesDict = {}
         #loadErrors:list[str] = []
@@ -3099,14 +3099,14 @@ def fullDemo() -> None:
         for standardTestFolder in (
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
-                            BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/' ),
+                            # BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest3/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM2AllMarkersProject/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM3AllMarkersProject/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMErrorProject/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX7Test/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/' ),
                             BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/' ),
-                            Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ),
+                            Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ),
                             BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Export/' ),
                             BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM2_Reexport/' ),
                             BibleOrgSysGlobals.DEFAULT_WRITEABLE_OUTPUT_FOLDERPATH.joinpath( 'BOS_USFM3_Export/' ),
@@ -3177,9 +3177,9 @@ def fullDemo() -> None:
         testFolders = (
                     ( 'Test1', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test1/') ),
                     ( 'Test2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'PTX8Test2/') ),
-                    ( 'MBTV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ) ),
-                    ( 'MBTBT', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT' ) ),
-                    ( 'MBTBC', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC' ) ),
+                    # ( 'MBTV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTV' ) ),
+                    # ( 'MBTBT', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBT' ) ),
+                    # ( 'MBTBC', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects/MBTBC' ) ),
                     ) # You can put your PTX8 test folder here
 
         for testName,testFolder in testFolders:
@@ -3225,7 +3225,7 @@ def fullDemo() -> None:
                 #     makeSettingsPage( 'Matigsalug', PTX8_Bible, readyWebPageTemplate, outputFolderpath )
             else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 1:
+    if 0:
         # Look at various projects inside various copies of the Paratext 8 folder made over time
         searchFolderName = Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/' )
         searchFolderHead = 'My Paratext 8 Projects' # often followed by a date

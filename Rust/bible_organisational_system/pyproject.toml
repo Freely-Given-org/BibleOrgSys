@@ -27,4 +27,4 @@ strategy = "any"
 
 [tool.uv]
 # Rebuild the extension module if the rust code changes.
-cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "**/*.rs"}]
+cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "**/*.rs"}, {file = "../bos-internals/Cargo.toml"}, {file = "../bos-internals/**/*.rs"}]

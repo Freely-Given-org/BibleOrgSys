@@ -149,7 +149,7 @@ def fullDemo() -> None:
         ## Test a single folder containing a USFM Bible
         #dPrint( 'Quiet', DEBUGGING_THIS_MODULE, "\nTest USFM Bible…" )
         #from BibleOrgSys.Formats.USFMBible import USFMBible
-        #name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        #name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #if os.access( testFolder, os.R_OK ):
             #UB = USFMBible( testFolder, name, encoding )
             #UB.load()

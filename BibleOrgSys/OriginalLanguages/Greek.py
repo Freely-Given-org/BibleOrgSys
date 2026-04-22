@@ -116,7 +116,7 @@ ALL_LETTERS = NORMAL_LETTERS + FINAL_CONSONANTS
 GREEK_ACCENT_DICT = { 
     # Lowercase composed-Unicode accented characters
     '᾽':'', # Koronis -- not strictly an accent
-    '́':'', # Combining accute accent
+    '́':'', # Combining acute accent
     'Ἀ':'Α', 'Ἄ':'Α', 'Ἆ':'Α', 'Ἁ':'Α', 'Ἅ':'Α', 'Ἃ':'Α', 'ᾍ':'Α',
     'ά':'α', 'ά':'α', 'ὰ':'α', 'ἀ':'α', 'ἁ':'α', 'ᾳ':'α', 'ἄ':'α', 'ᾶ':'α', 'ἅ':'α', 'ἃ':'α', 'ἆ':'α', 'ἂ':'α', 'ᾷ':'α',
              'ᾅ':'α', 'ᾴ':'α', 'ᾄ':'α',

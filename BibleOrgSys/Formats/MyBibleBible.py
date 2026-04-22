@@ -778,7 +778,7 @@ def createMyBibleModule( self, outputFolder, controlDict ) -> bool:
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
-        Parameters are the Scripture reference (for error messsages)
+        Parameters are the Scripture reference (for error messages)
             and the line (string) containing the backslash codes.
 
         Returns a string with the backslash codes replaced by MyBible RTF formatting codes.
@@ -1516,7 +1516,7 @@ def briefDemo() -> None:
                     BiblesFolderpath.joinpath( 'Zefania modules/' ),
                     BiblesFolderpath.joinpath( 'YET modules/' ),
                     BiblesFolderpath.joinpath( 'MyBible modules/' ),
-                    Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                    Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'),
                     Path( '/srv/AutoProcesses/Processed/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
@@ -1686,7 +1686,7 @@ def fullDemo() -> None:
                     BiblesFolderpath.joinpath( 'Zefania modules/' ),
                     BiblesFolderpath.joinpath( 'YET modules/' ),
                     BiblesFolderpath.joinpath( 'MyBible modules/' ),
-                    Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'),
+                    Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'),
                     Path( '/srv/AutoProcesses/Processed/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest1/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFMTest2/' ),
                     BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/' ), BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/' ),
