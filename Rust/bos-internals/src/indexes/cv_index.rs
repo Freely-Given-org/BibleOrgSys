@@ -187,20 +187,14 @@ impl InternalBibleBookCVIndex {
     ///
     /// Returns `LookupError::NotIndexed` if index hasn't been built.
     /// Returns `LookupError::CVNotFound` if the CV is not in the index.
-    pub fn get_verse_entries(
-        &self,
-        cv: &ChapterVerse,
-        strict: bool,
-    ) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_verse_entries(&self, cv: &ChapterVerse, strict: bool) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
 
         // Try direct lookup first
         if let Some(entry) = self.index_data.get(cv) {
-            return Ok(self
-                .entries
-                .slice(entry.entry_index(), entry.next_entry_index()));
+            return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
         }
 
         if strict {
@@ -208,9 +202,7 @@ impl InternalBibleBookCVIndex {
         }
 
         // Non-strict: search for verse ranges containing this verse
-        let desired_v = cv
-            .verse_int()
-            .map_err(|_| LookupError::CVNotFound(cv.clone()))?;
+        let desired_v = cv.verse_int().map_err(|_| LookupError::CVNotFound(cv.clone()))?;
 
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() {
@@ -219,15 +211,11 @@ impl InternalBibleBookCVIndex {
                     && start <= desired_v
                     && desired_v <= end
                 {
-                    return Ok(self
-                        .entries
-                        .slice(entry.entry_index(), entry.next_entry_index()));
+                    return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
                 }
                 // Check verse lists (e.g., "5,6,7")
                 if key.is_verse_list() && key.contains_verse(desired_v) {
-                    return Ok(self
-                        .entries
-                        .slice(entry.entry_index(), entry.next_entry_index()));
+                    return Ok(self.entries.slice(entry.entry_index(), entry.next_entry_index()));
                 }
             }
         }
@@ -256,18 +244,14 @@ impl InternalBibleBookCVIndex {
 
         // Try direct lookup
         if let Some(entry) = self.index_data.get(cv) {
-            let entries = self
-                .entries
-                .slice(entry.entry_index(), entry.next_entry_index());
+            let entries = self.entries.slice(entry.entry_index(), entry.next_entry_index());
             let context = entry.context.clone();
 
             // If complete and verse is 1, prepend verse 0 entries
             if complete && cv.verse() == "1" {
                 let cv0 = ChapterVerse::new(cv.chapter(), "0");
                 if let Some(entry0) = self.index_data.get(&cv0) {
-                    let mut combined = self
-                        .entries
-                        .slice(entry0.entry_index(), entry0.next_entry_index());
+                    let mut combined = self.entries.slice(entry0.entry_index(), entry0.next_entry_index());
                     combined.extend(&entries);
                     return Ok((combined, context));
                 }
@@ -281,15 +265,11 @@ impl InternalBibleBookCVIndex {
         }
 
         // Non-strict: search for ranges
-        let desired_v = cv
-            .verse_int()
-            .map_err(|_| LookupError::CVNotFound(cv.clone()))?;
+        let desired_v = cv.verse_int().map_err(|_| LookupError::CVNotFound(cv.clone()))?;
 
         for (key, entry) in &self.index_data {
             if key.chapter() == cv.chapter() && key.contains_verse(desired_v) {
-                let entries = self
-                    .entries
-                    .slice(entry.entry_index(), entry.next_entry_index());
+                let entries = self.entries.slice(entry.entry_index(), entry.next_entry_index());
                 return Ok((entries, entry.context.clone()));
             }
         }
@@ -302,10 +282,7 @@ impl InternalBibleBookCVIndex {
     /// # Errors
     ///
     /// Returns `LookupError::ChapterNotFound` if the chapter doesn't exist.
-    pub fn get_chapter_entries(
-        &self,
-        chapter: &str,
-    ) -> Result<InternalBibleEntryList, LookupError> {
+    pub fn get_chapter_entries(&self, chapter: &str) -> Result<InternalBibleEntryList, LookupError> {
         if !self.indexed {
             return Err(LookupError::NotIndexed);
         }
@@ -372,10 +349,8 @@ impl InternalBibleBookCVIndex {
                     if !self.index_data.contains_key(&cv) {
                         let entry_count = (i - current_start) as u16;
                         if entry_count > 0 {
-                            self.index_data.insert(
-                                cv,
-                                CVIndexEntry::new(current_start, entry_count, context.clone()),
-                            );
+                            self.index_data
+                                .insert(cv, CVIndexEntry::new(current_start, entry_count, context.clone()));
                         }
                         true
                     } else {
@@ -409,25 +384,23 @@ impl InternalBibleBookCVIndex {
 
             // 3. Handle end markers - pop from context and optionally close section
             if is_end_marker(marker) {
-                if let Some(base) = crate::markers::base_marker(marker) {
-                    if let Some(pos) = context.iter().rposition(|m| m == base) {
-                        context.remove(pos);
-                    }
+                if let Some(base) = crate::markers::base_marker(marker)
+                    && let Some(pos) = context.iter().rposition(|m| m == base)
+                {
+                    context.remove(pos);
                 }
 
-                if marker == "¬v" || marker == "¬c" {
-                    if let (Some(c), Some(v)) = (&current_chapter, &current_verse) {
-                        let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                        let entry_count = (i - current_start + 1) as u16;
-                        self.index_data.insert(
-                            cv,
-                            CVIndexEntry::new(current_start, entry_count, context.clone()),
-                        );
-                        current_start = i + 1;
-                        if marker == "¬c" {
-                            current_chapter = None;
-                            current_verse = None;
-                        }
+                if (marker == "¬v" || marker == "¬c")
+                    && let (Some(c), Some(v)) = (&current_chapter, &current_verse)
+                {
+                    let cv = ChapterVerse::new(c.as_str(), v.as_str());
+                    let entry_count = (i - current_start + 1) as u16;
+                    self.index_data
+                        .insert(cv, CVIndexEntry::new(current_start, entry_count, context.clone()));
+                    current_start = i + 1;
+                    if marker == "¬c" {
+                        current_chapter = None;
+                        current_verse = None;
                     }
                 }
             }
@@ -438,10 +411,8 @@ impl InternalBibleBookCVIndex {
             let entry_count = (self.entries.len() - current_start) as u16;
             if entry_count > 0 {
                 let cv = ChapterVerse::new(c.as_str(), v.as_str());
-                self.index_data.insert(
-                    cv,
-                    CVIndexEntry::new(current_start, entry_count, context),
-                );
+                self.index_data
+                    .insert(cv, CVIndexEntry::new(current_start, entry_count, context));
             }
         }
 
@@ -554,7 +525,6 @@ mod tests {
         entries.push(InternalBibleEntry::end_marker("¬c").expect("Failed to create end marker")); // 19
         entries.push(InternalBibleEntry::end_marker("¬chapters").expect("Failed to create end marker")); // 20
 
-
         entries
     }
 
@@ -576,29 +546,119 @@ mod tests {
         assert!(index.contains(&ChapterVerse::new("2", "0")));
         assert!(index.contains(&ChapterVerse::new("2", "1")));
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_index(), 1); // 1:0 starts at entry 1 (c marker)
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().entry_count(), 6); // 1:0 has 6 entries c, s1, p, v, v~, ¬v
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().context(), ["chapters"]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "0"))
+                .unwrap()
+                .entry_index(),
+            1
+        ); // 1:0 starts at entry 1 (c marker)
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "0"))
+                .unwrap()
+                .entry_count(),
+            6
+        ); // 1:0 has 6 entries c, s1, p, v, v~, ¬v
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("1", "0")).unwrap().context(),
+            ["chapters"]
+        );
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_index(), 4); // 1:1 starts at entry 4
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().entry_count(), 3); // 1:1 has 3 entries v, v~, ¬v
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().context(), ["chapters", "c", "p"]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "1"))
+                .unwrap()
+                .entry_index(),
+            4
+        ); // 1:1 starts at entry 4
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "1"))
+                .unwrap()
+                .entry_count(),
+            3
+        ); // 1:1 has 3 entries v, v~, ¬v
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("1", "1")).unwrap().context(),
+            ["chapters", "c", "p"]
+        );
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().entry_index(), 7); // 1:2 starts at entry 7
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().entry_count(), 3); // 1:2 has 3 entries v, v~, ¬v
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().context(), ["chapters", "c", "p"]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "2"))
+                .unwrap()
+                .entry_index(),
+            7
+        ); // 1:2 starts at entry 7
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "2"))
+                .unwrap()
+                .entry_count(),
+            3
+        ); // 1:2 has 3 entries v, v~, ¬v
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("1", "2")).unwrap().context(),
+            ["chapters", "c", "p"]
+        );
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().entry_index(), 11); // 1:3 starts at entry 11
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().entry_count(), 3); // 1:3 has 3 entries v, v~, ¬v
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().context(), ["chapters", "c", "p"]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "3"))
+                .unwrap()
+                .entry_index(),
+            11
+        ); // 1:3 starts at entry 11
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("1", "3"))
+                .unwrap()
+                .entry_count(),
+            3
+        ); // 1:3 has 3 entries v, v~, ¬v
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("1", "3")).unwrap().context(),
+            ["chapters", "c", "p"]
+        );
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_index(), 15); // 2:0 starts at entry 15 (c marker)
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().entry_count(), 1); // 2:0 has 1 entry c
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().context(), ["chapters"]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("2", "0"))
+                .unwrap()
+                .entry_index(),
+            15
+        ); // 2:0 starts at entry 15 (c marker)
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("2", "0"))
+                .unwrap()
+                .entry_count(),
+            1
+        ); // 2:0 has 1 entry c
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("2", "0")).unwrap().context(),
+            ["chapters"]
+        );
 
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().entry_index(), 15); // 2:1 starts at entry 15
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().entry_count(), 4); // 2:1 has 4 entries c, v, v~, ¬v
-        assert_eq!(index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().context(), ["chapters",]);
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("2", "1"))
+                .unwrap()
+                .entry_index(),
+            15
+        ); // 2:1 starts at entry 15
+        assert_eq!(
+            index
+                .get_index_entry(&ChapterVerse::new("2", "1"))
+                .unwrap()
+                .entry_count(),
+            4
+        ); // 2:1 has 4 entries c, v, v~, ¬v
+        assert_eq!(
+            index.get_index_entry(&ChapterVerse::new("2", "1")).unwrap().context(),
+            ["chapters",]
+        );
 
         assert!(index.len() == 7);
     }
@@ -608,9 +668,7 @@ mod tests {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
         index.build(create_test_entries()).unwrap();
 
-        let entries = index
-            .get_verse_entries(&ChapterVerse::new("1", "1"), true)
-            .unwrap();
+        let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true).unwrap();
         assert!(!entries.is_empty());
         assert_eq!(entries[0].marker(), "v");
     }

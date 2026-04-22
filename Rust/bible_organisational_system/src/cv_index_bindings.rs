@@ -12,16 +12,12 @@ use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
 use bos_internals::{
-    CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry,
-    InternalBibleEntryList, abbreviate, markers::is_end_marker,
+    CVIndexEntry, ChapterVerse, InternalBibleBookCVIndex, InternalBibleEntry, InternalBibleEntryList, abbreviate,
+    markers::is_end_marker,
 };
 
 use crate::extras_bindings::PyInternalBibleExtraList;
 use crate::verbosity_print;
-
-// ============================================================================
-// PyChapterVerse
-// ============================================================================
 
 /// A chapter:verse reference in a Bible book.
 ///
@@ -30,11 +26,7 @@ use crate::verbosity_print;
 /// - Verse suffixes like `17a`
 /// - Verse ranges like `17-25`
 /// - Verse lists like `5,6,7`
-#[pyclass(
-    name = "ChapterVerse",
-    module = "bible_organisational_system",
-    from_py_object
-)]
+#[pyclass(name = "ChapterVerse", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone)]
 pub struct PyChapterVerse {
     inner: ChapterVerse,
@@ -91,9 +83,7 @@ impl PyChapterVerse {
 
     /// Get the leading integer from the verse.
     fn verse_int(&self) -> PyResult<i16> {
-        self.inner
-            .verse_int()
-            .map_err(|e| PyValueError::new_err(e.to_string()))
+        self.inner.verse_int().map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
     /// Check if this is an introduction reference (chapter -1).
@@ -132,11 +122,7 @@ impl PyChapterVerse {
     }
 
     fn __repr__(&self) -> String {
-        format!(
-            "ChapterVerse('{}', '{}')",
-            self.inner.chapter(),
-            self.inner.verse()
-        )
+        format!("ChapterVerse('{}', '{}')", self.inner.chapter(), self.inner.verse())
     }
 
     fn __str__(&self) -> String {
@@ -167,10 +153,6 @@ impl From<&PyChapterVerse> for ChapterVerse {
     }
 }
 
-// ============================================================================
-// PyInternalBibleEntry
-// ============================================================================
-
 /// A single line/entry in the internal Bible format.
 ///
 /// Backward-compatible with the Python InternalBibleEntry class.
@@ -180,11 +162,7 @@ impl From<&PyChapterVerse> for ChapterVerse {
 /// - Simple 2-arg form: (marker, cleanText) — creates entry with all text fields set to cleanText
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(
-    name = "InternalBibleEntry",
-    module = "bible_organisational_system",
-    from_py_object
-)]
+#[pyclass(name = "InternalBibleEntry", module = "bible_organisational_system", from_py_object)]
 #[derive(Debug, Clone)]
 pub struct PyInternalBibleEntry {
     pub(crate) inner: InternalBibleEntry,
@@ -246,16 +224,9 @@ impl PyInternalBibleEntry {
 
         let rust_extras = extras.map(|e| e.inner.clone());
 
-        InternalBibleEntry::new(
-            marker,
-            orig_marker,
-            adj_text,
-            cln_text,
-            rust_extras,
-            orig_text,
-        )
-        .map(|inner| Self { inner })
-        .map_err(|e| PyValueError::new_err(e.to_string()))
+        InternalBibleEntry::new(marker, orig_marker, adj_text, cln_text, rust_extras, orig_text)
+            .map(|inner| Self { inner })
+            .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
     // --- snake_case properties (Rust-style) ---
@@ -287,9 +258,7 @@ impl PyInternalBibleEntry {
     /// Get the extras (footnotes, cross-refs, etc.).
     #[getter]
     fn extras(&self) -> Option<PyInternalBibleExtraList> {
-        self.inner
-            .extras()
-            .map(|e| PyInternalBibleExtraList::from(e.clone()))
+        self.inner.extras().map(|e| PyInternalBibleExtraList::from(e.clone()))
     }
 
     /// Get the original text (full USFM).
@@ -332,9 +301,7 @@ impl PyInternalBibleEntry {
 
     /// Get the extras (Python compat).
     fn getExtras(&self) -> Option<PyInternalBibleExtraList> {
-        self.inner
-            .extras()
-            .map(|e| PyInternalBibleExtraList::from(e.clone()))
+        self.inner.extras().map(|e| PyInternalBibleExtraList::from(e.clone()))
     }
 
     /// Get the original text (Python compat).
@@ -353,9 +320,7 @@ impl PyInternalBibleEntry {
     /// Only works when extras is None.
     fn setCleanText(&mut self, new_value: &str) -> PyResult<()> {
         if self.inner.has_extras() {
-            return Err(PyValueError::new_err(
-                "Cannot set cleanText when extras exist",
-            ));
+            return Err(PyValueError::new_err("Cannot set cleanText when extras exist"));
         }
         self.inner.set_clean_text(new_value);
         Ok(())
@@ -382,24 +347,9 @@ impl PyInternalBibleEntry {
     fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
         Python::attach(|py| match key_index {
             0 => Ok(self.inner.marker().into_pyobject(py)?.into_any().unbind()),
-            1 => Ok(self
-                .inner
-                .original_marker()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            2 => Ok(self
-                .inner
-                .adjusted_text()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            3 => Ok(self
-                .inner
-                .clean_text()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
+            1 => Ok(self.inner.original_marker().into_pyobject(py)?.into_any().unbind()),
+            2 => Ok(self.inner.adjusted_text().into_pyobject(py)?.into_any().unbind()),
+            3 => Ok(self.inner.clean_text().into_pyobject(py)?.into_any().unbind()),
             4 => match self.inner.extras() {
                 Some(e) => {
                     let py_extras = PyInternalBibleExtraList::from(e.clone());
@@ -407,16 +357,8 @@ impl PyInternalBibleEntry {
                 }
                 None => Ok(py.None()),
             },
-            5 => Ok(self
-                .inner
-                .original_text()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            _ => Err(PyIndexError::new_err(format!(
-                "Invalid {} index number",
-                key_index
-            ))),
+            5 => Ok(self.inner.original_text().into_pyobject(py)?.into_any().unbind()),
+            _ => Err(PyIndexError::new_err(format!("Invalid {} index number", key_index))),
         })
     }
 
@@ -432,13 +374,13 @@ impl PyInternalBibleEntry {
         let abbrev_adj = self
             .inner
             .adjusted_text()
-            .map(|t| abbreviate::<100, 50>(t))
+            .map(abbreviate::<100, 50>)
             .unwrap_or_default();
         let abbrev_clean = abbreviate::<100, 50>(self.inner.clean_text());
         let abbrev_orig = self
             .inner
             .original_text()
-            .map(|t| abbreviate::<100, 50>(t))
+            .map(abbreviate::<100, 50>)
             .unwrap_or_default();
 
         let mut result = format!(
@@ -475,11 +417,7 @@ impl PyInternalBibleEntry {
             "InternalBibleEntry object: {} = {:?}{}",
             self.inner.marker(),
             abbreviate::<100, 50>(self.inner.clean_text()),
-            if self.inner.has_extras() {
-                "+extras"
-            } else {
-                ""
-            }
+            if self.inner.has_extras() { "+extras" } else { "" }
         )
     }
 }
@@ -492,15 +430,9 @@ impl From<InternalBibleEntry> for PyInternalBibleEntry {
 
 impl From<&InternalBibleEntry> for PyInternalBibleEntry {
     fn from(entry: &InternalBibleEntry) -> Self {
-        Self {
-            inner: entry.clone(),
-        }
+        Self { inner: entry.clone() }
     }
 }
-
-// ============================================================================
-// PyInternalBibleEntryList
-// ============================================================================
 
 /// A list of Bible entries.
 ///
@@ -553,9 +485,7 @@ impl PyInternalBibleEntryList {
                 let indices = slice.indices(len as isize)?;
                 let mut result = InternalBibleEntryList::new();
                 let mut i = indices.start;
-                while (indices.step > 0 && i < indices.stop)
-                    || (indices.step < 0 && i > indices.stop)
-                {
+                while (indices.step > 0 && i < indices.stop) || (indices.step < 0 && i > indices.stop) {
                     if i >= 0 && (i as usize) < len {
                         result.push(self.inner[i as usize].clone());
                     }
@@ -647,15 +577,14 @@ impl PyInternalBibleEntryList {
 
     // Pickling support using rkyv zero-copy serialization.
     fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
-        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(PyBytes::new(py, &bytes).into())
     }
 
     fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
         let bytes = state.extract::<&[u8]>()?;
-        *self = rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        *self =
+            rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(())
     }
 }
@@ -690,10 +619,6 @@ impl PyInternalBibleEntryListIter {
     }
 }
 
-// ============================================================================
-// PyCVIndexEntry
-// ============================================================================
-
 /// An entry in the CV index, representing a single Chapter:Verse reference.
 ///
 /// Each entry stores:
@@ -702,11 +627,7 @@ impl PyInternalBibleEntryListIter {
 /// - context: The context markers that were open at this point
 ///
 /// Supports both snake_case properties and camelCase getter methods.
-#[pyclass(
-    name = "CVIndexEntry",
-    module = "bible_organisational_system",
-    from_py_object
-)]
+#[pyclass(name = "CVIndexEntry", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone)]
 pub struct PyCVIndexEntry {
     inner: CVIndexEntry,
@@ -724,11 +645,7 @@ impl PyCVIndexEntry {
     #[new]
     #[pyo3(signature = (entry_index, entry_count, context=None))]
     fn new(entry_index: usize, entry_count: u16, context: Option<Vec<String>>) -> Self {
-        let ctx = context
-            .unwrap_or_default()
-            .into_iter()
-            .map(|s| s.into())
-            .collect();
+        let ctx = context.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
             inner: CVIndexEntry::new(entry_index, entry_count, ctx),
         }
@@ -789,18 +706,8 @@ impl PyCVIndexEntry {
 
     fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
         Python::attach(|py| match key_index {
-            0 => Ok(self
-                .inner
-                .entry_index()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            1 => Ok(self
-                .inner
-                .entry_count()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
+            0 => Ok(self.inner.entry_index().into_pyobject(py)?.into_any().unbind()),
+            1 => Ok(self.inner.entry_count().into_pyobject(py)?.into_any().unbind()),
             2 => Ok(self.context().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyIndexError::new_err("Index out of range")),
         })
@@ -833,15 +740,9 @@ impl From<CVIndexEntry> for PyCVIndexEntry {
 
 impl From<&CVIndexEntry> for PyCVIndexEntry {
     fn from(entry: &CVIndexEntry) -> Self {
-        Self {
-            inner: entry.clone(),
-        }
+        Self { inner: entry.clone() }
     }
 }
-
-// ============================================================================
-// Helper function
-// ============================================================================
 
 /// Extract a ChapterVerse from a Python object (tuple or ChapterVerse).
 fn extract_chapter_verse(obj: &Bound<'_, PyAny>) -> PyResult<ChapterVerse> {
@@ -850,15 +751,9 @@ fn extract_chapter_verse(obj: &Bound<'_, PyAny>) -> PyResult<ChapterVerse> {
     } else if let Ok(cv) = obj.extract::<PyRef<PyChapterVerse>>() {
         Ok(cv.inner.clone())
     } else {
-        Err(PyValueError::new_err(
-            "Expected (str, str) tuple or ChapterVerse",
-        ))
+        Err(PyValueError::new_err("Expected (str, str) tuple or ChapterVerse"))
     }
 }
-
-// ============================================================================
-// PyInternalBibleBookCVIndex
-// ============================================================================
 
 /// Index for fast Chapter:Verse lookup in a Bible book.
 ///
@@ -871,10 +766,7 @@ fn extract_chapter_verse(obj: &Bound<'_, PyAny>) -> PyResult<ChapterVerse> {
 /// - Verse ranges: e.g., `17-25` for bridged verses
 /// - Verse lists: e.g., `5,6,7` for multiple verses in one entry
 /// - Verse suffixes: e.g., `17a`, `17b`
-#[pyclass(
-    name = "InternalBibleBookCVIndex",
-    module = "bible_organisational_system"
-)]
+#[pyclass(name = "InternalBibleBookCVIndex", module = "bible_organisational_system")]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleBookCVIndex {
     inner: InternalBibleBookCVIndex,
@@ -1010,11 +902,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get all chapters in the index.
     fn chapters(&self) -> Vec<String> {
-        self.inner
-            .chapters()
-            .into_iter()
-            .map(|s| s.to_string())
-            .collect()
+        self.inner.chapters().into_iter().map(|s| s.to_string()).collect()
     }
 
     // === snake_case methods (Rust-style, take ChapterVerse objects) ===
@@ -1027,11 +915,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get verse entries using a ChapterVerse object.
     #[pyo3(signature = (cv, strict=true))]
-    fn get_verse_entries(
-        &self,
-        cv: &PyChapterVerse,
-        strict: bool,
-    ) -> PyResult<PyInternalBibleEntryList> {
+    fn get_verse_entries(&self, cv: &PyChapterVerse, strict: bool) -> PyResult<PyInternalBibleEntryList> {
         self.inner
             .get_verse_entries(&cv.inner, strict)
             .map(PyInternalBibleEntryList::from)
@@ -1067,9 +951,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get the CV index entry for a specific ChapterVerse reference.
     fn get_index_entry(&self, cv: &PyChapterVerse) -> Option<PyCVIndexEntry> {
-        self.inner
-            .get_index_entry(&cv.inner)
-            .map(PyCVIndexEntry::from)
+        self.inner.get_index_entry(&cv.inner).map(PyCVIndexEntry::from)
     }
 
     /// Build the CV index from processed entries (snake_case).
@@ -1088,7 +970,12 @@ impl PyInternalBibleBookCVIndex {
 
     /// Build the CV index from processed entries (Python compat).
     fn makeBookCVIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_print!(2, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_print!(
+            2,
+            "Building CV index for {} {}…",
+            self.inner.work_name(),
+            self.inner.bos_book_code()
+        );
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -1096,11 +983,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Get verse entries for a (C,V) tuple key.
     #[pyo3(signature = (cv_key, strict=true))]
-    fn getVerseEntries(
-        &self,
-        cv_key: (String, String),
-        strict: bool,
-    ) -> PyResult<PyInternalBibleEntryList> {
+    fn getVerseEntries(&self, cv_key: (String, String), strict: bool) -> PyResult<PyInternalBibleEntryList> {
         let cv = ChapterVerse::new(&cv_key.0, &cv_key.1);
         self.inner
             .get_verse_entries(&cv, strict)
@@ -1137,21 +1020,14 @@ impl PyInternalBibleBookCVIndex {
     }
 
     /// Get chapter entries with context markers (Python compat).
-    fn getChapterEntriesWithContext(
-        &self,
-        chapter: &str,
-    ) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
+    fn getChapterEntriesWithContext(&self, chapter: &str) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
         let start_cv = ChapterVerse::new(chapter, "0");
         let first_entry = self
             .inner
             .get_index_entry(&start_cv)
             .ok_or_else(|| PyKeyError::new_err(format!("({:?}, '0')", chapter)))?;
 
-        let context: Vec<String> = first_entry
-            .context()
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
+        let context: Vec<String> = first_entry.context().iter().map(|s| s.to_string()).collect();
 
         // Try to find the start of the next chapter
         let next_c = (chapter.parse::<i32>().unwrap_or(0) + 1).to_string();
@@ -1170,10 +1046,7 @@ impl PyInternalBibleBookCVIndex {
             self.inner.entries().len()
         };
 
-        let entries = self
-            .inner
-            .entries()
-            .slice(first_entry.entry_index(), end_index);
+        let entries = self.inner.entries().slice(first_entry.entry_index(), end_index);
         Ok((PyInternalBibleEntryList::from(entries), context))
     }
 
@@ -1198,22 +1071,17 @@ impl PyInternalBibleBookCVIndex {
 
     // Pickling support using rkyv zero-copy serialization.
     fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
-        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(PyBytes::new(py, &bytes).into())
     }
 
     fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
         let bytes = state.extract::<&[u8]>()?;
-        *self = rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        *self =
+            rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(())
     }
 }
-
-// ============================================================================
-// CV Index Iterator
-// ============================================================================
 
 /// Iterator for PyInternalBibleBookCVIndex, yields (C, V) string tuples.
 #[pyclass]
@@ -1238,4 +1106,3 @@ impl PyCVIndexIter {
         }
     }
 }
-

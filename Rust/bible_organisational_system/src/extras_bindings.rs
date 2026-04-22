@@ -8,10 +8,6 @@ use pyo3::prelude::*;
 
 use bos_internals::{ExtraType, InternalBibleExtra, InternalBibleExtraList};
 
-// ============================================================================
-// PyInternalBibleExtra
-// ============================================================================
-
 /// An "extra" element extracted from Bible text (footnote, cross-ref, etc.).
 ///
 /// Each extra contains:
@@ -19,11 +15,7 @@ use bos_internals::{ExtraType, InternalBibleExtra, InternalBibleExtraList};
 /// - index: Position in the adjusted text where this was extracted
 /// - noteText: Full text with USFM markers
 /// - cleanNoteText: Plain text without markers
-#[pyclass(
-    name = "InternalBibleExtra",
-    module = "bible_organisational_system",
-    from_py_object
-)]
+#[pyclass(name = "InternalBibleExtra", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone)]
 pub struct PyInternalBibleExtra {
     pub(crate) inner: InternalBibleExtra,
@@ -52,9 +44,8 @@ impl PyInternalBibleExtra {
         let _ = location; // Not stored, matches Python API
         let extra_type = ExtraType::from_type_str(my_type)
             .ok_or_else(|| PyValueError::new_err(format!("Unknown extra type: {}", my_type)))?;
-        let inner =
-            InternalBibleExtra::new(extra_type, index_to_adj_text, note_text, clean_note_text)
-                .map_err(|e| PyValueError::new_err(e.to_string()))?;
+        let inner = InternalBibleExtra::new(extra_type, index_to_adj_text, note_text, clean_note_text)
+            .map_err(|e| PyValueError::new_err(e.to_string()))?;
         Ok(Self { inner })
     }
 
@@ -122,18 +113,8 @@ impl PyInternalBibleExtra {
                 .into_any()
                 .unbind()),
             1 => Ok(self.inner.index().into_pyobject(py)?.into_any().unbind()),
-            2 => Ok(self
-                .inner
-                .note_text()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            3 => Ok(self
-                .inner
-                .clean_note_text()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
+            2 => Ok(self.inner.note_text().into_pyobject(py)?.into_any().unbind()),
+            3 => Ok(self.inner.clean_note_text().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyIndexError::new_err("Index out of range")),
         })
     }
@@ -168,15 +149,9 @@ impl From<InternalBibleExtra> for PyInternalBibleExtra {
 
 impl From<&InternalBibleExtra> for PyInternalBibleExtra {
     fn from(inner: &InternalBibleExtra) -> Self {
-        Self {
-            inner: inner.clone(),
-        }
+        Self { inner: inner.clone() }
     }
 }
-
-// ============================================================================
-// PyInternalBibleExtraList
-// ============================================================================
 
 /// A list of InternalBibleExtra objects.
 #[pyclass(
@@ -214,16 +189,9 @@ impl PyInternalBibleExtraList {
 
     fn __getitem__(&self, key_index: isize) -> PyResult<PyInternalBibleExtra> {
         let len = self.inner.len() as isize;
-        let idx = if key_index < 0 {
-            len + key_index
-        } else {
-            key_index
-        };
+        let idx = if key_index < 0 { len + key_index } else { key_index };
         if idx < 0 || idx >= len {
-            return Err(PyIndexError::new_err(format!(
-                "Index {} out of range",
-                key_index
-            )));
+            return Err(PyIndexError::new_err(format!("Index {} out of range", key_index)));
         }
         Ok(PyInternalBibleExtra::from(&self.inner[idx as usize]))
     }
@@ -259,11 +227,7 @@ impl PyInternalBibleExtraList {
     /// Returns None if no extras found, a single extra if one found,
     /// or a list if multiple found.
     fn checkForIndex(&self, string_index: usize) -> PyResult<Py<PyAny>> {
-        let matches: Vec<&InternalBibleExtra> = self
-            .inner
-            .iter()
-            .filter(|e| e.index() == string_index)
-            .collect();
+        let matches: Vec<&InternalBibleExtra> = self.inner.iter().filter(|e| e.index() == string_index).collect();
 
         Python::attach(|py| match matches.len() {
             0 => Ok(py.None()),
@@ -272,10 +236,7 @@ impl PyInternalBibleExtraList {
                 Ok(extra.into_pyobject(py)?.into_any().unbind())
             }
             _ => {
-                let list: Vec<PyInternalBibleExtra> = matches
-                    .iter()
-                    .map(|e| PyInternalBibleExtra::from(*e))
-                    .collect();
+                let list: Vec<PyInternalBibleExtra> = matches.iter().map(|e| PyInternalBibleExtra::from(*e)).collect();
                 Ok(list.into_pyobject(py)?.into_any().unbind())
             }
         })
@@ -309,10 +270,6 @@ impl From<InternalBibleExtraList> for PyInternalBibleExtraList {
         Self { inner }
     }
 }
-
-// ============================================================================
-// Iterator
-// ============================================================================
 
 /// Iterator for PyInternalBibleExtraList.
 #[pyclass]

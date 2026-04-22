@@ -24,7 +24,3 @@ pretty_assertions.workspace = true
 default = []
 python = ["dep:pyo3"]
 
-# While we're still debugging
-[profile.release]
-debug = true
-

@@ -13,10 +13,6 @@ use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEnt
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 use crate::verbosity_print;
 
-// ============================================================================
-// PySectionIndexEntry
-// ============================================================================
-
 /// A section index entry for a Bible book.
 ///
 /// Each entry represents a section boundary and contains:
@@ -59,21 +55,9 @@ impl PySectionIndexEntry {
         section_name: &str,
         context_list: Option<Vec<String>>,
     ) -> Self {
-        let ctx = context_list
-            .unwrap_or_default()
-            .into_iter()
-            .map(|s| s.into())
-            .collect();
+        let ctx = context_list.unwrap_or_default().into_iter().map(|s| s.into()).collect();
         Self {
-            inner: SectionIndexEntry::new(
-                end_c,
-                end_v,
-                start_ix,
-                end_ix,
-                reason_marker,
-                section_name,
-                ctx,
-            ),
+            inner: SectionIndexEntry::new(end_c, end_v, start_ix, end_ix, reason_marker, section_name, ctx),
         }
     }
 
@@ -158,42 +142,12 @@ impl PySectionIndexEntry {
 
     fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
         Python::attach(|py| match key_index {
-            0 => Ok(self
-                .inner
-                .end_chapter_num_str()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            1 => Ok(self
-                .inner
-                .end_verse_num_str()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            2 => Ok(self
-                .inner
-                .start_index()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            3 => Ok(self
-                .inner
-                .end_index()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            4 => Ok(self
-                .inner
-                .reason_marker()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
-            5 => Ok(self
-                .inner
-                .section_name()
-                .into_pyobject(py)?
-                .into_any()
-                .unbind()),
+            0 => Ok(self.inner.end_chapter_num_str().into_pyobject(py)?.into_any().unbind()),
+            1 => Ok(self.inner.end_verse_num_str().into_pyobject(py)?.into_any().unbind()),
+            2 => Ok(self.inner.start_index().into_pyobject(py)?.into_any().unbind()),
+            3 => Ok(self.inner.end_index().into_pyobject(py)?.into_any().unbind()),
+            4 => Ok(self.inner.reason_marker().into_pyobject(py)?.into_any().unbind()),
+            5 => Ok(self.inner.section_name().into_pyobject(py)?.into_any().unbind()),
             6 => {
                 let ctx: Vec<String> = self.inner.context().iter().map(|s| s.to_string()).collect();
                 Ok(ctx.into_pyobject(py)?.into_any().unbind())
@@ -234,24 +188,15 @@ impl From<SectionIndexEntry> for PySectionIndexEntry {
 
 impl From<&SectionIndexEntry> for PySectionIndexEntry {
     fn from(inner: &SectionIndexEntry) -> Self {
-        Self {
-            inner: inner.clone(),
-        }
+        Self { inner: inner.clone() }
     }
 }
-
-// ============================================================================
-// PyInternalBibleBookSectionIndex
-// ============================================================================
 
 /// Section index for a Bible book.
 ///
 /// Maps section starting points (C:V) to section entries.
 /// Accepts (str, str) tuples for keys.
-#[pyclass(
-    name = "InternalBibleBookSectionIndex",
-    module = "bible_organisational_system"
-)]
+#[pyclass(name = "InternalBibleBookSectionIndex", module = "bible_organisational_system")]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleBookSectionIndex {
     inner: InternalBibleBookSectionIndex,
@@ -334,7 +279,12 @@ impl PyInternalBibleBookSectionIndex {
 
     /// Build the section index from processed entries.
     fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_print!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_print!(
+            2,
+            "Building section index for {} {}…",
+            self.inner.work_name(),
+            self.inner.bos_book_code()
+        );
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -350,10 +300,7 @@ impl PyInternalBibleBookSectionIndex {
     }
 
     /// Get section entries with context markers.
-    fn getSectionEntriesWithContext(
-        &self,
-        key: (String, String),
-    ) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
+    fn getSectionEntriesWithContext(&self, key: (String, String)) -> PyResult<(PyInternalBibleEntryList, Vec<String>)> {
         let cv = ChapterVerse::new(&key.0, &key.1);
         self.inner
             .get_section_entries_with_context(&cv)
@@ -388,22 +335,17 @@ impl PyInternalBibleBookSectionIndex {
 
     // Pickling support using rkyv zero-copy serialization.
     fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
-        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(PyBytes::new(py, &bytes).into())
     }
 
     fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
         let bytes = state.extract::<&[u8]>()?;
-        *self = rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes)
-            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        *self =
+            rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(())
     }
 }
-
-// ============================================================================
-// Section Index Iterator
-// ============================================================================
 
 /// Iterator for PyInternalBibleBookSectionIndex, yields (C, V) string tuples.
 #[pyclass]

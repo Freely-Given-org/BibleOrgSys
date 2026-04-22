@@ -564,7 +564,6 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;

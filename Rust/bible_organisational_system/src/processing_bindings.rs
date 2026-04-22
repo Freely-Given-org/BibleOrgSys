@@ -1,8 +1,8 @@
 //! Python bindings for processing lines.
 
-use pyo3::prelude::*;
-use bos_internals::processing::{ObjectType, ProcessLinesOptions, process_lines};
 use crate::cv_index_bindings::PyInternalBibleEntryList;
+use bos_internals::processing::{ObjectType, ProcessLinesOptions, process_lines};
+use pyo3::prelude::*;
 
 #[pyclass(name = "ObjectType", module = "bible_organisational_system", from_py_object)]
 #[derive(Clone, Copy, PartialEq, Eq)]

@@ -93,16 +93,14 @@ pub use chapter_verse::ChapterVerse;
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
 pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
-pub use indexes::{
-    CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry,
-};
+pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
 pub use nesting::add_nesting_markers;
 pub use parsing::{
-    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
-    parse_figure_attributes, parse_word_attributes,
+    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int, parse_figure_attributes,
+    parse_word_attributes,
 };
-pub use processing::{process_lines, ObjectType, ProcessLinesOptions};
+pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
 
 use std::sync::atomic::{AtomicU8, Ordering};
 
@@ -121,7 +119,7 @@ pub fn get_verbosity() -> u8 {
 #[macro_export]
 macro_rules! verbosity_print {
     ($level:expr, $($arg:tt)*) => {
-        if crate::get_verbosity() >= $level {
+        if $crate::get_verbosity() >= $level {
             println!($($arg)*);
         }
     };

@@ -106,10 +106,7 @@ impl InternalBibleExtraList {
 
     /// Find all extras at a specific string index.
     pub fn at_index(&self, string_index: usize) -> Vec<&InternalBibleExtra> {
-        self.data
-            .iter()
-            .filter(|e| e.index() == string_index)
-            .collect()
+        self.data.iter().filter(|e| e.index() == string_index).collect()
     }
 
     /// Check if there's an extra at the given index.
@@ -132,12 +129,7 @@ impl InternalBibleExtraList {
             "NO_EXTRAS".to_string()
         } else if self.data.len() == 1 {
             let e = &self.data[0];
-            format!(
-                "EXTRA({} @ {} = {:?})",
-                e.extra_type(),
-                e.index(),
-                e.note_text()
-            )
+            format!("EXTRA({} @ {} = {:?})", e.extra_type(), e.index(), e.note_text())
         } else {
             let mut s = "EXTRAS(".to_string();
             for (i, e) in self.data.iter().enumerate() {
@@ -157,24 +149,14 @@ impl InternalBibleExtraList {
             "NO_EXTRAS".to_string()
         } else if self.data.len() == 1 {
             let e = &self.data[0];
-            format!(
-                "EXTRA({} @ {} = {:?})",
-                e.extra_type(),
-                e.index(),
-                e.note_text()
-            )
+            format!("EXTRA({} @ {} = {:?})", e.extra_type(), e.index(), e.note_text())
         } else {
             let mut s = "EXTRAS(".to_string();
             for (i, e) in self.data.iter().enumerate() {
                 if i > 0 {
                     s.push_str(", ");
                 }
-                s.push_str(&format!(
-                    "{}@{}={:?}",
-                    e.extra_type(),
-                    e.index(),
-                    e.note_text()
-                ));
+                s.push_str(&format!("{}@{}={:?}", e.extra_type(), e.index(), e.note_text()));
             }
             s.push(')');
             s
@@ -263,10 +245,6 @@ impl std::fmt::Display for InternalBibleExtraList {
         Ok(())
     }
 }
-
-// ============================================================================
-// InternalBibleEntryList
-// ============================================================================
 
 /// A specialized list for holding `InternalBibleEntry` items.
 ///
@@ -377,10 +355,7 @@ impl InternalBibleEntryList {
     /// * `max_lines` - Optional limit on how many lines to search
     pub fn contains_marker(&self, marker: &str, max_lines: Option<usize>) -> Option<usize> {
         let limit = max_lines.unwrap_or(self.data.len());
-        self.data
-            .iter()
-            .take(limit)
-            .position(|e| e.marker() == marker)
+        self.data.iter().take(limit).position(|e| e.marker() == marker)
     }
 
     /// Find all entries with the given marker.
@@ -499,18 +474,10 @@ impl std::fmt::Display for InternalBibleEntryList {
                 let char_count = text.chars().count();
                 let abbrev = if char_count > 60 {
                     // Find byte offset for the 30th character from start
-                    let start_offset = text
-                        .char_indices()
-                        .map(|(i, _)| i)
-                        .nth(30)
-                        .unwrap_or(text.len());
+                    let start_offset = text.char_indices().map(|(i, _)| i).nth(30).unwrap_or(text.len());
 
                     // Find byte offset for the 30th character from the end
-                    let end_offset = text
-                        .char_indices()
-                        .map(|(i, _)| i)
-                        .nth(char_count - 30)
-                        .unwrap_or(0);
+                    let end_offset = text.char_indices().map(|(i, _)| i).nth(char_count - 30).unwrap_or(0);
 
                     format!("{}…{}", &text[..start_offset], &text[end_offset..])
                 } else {
@@ -540,9 +507,7 @@ mod tests {
         let mut list = InternalBibleExtraList::new();
         assert!(list.is_empty());
 
-        list.push(
-            InternalBibleExtra::new(ExtraType::Footnote, 5, "\\fr 1:1 \\ft Note", "Note").unwrap(),
-        );
+        list.push(InternalBibleExtra::new(ExtraType::Footnote, 5, "\\fr 1:1 \\ft Note", "Note").unwrap());
         assert_eq!(list.len(), 1);
         assert!(!list.is_empty());
 
@@ -554,18 +519,9 @@ mod tests {
     #[test]
     fn test_extra_list_at_index() {
         let mut list = InternalBibleExtraList::new();
-        list.push(
-            InternalBibleExtra::new(ExtraType::Footnote, 5, "\\fr 1:1 \\ft Note1", "Note1")
-                .unwrap(),
-        );
-        list.push(
-            InternalBibleExtra::new(ExtraType::CrossRef, 5, "\\xo 1:1 \\xt Gen 1:1", "Gen 1:1")
-                .unwrap(),
-        );
-        list.push(
-            InternalBibleExtra::new(ExtraType::Footnote, 10, "\\fr 1:2 \\ft Note2", "Note2")
-                .unwrap(),
-        );
+        list.push(InternalBibleExtra::new(ExtraType::Footnote, 5, "\\fr 1:1 \\ft Note1", "Note1").unwrap());
+        list.push(InternalBibleExtra::new(ExtraType::CrossRef, 5, "\\xo 1:1 \\xt Gen 1:1", "Gen 1:1").unwrap());
+        list.push(InternalBibleExtra::new(ExtraType::Footnote, 10, "\\fr 1:2 \\ft Note2", "Note2").unwrap());
 
         let at_5 = list.at_index(5);
         assert_eq!(at_5.len(), 2);
@@ -586,11 +542,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("v", "1"));
         list.push(InternalBibleEntry::simple("v~", "In the beginning..."));
 
-        println!(
-            "Test InternalBibleEntryList = ({} entries) {}",
-            list.len(),
-            list
-        );
+        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
         assert_eq!(list.len(), 3);
         assert_eq!(list[0].marker(), "c");
         assert_eq!(list[1].marker(), "v");
@@ -600,11 +552,8 @@ mod tests {
     fn test_entry_list_slice() {
         let mut list = InternalBibleEntryList::new();
         for i in 1..=10 {
-            list.push(InternalBibleEntry::simple("v", &i.to_string()));
-            list.push(InternalBibleEntry::simple(
-                "v~",
-                "Some verse text.".to_string(),
-            ));
+            list.push(InternalBibleEntry::simple("v", i.to_string()));
+            list.push(InternalBibleEntry::simple("v~", "Some verse text.".to_string()));
         }
 
         let slice = list.slice(4, 10);
@@ -625,11 +574,7 @@ mod tests {
         list.push(InternalBibleEntry::simple("p", ""));
         list.push(InternalBibleEntry::simple("v", "1"));
 
-        println!(
-            "Test InternalBibleEntryList = ({} entries) {}",
-            list.len(),
-            list
-        );
+        println!("Test InternalBibleEntryList = ({} entries) {}", list.len(), list);
         assert_eq!(list.contains_marker("c", None), Some(0));
         assert_eq!(list.contains_marker("v", None), Some(2));
         assert_eq!(list.contains_marker("v", Some(2)), None); // Limited search

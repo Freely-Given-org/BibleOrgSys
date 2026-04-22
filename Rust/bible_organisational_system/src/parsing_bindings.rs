@@ -6,16 +6,12 @@ use bos_internals::parsing;
 use pyo3::prelude::*;
 
 use crate::cv_index_bindings::{
-    PyChapterVerse, PyCVIndexEntry, PyCVIndexIter, PyInternalBibleBookCVIndex,
-    PyInternalBibleEntry, PyInternalBibleEntryList, PyInternalBibleEntryListIter,
+    PyCVIndexEntry, PyCVIndexIter, PyChapterVerse, PyInternalBibleBookCVIndex, PyInternalBibleEntry,
+    PyInternalBibleEntryList, PyInternalBibleEntryListIter,
 };
-use crate::extras_bindings::{
-    PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter,
-};
+use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter};
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines};
-use crate::section_index_bindings::{
-    PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter,
-};
+use crate::section_index_bindings::{PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter};
 
 /// Python module for BibleOrgSys internals.
 #[pymodule]
@@ -69,9 +65,7 @@ fn get_positive_leading_int(s: &str) -> PyResult<u32> {
 
 /// Parse word attributes from a USFM3 \w field.
 #[pyfunction]
-fn parse_word_attributes(
-    word_attribute_string: &str,
-) -> PyResult<std::collections::HashMap<String, String>> {
+fn parse_word_attributes(word_attribute_string: &str) -> PyResult<std::collections::HashMap<String, String>> {
     let attrs = bos_internals::parsing::parse_word_attributes(word_attribute_string)
         .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
 

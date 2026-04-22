@@ -72,42 +72,41 @@ pub fn process_line_fix(
     if matches!(
         options.object_type,
         ObjectType::Usfm2 | ObjectType::Usfm3 | ObjectType::Usx
-    ) {
-        if !matches!(marker, "id" | "ide" | "h" | "rem") {
-            if options.replace_angle_brackets && (adj_text.contains('<') || adj_text.contains('>')) {
-                adj_text = adj_text
-                    .replace("<<", "“")
-                    .replace(">>", "”")
-                    .replace('<', "‘")
-                    .replace('>', "’");
-            }
+    ) && !matches!(marker, "id" | "ide" | "h" | "rem")
+    {
+        if options.replace_angle_brackets && (adj_text.contains('<') || adj_text.contains('>')) {
+            adj_text = adj_text
+                .replace("<<", "“")
+                .replace(">>", "”")
+                .replace('<', "‘")
+                .replace('>', "’");
+        }
 
-            if options.replace_straight_double_quotes && adj_text.contains('"') {
-                // Simplified replacement logic
-                if adj_text.starts_with('"') {
-                    adj_text.replace_range(0..1, "“");
-                }
-                adj_text = adj_text
-                    .replace(" \"", " “")
-                    .replace(";\"", ";“")
-                    .replace("(\"", "(“")
-                    .replace("[\"", "[“")
-                    .replace(".\"", ".”")
-                    .replace(",\"", ",”")
-                    .replace("?\"", "?”")
-                    .replace("!\"", "!”")
-                    .replace(")\"", ")”")
-                    .replace("]\"", "]”")
-                    .replace("*\"", "*”")
-                    .replace("\";", "”;")
-                    .replace("\"(", "”(")
-                    .replace("\"[", "”[")
-                    .replace("\" ", "” ")
-                    .replace("\",", "”,")
-                    .replace("\".", "”.")
-                    .replace("\"?", "”?")
-                    .replace("\"!", "”!");
+        if options.replace_straight_double_quotes && adj_text.contains('"') {
+            // Simplified replacement logic
+            if adj_text.starts_with('"') {
+                adj_text.replace_range(0..1, "“");
             }
+            adj_text = adj_text
+                .replace(" \"", " “")
+                .replace(";\"", ";“")
+                .replace("(\"", "(“")
+                .replace("[\"", "[“")
+                .replace(".\"", ".”")
+                .replace(",\"", ",”")
+                .replace("?\"", "?”")
+                .replace("!\"", "!”")
+                .replace(")\"", ")”")
+                .replace("]\"", "]”")
+                .replace("*\"", "*”")
+                .replace("\";", "”;")
+                .replace("\"(", "”(")
+                .replace("\"[", "”[")
+                .replace("\" ", "” ")
+                .replace("\",", "”,")
+                .replace("\".", "”.")
+                .replace("\"?", "”?")
+                .replace("\"!", "”!");
         }
     }
 
@@ -115,19 +114,20 @@ pub fn process_line_fix(
     if adj_text.contains('|') {
         let mut new_adj = String::with_capacity(adj_text.len());
         let mut last_pos = 0;
-        
-        static W_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(\+?w)\s+([^|]+)\|([^\\\*]+)\\(\+?w)\*").unwrap());
-        
+
+        static W_RE: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"\\(\+?w)\s+([^|]+)\|([^\\\*]+)\\(\+?w)\*").unwrap());
+
         for cap in W_RE.captures_iter(&adj_text) {
             let full_match = cap.get(0).unwrap();
             new_adj.push_str(&adj_text[last_pos..full_match.start()]);
-            
+
             let word = &cap[2];
             let attrs = &cap[3];
-            
+
             new_adj.push_str(word);
             new_adj.push_str(&format!("\\ww {}|{}\\ww*", word, attrs));
-            
+
             last_pos = full_match.end();
         }
         new_adj.push_str(&adj_text[last_pos..]);
@@ -136,19 +136,20 @@ pub fn process_line_fix(
 
     // 4. Move notes and extras to extras list
     let mut extras = InternalBibleExtraList::new();
-    
-    static EXTRA_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\(f|fe|x|fig|str|sem|ww|vp)\s+(.*?)\\(f|fe|x|fig|str|sem|ww|vp)\*").unwrap());
-    
+
+    static EXTRA_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"\\(f|fe|x|fig|str|sem|ww|vp)\s+(.*?)\\(f|fe|x|fig|str|sem|ww|vp)\*").unwrap());
+
     let mut final_adj = String::with_capacity(adj_text.len());
     let mut last_pos = 0;
-    
+
     for cap in EXTRA_RE.captures_iter(&adj_text) {
         let full_match = cap.get(0).unwrap();
         final_adj.push_str(&adj_text[last_pos..full_match.start()]);
-        
+
         let m = &cap[1];
         let content = &cap[2];
-        
+
         let extra_type = match m {
             "f" => ExtraType::Footnote,
             "fe" => ExtraType::Endnote,
@@ -162,19 +163,14 @@ pub fn process_line_fix(
         };
 
         let clean_note = content.replace(r"\ft ", "").replace(r"\xt ", "").replace(r"\fqa ", "");
-        
-        let extra = InternalBibleExtra::new_unchecked(
-            extra_type,
-            final_adj.len(),
-            content,
-            clean_note,
-        );
+
+        let extra = InternalBibleExtra::new_unchecked(extra_type, final_adj.len(), content, clean_note);
         extras.push(extra);
-        
+
         last_pos = full_match.end();
     }
     final_adj.push_str(&adj_text[last_pos..]);
-    
+
     // 5. Generate clean text by removing all markers
     let mut final_clean = final_adj.clone();
     static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\[a-z0-9]+\*? ?").unwrap());
@@ -198,25 +194,41 @@ pub fn process_lines(
 
     for (marker, text) in raw_lines {
         let marker = marker.as_str();
-        
+
         if marker == "c" {
             let c_num = text.split_whitespace().next().unwrap_or(&text).to_string();
             chapter = c_num.clone();
             verse = "0".to_string();
             have_waiting_c = Some(chapter.clone());
-            
+
             if let Some(pos) = text.find(|c: char| !c.is_ascii_digit() && c != ' ') {
                 let extra = &text[pos..];
-                let (adj, clean, extras) = process_line_fix(extra, &chapter, &verse, book_code, "c", options, &mut errors);
+                let (adj, clean, extras) =
+                    process_line_fix(extra, &chapter, &verse, book_code, "c", options, &mut errors);
                 processed.push(InternalBibleEntry::new_unchecked(
-                    "c", "c", chapter.clone(), chapter.clone(), None, chapter.clone()
+                    "c",
+                    "c",
+                    chapter.clone(),
+                    chapter.clone(),
+                    None,
+                    chapter.clone(),
                 ));
                 processed.push(InternalBibleEntry::new_unchecked(
-                    "c~", "c", adj, clean, Some(extras), extra
+                    "c~",
+                    "c",
+                    adj,
+                    clean,
+                    Some(extras),
+                    extra,
                 ));
             } else {
                 processed.push(InternalBibleEntry::new_unchecked(
-                    "c", "c", chapter.clone(), chapter.clone(), None, text
+                    "c",
+                    "c",
+                    chapter.clone(),
+                    chapter.clone(),
+                    None,
+                    text,
                 ));
             }
             continue;
@@ -227,49 +239,84 @@ pub fn process_lines(
             let mut parts = text.splitn(2, ' ');
             let v_num_str = parts.next().unwrap_or(&text).to_string();
             verse = v_num_str.clone();
-            
+
             if let Some(c_num) = have_waiting_c.take() {
                 processed.push(InternalBibleEntry::new_unchecked(
-                    "c#", "c", c_num.clone(), c_num.clone(), None, c_num
+                    "c#",
+                    "c",
+                    c_num.clone(),
+                    c_num.clone(),
+                    None,
+                    c_num,
                 ));
             }
-            
+
             processed.push(InternalBibleEntry::new_unchecked(
-                "v", "v", verse.clone(), verse.clone(), None, verse.clone()
+                "v",
+                "v",
+                verse.clone(),
+                verse.clone(),
+                None,
+                verse.clone(),
             ));
-            
+
             if let Some(v_text) = parts.next() {
-                let (adj, clean, extras) = process_line_fix(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
+                let (adj, clean, extras) =
+                    process_line_fix(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
                 processed.push(InternalBibleEntry::new_unchecked(
-                    "v~", "v", adj, clean, Some(extras), v_text
+                    "v~",
+                    "v",
+                    adj,
+                    clean,
+                    Some(extras),
+                    v_text,
                 ));
             }
             continue;
         } else if matches!(marker, "d" | "iex") && have_waiting_c.is_some() {
             let c_num = have_waiting_c.take().unwrap();
             processed.push(InternalBibleEntry::new_unchecked(
-                "c#", "c", c_num.clone(), c_num.clone(), None, c_num
+                "c#",
+                "c",
+                c_num.clone(),
+                c_num.clone(),
+                None,
+                c_num,
             ));
         } else if marker == "cl" && chapter == "-1" {
-             let (adj, clean, extras) = process_line_fix(&text, &chapter, &verse, book_code, marker, options, &mut errors);
-             processed.push(InternalBibleEntry::new_unchecked(
-                "cl¤", marker, adj, clean, Some(extras), text
+            let (adj, clean, extras) =
+                process_line_fix(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+            processed.push(InternalBibleEntry::new_unchecked(
+                "cl¤",
+                marker,
+                adj,
+                clean,
+                Some(extras),
+                text,
             ));
             continue;
         }
 
         let (adj, clean, extras) = process_line_fix(&text, &chapter, &verse, book_code, marker, options, &mut errors);
-        
+
         if (marker == "b" || crate::markers::paragraph_markers::is_paragraph(marker)) && !clean.is_empty() {
-             processed.push(InternalBibleEntry::new_unchecked(
-                marker, marker, "", "", None, ""
-            ));
+            processed.push(InternalBibleEntry::new_unchecked(marker, marker, "", "", None, ""));
             processed.push(InternalBibleEntry::new_unchecked(
-                "p~", marker, adj, clean, Some(extras), text
+                "p~",
+                marker,
+                adj,
+                clean,
+                Some(extras),
+                text,
             ));
         } else {
             processed.push(InternalBibleEntry::new_unchecked(
-                marker, marker, adj, clean, Some(extras), text
+                marker,
+                marker,
+                adj,
+                clean,
+                Some(extras),
+                text,
             ));
         }
     }
@@ -313,7 +360,7 @@ mod tests {
         // Check some specific entries
         // Entry 0 should be \id
         assert_eq!(processed[0].marker(), "id");
-        
+
         // Find chapter 1 start
         let c1_idx = processed.contains_marker("c", None).expect("Should find chapter 1");
         assert_eq!(processed[c1_idx].clean_text(), "1");
