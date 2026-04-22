@@ -56,7 +56,7 @@ PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 DEBUGGING_THIS_MODULE = False
 
 
-compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPPERCASE
+compulsoryFiles = ( 'VERSION.DAT', 'TEXT.DAT', 'TEXTNDX.DAT', ) # Must be UPPERCASE
 
 
 
@@ -433,7 +433,7 @@ class PierceOnlineBible( Bible ):
             vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '     ', strings2 )
             if DEBUGGING_THIS_MODULE:
                 ix = -1
-                for j, word in enumerate( trings2 ):
+                for j, word in enumerate( strings2 ):
                     if word in ( 'Genesis', 'In', 'The', 'God', ):
                         vPrint( 'Quiet', DEBUGGING_THIS_MODULE, '      {!r} {}={:04x}'.format( word, j, j ) )
 

@@ -1241,7 +1241,7 @@ class InternalBibleBookSectionIndex:
                     vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Adjusting endV={endV} verse bridge to {endV[endV.find('-')+1:]!r}" )
                 endV = endV[endV.find('-')+1:]
 
-            # HAndle \ms1 specifics (v= doesn't occur before this)
+            # Handle \ms1 specifics (v= doesn't occur before this)
             if reasonMarker=='ms1' and startC==endC:
                 startV = str( int(startV) + 1 )
                 if int(endV) < int(startV): endV = startV

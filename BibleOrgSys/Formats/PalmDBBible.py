@@ -147,7 +147,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=
                 #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #if not firstLine.startswith( "info\t"):
-                        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
+                        #dPrint( 'Info', DEBUGGING_THIS_MODULE, "PalmDBBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) ); halt
                         #continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename

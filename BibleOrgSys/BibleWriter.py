@@ -241,7 +241,7 @@ class BibleWriter( InternalBible ):
         Saves the Python book objects as pickle files
             then the Bible object (less books)
             and a version info file
-            plus a zipped version of everthing for downloading.
+            plus a zipped version of everything for downloading.
 
         dataLevel:  1 = absolute minimal data saved (default)
                     2 = small amount saved
@@ -271,7 +271,7 @@ class BibleWriter( InternalBible ):
         Saves the Python book objects as json files
             then the Bible object (less books)
             and a version info file
-            plus a zipped version of everthing for downloading.
+            plus a zipped version of everything for downloading.
 
         Note: This can add up to a couple of GB if discovery data is included!
         """
@@ -9427,7 +9427,7 @@ class BibleWriter( InternalBible ):
         # First determine our format
         #verseByVerse = True
 
-        # Copy auxilliary XeTeX files to our output folder
+        # Copy auxiliary XeTeX files to our output folder
         for filename in ( "lettrine.sty", ):
             filepath = os.path.join( defaultControlFolderpath, filename )
             try: shutil.copy( filepath, outputFolderpath )

@@ -845,7 +845,7 @@ class InternalBibleBook:
             else: _processLineFix_w_loop_counter_is_too_small
 
         # Move all footnotes and cross-references, etc. from the main text out to extras
-        #  (This includes our \ww fields which contain the atttributes from \w fields)
+        #  (This includes our \ww fields which contain the attributes from \w fields)
         extras = InternalBibleExtraList() # Prepare for extras
 
         # dPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"QQQ MOVE OUT NOTES from {adjText=}" )
@@ -1128,7 +1128,7 @@ class InternalBibleBook:
         else: _processLineFix_main_loop_counter_is_too_small
 
         #if extras: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Fix gave {!r} and {!r}".format( adjText, extras ) )
-        #if len(extras)>1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Mutiple fix gave {!r} and {!r}".format( adjText, extras ) )
+        #if len(extras)>1: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "Multiple fix gave {!r} and {!r}".format( adjText, extras ) )
 
         # Check for anything left over
         if '\\f ' in adjText or '\\f*' in adjText or '\\x ' in adjText or '\\x*' in adjText:
@@ -2245,7 +2245,7 @@ class InternalBibleBook:
         def __doAppendEntry( adjMarker:str, originalMarker:str, text:str, originalText:str ) -> None:
             """
             Calls self._processLineFix to split out notes and other extras from the text.
-                then append the entry (with multilple components) to self._processedLines
+                then append the entry (with multiple components) to self._processedLines
             """
             #nonlocal self.sahtCount
 
@@ -5102,9 +5102,9 @@ class InternalBibleBook:
         if xrefList: self.checkResultsDictionary['Notes']['Cross-reference Lines'] = xrefList
         if leaderCounts:
             self.checkResultsDictionary['Notes']['Leader Counts'] = leaderCounts
-            if len(footnoteLeaderList) > 1: self.addPriorityError( 26, '-', '-', _("Mutiple different footnote leader characters: {}").format( footnoteLeaderList ) )
-            if len(xrefLeaderList) > 1: self.addPriorityError( 25, '-', '-', _("Mutiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
-            if len(CVSeparatorList) > 1: self.addPriorityError( 27, '-', '-', _("Mutiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
+            if len(footnoteLeaderList) > 1: self.addPriorityError( 26, '-', '-', _("Multiple different footnote leader characters: {}").format( footnoteLeaderList ) )
+            if len(xrefLeaderList) > 1: self.addPriorityError( 25, '-', '-', _("Multiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
+            if len(CVSeparatorList) > 1: self.addPriorityError( 27, '-', '-', _("Multiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
     # end of InternalBibleBook.doCheckNotes
 
 

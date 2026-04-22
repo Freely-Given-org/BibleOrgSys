@@ -105,7 +105,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
         if strictCheck:
             for folderName in foundFolders:
                 if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
-                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck: Suprised to find folder:", folderName )
+                    vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck: Surprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck got {} in {}".format( numFound, givenFolderName ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
@@ -146,7 +146,7 @@ def BCVBibleFileCheck( givenFolderName, strictCheck:bool=True, autoLoad:bool=Fal
             if strictCheck:
                 for folderName in foundSubfolders:
                     if folderName not in BibleOrgSysGlobals.loadedBibleBooksCodes:
-                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheckSuprised to find folder:", folderName )
+                        vPrint( 'Quiet', DEBUGGING_THIS_MODULE, "BCVBibleFileCheckSurprised to find folder:", folderName )
     if numFound:
         vPrint( 'Info', DEBUGGING_THIS_MODULE, "BCVBibleFileCheck foundProjects {} {}".format( numFound, foundProjects ) )
         if numFound == 1 and (autoLoad or autoLoadBooks):
