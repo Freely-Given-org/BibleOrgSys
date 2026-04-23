@@ -13,6 +13,7 @@ crate-type = ["rlib", "cdylib"]
 log.workspace = true
 pyo3-log.workspace = true
 bos-internals = { path = "../bos-internals" }
+#bos-internals.workspace = true
 pyo3.workspace = true
 rkyv.workspace = true
 thiserror.workspace = true

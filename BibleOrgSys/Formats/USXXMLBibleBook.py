@@ -739,7 +739,7 @@ def briefDemo() -> None:
         return someString[:int(maxLen/2)]+'…'+someString[-int(maxLen/2):]
 
     name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
-    name2, testFolder2 = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
+    name2, testFolder2 = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning USX  {} from {}…").format( name, testFolder ) )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning USFM {} from {}…").format( name, testFolder2 ) )
@@ -858,7 +858,7 @@ def fullDemo() -> None:
     # name, testFolder = "Matigsalug", Path( '/home/robert/BibleOrgSysData/BOSOutputFiles/BOS_USX3_Export/USX3Files/' )
     name2, testFolder2 = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV/USFM.save/' )
     # name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/PT7.5 Exports/USX/MBTV/' ) # You can put your USX test folder here
-    # name2, testFolder2 = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
+    # name2, testFolder2 = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning USX  {} from {}…").format( name, testFolder ) )
         vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning USFM {} from {}…").format( name, testFolder2 ) )

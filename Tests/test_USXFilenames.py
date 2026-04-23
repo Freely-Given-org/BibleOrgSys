@@ -26,13 +26,6 @@
 """
 Module testing USXFilenames.py.
 """
-
-LAST_MODIFIED_DATE = '2019-12-29' # by RJH
-PROGRAM_NAME = "USX Filenames tests"
-PROGRAM_VERSION = '0.51'
-PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
-
-
 import os
 import unittest
 import sys
@@ -40,6 +33,14 @@ import sys
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput import USXFilenames
+
+
+LAST_MODIFIED_DATE = '2019-12-29' # by RJH
+PROGRAM_NAME = "USX Filenames tests"
+PROGRAM_VERSION = '0.51'
+PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
+
+DEBUGGING_THIS_MODULE = False
 
 
 class USXFilenamesTests1( unittest.TestCase ):

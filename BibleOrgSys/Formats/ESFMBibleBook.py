@@ -6,7 +6,7 @@
 #
 # Module handling the ESFM markers for Bible books
 #
-# Copyright (C) 2010-2023 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,6 +44,9 @@ See https://GitHub.com/Freely-Given-org/ESFM for more info on ESFM.
 NOTE: We've started adding coding for the ESFM v0.6 spec,
     but not yet removed the old code
     (which may or may not still be needed and may or may not still work).
+
+CHANGELOG:
+    2026-04-12 Allow for an online folder to be used
 """
 from gettext import gettext as _
 import os
@@ -57,10 +60,10 @@ from BibleOrgSys.InputOutput.ESFMFile import ESFMFile
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2023-03-15' # by RJH
+LAST_MODIFIED_DATE = '2026-04-12' # by RJH
 SHORT_PROGRAM_NAME = "ESFMBibleBook"
 PROGRAM_NAME = "ESFM Bible book handler"
-PROGRAM_VERSION = '0.51'
+PROGRAM_VERSION = '0.52'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -545,13 +548,13 @@ class ESFMBibleBook( BibleBook ):
             halt
         #if debugging: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, self._rawLines ); halt
 
-        self.lookForAuxilliaryFilenames()
+        self.lookForAuxiliaryFilenames()
     # end of ESFMBibleBook.load
 
 
-    def lookForAuxilliaryFilenames( self ):
+    def lookForAuxiliaryFilenames( self ):
         """
-        Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxilliary filenames.
+        Looks into the loaded ESFM book for WORKDATA, FILEDATA, and/or WORDTABLE auxiliary filenames.
             \\id 1JN - Matigsalug Translation v1.0.17
             \\usfm 3.0
             \\ide UTF-8
@@ -565,7 +568,7 @@ class ESFMBibleBook( BibleBook ):
             loads any unique filename into a dict with the value set to None.
         Also checks that the referred file does actually exist.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxilliaryFilenames( {self.BBB} )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"ESFMBibleBook.lookForAuxiliaryFilenames( {self.BBB} )" )
         for marker,rest in self._rawLines[:10]: # Should be within the first seven lines
             if marker != 'rem': continue
             if rest.startswith( 'WORKDATA ' ):
@@ -574,34 +577,43 @@ class ESFMBibleBook( BibleBook ):
                 assert filePart.endswith( '.txt' )
                 if self.ESFMWorkDataFilename is None:
                     self.ESFMWorkDataFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORK DATA file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the WORK DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE WORK DATA file lines: {self.BBB} has '{self.ESFMWorkDataFilename}' and now got '{filePart}'")
             elif rest.startswith( 'FILEDATA ' ):
                 filePart = rest[9:]
                 # assert filePart.rstrip().endswith( '.txt' )
                 assert filePart.endswith( '.txt' )
                 if self.ESFMFileDataFilename is None:
                     self.ESFMFileDataFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the FILE DATA file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the FILE DATA file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE FILE DATA file lines: {self.BBB} has '{self.ESFMFileDataFilename}' and now got '{filePart}'")
             if rest.startswith( 'WORDTABLE ' ):
                 filePart = rest[10:]
                 # assert filePart.rstrip().endswith( '.tsv' )
                 assert filePart.endswith( '.tsv' )
                 if self.ESFMWordTableFilename is None:
                     self.ESFMWordTableFilename = filePart
-                    filepath = os.path.join( self.sourceFolder, filePart )
-                    if not os.path.isfile( filepath ):
-                        logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't find the WORD TABLE file at {filepath}")
+                    if isinstance( self.sourceFolder, str ) and self.sourceFolder.startswith( 'https://' ): # then it's an online source
+                        pass
+                    else: # it's on the local filesystem
+                        filepath = os.path.join( self.sourceFolder, filePart )
+                        if not os.path.isfile( filepath ):
+                            logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't find the WORD TABLE file at {filepath}")
                 else:
-                    logging.critical( f"ESFMBibleBook.lookForAuxilliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
-    # end of ESFMBibleBook.load.lookForAuxilliaryFilenames
+                    logging.critical( f"ESFMBibleBook.lookForAuxiliaryFilenames didn't expect MULTIPLE WORD TABLE file lines: {self.BBB} has '{self.ESFMWordTableFilename}' and now got '{filePart}'")
+    # end of ESFMBibleBook.load.lookForAuxiliaryFilenames
 # end of class ESFMBibleBook
 
 
@@ -638,16 +650,16 @@ def briefDemo() -> None:
     if 1: # Test individual files
         #name, testFolder, filename, BBB = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
         #name, testFolder, filename, BBB = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 0: # Test a whole folder full of files
-        name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )
@@ -689,16 +701,16 @@ def fullDemo() -> None:
     if 1: # Test individual files
         #name, testFolder, filename, BBB = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "06-JOS.usfm", "JOS" # You can put your test file here
         #name, testFolder, filename, BBB = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/'), "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/'), "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
         else: vPrint( 'Quiet', DEBUGGING_THIS_MODULE, f"Sorry, test folder '{testFolder}' doesn't exist on this computer." )
 
     if 1: # Test a whole folder full of files
-        name, testFolder = "Matigsalug", Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        name, testFolder = "Matigsalug", Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, testFolder = "WEB", Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )

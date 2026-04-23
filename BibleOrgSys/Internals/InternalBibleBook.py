@@ -59,6 +59,7 @@ CHANGELOG:
     2025-02-25 Don't add 'intro' section if 'iex' occurs under 'c'
     2025-03-04 Insert space if it appears that we might be appending text to the end of a verse number
     2025-11-19 Give better error info for an invalid chapter number
+    2026-04-22 Fixed addVerse
 """
 from gettext import gettext as _
 import os
@@ -694,12 +695,8 @@ class InternalBibleBook:
 
 
     # (Removed _processLineFix as it is now implemented in Rust)
-
-
-
     # (Removed addVerseStartMarkers as it is now implemented in Rust)
 
-    # end of addVerseStartMarkers
 
 
     def reorderRawOsisLines( self ):
@@ -893,7 +890,6 @@ class InternalBibleBook:
         self._processedFlag = True
         self.makeBookCVIndex()
     # end of InternalBibleBook.processLines
-
 
     def makeBookCVIndex( self ) -> None:
         """
@@ -3280,9 +3276,9 @@ class InternalBibleBook:
         if xrefList: self.checkResultsDictionary['Notes']['Cross-reference Lines'] = xrefList
         if leaderCounts:
             self.checkResultsDictionary['Notes']['Leader Counts'] = leaderCounts
-            if len(footnoteLeaderList) > 1: self.addPriorityError( 26, '-', '-', _("Mutiple different footnote leader characters: {}").format( footnoteLeaderList ) )
-            if len(xrefLeaderList) > 1: self.addPriorityError( 25, '-', '-', _("Mutiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
-            if len(CVSeparatorList) > 1: self.addPriorityError( 27, '-', '-', _("Mutiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
+            if len(footnoteLeaderList) > 1: self.addPriorityError( 26, '-', '-', _("Multiple different footnote leader characters: {}").format( footnoteLeaderList ) )
+            if len(xrefLeaderList) > 1: self.addPriorityError( 25, '-', '-', _("Multiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
+            if len(CVSeparatorList) > 1: self.addPriorityError( 27, '-', '-', _("Multiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
     # end of InternalBibleBook.doCheckNotes
 
 
@@ -3645,7 +3641,7 @@ def fullDemo() -> None:
 
     from BibleOrgSys.InputOutput import USFMFilenames
     if 1: # Test a whole folder full of files
-        name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
+        name, encoding, testFolder = "Matigsalug", 'utf-8', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) # You can put your test folder here
         #name, encoding, testFolder = "WEB", 'utf-8', Path( '/srv/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/' ) # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Scanning {} from {}…").format( name, testFolder ) )

@@ -35,6 +35,7 @@ pub struct SectionIndexEntry {
     /// Index of the last entry for this section (inclusive).
     end_index: u16,
     /// The marker that started this section (e.g., "Headers", "is1", "s1", "c", "c/s1").
+    /// Note that "c/s1" should only occur for Psalms (where each chapter is automatically a new section) and for chapter 1 of any book if there's no initial section heading
     reason_marker: CompactString,
     /// The section name/heading text.
     section_name: CompactString,
@@ -415,7 +416,8 @@ impl InternalBibleBookSectionIndex {
                 } else if pending.as_ref().is_some_and(|s| s.is_transition) {
                     // Merge heading into the transition section started by the c marker
                     let section = pending.as_mut().unwrap();
-                    section.reason = CompactString::from(format!("c/{}", marker));
+                    let marker_prefix = if self.bos_book_code() == "PSA" { "c/" } else { "" };
+                    section.reason = CompactString::from(format!("{}{}", marker_prefix, marker));
                     section.name = CompactString::from(entry.clean_text());
                     section.is_transition = false;
                 } else {
@@ -446,7 +448,10 @@ impl InternalBibleBookSectionIndex {
                     // New section starts at the `c` entry if there was a chapter
                     // change, otherwise at this section marker
                     let (start_index, reason): (u16, CompactString) = match &chapter_boundary {
-                        Some((_, _, idx)) => (idx + 1, CompactString::from(format!("c/{}", marker))),
+                        Some((_, _, idx)) => {
+                            let marker_prefix = if self.bos_book_code() == "PSA" { "c/" } else { "" };
+                            (idx + 1, CompactString::from(format!("{}{}", marker_prefix, marker)))
+                        }
                         None => (i.try_into().unwrap(), CompactString::from(marker)),
                     };
                     pending = Some(PendingSection {
@@ -637,7 +642,7 @@ mod tests {
         assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "2:1"); // ends at 2:1
         assert!(index.index_data.get_index(2).unwrap().1.start_index() == 5); // starts at entry index 5
         assert!(index.index_data.get_index(2).unwrap().1.end_index() == 16); // crosses chapters and ends at entry index 16
-        assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "c/s1");
+        assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(2).unwrap().1.section_name() == "The Creation");
 
         assert!(index.index_data.get_index(3).unwrap().0.to_string() == "2:2"); // starts at 2:2
@@ -651,10 +656,10 @@ mod tests {
         assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "3:2"); // ends at 3:2
         assert!(index.index_data.get_index(4).unwrap().1.start_index() == 23); // starts at entry index 23 (the c marker)
         assert!(index.index_data.get_index(4).unwrap().1.end_index() == 30); // ends at entry index 30
-        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "c/s1");
+        assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Chapter Three");
 
-        assert!(index.len() == 5); // Headers, is1, c/s1 (1/The Creation), s1 (Fall), c/s1 (3/Chapter Three)
+        assert!(index.len() == 5); // Headers, is1, s1 (1/The Creation), s1 (Fall), s1 (3/Chapter Three)
     }
 
     fn create_test_entries_2() -> InternalBibleEntryList {
@@ -891,13 +896,8 @@ mod tests {
         // Add structural nesting markers
         let entries_nested = crate::nesting::add_nesting_markers(entries, "OET-RV", "HAG");
 
-        for (i, entry) in entries_nested.iter().enumerate().take(30).skip(20) {
-            println!("Entry {}: {}", i, entry);
-        }
-
         let mut index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
         index.build(entries_nested).unwrap();
-        log::info!("HAG index:{}", index);
 
         // It should give the following seven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
@@ -933,7 +933,7 @@ mod tests {
         assert_eq!(entry2.end_cv().to_string(), "1:11");
         assert_eq!(entry2.start_index(), 23);
         assert_eq!(entry2.end_index(), 57);
-        assert_eq!(entry2.reason_marker(), "c/s1");
+        assert_eq!(entry2.reason_marker(), "s1");
         assert_eq!(entry2.section_name(), "God's command to rebuild the temple");
 
         // 3 1:12 s1='The people start rebuilding'
@@ -951,7 +951,7 @@ mod tests {
         assert_eq!(entry4.end_cv().to_string(), "2:9");
         assert_eq!(entry4.start_index(), 71);
         assert_eq!(entry4.end_index(), 93);
-        assert_eq!(entry4.reason_marker(), "c/s1");
+        assert_eq!(entry4.reason_marker(), "s1");
         assert_eq!(entry4.section_name(), "The splendour of the new temple");
 
         // 5 2:10 s1='Haggai consults the priests'

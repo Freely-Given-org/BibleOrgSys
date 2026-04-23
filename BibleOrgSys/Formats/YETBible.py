@@ -57,7 +57,7 @@ Plus optional
     …
 
 Limitations:
-    Unsure whether italic codes in verse text could just be \it instead of \add
+    Unsure whether italic codes in verse text could just be /it instead of /add
     Currently ignores encoded verse references in cross-references
 
 As of 2019-05-05, there's documentation here:

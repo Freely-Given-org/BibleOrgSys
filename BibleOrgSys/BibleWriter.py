@@ -241,7 +241,7 @@ class BibleWriter( InternalBible ):
         Saves the Python book objects as pickle files
             then the Bible object (less books)
             and a version info file
-            plus a zipped version of everthing for downloading.
+            plus a zipped version of everything for downloading.
 
         dataLevel:  1 = absolute minimal data saved (default)
                     2 = small amount saved
@@ -271,7 +271,7 @@ class BibleWriter( InternalBible ):
         Saves the Python book objects as json files
             then the Bible object (less books)
             and a version info file
-            plus a zipped version of everthing for downloading.
+            plus a zipped version of everything for downloading.
 
         Note: This can add up to a couple of GB if discovery data is included!
         """
@@ -9427,7 +9427,7 @@ class BibleWriter( InternalBible ):
         # First determine our format
         #verseByVerse = True
 
-        # Copy auxilliary XeTeX files to our output folder
+        # Copy auxiliary XeTeX files to our output folder
         for filename in ( "lettrine.sty", ):
             filepath = os.path.join( defaultControlFolderpath, filename )
             try: shutil.copy( filepath, outputFolderpath )
@@ -10496,10 +10496,10 @@ def fullDemo() -> None:
                 #("ESFMTest1-LV", 'ESFM1', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest1/'),
                 #("ESFMTest2-RV", 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #("WEB", 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
-                # ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/' ) ),
+                # ("Matigsalug", 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/' ) ),
                 # ("Matigsalug", 'MBTV', Path( '/mnt/SSDs/Work/VirtualBox_Shared_Folder/My Paratext 8 Projects Latest/Exports/USX/MBTV/USFM.save/' ) ),
-                #("MS-BT", 'MBTBT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
-                #("MS-ABT", 'MBTABT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
+                #("MS-BT", 'MBTBT', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/') ),
+                #("MS-ABT", 'MBTABT', Path( '/mnt/HDs/Matigsalug/Bible/MBTABT/') ),
                 #("WEB2", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #("WEB3", 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/'),
                 #("WEB4", 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),
@@ -10568,9 +10568,9 @@ def fullDemo() -> None:
                 #('ESFMTest2', 'ESFM2', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'ESFMTest2/'),
                 #('WEB', 'WEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-WEB/'),
                 #('OEB', 'OEB', BibleOrgSysGlobals.BOS_TEST_DATA_FOLDERPATH.joinpath( 'USFM-OEB/'),
-                #('Matigsalug', 'MBTV', Path( '/mnt/SSDs/Matigsalug/Bible/MBTV/') ),
-                #('MS-BT', 'MBTBT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTBT/') ),
-                #('MS-ABT', 'MBTABT', Path( '/mnt/SSDs/Matigsalug/Bible/MBTABT/') ),
+                #('Matigsalug', 'MBTV', Path( '/mnt/HDs/Matigsalug/Bible/MBTV/') ),
+                #('MS-BT', 'MBTBT', Path( '/mnt/HDs/Matigsalug/Bible/MBTBT/') ),
+                #('MS-ABT', 'MBTABT', Path( '/mnt/HDs/Matigsalug/Bible/MBTABT/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'From eBible/WEB/eng-web_usfm 2013-07-18/') ),
                 #('WEB', 'WEB', BiblesFolderpath.joinpath( 'English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/') ),

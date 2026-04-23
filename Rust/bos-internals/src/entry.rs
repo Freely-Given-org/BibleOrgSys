@@ -144,11 +144,7 @@ impl InternalBibleExtra {
 
 impl std::fmt::Display for InternalBibleExtra {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Extra({} @ {} = {:?})",
-            self.extra_type, self.index, self.note_text
-        )
+        write!(f, "Extra({} @ {} = {:?})", self.extra_type, self.index, self.note_text)
     }
 }
 
@@ -422,10 +418,7 @@ impl InternalBibleEntry {
     ///
     /// Panics if extras is not None (use with caution).
     pub fn set_clean_text(&mut self, new_value: impl Into<CompactString>) {
-        assert!(
-            self.extras.is_none(),
-            "Cannot set clean_text when extras exist"
-        );
+        assert!(self.extras.is_none(), "Cannot set clean_text when extras exist");
         let new_value = new_value.into();
         self.clean_text = new_value.clone();
         self.adjusted_text = Some(new_value.clone());
@@ -461,8 +454,7 @@ mod tests {
 
     #[test]
     fn test_internal_bible_extra_new() {
-        let extra =
-            InternalBibleExtra::new(ExtraType::Footnote, 15, r"\fr 1:1 \ft Note", "Note").unwrap();
+        let extra = InternalBibleExtra::new(ExtraType::Footnote, 15, r"\fr 1:1 \ft Note", "Note").unwrap();
 
         assert_eq!(extra.extra_type(), ExtraType::Footnote);
         assert_eq!(extra.index(), 15);
@@ -530,10 +522,7 @@ mod tests {
 
         // Invalid marker characters
         let result = InternalBibleEntry::new("\\v", "v", "text", "text", None, "text");
-        assert!(matches!(
-            result,
-            Err(ValidationError::InvalidMarkerCharacters(_))
-        ));
+        assert!(matches!(result, Err(ValidationError::InvalidMarkerCharacters(_))));
 
         // Backslash in clean text
         let result = InternalBibleEntry::new("v", "v", "text", "\\bad", None, "text");
@@ -547,9 +536,6 @@ mod tests {
     #[test]
     fn test_clean_text_no_underlines() {
         let entry = InternalBibleEntry::simple("p", "word_ _with_ underlines_here");
-        assert_eq!(
-            entry.clean_text_no_underlines(),
-            "word with underlines here"
-        );
+        assert_eq!(entry.clean_text_no_underlines(), "word with underlines here");
     }
 }

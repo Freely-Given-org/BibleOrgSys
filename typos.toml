@@ -1,0 +1,109 @@
+[files]
+extend-exclude = [
+    # Bible data and content — contains Old/Middle English, transliterations,
+    # and original-language text that is not English and must not be rewritten.
+    "BibleOrgSys/DataFiles/**",
+    "BibleOrgSys/Reference/**",
+    "ExternalSchemas/**",
+    "ControlFiles/**",
+    # Test fixtures / sample Bible data, and tests that embed raw Bible text
+    # as expected-output literals (would contain too many false positives).
+    "Tests/DataFilesForTests/**",
+    "Tests/OutputFiles/**",
+    "Tests/test_OET-RV_HAG_indexes.py",
+    "Rust/bos-internals/src/indexes/OET-RV_HAG.ESFM",
+    # Generated or third-party
+    "uv.lock",
+    "Cargo.lock",
+]
+
+[default.extend-words]
+# Bible section/testament abbreviations (Old Testament, New Testament).
+# These appear as full words and as prefixes/suffixes within identifiers
+# (e.g. OTOnlyTranslations, checkOT, .ot file extension).
+OT = "OT"
+ot = "ot"
+Ot = "Ot"
+NT = "NT"
+
+# File format identifiers (OpenDocument Format, Open Packaging Format).
+ODF = "ODF"
+odf = "odf"
+ODFs = "ODFs"
+OPF = "OPF"
+opf = "opf"
+
+# Save-file / saved-game identifier (e.g. .SAV extension).
+SAV = "SAV"
+
+# USFM markers that collide with English words
+nd = "nd"
+ND = "ND"
+bk = "bk"
+wj = "wj"
+em = "em"
+
+# Two/three-letter domain codes (book/language/lexicon)
+ba = "ba"
+Ba = "Ba"
+pn = "pn"
+PN = "PN"
+Pn = "Pn"
+iy = "iy"
+GES = "GES"
+Fo = "Fo"
+FO = "FO"
+fo = "fo"
+Thess = "Thess"
+THESS = "THESS"
+Thes = "Thes"
+Ths = "Ths"
+Nto = "Nto"
+NOY = "NOY"
+NAM = "NAM"
+MATA = "MATA"
+mata = "mata"
+Tema = "Tema"
+
+# OSIS / USFM domain words
+preverse = "preverse"
+
+# Font and product names
+Charis = "Charis"
+Saphire = "Saphire"
+
+# Non-English text that appears in string literals (book names, file-header
+# patterns, verse text samples in test data embedded in .py sources).
+Nowe = "Nowe"       # Polish: "Nowe Przymierze" = "New Covenant"
+Mose = "Mose"       # German: "1. Mose" = Genesis
+Builded = "Builded" # Zefania XML file-header marker <!--Builded with ...-->
+rin = "rin"         # appears in non-English verse text samples
+enew = "enew"       # hyphen-splitting example ("in-enew") in a comment
+
+# Abbreviations / short identifiers that aren't typos
+mis = "mis"
+thr = "thr"
+caf = "caf"
+buro = "buro"
+autio = "autio"
+jkd = "jkd"
+ENDE = "ENDE"
+EXCLUD = "EXCLUD"
+
+# Bible-translation edition codes used in comments (e.g. # fpr1933 refers
+# to a specific Bible edition being patched around in theWordBible).
+fpr = "fpr"
+
+# Sword config field name kept verbatim because the value lists
+# intentionally-misspelled field names that show up in real-world data.
+Abour = "Abour"
+
+# Intentional misspellings kept verbatim — these are real identifiers, real
+# string literals matched against real-world Bible/dictionary data, or legit
+# names that typos would mangle if auto-corrected.
+curren = "curren"       # HTML entity name for the generic currency sign (¤)
+writet = "writet"       # prefix of writetWBook (= "write theWord book")
+Hisotry = "Hisotry"     # misspelling in Sword module conf files, detected/fixed in code
+Minumum = "Minumum"     # misspelling in Sword module conf files, detected/fixed in code
+Fre = "Fre"             # Sword dictionary short name FreDAW
+

@@ -7,9 +7,7 @@ use compact_str::CompactString;
 
 /// Types of "extra" content (footnotes, cross-references, etc.)
 /// that are extracted from the main text flow.
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub enum ExtraType {
     /// Footnote (`fn` -> USFM marker `\f`)
     Footnote,
@@ -168,14 +166,7 @@ pub mod custom_nesting {
     pub const INTRO_OUTLINE_TITLE: &str = "iot";
 
     /// All custom nesting markers as a slice.
-    pub const ALL: &[&str] = &[
-        HEADERS,
-        INTRO,
-        INTRO_LIST,
-        CHAPTERS,
-        LIST,
-        INTRO_OUTLINE_TITLE,
-    ];
+    pub const ALL: &[&str] = &[HEADERS, INTRO, INTRO_LIST, CHAPTERS, LIST, INTRO_OUTLINE_TITLE];
 
     /// Check if a marker is a custom nesting marker.
     #[inline]
@@ -236,8 +227,8 @@ pub mod paragraph_markers {
 
     /// All paragraph markers.
     pub const ALL: &[&str] = &[
-        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4,
-        Q, Q1, Q2, Q3, Q4, QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4,
+        P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4, Q, Q1, Q2, Q3, Q4,
+        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4,
     ];
 
     /// Check if a marker is a paragraph marker.
@@ -359,10 +350,7 @@ pub fn all_nesting_markers() -> Vec<&'static str> {
 
 /// Generate all end markers for nesting markers.
 pub fn all_end_markers() -> Vec<CompactString> {
-    all_nesting_markers()
-        .iter()
-        .map(|m| end_marker(m))
-        .collect()
+    all_nesting_markers().iter().map(|m| end_marker(m)).collect()
 }
 
 #[cfg(test)]

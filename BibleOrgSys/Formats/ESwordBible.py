@@ -1171,7 +1171,7 @@ def createESwordBibleModule( self, outputFolder, controlDict ):
         """
         Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
 
-        Parameters are the Scripture reference (for error messsages)
+        Parameters are the Scripture reference (for error messages)
             and the line (string) containing the backslash codes.
 
         Returns a string with the backslash codes replaced by e-Sword RTF formatting codes.

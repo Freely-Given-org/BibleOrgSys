@@ -93,9 +93,7 @@ pub use chapter_verse::ChapterVerse;
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
 pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
-pub use indexes::{
-    CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry,
-};
+pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
 pub use nesting::add_nesting_markers;
 pub use parsing::{

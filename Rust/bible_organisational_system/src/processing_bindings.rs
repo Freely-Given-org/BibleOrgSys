@@ -43,19 +43,23 @@ pub struct PyProcessLinesOptions {
 
 #[pymethods]
 impl PyProcessLinesOptions {
+    // rylai emits pyo3 signature defaults verbatim as Python. An enum-path
+    // default like `PyObjectType::Usfm3` would produce invalid Python
+    // (`PyObjectType :: Usfm3`), so the default is expressed as `None` here
+    // and the real default is applied in the body.
     #[new]
-    #[pyo3(signature = (replace_angle_brackets=true, replace_straight_double_quotes=false, strict_checking=false, object_type=PyObjectType::Usfm3))]
+    #[pyo3(signature = (replace_angle_brackets=true, replace_straight_double_quotes=false, strict_checking=false, object_type=None))]
     fn new(
         replace_angle_brackets: bool,
         replace_straight_double_quotes: bool,
         strict_checking: bool,
-        object_type: PyObjectType,
+        object_type: Option<PyObjectType>,
     ) -> Self {
         Self {
             replace_angle_brackets,
             replace_straight_double_quotes,
             strict_checking,
-            object_type,
+            object_type: object_type.unwrap_or(PyObjectType::Usfm3),
         }
     }
 }

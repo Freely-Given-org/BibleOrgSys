@@ -129,11 +129,7 @@ impl ChapterVerse {
 
     /// Check if the verse has a suffix (e.g., `17a`, `17b`).
     pub fn has_verse_suffix(&self) -> bool {
-        self.verse
-            .chars()
-            .last()
-            .map(|c| c.is_alphabetic())
-            .unwrap_or(false)
+        self.verse.chars().last().map(|c| c.is_alphabetic()).unwrap_or(false)
     }
 
     /// Parse a verse range into (start, end) integers.

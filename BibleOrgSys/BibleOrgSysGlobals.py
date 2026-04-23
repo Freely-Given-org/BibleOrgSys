@@ -160,7 +160,7 @@ NL = '\n' # Can't use backslash inside f-strings
 BOM = '\ufeff' # = chr(65279) -- Unicode Byte Order Marker
 
 
-# Some language independant punctuation help
+# Some language independent punctuation help
 OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # } The length and order of these
 CLOSING_SPEECH_CHARACTERS = """”»"’›?!""" # }  two strings must match
 assert len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS)
