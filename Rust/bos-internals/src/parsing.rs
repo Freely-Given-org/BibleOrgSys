@@ -8,17 +8,7 @@
 
 use std::collections::HashMap;
 
-use regex::Regex;
-use std::sync::LazyLock;
-// use compact_str::CompactString;
-
 use crate::error::ParseError;
-
-/// Regex for extracting leading integer
-static LEADING_INT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^-?[0-9]+").expect("Invalid regex")); // Allows for optional leading minus sign for negative numbers
-static POSITIVE_LEADING_INT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"^[0-9]+").expect("Invalid regex"));
 
 /// Extract the leading integer from a string.
 ///
@@ -28,25 +18,86 @@ static POSITIVE_LEADING_INT_RE: LazyLock<Regex> =
 ///
 /// ```
 /// use bos_internals::parsing::get_small_leading_int;
+/// use bos_internals::error::ParseError;
 ///
 /// assert_eq!(get_small_leading_int("17").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("17a").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
 /// assert_eq!(get_small_leading_int("-1").unwrap(), -1);
-/// assert!(get_small_leading_int("abc").is_err());
+/// assert_eq!(get_small_leading_int("200something").unwrap(), 200);
+/// assert!(matches!(get_small_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+/// assert!(matches!(get_small_leading_int("-2"), Err(ParseError::IntOutOfRange(-2, _))));
+/// assert!(matches!(get_small_leading_int("201"), Err(ParseError::IntOutOfRange(201, _))));
 /// ```
 pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
-    LEADING_INT_RE
-        .find(s)
-        .and_then(|m| m.as_str().parse().ok())
-        .ok_or_else(|| ParseError::NoLeadingInt(s.to_string()))
+    let mut end = 0;
+    let bytes = s.as_bytes();
+    
+    if bytes.is_empty() {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    if bytes[0] == b'-' {
+        end = 1;
+    }
+
+    while end < bytes.len() && bytes[end].is_ascii_digit() {
+        end += 1;
+    }
+
+    if end == 0 || (end == 1 && bytes[0] == b'-') {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    let val: i32 = s[..end]
+        .parse()
+        .map_err(|_| ParseError::NoLeadingInt(s.to_string()))?;
+
+    if val < -1 || val > 200 {
+        return Err(ParseError::IntOutOfRange(val, s.to_string()));
+    }
+
+    Ok(val as i16)
 }
-/// Needed for ESFM word numbers which can be larger than 32767 (e.g., "46168", "375561") but must be non-negative.
+
+/// Extract the leading integer from a string.
+/// Needed for ESFM word numbers which can be larger than 32767 (e.g., "46168", "381561") but must be non-negative.
+///
+/// # Examples
+///
+/// ```
+/// use bos_internals::parsing::get_positive_leading_int;
+/// use bos_internals::error::ParseError;
+///
+/// assert_eq!(get_positive_leading_int("17").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
+/// assert_eq!(get_positive_leading_int("400000").unwrap(), 400000);
+/// assert!(matches!(get_positive_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+/// assert!(matches!(get_positive_leading_int("-1"), Err(ParseError::NoLeadingInt(_)))); // No digits at start
+/// assert!(matches!(get_positive_leading_int("400001"), Err(ParseError::IntOutOfRange(400001, _))));
+/// ```
 pub fn get_positive_leading_int(s: &str) -> Result<u32, ParseError> {
-    POSITIVE_LEADING_INT_RE
-        .find(s)
-        .and_then(|m| m.as_str().parse().ok())
-        .ok_or_else(|| ParseError::NoLeadingInt(s.to_string()))
+    let mut end = 0;
+    let bytes = s.as_bytes();
+
+    while end < bytes.len() && bytes[end].is_ascii_digit() {
+        end += 1;
+    }
+
+    if end == 0 {
+        return Err(ParseError::NoLeadingInt(s.to_string()));
+    }
+
+    let val: u32 = s[..end]
+        .parse()
+        .map_err(|_| ParseError::NoLeadingInt(s.to_string()))?;
+
+    if val > 400_000 {
+        return Err(ParseError::IntOutOfRange(val as i32, s.to_string()));
+    }
+
+    Ok(val)
 }
 
 /// Result of parsing word attributes from USFM3 `\w` field.
@@ -54,7 +105,7 @@ pub fn get_positive_leading_int(s: &str) -> Result<u32, ParseError> {
 pub struct WordWithAttributes {
     /// The word itself (before the pipe).
     pub word: String,
-    /// The lemma (dictionary form).
+    /// The lemma (dictionary form).reasonMarker
     pub lemma: Option<String>,
     /// Strong's number(s).
     pub strong: Option<String>,
@@ -475,6 +526,9 @@ mod tests {
         assert!(get_small_leading_int("375561").is_err());
         assert!(get_small_leading_int("abc").is_err());
         assert!(get_small_leading_int("").is_err());
+        assert!(get_small_leading_int("-2").is_err());
+        assert!(get_small_leading_int("-11").is_err());
+        assert!(get_small_leading_int("201").is_err());
     }
 
     #[test]
@@ -486,9 +540,12 @@ mod tests {
         assert_eq!(get_positive_leading_int("375561").unwrap(), 375561);
         assert_eq!(get_positive_leading_int("0").unwrap(), 0);
         assert_eq!(get_positive_leading_int("123abc456").unwrap(), 123);
-        assert!(get_positive_leading_int("-1").is_err());
         assert!(get_positive_leading_int("abc").is_err());
         assert!(get_positive_leading_int("").is_err());
+        assert!(get_positive_leading_int("-1").is_err());
+        assert!(get_positive_leading_int("-2").is_err());
+        assert!(get_positive_leading_int("-11").is_err());
+        assert!(get_positive_leading_int("400001").is_err());
     }
 
     #[test]

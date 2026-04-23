@@ -239,6 +239,10 @@ impl InternalBibleEntry {
             return Err(ValidationError::InvalidNewlineInOriginalText);
         }
 
+        if clean_text.contains('\\') {
+            return Err(ValidationError::BackslashInCleanText);
+        }
+
         Ok(Self {
             marker,
             original_marker: Some(original_marker.into()),

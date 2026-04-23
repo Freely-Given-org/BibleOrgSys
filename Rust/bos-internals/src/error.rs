@@ -43,6 +43,9 @@ pub enum ParseError {
     #[error("No leading integer found in '{0}'")]
     NoLeadingInt(String),
 
+    #[error("Integer {0} out of range in '{1}'")]
+    IntOutOfRange(i32, String),
+
     #[error("Invalid word attribute format: {0}")]
     InvalidWordAttribute(String),
 

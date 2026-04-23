@@ -59,7 +59,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Bible import Bible, BibleBook
 from BibleOrgSys.Internals.InternalBibleBook import InternalBibleBook
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList
-from BibleOrgSys.Internals.InternalBibleIndexes import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
+from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 
 
 LAST_MODIFIED_DATE = '2024-06-13' # by RJH

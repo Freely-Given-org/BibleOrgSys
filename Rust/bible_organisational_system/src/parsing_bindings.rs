@@ -20,6 +20,9 @@ use crate::section_index_bindings::{
 /// Python module for BibleOrgSys internals.
 #[pymodule]
 fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    // Forward Rust logs to Python logging
+    let _ = pyo3_log::try_init();
+
     m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
@@ -89,13 +92,19 @@ fn parse_word_attributes(
     Ok(result)
 }
 
-use bos_internals::VERBOSITY;
-use std::sync::atomic::Ordering;
-
 #[pyfunction]
 pub fn set_rust_verbosity(level: u8) {
-    // Store the level (0-4) using Relaxed ordering (fastest)
-    VERBOSITY.store(level, Ordering::Relaxed);
+    let filter = match level {
+        0 => log::LevelFilter::Off,
+        1 => log::LevelFilter::Warn,
+        2 => log::LevelFilter::Info,
+        3 => log::LevelFilter::Debug,
+        4 => log::LevelFilter::Trace,
+        _ => log::LevelFilter::Trace,
+    };
+    log::set_max_level(filter);
+    // Forward Rust logs to Python logging
+    let _ = pyo3_log::try_init();
 }
 
 /// Add nesting markers to a list of Bible entries.

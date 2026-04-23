@@ -102,27 +102,4 @@ pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
     parse_figure_attributes, parse_word_attributes,
 };
-pub use processing::{process_lines, ObjectType, ProcessLinesOptions};
-
-use std::sync::atomic::{AtomicU8, Ordering};
-
-// A global atomic variable in Rust
-pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
-
-pub fn set_verbosity(level: u8) {
-    // Store the level (0-4) using Relaxed ordering (fastest)
-    VERBOSITY.store(level, Ordering::Relaxed);
-}
-pub fn get_verbosity() -> u8 {
-    VERBOSITY.load(Ordering::Relaxed)
-}
-
-// Internal Rust macro for logging (convenience)
-#[macro_export]
-macro_rules! verbosity_print {
-    ($level:expr, $($arg:tt)*) => {
-        if crate::get_verbosity() >= $level {
-            println!($($arg)*);
-        }
-    };
-}
+pub use processing::{ObjectType, ProcessLinesOptions, process_lines};

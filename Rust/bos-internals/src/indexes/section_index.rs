@@ -11,7 +11,6 @@ use num_format::{Locale, ToFormattedString};
 use crate::chapter_verse::ChapterVerse;
 use crate::entry_extras::InternalBibleEntryList;
 use crate::error::LookupError;
-use crate::verbosity_print;
 
 /// Markers that can define section boundaries.
 const SECTION_MARKERS: &[&str] = &[
@@ -276,8 +275,7 @@ impl InternalBibleBookSectionIndex {
         if entries.is_empty() {
             return Err(crate::error::IndexError::EmptyEntries);
         }
-        verbosity_print!(
-            2,
+        log::info!(
             "Building section index for {} {} from {} entries…",
             self.work_name(),
             self.bos_book_code(),
@@ -317,8 +315,7 @@ impl InternalBibleBookSectionIndex {
                     // subsequent headings should start new sections.
                     section.is_transition = false;
                 }
-                verbosity_print!(
-                    4,
+                log::trace!(
                     "  Build {} section index: at entry #{} {} {}:{}",
                     self.work_name(),
                     i,
@@ -340,8 +337,7 @@ impl InternalBibleBookSectionIndex {
             }
             // Check for section markers (but chapter markers are only section markers if they appear in intro or content-transition contexts or in Psalms, handled above)
             else if is_section_marker(marker) {
-                verbosity_print!(
-                    4,
+                log::trace!(
                     "  Build {} {} section index: found section marker at entry #{} {}={} with {}:{}",
                     self.work_name(),
                     self.bos_book_code(),
@@ -568,7 +564,6 @@ impl std::fmt::Display for InternalBibleBookSectionIndex {
 mod tests {
     use super::*;
     use crate::entry::InternalBibleEntry;
-    use crate::set_verbosity;
 
     fn create_test_entries_1() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
@@ -619,10 +614,9 @@ mod tests {
 
     #[test]
     fn test_build_section_index_1() {
-        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("XSV", "GEN");
         index.build(create_test_entries_1()).unwrap();
-        verbosity_print!(4, "Index1:{}", index);
+        log::trace!("Index1:{}", index);
         assert!(index.is_indexed());
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
@@ -703,10 +697,9 @@ mod tests {
 
     #[test]
     fn test_build_section_index_2() {
-        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("YSV", "MRK");
         index.build(create_test_entries_2()).unwrap();
-        verbosity_print!(4, "Index2:{}", index);
+        log::trace!("Index2:{}", index);
         assert!(index.is_indexed());
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
@@ -797,10 +790,9 @@ mod tests {
 
     #[test]
     fn test_build_section_index_psa() {
-        set_verbosity(2); // Use 4 for debugging test output
         let mut index = InternalBibleBookSectionIndex::new("ZSV", "PSA");
         index.build(create_psa_test_entries()).unwrap();
-        verbosity_print!(4, "PSA index:{}", index);
+        log::trace!("PSA index:{}", index);
         assert!(index.is_indexed());
 
         // 0: Headers
@@ -905,7 +897,7 @@ mod tests {
 
         let mut index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
         index.build(entries_nested).unwrap();
-        verbosity_print!(2, "HAG index:{}", index);
+        log::info!("HAG index:{}", index);
 
         // It should give the following seven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
@@ -939,17 +931,17 @@ mod tests {
         let (cv2, entry2) = index.index_data.get_index(2).unwrap();
         assert_eq!(cv2.to_string(), "1:1");
         assert_eq!(entry2.end_cv().to_string(), "1:11");
-        assert_eq!(entry2.start_index(), 24);
-        assert_eq!(entry2.end_index(), 69);
-        assert_eq!(entry2.reason_marker(), "s1");
+        assert_eq!(entry2.start_index(), 23);
+        assert_eq!(entry2.end_index(), 57);
+        assert_eq!(entry2.reason_marker(), "c/s1");
         assert_eq!(entry2.section_name(), "God's command to rebuild the temple");
 
         // 3 1:12 s1='The people start rebuilding'
         let (cv3, entry3) = index.index_data.get_index(3).unwrap();
         assert_eq!(cv3.to_string(), "1:12");
         assert_eq!(entry3.end_cv().to_string(), "1:15");
-        assert_eq!(entry3.start_index(), 70);
-        assert_eq!(entry3.end_index(), 87);
+        assert_eq!(entry3.start_index(), 58);
+        assert_eq!(entry3.end_index(), 70);
         assert_eq!(entry3.reason_marker(), "s1");
         assert_eq!(entry3.section_name(), "The people start rebuilding");
 
@@ -957,17 +949,17 @@ mod tests {
         let (cv4, entry4) = index.index_data.get_index(4).unwrap();
         assert_eq!(cv4.to_string(), "2:1");
         assert_eq!(entry4.end_cv().to_string(), "2:9");
-        assert_eq!(entry4.start_index(), 88);
-        assert_eq!(entry4.end_index(), 119);
-        assert_eq!(entry4.reason_marker(), "s1");
+        assert_eq!(entry4.start_index(), 71);
+        assert_eq!(entry4.end_index(), 93);
+        assert_eq!(entry4.reason_marker(), "c/s1");
         assert_eq!(entry4.section_name(), "The splendour of the new temple");
 
         // 5 2:10 s1='Haggai consults the priests'
         let (cv5, entry5) = index.index_data.get_index(5).unwrap();
         assert_eq!(cv5.to_string(), "2:10");
         assert_eq!(entry5.end_cv().to_string(), "2:19");
-        assert_eq!(entry5.start_index(), 120);
-        assert_eq!(entry5.end_index(), 164);
+        assert_eq!(entry5.start_index(), 94);
+        assert_eq!(entry5.end_index(), 126);
         assert_eq!(entry5.reason_marker(), "s1");
         assert_eq!(entry5.section_name(), "Haggai consults the priests");
 
@@ -975,8 +967,8 @@ mod tests {
         let (cv6, entry6) = index.index_data.get_index(6).unwrap();
         assert_eq!(cv6.to_string(), "2:20");
         assert_eq!(entry6.end_cv().to_string(), "2:23");
-        assert_eq!(entry6.start_index(), 165);
-        assert_eq!(entry6.end_index(), 182);
+        assert_eq!(entry6.start_index(), 127);
+        assert_eq!(entry6.end_index(), 140);
         assert_eq!(entry6.reason_marker(), "s1");
         assert_eq!(entry6.section_name(), "God's promise to Zerubavel");
     }

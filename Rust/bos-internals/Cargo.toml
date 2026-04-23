@@ -9,6 +9,7 @@ keywords = ["bible", "usfm", "scripture"]
 categories = ["text-processing", "parser-implementations"]
 
 [dependencies]
+log.workspace = true
 compact_str.workspace = true
 indexmap.workspace = true
 num-format = "0.4.4"
@@ -19,6 +20,7 @@ thiserror.workspace = true
 
 [dev-dependencies]
 pretty_assertions.workspace = true
+env_logger = "0.11"
 
 [features]
 default = []

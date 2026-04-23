@@ -17,7 +17,6 @@ use bos_internals::{
 };
 
 use crate::extras_bindings::PyInternalBibleExtraList;
-use crate::verbosity_print;
 
 // ============================================================================
 // PyChapterVerse
@@ -1088,7 +1087,7 @@ impl PyInternalBibleBookCVIndex {
 
     /// Build the CV index from processed entries (Python compat).
     fn makeBookCVIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_print!(2, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        log::info!("Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
