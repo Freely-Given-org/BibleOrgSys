@@ -58,7 +58,7 @@ BibleVersificationSystem class:
     getTotalNumVerses( self, BBB )
     getOmittedVerseList( self, BBB:str, fullRefs=False )
     isOmittedVerse( self, referenceTuple )
-    getAuxilliaryVerseList( self, listName )
+    getAuxiliaryVerseList( self, listName )
     isValidBCVRef( self, referenceTuple, referenceString=None, extended=False )
     expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None )
     convertToReferenceVersification( self, BBB:str, C, V, S=None )
@@ -810,15 +810,15 @@ class BibleVersificationSystem:
     # end of BibleVersificationSystem.isOmittedVerse
 
 
-    def getAuxilliaryVerseList( self, listName ):
+    def getAuxiliaryVerseList( self, listName ):
         """
-        Gets a list of auxilliary verse information for "omitted", "combined", or "reordered" verses.
+        Gets a list of auxiliary verse information for "omitted", "combined", or "reordered" verses.
         """
         assert listName in ["omitted", "combined", "reordered"]
         if listName=="omitted": return self.__omittedVersesDict
         if listName=="combined": return self.__combinedVersesDict
         if listName=="reordered": return self.__reorderedVersesDict
-    # end of BibleVersificationSystem.getAuxilliaryVerseList
+    # end of BibleVersificationSystem.getAuxiliaryVerseList
 
 
     def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False ):
