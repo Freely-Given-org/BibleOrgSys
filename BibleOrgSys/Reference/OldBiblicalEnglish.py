@@ -60,6 +60,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     # Fix typos
     ((' aud ',),' and '), # Cvdl Mrk 8:23, 10:50
     ((' thu s ',),' thus '), # Cvdl Isa 14:26
+    # (('Joash’ s ','Joash’s ')), # UST Jdg 6:11
     (('noman.But',),'no man. But'), # Cvdl Mrk 7:36
     (('plaged,preased',),'plagued, pressed'), # Cvdl Mrk 3:10
     (('symilitudes:How',),'similitudes: How'), # Cvdl Mrk 3:23
@@ -1048,7 +1049,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' drieden',' driede',' dryed'),' dried'),((' driest',' dryest'),' driest/dry'),((' drieth',' dryeth'),' drieth/dries'),(('dryenge','driyng'),'drying'), ((' drie ',' drye '),' dry '),((' drie,',' drye,'),' dry,'),((' drie.',' drye.'),' dry.'),
         ((' diggide',' digged',' dygged'),' dug'),
             ((' duykis',' duikis',' dukis'),' dukes'),((' duyk ',),' duke '),
-            ((' doumb',' dumbe',' dumme'),' dumb'),((' domme,',),' dumb,'),
+            ((' doumb',' domme',' dumbe',' dumme'),' dumb'),
             ((' dongeon',),' dungeon'), ((' dongue',' doung',' donge'),' dung'),
             ((' duste ',),' dust '),
             ((' duetie ',),' duty '),
