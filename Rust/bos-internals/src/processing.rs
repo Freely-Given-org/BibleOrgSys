@@ -44,6 +44,9 @@ impl Default for ProcessLinesOptions {
 ///
 /// Does character fixes on a specific line and moves the following out of the main text:
 /// footnotes, cross-references, and figures, Strongs numbers.
+/// 
+/// Returns the adjusted text, the clean text (with all markers removed), and a list of extras.
+/// The `line_location` is used for error reporting and is in the format "BOOK_CHAPTER:VERSE".
 pub fn process_line_fix(
     text: &str,
     chapter: &str,
@@ -329,6 +332,32 @@ mod tests {
     use super::*;
     use std::fs::File;
     use std::io::{BufRead, BufReader};
+
+    #[test]
+    fn test_process_line_fix_isaiah() {
+        let (adj_text, clean_text, extras) = process_line_fix(
+            r"The¦283645_vision¦283645_of¦283645 Yəshaˊ\sup yāh\sup*¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziy\sup yāh\sup*¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiy\sup yāh\sup*¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.",
+            "1",
+            "1",
+            "ISA",
+            "v~",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        assert_eq!(clean_text, "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.");
+        assert!(extras.is_empty());
+        let (adj_text, clean_text, extras) = process_line_fix(
+            r"Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 \nd YHWH¦283669\nd* he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.",
+            "1",
+            "2",
+            "ISA",
+            "v~",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        assert_eq!(clean_text, "Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 YHWH¦283669 he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.");
+        assert!(extras.is_empty());
+    }
 
     #[test]
     fn test_process_lines_haggai() {

@@ -27,6 +27,7 @@ use crate::error::ParseError;
 /// assert_eq!(get_small_leading_int("200something").unwrap(), 200);
 /// assert!(matches!(get_small_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
 /// assert!(matches!(get_small_leading_int("-2"), Err(ParseError::IntOutOfRange(-2, _))));
+/// assert!(matches!(get_small_leading_int("-11"), Err(ParseError::IntOutOfRange(-11, _))));
 /// assert!(matches!(get_small_leading_int("201"), Err(ParseError::IntOutOfRange(201, _))));
 /// ```
 pub fn get_small_leading_int(s: &str) -> Result<i16, ParseError> {
@@ -465,10 +466,22 @@ mod tests {
         assert_eq!(get_small_leading_int("17a").unwrap(), 17);
         assert_eq!(get_small_leading_int("17-25").unwrap(), 17);
         assert_eq!(get_small_leading_int("-1").unwrap(), -1);
-        assert_eq!(get_small_leading_int("0").unwrap(), 0);
-        assert_eq!(get_small_leading_int("123abc456").unwrap(), 123);
-        assert!(get_small_leading_int("abc").is_err());
-        assert!(get_small_leading_int("").is_err());
+        assert_eq!(get_small_leading_int("200something").unwrap(), 200);
+        assert!(matches!(get_small_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+        assert!(matches!(get_small_leading_int("-2"), Err(ParseError::IntOutOfRange(-2, _))));
+        assert!(matches!(get_small_leading_int("-11"), Err(ParseError::IntOutOfRange(-11, _))));
+        assert!(matches!(get_small_leading_int("201"), Err(ParseError::IntOutOfRange(201, _))));
+    }
+
+    #[test]
+    fn test_get_positive_leading_int() {
+        assert_eq!(get_positive_leading_int("17").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17a").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("17-25").unwrap(), 17);
+        assert_eq!(get_positive_leading_int("400000").unwrap(), 400000);
+        assert!(matches!(get_positive_leading_int("abc"), Err(ParseError::NoLeadingInt(_))));
+        assert!(matches!(get_positive_leading_int("-1"), Err(ParseError::NoLeadingInt(_)))); // No digits at start
+        assert!(matches!(get_positive_leading_int("400001"), Err(ParseError::IntOutOfRange(400001, _))));
     }
 
     #[test]
