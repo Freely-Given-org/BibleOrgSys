@@ -556,7 +556,7 @@ class InternalBibleBook:
             if marker=='v' and text and text.isdigit(): # Must be a verse number
                 # TODO: Should we ALWAYS be inserting that space??? Probably better to fix at source
                 #   Also, remember, might be appending a closing quote mark or an em dash or something that SHOULD be attached
-                logging.critical( f"InternalBibleBook.appendToLastLine() inserted space where appears to be joining text after {self.BBB} verse number {marker} {text=} plus {additionalText=}" )
+                logging.critical( f"InternalBibleBook.appendToLastLine() inserted space where appears to be joining text after {self.workName} {self.BBB} verse number {marker} {text=} plus {additionalText=}" )
                 insertSpace = True
             else:
                 logging.critical( f"InternalBibleBook.appendToLastLine() appears to be joining words {self.BBB} {marker} {text=} plus {additionalText=}" )
