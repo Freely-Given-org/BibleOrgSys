@@ -573,9 +573,55 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
+    fn test_oet_lv_haggai_nesting() {
+        let file_path = "src/test_data/OET-LV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
+        let reader = BufReader::new(file);
+
+        let mut raw_lines = Vec::new();
+        for line in reader.lines() {
+            let line = line.expect("Could not read line");
+            if line.trim().is_empty() {
+                continue;
+            }
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line.as_str(), ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+        
+        // Results should match test_data/OET-LV_HAG_rawLines.txt
+        let original_count = raw_lines.len();
+        println!("Original lines read: {}", original_count);
+        assert_eq!(original_count, 57, "Expected 57 raw lines in Haggai ESFM file");
+
+        let options = crate::processing::ProcessLinesOptions::default();
+        let processed = crate::processing::process_lines(raw_lines, "HAG", "OET-LV", &options);
+        
+        println!("Final entries: {}", processed.len());
+
+        assert_eq!(processed.len(), 143, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
+        
+        // Verify some key structural markers from the Python reference test
+        // TODO: Need to correct these tests which are currently wrong!
+        assert_eq!(processed[5].marker(), "headers");
+        assert_eq!(processed[11].marker(), "¬headers");
+        assert_eq!(processed[12].marker(), "intro");
+        assert_eq!(processed[21].marker(), "¬intro");
+        assert_eq!(processed[22].marker(), "chapters");
+        assert_eq!(processed[23].marker(), "c");
+        assert_eq!(processed[24].marker(), "v=");
+        assert_eq!(processed[140].marker(), "¬nb");
+        assert_eq!(processed[141].marker(), "¬c");
+        assert_eq!(processed[142].marker(), "¬chapters");
+    }
+
+    #[test]
     fn test_oet_rv_haggai_nesting() {
-        let file_path = "src/indexes/OET-RV_HAG.ESFM";
-        let file = File::open(file_path).expect("Could not open Haggai ESFM file");
+        let file_path = "src/test_data/OET-RV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
         let reader = BufReader::new(file);
 
         let mut raw_lines = Vec::new();

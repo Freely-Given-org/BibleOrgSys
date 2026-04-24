@@ -379,9 +379,9 @@ mod tests {
     }
 
     #[test]
-    fn test_process_lines_haggai() {
-        let file_path = "src/indexes/OET-RV_HAG.ESFM";
-        let file = File::open(file_path).expect("Could not open Haggai ESFM file");
+    fn test_oet_lv_process_lines_haggai() {
+        let file_path = "src/test_data/OET-LV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
 
         let mut raw_lines = Vec::new();
@@ -402,7 +402,45 @@ mod tests {
         let processed = process_lines(raw_lines, "HAG", "OET-RV", &options);
 
         println!("Processed {} entries", processed.len());
-        assert!(processed.len() >= 183);
+        
+        // The results should match test_data/OET-LV_HAG_processedLines.txt
+        assert!(processed.len() == 143);
+
+        // Check some specific entries
+        // Entry 0 should be \id
+        assert_eq!(processed[0].marker(), "id");
+        // Find chapter 1 start
+        let c1_idx = processed.contains_marker("c", None).expect("Should find chapter 1");
+        assert_eq!(processed[c1_idx].clean_text(), "1");
+    }
+
+    #[test]
+    fn test_oet_rv_process_lines_haggai() {
+        let file_path = "src/test_data/OET-RV_HAG.ESFM";
+        let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
+        let reader = BufReader::new(file);
+
+        let mut raw_lines = Vec::new();
+        for line in reader.lines() {
+            let line = line.expect("Could not read line");
+            if line.trim().is_empty() {
+                continue;
+            }
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line.as_str(), ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = ProcessLinesOptions::default();
+        let processed = process_lines(raw_lines, "HAG", "OET-RV", &options);
+
+        println!("Processed {} entries", processed.len());
+        
+        // The results should match test_data/OET-RV_HAG_processedLines.txt
+        assert!(processed.len() == 188);
 
         // Check some specific entries
         // Entry 0 should be \id
