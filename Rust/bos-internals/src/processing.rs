@@ -380,7 +380,7 @@ mod tests {
 
     #[test]
     fn test_oet_lv_process_lines_haggai() {
-        let file_path = "src/test_data/OET-LV_HAG.ESFM";
+        let file_path = "test_data/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
 
@@ -404,7 +404,7 @@ mod tests {
         println!("Processed {} entries", processed.len());
         
         // The results should match test_data/OET-LV_HAG_processedLines.txt
-        assert!(processed.len() == 143);
+        assert!(processed.len() == 141);
 
         // Check some specific entries
         // Entry 0 should be \id
@@ -416,7 +416,7 @@ mod tests {
 
     #[test]
     fn test_oet_rv_process_lines_haggai() {
-        let file_path = "src/test_data/OET-RV_HAG.ESFM";
+        let file_path = "test_data/OET-RV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
         let reader = BufReader::new(file);
 

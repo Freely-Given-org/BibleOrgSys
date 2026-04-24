@@ -618,7 +618,7 @@ mod tests {
 
     #[test]
     fn test_oet_lv_haggai_cv_index_build() {
-        let content = include_str!("../test_data/OET-LV_HAG.ESFM");
+        let content = include_str!("../../test_data/OET-LV_HAG.ESFM");
         let mut raw_lines = Vec::new();
         for line in content.lines() {
             let (marker, text) = match line.split_once(' ') {
@@ -755,7 +755,7 @@ mod tests {
 
     #[test]
     fn test_oet_rv_haggai_cv_index_build() {
-        let content = include_str!("../test_data/OET-RV_HAG.ESFM");
+        let content = include_str!("../../test_data/OET-RV_HAG.ESFM");
         let mut raw_lines = Vec::new();
         for line in content.lines() {
             let (marker, text) = match line.split_once(' ') {

@@ -537,42 +537,58 @@ mod tests {
         entries.push(InternalBibleEntry::simple("id", "GEN Test Version")); // 0
         entries.push(InternalBibleEntry::simple("usfm", "3.0")); // 1
         entries.push(InternalBibleEntry::simple("ide", "UTF-8")); // 2
+        entries.push(InternalBibleEntry::simple("headers", "")); // 3
+        entries.push(InternalBibleEntry::simple("h", "Genesis")); // 4
+        entries.push(InternalBibleEntry::simple("mt1", "Book of Genesis")); // 5
+        entries.push(InternalBibleEntry::simple("¬headers", "")); // 6
 
         // Section 2 (Intro)
-        entries.push(InternalBibleEntry::simple("is1", "Introduction to Genesis")); // 3
-        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 4
+        entries.push(InternalBibleEntry::simple("intro", "")); // 7
+        entries.push(InternalBibleEntry::simple("is1", "Introduction to Genesis")); // 8
+        entries.push(InternalBibleEntry::simple("ip", "An introductory paragraph.")); // 9
+        entries.push(InternalBibleEntry::simple("¬intro", "")); // 10
 
         // Section 3
-        entries.push(InternalBibleEntry::simple("c", "1")); // 5
-        entries.push(InternalBibleEntry::simple("s1", "The Creation")); // 6
-        entries.push(InternalBibleEntry::simple("p", "")); // 7
-        entries.push(InternalBibleEntry::simple("v", "1")); // 8
-        entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 9
-        entries.push(InternalBibleEntry::simple("v", "2")); // 10
-        entries.push(InternalBibleEntry::simple("v~", "And the earth was without form...")); // 11
-        entries.push(InternalBibleEntry::simple("¬c", "")); // 12
-
+        entries.push(InternalBibleEntry::simple("chapters", "")); // 11
+        entries.push(InternalBibleEntry::simple("c", "1")); // 12
+        entries.push(InternalBibleEntry::simple("v=", "1")); // 13
+        entries.push(InternalBibleEntry::simple("s1", "The Creation")); // 14
+        entries.push(InternalBibleEntry::simple("p", "")); // 15
+        entries.push(InternalBibleEntry::simple("v", "1")); // 16
+        entries.push(InternalBibleEntry::simple("v~", "In the beginning...")); // 17
+        entries.push(InternalBibleEntry::simple("v", "2")); // 18
+        entries.push(InternalBibleEntry::simple("v~", "And the earth was without form...")); // 19
+        entries.push(InternalBibleEntry::simple("¬c", "1")); // 20
+        entries.push(InternalBibleEntry::simple("c", "2")); // 21
+        entries.push(InternalBibleEntry::simple("v=", "1")); // 22
+        entries.push(InternalBibleEntry::simple("nb", "")); // 23
+        entries.push(InternalBibleEntry::simple("v", "1")); // 24
+        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 2...")); // 25
+        entries.push(InternalBibleEntry::simple("¬p", "")); // 26
+        
         // Section 4
-        entries.push(InternalBibleEntry::simple("c", "2")); // 13
-        entries.push(InternalBibleEntry::simple("nb", "")); // 14
-        entries.push(InternalBibleEntry::simple("v", "1")); // 15
-        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 2...")); // 16
-        entries.push(InternalBibleEntry::simple("s1", "The Fall")); // 17
-        entries.push(InternalBibleEntry::simple("p", "")); // 18
-        entries.push(InternalBibleEntry::simple("v", "2")); // 19
-        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 2...")); // 20
-        entries.push(InternalBibleEntry::simple("v", "3")); // 21
-        entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 2...")); // 22
+        entries.push(InternalBibleEntry::simple("s1", "The Fall")); // 27
+        entries.push(InternalBibleEntry::simple("p", "")); // 28
+        entries.push(InternalBibleEntry::simple("v", "2")); // 29
+        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 2...")); // 30
+        entries.push(InternalBibleEntry::simple("v", "3")); // 31
+        entries.push(InternalBibleEntry::simple("v~", "Verse 3 of chapter 2...")); // 32
+        entries.push(InternalBibleEntry::simple("¬p", "")); // 33
+        entries.push(InternalBibleEntry::simple("¬c", "2")); // 34
 
         // Section 5
-        entries.push(InternalBibleEntry::simple("c", "3")); // 23
-        entries.push(InternalBibleEntry::simple("s1", "Chapter Three")); // 24
-        entries.push(InternalBibleEntry::simple("rem", "/s1 Alternative heading")); // 25
-        entries.push(InternalBibleEntry::simple("p", "")); // 26
-        entries.push(InternalBibleEntry::simple("v", "1")); // 27
-        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 3...")); // 28
-        entries.push(InternalBibleEntry::simple("v", "2")); // 29
-        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 3...")); // 30
+        entries.push(InternalBibleEntry::simple("c", "3")); // 35
+        entries.push(InternalBibleEntry::simple("v=", "1")); // 36
+        entries.push(InternalBibleEntry::simple("s1", "Chapter Three")); // 37
+        entries.push(InternalBibleEntry::simple("rem", "/s1 Alternative heading")); // 38
+        entries.push(InternalBibleEntry::simple("p", "")); // 39
+        entries.push(InternalBibleEntry::simple("v", "1")); // 40
+        entries.push(InternalBibleEntry::simple("v~", "Verse 1 of chapter 3...")); // 41
+        entries.push(InternalBibleEntry::simple("v", "2")); // 42
+        entries.push(InternalBibleEntry::simple("v~", "Verse 2 of chapter 3...")); // 43
+        entries.push(InternalBibleEntry::simple("¬p", "")); // 44
+        entries.push(InternalBibleEntry::simple("¬c", "3")); // 45
+        entries.push(InternalBibleEntry::simple("¬chapters", "")); // 46
 
         entries
     }
@@ -585,37 +601,37 @@ mod tests {
         assert!(index.is_indexed());
 
         assert!(index.index_data.get_index(0).unwrap().0.to_string() == "-1:0"); // ID Header starts at -1:0
-        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:2"); // ID Header ends at -1:2
+        assert!(index.index_data.get_index(0).unwrap().1.end_cv().to_string() == "-1:6"); // ID Header ends at -1:6
         assert!(index.index_data.get_index(0).unwrap().1.start_index() == 0); // starts at entry index 0
-        assert!(index.index_data.get_index(0).unwrap().1.end_index() == 2); // ends at entry index 2
+        assert!(index.index_data.get_index(0).unwrap().1.end_index() == 6); // ends at entry index 6
         assert!(index.index_data.get_index(0).unwrap().1.reason_marker() == "Headers");
         assert!(index.index_data.get_index(0).unwrap().1.section_name() == "GEN");
 
-        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:3"); // starts at -1:3
-        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "-1:4"); // ends at -1:4
-        assert!(index.index_data.get_index(1).unwrap().1.start_index() == 3); // starts at entry index 3
-        assert!(index.index_data.get_index(1).unwrap().1.end_index() == 4); // ends at entry index 4
+        assert!(index.index_data.get_index(1).unwrap().0.to_string() == "-1:7"); // starts at -1:7
+        assert!(index.index_data.get_index(1).unwrap().1.end_cv().to_string() == "-1:10"); // ends at -1:10
+        assert!(index.index_data.get_index(1).unwrap().1.start_index() == 7); // starts at entry index 7
+        assert!(index.index_data.get_index(1).unwrap().1.end_index() == 10); // ends at entry index 10
         assert!(index.index_data.get_index(1).unwrap().1.reason_marker() == "is1");
         assert!(index.index_data.get_index(1).unwrap().1.section_name() == "Introduction to Genesis");
 
         assert!(index.index_data.get_index(2).unwrap().0.to_string() == "1:1"); // starts at 1:1
-        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "1:2"); // ends at 1:2
-        assert!(index.index_data.get_index(2).unwrap().1.start_index() == 5); // starts at entry index 5 (the c marker)
-        assert!(index.index_data.get_index(2).unwrap().1.end_index() == 12); // ends before next c
+        assert!(index.index_data.get_index(2).unwrap().1.end_cv().to_string() == "2:1"); // ends at 2:1
+        assert!(index.index_data.get_index(2).unwrap().1.start_index() == 12); // starts at entry index 12 (the c marker)
+        assert!(index.index_data.get_index(2).unwrap().1.end_index() == 26);
         assert!(index.index_data.get_index(2).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(2).unwrap().1.section_name() == "The Creation");
 
-        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "2:1"); // starts at 2:1
-        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "2:1"); // ends at 2:1
-        assert!(index.index_data.get_index(3).unwrap().1.start_index() == 13); // starts at entry index 13
-        assert!(index.index_data.get_index(3).unwrap().1.end_index() == 16); // ends before next s1
+        assert!(index.index_data.get_index(3).unwrap().0.to_string() == "2:2"); // starts at 2:2
+        assert!(index.index_data.get_index(3).unwrap().1.end_cv().to_string() == "2:3"); // ends at 2:3
+        assert!(index.index_data.get_index(3).unwrap().1.start_index() == 27); // starts at entry index 27
+        assert!(index.index_data.get_index(3).unwrap().1.end_index() == 33);
         assert!(index.index_data.get_index(3).unwrap().1.reason_marker() == "c");
         assert!(index.index_data.get_index(3).unwrap().1.section_name() == "");
 
-        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "2:2"); // starts at 2:2
-        assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "2:3"); // ends at 2:3
-        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 17); // starts at entry index 17
-        assert!(index.index_data.get_index(4).unwrap().1.end_index() == 22); // ends before next c
+        assert!(index.index_data.get_index(4).unwrap().0.to_string() == "3:1"); // starts at 3:1
+        assert!(index.index_data.get_index(4).unwrap().1.end_cv().to_string() == "3:3"); // ends at 3:3
+        assert!(index.index_data.get_index(4).unwrap().1.start_index() == 35); // starts at entry index 35
+        assert!(index.index_data.get_index(4).unwrap().1.end_index() == 44);
         assert!(index.index_data.get_index(4).unwrap().1.reason_marker() == "s1");
         assert!(index.index_data.get_index(4).unwrap().1.section_name() == "Chapter Three");
 
@@ -842,7 +858,7 @@ mod tests {
 
     #[test]
     fn test_oet_rv_haggai_section_index_build() {
-        let content = include_str!("../test_data/OET-RV_HAG.ESFM");
+        let content = include_str!("../../test_data/OET-RV_HAG.ESFM");
         let mut raw_lines = Vec::new();
         for line in content.lines() {
             let (marker, text) = match line.split_once(' ') {

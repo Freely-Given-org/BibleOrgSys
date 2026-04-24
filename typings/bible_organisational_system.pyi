@@ -7,7 +7,6 @@ __all__ = [
     "getPositiveLeadingInt",
     "parse_word_attributes",
     "set_rust_verbosity",
-    "addNestingMarkers",
     "processLines",
     "InternalBibleExtra",
     "InternalBibleExtraList",
@@ -37,11 +36,6 @@ def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
     """Parse word attributes from a USFM3 \w field."""
 
 def set_rust_verbosity(level: int) -> None: ...
-def addNestingMarkers(
-    entries: InternalBibleEntryList, work_name: str, bos_book_code: str
-) -> InternalBibleEntryList:
-    """Add nesting markers to a list of Bible entries."""
-
 def processLines(
     raw_lines: list[tuple[str, str]],
     book_code: str,

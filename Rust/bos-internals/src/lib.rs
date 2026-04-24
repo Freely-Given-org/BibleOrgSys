@@ -95,7 +95,6 @@ pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
-pub use nesting::add_nesting_markers;
 pub use parsing::{
     UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
     parse_figure_attributes, parse_word_attributes,

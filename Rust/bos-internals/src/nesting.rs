@@ -14,6 +14,10 @@ use crate::markers::{
 /// This is the Rust equivalent of the Python `_addNestingMarkers` function.
 /// It also calls `add_verse_start_markers` internally to provide a complete
 /// structural processing in one call, though the functions remain available.
+/// 
+/// Note that although nb is considered as a USFM paragraph marker,
+///   in the BibleOrgSys nesting it acts as a NOP (no-operation)
+///   so it does not cause an existing paragraph to end (¬nb is never added).
 pub fn add_nesting_markers(
     entries: InternalBibleEntryList,
     work_name: &str,
@@ -574,7 +578,7 @@ mod tests {
 
     #[test]
     fn test_oet_lv_haggai_nesting() {
-        let file_path = "src/test_data/OET-LV_HAG.ESFM";
+        let file_path = "test_data/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
 
@@ -620,7 +624,7 @@ mod tests {
 
     #[test]
     fn test_oet_rv_haggai_nesting() {
-        let file_path = "src/test_data/OET-RV_HAG.ESFM";
+        let file_path = "test_data/OET-RV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
         let reader = BufReader::new(file);
 

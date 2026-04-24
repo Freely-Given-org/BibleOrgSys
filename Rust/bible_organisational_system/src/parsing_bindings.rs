@@ -23,7 +23,6 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;
-    m.add_function(wrap_pyfunction!(add_nesting_markers, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
 
     // Extra types
@@ -99,16 +98,4 @@ pub fn set_rust_verbosity(level: u8) {
     log::set_max_level(filter);
     // Forward Rust logs to Python logging
     let _ = pyo3_log::try_init();
-}
-
-/// Add nesting markers to a list of Bible entries.
-#[pyfunction]
-#[pyo3(name = "addNestingMarkers")]
-pub fn add_nesting_markers(
-    entries: PyInternalBibleEntryList,
-    work_name: &str,
-    bos_book_code: &str,
-) -> PyInternalBibleEntryList {
-    let result = bos_internals::nesting::add_nesting_markers(entries.inner, work_name, bos_book_code);
-    PyInternalBibleEntryList { inner: result }
 }
