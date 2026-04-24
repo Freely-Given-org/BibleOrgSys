@@ -82,7 +82,7 @@ from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 
 
-LAST_MODIFIED_DATE = '2026-04-22' # by RJH
+LAST_MODIFIED_DATE = '2026-04-24' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '0.99'
@@ -1431,7 +1431,12 @@ class InternalBibleBook:
             ¬v      1
             v       2
 
-        Note: the six parameters for InternalBibleEntry are
+        NOTE: Although the USFM spec considers 'nb' as a paragraph marker,
+            internally the BibleOrgSys considers it as a NOP (no-operation)
+            i.e., it doesn't close any existing paragraph nesting
+                and nor does '¬nb' ever appear in the output.
+
+        NOTE: the six parameters for InternalBibleEntry are
             marker, originalMarker, adjustedText, cleanText, extras, originalText
         """
         fnPrint( DEBUGGING_THIS_MODULE, f"_addNestingMarkers() for {self.BBB}" )
@@ -2704,6 +2709,17 @@ class InternalBibleBook:
             adjustedMarkerList.append( entryWithVerseStartMarkers.getMarker() )
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(originalMarkerList)} {originalMarkerList=}" )# expected 183 for OET-RV HAG
         vPrint( 'Info', DEBUGGING_THIS_MODULE, f"{len(adjustedMarkerList)} {adjustedMarkerList=}" )# expected 183 for OET-RV HAG
+
+        # # Create files for tests for new Rust implementation
+        # if 'OET' in self.workName and self.BBB=='HAG':
+        #     with open( f'{self.workName}_{self.BBB}_rawLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
+        #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._rawLines)}\n" )
+        #         for n, (marker,text) in enumerate( self._rawLines ):
+        #             debugOutputFile.write( f"{n} {marker=} {text=}\n")
+        #     with open( f'{self.workName}_{self.BBB}_processedLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
+        #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._processedLines)}\n" )
+        #         for n, processedLine in enumerate( self._processedLines ):
+        #             debugOutputFile.write( f"{n} {processedLine}\n")
 
         # Get rid of data that we don't need
         #if not BibleOrgSysGlobals.debugFlag:

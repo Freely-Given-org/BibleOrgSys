@@ -32,8 +32,7 @@ moderniseEnglishWords( htmlStr:str, allowOptions:bool|None=False ) -> str
     May return something like 'endureth/endures' if allowOptions is set.
     This has been used for KJB-1769, KJB-1611, Biships Bible, Geneva Bible, Coverdale Bible,
         and middle-English Wycliffe Bible.
-briefDemo() -> None
-fullDemo() -> None
+briefDemo() -> NonefullDemo() -> None
 main calls fullDemo()
 
 
@@ -809,7 +808,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 (('companyon',),'companion'), (('cumpenyes','cumpanyes','companyes'),'companies'),((' companye ',' cumpenye ',' cumpany ',' cumpeny ',' companie '),' company '),((' companie.',),' company.'),((' companie:',),' company:'),((' cumpany;',),' company;'),
                     ((' coparable',),' comparable'), (('comparisoun','comparyson','compareson'),'comparison'), ((' copared',),' compared'), ((' copare',),' compare'),
                     ((' compassed',' cumpassiden',' cumpasside',' cumpassid',' copassed',' copased'),' compassed/surrounded'),((' cumpassen',),' compassing/surrounding'),((' compasseth',' copaseth'),' compasseth/compasses/surrounds'),((' compass ',' compasse ',' cumpasse ',' compase ',' cumpass ',' cumpas ',' copase '),' compass/all_around '),((' compass,',' compasse,',' cumpas,'),' compass/all_around,'),((' compass.',' cumpas.',),' compass/all_around.'), # Joel 3:11-12
-                        (('compassioun','copassion'),'compassion'),
+                        (('compassioun','copassion'),'compassion'),(('compassio ',),'compassion '),
                     ((' compell ',),' compel '),
                     ((' compyle ',),' compile '),
                     (('complaynte','complaynt','coplaynte'),'complaint'),((' complayned',' coplayned'),' complained'),(('complaynynge',),'complaining'),((' complaine,',),' complain,'),((' coplayne.',),' complain.'),((' complayne:',),' complain:'),
@@ -2894,6 +2893,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
         ((' dred.',),' dreaded/feared.'), # Ecc 3:14
         ((' drooue',),' herd'), # Wycl Num 7:33
     ((' eelde',),' age'), # 1Chr 29:28
+    ((' eft,',),' after,'), # Wycl Mrk 8:1
         ((' ensample',' ensaumple'),' ensample/example'), # Heb 4:11
         ((' ententifli',),' attentively'),((' ententif',),' attentive'), # Wycl 2Chr 33:13, Lam 4:17
         ((' erid ',),' ploughed '), # Hos 10:13
