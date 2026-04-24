@@ -585,4 +585,134 @@ mod tests {
         let result = index.get_verse_entries(&ChapterVerse::new("1", "1"), true);
         assert!(matches!(result, Err(LookupError::NotIndexed)));
     }
+
+    #[test]
+    fn test_oet_lv_haggai_cv_index_build() {
+        let content = include_str!("OET-LV_HAG.ESFM");
+        let mut raw_lines = Vec::new();
+        for line in content.lines() {
+            let (marker, text) = match line.split_once(' ') {
+                Some((m, t)) => (m, t),
+                None => (line, ""),
+            };
+            let marker = marker.strip_prefix('\\').unwrap_or(marker);
+            raw_lines.push((marker.to_string(), text.to_string()));
+        }
+
+        let options = crate::processing::ProcessLinesOptions::default();
+        let entries_final = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
+
+        let mut index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
+        index.build(entries_final).unwrap();
+
+        // It should give the following 58 entries:
+        // 0 startCV=('-1', '0') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=0 cnt=1 ixE=1
+        // 1 startCV=('-1', '1') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=1 cnt=1 ixE=2
+        // 2 startCV=('-1', '2') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=2 cnt=1 ixE=3
+        // 3 startCV=('-1', '3') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=3 cnt=1 ixE=4
+        // 4 startCV=('-1', '4') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=4 cnt=1 ixE=5
+        // 5 startCV=('-1', '5') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=5 cnt=1 ixE=6
+        // 6 startCV=('-1', '6') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=6 cnt=1 ixE=7
+        // 7 startCV=('-1', '7') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=7 cnt=1 ixE=8
+        // 8 startCV=('-1', '8') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=8 cnt=1 ixE=9
+        // 9 startCV=('-1', '9') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=9 cnt=1 ixE=10
+        // 10 startCV=('-1', '10') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=10 cnt=1 ixE=11 ctxt=['headers']
+        // 11 startCV=('-1', '11') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=11 cnt=1 ixE=12 ctxt=['headers']
+        // 12 startCV=('-1', '12') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=12 cnt=1 ixE=13 ctxt=['headers']
+        // 13 startCV=('-1', '13') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=13 cnt=1 ixE=14 ctxt=['headers']
+        // 14 startCV=('-1', '14') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=14 cnt=1 ixE=15 ctxt=['headers']
+        // 15 startCV=('-1', '15') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=15 cnt=1 ixE=16 ctxt=['headers']
+        // 16 startCV=('-1', '16') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=16 cnt=1 ixE=17 ctxt=['headers']
+        // 17 startCV=('-1', '17') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=17 cnt=1 ixE=18
+        // 18 startCV=('1', '0') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=18 cnt=1 ixE=19 ctxt=['chapters']
+        // 19 startCV=('1', '1') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=19 cnt=5 ixE=24 ctxt=['chapters', 'c']
+        // 20 startCV=('1', '2') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=24 cnt=3 ixE=27 ctxt=['chapters', 'c']
+        // 21 startCV=('1', '3') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=27 cnt=3 ixE=30 ctxt=['chapters', 'c']
+        // 22 startCV=('1', '4') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=30 cnt=3 ixE=33 ctxt=['chapters', 'c']
+        // 23 startCV=('1', '5') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=33 cnt=3 ixE=36 ctxt=['chapters', 'c']
+        // 24 startCV=('1', '6') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=36 cnt=3 ixE=39 ctxt=['chapters', 'c']
+        // 25 startCV=('1', '7') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=39 cnt=3 ixE=42 ctxt=['chapters', 'c']
+        // 26 startCV=('1', '8') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=42 cnt=3 ixE=45 ctxt=['chapters', 'c']
+        // 27 startCV=('1', '9') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=45 cnt=3 ixE=48 ctxt=['chapters', 'c']
+        // 28 startCV=('1', '10') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=48 cnt=3 ixE=51 ctxt=['chapters', 'c']
+        // 29 startCV=('1', '11') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=51 cnt=3 ixE=54 ctxt=['chapters', 'c']
+        // 30 startCV=('1', '12') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=54 cnt=3 ixE=57 ctxt=['chapters', 'c']
+        // 31 startCV=('1', '13') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=57 cnt=3 ixE=60 ctxt=['chapters', 'c']
+        // 32 startCV=('1', '14') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=60 cnt=3 ixE=63 ctxt=['chapters', 'c']
+        // 33 startCV=('1', '15') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=63 cnt=4 ixE=67 ctxt=['chapters', 'c']
+        // 34 startCV=('2', '0') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=67 cnt=1 ixE=68 ctxt=['chapters']
+        // 35 startCV=('2', '1') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=68 cnt=5 ixE=73 ctxt=['chapters', 'c']
+        // 36 startCV=('2', '2') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=73 cnt=3 ixE=76 ctxt=['chapters', 'c']
+        // 37 startCV=('2', '3') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=76 cnt=3 ixE=79 ctxt=['chapters', 'c']
+        // 38 startCV=('2', '4') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=79 cnt=3 ixE=82 ctxt=['chapters', 'c']
+        // 39 startCV=('2', '5') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=82 cnt=3 ixE=85 ctxt=['chapters', 'c']
+        // 40 startCV=('2', '6') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=85 cnt=3 ixE=88 ctxt=['chapters', 'c']
+        // 41 startCV=('2', '7') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=88 cnt=3 ixE=91 ctxt=['chapters', 'c']
+        // 42 startCV=('2', '8') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=91 cnt=3 ixE=94 ctxt=['chapters', 'c']
+        // 43 startCV=('2', '9') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=94 cnt=3 ixE=97 ctxt=['chapters', 'c']
+        // 44 startCV=('2', '10') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=97 cnt=3 ixE=100 ctxt=['chapters', 'c']
+        // 45 startCV=('2', '11') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=100 cnt=3 ixE=103 ctxt=['chapters', 'c']
+        // 46 startCV=('2', '12') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=103 cnt=3 ixE=106 ctxt=['chapters', 'c']
+        // 47 startCV=('2', '13') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=106 cnt=3 ixE=109 ctxt=['chapters', 'c']
+        // 48 startCV=('2', '14') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=109 cnt=3 ixE=112 ctxt=['chapters', 'c']
+        // 49 startCV=('2', '15') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=112 cnt=3 ixE=115 ctxt=['chapters', 'c']
+        // 50 startCV=('2', '16') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=115 cnt=3 ixE=118 ctxt=['chapters', 'c']
+        // 51 startCV=('2', '17') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=118 cnt=3 ixE=121 ctxt=['chapters', 'c']
+        // 52 startCV=('2', '18') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=121 cnt=3 ixE=124 ctxt=['chapters', 'c']
+        // 53 startCV=('2', '19') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=124 cnt=3 ixE=127 ctxt=['chapters', 'c']
+        // 54 startCV=('2', '20') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=127 cnt=3 ixE=130 ctxt=['chapters', 'c']
+        // 55 startCV=('2', '21') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=130 cnt=3 ixE=133 ctxt=['chapters', 'c']
+        // 56 startCV=('2', '22') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=133 cnt=3 ixE=136 ctxt=['chapters', 'c']
+        // 57 startCV=('2', '23') CVIndexEntry=InternalBibleBookCVIndexEntry object: ix=136 cnt=5 ixE=141 ctxt=['chapters', 'c']
+        assert_eq!(index.len(), 58);
+
+        // 0 -1:0 Headers='HAG'
+        let (cv0, entry0) = index.index_data.get_index(0).unwrap();
+        assert_eq!(cv0.to_string(), "-1:0");
+        assert_eq!(entry0.entry_index(), 0);
+        assert_eq!(entry0.entry_count(), 1);
+        assert_eq!(entry0.context(), Vec::<CompactString>::new());
+
+        // 10 -1:10 ctxt=['headers']
+        let (cv10, entry10) = index.index_data.get_index(10).unwrap();
+        assert_eq!(cv10.to_string(), "-1:10");
+        assert_eq!(entry10.entry_index(), 10);
+        assert_eq!(entry10.entry_count(), 1);
+        assert_eq!(entry10.context(), ["headers"]);
+
+        // 18 1:0 ctxt=['chapters']
+        let (cv18, entry18) = index.index_data.get_index(18).unwrap();
+        assert_eq!(cv18.to_string(), "1:0");
+        assert_eq!(entry18.entry_index(), 18);
+        assert_eq!(entry18.entry_count(), 1);
+        assert_eq!(entry18.context(), ["chapters"]);
+
+        // 19 1:1 ctxt=['chapters', 'c']
+        let (cv19, entry19) = index.index_data.get_index(19).unwrap();
+        assert_eq!(cv19.to_string(), "1:1");
+        assert_eq!(entry19.entry_index(), 19);
+        assert_eq!(entry19.entry_count(), 5);
+        assert_eq!(entry19.context(), ["chapters", "c"]);
+
+        // 33 1:15 ctxt=['chapters', 'c']
+        let (cv33, entry33) = index.index_data.get_index(33).unwrap();
+        assert_eq!(cv33.to_string(), "1:15");
+        assert_eq!(entry33.entry_index(), 63);
+        assert_eq!(entry33.entry_count(), 4);
+        assert_eq!(entry33.context(), ["chapters", "c"]);
+
+        // 34 2:0 ctxt=['chapters']
+        let (cv34, entry34) = index.index_data.get_index(34).unwrap();
+        assert_eq!(cv34.to_string(), "2:0");
+        assert_eq!(entry34.entry_index(), 67);
+        assert_eq!(entry34.entry_count(), 1);
+        assert_eq!(entry34.context(), ["chapters"]);
+
+        // 57 2:23 ctxt=['chapters', 'c']
+        let (cv57, entry57) = index.index_data.get_index(57).unwrap();
+        assert_eq!(cv57.to_string(), "2:23");
+        assert_eq!(entry57.entry_index(), 136);
+        assert_eq!(entry57.entry_count(), 5);
+        assert_eq!(entry57.context(), ["chapters", "c"]);
+    }
 }

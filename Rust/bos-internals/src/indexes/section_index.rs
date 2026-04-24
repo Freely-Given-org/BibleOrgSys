@@ -883,21 +883,21 @@ mod tests {
     #[test]
     fn test_oet_rv_haggai_section_index_build() {
         let content = include_str!("OET-RV_HAG.ESFM");
-        let mut entries = InternalBibleEntryList::new();
+        let mut raw_lines = Vec::new();
         for line in content.lines() {
             let (marker, text) = match line.split_once(' ') {
                 Some((m, t)) => (m, t),
                 None => (line, ""),
             };
             let marker = marker.strip_prefix('\\').unwrap_or(marker);
-            entries.push(InternalBibleEntry::simple(marker, text));
+            raw_lines.push((marker.to_string(), text.to_string()));
         }
 
-        // Add structural nesting markers
-        let entries_nested = crate::nesting::add_nesting_markers(entries, "OET-RV", "HAG");
+        let options = crate::processing::ProcessLinesOptions::default();
+        let entries_final = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
 
         let mut index = InternalBibleBookSectionIndex::new("OET-RV", "HAG");
-        index.build(entries_nested).unwrap();
+        index.build(entries_final).unwrap();
 
         // It should give the following seven entries:
         //    0 -1:0 InternalBibleBookSectionIndexEntry object: (inclusive) endCV=-1:12 ix=0–12 (cnt=13) Headers='HAG'
@@ -931,8 +931,8 @@ mod tests {
         let (cv2, entry2) = index.index_data.get_index(2).unwrap();
         assert_eq!(cv2.to_string(), "1:1");
         assert_eq!(entry2.end_cv().to_string(), "1:11");
-        assert_eq!(entry2.start_index(), 23);
-        assert_eq!(entry2.end_index(), 57);
+        assert_eq!(entry2.start_index(), 24);
+        assert_eq!(entry2.end_index(), 69);
         assert_eq!(entry2.reason_marker(), "s1");
         assert_eq!(entry2.section_name(), "God's command to rebuild the temple");
 
@@ -940,8 +940,8 @@ mod tests {
         let (cv3, entry3) = index.index_data.get_index(3).unwrap();
         assert_eq!(cv3.to_string(), "1:12");
         assert_eq!(entry3.end_cv().to_string(), "1:15");
-        assert_eq!(entry3.start_index(), 58);
-        assert_eq!(entry3.end_index(), 70);
+        assert_eq!(entry3.start_index(), 70);
+        assert_eq!(entry3.end_index(), 87);
         assert_eq!(entry3.reason_marker(), "s1");
         assert_eq!(entry3.section_name(), "The people start rebuilding");
 
@@ -949,8 +949,8 @@ mod tests {
         let (cv4, entry4) = index.index_data.get_index(4).unwrap();
         assert_eq!(cv4.to_string(), "2:1");
         assert_eq!(entry4.end_cv().to_string(), "2:9");
-        assert_eq!(entry4.start_index(), 71);
-        assert_eq!(entry4.end_index(), 93);
+        assert_eq!(entry4.start_index(), 88);
+        assert_eq!(entry4.end_index(), 119);
         assert_eq!(entry4.reason_marker(), "s1");
         assert_eq!(entry4.section_name(), "The splendour of the new temple");
 
@@ -958,8 +958,8 @@ mod tests {
         let (cv5, entry5) = index.index_data.get_index(5).unwrap();
         assert_eq!(cv5.to_string(), "2:10");
         assert_eq!(entry5.end_cv().to_string(), "2:19");
-        assert_eq!(entry5.start_index(), 94);
-        assert_eq!(entry5.end_index(), 126);
+        assert_eq!(entry5.start_index(), 120);
+        assert_eq!(entry5.end_index(), 164);
         assert_eq!(entry5.reason_marker(), "s1");
         assert_eq!(entry5.section_name(), "Haggai consults the priests");
 
@@ -967,8 +967,8 @@ mod tests {
         let (cv6, entry6) = index.index_data.get_index(6).unwrap();
         assert_eq!(cv6.to_string(), "2:20");
         assert_eq!(entry6.end_cv().to_string(), "2:23");
-        assert_eq!(entry6.start_index(), 127);
-        assert_eq!(entry6.end_index(), 140);
+        assert_eq!(entry6.start_index(), 165);
+        assert_eq!(entry6.end_index(), 182);
         assert_eq!(entry6.reason_marker(), "s1");
         assert_eq!(entry6.section_name(), "God's promise to Zerubavel");
     }

@@ -225,10 +225,12 @@ pub mod paragraph_markers {
     pub const LI3: &str = "li3";
     pub const LI4: &str = "li4";
 
+    pub const NB: &str = "nb";
+
     /// All paragraph markers.
     pub const ALL: &[&str] = &[
         P, PC, PR, M, MI, PM, PMO, PMC, PMR, CLS, PI, PI1, PI2, PI3, PI4, PH, PH1, PH2, PH3, PH4, Q, Q1, Q2, Q3, Q4,
-        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4,
+        QR, QM, QM1, QM2, QM3, QM4, LI, LI1, LI2, LI3, LI4, NB,
     ];
 
     /// Check if a marker is a paragraph marker.
