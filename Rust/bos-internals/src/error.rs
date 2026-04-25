@@ -15,8 +15,8 @@ pub enum ValidationError {
     #[error("Marker '{0}' contains invalid characters (backslash, space, or asterisk)")]
     InvalidMarkerCharacters(String),
 
-    #[error("Clean text cannot contain backslashes")]
-    BackslashInCleanText,
+    #[error("Unexpected backslash in clean text: '{0}'")]
+    BackslashInCleanText(String),
 
     #[error("Note text cannot be empty")]
     EmptyNoteText,

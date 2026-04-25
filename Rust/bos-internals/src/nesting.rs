@@ -194,7 +194,9 @@ pub fn add_nesting_markers(
         }
 
         // Chapter logic
-        if marker == "c" {
+        if marker == "nb" {
+            // nb is a NOP for nesting
+        } else if marker == "c" {
             if let Some(last_open) = open_markers.last().map(|s| s.to_string())
                 && (last_open == "headers" || last_open == "intro")
             {
@@ -606,20 +608,14 @@ mod tests {
         
         println!("Final entries: {}", processed.len());
 
-        assert_eq!(processed.len(), 143, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
+        assert_eq!(processed.len(), 141, "{}", processed.iter().map(|e| e.marker()).collect::<Vec<_>>().join(","));
         
-        // Verify some key structural markers from the Python reference test
-        // TODO: Need to correct these tests which are currently wrong!
-        assert_eq!(processed[5].marker(), "headers");
-        assert_eq!(processed[11].marker(), "¬headers");
-        assert_eq!(processed[12].marker(), "intro");
-        assert_eq!(processed[21].marker(), "¬intro");
-        assert_eq!(processed[22].marker(), "chapters");
-        assert_eq!(processed[23].marker(), "c");
-        assert_eq!(processed[24].marker(), "v=");
-        assert_eq!(processed[140].marker(), "¬nb");
-        assert_eq!(processed[141].marker(), "¬c");
-        assert_eq!(processed[142].marker(), "¬chapters");
+        // Verify some key structural markers from the reference test
+        assert_eq!(processed[9].marker(), "headers");
+        assert_eq!(processed[16].marker(), "¬headers");
+        assert_eq!(processed[17].marker(), "chapters");
+        assert_eq!(processed[18].marker(), "c");
+        assert_eq!(processed[140].marker(), "¬chapters");
     }
 
     #[test]
@@ -653,7 +649,7 @@ mod tests {
 
         assert_eq!(processed.len(), 188, "Expected 188 entries after nesting and verse start markers");
         
-        // Verify some key structural markers from the Python reference test
+        // Verify some key structural markers from the reference test
         assert_eq!(processed[5].marker(), "headers");
         assert_eq!(processed[11].marker(), "¬headers");
         assert_eq!(processed[12].marker(), "intro");

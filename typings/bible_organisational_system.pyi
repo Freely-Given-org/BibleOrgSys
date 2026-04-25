@@ -5,7 +5,6 @@ import typing as t
 __all__ = [
     "getSmallLeadingInt",
     "getPositiveLeadingInt",
-    "parse_word_attributes",
     "set_rust_verbosity",
     "processLines",
     "InternalBibleExtra",
@@ -31,9 +30,6 @@ def getSmallLeadingInt(s: str) -> int:
 
 def getPositiveLeadingInt(s: str) -> int:
     """Extract leading integer from a string (e.g., "17a" -> 17)."""
-
-def parse_word_attributes(word_attribute_string: str) -> dict[str, str]:
-    """Parse word attributes from a USFM3 \w field."""
 
 def set_rust_verbosity(level: int) -> None: ...
 def processLines(

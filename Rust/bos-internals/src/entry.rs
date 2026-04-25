@@ -71,7 +71,7 @@ impl InternalBibleExtra {
             return Err(ValidationError::InvalidNewlineInNote);
         }
         if clean_note_text.contains('\\') {
-            return Err(ValidationError::BackslashInCleanText);
+            return Err(ValidationError::BackslashInCleanText(format!("{} extra: '{}'", extra_type, clean_note_text)));
         }
 
         Ok(Self {
@@ -236,7 +236,7 @@ impl InternalBibleEntry {
         }
 
         if clean_text.contains('\\') {
-            return Err(ValidationError::BackslashInCleanText);
+            return Err(ValidationError::BackslashInCleanText(format!("{} marker: '{}'", marker, clean_text)));
         }
 
         Ok(Self {
@@ -474,7 +474,7 @@ mod tests {
 
         // Backslash in clean text
         let result = InternalBibleExtra::new(ExtraType::Footnote, 0, "note", "\\bad");
-        assert!(matches!(result, Err(ValidationError::BackslashInCleanText)));
+        assert!(matches!(result, Err(ValidationError::BackslashInCleanText(_))));
     }
 
     #[test]
@@ -526,7 +526,7 @@ mod tests {
 
         // Backslash in clean text
         let result = InternalBibleEntry::new("v", "v", "text", "\\bad", None, "text");
-        assert!(matches!(result, Err(ValidationError::BackslashInCleanText)));
+        assert!(matches!(result, Err(ValidationError::BackslashInCleanText(_))));
 
         // Invalid end marker
         let result = InternalBibleEntry::end_marker("v");

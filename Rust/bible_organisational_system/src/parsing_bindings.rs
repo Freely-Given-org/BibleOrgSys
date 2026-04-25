@@ -21,7 +21,6 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
-    m.add_function(wrap_pyfunction!(parse_word_attributes, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
 
@@ -63,26 +62,6 @@ fn get_small_leading_int(s: &str) -> PyResult<i16> {
 #[pyo3(name = "getPositiveLeadingInt")]
 fn get_positive_leading_int(s: &str) -> PyResult<u32> {
     parsing::get_positive_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
-}
-
-/// Parse word attributes from a USFM3 \w field.
-#[pyfunction]
-fn parse_word_attributes(word_attribute_string: &str) -> PyResult<std::collections::HashMap<String, String>> {
-    let attrs = bos_internals::parsing::parse_word_attributes(word_attribute_string)
-        .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
-
-    let mut result = std::collections::HashMap::new();
-    result.insert("word".to_string(), attrs.word);
-    if let Some(lemma) = attrs.lemma {
-        result.insert("lemma".to_string(), lemma);
-    }
-    if let Some(strong) = attrs.strong {
-        result.insert("strong".to_string(), strong);
-    }
-    for (k, v) in attrs.extra {
-        result.insert(k, v);
-    }
-    Ok(result)
 }
 
 #[pyfunction]
