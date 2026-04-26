@@ -210,8 +210,7 @@ pub fn process_lines(
     let mut errors = Vec::new();
 
     for (marker, text) in raw_lines {
-        let marker = marker.as_str();
-        // let text_copy = text.clone();
+        let marker = crate::markers::normalize_marker(marker.as_str());
         log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
         // println!("process_lines: Processing marker {} with text '{}'", marker, text);
         if marker == "v" { // Put the most common marker first for better performance
@@ -516,5 +515,22 @@ mod tests {
         assert!(processed[pc_idx + 1].has_extras());
         assert_eq!(processed[pc_idx + 1].extras().unwrap().len(), 1);
         assert_eq!(processed[pc_idx + 1].extras().unwrap()[0].extra_type(), ExtraType::Figure);
+    }
+
+    #[test]
+    fn test_mt_marker_normalization() {
+        let raw_lines = vec![
+            ("id".to_string(), "GEN".to_string()),
+            ("mt".to_string(), "Genesis".to_string()),
+        ];
+        let options = ProcessLinesOptions::default();
+        let processed = process_lines(raw_lines, "GEN", "WORK", &options);
+
+        let markers: Vec<&str> = processed.iter().map(|e| e.marker()).collect();
+        println!("Markers: {:?}", markers);
+
+        // Check if "mt" was normalized to "mt1"
+        assert!(markers.contains(&"mt1"));
+        assert!(!markers.contains(&"mt"));
     }
 }

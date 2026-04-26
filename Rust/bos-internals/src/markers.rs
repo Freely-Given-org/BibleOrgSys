@@ -318,6 +318,35 @@ pub fn is_never_content_marker(marker: &str) -> bool {
     matches!(marker, "b" | "ib" | "nb" | "ts")
 }
 
+/// Normalize a marker to its standard numbered form if applicable.
+/// E.g., "mt" -> "mt1", "s" -> "s1".
+pub fn normalize_marker(marker: &str) -> &str {
+    match marker {
+        "imt" => "imt1",
+        "is" => "is1",
+        "iq" => "iq1",
+        "ili" => "ili1",
+        "io" => "io1",
+        "imte" => "imte1",
+        "mt" => "mt1",
+        "mte" => "mte1",
+        "ms" => "ms1",
+        "s" => "s1",
+        "pi" => "pi1",
+        "li" => "li1",
+        "ph" => "ph1",
+        "q" => "q1",
+        "qm" => "qm1",
+        "th" => "th1",
+        "thr" => "thr1",
+        "tc" => "tc1",
+        "tcr" => "tcr1",
+        "qt-s" => "qt1-s",
+        "qt-e" => "qt1-e",
+        _ => marker,
+    }
+}
+
 /// Generate an end marker for a given marker.
 ///
 /// End markers are prefixed with `¬` ('not' sign).

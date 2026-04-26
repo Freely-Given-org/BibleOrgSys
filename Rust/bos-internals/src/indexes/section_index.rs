@@ -35,7 +35,7 @@ pub struct SectionIndexEntry {
     /// Index of the last entry for this section (inclusive).
     end_index: u16,
     /// The marker that started this section (e.g., "Headers", "is1", "s1", "c", "c/s1").
-    /// Note that "c/s1" should only occur for Psalms (where each chapter is automatically a new section) and for chapter 1 of any book if there's no initial section heading
+    /// Note that "c/s1" should only occur for Psalms (where each chapter is automatically a new section)
     reason_marker: CompactString,
     /// The section name/heading text.
     section_name: CompactString,
