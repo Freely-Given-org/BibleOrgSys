@@ -6,7 +6,7 @@
 #
 # Module handling the internal objects for Bible books
 #
-# Copyright (C) 2010-2024 Robert Hunt
+# Copyright (C) 2010-2026 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org+BOS@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -84,7 +84,7 @@ from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, BOS_NESTING_MARKERS, BOS_END_MARKERS, getSmallLeadingInt
 
 
-LAST_MODIFIED_DATE = '2025-09-29' # by RJH
+LAST_MODIFIED_DATE = '2026-04-26' # by RJH
 SHORT_PROGRAM_NAME = "BibleIndexes"
 PROGRAM_NAME = "Bible indexes handler"
 PROGRAM_VERSION = '0.94'
@@ -292,7 +292,8 @@ class InternalBibleBookCVIndex:
         """
         # print( f"{self.__indexData.keys()}" )
         desiredCint = int( CVkey[0] )
-        desiredVint = getSmallLeadingInt( CVkey[1] )
+        try: desiredVint = getSmallLeadingInt( CVkey[1] )
+        except ValueError: desiredVint = 0
         indexEntries = []
 
         if complete: # First look for all verse ranges that would match (they probably precede any specific verse entries)

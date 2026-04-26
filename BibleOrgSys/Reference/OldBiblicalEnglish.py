@@ -43,7 +43,7 @@ import BibleOrgSys.BibleOrgSysGlobals as BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 
 
-LAST_MODIFIED_DATE = '2026-04-24' # by RJH
+LAST_MODIFIED_DATE = '2026-04-27' # by RJH
 SHORT_PROGRAM_NAME = "OldBiblicalEnglish"
 PROGRAM_NAME = "OpenBibleData English Language Handling functions"
 PROGRAM_VERSION = '0.97'
@@ -93,6 +93,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
     (('fro God',),'from God'),
     (('gate him ',),'gat him '), # KJB-1611 2 Sam 17:23
     (('get bred',),'get bread'),
+    (('have breade ',),'have bread '), # TNT Mrk 8:4
     (('hadden herd',),'had heard'),(('hath herd',),'hath heard'),(('haue herde',),'have heard'),(('was herd',),'was heard'),(('Y herde',),'I heard'), # 'herd' could be 'heard', but might be a 'herd'
     (('he grette ',),'he greeted '),(('and grette ',),'and greeted '), # Wycl Tob 5:6,11
     (('her heed,',),'her head,'), # Wycl Neh 4:4
@@ -2191,7 +2192,8 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
             ((' settinge',' setten'),' setting'), (('Sette ',),'Set '),((' settide ',' sette ',' sett '),' set '),
                 ((' setled',),' settled'),
             ((' seuerall',),' several'),
-                ((' seuententhe',),' seventeenth'),(('seuenteene','seuentene'),'seventeen'),(('seuenthe','seuenth'),'seventh'),((' seuentithe',),' seventieth'),((' seuentie',' seuenti',' seuentye'),' seventy'), (('Seuene ','Seuen ','Seue '),'Seven '),((' seuene',' seuen',' seue'),' seven'),
+                ((' seuententhe',),' seventeenth'),(('seuenteene','seuentene'),'seventeen'),(('seuenthe','seuenth'),'seventh'),((' seuentithe',),' seventieth'),((' seuentie',' seuenti',' seuentye'),' seventy'),
+                    (('Seuene','Seuen',),'Seven'),(('Seue ',),'Seven '),((' seuene',' seuen',' seue'),' seven'),
             ((' sewe ',),' sew '),
         ((' schadewi',' shadewi',' schadewe',' schadowe',' shadowe',' shadewe',' schadow'),' shadow'),
                 ((' schaft',),' shaft'),
@@ -2709,7 +2711,7 @@ ENGLISH_WORD_MAP = ( # Place longer words first,
                 ((' wheeles',),' wheels'),((' wheele',' whele'),' wheel'),#((' wheele,',),' wheel,'),((' wheele:',),' wheel:'),
                 ((' whelps',' whelppes',' whelpes',' whelpis',' welpes'),' whelps/pups_or_cubs'),((' whelp ',' whelpe '),' whelp/pup_or_cub '),
                 (('Whensoeuer ',),'Whenever '), (('Whanne ','Whane ','Whan ','Whe '),'When '),((' whanne ',' whan ',' whe '),' when '),
-                (('Wher ',),'Where '),(('Wheras ',),'Whereas '),((' wheras ',),' whereas '), ((' wherby',' wherbi'),' whereby'), (('Wherfore','Wherfor'),'Wherefore'),((' wherfore ',' wherfor '),' wherefore '), ((' wherynne ',' wherin '),' wherein '), ((' wherof ',),' whereof '),
+                (('Wher ',),'Where '),(('Wheras ',),'Whereas '),((' wheras ',),' whereas '), ((' wherby',' wherbi'),' whereby'), (('Wherfore','Wherfor'),'Wherefore'),((' wherfore ',' wherfor '),' wherefore '), ((' wherynne ',' wherin '),' wherein '), (('Wherof ',),'Whereof '),((' wherof ',),' whereof '),
                     (('Whidur ever','Wheresoever','Where so ever','Wheresoeuer','Whersoeuer'),'Wherever'),(('wheresoever','wheresoeuer','whersoeuer','whersoever'),'wherever'), (('whervnto',),'whereunto'), (('wherevpon','whervpon','wherupon'),'whereupon'), (('wherwith',),'wherewith'),
                 (('Whethir',),'Whether'),((' whethir',' whidir'),' whether'),
             (('Whiche ','Whyche '),'Which '),((' whiche ',' whyche ',' whis '),' which '),(('(whiche ',),'(which '),
