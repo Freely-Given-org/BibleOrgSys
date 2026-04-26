@@ -22,6 +22,8 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(get_small_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(get_positive_leading_int, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_verbosity, m)?)?;
+    m.add_function(wrap_pyfunction!(set_rust_debug, m)?)?;
+    m.add_function(wrap_pyfunction!(set_rust_strict_checking, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
 
     // Extra types
@@ -64,8 +66,12 @@ fn get_positive_leading_int(s: &str) -> PyResult<u32> {
     parsing::get_positive_leading_int(s).map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))
 }
 
+use bos_internals::{DEBUG, STRICT_CHECKING, VERBOSITY};
+use std::sync::atomic::Ordering;
+
 #[pyfunction]
 pub fn set_rust_verbosity(level: u8) {
+    VERBOSITY.store(level, Ordering::Relaxed); // Store the level (0-4) using Relaxed ordering (fastest)
     let filter = match level {
         0 => log::LevelFilter::Off,
         1 => log::LevelFilter::Warn,
@@ -77,4 +83,14 @@ pub fn set_rust_verbosity(level: u8) {
     log::set_max_level(filter);
     // Forward Rust logs to Python logging
     let _ = pyo3_log::try_init();
+}
+
+#[pyfunction]
+pub fn set_rust_debug(value: bool) {
+    DEBUG.store(value, Ordering::Relaxed);
+}
+
+#[pyfunction]
+pub fn set_rust_strict_checking(value: bool) {
+    STRICT_CHECKING.store(value, Ordering::Relaxed);
 }

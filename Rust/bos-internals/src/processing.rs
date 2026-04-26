@@ -46,8 +46,7 @@ impl Default for ProcessLinesOptions {
 /// footnotes, cross-references, and figures, Strongs numbers.
 /// 
 /// Returns the adjusted text, the clean text (with all markers removed), and a list of extras.
-/// The `line_location` is used for error reporting and is in the format "BOOK_CHAPTER:VERSE".
-pub fn process_line_fix(
+pub fn move_extras_out_of_line(
     text: &str,
     chapter: &str,
     verse: &str,
@@ -118,15 +117,19 @@ pub fn process_line_fix(
         let mut new_adj = String::with_capacity(adj_text.len());
         let mut last_pos = 0;
 
-        static W_RE: LazyLock<Regex> =
-            LazyLock::new(|| Regex::new(r"\\(\+?w)\s+([^|]+)\|([^\\\*]+)\\(\+?w)\*").unwrap());
+        static W_RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(r"\\(?:w\s+([^|]+)\|([^\\\*]+)\\w\*|\+w\s+([^|]+)\|([^\\\*]+)\\\+w\*)").unwrap()
+        });
 
         for cap in W_RE.captures_iter(&adj_text) {
             let full_match = cap.get(0).unwrap();
             new_adj.push_str(&adj_text[last_pos..full_match.start()]);
 
-            let word = &cap[2];
-            let attrs = &cap[3];
+            let (word, attrs) = if let Some(w) = cap.get(1) {
+                (w.as_str(), cap.get(2).unwrap().as_str())
+            } else {
+                (cap.get(3).unwrap().as_str(), cap.get(4).unwrap().as_str())
+            };
 
             new_adj.push_str(word);
             new_adj.push_str(&format!("\\ww {}|{}\\ww*", word, attrs));
@@ -140,8 +143,9 @@ pub fn process_line_fix(
     // 4. Move notes and extras to extras list
     let mut extras = InternalBibleExtraList::new();
 
-    static EXTRA_RE: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"\\(f|fe|x|fig|str|sem|ww|vp)\s+(.*?)\\(f|fe|x|fig|str|sem|ww|vp)\*").unwrap());
+    static EXTRA_RE: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r"\\(?:f\s+(.*?)\\f\*|fe\s+(.*?)\\fe\*|x\s+(.*?)\\x\*|fig\s+(.*?)\\fig\*|str\s+(.*?)\\str\*|sem\s+(.*?)\\sem\*|ww\s+(.*?)\\ww\*|vp\s+(.*?)\\vp\*)").unwrap()
+    });
 
     let mut final_adj = String::with_capacity(adj_text.len());
     let mut last_pos = 0;
@@ -150,24 +154,33 @@ pub fn process_line_fix(
         let full_match = cap.get(0).unwrap();
         final_adj.push_str(&adj_text[last_pos..full_match.start()]);
 
-        let m = &cap[1];
-        let content = &cap[2];
-
-        let extra_type = match m {
-            "f" => ExtraType::Footnote,
-            "fe" => ExtraType::Endnote,
-            "x" => ExtraType::CrossRef,
-            "fig" => ExtraType::Figure,
-            "str" => ExtraType::Strongs,
-            "sem" => ExtraType::Semantic,
-            "ww" => ExtraType::WordWithAttributes,
-            "vp" => ExtraType::VersePublished,
-            _ => continue,
+        let (extra_type, content) = if let Some(c) = cap.get(1) {
+            (ExtraType::Footnote, c.as_str())
+        } else if let Some(c) = cap.get(2) {
+            (ExtraType::Endnote, c.as_str())
+        } else if let Some(c) = cap.get(3) {
+            (ExtraType::CrossRef, c.as_str())
+        } else if let Some(c) = cap.get(4) {
+            (ExtraType::Figure, c.as_str())
+        } else if let Some(c) = cap.get(5) {
+            (ExtraType::Strongs, c.as_str())
+        } else if let Some(c) = cap.get(6) {
+            (ExtraType::Semantic, c.as_str())
+        } else if let Some(c) = cap.get(7) {
+            (ExtraType::WordWithAttributes, c.as_str())
+        } else if let Some(c) = cap.get(8) {
+            (ExtraType::VersePublished, c.as_str())
+        } else {
+            continue;
         };
 
-        let clean_note = content.replace(r"\ft ", "").replace(r"\xt ", "").replace(r"\fqa ", "");
+        let clean_note = content
+            .replace(r"\ft ", "")
+            .replace(r"\xt ", "")
+            .replace(r"\fqa ", "");
 
-        let extra = InternalBibleExtra::new_unchecked(extra_type, final_adj.len(), content, clean_note);
+        let extra =
+            InternalBibleExtra::new_unchecked(extra_type, final_adj.len(), content, clean_note);
         extras.push(extra);
 
         last_pos = full_match.end();
@@ -176,8 +189,9 @@ pub fn process_line_fix(
 
     // 5. Generate clean text by removing all markers
     let mut final_clean = final_adj.clone();
-    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]+(?:\*| )?").unwrap());
+    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z1-4]{1,4}(?:\*| )?").unwrap());
     final_clean = MARKER_RE.replace_all(&final_clean, "").to_string();
+    assert!(!final_clean.contains('\\'), "move_extras_out_of_line {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'", line_location, final_clean, text);
 
     (final_adj, final_clean, extras)
 }
@@ -197,7 +211,48 @@ pub fn process_lines(
 
     for (marker, text) in raw_lines {
         let marker = marker.as_str();
-        if marker == "c" {
+        // let text_copy = text.clone();
+        log::info!("process_lines: Processing marker {} with text '{}'", marker, text);
+        // println!("process_lines: Processing marker {} with text '{}'", marker, text);
+        if marker == "v" { // Put the most common marker first for better performance
+            let mut parts = text.splitn(2, ' ');
+            let v_num_str = parts.next().unwrap_or(&text).to_string();
+            verse = v_num_str.clone();
+
+            if let Some(c_num) = have_waiting_c.take() {
+                processed.push(InternalBibleEntry::new_unchecked(
+                    "c#",
+                    "c",
+                    c_num.clone(),
+                    c_num.clone(),
+                    None,
+                    c_num,
+                ));
+            }
+
+            processed.push(InternalBibleEntry::new_unchecked(
+                "v",
+                "v",
+                verse.clone(),
+                verse.clone(),
+                None,
+                verse.clone(),
+            ));
+
+            if let Some(v_text) = parts.next() {
+                let (adj, clean, extras) =
+                    move_extras_out_of_line(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
+                processed.push(InternalBibleEntry::new_unchecked(
+                    "v~",
+                    "v",
+                    adj,
+                    clean,
+                    Some(extras),
+                    v_text,
+                ));
+            }
+            continue;
+        } else if marker == "c" {
             let c_num = text.split_whitespace().next().unwrap_or(&text).to_string();
             chapter = c_num.clone();
             verse = "0".to_string();
@@ -206,7 +261,7 @@ pub fn process_lines(
             if let Some(pos) = text.find(|c: char| !c.is_ascii_digit() && c != ' ') {
                 let extra = &text[pos..];
                 let (adj, clean, extras) =
-                    process_line_fix(extra, &chapter, &verse, book_code, "c", options, &mut errors);
+                    move_extras_out_of_line(extra, &chapter, &verse, book_code, "c", options, &mut errors);
                 processed.push(InternalBibleEntry::new_unchecked(
                     "c",
                     "c",
@@ -237,44 +292,6 @@ pub fn process_lines(
         } else if marker == "cp" {
             have_waiting_c = Some(text.clone());
             continue;
-        } else if marker == "v" {
-            let mut parts = text.splitn(2, ' ');
-            let v_num_str = parts.next().unwrap_or(&text).to_string();
-            verse = v_num_str.clone();
-
-            if let Some(c_num) = have_waiting_c.take() {
-                processed.push(InternalBibleEntry::new_unchecked(
-                    "c#",
-                    "c",
-                    c_num.clone(),
-                    c_num.clone(),
-                    None,
-                    c_num,
-                ));
-            }
-
-            processed.push(InternalBibleEntry::new_unchecked(
-                "v",
-                "v",
-                verse.clone(),
-                verse.clone(),
-                None,
-                verse.clone(),
-            ));
-
-            if let Some(v_text) = parts.next() {
-                let (adj, clean, extras) =
-                    process_line_fix(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
-                processed.push(InternalBibleEntry::new_unchecked(
-                    "v~",
-                    "v",
-                    adj,
-                    clean,
-                    Some(extras),
-                    v_text,
-                ));
-            }
-            continue;
         } else if matches!(marker, "d" | "iex") && have_waiting_c.is_some() {
             let c_num = have_waiting_c.take().unwrap();
             processed.push(InternalBibleEntry::new_unchecked(
@@ -287,7 +304,7 @@ pub fn process_lines(
             ));
         } else if marker == "cl" && chapter == "-1" {
             let (adj, clean, extras) =
-                process_line_fix(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+                move_extras_out_of_line(&text, &chapter, &verse, book_code, marker, options, &mut errors);
             processed.push(InternalBibleEntry::new_unchecked(
                 "cl¤",
                 marker,
@@ -299,9 +316,12 @@ pub fn process_lines(
             continue;
         }
 
-        let (adj, clean, extras) = process_line_fix(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+        let (adj, clean, extras) = move_extras_out_of_line(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+        // println!("process_lines: After move_extras_out_of_line for marker {}: adj='{}', clean='{}', extras={}", marker, adj, clean, extras.len());
 
-        if (marker == "b" || crate::markers::paragraph_markers::is_paragraph(marker)) && !clean.is_empty() {
+        if (marker == "b" || crate::markers::paragraph_markers::is_paragraph(marker))
+            && (!clean.is_empty() || !extras.is_empty())
+        {
             processed.push(InternalBibleEntry::new_unchecked(marker, marker, "", "", None, ""));
             processed.push(InternalBibleEntry::new_unchecked(
                 "p~",
@@ -321,6 +341,9 @@ pub fn process_lines(
                 text,
             ));
         }
+        // if text_copy.contains("FG_with_text_below.png") {
+        //     panic!("Found FG_with_text_below.png in text: {}='{}'", marker, text_copy);
+        // }
     }
 
     let nested = crate::nesting::add_nesting_markers(processed, work_name, book_code);
@@ -334,8 +357,67 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
-    fn test_process_line_fix() {
-        let (adj_text, clean_text, extras) = process_line_fix(
+    fn test_move_extras_out_of_line() {
+        let (_adj_text, clean_text, extras) = move_extras_out_of_line(
+            r" Mismatched \f footnote \fe* should be ignored. ",
+            "1",
+            "1",
+            "TST",
+            "p",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        // It should NOT extract the mismatched footnote as an extra
+        assert!(extras.is_empty());
+        // Trailing space is trimmed, \f<space> is removed, \fe* is removed
+        assert_eq!(clean_text, " Mismatched footnote  should be ignored.");
+
+        let (_adj_text, clean_text, extras) = move_extras_out_of_line(
+            r" Mismatched \w word|attr \+w* should be ignored. ",
+            "1",
+            "1",
+            "TST",
+            "p",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        // It should NOT extract/convert the mismatched \w
+        assert!(extras.is_empty());
+        assert_eq!(clean_text, " Mismatched word|attr  should be ignored.");
+
+        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+            r"\fig |/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||\fig*",
+            "-1",
+            "16",
+            "FRT",
+            "pc",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        assert_eq!(adj_text, "");
+        assert_eq!(clean_text, "");
+        assert!(extras.len() == 1); // Should have one figure
+        assert_eq!(extras[0].extra_type(), ExtraType::Figure);
+        assert_eq!(extras[0].clean_note_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
+        assert_eq!(extras[0].clean_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
+        
+        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+            r" Praise Yah.\f + \fr 150:? \ft Hebrew \+it hallelujah\+it*\f* ",
+            "150",
+            "6",
+            "PSA",
+            "li1",
+            &ProcessLinesOptions::default(),
+            &mut Vec::new(),
+        );
+        assert_eq!(adj_text, " Praise Yah.");
+        assert_eq!(clean_text, " Praise Yah.");
+        assert!(extras.len() == 1); // Should have one footnote
+        assert_eq!(extras[0].extra_type(), ExtraType::Footnote);
+        assert_eq!(extras[0].clean_note_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
+        assert_eq!(extras[0].clean_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
+        
+        let (adj_text, clean_text, extras) = move_extras_out_of_line(
             r"\f + \fr 8:28 \ft Note: KJB: Exod.8.32\f* and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 \untr DOM¦29091\untr* his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 \untr DOM¦29099\untr* the¦29101÷people¦29101.",
             "8",
             "28",
@@ -351,7 +433,7 @@ mod tests {
         assert_eq!(extras[0].clean_note_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
         assert_eq!(extras[0].clean_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
         
-        let (adj_text, clean_text, extras) = process_line_fix(
+        let (adj_text, clean_text, extras) = move_extras_out_of_line(
             r"The¦283645_vision¦283645_of¦283645 Yəshaˊ\sup yāh\sup*¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziy\sup yāh\sup*¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiy\sup yāh\sup*¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.",
             "1",
             "1",
@@ -364,7 +446,7 @@ mod tests {
         assert_eq!(clean_text, "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.");
         assert!(extras.is_empty());
 
-        let (adj_text, clean_text, extras) = process_line_fix(
+        let (adj_text, clean_text, extras) = move_extras_out_of_line(
             r"Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 \nd YHWH¦283669\nd* he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.",
             "1",
             "2",
@@ -415,38 +497,24 @@ mod tests {
     }
 
     #[test]
-    fn test_oet_rv_process_lines_haggai() {
-        let file_path = "test_data/OET-RV_HAG.ESFM";
-        let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
-        let reader = BufReader::new(file);
-
-        let mut raw_lines = Vec::new();
-        for line in reader.lines() {
-            let line = line.expect("Could not read line");
-            if line.trim().is_empty() {
-                continue;
-            }
-            let (marker, text) = match line.split_once(' ') {
-                Some((m, t)) => (m, t),
-                None => (line.as_str(), ""),
-            };
-            let marker = marker.strip_prefix('\\').unwrap_or(marker);
-            raw_lines.push((marker.to_string(), text.to_string()));
-        }
-
+    fn test_pc_marker_with_fig_in_frt() {
+        let raw_lines = vec![
+            ("id".to_string(), "FRT".to_string()),
+            ("pc".to_string(), r"\fig |/srv/logo.png|span||||\fig*".to_string()),
+        ];
         let options = ProcessLinesOptions::default();
-        let processed = process_lines(raw_lines, "HAG", "OET-RV", &options);
+        let processed = process_lines(raw_lines, "FRT", "WORK", &options);
 
-        println!("Processed {} entries", processed.len());
-        
-        // The results should match test_data/OET-RV_HAG_processedLines.txt
-        assert!(processed.len() == 188);
+        // We expect "id", then "headers" nesting, then "pc" (empty), "p~" (with fig in extras)
+        let markers: Vec<&str> = processed.iter().map(|e| e.marker()).collect();
+        println!("Markers: {:?}", markers);
 
-        // Check some specific entries
-        // Entry 0 should be \id
-        assert_eq!(processed[0].marker(), "id");
-        // Find chapter 1 start
-        let c1_idx = processed.contains_marker("c", None).expect("Should find chapter 1");
-        assert_eq!(processed[c1_idx].clean_text(), "1");
+        // Find "pc"
+        let pc_idx = markers.iter().position(|&m| m == "pc").expect("Should find pc marker");
+        assert_eq!(processed[pc_idx].clean_text(), "");
+        assert_eq!(processed[pc_idx + 1].marker(), "p~");
+        assert!(processed[pc_idx + 1].has_extras());
+        assert_eq!(processed[pc_idx + 1].extras().unwrap().len(), 1);
+        assert_eq!(processed[pc_idx + 1].extras().unwrap()[0].extra_type(), ExtraType::Figure);
     }
 }

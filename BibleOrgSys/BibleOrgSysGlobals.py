@@ -112,7 +112,7 @@ except ImportError:
     import getpass
 
 # Rust implementations for better memory usage and speed (drop-in replacements with camelCase API)
-from bible_organisational_system import set_rust_verbosity
+from bible_organisational_system import set_rust_verbosity, set_rust_debug, set_rust_strict_checking
 
 
 LAST_MODIFIED_DATE = '2026-04-18' # by RJH
@@ -1513,6 +1513,7 @@ def setDebugFlag( newValue=True ) -> None:
     """
     global debugFlag
     debugFlag = newValue
+    set_rust_debug( debugFlag )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {debugFlag=}' )
 # end of BibleOrgSysGlobals.setDebugFlag
 
@@ -1523,6 +1524,7 @@ def setStrictCheckingFlag( newValue=True ):
     """
     global strictCheckingFlag
     strictCheckingFlag = newValue
+    set_rust_strict_checking( strictCheckingFlag )
     dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f'  {strictCheckingFlag=}' )
 # end of BibleOrgSysGlobals.setStrictCheckingFlag
 

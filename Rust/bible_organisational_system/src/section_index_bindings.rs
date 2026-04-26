@@ -8,7 +8,7 @@ use pyo3::exceptions::{PyIndexError, PyKeyError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
-use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEntry};
+use bos_internals::{ChapterVerse, InternalBibleBookSectionIndex, SectionIndexEntry, verbosity_println};
 
 use crate::cv_index_bindings::PyInternalBibleEntryList;
 
@@ -58,6 +58,18 @@ impl PySectionIndexEntry {
         Self {
             inner: SectionIndexEntry::new(end_c, end_v, start_ix, end_ix, reason_marker, section_name, ctx),
         }
+    }
+
+    fn __getnewargs__(&self) -> (String, String, u16, u16, String, String, Option<Vec<String>>) {
+        (
+            self.inner.end_chapter_num_str().to_string(),
+            self.inner.end_verse_num_str().to_string(),
+            self.inner.start_index() as u16,
+            self.inner.end_index() as u16,
+            self.inner.reason_marker().to_string(),
+            self.inner.section_name().to_string(),
+            Some(self.inner.context().iter().map(|s| s.to_string()).collect()),
+        )
     }
 
     // --- Properties (matching Python attribute access) ---
@@ -139,8 +151,8 @@ impl PySectionIndexEntry {
         7
     }
 
-    fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
-        Python::attach(|py| match key_index {
+    fn __getitem__(&self, py: Python<'_>, key_index: isize) -> PyResult<Py<PyAny>> {
+        match key_index {
             0 => Ok(self.inner.end_chapter_num_str().into_pyobject(py)?.into_any().unbind()),
             1 => Ok(self.inner.end_verse_num_str().into_pyobject(py)?.into_any().unbind()),
             2 => Ok(self.inner.start_index().into_pyobject(py)?.into_any().unbind()),
@@ -152,7 +164,7 @@ impl PySectionIndexEntry {
                 Ok(ctx.into_pyobject(py)?.into_any().unbind())
             }
             _ => Err(PyIndexError::new_err("Index out of range")),
-        })
+        }
     }
 
     fn __repr__(&self) -> String {
@@ -196,7 +208,6 @@ impl From<&SectionIndexEntry> for PySectionIndexEntry {
 /// Maps section starting points (C:V) to section entries.
 /// Accepts (str, str) tuples for keys.
 #[pyclass(name = "InternalBibleBookSectionIndex", module = "bible_organisational_system")]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
 pub struct PyInternalBibleBookSectionIndex {
     inner: InternalBibleBookSectionIndex,
 }
@@ -210,6 +221,14 @@ impl PyInternalBibleBookSectionIndex {
         Self {
             inner: InternalBibleBookSectionIndex::new(work_name, bos_book_code),
         }
+    }
+
+    // Pickle needs args for _new_ before it can call _setstate_
+    fn __getnewargs__(&self) -> (String, String) {
+        (
+            self.inner.work_name().to_string(),
+            self.inner.bos_book_code().to_string(),
+        )
     }
 
     // === Properties ===
@@ -278,7 +297,7 @@ impl PyInternalBibleBookSectionIndex {
 
     /// Build the section index from processed entries.
     fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        log::info!("Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_println!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
@@ -328,15 +347,17 @@ impl PyInternalBibleBookSectionIndex {
     }
 
     // Pickling support using rkyv zero-copy serialization.
+    // We pickle self.inner (the Rust struct) instead of the PyO3 wrapper.
     fn __getstate__(&self, py: Python) -> PyResult<Py<PyAny>> {
-        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&self.inner)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(PyBytes::new(py, &bytes).into())
     }
 
     fn __setstate__(&mut self, state: &Bound<'_, PyAny>) -> PyResult<()> {
         let bytes = state.extract::<&[u8]>()?;
-        *self =
-            rkyv::from_bytes::<Self, rkyv::rancor::Error>(bytes).map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        self.inner = rkyv::from_bytes::<InternalBibleBookSectionIndex, rkyv::rancor::Error>(bytes)
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
         Ok(())
     }
 }

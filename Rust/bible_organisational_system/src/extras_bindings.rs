@@ -49,6 +49,15 @@ impl PyInternalBibleExtra {
         Ok(Self { inner })
     }
 
+    fn __getnewargs__(&self) -> (&str, usize, &str, &str) {
+        (
+            self.inner.extra_type().type_str(),
+            self.inner.index(),
+            self.inner.note_text(),
+            self.inner.clean_note_text(),
+        )
+    }
+
     // --- Python-compatible camelCase properties (matching Python attribute access) ---
 
     /// Get the type string.
@@ -103,8 +112,8 @@ impl PyInternalBibleExtra {
         4
     }
 
-    fn __getitem__(&self, key_index: isize) -> PyResult<Py<PyAny>> {
-        Python::attach(|py| match key_index {
+    fn __getitem__(&self, py: Python<'_>, key_index: isize) -> PyResult<Py<PyAny>> {
+        match key_index {
             0 => Ok(self
                 .inner
                 .extra_type()
@@ -116,7 +125,7 @@ impl PyInternalBibleExtra {
             2 => Ok(self.inner.note_text().into_pyobject(py)?.into_any().unbind()),
             3 => Ok(self.inner.clean_note_text().into_pyobject(py)?.into_any().unbind()),
             _ => Err(PyIndexError::new_err("Index out of range")),
-        })
+        }
     }
 
     fn __repr__(&self) -> String {
@@ -226,10 +235,10 @@ impl PyInternalBibleExtraList {
     ///
     /// Returns None if no extras found, a single extra if one found,
     /// or a list if multiple found.
-    fn checkForIndex(&self, string_index: usize) -> PyResult<Py<PyAny>> {
+    fn checkForIndex(&self, py: Python<'_>, string_index: usize) -> PyResult<Py<PyAny>> {
         let matches: Vec<&InternalBibleExtra> = self.inner.iter().filter(|e| e.index() == string_index).collect();
 
-        Python::attach(|py| match matches.len() {
+        match matches.len() {
             0 => Ok(py.None()),
             1 => {
                 let extra = PyInternalBibleExtra::from(matches[0]);
@@ -239,7 +248,7 @@ impl PyInternalBibleExtraList {
                 let list: Vec<PyInternalBibleExtra> = matches.iter().map(|e| PyInternalBibleExtra::from(*e)).collect();
                 Ok(list.into_pyobject(py)?.into_any().unbind())
             }
-        })
+        }
     }
 
     /// Get a short summary string.

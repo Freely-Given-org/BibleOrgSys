@@ -100,3 +100,43 @@ pub use parsing::{
     parse_figure_attributes, parse_word_attributes,
 };
 pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
+
+
+use std::sync::atomic::{AtomicU8, AtomicBool, Ordering};
+
+// A global atomic variable in Rust
+pub static VERBOSITY: AtomicU8 = AtomicU8::new(2);
+pub static STRICT_CHECKING: AtomicBool = AtomicBool::new(false);
+pub static DEBUG: AtomicBool = AtomicBool::new(false);
+
+pub fn set_verbosity(level: u8) {
+    // Store the level (0-4) using Relaxed ordering (fastest)
+    VERBOSITY.store(level, Ordering::Relaxed);
+}
+pub fn get_verbosity() -> u8 {
+    VERBOSITY.load(Ordering::Relaxed)
+}
+
+pub fn set_strict_checking(value: bool) {
+    STRICT_CHECKING.store(value, Ordering::Relaxed);
+}
+pub fn get_strict_checking() -> bool {
+    STRICT_CHECKING.load(Ordering::Relaxed)
+}
+
+pub fn set_debug(value: bool) {
+    DEBUG.store(value, Ordering::Relaxed);
+}
+pub fn get_debug() -> bool {
+    DEBUG.load(Ordering::Relaxed)
+}
+
+// Internal Rust macro for displaying user messages based on verbosity level
+#[macro_export]
+macro_rules! verbosity_println {
+    ($level:expr, $($arg:tt)*) => {
+        if crate::get_verbosity() >= $level {
+            println!($($arg)*);
+        }
+    };
+}

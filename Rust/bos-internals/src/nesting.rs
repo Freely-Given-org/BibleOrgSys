@@ -556,7 +556,7 @@ pub fn add_verse_start_markers(entries: InternalBibleEntryList) -> InternalBible
                                 None,
                                 next_entry.original_text().unwrap_or(""),
                             )
-                            .expect("Valid internal entry"),
+                            .expect("Invalid internal entry"),
                         );
                         break; // Only add one v= for this preceded field
                     } else if !fields_also_preceded.contains(&next_marker)

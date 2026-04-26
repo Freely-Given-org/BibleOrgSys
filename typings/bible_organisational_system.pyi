@@ -6,6 +6,8 @@ __all__ = [
     "getSmallLeadingInt",
     "getPositiveLeadingInt",
     "set_rust_verbosity",
+    "set_rust_debug",
+    "set_rust_strict_checking",
     "processLines",
     "InternalBibleExtra",
     "InternalBibleExtraList",
@@ -32,6 +34,8 @@ def getPositiveLeadingInt(s: str) -> int:
     """Extract leading integer from a string (e.g., "17a" -> 17)."""
 
 def set_rust_verbosity(level: int) -> None: ...
+def set_rust_debug(value: bool) -> None: ...
+def set_rust_strict_checking(value: bool) -> None: ...
 def processLines(
     raw_lines: list[tuple[str, str]],
     book_code: str,
@@ -69,6 +73,7 @@ class InternalBibleExtra:
         location: Location string for error messages (not stored)
         """
 
+    def __getnewargs__(self) -> tuple[str, int, str, str]: ...
     @property
     def myType(self) -> str:
         """Get the type string."""
@@ -167,6 +172,7 @@ class ChapterVerse:
         verse: The verse string (e.g., "16", "17a", "17-25")
         """
 
+    def __getnewargs__(self) -> tuple[str, str]: ...
     @staticmethod
     def intro(verse_line: int) -> t.Self:
         """Create an introduction reference (chapter -1)."""
@@ -246,6 +252,16 @@ class InternalBibleEntry:
         For end markers / added nesting markers, originalMarker through originalText should be None.
         """
 
+    def __getnewargs__(
+        self,
+    ) -> tuple[
+        str,
+        str | None,
+        str | None,
+        str | None,
+        InternalBibleExtraList | None,
+        str | None,
+    ]: ...
     @property
     def marker(self) -> str:
         """Get the (adjusted) marker."""
@@ -396,6 +412,7 @@ class CVIndexEntry:
         context: Optional list of context markers
         """
 
+    def __getnewargs__(self) -> tuple[int, int, list[str] | None]: ...
     @property
     def entryIndex(self) -> int:
         """Get the starting entry index."""
@@ -601,6 +618,9 @@ class InternalBibleBookSectionIndexEntry:
         contextList: Optional list of context markers
         """
 
+    def __getnewargs__(
+        self,
+    ) -> tuple[str, str, int, int, str, str, list[str] | None]: ...
     @property
     def endC(self) -> str: ...
     @property
@@ -649,6 +669,7 @@ class InternalBibleBookSectionIndex:
     def __init__(self, work_name: str, bos_book_code: str) -> None:
         """Create a new empty section index."""
 
+    def __getnewargs__(self) -> tuple[str, str]: ...
     @property
     def workName(self) -> str: ...
     @property

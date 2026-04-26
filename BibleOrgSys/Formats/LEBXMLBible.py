@@ -43,14 +43,13 @@ import multiprocessing
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.Reference.ISO_639_3_Languages import ISO_639_3_Languages
-# from BibleOrgSys.Reference.USFM3Markers import USFM_BIBLE_PARAGRAPH_MARKERS
 from BibleOrgSys.Bible import Bible, BibleBook
 
 
-LAST_MODIFIED_DATE = '2025-09-29' # by RJH
+LAST_MODIFIED_DATE = '2026-04-26' # by RJH
 SHORT_PROGRAM_NAME = "LEBXMLBible"
 PROGRAM_NAME = "LEB XML Bible format handler"
-PROGRAM_VERSION = '0.26'
+PROGRAM_VERSION = '0.27'
 PROGRAM_NAME_VERSION = f'{SHORT_PROGRAM_NAME} v{PROGRAM_VERSION}'
 
 DEBUGGING_THIS_MODULE = False
@@ -457,24 +456,24 @@ class LEBXMLBible( Bible ):
     # end of LEBXMLBible._loadFile function
 
 
-    def addLine( self, marker, rest, alObject ) -> None:
+    def addLEBLine( self, marker, rest, alObject ) -> None:
         """
         Extra shim function to help debugging.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"addLine( {marker=}, {rest=}, ... )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"addLEBLine( {marker=}, {rest=}, ... )" )
         assert isinstance( marker, str ) and marker
         assert isinstance( rest, str ) and rest != 'None', f"{marker=}, {rest=}"
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding line {marker}='{rest}'")
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Adding LEB line {marker}='{rest}'")
         alObject.addLine( marker, rest )
     # end of addLine
 
-    def appendToLastLine( self, appendage, alObject ) -> None:
+    def appendToLastLEBLine( self, appendage, alObject ) -> None:
         """
         Extra shim function to help debugging.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLine( {appendage=}, ... )" )
+        fnPrint( DEBUGGING_THIS_MODULE, f"appendToLastLEBLine( {appendage=}, ... )" )
         assert isinstance( appendage, str ) and appendage
-        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending line '{appendage}'")
+        dPrint( 'Verbose', DEBUGGING_THIS_MODULE, f"===> Appending LEB line '{appendage}'")
         alObject.appendToLastLine( appendage )
     # end of appendToLastLine
 
@@ -540,7 +539,7 @@ class LEBXMLBible( Bible ):
         bookList.append( (thisBook,loadErrors.copy()) )
         loadErrors.clear()
         self.haveBook = True
-        self.addLine( 'ide', 'UTF-8', thisBook )
+        self.addLEBLine( 'ide', 'UTF-8', thisBook )
         doneChapter = False
         for subelement in bookElement:
             BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'kf93', loadErrors )
@@ -548,17 +547,18 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'jf21', loadErrors )
                 self.processChapter( subelement, thisBook, loadErrors )
                 doneChapter = True
+                # if BBB=='PRO' and self.state['C']=='2': halt
             elif subelement.tag == 'pericope': # Some single-chapter books (not OBA but PHM, JDE)
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'jf21', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jf21', loadErrors )
                 if not doneChapter:
-                    self.addLine( 'c', '1', thisBook )
+                    self.addLEBLine( 'c', '1', thisBook )
                     doneChapter = True
-                self.addLine( 's1', subelement.text, thisBook )
+                self.addLEBLine( 's1', subelement.text, thisBook )
             elif subelement.tag == 'p': # Some single-chapter books (not OBA but PHM, JDE)
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'jf21', loadErrors )
                 if not doneChapter:
-                    self.addLine( 'c', '1', thisBook )
+                    self.addLEBLine( 'c', '1', thisBook )
                     doneChapter = True
                 self.processParagraph( subelement, thisBook, loadErrors )
             else:
@@ -591,7 +591,7 @@ class LEBXMLBible( Bible ):
         bits = chapterID.split( ' ' )
         assert len(bits) == 3 if chapterID[1]==' ' else 2 # e.g., '2 Sa 1'
         self.state['C'] = bits[-1]
-        self.addLine( 'c', self.state['C'], thisBook )
+        self.addLEBLine( 'c', self.state['C'], thisBook )
 
         self.state['V'] = '?'
         for subelement in chapterElement:
@@ -601,7 +601,7 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'ld10', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ld01', loadErrors )
                 haveOutstandingSpace = False
-                self.addLine( 's1', subelement.text, thisBook )
+                self.addLEBLine( 's1', subelement.text, thisBook )
                 for sub2element in subelement:
                     if sub2element.tag == 'note':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'gdf3', loadErrors )
@@ -640,7 +640,7 @@ class LEBXMLBible( Bible ):
 
         # Check for an empty paragraph (which we implement as USFM /b)
         if not element.text and len(element) == 0: # No text and no subelements
-            self.addLine( 'b', '', thisBook )
+            self.addLEBLine( 'b', '', thisBook )
             if element.tail:
                 tail = clean( element.tail, loadErrors, location )
                 if tail.strip(): print( f"{tail=}"); halt
@@ -651,7 +651,7 @@ class LEBXMLBible( Bible ):
         if text and text[-1] == ' ':
             text = text[:-1]
             haveOutstandingSpace = True
-        self.addLine( 'p', '' if text is None else text, thisBook )
+        self.addLEBLine( 'p', '' if text is None else text, thisBook )
 
         C = V = '?'
         for subelement in element:
@@ -674,7 +674,7 @@ class LEBXMLBible( Bible ):
                     continue
                 assert subelement.text.strip() == subelement.text
                 self.state['V'] = subelement.text
-                self.addLine( 'v', f'{self.state['V']} ', thisBook )
+                self.addLEBLine( 'v', f'{self.state['V']} ', thisBook )
                 # assert haveOutstandingSpace == False # Why not???
                 haveOutstandingSpace = False
                 if subelement.tail:
@@ -683,11 +683,11 @@ class LEBXMLBible( Bible ):
                         tail = tail[:-1]
                         haveOutstandingSpace = True
                     if tail: # still
-                        self.appendToLastLine( tail, thisBook )
+                        self.appendToLastLEBLine( tail, thisBook )
             elif subelement.tag == 'supplied':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'mns3', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'gd63', loadErrors )
-                self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {subelement.text}\\add*", thisBook )
+                self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\add {subelement.text}\\add*", thisBook )
                 haveOutstandingSpace = False
                 if subelement.tail:
                     tail = clean( subelement.tail, loadErrors, location )
@@ -696,20 +696,20 @@ class LEBXMLBible( Bible ):
                         tail = tail[:-1]
                         haveOutstandingSpace = True
                     if tail: # still
-                        self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             elif subelement.tag == 'note':
                 self.processNote( subelement, thisBook, loadErrors )
             elif subelement.tag == 'tab':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'k6g7', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'dx43', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jd52', loadErrors )
-                self.appendToLastLine( f"  {subelement.tail if subelement.tail else ''}", thisBook ) # Double em-space
+                self.appendToLastLEBLine( f"  {subelement.tail if subelement.tail else ''}", thisBook ) # Double em-space
             elif subelement.tag == 'br':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'k6g7', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'dx43', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jd52', loadErrors )
                 assert not haveOutstandingSpace
-                self.appendToLastLine( '//', thisBook ) # This is the USFM code for an optional line break
+                self.appendToLastLEBLine( '//', thisBook ) # This is the USFM code for an optional line break
                 # TODO: See if this is the correct way to handle the two <br /> in LEB
                 if subelement.tail:
                     tail = clean( subelement.tail, loadErrors, location )
@@ -718,14 +718,14 @@ class LEBXMLBible( Bible ):
                         tail = tail[:-1]
                         haveOutstandingSpace = True
                     if tail: # still
-                        self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             elif subelement.tag == 'span':
                 self.processSpan( subelement, thisBook, loadErrors )
             elif subelement.tag == 'i':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'k6g7', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jd52', loadErrors )
                 assert subelement.text
-                self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\it {subelement.text}\\it*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\it {subelement.text}\\it*{subelement.tail if subelement.tail else ''}", thisBook )
                 haveOutstandingSpace = False
             elif subelement.tag in ('idiom-start','idiom-end'): # should be self-closing
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'sd31', loadErrors )
@@ -733,10 +733,10 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jhw4', loadErrors )
 
                 if subelement.tag == 'idiom-start':
-                    self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
+                    self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
                     haveOutstandingSpace = False
                 elif subelement.tag == 'idiom-end':
-                    self.appendToLastLine( '⌋', thisBook ) # '⌋'
+                    self.appendToLastLEBLine( '⌋', thisBook ) # '⌋'
 
                 if subelement.tail:
                     assert subelement.tail is not None
@@ -748,7 +748,7 @@ class LEBXMLBible( Bible ):
                         haveOutstandingSpace = True
                     else: haveOutstandingSpace = False
                     if tail: # still
-                        self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             else:
                 logging.error( "bvd3 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(bvd3)".format( subelement.tag, subelement.text, location ) )
@@ -776,14 +776,14 @@ class LEBXMLBible( Bible ):
             if subelement.tag in ('li1','li2','li3'):
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'ld10', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'ms25', loadErrors )
-                self.addLine( subelement.tag, '', thisBook )
+                self.addLEBLine( subelement.tag, '', thisBook )
                 text = subelement.text
                 hadOutstandingSpace = haveOutstandingSpace # remember it
                 if text and text[-1] == ' ':
                     text = text[:-1]
                     haveOutstandingSpace = True
                 if text: # still
-                    self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
+                    self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
                 for sub2element in subelement:
                     if sub2element.tag == 'verse-number':
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gdh0', loadErrors )
@@ -803,11 +803,11 @@ class LEBXMLBible( Bible ):
                             # I think this is a random LEB encoding fault like '<p><verse-number id="Ge 2">2</verse-number><verse-number id="Ge 2:1">1</verse-number> And heaven...'
                             continue
                         assert sub2element.text.strip() == sub2element.text
-                        self.addLine( 'v', sub2element.text, thisBook )
+                        self.addLEBLine( 'v', f'{sub2element.text} ', thisBook )
                     elif sub2element.tag == 'supplied':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'mns3', loadErrors )
                         # BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gd63', loadErrors )
-                        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {sub2element.text}\\add*", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\add {sub2element.text}\\add*", thisBook )
                         haveOutstandingSpace = False
                         # if tail := clean( sub2element.tail, loadErrors, location ):
                         #     hadOutstandingSpace = haveOutstandingSpace # Remember it
@@ -904,13 +904,13 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gdf3', loadErrors )
-                        self.appendToLastLine( f"  {sub2element.tail if sub2element.tail else ''}", thisBook ) # Double em-space
+                        self.appendToLastLEBLine( f"  {sub2element.tail if sub2element.tail else ''}", thisBook ) # Double em-space
                     elif sub2element.tag == 'i':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'gdf3', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, location, 'gdf3', loadErrors )
                         assert sub2element.text
-                        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\qs {sub2element.text}\\qs*" if sub2element.text=='Selah' else f"{' ' if haveOutstandingSpace else ''}\\it {sub2element.text}\\it*", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\qs {sub2element.text}\\qs*" if sub2element.text=='Selah' else f"{' ' if haveOutstandingSpace else ''}\\it {sub2element.text}\\it*", thisBook )
                         haveOutstandingSpace = False
                     elif sub2element.tag == 'span':
                         BibleOrgSysGlobals.checkXMLNoText( sub2element, location, 'gdf3', loadErrors )
@@ -922,10 +922,10 @@ class LEBXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'jf56', loadErrors )
 
                         if subelement.tag == 'idiom-start':
-                            self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
+                            self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}⌊", thisBook ) #⌊
                             haveOutstandingSpace = False
                         elif subelement.tag == 'idiom-end':
-                            self.appendToLastLine( '⌋', thisBook ) # '⌋'
+                            self.appendToLastLEBLine( '⌋', thisBook ) # '⌋'
 
                         if subelement.tail:
                             tail = clean( subelement.tail, loadErrors, location )
@@ -935,7 +935,7 @@ class LEBXMLBible( Bible ):
                                 haveOutstandingSpace = True
                             else: haveOutstandingSpace = False
                             if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     else:
                         logging.error( "hsg3 Unprocessed {!r} sub2element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(hsg3)".format( sub2element.tag, sub2element.text, location ) )
@@ -949,7 +949,7 @@ class LEBXMLBible( Bible ):
                                 tail = tail[:-1]
                                 haveOutstandingSpace = True
                             if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             else:
                 logging.error( "lfg3 Unprocessed {!r} subelement ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(lfg3)".format( subelement.tag, subelement.text, location ) )
@@ -968,7 +968,7 @@ class LEBXMLBible( Bible ):
 
         location = 'processNote'
         haveOutstandingSpace = False
-        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\f + \\fr {self.state['C']}:{self.state['V']} \\ft {noteElement.text if noteElement.text else ''}", thisBook )
+        self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\f + \\fr {self.state['C']}:{self.state['V']} \\ft {noteElement.text if noteElement.text else ''}", thisBook )
         for subelement in noteElement:
             if subelement.tag == 'supplied':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'm56d', loadErrors )
@@ -980,7 +980,7 @@ class LEBXMLBible( Bible ):
                         haveOutstandingSpace = True
                 if text: # still
                     # self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
-                    self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\add {text}\\add*", thisBook )
+                    self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\add {text}\\add*", thisBook )
                 for sub2element in subelement:
                     if sub2element.tag == 'i':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'kj4d', loadErrors )
@@ -993,7 +993,7 @@ class LEBXMLBible( Bible ):
                                 text = text[:-1]
                                 haveOutstandingSpace = True
                         if text: # still
-                            self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
+                            self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
                         if sub2element.tail:
                             tail = clean( sub2element.tail, loadErrors, location )
                             hadOutstandingSpace = haveOutstandingSpace # Remember
@@ -1002,7 +1002,7 @@ class LEBXMLBible( Bible ):
                                 haveOutstandingSpace = True
                             else: haveOutstandingSpace = False
                             if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     else:
                         logging.error( "nfg4 Unprocessed {!r} sub3element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub3element ({}) in {}(nfg4)".format( sub2element.tag, sub2element.text, location ) )
@@ -1016,7 +1016,7 @@ class LEBXMLBible( Bible ):
                         haveOutstandingSpace = True
                     else: haveOutstandingSpace = False
                     if tail: # still
-                        self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             elif subelement.tag == 'cite':
                 # Process the attribute(s) first
                 title = None
@@ -1036,7 +1036,7 @@ class LEBXMLBible( Bible ):
                         text = text[:-1]
                         haveOutstandingSpace = True
                 if text: # still
-                    self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
+                    self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{text}", thisBook )
                 for sub2element in subelement:
                     if sub2element.tag == 'i':
                         BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, location, 'kj4d', loadErrors )
@@ -1049,7 +1049,7 @@ class LEBXMLBible( Bible ):
                                 text = text[:-1]
                                 haveOutstandingSpace = True
                         if text: # still
-                            self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
+                            self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}\\it {text}\\it*", thisBook )
                         if sub2element.tail:
                             tail = clean( sub2element.tail, loadErrors, location )
                             hadOutstandingSpace = haveOutstandingSpace # Remember
@@ -1058,7 +1058,7 @@ class LEBXMLBible( Bible ):
                                 haveOutstandingSpace = True
                             else: haveOutstandingSpace = False
                             if tail: # still
-                                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
                     elif sub2element.tag == 'data':
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, location, 'kj4d', loadErrors )
                         BibleOrgSysGlobals.checkXMLNoTail( sub2element, location, 'x4vs', loadErrors )
@@ -1076,7 +1076,7 @@ class LEBXMLBible( Bible ):
                                 halt
                         # print( f"{ref=} {title=} {sub2element.text=}")
                         #assert title == sub2element.text # ref=None title='1 Ch 2:9' sub2element.text='1 Chr 2:9'
-                        self.appendToLastLine( f'\\+jmp {sub2element.text}|link-href="{ref}"\\+jmp*', thisBook )
+                        self.appendToLastLEBLine( f'\\+jmp {sub2element.text}|link-href="{ref}"\\+jmp*', thisBook )
                     else:
                         logging.error( "nfg4 Unprocessed {!r} sub3element ({}) in {}".format( sub2element.tag, sub2element.text, location ) )
                         loadErrors.append( "Unprocessed {!r} sub3element ({}) in {}(nfg4)".format( sub2element.tag, sub2element.text, location ) )
@@ -1090,26 +1090,26 @@ class LEBXMLBible( Bible ):
                         haveOutstandingSpace = True
                     else: haveOutstandingSpace = False
                     if tail: # still
-                        self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                        self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
             elif subelement.tag == 'i':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'b45g', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'k8j7', loadErrors )
                 assert subelement.text
-                self.appendToLastLine( f"\\+it {subelement.text}\\+it*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLEBLine( f"\\+it {subelement.text}\\+it*{subelement.tail if subelement.tail else ''}", thisBook )
             elif subelement.tag == 'b':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'bdf3', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'j45d', loadErrors )
-                self.appendToLastLine( f"\\+bd {subelement.text}\\+bd*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLEBLine( f"\\+bd {subelement.text}\\+bd*{subelement.tail if subelement.tail else ''}", thisBook )
             elif subelement.tag == 'he':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'sfs2', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'jfd5', loadErrors )
                 assert subelement.text
-                self.appendToLastLine( f"\\+wh {subelement.text}\\+wh*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLEBLine( f"\\+wh {subelement.text}\\+wh*{subelement.tail if subelement.tail else ''}", thisBook )
             elif subelement.tag == 'sc':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'bdf3', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'j45d', loadErrors )
                 assert subelement.text
-                self.appendToLastLine( f"\\+sc {subelement.text}\\+sc*{subelement.tail if subelement.tail else ''}", thisBook )
+                self.appendToLastLEBLine( f"\\+sc {subelement.text}\\+sc*{subelement.tail if subelement.tail else ''}", thisBook )
             elif subelement.tag == 'span':
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'ngrt', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'csf2', loadErrors )
@@ -1119,14 +1119,14 @@ class LEBXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoText( subelement, location, 'd43h', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'j45d', loadErrors )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, location, 'b2c9', loadErrors )
-                self.appendToLastLine( '  ', thisBook ) # Double em-space
+                self.appendToLastLEBLine( '  ', thisBook ) # Double em-space
             else:
                 logging.error( "fvc3 Unprocessed {!r} sub2element ({}) in {}".format( subelement.tag, subelement.text, location ) )
                 loadErrors.append( "Unprocessed {!r} sub2element ({}) in {}(fvc3)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 halt
         # Why fails ??? assert not haveOutstandingSpace
-        self.appendToLastLine( '\\f*', thisBook )
+        self.appendToLastLEBLine( '\\f*', thisBook )
         if noteElement.tail:
             tail = clean( noteElement.tail, loadErrors, location )
             hadOutstandingSpace = haveOutstandingSpace # Remember it
@@ -1134,7 +1134,7 @@ class LEBXMLBible( Bible ):
             #     tail = tail[:-1]
             #     haveOutstandingSpace = True # Gets lost
             if tail: # still
-                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
 
         # if DEBUGGING_THIS_FUNCTION: halt
     # end of processNote
@@ -1161,7 +1161,7 @@ class LEBXMLBible( Bible ):
         assert spanStyle
         spanMarker = 'it' # TODO: Could maybe adjust this according to the style ???
         dPrint( 'Info', DEBUGGING_THIS_MODULE, f"processSpan {spanElement.text=} {spanStyle=} {spanMarker=}" )
-        self.appendToLastLine( f"{' ' if haveOutstandingSpace else ''}\\{spanMarker} {spanElement.text if spanElement.text else ''}", thisBook )
+        self.appendToLastLEBLine( f"{' ' if haveOutstandingSpace else ''}\\{spanMarker} {spanElement.text if spanElement.text else ''}", thisBook )
         for subelement in spanElement:
             if subelement.tag == 'note':
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, location, 'kf93', loadErrors )
@@ -1172,7 +1172,7 @@ class LEBXMLBible( Bible ):
                 loadErrors.append( "Unprocessed {!r} subelement ({}) in {}(kj21)".format( subelement.tag, subelement.text, location ) )
                 if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag and BibleOrgSysGlobals.errorOnXMLWarning: halt
                 halt
-        self.appendToLastLine( f'\\{spanMarker}*', thisBook )
+        self.appendToLastLEBLine( f'\\{spanMarker}*', thisBook )
         if spanElement.tail:
             tail = clean( spanElement.tail, loadErrors, location )
             hadOutstandingSpace = haveOutstandingSpace # Remember it
@@ -1180,7 +1180,7 @@ class LEBXMLBible( Bible ):
                 tail = tail[:-1]
                 haveOutstandingSpace = True
             if tail: # still
-                self.appendToLastLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
+                self.appendToLastLEBLine( f"{' ' if hadOutstandingSpace else ''}{tail}", thisBook )
     # end of processSpan
 
 # end of LEBXMLBible class
