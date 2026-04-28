@@ -1,0 +1,27 @@
+[package]
+name = "bos_books_codes"
+version = "0.2.0"
+edition = '2024'
+build = "build.rs"
+authors = ["Robert <Freely.Given.org+BOSBC@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = """
+A library that handles 3-character Bible Books Codes from BibleOrgSys/BOS, as well as several other Bible books codes systems.
+"""
+readme = "README.md"
+homepage = "https://github.com/you/bible_org_sys"
+repository = "https://github.com/you/bible_org_sys"
+keywords = ["BibleOrgSys", "books", "codes", "USFM", "OSIS"]
+categories = ["command-line-utilities", "text-processing", "data-structures"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+phf = { version = "0.13.1", features = ["macros"] }
+
+[dev-dependencies]
+criterion = "0.7.0"
+
+[[bench]]
+name = "my_benchmark"
+harness = false

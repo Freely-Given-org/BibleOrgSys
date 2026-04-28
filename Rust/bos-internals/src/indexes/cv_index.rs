@@ -369,7 +369,7 @@ impl InternalBibleBookCVIndex {
                         }
                         break;
                     }
-                    if next_m == "c" || next_m == "id" {
+                    if next_m == "c" || next_m == "id" || next_m == "¬v" {
                         break;
                     }
                 }
@@ -497,7 +497,10 @@ impl std::fmt::Display for InternalBibleBookCVIndex {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
     use crate::entry::InternalBibleEntry;
+    use crate::ProcessLinesOptions;
+    use crate::process_lines;
 
     fn create_test_entries() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
@@ -627,8 +630,8 @@ mod tests {
             raw_lines.push((marker.to_string(), text.to_string()));
         }
 
-        let options = crate::processing::ProcessLinesOptions::default();
-        let entries_final = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
+        let options = ProcessLinesOptions::default();
+        let entries_final = process_lines(raw_lines, "HAG", "OET-RV", &options);
 
         let mut index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
         index.build(entries_final).unwrap();
@@ -720,8 +723,8 @@ mod tests {
             raw_lines.push((marker.to_string(), text.to_string()));
         }
 
-        let options = crate::processing::ProcessLinesOptions::default();
-        let entries_final = crate::processing::process_lines(raw_lines, "HAG", "OET-RV", &options);
+        let options = ProcessLinesOptions::default();
+        let entries_final = process_lines(raw_lines, "HAG", "OET-RV", &options);
 
         let mut index = InternalBibleBookCVIndex::new("OET-RV", "HAG");
         index.build(entries_final).unwrap();
@@ -812,5 +815,81 @@ mod tests {
         assert_eq!(entry62.entry_index(), 182);
         assert_eq!(entry62.entry_count(), 6);
         assert_eq!(entry62.context(), ["chapters", "c", "p"]);
+    }
+
+    #[test]
+    fn test_oet_lv_indexing() {
+        let test_folder_path = "../../Tests/DataFilesForTests/OET-LV";
+        let mut books = IndexMap::new();
+
+        let paths = fs::read_dir(test_folder_path).expect("Could not read OET-LV folder");
+        for path in paths {
+            let path = path.unwrap().path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("ESFM") {
+                let filename = path.file_name().unwrap().to_str().unwrap();
+                // OET-LV_HAG.ESFM -> HAG
+                let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
+                
+                let content = fs::read_to_string(&path).expect("Could not read file");
+                let mut raw_lines = Vec::new();
+                for line in content.lines() {
+                    if line.trim().is_empty() { continue; }
+                    let (marker, text) = match line.split_once(' ') {
+                        Some((m, t)) => (m, t),
+                        None => (line, ""),
+                    };
+                    let marker = marker.strip_prefix('\\').unwrap_or(marker);
+                    raw_lines.push((marker.to_string(), text.to_string()));
+                }
+
+                let options = ProcessLinesOptions::default();
+                let entries_final = process_lines(raw_lines, bos_book_code, "OET-LV", &options);
+
+                let mut index = InternalBibleBookCVIndex::new("OET-LV", bos_book_code);
+                index.build(entries_final.clone()).unwrap();
+                books.insert(bos_book_code.to_string(), entries_final);
+            }
+        }
+
+        assert!(!books.is_empty(), "Should have loaded some books");
+        
+    }
+
+    #[test]
+    fn test_oet_rv_indexing() {
+        let test_folder_path = "../../Tests/DataFilesForTests/OET-RV";
+        let mut books = IndexMap::new();
+
+        let paths = fs::read_dir(test_folder_path).expect("Could not read OET-RV folder");
+        for path in paths {
+            let path = path.unwrap().path();
+            if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("ESFM") {
+                let filename = path.file_name().unwrap().to_str().unwrap();
+                // OET-RV_HAG.ESFM -> HAG
+                let bos_book_code = filename.split('_').nth(1).unwrap().split('.').next().unwrap();
+                
+                let content = fs::read_to_string(&path).expect("Could not read file");
+                let mut raw_lines = Vec::new();
+                for line in content.lines() {
+                    if line.trim().is_empty() { continue; }
+                    let (marker, text) = match line.split_once(' ') {
+                        Some((m, t)) => (m, t),
+                        None => (line, ""),
+                    };
+                    let marker = marker.strip_prefix('\\').unwrap_or(marker);
+                    raw_lines.push((marker.to_string(), text.to_string()));
+                }
+
+                let options = ProcessLinesOptions::default();
+                let entries_final = process_lines(raw_lines, bos_book_code, "OET-RV", &options);
+
+                let mut index = InternalBibleBookCVIndex::new("OET-RV", bos_book_code);
+                index.build(entries_final.clone()).unwrap();
+                books.insert(bos_book_code.to_string(), entries_final);
+            }
+        }
+
+        assert!(!books.is_empty(), "Should have loaded some books");
+        
     }
 }
