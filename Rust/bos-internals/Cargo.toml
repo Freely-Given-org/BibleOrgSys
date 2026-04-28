@@ -11,12 +11,16 @@ publish = false
 
 [dependencies]
 log.workspace = true
-compact_str.workspace = true
-indexmap.workspace = true
+compact_str = { workspace = true, features = ["rkyv"] }
+indexmap = { workspace = true, features = ["rayon"] }
 num-format = "0.4.4"
 pyo3 = { workspace = true, optional = true }
-regex.workspace = true
+rayon = { workspace = true }
+regex = { workspace = true }
+
 rkyv.workspace = true
+serde = { workspace = true }
+serde_json = { workspace = true }
 thiserror.workspace = true
 
 [dev-dependencies]

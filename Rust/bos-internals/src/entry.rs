@@ -181,7 +181,7 @@ impl std::fmt::Display for InternalBibleExtra {
 /// assert_eq!(entry.clean_text(), "In the beginning...");
 ///
 /// // End marker
-/// let end = InternalBibleEntry::end_marker("¬v").unwrap();
+/// let end = InternalBibleEntry::end_marker("¬v", "").unwrap();
 /// assert!(end.is_end_marker());
 /// ```
 #[derive(Debug, Clone, PartialEq, rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)]
@@ -273,12 +273,15 @@ impl InternalBibleEntry {
 
     /// Create an end marker entry (e.g., `¬v`, `¬p`).
     ///
-    /// End markers only have `marker` and empty `clean_text` set.
+    /// End markers only have `marker` and `clean_text` set.
     ///
     /// # Errors
     ///
     /// Returns `ValidationError` if the marker doesn't start with `¬`.
-    pub fn end_marker(marker: impl Into<CompactString>) -> Result<Self, ValidationError> {
+    pub fn end_marker(
+        marker: impl Into<CompactString>,
+        text: impl Into<CompactString>,
+    ) -> Result<Self, ValidationError> {
         let marker = marker.into();
         if !is_end_marker(&marker) {
             return Err(ValidationError::InvalidEndMarker(marker.to_string()));
@@ -287,7 +290,7 @@ impl InternalBibleEntry {
             marker,
             original_marker: None,
             adjusted_text: None,
-            clean_text: CompactString::new(""),
+            clean_text: text.into(),
             extras: None,
             original_text: None,
         })
@@ -498,10 +501,10 @@ mod tests {
 
     #[test]
     fn test_internal_bible_entry_end_marker() {
-        let entry = InternalBibleEntry::end_marker("¬v").unwrap();
+        let entry = InternalBibleEntry::end_marker("¬v", "1").unwrap();
         assert!(entry.is_end_marker());
         assert_eq!(entry.marker(), "¬v");
-        assert_eq!(entry.clean_text(), "");
+        assert_eq!(entry.clean_text(), "1");
         assert!(entry.original_marker().is_none());
         assert!(entry.adjusted_text().is_none());
     }
@@ -529,7 +532,7 @@ mod tests {
         assert!(matches!(result, Err(ValidationError::BackslashInCleanText(_))));
 
         // Invalid end marker
-        let result = InternalBibleEntry::end_marker("v");
+        let result = InternalBibleEntry::end_marker("v", "");
         assert!(matches!(result, Err(ValidationError::InvalidEndMarker(_))));
     }
 

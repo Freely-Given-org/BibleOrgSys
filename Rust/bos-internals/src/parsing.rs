@@ -10,6 +10,96 @@ use std::collections::HashMap;
 
 use crate::error::ParseError;
 
+/// Leading punctuation characters for word stripping.
+pub const LEADING_WORD_PUNCT_CHARS: &str = "“«„\"‘¿¡‹'([{<";
+/// Trailing punctuation characters for word stripping.
+pub const TRAILING_WORD_PUNCT_CHARS: &str = ",.”»\"’›'?)!;:]}>%…—।";
+/// Medial word punctuation characters.
+pub const MEDIAL_WORD_PUNCT_CHARS: &str = "-";
+
+/// Remove leading and trailing punctuation from words (or strings of words).
+/// Ported from Python stripWordEndsPunctuation.
+pub fn strip_word_ends_punctuation(word_token: &str) -> String {
+    let mut word = word_token.to_string();
+    if word.is_empty() {
+        return word;
+    }
+
+    // Matching pairs for removal
+    let pairs = [
+        ('(', ')'),
+        ('[', ']'),
+        ('{', '}'),
+        ('<', '>'),
+        ('“', '”'),
+        ('‘', '’'),
+        ('«', '»'),
+        ('‹', '›'),
+    ];
+
+    // 1. Remove matching end punctuation pairs
+    for (start_char, end_char) in pairs {
+        if word.starts_with(start_char) && word.ends_with(end_char) {
+            let inner = &word[start_char.len_utf8()..word.len() - end_char.len_utf8()];
+            if !inner.contains(start_char) && !inner.contains(end_char) {
+                word = inner.to_string();
+            }
+        }
+    }
+
+    // 2. Remove non-matching punctuation
+    while !word.is_empty() {
+        let first = word.chars().next().unwrap();
+        if LEADING_WORD_PUNCT_CHARS.contains(first) {
+            // Check if it's part of a pair that's closed later
+            let mut has_match = false;
+            for (s, e) in pairs {
+                if s == first && word.contains(e) {
+                    has_match = true;
+                    break;
+                }
+            }
+            if has_match {
+                break;
+            }
+            word.remove(0);
+        } else {
+            break;
+        }
+    }
+
+    while !word.is_empty() {
+        let last = word.chars().last().unwrap();
+        if TRAILING_WORD_PUNCT_CHARS.contains(last) {
+            let mut has_match = false;
+            for (s, e) in pairs {
+                if e == last && word.contains(s) {
+                    has_match = true;
+                    break;
+                }
+            }
+            if has_match {
+                break;
+            }
+            word.pop();
+        } else {
+            break;
+        }
+    }
+
+    // 3. One more pass for matching pairs that might have been revealed
+    for (start_char, end_char) in pairs {
+        if word.starts_with(start_char) && word.ends_with(end_char) {
+            let inner = &word[start_char.len_utf8()..word.len() - end_char.len_utf8()];
+            if !inner.contains(start_char) && !inner.contains(end_char) {
+                word = inner.to_string();
+            }
+        }
+    }
+
+    word
+}
+
 /// Extract the leading integer from a string.
 ///
 /// This is especially useful for verse numbers like "17a", "17-25", etc.

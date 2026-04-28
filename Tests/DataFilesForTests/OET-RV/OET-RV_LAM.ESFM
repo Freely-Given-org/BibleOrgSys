@@ -1,0 +1,666 @@
+\id LAM - Open English Translation—Readers' Version (OET-RV) v0.1.04
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 LAM
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Sorrows
+\toc1 Sorrows
+\toc2 Sorrows
+\toc3 Sor.
+\mt1 Sorrows
+\mt3 commonly called
+\mt2 Lamentations
+\is1 Introduction
+\ip The document named \bk Sorrows\bk* (or in older English \bk Lamentations\bk*) is this collection of poems or sad songs describing the people's sorrow at the terrible destruction that had happened to Yerushalem, and the capture of it inhabitants 586 year before Yeshua (B.C.). However, despite the sadness displayed by these compositions, it's also possible to see hope shown through trusting Yahweh God and the hope of a better future. These poems were used by Jews\f + \fr 1:0 \ft The Jews were the descendants of Yakov (Jacob) who was later named ‘Israel’. They were named Jews because they had lived in Yudea (Judea) long ago.\f* there in worship at time of fasting and sorrow each year, until today, in order to mourn Yerushalem's destruction.
+\ip Several of these sorrowful chapters are acrostic poems, i.e., the first verse starts with the first Hebrew letter (alef) and the second with the second Hebrew letter (beyt), etc. We have chosen to display those Hebrew letters to help the English reader understand that there is that acrostic background to the poem.
+\iot Main components of this document
+\io1 Yerushalem's sorrows \ior 1:1-22\ior*
+\io1 Yerushalem's punishment \ior 2:1-22\ior*
+\io1 The punishment and the hope \ior 3:1-66\ior*
+\io1 Yerushalem's demolition \ior 4:1-22\ior*
+\io1 A prayer requesting help \ior 5:1-22\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\s1 Yerushalem's sorrows
+\rem /s1 The Deserted City; Sorrow in Jerusalem; Sorrows of captive Zion; The Sorrows of Jerusalem
+\qa \bd א\bd* (Alef)
+\q1
+\v 1 Oh dear, how she sits alone¦331464, that city¦331465, a mighty people¦331467.
+\q1 \add Once\add* powerful among the nations¦331474, she's become like a widow¦331469.
+\q1 ≈\add From being\add* a princess¦331475 among the provinces¦331476, she became a slave.
+\qa \bd ב\bd* (Beyt)
+\q1
+\v 2 She weeps¦331482 excessively in¦331483 the night¦331483, and¦331484 her tears¦331484 are on¦331483 her cheeks¦331486.
+\q1 \add ≈Despite having many\add* lovers¦331493, no one brings her comfort¦331490.
+\q1 ≈All her friends¦331496 betrayed her—they've become¦331499 her enemies¦331501 \add instead\add*.
+\qa \bd ג\bd* (Gimel)
+\q1
+\v 3 Yehudah¦331505 \add (Judah)\add* is exiled¦331504 \add and made to experience\add* suffering and harsh¦331507 slavery.
+\q1 She sits among¦331511 the nations¦331511 \add but¦331507\add* finds no rest.
+\q1 All who pursue¦331517 her, overtake¦331518 her in¦331511 the midst of distress¦331520.
+\qa \bd ד\bd* (Dalet)
+\q1
+\v 4 The roads¦331523 of Tsiyyon¦331524 \add (Zion¦331524)\add* mourn¦331525—no one's coming to the \add ≈scheduled festivals\add*.
+\q1 All her¦331531 gates¦331531 are desolate¦331532. Her priests¦331533 are groaning¦331534.
+\q1 Her young¦331535 women¦331535 are grieving¦331536 and¦331539 she¦331539 makes herself bitter¦331540.
+\qa \bd ה\bd* (He)
+\q1
+\v 5 Her enemies have become¦331545 \add ≈her masters¦331547\add*—her enemies prosper
+\q1 because¦331550 Yahweh¦331552 has made her suffer¦331553 due to her \add ≈frequent disobedience\add*.
+\q1 Her children¦331558 \add ≈get taken away as captives¦331560 by the enemy\add*.
+\qa \bd ו\bd* (Vav)
+\q1
+\v 6 All her¦331575 splendour¦331575 was sent out from the daughter that's Tsiyyon¦331572.
+\q1 Her¦331575 \add ≈leaders\add* have become¦331576 like deer—they can't¦331579 find a pasture¦331582
+\q1 \add ≈so\add* they \add ≈have very little strength¦331586 as they flee from\add* the pursuer¦331588.
+\qa \bd ז\bd* (Zayin)
+\q1
+\v 7 Yerushalem¦331592 remembers¦331591 the days of her suffering and her homelessness¦331595,
+\q1 all her treasures which¦331598 were from former days.
+\q1 When her people¦331603 fell into the hand of the enemy and there¦331607 was no one to help her,
+\q1 her enemies saw her—they laughed¦331612 over her destruction.
+\qa \bd ח\bd* (Het)
+\q1
+\v 8 Yerushalem¦331619 \add ≈disobeyed terribly\add*, therefore¦331620, she became filth.
+\q1 All her glory is scorned, because¦331629 they've seen¦331631 her nakedness¦331632.
+\q1 Again, she groans¦331636 and¦331637 turns¦331637 away.
+\qa \bd ט\bd* (Tet)
+\q1
+\v 9 Her¦331641 uncleanness¦331641 is in¦331642 her skirt¦331642.
+\q1 She didn't¦331643 remember¦331644 her end and¦331646 her descent was marvellous.
+\q1 There wasn't any comforter¦331649 for her.
+\q1 “Oh, Yahweh¦331652, see¦331651 my suffering, because¦331656 the enemy¦331658 is powerful.”
+\qa \bd י\bd* (Yod)
+\q1
+\v 10 The enemy spread¦331662 his hand¦331661 over all her treasures.
+\q1 So, she saw¦331670 the nations¦331671; they entered her sanctuary¦331673—
+\q1 those who you¦331675 \add ≈had forbidden to\add* enter into your \add ≈gathering place\add*.
+\qa \bd כ\bd* (Kaf)
+\q1
+\v 11 All her¦331685 people¦331685 are groaning¦331686, searching for bread¦331688.
+\q1 They give their¦331690 treasures¦331690 to restore¦331694 life¦331695 with¦331693 food¦331688.
+\q1 “O, Yahweh¦331697, look¦331698 and¦331698 see¦331696, for I have become worthless¦331701.
+\qa \bd ל\bd* (Lamed)
+\q1
+\v 12 Is it¦331718 nothing to you, all those going past on the road¦331709?
+\q1 Look and¦331711 see¦331711 if there¦331714 is any sorrow like my sorrow, which has been forced on me,
+\q1 which Yahweh¦331722 inflicted on the day¦331723 of his fierce anger¦331725.
+\qa \bd מ\bd* (Mem)
+\q1
+\v 13 He sent¦331729 fire¦331731 down from on¦331732 high¦331728 into my bones¦331732.
+\q1 He spread¦331734 a net¦331735 for my feet¦331736 and¦331733 turned¦331737 me away.
+\q1 He made me desolate¦331740—\add ≈feeling faint¦331744\add* every day¦331743.
+\qa \bd נ\bd* (Nun)
+\q1
+\v 14 The yoke of my \add ≈disobedience\add* is bound¦331747.
+\q1 \add ≈With his hand¦331750 it's assembled together¦331751 and placed\add* on¦331760 my neck.
+\q1 My strength¦331757 is \add gone so now I\add* stumble.
+\q1 My master¦331759 \add ≈arranged for me to be captured and I couldn't defend myself.\add*
+\qa \bd ס\bd* (Samek)
+\q1
+\v 15 My master has rejected all my mighty¦331770 \add ≈warriors¦331778 protecting me\add*.
+\q1 He has \add ≈told us exactly when he plans\add* to destroy my young¦331778 men¦331778.
+\q1 My master has \add ≈stomped on¦331773 the grapes\add* for Yehudah's¦331785 virgin¦331782 daughter¦331783.
+\qa \bd ע\bd* (Ayin)
+\q1
+\v 16 \add ≈As a result\add* of those things, I weep.
+\q1 My eyes, oh dear, my eyes overflow with water¦331798
+\q1 because the comforter¦331803 is far from me—one who restores¦331804 my life¦331805.
+\q1 My sons have become desolate¦331808, because the enemy¦331811 is made mighty.”
+\qa \bd פ\bd* (Pe)
+\q1
+\v 17 Tsiyyon¦331815 has spread¦331814 her hands¦331816 wide—there¦331817 is no comforter¦331818 for her.
+\q1 Yahweh¦331821 commanded¦331820 that those¦331823 surrounding Yakov¦331822 become his¦331823 enemies.
+\q1 Yerushalem¦331826 has become filth¦331827 in¦331816 \add ≈the middle of them\add*.
+\qa \bd צ\bd* (Tsade)
+\q1
+\v 18 “Yahweh¦331833 is surely righteous¦331831, \add ≈but¦331844\add* I disobeyed his command¦331835.
+\q1 Hear, all peoples, and see my sorrow.
+\q1 My young men and women¦331846 have been taken into captivity¦331849.
+\qa \bd ק\bd* (Qof)
+\q1
+\v 19 I called¦331852 to my lovers¦331853 \add but¦331857\add* they deceived¦331855 me.
+\q1 My priests¦331856 and my elders¦331857 perished¦331859 in¦331858 the city¦331858,
+\q1 while they searched for food \add ≈to stay alive\add*.
+\qa \bd ר\bd* (Resh)
+\q1
+\v 20 Look, O Yahweh¦331872, because I'm engulfed—my¦331882 stomach¦331878 churns.
+\q1 My¦331882 heart¦331881 is undone within¦331882 me, because I've¦331885 disobeyed grievously.
+\q1 Out in¦331882 the street¦331886, the sword¦331889 bereaves¦331887.
+\q1 Inside the house¦331890, \add ≈there's\add* death¦331891.
+\qa \bd ש\bd* (Sin/Shin)
+\q1
+\v 21 \add ≈Take notice\add* because¦331895 I'm groaning¦331896.
+\q1 There's no comforter¦331899 for me.
+\q1 All my enemies¦331903 heard my trouble¦331905—they rejoiced¦331906 that you did it.
+\q1 You brought¦331910 about the day¦331911 \add of punishment\add* that you declared,
+\q1 \add yet may those persecutors\add* become¦331914 like me.
+\qa \bd ת\bd* (Tav)
+\q1
+\v 22 May all their¦331921 evil \add ≈be noticed by\add* you,
+\q1 and deal with them just as you have dealt¦331926 with me because of all my \add ≈disobedience\add*,
+\q1 because my groans¦331935 are many and my heart¦331936 is faint¦331937.”
+\c 2
+\s1 Yahweh's punishment of Yerushalem
+\rem /s1 Zion's hope of relief after punishment; The Lord's Punishment of Jerusalem; God's Warnings Fulfilled; God's Anger at Sin
+\qa \bd א\bd* (Alef)
+\q1
+\v 1 Oh dear, how my master¦331944 engulfed the daughter¦331947 that's Tsiyyon¦331949 in¦331942 his anger.
+\q1 He's thrown¦331950 Yisrael's splendour¦331953 down from heaven¦331951 to earth¦331952.
+\q1 And he hasn't remembered¦331957 the footstool¦331958 of his feet on¦331942 the day of his anger.
+\qa \bd ב\bd* (Beyt)
+\q1
+\v 2 My master¦331966 devoured—he didn't show compassion on¦331976 all the pastures of Yakov.
+\q1 In his fury, he \add ≈knocked\add* down the fortifications¦331977 of the daughter¦331978 of Yehudah¦331980.
+\q1 He struck the earth with¦331976 disgrace—the kingdom¦331984 and its \add ≈leaders\add*.
+\qa \bd ג\bd* (Gimel)
+\q1
+\v 3 With fierce¦331989 anger¦331993 he cut off \add ≈all of Yisrael's power\add*.
+\q1 He \add ≈stopped using his strength to protect her from\add* the enemy¦332001.
+\q1 And he has burned¦332002 Yakov—it consumed¦332006 the surroundings like a fire¦332004.
+\qa \bd ד\bd* (Dalet)
+\q1
+\v 4 He's bent his bow like an enemy¦332012.
+\q1 His \add ≈sword\add* hand¦332014 is posed like an adversary.
+\q1 And he has slain¦332016 all those precious to the eye¦332020 in¦332021 the tent¦332021 of the daughter¦332022 that's Tsiyyon¦332024.
+\q1 He has poured¦332025 out his rage¦332027 like fire¦332026.
+\qa \bd ה\bd* (He)
+\q1
+\v 5 My master¦332031 has become¦332030 like an enemy¦332033—he's swallowed up Yisrael¦332035.
+\q1 He has swallowed up all her palaces¦332039—he's destroyed its fortifications¦332041.
+\q1 And he has multiplied¦332042 mourning¦332046 and lamentation¦332047 within the daughter¦332043 of Yehudah¦332045.
+\qa \bd ו\bd* (Vav)
+\q1
+\v 6 And he was violent¦332050 with¦332058 his garden¦332051 tent—he ruined¦332053 his appointed place¦332054.
+\q1 Yahweh¦332056 has caused¦332055 the appointed festival and Sabbath to be forgotten¦332055 in Tsiyyon¦332058.
+\q1 And he has despised¦332061 the king¦332065 and priest¦332066 in his indignant¦332062 anger¦332064.
+\qa \bd ז\bd* (Zayin)
+\q1
+\v 7 My master¦332070 has rejected¦332069 his altar¦332072—he abandoned his sanctuary¦332074.
+\q1 He has \add ≈allowed the enemy¦332078\add* \add to enter via\add* the walls¦332079 of her¦332080 palaces¦332080.
+\q1 They raised a shout in¦332076 Yahweh's¦332085 house¦332083, like on¦332076 an appointed¦332087 festival day¦332086.
+\qa \bd ח\bd* (Het)
+\q1
+\v 8 Yahweh¦332091 planned¦332090 to destroy¦332093 the wall of the daughter¦332095 that's Tsiyyon¦332097.
+\q1 He stretched¦332098 out the measuring¦332099 line.
+\q1 He didn't¦332100 withhold his hand¦332103 from devouring,
+\q1 and he's brought the ramparts¦332107 and wall to mourning¦332105. Together they¦332110 wasted away.
+\qa \bd י\bd* (Yod)
+\q1
+\v 9 Her gates¦332115 sank into the ground.
+\q1 He has destroyed¦332116 and shattered \add #their\add* \add locking\add* bars.
+\q1 Her king¦332119 and her \add ≈leaders\add* are among¦332121 the nations¦332121. There's no law.
+\q1 Also, her prophets¦332126 don't¦332122 \add ≈receive any visions¦332130\add* from Yahweh¦332131.
+\qa \bd י\bd* (Yod)
+\q1
+\v 10 They sit¦332134 on the ground.
+\q1 The elders¦332137 of the daughter¦332138 that's Tsiyyon¦332140 are silenced¦332136.
+\q1 They have thrown up dust on their heads and put on sackcloth¦332147.
+\q1 Yerushalem's¦332152 young women have bowed their heads to the ground.
+\qa \bd כ\bd* (Kaf)
+\q1
+\v 11 My eyes¦332157 have failed¦332155 with¦332156 tears¦332156.
+\q1 My stomach¦332159 churns.
+\q1 My inner parts¦332159 are poured¦332160 out to the ground¦332161, because¦332169 of the destruction of the daughter¦332166 of my people¦332168,
+\q1 when child¦332170 and¦332171 infant¦332171 faint¦332169 in¦332156 the streets¦332172 of the town¦332173.
+\qa \bd ל\bd* (Lamed)
+\q1
+\v 12 They \add ≈ask\add* their mothers¦332176, “Where's \add ≈our food and drink\add*?”
+\q1 when they faint¦332181 like the slain in the streets¦332183 of the city¦332184,
+\q1 when \add ≈they die slowly\add* in their mothers' laps.
+\qa \bd מ\bd* (Mem)
+\q1
+\v 13 What can I testify¦332195 to you?
+\q1 To what can I compare you, daughter of Yerushalem¦332201?
+\q1 To what can I liken¦332197 you, that I may comfort¦332206 you, virgin¦332207 daughter that's Tsiyyon¦332210?
+\q1 Because your brokenness¦332215 is as great¦332213 as the sea.
+\q1 Who can heal you?
+\qa \bd נ\bd* (Nun)
+\q1
+\v 14 Your prophets¦332222 have ‘seen’ false and worthless¦332226 visions for you,
+\q1 and they didn't¦332227 expose your \add ≈disobedience\add*, to restore¦332233 your fortunes¦332234,
+\q1 but¦332226 they have ‘received’ false and enticing¦332240 \add ≈messages\add* for you.
+\qa \bd ס\bd* (Samek)
+\q1
+\v 15 All those¦332248 passing on the road¦332249 clap their hands at you¦332244.
+\q1 They hiss and shake¦332251 their heads¦332252 at the daughter¦332255 of Yerushalem¦332256.
+\q1 “Is this the city¦332258 that they called¦332259 ‘the fullness of beauty¦332261 \add ≈that makes the whole world happy\add*’?”
+\qa \bd ע\bd* (Ayin)
+\q1
+\v 16 All your enemies¦332273 \add ≈spoke out\add* against¦332269 you¦332269.
+\q1 They hiss and grind their¦332270 teeth.
+\q1 They say, “We have devoured.
+\q1 Surely this is the \add ≈time we'd longed\add* for.
+\q1 We have found¦332284, we have seen¦332285.”
+\qa \bd פ\bd* (Pe)
+\q1
+\v 17 Yahweh¦332289 has done¦332288 what he planned¦332291.
+\q1 He's fulfilled¦332292 the message¦332293 that¦332294 he commanded¦332295 in ancient times.
+\q1 He has overthrown and shown no compassion,
+\q1 and the enemy¦332304 rejoiced¦332302 over you.
+\q1 He has \add ≈enabled your enemies to get stronger\add*.
+\qa \bd צ\bd* (Tsade)
+\q1
+\v 18 Their heart¦332311 cried¦332310 out to my master¦332314,
+\q1 “You walls of the daughter that's Tsiyyon¦332318.”
+\q1 Like a tearful river¦332320, let your tears flow down day and night¦332323.
+\q1 Don't \add ≈allow yourself any relief from it\add*.
+\q1 Don't rest your eyes \add from the tears\add*.
+\qa \bd ק\bd* (Qof)
+\q1
+\v 19 Arise, shout in the night at the beginning¦332342 of the night watches.
+\q1 Pour out your heart¦332346 like water¦332345 in front¦332347 of my master¦332349.
+\q1 Lift up your hands¦332352 to him for the life¦332355 of your children¦332356 who are fainting¦332357 with¦332340 hunger¦332358 at the end of every street¦332362.
+\qa \bd ר\bd* (Resh)
+\q1
+\v 20 Look, Yahweh¦332382, and see¦332365 those you¦332369 have dealt¦332369 with¦332381 in this way.
+\q1 Should women¦332374 eat¦332373 their¦332375 own newborn children¦332376?
+\q1 Should \add #priests and prophets¦332384\add* be slaughtered in my master's¦332382 sanctuary¦332381?
+\qa \bd ש\bd* (Sin/Shin)
+\q1
+\v 21 The young and the old lie down in the dirt in the streets¦332389.
+\q1 My young men and women¦332392 have fallen¦332394 by the sword¦332395.
+\q1 You've \add had them\add* struck down—\add ≈at¦332395 the time\add* of your¦332398 anger¦332398 you slaughtered¦332399.
+\q1 You showed no compassion.
+\qa \bd ת\bd* (Tav)
+\q1
+\v 22 You've summoned \add ≈terrors¦332407 to surround me like summoning people to\add* a festival day,
+\q1 and there wasn't anyone who escaped¦332415 or survived¦332416 on the day of Yahweh's¦332414 anger¦332412.
+\q1 Those who I birthed¦332419 and multiplied, my enemy¦332421 has ended.
+\c 3
+\s1 Yahweh's love
+\rem /s1 God's Steadfast Love Endures; Punishment, Repentance, and Hope; Hope in the Lord's Faithfulness
+\qa \bd א\bd* (Alef)
+\q1
+\v 1 I¦332425 am the man¦332426 \add ≈made to suffer from\add* the rod of his fury.
+\q1
+\v 2 He led me and \add ≈took me into\add* darkness¦332435—not light¦332438.
+\q1
+\v 3 He certainly turned¦332443 against me—\add ≈he put the screws on¦332441 me\add* all day¦332447.
+\qa \bd ב\bd* (Beyt)
+\q1
+\v 4 He made my skin and¦332452 my flesh¦332451 waste¦332450 away.
+\q1 He shattered my bones¦332454.
+\q1
+\v 5 He built¦332456 \add a ramp\add* up against¦332457 me
+\q1 and besieged¦332458 me with bitterness and hardship¦332460.
+\q1
+\v 6 He makes me live in darkness¦332462
+\q1 like the dead¦332464 of long ago.
+\qa \bd ג\bd* (Gimel)
+\q1
+\v 7 He built a wall around¦332469 me \add ≈so\add* I can't¦332470 \add ≈escape\add*.
+\q1 He made my¦332473 chains¦332473 heavy¦332472.
+\q1
+\v 8 Even though I call out and cry for help,
+\q1 he shuts out my prayer¦332480.
+\q1
+\v 9 He \add ≈made roadblocks\add* with¦332484 \add large\add* cut stones¦332484.
+\q1 ≈He \add ≈made it difficult to get anywhere\add*.
+\qa \bd ד\bd* (Dalet)
+\q1
+\v 10 He's a bear lying in¦332495 wait for me—
+\q1 a lion¦332493 hiding¦332495 \add ready to attack\add*.
+\q1
+\v 11 He \add ≈obstructed\add* my paths and¦332499 tore me apart.
+\q1 He's \add ≈isolated\add* me.
+\q1
+\v 12 He bent his bow \add back\add*
+\q1 and¦332508 set me up like a target¦332509 for an arrow¦332510.
+\qa \bd ה\bd* (He)
+\q1
+\v 13 He pierced my kidneys¦332514
+\q1 with¦332514 the arrows from his quiver¦332516.
+\q1
+\v 14 I became a joke to all the people¦332523 \add groups\add*—
+\q1 the \add one\add* they mocked all day¦332527 \add long\add*.
+\q1
+\v 15 He filled me with bitterness.
+\q1 He stuffed me with \add ≈bitter herbs\add*.
+\qa \bd ו\bd* (Vav)
+\q1
+\v 16 He made my teeth¦332537 grind with¦332536 gravel¦332536.
+\q1 He made me cower¦332538 in¦332536 the dust.
+\q1
+\v 17 \add Now\add* \add ≈I can't find any inner\add* peace¦332542.
+\q1 I've¦332544 forgotten¦332544 \add ≈what prosperity is\add*.
+\q1
+\v 18 Then¦332547 I said¦332547, “My endurance¦332549 has \add ≈come to an end\add*,
+\q1 as has my hope in Yahweh¦332551.”
+\qa \bd ז\bd* (Zayin)
+\q1
+\v 19 Remember my suffering and my wanderings,
+\q1 the wormwood¦332558 and bitterness¦332559.
+\q1
+\v 20 It continually remembers¦332561
+\q1 and¦332563 my \add ≈insides turn to butter\add*.
+\q1
+\v 21 \add ≈I bring¦332569 that to mind¦332572\add*,
+\q1 therefore¦332573 I have hope.
+\qa \bd ח\bd* (Het)
+\q1
+\v 22 Yahweh's¦332580 loyal¦332579 commitment doesn't cease.
+\q1 His mercy doesn't end.
+\q1
+\v 23 \add @His loyal commitment and his mercy\add* are new morning by morning.
+\q1 \add ≈He is very faithful¦332594\add*.
+\q1
+\v 24 “Yahweh¦332597 is my portion,” \add ≈I told myself\add*,
+\q1 “therefore¦332600, I'll¦332603 \add place my\add* hope in him.”
+\qa \bd ט\bd* (Tet)
+\q1
+\v 25 Yahweh¦332608 is good¦332607 to those¦332609 who \add ≈depend on\add* him—
+\q1 to \add ≈anyone sincerely wanting to follow\add* him.
+\q1
+\v 26 It is good¦332615 to be silent¦332617 and wait
+\q1 for Yahweh¦332619 \add ≈to rescue us\add*.
+\q2
+\v 27 It's good¦332621 for \add #people\add* \add ≈to experience hardship while they're young\add*.
+\qa \bd י\bd* (Yod)
+\q1
+\v 28 A person should¦332630 sit¦332630 alone¦332631 and¦332632 stay quiet
+\q1 \add ≈when they've been disciplined\add* \add by Yahweh\add*.
+\q1
+\v 29 Let him¦332637 put his mouth¦332639 in¦332638 the dust—
+\q1 perhaps¦332640 there's¦332641 hope.
+\q1
+\v 30 Let him offer his¦332645 cheek¦332646 to the person striking¦332645 him.
+\q1 Let him be filled with¦332648 shame.
+\qa \bd כ\bd* (Kaf)
+\q1
+\v 31 My master¦332655 won't¦332652 reject¦332653 \add his people\add* forever¦332654.
+\q1
+\v 32 Though he brings grief¦332660,
+\q1 he will be merciful \add ≈due to the strength\add* of his loyal¦332663 commitment,
+\q1
+\v 33 because he doesn't \add ≈enjoy making people suffer\add*
+\q1 ≈or \add ≡delight\add* in making \add ≈humanity\add* grieve¦332670.
+\qa \bd ל\bd* (Lamed)
+\q1
+\v 34 Crushing all the prisoners¦332683 of the earth under¦332680 his feet¦332681,
+\q1
+\v 35 denying a person justice¦332687 before¦332690 the highest \add >one\add*,
+\q1
+\v 36 subverting¦332694 a person's lawsuit¦332696—the master¦332697 approves none of those.
+\qa \bd מ\bd* (Mem)
+\q1
+\v 37 Who \add ≈said that and made it happen¦332705, if it wasn't\add* my master¦332706?
+\q1
+\v 38 Didn't \add both\add* trouble¦332714 and¦332715 good¦332715 come from the \add ≈command\add* of the highest \add >one\add*?
+\q1
+\v 39 How can any living¦332721 person¦332720 complain¦332719 \add ≈when it's their disobedience that they're getting punished for\add*?
+\qa \bd נ\bd* (Nun)
+\q1
+\v 40 Let's examine our¦332730 \add ≈behaviour\add*
+\q1 and \add then\add* \add ≈strive to\add* return¦332732 to Yahweh¦332735.
+\q1
+\v 41 Let us lift up our hearts¦332738
+\q1 with¦332745 our hands \add ≡lifted\add* to God¦332744 in¦332745 heaven¦332745.
+\q1
+\v 42 We've¦332747 certainly \add ≈broken your rules\add* and disobeyed you.
+\q1 You haven't forgiven¦332752 \add us\add*.
+\qa \bd ס\bd* (Samek)
+\q1
+\v 43 You wrapped yourself¦332755 with¦332756 anger¦332756 and¦332757 chased after us.
+\q1 You killed¦332758 without showing any pity.
+\q1
+\v 44 You enveloped yourself in¦332763 a cloud¦332763,
+\q1 so that no prayers¦332766 could get through¦332765.
+\q1
+\v 45 You cause us to be considered as outcasts
+\q1 and¦332769 as garbage among the nations.
+\qa \bd ע\bd* (Ayin)
+\q1
+\v 46 All our¦332780 enemies¦332780 \add ≈spoke out\add* against¦332776 us.
+\q1
+\v 47 Panic and pitfall¦332783 have come for us—
+\q1 devastation¦332786 and destruction¦332787.
+\q1
+\v 48 My eyes¦332793 run with streams of water¦332791
+\q1 because my people¦332799 have been destroyed.
+\qa \bd פ\bd* (Pe)
+\q1
+\v 49 My \add ≈tears flowed continually without any\add* relief,
+\q1
+\v 50 until Yahweh¦332813 looked down from heaven¦332814 and¦332812 saw.
+\q1
+\v 51 \add ≈What I see grieves my insides\add*,
+\q1 because of \add the suffering\add* of the city's daughters¦332820.
+\qa \bd צ\bd* (Tsade)
+\q1
+\v 52 My enemies¦332827 certainly hunted¦332825 me without¦332828 cause¦332828—
+\q1 like \add ≡hunting\add* a bird.
+\q1
+\v 53 They \add ≈shut down my¦332832 life¦332832 by throwing¦332833 me\add* into a pit,
+\q1 and¦332833 \add then\add* \add ≈heaving a rock¦332835 onto the top\add*.
+\q1
+\v 54 They made water¦332840 flow over my head¦332843.
+\q1 I said¦332844, ‘\add ≈This must be my end\add*!’
+\qa \bd ק\bd* (Qof)
+\q1
+\v 55 I¦332848 called¦332848 out your¦332849 name¦332849, Yahweh¦332850, from the depths of the pit.
+\q1
+\v 56 You heard¦332855 my voice.
+\q1 ‘Don't¦332856 \add ≈ignore my\add* cry¦332861 for help¦332861
+\q1 \add and my need for\add* relief¦332860.’
+\q1
+\v 57 You approached \add me\add* when I called¦332865 you
+\q1 \add and\add* \add ≈told me not to be afraid\add*.
+\qa \bd ר\bd* (Resh)
+\q1
+\v 58 My master¦332873, you \add ≈helped with my internal conflict\add*.
+\q1 You \add ≈paid out to save\add* my life¦332877.
+\q1
+\v 59 \add ≈Yes,\add* Yahweh¦332880, you saw my suffering.
+\q1 Judge my case.
+\q1
+\v 60 You've seen¦332885 all their insults—
+\q1 all their plots¦332891 against me.
+\qa \bd ש\bd* (Sin/Shin)
+\q1
+\v 61 You've heard¦332895 their scorn, Yahweh¦332897—
+\q1 all their plots¦332900 against¦332901 me.
+\q1
+\v 62 \add ≈Those harassing me spend all day¦332909 speaking out\add* against me
+\q1 and¦332905 \add singing\add* songs against me.
+\q1
+\v 63 See¦332914 how, whether they're sitting¦332911 or rising¦332912,
+\q1 \add they have\add* their mocking¦332915 song.
+\qa \bd ת\bd* (Tav)
+\q1
+\v 64 You, Yahweh¦332921, will \add ≈pay them back for what they've done\add*.
+\q1
+\v 65 Give them \add ≈over to shamelessness¦332927\add*.
+\q1 May your¦332930 curse¦332930 be on them.
+\q1
+\v 66 Chase after them in¦332934 your anger¦332934,
+\q1 and¦332935 \add ≈wipe them off the face of the earth\add*, Yahweh¦332938.
+\c 4
+\s1 Tsiyyon's punishment
+\rem /s1 The Punishment of Zion; God's Anger Satisfied; Jerusalem after Its Fall
+\qa \bd א\bd* (Alef)
+\q1
+\v 1 Wow, how the gold is tarnished—the pure gold has changed¦332944.
+\q1 The holy stones¦332948 are scattered¦332947 on¦332951 the \add #corners\add* of every street¦332954.
+\qa \bd ב\bd* (Beyt)
+\q1
+\v 2 The precious¦332959 sons of Tsiyyon¦332958 were \add ≈once comparable\add* with¦332961 fine gold¦332961.
+\q1 \add ≈Now\add* they're regarded as clay jars—the work¦332967 of a potter's¦332969 hands¦332968.
+\qa \bd ג\bd* (Gimel)
+\q1
+\v 3 Even the jackals¦332974 offer \add ≈their teats to\add* suckle¦332978 their cubs,
+\q1 \add but\add* my people¦332982 are fierce like the ostriches in¦332987 the wilderness¦332987.
+\qa \bd ד\bd* (Dalet)
+\q1
+\v 4 The tongue¦332991 of the breast-feeding baby sticks to the roof¦332995 of his mouth¦332995 with¦332999 thirst¦332999.
+\q1 The children¦333000 ask for food¦333002 from those distributing \add it, but\add* there's¦333004 none for them.
+\qa \bd ה\bd* (He)
+\q1
+\v 5 Those \add used to\add* eating¦333008 the finest food are \add now\add* desolate¦333010 in¦333011 the streets¦333011.
+\q1 Those \add once\add* \add ≈attended\add* by \add servants wearing\add* scarlet \add now\add* embrace¦333015 \add ≈piles of rubbish\add*.
+\qa \bd ו\bd* (Vav)
+\q1
+\v 6 The guilt of my people¦333023 is greater¦333019 than Sodom's¦333025 sin¦333024.\x + \xo 4:6: \xt Gen 19:24.\x*
+\q1 \add @That city\add* was overthrown¦333026 in¦333033 an instant, \add ≈but¦333019 no one shed any tears about¦333032 it\add*.
+\qa \bd ז\bd* (Zayin)
+\q1
+\v 7 Her¦333038 \add ?≈religious leaders\add* were purer than snow—whiter than milk¦333041.
+\q1 Their bones were redder than coral¦333044—their¦333046 parts were sapphire¦333045.
+\qa \bd ח\bd* (Het)
+\q1
+\v 8 Blackness has darkened their form—they're not \add even\add* recognised¦333053 in¦333054 the streets¦333054.
+\q1 Their skin has shrivelled¦333055 on¦333054 their bones¦333059—it's become¦333061 \add ≈as dry and stiff as bark\add*.
+\qa \bd ט\bd* (Tet)
+\q1
+\v 9 Those slain by the sword¦333069 were happier than those who died from hunger¦333071—
+\q1 those who slowly wasted away as if they were pierced¦333074 through¦333074 by the lack of produce¦333075 from the countryside¦333076.
+\qa \bd י\bd* (Yod)
+\q1
+\v 10 The hands¦333079 of compassionate¦333081 women¦333080 boiled¦333082 their¦333083 children¦333083.
+\q1 They became a meal for them during the destruction¦333087 of my people¦333090.\x + \xo 4:10: \xt Deu 28:57; Eze 5:10.\x*
+\qa \bd כ\bd* (Kaf)
+\q1
+\v 11 Yahweh¦333094 brought his rage¦333097 to completion¦333093.
+\q1 He poured¦333098 out his fierce anger¦333100
+\q1 and he kindled¦333101 a fire¦333103 in¦333104 Tsiyyon¦333104 that consumed its foundations¦333106.
+\qa \bd ל\bd* (Lamed)
+\q1
+\v 12 None of the kings¦333111 of the earth¦333113, and none of the world's¦333117 inhabitants¦333116, \add ever\add* believed¦333110
+\q1 that the adversary and enemy¦333121 would \add ≈get through\add* Yerushalem's¦333123 gates¦333122.
+\qa \bd מ\bd* (Mem)
+\q1
+\v 13 \add However,\add* the sins¦333126 of her prophets¦333127 were \add even\add* more than the disobedience of her priests¦333129.
+\q1 They had poured the blood¦333132 of godly¦333133 \add >people\add* out \add right¦333133 there\add* in¦333131 the middle of \add @the city\add*.
+\qa \bd נ\bd* (Nun)
+\q1
+\v 14 They stumble blind¦333137 in¦333138 the streets¦333138.
+\q1 They're defiled¦333139 with¦333138 blood¦333140.
+\q1 No one \add even\add* \add ≈dares\add* to touch¦333143 their¦333144 clothes¦333144.
+\qa \bd ס\bd* (Samek)
+\q1
+\v 15 “Away! Unclean!” they shouted at¦333162 them. “Away! Away! Don't¦333153 touch¦333155!”
+\q1 So they fled \add Yisrael\add*, wandering¦333160 around,
+\q1 \add but\add* it was said¦333161 among¦333162 the nations¦333162, “They can't¦333153 stay¦333165 here any longer.”
+\qa \bd ע\bd* (Ayin)
+\q1
+\v 16 Yahweh's¦333169 \add ≈presence¦333168\add* scattered¦333170 them—he won't¦333171 continue to watch over them.
+\q1 \add The people\add* no longer \add ≈honoured\add* the priests¦333175.
+\q1 They showed¦333182 no favour¦333182 to the elders.
+\qa \bd פ\bd* (Pe)
+\q1
+\v 17 Our eyes¦333188 failed¦333187 as we waited uselessly for \add ≈help¦333191\add*.
+\q1 From our watchtowers¦333193, we \add ≈expected to see\add* \add other\add* nations¦333197 \add ≈come to rescue us, but no\add*.
+\qa \bd צ\bd* (Tsade)
+\q1
+\v 18 They tracked our steps¦333203,
+\q2 ≈walking¦333204 in¦333205 our paths.
+\q1 Our end was coming closer.
+\q1 ≈Our days¦333209 had been \add ≈numbered\add*, because¦333210 our end had come¦333212.
+\qa \bd ק\bd* (Qof)
+\q1
+\v 19 The ones chasing after us were faster than the eagles¦333219 in the sky.
+\q1 They chased¦333224 us over the mountains¦333223,
+\q1 \add then\add* they ambushed us in the wilderness¦333225.
+\qa \bd ר\bd* (Resh)
+\q1
+\v 20 A breath¦333230 of our¦333231 nostrils¦333231, Yahweh's¦333233 anointed¦333232 one was captured¦333234 in¦333235 their¦333235 pits—
+\q1 the one we'd spoken¦333237 about, \add saying\add*, “We'll live¦333239 among¦333240 the nations¦333240 under his \add ≈protection\add*.”
+\qa \bd ש\bd* (Sin/Shin)
+\q1
+\v 21 Celebrate and be glad, Edom¦333247, living there in the Uz¦333251 region¦333250.
+\q1 The cup \add of suffering\add* will also pass¦333255 to you.
+\q1 You'll get drunk¦333258 and go around naked¦333259.
+\qa \bd ת\bd* (Tav)
+\q1
+\v 22 \add ≈People\add* of Tsiyyon¦333267, your guilt will finish¦333262—he won't¦333268 extend your exile¦333270.
+\q1 ^He'll \add ≈deal with\add* your guilt, \add ≈people\add* of Edom¦333275—he'll uncover your sins¦333279.
+\c 5
+\s1 The mercy of Yisrael
+\rem /s1 A Prayer for Mercy; A Plea for Mercy; A prayer for remembrance and restoration; Prayer for Restoration
+\q1
+\v 1 Yahweh¦333283, \add ≈take notice of\add* what's happened¦333286 to us.
+\q1 Look and¦333290 see¦333290 our¦333293 disgrace¦333293.
+\b
+\q1
+\v 2 \add The land that was\add* our inheritance has been turned¦333296 over to strangers¦333297—
+\q1 ≈our houses¦333298 to foreigners¦333299.
+\b
+\q1
+\v 3 We have become¦333302 orphans, without a father¦333305,
+\q1 ≈and our¦333306 mothers¦333306 are like widows¦333307.
+\b
+\q1
+\v 4 We \add ≈pay to\add* drink water.
+\q1 ≈We bring in¦333310 our¦333312 \add fire\add*wood for a price¦333313.
+\b
+\q1
+\v 5 We're \add ≈driven hard\add* \add with the yoke\add* on our¦333317 necks¦333317.
+\q1 We \add ≈work hard, yet never get any\add* rest.
+\b
+\q1
+\v 6 We've \add ≈made a treaty with\add* Egypt \add (Heb. Mitsrayim)\add*,
+\q1 ≈\add and with\add* Assyria¦333331 \add (Heb. Ashshur)\add* to \add ≈get food¦333333\add*.
+\b
+\q1
+\v 7 Our ancestors¦333335 sinned¦333336 \add ≈but¦333337 they're gone now\add*.
+\q1 →We ourselves bear \add the results of\add* their¦333341 \add ≈disobedience\add*.
+\b
+\q1
+\v 8 \add ?Babylonian\add* slaves rule over us.
+\q1 There's no one to rescue \add ≡us\add* from their¦333349 \add ≈control\add*.
+\b
+\q1
+\v 9 We bring¦333352 in our \add ≈food¦333353 at the cost of\add* our lives¦333351,
+\q1 due to the sword¦333355 blades \add out there\add* in the wilderness¦333356.
+\b
+\q1
+\v 10 Our skin grows as hot as an oven
+\q1 from the burning¦333362 heat of hunger¦333363.
+\b
+\q1
+\v 11 Women¦333365 are raped in Tsiyyon¦333366—
+\q1 ≈young women in Yehudah's¦333370 cities¦333369.
+\b
+\q1
+\v 12 Princes¦333372 were hung by their¦333373 hands¦333373.
+\q1 ≈The \add city\add* elders¦333376 \add ≈were treated with¦333373 no respect\add*.
+\b
+\q1
+\v 13 Young¦333380 men¦333380 lift the grind stone
+\q1 ≈and¦333383 boys¦333383 stagger¦333385 \add under loads of\add* wood.
+\b
+\q1
+\v 14 The elders \add ≈no longer make decisions\add* at the \add city¦333388\add* gate¦333388,
+\q1 ≈The young¦333390 men \add ≡have stopped\add* their¦333391 music¦333391.
+\b
+\q1
+\v 15 \add ≈We're no longer happy and contented\add*.
+\q1 ≈Our dancing¦333398 has turned to mourning¦333397.
+\b
+\q1
+\v 16 The crown¦333401 has fallen¦333400 off our¦333402 head¦333402.
+\q1 \add ≈We won't end well\add*, because¦333407 we've sinned¦333408.
+\b
+\q1
+\v 17 \add ≈As a result of that, we've become¦333413 depressed\add*.
+\q1 On account of those things, our eyes¦333420 grow dim.
+\b
+\q1
+\v 18 On account of Mt¦333423. Tsiyyon¦333425,
+\q1 which¦333426 is desolate¦333426 with jackals roaming over it.
+\b
+\q1
+\v 19 You, Yahweh¦333434, \add ≈exist\add* forever¦333435.
+\q1 ≈You'll sit upon your throne¦333437 from generation to generation.
+\b
+\q1
+\v 20 Why do you forget¦333443 us for so long?
+\q1 ≈\add ≡Why do\add* you abandon¦333444 us for many days¦333446?
+\b
+\q1
+\v 21 Bring us back to yourself¦333451, Yahweh¦333449, and¦333452 we'll be restored¦333452.
+\q1 ≈Renew our¦333455 \add ≈life back to what it was before\add*
+\q1
+\v 22 unless you've¦333462 totally rejected¦333461 us—
+\q1 ≈\add ≡unless\add* you're¦333463 angry¦333463 with us beyond measure.

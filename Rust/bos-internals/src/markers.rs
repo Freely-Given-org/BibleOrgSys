@@ -312,6 +312,25 @@ pub mod major_section_markers {
     }
 }
 
+/// USFM title markers.
+pub mod title_markers {
+    pub const ALL: &[&str] = &["mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2", "toc1", "toc2", "toc3", "h"];
+}
+
+/// All markers that are considered to contain printable Bible text for word counting.
+pub const BOS_PRINTABLE_MARKERS: &[&str] = &[
+    "mt", "mt1", "mt2", "mt3", "mt4", "mte", "mte1", "mte2",
+    "imt", "imt1", "imt2", "imt3", "imt4", "is", "is1", "is2", "is3", "is4", "ip", "ipi", "im", "imi", "ipq", "imq", "ipr", "iq", "iq1", "iq2", "iq3", "io", "io1", "io2", "io3", "io4", "iot", "ior", "ili", "ili1", "ili2", "ili3", "ili4", "iex",
+    "s", "s1", "s2", "s3", "s4", "sr", "mr", "qa", "qc",
+    "v~", "p~",
+];
+
+/// Check if a marker is a printable marker.
+#[inline]
+pub fn is_printable_marker(marker: &str) -> bool {
+    BOS_PRINTABLE_MARKERS.contains(&marker)
+}
+
 /// Check if a marker has "Never" content type (like \b, \ib, \nb).
 #[inline]
 pub fn is_never_content_marker(marker: &str) -> bool {

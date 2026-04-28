@@ -1,0 +1,218 @@
+\id 1PE - Open English Translation—Readers' Version (OET-RV) v0.1.11
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 PE1
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h 1 Peter
+\toc1 1 Peter
+\toc2 1 Peter
+\toc3 1 Ptr
+\mt2 The first letter from
+\mt1 Simon ‘the Rock’ (Peter)
+\is1 Introduction
+\ip \bk The first letter from Simon ‘Peter’\bk* was written to believers scattered throughout Asia Minor (also called Anatolia, now part of modern Turkey). Peter wrote to encourage the believers that it's necessary for them to be strong even in the middle of much persecution that comes because of their faith in the messiah. He reminds them about their salvation, the death of Yeshua the messiah, and of his coming back to life. Because Peter told them that there must always remember their hope in heaven, then they can persevere even through all the difficulties here on earth. He also reminds them that if their faith holds strong through their suffering of difficulties and persecutions, they will receive a gift at “The time when Yeshua the messiah is revealed.” (1:7,13)
+\ip He also warns them that it's necessary to watch their behaviour as followers of the messiah and it's necessary that they follow the guidance of their elders.
+\iot Main components of Peter's letter
+\io1 Introduction \ior 1:1-2\ior*
+\io1 The reminder about the future benefits of salvation \ior 1:3-12\ior*
+\io1 Encouragement about godly living \ior 1:13–2:10\ior*
+\io1 Respecting those who have authority over us \ior 2:11–3:7\ior*
+\io1 Advice concerning the coming persecutions \ior 3:8–4:19\ior*
+\io1 Advice for teachers and believers \ior 5:1-11\ior*
+\io1 Farewell \ior 5:12-14\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Salutation; Greetings from Peter
+\p
+\v 1 \add This letter is from\add* Peter¦148446, an ambassador¦148447 for \nd Yeshua\nd* the \nd messiah¦148449\nd*.
+\p \add It's written\add* to those people who've been chosen \add by God\add* and dispersed¦148453 \add by persecution\add* throughout \add the provinces of\add* Pontus¦148454, Galatia¦148455, Cappadocia¦148456, Asia¦148457 \add Minor\add*, and Bithynia¦148459.
+\v 2 \add They were chosen¦148473\add* in advance by God the father¦148463 by his pure \nd spirit¦148466\nd*, thanks to the obedience¦148468 of \nd Yeshua\nd* the \nd messiah¦148473\nd* and the sprinkling¦148470 of his blood¦148471.
+\rem /s1 Praise to God for a Living Hope; The Hope of Eternal Life; Peter gives thanks
+\p May \add God give\add* you¦148475 grace¦148474 and \add ≈abundant\add* peace¦148477.
+\s1 The future hope of life without ending
+\p
+\v 3 May \nd God¦148481\nd*, the father¦148483 of our¦148486 \nd master¦148485\nd* Yeshua the messiah be blessed. He's the one who, because of his¦148493 incredible mercy¦148494, births us into living¦148500 hope through¦148501 the death and¦148482 coming back to life of Yeshua the messiah.
+\v 4 \add Now we have\add* an inheritance¦148508 that can't be destroyed or ruined and never diminishes. It's kept¦148516 in the heavens¦148519 for you¦148523 \add chosen people\add*,
+\v 5 who are guarded¦148528 through¦148529 faith¦148530 by God's power¦148526, because¦148531 the rescue¦148532 is ready¦148534 to be revealed¦148535 in the final age.
+\p
+\v 6 \add This rescue\add* brings some happiness now, although offset by the sorrow¦148548 of various¦148552 trials¦148554 \add that¦148540 you¦148541 go through\add*
+\v 7 in order¦148555 that¦148566 your faith will be purified by fire, like gold, but¦148576 \add even\add* more precious¦148563, because gold corrodes¦148567. Then your faith will lead to praise¦148575 and glory¦148578 and honour¦148582 when \nd Yeshua\nd* the \nd messiah¦148586\nd* is revealed,
+\v 8 the one you \add chosen people\add* love, even though you've never seen¦148590 him. Yet you believe¦148598, and because of that, you're happier than you can even show, AND HAVING BEEN GLORIFIED,
+\v 9 you'll receive¦148606 the result of your faith¦148610, which is that your souls¦148613 \add ≈are rescued\add*.
+\rem /s1 The calling of a Christian
+\p
+\v 10 The prophets¦148620 wanted that¦148621 rescue¦148616 and¦148618 searched¦148619 for it, even while speaking about the grace¦148626 which¦148621 you¦148625 \add chosen people\add* would experience.
+\v 11 They tried to discover which person or what time¦148633 the messiah's \nd spirit¦148638\nd* within them was telling them about, having previously¦148640 testified¦148640 that the messiah would suffer¦148644 but¦148645 afterwards¦148647 would be GLORIOUS.
+\v 12 It was shown to them that they weren't just serving themselves¦148655, but were serving you as they declared¦148663 all the same things that have been preached¦148667 to you by the holy \nd spirit¦148671\nd* who was sent from heaven. Even \add God's\add* messengers¦148679 in heaven wanted to know more about those things.
+\s1 The holy behaviour of believers
+\rem /s1 A Call to Holy Living; Be Holy
+\p
+\v 13 So¦148681 take this seriously and get your minds prepared, putting your full hope in the grace¦148695 that'll be brought¦148693 to you by \nd Yeshua¦148698\nd* the \nd messiah¦148699\nd* \add ≈being revealed¦148697\add*.
+\v 14 As people who want to obey, don't¦148703 conform¦148704 to your earlier¦148706 desires¦148711 that came from your ignorance¦148709,
+\v 15 but¦148712 just as \add God\add* who called¦148715 you¦148716 is holy, your yourselves¦148719 need to be holy in all your conduct¦148723,
+\v 16 \x + \xo 1:16: \xt Lev 11:44-45; 19:2.\x*because it's been written¦148727 that ‘you'll¦148730 be holy \add people\add* because I am holy.’
+\p
+\v 17 And since you call on the father¦148740 who impartially¦148744 judges each person according¦148747 to their actions, continue to obey him even as you live \add ≈as foreigners\add*,
+\v 18 knowing¦148761 that when you were in slavery due to your poor conduct¦148775 that you inherited¦148776 from your ancestors, you weren't bought¦148770 out of that by payment of things \add ≈that decay¦148764\add* like silver¦148766 or gold¦148769,
+\v 19 but¦148778 by the precious¦148780 blood¦148781 of the \nd messiah¦148787\nd*—the unblemished¦148784 and¦148785 spotless¦148786 lamb¦148783.
+\v 20 He'd been known¦148789 before¦148792 the world¦148794 was created, yet he was only recently revealed¦148795 for the sake of you \add chosen people\add*
+\v 21 who believe¦148810 in God through him. God was the one who raised¦148815 him from the dead¦148819 and honoured him, so that your¦148827 faith¦148826 and hope would be in God.
+\p
+\v 22 Since your souls¦148835 have been purified¦148837 by obeying the truth¦148842, \add now\add* you should love each other from your hearts¦148850 and without hypocrisy.
+\v 23 You've been born again¦148855, not \add growing\add* from some physical thing that'll decay¦148860, but¦148861 from indestructible¦148862 material—God's message¦148864 that's alive and¦148867 lives on,
+\v 24 because \add it's written\add*:\x + \xo 1:24-25: \xt Isa 40:6-8 (LXX).\x*
+\q1 ‘All flesh¦148875 is like grass,
+\q2 and the beauty of our bodies like its flower.
+\q1 The grass will wither¦148889 and its flower will drop,
+\q2
+\v 25 but¦148906 \nd Yahweh's\nd* message will last till the end of the age.’
+\m And that's the good message that's been preached¦148911 to you \add chosen people\add*.
+\c 2
+\rem /s1 The Living Stone and the Holy Nation; The Living Stone and a Chosen People
+\p
+\v 1 So¦148916 then, get rid of all malice¦148918 and deceit¦148922, and hypocrisy¦148924 and envy, and slandering¦148932 \add others\add*.
+\v 2 \add Just\add* like newborn¦148936 babies¦148937 long¦148942 for pure milk¦148941 so they'll grow, you should cultivate a thirst for what'll help you grow \add ≈as people who are rescued¦148950\add*,
+\v 3 \x + \xo 2:3: \xt Psa 34:8.\x*since you've tasted¦148953 that \nd Yahweh¦148959\nd* is good¦148957.
+\s1 The vital building-stone and the believers
+\rem /s1 Living Stones for God's House; The Living Stone and a Chosen People
+\p
+\v 4 As you \add chosen people\add* approach¦148962 the living¦148964 building-stone (which was rejected¦148969 by humans¦148967 yet chosen¦148973 and honoured¦148974 by \nd God¦148972\nd*),
+\v 5 you're¦148982 being¦148982 built¦148982 into a temple and \add joining\add* a holy group of priests¦148989 to offer¦148991 up \em spiritual\em* sacrifices¦148994 that are acceptable¦148995 to \nd God¦148997\nd* through¦148998 \nd Yeshua¦148999\nd* the \nd messiah¦149000\nd*,
+\v 6 \x + \xo 2:6: \xt Isa 28:16 (LXX).\x*because it's written in the scriptures¦149008:
+\q1 ‘Look¦149009, I'm placing a building-stone in Tsiyyon/Zion¦149012,
+\q2 the \add vital\add* cornerstone¦149014 that's chosen¦149015 and honoured¦149017,
+\q2 and anyone who believes¦149020 in him¦149022 certainly won't¦149025 be disgraced¦149026.’
+\m
+\v 7 \x + \xo 2:7: \xt Psa 118:22.\x*To all of you¦149028 who believe, this \add cornerstone\add* is valuable, but¦149036 to those who don't believe:
+\q1 ‘The building-stone which¦149039 the builders¦149042 rejected¦149040
+\q2 ended up becoming¦149044 the \add vital\add* cornerstone.’
+\m
+\v 8 and \add he'll be\add*:\x + \xo 2:8: \xt Isa 8:14-15.\x*
+\q1 ‘A stone¦149049 that people stumble over
+\q2 and a rock¦149053 that upsets people.’
+\m They stumble \add because\add* they¦149066 won't believe in the message¦149060—this is what was appointed¦149066 for them.
+\p
+\v 9 \x + \xo 2:9: a \xt Exo 19:5-6; Isa 43:20 (LXX); \xo b \xt Exo 19:5; Deu 4:20; 7:6; 14:2; Tit 2:14; \xo c \xt Isa 43:21; \xo d \xt Isa 9:2.\x*But you \add believers\add* are a chosen¦149070 tribe, a group of royal¦149071 priests¦149072, a holy nation¦149073, a people¦149075 that God has procured¦149077, so that you can tell others about the virtues¦149080 of the one who called¦149086 you out of darkness¦149084 and into his¦149090 marvellous¦149089 light¦149091.
+\v 10 \x + \xo 2:10: \xt Hos 2:23.\x*Previously you weren't a people group, but now you're \nd God's¦149100\nd* people—previously you hadn't been shown mercy, but now you have been.
+\s1 Battling worldly desires
+\rem /s1 The Christian household; Slaves of God; Live as Servants of God
+\p
+\v 11 Dear friends, I'm urging you as travellers and¦149111 foreigners to keep away from the world's temptations, which¦149119 are in a battle against¦149121 your¦149122 soul¦149123.
+\v 12 Even as you, \add friends\add*, live among¦149130 \add ≈the world's people\add*, maintain your good conduct¦149125 so that¦149138 when they slander¦149139 you by calling you ‘evil’, at the time of God's \add judgement\add* they'll have to honour¦149149 \nd god¦149155\nd* when they see your good behaviour.
+\rem /s1 Submission to Rulers and Masters; Respecting People in Authority
+\p
+\v 13 Submit yourselves to every¦149161 human¦149163 authority, because¦149165 \add you obey\add* the \nd master¦149167\nd*, whether¦149168 it's to the king¦149169 who rules,
+\v 14 or the governors¦149173 he sends to punish those who do evil and to praise¦149182 those who do good.
+\v 15 \nd God¦149191\nd* wants you \add chosen people\add* to silence¦149195 the ignorant¦149201 \add talk\add* of foolish¦149198 people¦149199 by doing¦149192 good¦149192.
+\v 16 Live like free \add people\add*, but¦149214 don't¦149205 use that freedom¦149213 to cover¦149207 up evil¦149211—use it as God's slaves¦149218.
+\v 17 Honour others and be loving¦149224 towards your fellow believers. Revere \nd God¦149228\nd* as well as honouring¦149232 the king¦149231.
+\s1 Doing good despite suffering
+\rem /s1 Slaves; Servants; The Example of Christ's Suffering
+\p
+\v 18 You who are house-servants should respectfully¦149238 obey your¦149240 masters¦149241—not only the good¦149246 and¦149247 gentle¦149248 \add ones\add*, but¦149249 also the crooked¦149252 \add ones\add*,
+\v 19 because \add God\add* favours¦149255 those who endure unjust¦149270 hardships because of their godly consciences¦149262.
+\v 20 What good would it do if you were enduring being¦149277 beaten¦149277 because¦149272 of doing evil? But¦149276 if you endure suffering¦149285 for doing good, then \nd God¦149293\nd* will be pleased \add with your behaviour\add*,
+\v 21 because that's what we're called¦149299 to, because the \nd messiah¦149303\nd* also suffered¦149305 for you \add chosen people\add*. He left an example¦149314 for you, so that you can follow¦149316 in his¦149319 steps¦149318:
+\v 22 \x + \xo 2:22: \xt Isa 53:9.\x*he didn't do evil or say anything that wasn't true,
+\v 23 \x + \xo 2:23: \xt Isa 53:7.\x*when he was insulted¦149333 he didn't retaliate¦149336, when he was persecuted he didn't threaten¦149339, but put his trust in the one who'll judge \add everyone\add* with \add true\add* justice.
+\v 24 \x + \xo 2:24-25: \xt Isa 53:5-6 (LXX).\x*He sacrificed his own body¦149359 on the wooden post¦149363 for \em our¦149353\em* sins, so that when we die to sin we can live for righteousness¦149370. By his wounds¦149375, you \add chosen people\add* were healed¦149377.
+\v 25 \add He did all that\add* because¦149379 you were like lost sheep¦149381, but¦149391 now you've returned¦149385 to your¦149395 souls'¦149394 shepherd¦149390 and overseer¦149392.
+\c 3
+\s1 Advice to married couples
+\rem /s1 Wives and Husbands
+\p
+\v 1 \x + \xo 3:1: \xt Eph 5:22; Col 3:18.\x*Similarly¦149396, women¦149398 should be subject¦149399 to their husbands¦149402, so that if any of them don't believe the message, they'll be won by their wives'¦149414 behaviour¦149415 even without \add hearing\add* the message,
+\v 2 because they'll be able to observe¦149420 \add their wives'\add* pure behaviour¦149426.
+\v 3 \x + \xo 3:3: \xt 1Tim 2:9.\x*\add These women shouldn't¦149430 focus\add* on outward¦149432 \add appearances\add* like \add ≈elaborate hairstyles¦149434\add*, or gold¦149438 \add jewellery\add* or \add expensive\add* clothes¦149441,
+\v 4 but¦149456 on the inner person¦149448 with a gentle¦149454 and quiet¦149457 spirit¦149460 that's indestructible¦149451 and which¦149461 \nd God¦149465\nd* \add considers\add* precious¦149466.
+\v 5 That was how holy women¦149473 \add in the past\add* adorned¦149482 themselves¦149483—those whose hope was in \nd God¦149481\nd*,
+\v 6 \x + \xo 3:6: \xt Gen 18:12.\x*like Sarah¦149489, who submitted¦149490 to Abraham¦149493 who you've¦149499 become¦149499 descendants of. She called him¦149496 ‘master¦149495’, doing¦149502 good¦149502 and¦149503 without any worries.
+\rem /s1 Husbands
+\p
+\v 7 \x + \xo 3:7: \xt Eph 5:25; Col 3:19.\x*Similarly, men¦149509 should live with \add their wives\add* with understanding, like how you'd handle something more fragile. They should display honour¦149522 to their fellow¦149527 recipients of life-\add giving\add* grace¦149530 so that their prayers¦149540 won't¦149535 be hindered¦149536.
+\s1 Suffering for doing good
+\rem /s1 All Christians; Suffering for Doing Right; Suffering for Doing Good
+\p
+\v 8 Finally, everyone should be agreeable and sympathetic¦149548 \add to others\add*, kind and caring towards those around you, humble¦149551
+\v 9 and not repaying evil with evil or insult with insult, but rather be a blessing to others. You were called¦149569 to do that so that you \add chosen people\add* can receive a blessing,
+\v 10 \x + \xo 3:10-12: \xt Psa 34:12-16 (LXX).\x*because¦149574 \add it's written\add*:
+\q1 ‘The person wanting¦149575 to enjoy life¦149576 and see¦149579 good¦149582 days¦149580,
+\q1 let their tongue¦149587 cease¦149583 from evil¦149590,
+\q2 and their lips¦149593 not speak¦149597 deceit¦149599.
+\q1
+\v 11 Let them turn¦149600 away from evil¦149603 and do¦149605 good¦149606,
+\q1 let them look for peace¦149608 and chase after it¦149611,
+\q1
+\v 12 because \nd Yahweh\nd* \add ≈looks kindly\add* on the righteous¦149617,
+\q2 and¦149618 his ears¦149619 listen to their¦149624 petition¦149623,
+\q1 but¦149626 \nd Yahweh\nd* \add turns\add* his face¦149625 away from those¦149629 who do evil¦149630.’
+\rem /s1 Suffering for Doing Good
+\p
+\v 13 Who's going¦149634 to mistreat¦149634 you if you \add chosen people\add* start actively \add doing\add* good¦149639?
+\v 14 \x + \xo 3:14: \xt Mat 5:10.\x*But¦149645 even if some of you do suffer¦149649 because of your godliness, \add you will be\add* blessed¦149652. Don't be scared or disturbed¦149661 because of your fear¦149656 of them,
+\v 15 but¦149663 revere the \nd messiah¦149665\nd* as the \nd master¦149662\nd* of your¦149672 hearts¦149670. Always be ready¦149673 to explain the hope that¦149679 you \add chosen people\add* have if anyone¦149665 asks,
+\v 16 but¦149692 \add do it\add* with gentleness¦149691 and respect¦149693, keeping a clear conscience¦149694, so that¦149699 if you're falsely accused of doing evil, then the ones who'll be disgraced¦149706 will be the ones who mistreat¦149709 you \add chosen people, because of\add* the good way you live because of the message.
+\v 17 After all, it's better¦149720 to do good¦149722, and then, if \nd God¦149730\nd* intends it, to suffer¦149731, than to do evil¦149734,
+\v 18 because¦149736 the \nd messiah¦149739\nd* also died once for sin, that is, the sinless one died for sinful people, so that he can bring¦149755 you \add chosen people past death\add* onward to \nd God¦149757\nd*. \add Although\add* he experienced physical death, he'd been given¦149761 life in the \nd spirit¦149765\nd*,
+\v 19 and with that¦149767 life he also went to the spirits¦149773 in prison¦149771 and preached to them—
+\v 20 \x + \xo 3:20: \xt Gen 6:1–7:24.\x*those who'd refused to believe. \nd God¦149786\nd* had waited patiently¦149787 in Noah's¦149791 time¦149790 when the barge was being¦149792 built, \add yet\add* only a few were saved. Eight of them were brought¦149802 safely¦149802 through the waters¦149804,
+\v 21 which also represents¦149810 how being immersed¦149815 saved you \add chosen people\add*. It doesn't remove¦149818 the filth¦149819 from your bodies, but cleans the conscience¦149821 as you make a pledge to \nd God¦149825\nd* based on the coming back to life of \nd Yeshua\nd* the \nd messiah¦149829\nd*,
+\v 22 who went to heaven¦149839 and \add sat\add* at God's right¦149834, with \add God's\add* messengers¦149842 and authorities¦149844 and powers¦149846 all under his authority.
+\c 4
+\s1 Leaving worldly desires behind
+\rem /s1 Changed Lives; The final testing; Good Stewards of God's Grace; Living for God
+\p
+\v 1 Since the \nd messiah¦149847\nd* suffered physically, you¦149856 \add chosen people\add* should also cultivate the same¦149858 intention¦149859, because¦149861 anyone who suffers physically stops sinning
+\v 2 so that they can live¦149885 their remaining¦149881 physical lives obeying God's intentions instead of this world's lusts¦149874,
+\v 3 because¦149888 enough time¦149893 has been spent \add listening to\add* this world's advice and pursuing¦149903 immorality, lusts¦149907, drunkenness¦149908, carousing¦149909, drinking¦149910 parties¦149910, and repulsive service to false gods.
+\v 4 \add The unbelievers\add* will be surprised¦149916 that you \add chosen people\add* aren't¦149917 joining them in that unrestrained, wild living, and they'll mock you,
+\v 5 but¦149939 they'll \add need\add* to give an account¦149931 \add for their actions\add* to the one who's ready¦149934 to judge¦149936 \add both\add* the living¦149938 and¦149939 the dead¦149940.
+\v 6 That's why the good¦149946 message¦149946 was preached¦149946 even to the dead¦149945, so that while people might judge¦149948 them according to this world's standards, yet they¦149948 might live spiritually¦149959 according to God's judgement.
+\rem /s1 Good Managers of God's Gifts
+\p
+\v 7 The end¦149963 of everything is getting close, so make good decisions and¦149967 be serious in prayer¦149971,
+\v 8 \x + \xo 4:8: \xt Prv 10:12.\x*and more than anything, display genuine love to each other, because¦149982 love triumphs over many sins¦149987.
+\v 9 Show hospitality¦149988 to each other without grumbling¦149993.
+\v 10 Whatever gift¦149997 each person has received¦149996, they should use it¦150000 to serve the others as good¦150003 managers¦150004 of the various¦150005 \add forms of\add* grace¦150006 \nd God's¦150007\nd* \add given us\add*.
+\v 11 \nd Anyone¦150035\nd* who shares wisdom that came from God or uses the strength¦150021 that God's given them to serve \add others\add* needs to be honouring God through \nd Yeshua\nd* the \nd messiah¦150035\nd*. He's the one who \add deserves\add* the honour and¦150041 power¦150043 throughout all time.
+\s1 The suffering of believers
+\rem /s1 Suffering as a Christian; Suffering for Being a Christian
+\p
+\v 12 Dear friends, don't¦150052 be surprised¦150053 about the fiery¦150058 trials that you'll have to face as a test, as though¦150063 it's something unusual that's happening¦150066 to you,
+\v 13 but rather, as you, \add friends\add*, share in the \nd messiah's¦150072\nd* sufferings¦150073, stay positive so that you'll be happy, jsut as you're glad to see his¦150082 honour revealed.
+\v 14 You, \add friends\add*, \add will be\add* blessed¦150090 if you're derided¦150086 in the \nd messiah's¦150089\nd* name¦150088, because¦150091 God's spirit rests on you—the spirit that honours \add him\add*.
+\v 15 None of you should¦150121 suffer¦150121 \add persecution\add* because¦150118 you're a murderer¦150123 or a thief¦150127 or a troublemaker or nosey-parker,
+\v 16 but if you \add suffer\add* for being¦150142 one of the messiah's¦150140 people, then there's no need to feel ashamed¦150142, but \add instead\add* praise \nd God¦150146\nd* in that name¦150149.
+\p
+\v 17 It's time¦150154 for the judgement¦150158 to begin—and to begin with God's people—and if we're judged first¦150166, what will the outcome¦150172 be for those who refuse to believe in God's good¦150179 message¦150179?
+\v 18 \x + \xo 4:18: \xt Prv 11:31 (LXX).\x*Yes,
+\q1 ‘if it's difficult¦150185 for godly¦150184 people to be saved¦150186,
+\q2 what will it be like for the ungodly¦150189 and¦150190 for sinners¦150192?’
+\m
+\v 19 So for everyone who's suffering¦150200 according¦150201 to God's intentions, let them entrust¦150209 their¦150213 souls'¦150211 well-being to the faithful¦150207 creator¦150208.
+\c 5
+\s1 Advice to believers
+\rem /s1 The Christian community; Advice for Elders and Young Men; The Flock of God; To Elders and Young Men; Tending the Flock of God
+\p
+\v 1 Because of that, I'm encouraging your elders, as a fellow¦150224 elder, and a witness¦150226 of the \nd messiah's¦150230\nd* sufferings¦150231, and also a partner¦150240 in the GLORY that's going¦150235 to be revealed¦150236:
+\v 2 \x + \xo 5:2: \xt Yhn 21:15-17.\x*Carefully shepherd¦150241 God's people that you¦150244 care for, not out of compulsion¦150250, but willingly¦150252, listening to God, not greedily¦150257, but enthusiastically,
+\v 3 not exercising¦150262 dominance over them, but¦150265 being examples¦150266 for them.
+\v 4 Then¦150270 when the chief¦150273 shepherd¦150273 \add returns\add*, you¦150274 \add elders\add* will receive¦150274 the unfading¦150276 crown¦150279 of honour.
+\p
+\v 5 \x + \xo 5:5: \xt Prv 3:34 (LXX).\x*Similarly¦150280, you younger¦150282 ones, take your elders'¦150285 advice, and¦150287 all of you, show humility¦150292 to each other, because¦150294 ‘\nd God¦150296\nd* opposes¦150298 those who are proud¦150297, but¦150300 displays grace¦150302 to those who are humble¦150299.’
+\v 6 \x + \xo 5:6: \xt Mat 23:12; Luk 14:11; 18:14.\x*So¦150304 humble¦150303 yourselves under¦150305 God's mighty hand¦150308 so that he might honour you at the \add right\add* time¦150315.
+\v 7 Give all your¦150320 concerns to him because¦150326 he cares about¦150329 you all.
+\p
+\v 8 Stay alert and keep watch¦150333. Your¦150337 opponent¦150336, the devil¦150339, walks around like a roaring¦150343 lion¦150342, wanting to swallow¦150347 up \add you¦150337 chosen people\add*,
+\v 9 \add but you¦150366 should remain\add* firmly in the faith¦150354 and resist¦150350 him, knowing¦150355 that fellow believers \add all around\add* the world¦150365 experiencing similar suffering¦150360 are doing the same¦150358.
+\v 10 Then¦150372 \nd God¦150373\nd*, \add the source\add* of all grace¦150375, and the one who called¦150377 you to his¦150383 eternal¦150382 GLORY in the \nd messiah¦150387\nd*, will prepare¦150392 you \add chosen people\add* as you suffer¦150390 a little¦150389, and will then¦150372 strengthen you as you're established.
+\v 11 May his authority be powerful throughout all time. May it¦150413 be so¦150413.
+\s1 Farewell
+\rem /s1 Peter's Final Greetings and Benediction
+\p
+\v 12 \x + \xo 5:12: \xt Acts 15:22,40.\x*I've written this brief \add letter\add* with the \add help\add* of the faithful¦150418 brother¦150419, Silvanus¦150415, to encourage you \add chosen people\add* and to testify¦150428 that God's grace¦150433 that you accepted is true.
+\p
+\v 13 \x + \xo 5:13: \xt Acts 12:12,25; 13:13; 15:37-39; Col 4:10; Phm 24.\x*The chosen¦150446 \add group\add* in Babylon and¦150447 my¦150451 ‘son’ Mark¦150448 send their greetings¦150440 to you¦150441 \add chosen people\add*.
+\v 14 Greet¦150452 one another¦150453 with a kiss¦150455 of love¦150456.
+\p May all of you¦150459 who are \add united with\add* the \nd messiah¦150463\nd* experience \add God's\add* peace.

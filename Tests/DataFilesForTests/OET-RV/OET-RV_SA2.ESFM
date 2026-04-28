@@ -1,0 +1,1436 @@
+\id 2SA - Open English Translation—Readers' Version (OET-RV) v0.1.16
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 SA2
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h 2 Shemuel
+\toc1 2 Shemuel
+\toc2 2 Shemuel
+\toc3 2 She.
+\mt1 2 Shemuel
+\is1 Introduction
+\ip \bk Second Shemuel\bk* (commonly, but wrongly known as ‘Samuel’) is the continuation of \bk First Shemuel\bk*—the two parts together are considered a single ‘book’ in the Jewish Bible—it's only split into two because it was too long to fit on a single scroll.
+\ip This the story of David's reign: firstly he ruled what became known as ‘Yehudah’ (Judah) in the south east (chapters 1–4), and eventually, the entire nation, including the much larger area of Yisrael (called ‘Israel’ in older translations) in the north east (Chapter 5–24). This document explains how David dealt with his enemies within the country, as well as battling with other nations in order to widen and strengthen his kingdom. David's faith and respect of God is demonstrated here, as well as his love for the people. However, despite that, he was also fierce and he was quite capable of disobeying God to get what he wanted. But God sees everything and seen his prophet Natan (Nathan) with a parable to show David his selfishness. David asked for forgiven for his sin and accepted the punishment that God gave him.
+\ip The times of peace and prosperity through the latter parts of David's rule were planted in the minds of the Hebrew people, and in the future when they faced difficulties, they would long for another king like David—a son (better ‘a descendant’) of David who would love God like him.
+\iot Main components of this account
+\io1 The kingdom of David in Yehudah \ior 1:1–4:12\ior*
+\io1 The kingdom of David over all Yisrael \ior 5:1–24:25\ior*
+\io2 a. The early years \ior 5:1–10:19\ior*
+\io2 b. David takes Uriyah's wife \ior 11:1–12:25\ior*
+\io2 c. The battles and the difficulties \ior 12:26–20:26\ior*
+\io2 d. The later years \ior 21:1–24:25\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\s1 David learns about Sha'ul's death
+\rem /s1 David Learns of Saul's Death; David Mourns for Saul and Jonathan; David installed as king; David Hears of Saul's Death
+\s4 Full kingdom
+\p
+\v 1 \add ≈After\add* David¦141765 returned¦141766 from \add ≈slaughtering\add* the Amalekites¦141770, he stayed in¦141773 Tsiklag¦141773 for two¦141775 days¦141774. (\add King\add* Sha'ul¦141764 \add ≈was dead by this time¦141774\add*.)
+\v 2 Then¦141777 on the third¦141780 day¦141779, wow, a man¦141782 came¦141796 from Sha'ul's camp¦141786. He had torn clothes¦141789 and dirt on his head¦141794, and when he got to David¦141799 he \add ≈fell onto his knees and bowed¦141802 low\add*.
+\v 3 “Where \add ≈have you¦141809 come from\add*?” David¦141806 \add ≈asked\add* him.
+\p “I \add ≈was in Yisrael's¦141813 camp¦141812, but¦141804 managed to escape¦141814\add*.” he \add ≈replied\add*.
+\v 4 “\add ≈Why? What happened?\add*” David¦141818 \add ≈demanded\add*. “Tell me, please¦141825,”
+\p “\add &Our\add* people¦141841 fled from the battle¦141834,” the man said. “Many fell and died. Even Sha'ul¦141844 and his son Yonatan died.”
+\p
+\v 5 “How do¦141857 you¦141857 know¦141857 that Sha'ul¦141861 and¦141862 Yonatan died¦141860?” David¦141850 \add ≈asked\add* the young¦141853 man¦141853 who'd \add ≈brought the news\add*.
+\p
+\v 6 “I¦141871 happened¦141870 to be on Mt¦141872. Gilboa¦141873,” the young¦141866 man¦141866 \add ≈replied\add*, “and listen, Sha'ul¦141875 was leaning¦141876 on his spear¦141879. Then¦141865 wow, the chariots¦141881 and the masters¦141882 of the chariot horses¦141883 overtook¦141884 him¦141884,\x + \xo 1:6-10: \xt 1Sam 31:1-6; 1Ch 10:1-6.\x*
+\v 7 and he turned¦141886 around and saw¦141888 me. He called¦141889 me and I \add ≈answered\add*, ‘Here I am.’
+\v 8 ‘Who are you¦141898?’ he \add ≈asked\add*. ‘I'm an Amalekite¦141902,’ I told him.
+\v 9 Then¦141905 he said¦141905 to me, ‘Please, \add ≈come over here\add* and¦141905 kill¦141911 me, because¦141912 \add ≈although I'm still¦141919 alive, the pain is unbearable\add*.’
+\v 10 \add ≈So¦141923\add* I stood¦141923 over him and killed¦141925 him, because¦141926 I knew¦141927 that¦141936 \add ≈with those wounds\add*, he wouldn't live¦141930. Then¦141923 I took¦141933 the crown¦141934 off his head¦141939 and the bracelet¦141940 on his arm, and I brought¦141945 them here to you, my master¦141948.”
+\p
+\v 11 Then¦141951 David¦141952 pulled at¦141953 his clothes¦141953 \add with his hands\add* and tore them, and all the men¦141959 with him \add ≈did the same\add*,
+\v 12 and they¦141985 mourned¦141963 and wept and fasted¦141965 until¦141966 the evening¦141968 for Sha'ul¦141971 and for his son Yonatan¦141974, and for Yahweh's¦141979 people¦141978, because¦141984 \add many\add* \add ≈Israelis¦141983 had been killed\add*.
+\p
+\v 13 Then David¦141990 \add ≈asked\add* the young¦141993 man \add ≈who'd brought the news\add*, “Where are you from?”
+\p “I'm a foreigner's son,” he \add ≈replied\add*, “an Amalekite¦142004.”
+\v 14 “How come you¦142012 weren't afraid¦142012 to \add ≈kill¦142015\add* Yahweh's¦142019 anointed¦142018 \add king\add* \add ≈with your¦142014 own hands\add*?” David¦142009 \add ≈asked\add* him.
+\v 15 Then¦142021 David¦142022 called¦142021 to one of \add &his\add* young¦142024 men¦142024, “Come \add ≈over here\add* \add and\add* \add ≈execute\add* him.” \add ≈So¦142021\add* he struck¦142030 him, and he died¦142031.
+\v 16 “Your blood's¦142036 on your \add own\add* head¦142040,” David¦142035 told \add @the Amalekite\add*, “because¦142041 \add ≈you admitted in your own words\add* that you, yourself killed¦142047 Yahweh's¦142051 anointed¦142050 \add one\add*.”
+\s1 David's song of mourning
+\rem /s1 David's Lament for Saul and Jonathan; David's Song for Saul and Jonathan
+\s4 Full kingdom
+\p
+\v 17 Then David¦142055 sang this funeral song for Sha'ul¦142062 and his son Yonatan
+\v 18 and said¦142068 \add that it should be\add* taught¦142069 to the \add ≈people\add* of Yehudah¦142072. \add It's called\add* ‘The bow’ and indeed, it's written¦142075 \add down\add* in the Book of Yashar:\x + \xo 1:18: \xt Josh 10:13.\x*
+\q1
+\v 19 “Yisrael's¦142082 splendour \add was\add* slain¦142086 \add ≈in the hills\add*.
+\q1 ≈How the \add ≈powerful\add* \add warriors\add* have \add ≈died\add*.
+\q1
+\v 20 Don't tell \add <them\add* in Gat¦142094.
+\q1 ≈Don't let \add <them\add* take the news to Ashkelon's¦142099 streets¦142098,
+\q1 in case the Philistine \add ≈women¦142103\add* celebrate,
+\q1 and the daughters of the uncircumcised¦142109 are elated.
+\b
+\q1
+\v 21 \add ≈You\add* mountains¦142111 in¦142112 Gilboa¦142112,
+\q2 \add may you have\add* no dew or rain \add fall\add* on¦142112 you,
+\q2 nor fields¦142120 \add producing grain\add* for offerings.
+\q1 Because it¦142124 was there¦142123 that \add Shaul's¦142128\add* shield was \add ≈splattered with his blood\add*,
+\q2 and \add the leather\add* won't¦142113 be \add ≈preserved\add* with oil¦142131 \add again\add*.
+\q1
+\v 22 From the blood¦142133 of those¦142134 slain¦142134—
+\q2 ≈from the fat of the \add ≈warriors\add*,
+\q1 Yonatan's bow didn't \add ≈retreat\add*
+\q2 ≈and¦142142 Sha'ul's sword¦142142 didn't \add ≈fail on its strikes\add*.
+\b
+\q1
+\v 23 Sha'ul¦142148 and Yonatan were loved—
+\q2 ≈they pleased¦142151 the people.
+\q2 and even at¦142152 their death¦142153 they weren't separated¦142155.
+\q1 They were swifter¦142157 than eagles¦142156.
+\q2 ≈they were stronger¦142159 than lions¦142158.
+\b
+\q1
+\v 24 Weep for Sha'ul¦142165 you daughters¦142161 of Yisrael¦142162,
+\q1 the one who \add ≈dressed you in nice clothes¦142167 with jewellery\add*,
+\q1 ≈and gave you all gold¦142174 \add ≈brooches\add* to put on.
+\b
+\q1
+\v 25 Those warriors have fallen¦142179 in the middle¦142181 of the battle¦142182.
+\q1 ≈Yonatan has been killed \add there\add* on the hills.
+\b
+\q1
+\v 26 I \add ≈grieve\add* for you my dear friend Yonatan.
+\q1 You were \add ≈so kind\add* to me.
+\q1 Your \add ≈friendship meant more to me\add* than the women¦142202 \add ≈who say they love me\add*.
+\b
+\q1
+\v 27 \add Yes, those\add* \add ≈powerful warriors\add* have fallen¦142205,
+\q1 ≈and¦142207 those weapons¦142208 of war have \add ≈been destroyed\add*.”
+\c 2
+\s1 The kingdom of David
+\rem /s1 David Anointed King of Judah; David Is Made King of Judah; David Anointed King Over Judah
+\s4 Full kingdom
+\p
+\v 1 After \add ≈that was over\add*, David¦142217 inquired¦142216 from Yahweh, “Should I go into one of Yehudah's¦142224 cities¦142223?”
+\p “\add Yes,\add*, go,” Yahweh \add ≈answered\add*.
+\p “Where should I go?” David \add ≈asked\add* \add again\add*.
+\p “To Hebron¦142234,” he said.
+\p
+\v 2 \add ≈So¦142236\add* David¦142238 took his two¦142240 wives¦142241 (Ahinoam¦142242 the Yezreelite¦142243 and Abigail¦142244 the \add ≈widow\add* of Nabal¦142246 the Carmelite¦142247) and went there¦142237.\x + \xo 2:2: \xt 1Sam 25:42-43.\x*
+\v 3 He¦142254 took his men¦142249 who were with him, along with their \add ≈families\add*, and went to live in¦142258 Hebron¦142259 and the \add surrounding\add* towns¦142258.
+\v 4 Then¦142261 the Yehudah \add ≈leaders\add* came¦142261 and¦142261 anointed¦142264 David¦142269 as king¦142270 over Yehudah.
+\p They told him, “It was the men¦142278 of Yabesh¦142280-Gilead who buried¦142282 Sha'ul¦142285.”\x + \xo 2:4: \xt 1Sam 31:11-13.\x*
+\v 5 \add ≈So\add* David¦142289 sent¦142288 messengers¦142290 to Yabesh¦142295-Gilead to tell them, “May Yahweh¦142307 bless¦142298 you all because you \add ≈showed\add* that kindness¦142303 to your master¦142307 Sha'ul¦142310 to bury him \add respectfully\add*.
+\v 6 Now may Yahweh¦142317 \add ≈treat\add* you all with kindness and faithfulness¦142320, and I myself will also be good¦142325 to you because you did that.
+\v 7 \add ≈Meanwhile\add* now that Sha'ul¦142344 your master¦142343 is dead, \add continue\add* to be courageous and¦142332 become¦142336 \add ≈brave warriors¦142337\add* as Yehudah¦142351 has anointed¦142348 me as king¦142352 over \add ≈their tribe\add*.
+\s1 Disputes between Sha'ul and David's families
+\rem /s1 Ishbaal King of Israel; Ishbosheth Is Made King of Israel; Ishbosheth Crowned King of Israel; War Between the Houses of David and Saul
+\s4 Full kingdom
+\p
+\v 8 \add However,\add* Abner¦142356 (Ner's¦142359 son) who'd been Sha'ul's army commander¦142360 had taken¦142365 Sha'ul's son Iysh-Boshet\f + \fr 2:8 \ft Also known as Esh-Baal. (See 1 Chronicles 8:33.)\f* across to Mahanayim
+\v 9 and \add ≈declared\add* him¦142376 to be king¦142376 over Gilead¦142379, and over the Asherites¦142382 and Yezreel¦142385, and over Efrayim¦142388 and Benyamin¦142391, and over all of Yisrael¦142394.
+\v 10 Iysh-Boshet \add ≈was forty¦142400 years old\add* when he \add ≈started to rule\add* over the \add ≈Israelis\add*, and he \add ≈ruled them\add* for two years.
+\p But¦142412 the tribe of Yehudah¦142417 was loyal to David¦142420
+\v 11 and \add *he\add* \add ≈ruled them\add* for seven¦142434 and a half years¦142435.
+\rem /s1 The Battle of Gibeon; War between Israel and Judah
+\p
+\v 12 \add One day\add* Abner¦142441 left Mahanayim with \add some of\add* Iysh-Boshet's servants¦142445 and went¦142440 to Gibeon¦142453,
+\v 13 \add ≈but¦142455\add* Yoav¦142455 (Tseruyah's son, \add traditionally called ‘Joab’ in English\add*) \add took some of\add* David's¦142460 servants¦142459 and went¦142461 and \add ≈confronted\add* them at the Gibeon¦142466 pool—one group on each side of the pool.
+\v 14 Then¦142480 Abner¦142481 said to Yoav, “\add ≈Let's get some of these young¦142487 warriors¦142487 to fight¦142488 it out in front¦142489 of us\add*.”
+\p “\add ≈Sounds good to me\add*,” said Yoav.
+\p
+\v 15 \add ≈So¦142494 they stood up and counted¦142496 off\add* twelve \add ≈representing\add* Benyamin¦142499 and Sha'ul's son Iysh-Boshet and twelve from David's¦142508 servants¦142507.
+\v 16 Each of them grabbed¦142510 his opponent's head¦142513 and¦142510 then¦142510 thrust his sword¦142515 into his side¦142516, so they¦142518 both fell \add down\add* dead together¦142519. \add ≈So¦142510\add* that¦142525 place¦142521 in¦142513 Gibeon¦142526 was \add ≈named\add* ‘Helkat¦142523-Hatsurim’ \add (meaning ‘Field of Daggers’)\add*.
+\p
+\v 17 \add That¦142539 led on to\add* a very intense battle¦142529 that day¦142534, \add ≈but¦142528\add* Abner¦142537 and¦142528 the Israeli¦142538 men¦142538 were \add ≈defeated¦142536\add* by David's¦142542 servants¦142541.
+\rem /s1 The Death of Asahel
+\v 18 Tseruyah's three¦142547 sons¦142548 were there¦142546: Yoav¦142550, Avishay, and¦142544 Asah-El, (Asah-El was a \add ≈fast runner\add*—like a wild antelope.)
+\v 19 and Asah¦142576-El¦142562 chased after¦142563 Abner¦142564 and \add ≈wouldn't give up\add*.
+\v 20 Abner¦142579 turned¦142578 and¦142578 said, “Is that you, Asah-El¦142584?”
+\p “\add Yes,\add* it's me,” he \add ≈answered\add*.
+\p
+\v 21 “\add I'm warning you:\add* \add ≈Stop chasing me and¦142588 go after¦142615 someone else instead\add*,” Abner¦142590 \add ≈called back\add*. But¦142588 Asah-El¦142613 \add ≈wouldn't give up\add*
+\v 22 \add ≈so\add* Abner¦142619 \add ≈tried again¦142618\add*, “\add ≈Stop chasing me! You'll force me to kill you¦142628\add*, then¦142617 how could I face¦142632 your brother¦142636 Yoav¦142635?”
+\v 23 \add ≈But¦142638\add* \add @Asah-El\add* \add ≈wouldn't give up so\add* Abner¦142641 thrust the butt end of his spear into his stomach¦142646 and it went¦142647 right through and came¦142659 out his back. He¦142667 fell to the ground and died there, and \add ≈when the others caught up, they stopped\add* there.
+\p
+\v 24 \add ≈But¦142671\add* Yoav¦142672 and¦142671 Abishai¦142673 \add ≈kept going\add* after¦142674 Abner¦142675. As the sun¦142676 was setting, they came¦142679 to the Ammah¦142683 hill (east of Giah¦142689, along the road to the wilderness¦142691 near Gibeon¦142692)
+\v 25 and¦142694 the \add ≈Benyamites¦142697 lined up\add* behind¦142698 Abner¦142699 as an \add ≈coordinated unit\add* there on top of \add ≈the\add* hill.
+\v 26 Abner¦142711 called¦142710 out to Yoav¦142714, “\add ≈Are we just going to keep killing each other\add*? Don't¦142719 you know¦142720 that \add ≈the only result can be more\add* bitterness¦142723? How long will you \add ≈go on¦142725 before you command your people¦142732 to stop killing\add* their¦142735 \add ≈cousins\add*?”
+\p
+\v 27 “\add ≈As God¦142740 lives\add*,” Yoav¦142738 \add ≈replied\add*, “if you hadn't \add ≈said¦142737 that\add*, then¦142737 surely \add ≈it would have been morning¦142746 before they would have pulled back from the chase\add*.”
+\v 28 \add ≈So¦142753\add* Yoav¦142754 had a trumpet¦142755 blown and \add &his\add* men \add ≈stopped fighting¦142770 and pursing the Israelis¦142765\add*.
+\p
+\v 29 Then¦142772 Abner and his men¦142773 walked all that night¦142777 through the \add ≈Jordan river plain¦142775\add*, then¦142772 crossed¦142779 the \add *river\add* and walked all morning until they got \add back\add* to Mahanayim.
+\p
+\v 30 \add ≈When¦142790\add* Yoav¦142790 had assembled them all \add and counted them, only\add* Asah-El¦142807 and nineteen others had been killed in the battle,
+\v 31 \add ≈although\add* \add *they\add* had killed 360 of Abner's¦142816 Benyamite \add ≈warriors¦142815\add*.
+\v 32 They \add ≈retrieved Asah-El's¦142827 body\add* and buried¦142828 it¦142840 in his father's¦142830 tomb¦142829 in Beyt-Lehem. Then¦142824 \add *they\add* walked all night¦142837 and got \add back\add* to Hebron¦142842 \add ≈at¦142829 first\add* light¦142840.
+\c 3
+\rem /s1 Abner Defects to David
+\p
+\v 1 \add ≈Nevertheless\add* the war between Sha'ul's and David's \add ≈followers\add* dragged on and on, \add ≈but¦142844\add* \add overall,\add* David's \add ≈side had more wins than the followers of Iysh-Boshet\add*.
+\s1 David's sons
+\rem /s1 David's Sons; David's Sons Born in Hebron
+\s4 Full kingdom
+\p
+\v 2 David's¦142865 \add ≈wives gave birth to\add* \add six\add* sons¦142866 \add while they¦142862 were based there\add* in¦142867 Hebron¦142867: Ahinoam¦142871 (the Yezreelite¦142872) gave birth to Amnon¦142870,
+\v 3 then¦142874 Abigail¦142876 (the \add ≈widow\add* of Nabal¦142880 the Carmelite¦142881) \add ≈gave birth to\add* Kileab¦142875, and¦142882 Maakah¦142886 (daughter¦142887 of King¦142890 Talmai¦142889 of Geshur¦142891) \add ≈gave birth to\add* Abshalom¦142883.
+\v 4 The fourth¦142893 was Adoniyah¦142894 (son of Haggit¦142897), the fifth¦142898 was Shefatyah (son of Abital¦142902),
+\v 5 and¦142904 the sixth¦142904 was Yitre'am (son of David's¦142908 wife¦142907 Eglah¦142906). \add All six of\add* those \add sons\add* were born to David in¦142912 Hebron¦142912.
+\s1 Abner switches over to David
+\rem /s1 Abner Joins David; Abner Joins Forces with David; Abner Goes Over to David
+\s4 Full kingdom
+\p
+\v 6 \add ≈While the war between Sha'ul's son Iysh-Boshet and David's¦142923 supporters continued\add*, Abner¦142924 was strengthening¦142926 himself¦142926 with¦142916 Sha'ul's \add ≈supporters\add*.
+\v 7 \add ≈Now\add* Sha'ul¦142930 had had a slave-wife named Ritspah (daughter¦142934 of Ayyah) and¦142930 Abner¦142940 slept with her¦142932. \add ≈So¦142930\add* \add Iysh-Boshet\add* \add ≈demanded\add*, “Why have you¦142942 slept with my father's¦142946 slave-wife?”
+\v 8 Abner¦142949 \add ≈became very angry at¦142981 this challenge from Iysh-Boshet and snapped back\add*, “\add ≈Do you think I'm Yehudah's¦142962 dog\add* \add hiding out over here\add*? Today I've¦142980 been \add ≈helping\add* Sha'ul's \add ≈family\add*: your father, his brothers¦142975, and his friends¦142978, and I won't¦142979 let you fall into David's¦142983 \add #hands\add*. \add ≈Yet\add* today you \add ≈bring some charge¦142984 against me to do with¦142981 a\add* woman¦142987?
+\v 9 May God¦142993 punish \add *me\add* if I don't do for David¦143002 exactly what Yahweh¦143001 promised him
+\v 10 \add and help with\add* the transfer¦143010 of the kingdom away from \add *your\add* family and to establish¦143014 David's¦143018 \add ≈kingdom\add* over \add both\add* Yehudah¦143024 and Yisrael¦143021, from Dan¦143025 \add down\add* to Beer¦143028-Sheba¦143029.”\x + \xo 3:10: \xt 1Sam 15:28.\x*
+\v 11 Iysh-Boshet didn't¦143031 say a word¦143039 back to Abner¦143038 because¦143040 he was very scared¦143040 of him.
+\p
+\v 12 Then Abner¦143045 sent¦143044 messengers¦143046 to David¦143050 to tell \add <him\add*, “Who should be king of this \add ≈country\add*? \add ≈Let's come to an agreement¦143059 and then I could join you\add* \add and help\add* make all of Yisrael¦143070 turn to you.”
+\p
+\v 13 “\add Yes,\add* good¦143073,” \add @David\add* \add ≈replied\add*. “\add ≈I'm happy to come¦143102 to an agreement¦143077 with¦143102 you on¦143102 one condition: you must¦143075 bring¦143096 my¦143106 wife—Sha'ul's daughter¦143099, Mikal—if you want to be accepted here\add*.”
+\v 14 Then David¦143110 sent¦143109 messengers¦143111 to Sha'ul's son Iysh-Boshet saying, “Give \add ≈Mikal back to\add* me. \add ≈I earnt her as my wife¦143124 with¦143131\add* the foreskins¦143132 of one-hundred Philistines¦143133.”\x + \xo 3:14: \xt 1Sam 18:27.\x*
+\v 15 \add ≈So¦143135\add* Iysh-Boshet \add ≈had her taken\add* from \add &her\add* husband¦143140 (Laish's¦143145 son Paltiel¦143142),
+\v 16 \add ≈but¦143148\add* he walked along behind¦143153 her, weeping¦143152, as far as Bahurim¦143156 \add where finally\add* Abner¦143159 told him to go¦143160 \add ≈back home\add* and¦143148 \add ≈so he did\add*.
+\p
+\v 17 Then¦143164 Abner¦143166 conferred¦143164 with the Israeli¦143170 elders¦143170 saying, “\add ≈Previously¦143171\add* you were wanting David¦143183 to be king over you,
+\v 18 \add ≈but¦143187 now it's time for action\add*. Yahweh¦143190 has \add already\add* said, ‘\add ≈I'm¦143198 going to use\add* my servant¦143199 David¦143194 to rescue¦143200 my people¦143203 Yisrael¦143204 from the Philistines¦143206 and¦143187 all their¦143210 \add other\add* enemies¦143210.’ ”
+\v 19 Abner¦143215 also spoke¦143212 \add ≈privately with¦143216 the Benyamites\add*, then¦143212 he went¦143218 to Hebron¦143225 to tell David¦143224 \add ≈privately what the Israelis¦143233 and¦143212 the Benyamites had agreed to\add*.
+\p
+\v 20 Then¦143240 Abner¦143241 took twenty¦143247 men and went¦143240 to David at Hebron¦143245, and David put on a feast¦143256 for \add ≈all of them\add*.
+\v 21 Abner \add ≈asked\add* David, “My master¦143269, the king. Let me get \add ≈ready\add* and go, and let me \add ≈encourage\add* all of Yisrael¦143275 that they'll \add ≈make an agreement¦143278\add* with¦143280 you so that you will be king over \add ≈the entire¦143273 area as you've been wanting\add*.” \add ≈So¦143258\add* David sent Abner, and he went in¦143280 peace¦143291.
+\s1 Yoav murders Abner
+\rem /s1 Abner Is Killed by Joab; Abner Is Murdered; Joab Murders Abner
+\s4 Full kingdom
+\p
+\v 22 \add Soon afterwards,\add* Yoav¦143296 and some of David's¦143295 \add ≈men\add* arrived after a raid and \add ≈carried in\add* a lot of plunder¦143299. (Abner¦143303 had already left Hebron¦143308 because¦143309 \add David\add* had sent¦143310 him¦143310 off and he'd left in peace¦143312.)
+\v 23 \add ≈When¦143314\add* Yoav¦143314 and all the fighters with him arrived, \add *he\add* was told that¦143318 Abner¦143327 had been there and spoken with the king¦143333, then¦143314 sent¦143334 away in¦143336 peace¦143336.
+\v 24 \add ≈So¦143338 Yoav¦143339\add* went¦143348 to the king¦143342 and \add ≈demanded\add*, “What have you done¦143345? Abner¦143349 came¦143348 to you \add ≈and I can't believe that you'd let him¦143354 go¦143356, but¦143338 he's definitely not here now\add*.
+\v 25 \add ≈Surely¦143364 you realise that\add* \add *he\add* \add only\add* came¦143367 \add ≈here to influence you and to find out where you're coming¦143374 from and going¦143371 to, and to learn¦143368 everything\add* that you're doing¦143382?”
+\p
+\v 26 \add ≈Once Yoav¦143385 had finished talking to\add* David, he¦143398 sent¦143388 messengers¦143389 \add ≈to catch up to\add* Abner¦143391. They \add found him\add* at the Sirah¦143395 cistern and¦143384 brought¦143392 him back \add ≈without David's¦143387 knowledge\add*.
+\v 27 \add ≈When¦143400\add* Abner¦143401 got back to Hebron¦143402, Yoav took¦143403 him aside¦143403 at¦143411 the \add city\add* gate¦143408 as if to speak¦143409 to him privately¦143411, then¦143400 \add ≈stabbed¦143412\add* him in¦143411 the stomach¦143414 and¦143400 he died¦143415 \add ≈as vengeance for killing\add* \add @Yoav's\add* brother Asah-El¦143419.
+\v 28 \add Later\add* \add ≈when\add* David¦143423 heard about it, he \add ≈declared\add*, “I and¦143422 my kingdom¦143429 are innocent¦143427 \add ≈of Abner's¦143436 death in Yahweh's¦143431 eyes\add*.
+\v 29 \add ≈May Yoav's extended family continually suffer¦143456 from sores or leprosy¦143457, and be forced into manual labour or be killed in¦143459 battle, or run out of food¦143464 to eat\add*.”
+\v 30 (\add That's how\add* Yoav¦143466 and¦143466 his brother Abishai¦143467 murdered Abner¦143470 because he'd killed their¦143477 brother Asah-El¦143476 in¦143478 Gibeon¦143478 during the war.)
+\s1 Abnir's burial
+\rem /s1 David Mourns Abner's Death; Abner Is Buried
+\s4 Full kingdom
+\p
+\v 31 Then David \add ≈instructed\add* Yoav¦143486 and all the people¦143491 with him, “Tear your¦143496 clothes¦143496 and put on sackcloth¦143498 and mourn¦143499 \add ≈for\add* Abner¦143501.” \add Later at the funeral,\add* King¦143502 David walked behind the \add ≈coffin\add*
+\v 32 and they buried¦143508 Abner¦143511 in¦143512 Hebron¦143512. The¦143523 king¦143515 \add ≈cried loudly\add* at¦143512 the tomb, and the people¦143527 \add also\add* wept.
+\v 33 The king¦143531 \add ≈sang this song\add* for Abner¦143534:
+\q1 “Abner shouldn't have died as if \add ≈he was just some drunken fool\add*.
+\q1
+\v 34 \add ≈He wasn't handcuffed or with his feet¦143545 in chains\add*.
+\q1 \add ≈He fell like someone disturbing a burglar.\add*”
+\m And \add so\add* the people¦143559 wept even more for him.
+\p
+\v 35 \add ≈Many people¦143566 brought food¦143571\add* to David¦143570 during the day¦143573, but¦143563 he promised, “\add ≈May God¦143581 severely punish me if I eat¦143567 anything¦143597\add* before the sun¦143590 goes¦143588 down.”
+\v 36 All the people recognised \add David's dignity in¦143604 handling this matter and¦143599 were pleased with his behaviour, just as they were pleased with everything¦143605 that the king¦143608 did\add*,
+\v 37 and¦143619 \add ≈everyone¦143618 throughout Yisrael¦143621 knew¦143615 that the king¦143627 hadn't ordered for Abner¦143631 (Ner's¦143634 son) to be executed\add*.
+\v 38 Then the king¦143638 told his servants¦143641, “Don't¦143642 you¦143643 all \add ≈realise that Yisrael¦143651 lost a leader¦143646 and a great¦143647 man¦143647 today\add*?
+\v 39 Although I was anointed¦143656 as king¦143657, I \add ≈feel tender\add* today. Those sons¦143660 of Zeruyah¦143661 \add ≈are more violent\add* than me. May Yahweh¦143665 repay¦143664 \add ≈evil people appropriately for their actions\add*.”
+\c 4
+\s1 The murder of Iysh-Boshet
+\rem /s1 Ishbosheth Is Murdered; Ishbaal Assassinated; The Murder of Ishbosheth; Ish-Bosheth Murdered
+\s4 Full kingdom
+\p
+\v 1 \add ≈When\add* Sha'ul's son \add Iysh-Boshet\add* heard that Abner¦143677 had \add ≈been killed\add* in¦143678 Hebron¦143678, \add ≈he lost courage\add* and all Yisrael¦143683 was horrified.
+\v 2 \add *He\add* had two men¦143687 who were \add ≈leaders of raiding parties\add*. They were Rimmon's¦143702 sons Baanah¦143697 and¦143686 Rekav from Beerot¦143709 in the Benyamite region,
+\v 3 \add ≈but¦143715\add* the \add ≈people from Beerot¦143716\add* had fled to Gittaim¦143717 where they've stayed until¦143722 now.
+\p
+\v 4 (Sha'ul's son Yonatan had a son named Mefiboshet. He was \add ≈five years¦143737 old\add* when the report¦143740 about Sha'ul and Yonatan's \add death\add* came from Yezreel¦143743. \add @Mefiboshet's\add* \add ≈nanny\add* picked¦143744 him up \add ≈to run to safety, but¦143727 in her hurry\add* he fell and \add ≈became¦143751 crippled in his legs\add*.)\x + \xo 4:4: \xt 2Sam 9:3.\x*
+\p
+\v 5 \add One day,\add* Baanah¦143761 and¦143755 Rekav (the sons of Rimmon¦143758 from Beerot) walked to Iysh-Boshet's house¦143767, \add ≈arriving in the middle of the day when he was taking a nap\add*.
+\v 6-7 They entered the middle¦143780 of the house¦143781 \add ?≈as if getting wheat¦143783\add*, then \add entered\add* the inner room where @Iysh-Boshet was on the bed. They struck¦143784 him in the \add ≈body\add*, killing him, then they cut off his head. Then¦143776 Rekav and Baanah¦143789 took the head and escaped¦143791, and walked all night through the Arabah.
+\v 8 They took Iysh-Boshet's head to David¦143829 at Hebron¦143830 and told the king, “Look, \add here's\add* the head of Ishbosheth, the son of your enemy¦143844 Sha'ul who \add ≈tried to kill you\add*. Today Yahweh's¦143851 given vengeance¦143854 to my master¦143852 the king against Sha'ul and his \add ≈descendants\add*.”
+\p
+\v 9 Then David¦143862 answered¦143861 Rekav and his brother Baanah¦143869 (the sons of Rimmon¦143872 from Beerot), “\add ≈As Yahweh¦143878 lives, having\add* delivered my life from every distress,
+\v 10 when the \add ≈messenger came to Tsiklag¦143905 thinking he was bringing¦143900 me good news and told me that Sha'ul¦143896 was dead, I¦143907 had him seized¦143902 and executed\add*.\x + \xo 4:10: \xt 2Sam 1:1-16.\x*
+\v 11 \add Now\add* how much more when \add ≈wicked¦143916 men¦143915\add* have killed¦143917 an \add ≈innocent\add* man¦143920 on¦143923 his bed¦143926 in¦143923 his \add own\add* house¦143923. Shouldn't I \add ≈avenge\add* you \add two\add* \add ≈for his murder\add* and remove¦143934 you from the earth¦143938?”
+\v 12 Then¦143940 David¦143941 commanded¦143940 \add some of\add* the young¦143944 men¦143944 and they killed¦143945 \add @the two brothers\add* and cut of their hands and feet and hung \add them\add*\f + \fr 4:12 \ft It's ambiguous in the Hebrew whether the hands and feet were strung up, or the actual bodies.\f* beside the Hebron pool, \add ≈but¦143940\add* they took¦143963 Iysh-Boshet's head¦143959 and buried¦143964 it \add there\add* in Hebron in Abner's¦143967 tomb¦143965.
+\c 5
+\s1 David becomes king of all Yisrael
+\rem /s1 David Becomes King Over Israel; David Becomes King of All Israel; David Becomes King of Israel and Judah; David Anointed King of All Israel
+\s4 Full kingdom
+\r (1 Chr. 11:1-9; 14:1-7)
+\p
+\v 1 Then \add the leaders of\add* all of Yisrael's¦143975 tribes¦143974 came¦143971 to David¦143978 at Hebron¦143979 and said¦143980 to him, “Listen, we're \add all\add* \add ≈close relations\add*.
+\v 2 \add ≈In the past\add* when Sha'ul¦143994 was \add ≈our king\add*, you were the \add ≈one who actually showed leadership of the people¦144014\add*. Yahweh¦144008 has \add already\add* told you that you will shepherd¦144011 Yisrael¦144006 and become¦144019 \add ≈our king\add*.”
+\v 3 \add ≈So¦144025 with Yahweh¦144041 as their witness,\add* all the Israeli¦144028 elders¦144028 made a \add ≈formal agreement¦144038\add* with David¦144037, and¦144025 they anointed¦144042 him as king over \add all\add* Yisrael¦144029.
+\v 4 David¦144056 \add ≈was thirty¦144054 years old\add* when he became¦144057 \add their\add* king¦144057 and he reigned¦144057 for \add a total of\add* forty¦144058 years:\x + \xo 5:4-5: \xt 1Ki 2:11; 1Ch 3:4; 29:27.\x*
+\v 5 seven¦144067 and a half years in Hebron as king of Yehudah, then thirty-three years in Yerushalem¦144071 as king over all Yisrael¦144079 and Yehudah.
+\s1 David captures Yerushalem
+\rem /s1 David Captures Jerusalem; David Conquers Jerusalem; Jerusalem Made Capital of the United Kingdom
+\s4 Full kingdom
+\p
+\v 6 The king¦144083 and his men \add battled\add* against¦144086 the Yebusites who lived \add ≈in and around\add* Yerushalem¦144085, \add ≈but¦144082\add* \add @Yebusites\add* \add ≈mocked\add* David, “You'll \add ≈never break in here—even blind¦144102 and crippled men could keep you out\add*,” because¦144098 they thought that David couldn't get in.\x + \xo 5:6: \xt Josh 15:63; Jdg 1:21.\x*
+\v 7 \add ≈But¦144111\add* David \em did\em* capture¦144111 that Tsiyyon¦144115 stronghold¦144114 that \add then¦144111 became known as\add* David's¦144112 city¦144117.
+\p
+\v 8 He'd told \add <his men\add* that day¦144122, “Anyone¦144126 \add wanting to\add* strike the Yebusites¦144127 \add ≈should¦144128 use the water¦144129 tunnel¦144129 to reach¦144128\add* the lame people and the blind people—the ones who are hated¦144136 by David.” (That's why they say that blind and crippled people shouldn't¦144146 enter the house¦144150.\f + \fr 5:8 \ft Left ambiguous here because it's not clear from the Hebrew. (Some think ‘David's palace’ while others go for ‘God's temple’.)\f*)
+\p
+\v 9 \add ≈So¦144152\add* David lived in¦144154 that stronghold¦144154 and¦144152 called¦144155 it ‘David's¦144153 city¦144158’—\add ≈expanding it on¦144154 all sides\add*.
+\v 10 David¦144169 \add ≈continued to grow more powerful¦144171 because\add* Yahweh¦144172 the commander¦144174 God¦144173 was with him.
+\rem /s1 David's achievements
+\p
+\v 11 King¦144180 Hiram¦144179 from Tyre¦144182 sent messengers¦144183 to David, then he sent \add ≈carpenters and stone-cutters\add* to build a \add ≈palace\add* for David.
+\p
+\v 12 David¦144200 knew¦144199 that Yahweh¦144204 had established¦144203 him¦144203 as king¦144205 over \add all\add* Yisrael¦144208 and¦144209 that he¦144210 \add ≈was prospering\add* the kingdom¦144211 for the sake of his people¦144213 the Israelis¦144214.
+\p
+\v 13 \add ≈After¦144230 David¦144218 moved from Hebron¦144225 to\add* Yerushalem¦144222, he¦144224 \add ≈married more wives and took¦144217 more slave-wives, all of whom produced more sons¦144231 and daughters¦144232 for him\add*.
+\v 14 The names¦144235 of his sons who were born in¦144238 Yerushalem¦144238 were Shammua¦144239, Shobab¦144240, Natan \add (Nathan¦144241)\add*, Shelomoh \add (Solomon¦144242)\add*,
+\v 15 Ibhar, Elishua¦144245, Nefeg¦144246, Yafia¦144247,
+\v 16 Elishama, Eliada¦144250, and¦144249 Elifelet¦144251.
+\s1 Defeated by David the Philistines
+\rem /s1 David Defeats the Philistines; Victory over the Philistines; Philistine Attack Repulsed; David Conquers the Philistines
+\s4 Full kingdom
+\r (1 Chr. 14:8-17)
+\p
+\v 17 \add ≈When\add* the Philistines¦144255 heard that David had been \add ≈proclaimed\add* as king¦144262 over \add all\add* Yisrael¦144265, \add ≈their army set off to capture\add* \add *him\add*, \add ≈but\add* David heard and \add ≈retreated\add*\f + \fr 5:17 \ft The Hebrew says ‘descended’, but doesn't tell us either from where (probably Yerushalem) or to where (possibly Masada).\f* to the stronghold¦144279.
+\v 18 The Philistines¦144281 \add ≈moved in¦144284\add* and¦144283 took over the Rafa valley¦144284,
+\v 19 and¦144287 David¦144288 inquired¦144287 from Yahweh, “Should I \add ≈attack\add* the Philistines¦144294? Will you \add ≈help me defeat them\add*?”
+\p “\add Yes,\add* \add ≈attack them\add*,” Yahweh \add ≈replied\add*, “because¦144303 I'll¦144306 certainly¦144305 \add ≈help you to defeat them\add*.”
+\p
+\v 20 \add ≈So\add* David¦144313 \add ≈attacked\add* and \add ≈defeated¦144317\add* them, and said¦144320, “Yahweh¦144322 broke¦144321 through my enemies¦144325 \add ≈in¦144314 front of me like breaking a dam\add*.” So he called¦144332 the place¦144335 ‘Baal¦144337-Peratsim’ \add (which means ‘Master of breaking through’)\add*.
+\v 21 \add @The Philistines¦144343\add* left their¦144345 idols¦144345 there¦144342, and David¦144347 and his men¦144348 \add ≈took them away\add*.
+\p
+\v 22 Then the Philistines¦144353 \add ≈returned to\add* the Rafa valley¦144356 and took over it again¦144352.
+\v 23 \add Again\add* David¦144360 inquired¦144359 from Yahweh¦144361 who \add ≈replied\add*, “\add No,\add* \add ≈don't¦144363 go straight in¦144361. Move\add* around¦144365 behind¦144368 them and¦144359 \add ≈then¦144359 attack\add* them from opposite¦144371 the trees¦144372.
+\v 24 Then¦144374 when you hear¦144375 a sound in¦144375 the tops of the trees¦144382 \add ≈that sounds like marching¦144380, then¦144374 you'll know that Yahweh¦144388 has gone ahead\add* to strike¦144390 the Philistines' camp¦144391.”
+\v 25 \add ≈So¦144394\add* David¦144395 \add ≈followed Yahweh's¦144399 instructions¦144398\add* \add #they\add* attacked the Philistines¦144403 from Geva¦144404 \add ≈all the way\add* to Gezer¦144408.
+\c 6
+\s1 The Box with the agreement is brought to Yerushalem
+\rem /s1 The Covenant Box Is Brought to Jerusalem; David Brings the Ark to Jerusalem; The Ark Brought to Jerusalem
+\s4 Full kingdom
+\r (1 Chr. 13:1-14; 15:25–16:6,43)
+\p
+\v 1 Then David¦144413 \add ≈selected thirty¦144420 thousand¦144421 Israeli warriors and gathered¦144411 them together\add*.
+\v 2 \add ≈He led them to\add* \add Kiriat-Yearim (formerly called¦144441\add* Baalah) in Yehudah¦144433 to get the box¦144437 of God¦144438 (whose name is Yahweh¦144444 the army¦144445 commander¦144445) who lives between the two winged creatures on the top of it.\x + \xo 6:2: \xt Exo 25:22.\x*
+\v 3 They \add ≈placed the sacred chest¦144453\add* on a \add ≈newly-made\add* cart and started moving it¦144459 from Abinadab's house¦144460 which¦144462 was on a hill. Uzzah¦144464 and Ahyo (Abinadab's sons¦144466) were leading¦144468 the cart.\x + \xo 6:3: \xt 1Sam 7:1-2.\x*
+\v 4 They took it¦144474 from Abinadab's¦144476 house¦144475 and¦144482 Ahyo \add ≈took the lead in¦144478 front¦144484\add*.
+\v 5 David¦144487 and all the \add ≈Israelis¦144492\add* were celebrating \add ≈in¦144496 God's¦144495 presence\add* with \add ≈wooden\add* harps¦144500 and lyres¦144499, along with tambourines¦144501, shakers, and cymbals¦144503.
+\p
+\v 6 \add ≈But¦144505\add* when they reached Nakon's¦144515 threshing¦144508 floor¦144508 the oxen \add ≈stumbled¦144519 so\add* Uzzah¦144511 reached out \add ≈to steady the sacred chest¦144514\add*.
+\v 7 Yahweh¦144525 \add ≈became furious with¦144526\add* Uzzah¦144526 and¦144522 \add ≈killed\add* him \add right\add* there by the \add ≈sacred chest¦144536 because he'd touched it\add*.
+\v 8 \add Now\add* David¦144540 \add ≈got angry\add* because of Yahweh's¦144544 outburst against¦144546 Uzzah, and¦144547 that place¦144548 has been called¦144547 Perets-Uzzah \add (meaning ‘The punishment of Uzzah’)\add* until¦144552 today.
+\v 9 David¦144557 was afraid¦144556 of Yahweh that day¦144561 and¦144563 asked, “How will Yahweh's¦144560 box¦144567 \add ≈get to Yerushalem\add*?”
+\v 10 \add ≈So¦144570\add* \add *he\add* \add ≈decided not to take¦144574\add* Yahweh's¦144579 box¦144578 \add *there\add* and¦144570 \add ≈redirected\add* it \add instead\add* to the house¦144586 of Obed-Edom¦144589 (a Gittite¦144590).
+\v 11 The \add ≈sacred chest¦144593\add* stayed at Obed-Edom's¦144597 house¦144595 for three¦144599 months¦144600, and Yahweh¦144594 blessed¦144601 him and all \add ≈the household\add*.\x + \xo 6:11: \xt 1Ch 26:4-5.\x*
+\p
+\v 12 \add ≈Someone told\add* King¦144614 David, “Yahweh¦144618 has blessed¦144617 Obed-Edom's \add ≈household\add* because of the \add ≈sacred chest¦144632,” so\add* David went¦144634 and¦144613 brought God's Box from Obed-Edom's house¦144641 to \add ≈Yerushalem with¦144646 much happiness\add*.
+\v 13 \add ≈When¦144654 the men who were carrying¦144651 the sacred chest¦144652 had walked\add* six¦144655 steps¦144656, they¦144650 stopped and \add @David\add* sacrificed¦144657 a \add ≈bull¦144658 and a fattened calf\add* \add there\add*.
+\v 14 Then¦144661 David¦144661, wearing a linen¦144671 \add ≈apron\add*, danced \add ≈in front¦144666 of\add* Yahweh¦144667, \add ≈putting everything into it\add*.
+\v 15 David¦144673 and all the \add ≈Israelis¦144677\add* brought the \add ≈sacred chest¦144681\add* \add into Yerushalem¦144682\add* with¦144683 shouting¦144683 and trumpet \add ≈blasts\add*.
+\rem /s1 Michal's Contempt for David
+\p
+\v 16 \add ≈However\add*, as they were entering the city¦144691, \add @David's\add* wife Mikal (Sha'ul's daughter¦144694) looked¦144697 out the window¦144700 and saw¦144701 King¦144704 David leaping¦144706 and dancing¦144707 \add ≈in¦144712 front¦144708 of\add* Yahweh¦144689, and she¦144697 \add ≈felt only despite¦144710 for\add* him.
+\v 17 They took Yahweh's¦144718 box¦144717 and¦144714 placed¦144721 it in¦144721 the middle¦144722 of the tent that¦144724 David had erected for it. Then¦144714 David \add ≈offered burnt¦144731 sacrifices\add* to Yahweh, as well as peace¦144734 offerings.
+\v 18 \add ≈When¦144736\add* David¦144737 \add ≈had finished offering¦144738 those sacrifices\add*, he blessed¦144741 the people¦144744 in commander¦144747 Yahweh's¦144746 name¦144745.
+\v 19 He¦144756 \add ≈handed out a large bread¦144763 roll\add*, a cake of \add pressed\add* dates¦144765, and a cake of \add pressed\add* raisins¦144767 to each man and woman¦144760 \add there\add*, then¦144749 they all returned to their homes.\x + \xo 6:19-20: \xt 1Ch 16:43.\x*
+\p
+\v 20 Then¦144776 David¦144777 returned¦144776 to bless¦144778 his \add own\add* house¦144781, \add ≈but¦144776 his wife Mikal came¦144782\add* out to meet him \add ≈complaining, “What disgraceful behaviour for Yisrael's¦144795 king¦144794 today—dancing when he was wearing so little and¦144776 exposing himself to his female servants¦144801 like some brainless person\add*!”
+\p
+\v 21 “\add ≈It was to thank\add* Yahweh,” David¦144808 \add ≈responded¦144807\add*, “who chose¦144815 me (rather than your¦144818 father¦144818 and¦144807 any of his family) by appointing¦144822 me as leader over Yahweh's¦144813 people¦144827 Yisrael¦144831. I was celebrating¦144832 \add ≈in¦144817 front¦144812\add* of Yahweh
+\v 22 and I will humiliate and \add ≈humble myself¦144836\add* \add even\add* more than that. \add ≈Yet\add* I will \add end up\add* being honoured¦144848 by those female servants \add ≈that you¦144846 were talking about\add*.”
+\p
+\v 23 \add After that,\add* Sha'ul's daughter¦144851 Mikal \add ≈never had any more children¦144858\add*.
+\c 7
+\s1 Yahweh's promise to David
+\rem /s1 God's Promise to David; Nathan's Message to David; The Lord's Covenant Promise to David; God's Covenant with David
+\s4 Full kingdom
+\r (1 Chr. 17:1-15)
+\p
+\v 1 Then the king¦144868 \add ≈moved into his palace\add*, and Yahweh¦144870 \add ≈allowed him to have a time of peace\add* from all his enemies¦144877.
+\v 2 \add One day\add* the king¦144880 said¦144879 to the prophet¦144884 Natan¦144883, “Look, I'm \add here\add* living¦144888 in a house¦144889 \add made\add* of cedar¦144890, but¦144879 God's box¦144891 is \add ≈still there in a tent¦144895\add*.”
+\p
+\v 3 “Go and¦144897 do¦144906 \add ≈whatever you consider best\add*,” Natan¦144898 \add ≈replied\add*, “because¦144907 Yahweh¦144908 is with¦144904 you.”
+\v 4 \add ≈But¦144912 that\add* night¦144913, Yahweh¦144918 \add ≈spoke\add* to Natan¦144921,
+\v 5 “Go and tell my servant¦144928 David¦144931 that Yahweh¦144934 says¦144933, ‘Will you build¦144936 a house¦144939 for me \add ≈to live in\add*?
+\v 6 I haven't lived in a house¦144945 since¦144946 I brought¦144947 the \add ≈Israelis¦144951\add* out of Egypt¦144952 \add ≈right up until now\add*, \add but¦144953 rather\add* I was living in a tent¦144959 \add ≈as they moved around\add*.
+\v 7 In \add ≈all those places, I never once queried the leaders to ask\add* why they never built¦144989 a cedar¦144992 house¦144991 for me.’
+\p
+\v 8 “\add ≈But¦144994\add* now you should tell my servant¦144998 David¦144999 that commander¦145003 Yahweh¦145002 says¦145001, ‘I myself took¦145005 you out of the \add ≈grass field where you looked after¦145009 the sheep¦145010 and¦144994 goats\add* to become the leader of my people¦145015 the \add ≈Israelis¦145015\add*.
+\v 9 Everywhere you've gone, I've¦145020 been with¦145022 you and \add ≈destroyed your¦145031 enemies¦145030 in¦145022 front of you\add*, and I will make you \add ≈famous like all the famous\add* people on¦145022 the earth¦145039.
+\v 10 I will \add ≈establish\add* a place for the \add ≈Israelis¦145043\add* and put them there to live, and they won't \add ≈be afraid because evil people¦145043\add* won't continue to oppress them \add ≈like happened in¦145059 the past\add*
+\v 11 \add ≈when I appointed¦145065 heroes\add* \add (traditionally ‘judges¦145066’)\add* over my people¦145069 Yisrael¦145070. I will give¦145071 you \add ≈peace\add* from all your enemies¦145075, and¦145061 I, Yahweh¦145078, will \add ≈enable your descendants to rule after you\add*.
+\v 12 \add ≈when your time¦145090 on earth comes to an end\add* and you're laid down with your ancestors¦145094, I will appoint one of your sons to be king and I will establish¦145103 his kingdom¦145106.\x + \xo 7:12: \xt Psa 89:3-4; 132:11; Yhn 7:42; Acts 2:30.\x*
+\v 13 He's \add ≈the one who'll build¦145109 a temple for me\add*, and¦145113 I will \add ≈make his descendents reign\add* forever¦145120.
+\v 14 I myself will become like a father¦145126 to him, and he'll become like a son to me. When he \add ≈disobeys, I'll¦145123 punish him like fathers punish their sons\add*.\x + \xo 7:14: \xt Psa 89:26-27; 2Cor 6:18; Heb 1:5.\x*
+\v 15 \add ≈But¦145141\add* my kindness won't¦145142 turn away from you like I turned away from Sha'ul¦145149—\add ≈the one who I removed ahead of you\add*.
+\v 16 Your \add ≈descendants\add* and¦145154 your kingdom¦145156 will remain forever. Your throne¦145161 will be established¦145163 forever.’ ”\x + \xo 7:16: \xt Psa 89:36-37.\x*
+\s1 David's prayer
+\rem /s1 David's Prayer of Thanksgiving; David's Prayer of Thanks; David's Prayer
+\s4 Full kingdom
+\r (1 Chr. 17:16-27)
+\p
+\v 17 \add ≈So\add* Natan¦145176 \add ≈passed all of that onto\add* David¦145179,
+\v 18 and King¦145183 David¦145184 went¦145182 and sat¦145185 \add ≈in front¦145186\add* of Yahweh and said¦145188, “Who am I, my master¦145191 Yahweh, and \add ≈how important is my family\add* that you¦145196 have brought¦145196 me to \add ≈this point\add*?
+\v 19 \add ≈But¦145201 that was just minor to you,\add* my master Yahweh¦145205. You also spoke¦145207 about¦145214 \add ≈the distant¦145214 future for my descendants\add*.
+\v 20 What more can \add I,\add* David¦145224 say¦145226 to you? \add ≈But¦145221\add* my master¦145233 Yahweh¦145233, you yourself know¦145229 your servant¦145232.
+\v 21 You've done¦145239 all these incredible things \add ≈in order to fulfil what you¦145239 said and to fulfil your own desires\add*, and then \add ≈revealed them to\add* your servant¦145248.
+\v 22 That's¦145255 why you're¦145253 incredible, Yahweh¦145254 my god¦145261, \add ≈and so\add* there's no one like you. There's¦145250 no god¦145261 except¦145262 you—\add ≈that's what we keep hearing about\add*.
+\v 23 \add ≈What other nation\add* is like your people, Yisrael¦145271—one nation on the earth¦145274 that¦145275 \add *you\add* went to redeem¦145279 for \add ≈yourself\add* as a people—\add ≈rescuing\add* you from Egypt¦145296 and its gods¦145298? \add You\add* \add ≈made a reputation¦145285 for yourself\add* and \add ≈did amazing and scary things for your nation in front¦145291\add* of your people\x + \xo 7:23: \xt Deu 4:34.\x*
+\v 24 You¦145306 established¦145300 \add us\add* Israelis¦145304 as your \add own\add* people forever¦145312, and¦145300 you yourself Yahweh¦145314 became \add ≈our\add* God¦145317.
+\p
+\v 25 “And now, Yahweh¦145321 God¦145322, the \add ≈promise you made\add* concerning¦145329 your servant¦145328 and his \add ≈descendants\add*, and do¦145336 just as you have spoken and \add ≈make it come true into the future\add*.
+\v 26 May your \add ≈reputation¦145341 be good\add* forever¦145344, \add with people\add* saying, ‘Commander Yahweh¦145346 is God¦145348 over Yisrael¦145351,’ and¦145340 the \add ≈dynasty\add* of your servant¦145353 David¦145354 will be established¦145356 \add ≈under you¦145357\add*,
+\v 27 because you, commander¦145363 Yahweh¦145362 are Yisrael's¦145365 god¦145364. You have \add ≈told\add* your servant, ‘I will build¦145373 a \add ≈dynasty\add* for you.’ \add ≈That's why\add* your servant has found¦145379 \add ≈the courage\add* to pray this prayer¦145388.
+\p
+\v 28 “\add ≈So¦145391\add* now, my master¦145393 Yahweh¦145393, you are God¦145398, and \add ≈you do what you say\add*, and you have said these good¦145408 things¦145408 concerning your servant¦145405.
+\v 29 Now¦145425, \add ≈if it¦145428 pleases you,\add* bless your servant's \add ≈extended family\add* forever, because¦145421 you yourself, my master¦145424 Yahweh¦145424, have spoken¦145426, and¦145411 from your blessing, your servant's \add ≈family\add* will be blessed forever.”
+\c 8
+\s1 David's victories
+\rem /s1 David's Wars; David's Victories; David's Military Victories
+\s4 Full kingdom
+\r (1 Chr. 18:1-17)
+\p
+\v 1 \add ≈Sometime later,\add* David¦145440 \add ≈attacked\add* the Philistines¦145443 and \add ≈defeated¦145439\add* them, and he \add ≈captured\add* Meteg-Ammah from \add ≈them\add*.
+\p
+\v 2 Then¦145454 he \add ≈defeated¦145454\add* the \add ≈Moabites\add*. \add @David\add* forced them to lie on¦145459 the ground and \add ≈used a length of rope to decide their fate—those inside two¦145464 lengths of the rope were killed, and those inside the third length were spared\add* and \add so\add* the Moabites became¦145471 David's¦145473 servants¦145474—bringing¦145475 him tribute¦145476.
+\p
+\v 3 Then¦145478 David¦145479 \add ≈defeated¦145478\add* Tsovah's King¦145486 Hadadezer¦145482 (son of Rehov) \add ≈who had tried to reestablish his authority over the Euphrates\add* River.
+\v 4 David¦145497 captured¦145496 1,700 horsemen and twenty¦145504 thousand men on foot¦145507. \add *He\add* hamstrung¦145508 all the chariot¦145514 \add horses¦145514\add* except for a hundred¦145502 of them.
+\p
+\v 5 Then¦145520 \add ≈the Arameans¦145529\add* came¦145520 from Damascus¦145522 to help¦145523 Tsovah's king¦145525 Hadadezer¦145524 \add ≈but¦145520\add* David¦145528 \add ≈killed¦145527\add* twenty-two thousand¦145533 \add ≈of them\add*.
+\v 6 David \add ≈stationed\add* garrisons¦145538 in Aram¦145542 (in Damascus¦145540) and \add ≈the Arameans¦145542\add* became¦145541 David's¦145537 servants¦145544—bringing¦145545 him tribute¦145546, and Yahweh¦145548 \add ≈helped\add* David \add win\add* wherever¦145553 he¦145554 went¦145554.
+\v 7 David¦145557 \add ≈confiscated\add* the gold¦145560 shields¦145559 that¦145561 Hadadezer's¦145565 servants¦145564 carried and¦145566 brought¦145566 them to Yerushalem¦145567.
+\v 8 \add *He\add* also brought a large amount of bronze¦145576 out of Hadadezer's¦145572 cities¦145571 of Betah and¦145570 Berotay.
+\p
+\v 9 \add ≈When\add* Hamat's¦145584 King¦145583 Toi¦145582 heard that David¦145587 had \add ≈defeated¦145586\add* Hadadezer's¦145592 entire¦145589 army,
+\v 10 \add *he\add* sent¦145594 his¦145623 son Yoram to ask¦145606 for peace \add for Hamat\add* and to \add ≈congratulate¦145610\add* him for fighting Hadadezer and \add ≈defeating¦145615\add* him because¦145616 Hadadezer \add ≈often battled against¦145614\add* Toi¦145595. \add @Yoram\add* \add ≈brought containers with¦145614 him, made\add* of gold¦145630, silver¦145627, and bronze¦145632.
+\v 11 King¦145636 David¦145639 \add ≈dedicated\add* them to Yahweh¦145640, \add along\add* with the silver¦145643 and¦145644 gold¦145644 \add that he'd taken\add* from all the nations¦145649 that \add ≈they'd conquered\add*:
+\v 12 from Aram and Moab¦145654, from the \add ≈Ammonites¦145656\add* and the Philistines¦145657, and from Amalak and from the plunder¦145659 of Tsovah's King¦145664 Hadadezer¦145660 (son of Rehov).
+\p
+\v 13 Then¦145667 David¦145668 made \add more of\add* a name¦145669 \add for himself\add* when he returned¦145670 from \add ≈defeating¦145671 eighteen¦145678 thousand¦145680 Arameans¦145674\add* in¦145670 the Salt¦145677 Valley¦145675.\x + \xo 8:13: \xt Psa 60 header.\x*
+\v 14 He \add ≈stationed\add* garrisons \add ≈throughout\add* Edom¦145683 and \add made the people\add* his servants, and Yahweh¦145697 \add ≈protected\add* David¦145695 wherever¦145702 \add ≈they fought\add*.
+\rem /s1 David's Officials; David's Officers
+\p
+\v 15 \add ≈So¦145705\add* David¦145706 \add ≈reigned¦145705\add* over all Yisrael¦145711 and \add ≈led all his people¦145719 with\add* justice¦145715 and \add ≈integrity\add*.
+\v 16 Tseruyah's¦145724 son Yoav¦145721 was the army \add ≈commander\add* and¦145728 Ahilud's¦145731 son Yehoshafat¦145728 was the secretary.
+\v 17 The priests¦145742 were Ahitub's¦145737 son Tsadok and Evyatar's son Ahimelek, and Serayah¦145743 was secretary¦145744.
+\v 18 Yehoyada's son Benayah \add supervised\add* the Keretites¦145750 and the Peletites¦145751 \add (David's bodyguard)\add*, and David's sons¦145752 were \add his\add* \add ≈administrators\add*.
+\c 9
+\s1 David assists Mefiboshet
+\rem /s1 David and Mephibosheth; David's Kindness to Mephibosheth
+\s4 Full kingdom
+\p
+\v 1 \add ≈One day\add* David¦145759 \add ≈asked\add*, “Is there¦145761 still¦145763 anyone remaining from Sha'ul's \add ≈extended family because¦145760 I'd like to show kindness to them\add* for Yonatan's sake?”\x + \xo 9:1: \xt 1Sam 20:15-17.\x*
+\p
+\v 2 \add ≈Now\add* there was a servant in Sha'ul¦145775 household¦145774 named Tsiva and he was summoned¦145779 to David¦145784, and the king¦145786 \add ≈asked\add* him, “Are you Tsiva?”
+\p “\add Yes, I'm\add* your servant,” he \add ≈replied\add*.
+\p
+\v 3 “Is there¦145795 \add ≈anyone¦145797 from Sha'ul's family who's still alive\add*?” the king \add ≈asked\add*. “\add If so,\add* I'd \add ≈like to show God's kindness to them\add*.”\x + \xo 9:3: \xt 2Sam 4:4.\x*
+\p “\add Yes,\add* \add ≈There's still one of Yonatan's sons alive\add*,” Tsiva told the king. “\add ≈He's crippled in both legs\add*.”
+\p
+\v 4 “Where is he?” the king asked.
+\p “\add ≈Actually,\add*” Tsiva told the king, “he's at¦145834 Makir's¦145830 house¦145829—the son of Ammiel¦145833 in¦145834 Lo-Debar.”
+\v 5 \add ≈So¦145837\add* King¦145838 David¦145839 sent¦145837 messengers to Lo-Debar to have him¦145840 brought¦145840 \add to Yerushalem\add*.
+\p
+\v 6 Then¦145849 Yonatan's son Mefiboshet came¦145849 to David and fell onto \add ≈his knees and bowed¦145864 his face down to the ground\add*, and David said, Mefiboshet.”
+\p “I'm your servant¦145870,” he \add ≈replied\add*.
+\p
+\v 7 Then¦145872 David¦145874 told him, “Don't¦145875 be afraid¦145877, because¦145883 I'll certainly¦145879 \add ≈show you\add* kindness for the sake of your father Yonatan. I'll restore¦145886 all the pastureland that belonged to your grandfather Sha'ul¦145893, and¦145872 you yourself¦145887 \add ≈are invited to always eat¦145896 at¦145883\add* my table¦145900.”
+\p
+\v 8 \add @Mefiboshet\add* \add ≈bowed¦145903 low and¦145904 asked\add*, “Your servant's¦145906 \add ≈nothing more than a\add* dead¦145912 dog. \add ≈Why would you¦145908 care about\add* me?”
+\p
+\v 9 Then¦145916 the king¦145917 summoned Sha'ul's servant¦145921 Tsiva and told him, “I've¦145932 given¦145932 everything that belonged¦145927 to Sha'ul and to all his \add ≈household¦145931\add* to your¦145935 master¦145935.
+\v 10 You and your fifteen sons and your twenty¦145966 servants must¦145937 work the land for him and \add ≈harvest the produce to support\add* your master's \add grand\add*son, but¦145937 \add *he\add* will eat \add ≈with me at my house\add*.”
+\p
+\v 11 “\add Yes,\add* my¦145989 master¦145977 the king,” Tsiva \add ≈responded¦145969\add*. “Your servant will do everything you've commanded¦145976.”
+\p \add So¦145969 from then¦145969 on,\add* Mefiboshet always ate at the king's table¦145989 as if he was one of the king's sons.
+\v 12 Mefiboshet had a young¦145997 son named Mika. All \add ≈Tsiva's household¦146002\add* became Mefiboshet's servants¦146005,
+\v 13 \add ≈but¦146008\add* Mefiboshet (who was crippled in both¦146021 legs) lived in Yerushalem¦146010 because¦146011 he \add ≈had a permanent invitation to eat with¦146010 the king¦146015\add*.
+\c 10
+\s1 Yisrael defeats the Ammonites and the Arameans
+\rem /s1 David Defeats the Ammonites and the Syrians; David Defeats the Ammonites; The Ammonites and Arameans Are Defeated
+\s4 Full kingdom
+\r (1 Chr. 19:1-19)
+\p
+\v 1 \add ≈Some time later,\add* the \add ≈Ammonite\add* king died, and his¦146036 son Hanun¦146034 replace him as king.
+\v 2 “I'll¦146040 be kind to Nahash's¦146049 son Hanun,” David¦146039 said, “just like his father was kind to me.” So¦146038 \add *he\add* sent servants \add to Hanun\add* \add ≈to convey his condolences\add*.
+\p \add ≈When¦146038\add* \add *they\add* \add ≈arrived in¦146058 the Ammon¦146069 region¦146067\add*,
+\v 3 the \add ≈Ammonite commanders\add* said¦146071 to their¦146079 master¦146079 Hanun¦146078, “\add ≈Do you think that David¦146081 really sent condolences to honour¦146080 your¦146085 late father\add*? Isn't it \add more likely\add* \add ≈because he wanted them to spy on¦146085 us, and¦146071 to explore¦146093 the city¦146096 so he could more easily conquer it\add*?”
+\p
+\v 4 \add ≈So¦146106\add* Hanun¦146107 \add ≈seized\add* David's¦146111 servants¦146110 and had half of their beards¦146116 shaved¦146112 off and their robes¦146120 cut in¦146121 half \add all the way\add* up to their buttocks¦146123, then¦146106 he sent¦146124 them off.
+\v 5 They \add ≈sent¦146128 messengers ahead\add* to tell David¦146127 because¦146130 they¦146132 were very humiliated¦146134, and¦146126 the king¦146137 told them to stay in¦146139 Yeriho before returning¦146144 when their beards¦146143 grew back.
+\p
+\v 6 Then¦146146 the \add ≈Ammonite leaders realised¦146146 that they'd now caused David¦146151 to despise them, so\add* they hired¦146156 twenty¦146167 thousand \add ≈Aramean\add* \add (or Syrian)\add* \add ≈mercenaries\add* from Beyt-Rehob¦146162 and Tsovah, and \add another\add* one thousand from Maakah and twelve thousand from Tov.
+\v 7 \add ≈When¦146184\add* David¦146185 heard \add <that\add*, he sent¦146186 Yoav¦146189 in with the entire¦146191 army.
+\v 8 The \add ≈Ammonites¦146198\add* came out the \add city\add* gate¦146202 and¦146196 \add ≈organised themselves¦146210 for battle¦146200 at¦146211 the entrance¦146201\add*, while \add ≈their hired mercenaries stood apart out in¦146211 the countryside¦146211\add*.
+\p
+\v 9 \add ≈When¦146213 Yoav¦146214 saw¦146213 that he was disadvantaged with¦146226 enemy lines both in¦146226 front¦146221\add* and behind¦146222, he \add ≈selected certain Israeli warriors\add* and placed them to battle¦146220 the \add ≈Aramean mercenaries\add*,
+\v 10 leaving the others to face the Ammonites¦146242 under the command¦146236 of his brother Avishay¦146237,
+\v 11 telling him, “If \add ≈the Arameans¦146248\add* are too strong for me, then you come \add ≈and rescue us, but¦146244\add* if the \add ≈Ammonites¦146256\add* are too strong for you, then I'll¦146259 \add ≈come and rescue\add* you.
+\v 12 Be strong¦146263 and courageous¦146264 for \add the sake of\add* our people¦146267 and our god's cities¦146269, and Yahweh¦146271 will do¦146272 \add ≈whatever he considers right\add*.”
+\p
+\v 13 \add ≈So¦146276\add* Yoav¦146277 and¦146276 \add ≈his¦146284 men advanced to attack the Aramean¦146282 mercenaries but¦146276 they¦146283 fled away from them\add*.
+\v 14 \add ≈When¦146286 the Ammonites saw¦146288 the Arameans¦146292 running away, they started retreating from Abishai¦146295 and went¦146296 back into\add* the city¦146297, \add ≈so\add* Yoav¦146299 \add ≈withdrew from attacking the Ammonites and returned¦146298\add* to Yerushalem¦146304.
+\p
+\v 15 \add ≈When¦146306 the Arameans¦146307 realised¦146306 that they'd been defeated¦146309 by\add* Yisrael¦146311, they assembled \add all their warriors\add* together¦146313 \add again\add*.
+\v 16 \add King\add* Hadadezer \add (from Tsovah)\add* \add ≈called for Aramean warriors\add* from beyond¦146322 the \add Euphrates\add* River and¦146315 they¦146324 came¦146324 to Heylam. Shovak was Hadadezer's¦146316 army commander¦146327.
+\v 17 \add ≈When¦146333\add* David \add ≈heard that\add*, he assembled all \add ≈the Israeli¦146339 warriors\add* and they crossed the Yordan¦146345 \add ≈going towards\add* Helam¦146347. \add ≈The Arameans¦146349 came¦146346 out\add* to meet David and \add ≈the two sides fought¦146352 each other\add*.
+\v 18 \add ≈But¦146355\add* \add again\add* \add ≈the Arameans¦146356\add* fled from \add ≈the Israelis¦146357\add*, and David¦146360 killed¦146359 seven¦146362 hundred¦146363 \add ≈Aramean charioteers¦146364\add* and forty¦146365 thousand¦146366 cavalry, and their¦146372 commander¦146370 Shobak was struck¦146373 and died¦146374 there¦146375 \add also\add*.
+\v 19 Then¦146377 all the kings¦146380 \add ≈associated with Hadadezer¦146382 realised¦146377 they couldn't defeat¦146384\add* Yisrael¦146386, \add ≈so\add* they made peace¦146387 with \add ≈the Israelis¦146390\add* and served¦146391 them, and \add so\add* the Arameans¦146393 were afraid to \add try to\add* rescue¦146394 the \add ≈Ammonites¦146399\add* again¦146395.
+\c 11
+\s1 David takes Uriyah's wife
+\rem /s1 David and Bathsheba; David Commits Adultery with Bathsheba; David's crimes
+\s4 Full kingdom
+\p
+\v 1 \add ≈The next spring¦146403 (when kings¦146408 usually go¦146407 to war)\add*, David¦146411 sent¦146410 Yoav¦146414 and his \add ≈officials\add* and all the \add ≈Israeli¦146421 warriors\add*, and they \add ≈defeated the Ammonites¦146428 and besieged¦146429\add* Rabbah¦146432.\x + \xo 11:1: \xt 1Ch 20:1.\x*
+\p \add ≈But¦146402\add* David stayed in¦146435 Yerushalem¦146435,
+\v 2 and \add ≈early one\add* evening¦146441 \add *he\add* got up from \add ≈a nap\add* and walked¦146446 around the \add ≈palace roof area\add*. From¦146443 \add ≈there\add* he saw a woman bathing¦146455, and she was very \add ≈good-looking\add*.
+\v 3 David¦146464 sent \add a messenger\add* \add ≈to find out who she was, and¦146463 was told\add*, “That's Eliam's¦146476 daughter¦146474 Batsheva—Uriyah the Hittite's¦146479 wife.”
+\v 4 Then \add *he\add* sent¦146481 messengers¦146483 \add ≈to get\add* her, and she came¦146485 and he slept¦146487 with her. (She had been \add ≈purifying¦146491 herself¦146491 after the completion of her menstrual period\add*.) Then she returned¦146493 to her house¦146496.
+\p
+\v 5 \add ≈After¦146505 some time,\add* the woman¦146499 \add realised that she\add* was pregnant, and¦146498 \add so\add* she informed David¦146502.
+\v 6 David sent to Yoav, “Send Uriyah the Hittite¦146517 \add here\add* to me.” \add ≈So¦146507\add* Yoav sent Uriyah to David.
+\v 7 \add ≈When¦146528 he arrived, David¦146531 asked¦146530 him about how Yoav¦146533 and his men were doing, and how the battle¦146537 was going\add*,
+\v 8 then¦146539 \add *he\add* told \add *him\add*, “Go to your house and \add ≈relax\add*.” \add ≈So¦146539\add* Uriyah \add ≈left the palace\add* and the king \add ≈sent a gift to be delivered to his house\add*.
+\v 9 \add ≈But¦146556\add* Uriyah¦146557 didn't¦146566 go home—\add ≈instead he slept¦146556 at the palace entrance¦146558\add* with all the king's servants¦146564,
+\v 10 \add The next day,\add* David¦146573 was informed that Uriyah didn't go home to his house, \add ≈so\add* \add *he\add* \add ≈asked\add* \add *him\add*, “\add ≈Didn't you just get back from a long journey¦146588\add*? Why didn't you go \add ≈home\add*?”
+\p
+\v 11 “The \add ≈sacred chest¦146604\add* and \add the warriors from\add* Yisrael¦146605 and Yehudah are living¦146607 in tents,” Uriyah \add ≈replied\add*. “And my master, Yoav¦146610, and my master's servants¦146611 are camping \add ≈out in the open\add*. \add ≈So¦146599 I couldn't just\add* go to my house¦146622 to eat and to drink¦146624 and to sleep with¦146608 my wife. By your life and by the life of your spirit, I \add ≈couldn't do that\add*.”
+\p
+\v 12 “\add Well,\add* stay here today also,” David¦146641 told \add *him\add*, “and tomorrow¦146650 I'll¦146651 send you \add back\add*.” \add ≈So¦146640\add* Uriyah stayed in¦146646 Yerushalem¦146654 that day and the following day,
+\v 13 and David \add ≈summoned\add* him \add over\add*, and they ate¦146663 and drank¦146665 together, and \add @David\add* got him drunk¦146666. \add ≈But¦146659 even then¦146659\add*, \add @Uriyah\add* didn't¦146678 go back to his house¦146677, but¦146659 when he left in the evening¦146668 he went \add back\add* to sleep \add in the dorm\add* with¦146668 his master's¦146674 servants¦146673.
+\rem /s1 David Arranges for Uriah's Death; David Has Uriah Killed
+\p
+\v 14 \add ≈The next morning¦146682\add*, David¦146684 wrote¦146683 a \add ≈note\add* to Yoav¦146688 and¦146681 \add told\add* Uriyah \add ≈to deliver it\add*.
+\v 15 He'd written, “\add ≈Place\add* Uriyah in¦146694 the front¦146702 \add ≈where the fighting¦146704 is\add* strongest, then¦146693 \add ≈fall\add* back from behind¦146707 him¦146707 so that he'll be struck¦146708 and¦146693 die¦146709.”
+\v 16 \add ≈So\add* as Yoav¦146714 \add ≈was surrounding\add* the city¦146717, he \add ≈placed¦146724\add* Uriyah where¦146725 he knew¦146726 \add ≈the strongest enemy warriors¦146728\add* \add would be fighting\add*.
+\v 17 The \add ≈warriors¦146734\add* from the city¦146735 came out and fought¦146736 against Yoav's \add ≈men¦146734\add*, and some of David's¦146745 servants¦146744 \add ≈were killed\add* and \add ≈so was\add* Uriyah.
+\p
+\v 18 Then¦146751 Yoav¦146752 sent¦146751 \add a messenger\add* to David¦146754 \add ≈to give him a full account of the battle¦146760\add*.
+\v 19 He told¦146762 the messenger¦146765, “\add ≈Once you've finished¦146767 telling¦146773 all the details of the battle¦146772\add* to the king¦146776,
+\v 20 if \add *he\add* gets angry and¦146784 \add ≈asks\add*, ‘Why did you all \add ≈go so close in\add* to the city¦146790 to fight¦146791? Didn't you know¦146793 that they'd shoot¦146797 \add down\add* from the wall¦146799?
+\v 21 \add ≈Wasn't Yerub-Beshet's son Abimilek killed by a woman¦146812 in¦146820 Tevets\add* when she¦146813 threw a millstone down from the wall? Why did you approach the wall?’ Then you should say¦146826, ‘Your servant¦146828 Uriyah the Hittite¦146830 is also dead.’ ”\x + \xo 11:21: \xt Jdg 9:53.\x*
+\p
+\v 22 \add ≈So¦146833\add* the messenger¦146834 left and went¦146833 and told David¦146837 everything that Yoav¦146843 had told him¦146842,
+\v 23 saying, “\add ≈Their¦146849 men¦146854 gained ground and¦146845 came out against¦146856 us in the countryside¦146857, but¦146845 we¦146858 forced them back to their city\add* gate¦146863.
+\v 24 Then¦146865 \add &their\add* archers¦146867 were shooting at your men from \add the top of\add* the wall¦146873 and¦146865 \add ≈some of your men were killed, including¦146874\add* your servant¦146878 Uriyah¦146879 the Hittite¦146880.”
+\p
+\v 25 David¦146885 \add ≈sent the messenger¦146888 back to encourage¦146915 Yoav¦146894\add*, “Don't¦146895 let \add ≈yourself be upset by what happened\add* because¦146903 \add ≈no one knows who might die in¦146898 a battle\add*. \add ≈Reinforce your¦146898 battle\add* against¦146911 the city¦146913 and tear it down.”
+\p
+\v 26 \add ≈When¦146917 Uriyah's wife¦146918 Batsheva heard¦146917 that her¦146928 husband¦146928 had been killed\add*, she mourned¦146925 for \add *him\add*.
+\v 27 \add ≈When¦146930 her time¦146931 of mourning¦146931 was over\add*, David sent¦146932 for her and brought¦146934 her to \add ≈the palace\add*. She became¦146938 a wife to him and bore a son for him, \add ≈but¦146930 Yahweh¦146952 was unhappy about what\add* David had done¦146949.
+\c 12
+\s1 Natan brings rebuke to David
+\rem /s1 Nathan Rebukes David; Nathan's Message and David's Repentance
+\s4 Full kingdom
+\p
+\v 1 \add ≈So\add* Yahweh¦146956 sent¦146955 Natan¦146959 to David¦146962 \add ≈to tell\add* him, “\add Once\add* \add ≈there was a rich man and a poor man living in¦146970 the same city¦146970\add*.\x + \xo 12:1: \xt Psa 51 header.\x*
+\v 2 The rich man¦146977 \add ≈had a large number\add* of flocks¦146979 and¦146980 herds¦146980,
+\v 3 \add ≈but¦146984\add* the poor man¦146984 only had one little female lamb that¦146994 he'd bought. It grew up with¦147007 him and his sons, and would eat his left-overs and drink from his cup and lay down in¦147007 his lap—it was like a daughter¦147012 to him.
+\v 4 \add One¦147028 day\add* the rich man \add ≈had a visitor¦147015, but¦147014 instead of taking one of his own animals for a meal, he killed the poor man's lamb and¦147014 prepared¦147033 it for the meal for his guest\add*.”
+\p
+\v 5 David¦147041 \add ≈got very angry listening to that\add* and¦147038 told Natan¦147047, “By the life¦147048 of Yahweh¦147050, the man that did that \add ≈definitely deserves to be put to\add* death¦147054!
+\v 6 He must¦147062 \add ≈pay back four lambs\add* for doing that and¦147071 for \add ≈having no pity\add* \add on that poor man\add*.”
+\p
+\v 7 Then¦147077 Natan¦147078 said¦147077 to David¦147081, “You are \add that rich\add* man¦147083. Yahweh¦147087, the god¦147088 of Yisrael, says¦147086 to you: ‘I myself anointed¦147091 you as king¦147092 over Yisrael, and¦147077 I myself \add ≈kept you safe from\add* Sha'ul¦147099.
+\v 8 I gave you the house that belonged to your master, \add ≈as well as\add* his wives¦147109. I \add ≈made you king over\add* \add both\add* Yisrael¦147117 and Yehudah. And \add ≈if that wasn't enough, I've given you more and more\add*.
+\v 9 \add ≈So\add* why have you despised¦147128 \add ≈my commands\add* by doing¦147134 \add ≈what you knew was evil\add*? You had Uriyah the Hittite¦147140 killed¦147150 with¦147136 \add ≈an Ammonite sword\add* and you took his wife for yourself¦147147.
+\v 10 \add ≈So¦147155\add* now, because¦147165 you despised¦147166 me and took¦147167 Uriyah's¦147172 wife¦147170 as your own, \add ≈war and violence will never go away from you and your descendants\add*.
+\v 11 \add ≈I will cause a disaster to hit you from within your own household¦147186—I'll¦147187 take your wives and give them to a family member right in front of your eyes¦147191, and he will let everyone know that he's sleeping\add* with your wives.\x + \xo 12:11-12: \xt 2Sam 16:22.\x*
+\v 12 \add ≈You did what you did\add* in secret¦147205, \add ≈but¦147206\add* I myself will do¦147207 all this \add ≈in public\add* before all Yisrael¦147215.’”
+\rem /s1 David Confesses His Guilt
+\p
+\v 13 “\add Yes,\add* I've¦147225 sinned¦147225 against Yahweh,” David¦147221 \add ≈responded¦147220\add* to Natan¦147224.
+\p “Yahweh has taken¦147236 away your¦147237 sin¦147237,” Natan \add ≈replied\add*. “You won't¦147238 die¦147239.
+\v 14 Nevertheless¦147241, because¦147242 you have utterly disrespected Yahweh¦147249 in¦147250 this matter, also your \add ≈new\add* son is certainly going to die.”
+\v 15 Then Natan¦147260 went¦147259 home.
+\s1 David's son dies
+\rem /s1 David's Son Dies; Bathsheba's Child Dies
+\s4 Full kingdom
+\p Then Yahweh¦147265 \add ≈caused the baby (that Uriyah's wife¦147271 had given birth to) to\add* get sick¦147275.
+\v 16 David¦147278 \add ≈pleaded with\add* Yahweh¦147285 for the boy's sake, and he fasted¦147284, and he spent the \add entire¦147288\add* night¦147288 lying down on the ground¦147290.
+\v 17 The \add ≈influential members\add* of his household¦147294 got beside him to try to get him up from the ground, but¦147292 he \add ≈wouldn't budge\add*, and¦147292 he wouldn't eat \add ≈anything they brought\add*.
+\v 18 Then¦147308 on¦147326 the seventh¦147310 day, the baby died, \add ≈but¦147308\add* David's¦147315 servants¦147314 were afraid to tell him because¦147319 \add ≈after seeing his response when the child was sick, they were afraid of what he might do to himself when he found out that his son\add* had died.
+\p
+\v 19 \add ≈However, when\add* David¦147344 noticed¦147343 his servants whispering¦147347 together, he \add ≈realised¦147343 that the baby must have died, and¦147343 he asked\add* \add *them\add*, “Did the baby die?”
+\p “\add Yes,\add*” they \add ≈answered\add*, “he \add ≈passed away\add*.”
+\p
+\v 20 Then David¦147364 got up from the ground¦147365 and washed¦147366, and he \add ≈rubbed lotions on\add* and changed¦147368 his clothes¦147369, then¦147363 he entered Yahweh's¦147374 \add ≈tent and worshipped¦147375 him\add*. Then he \add ≈went back home and asked¦147380 for food to be served¦147381\add*, and he ate¦147384.
+\p
+\v 21 His servants¦147387 \add ≈queried\add* him, “\add ≈We don't understand what just happened: when the baby was alive¦147397 you fasted¦147398 and wept, but¦147386 yet when he dies, you get up and have a meal?\add*”
+\p
+\v 22 “While the child was still¦147408 alive¦147410,” David \add ≈replied\add*, “I fasted¦147411 and I wept, because¦147413 I \add ≈thought\add*, ‘Who knows? Yahweh¦147419 might be gracious¦147417 to me and let \add *him\add* live.’
+\v 23 \add ≈But¦147423\add* now \add that\add* he's dead, \add ≈there's no more reason\add* to fast—I can't¦147437 bring¦147431 him back again¦147432. \add One day\add* I'll¦147433 go to him, \add ≈but¦147423\add* he'll \add ≈never\add* come back \add here\add* to me.”
+\v 24 Then David¦147443 comforted¦147442 his wife Batsheva.
+\s1 The birth of Shelomoh
+\rem /s1 Solomon Is Born
+\s4 Full kingdom
+\p Then \add @David\add* went¦147449 to \add @Batsheva\add* and \add ≈slept\add* with her, and \add in due course\add* she \add ≈gave¦147453 birth¦147453\add* to a son. \add @David\add* he named him¦147462 Shelomoh \add (Solomon¦147460)\add*, and Yahweh¦147461 loved¦147462 \add @that boy\add*
+\v 25 and¦147464 sent¦147464 the prophet¦147467 Natan¦147466 to name him Yedidyah¦147472\f + \fr 12:25 \ft That name didn't seem to stick because this is the only mention of it in the Bible.\f* \add (which means ‘loved by Yahweh’)\add* for Yahweh's¦147474 sake.
+\s1 David captures Rabbah
+\rem /s1 The Ammonites Crushed; David Captures Rabbah
+\s4 Full kingdom
+\r (1 Chr. 20:1-3)
+\p
+\v 26 Then¦147483 Yoav¦147478 fought¦147477 \add ≈the Ammonites¦147481\add* at¦147479 Rabbah¦147479 and captured¦147482 \add &their\add* \add ≈palace\add*,
+\v 27 then¦147488 \add *he\add* sent¦147488 messengers¦147490 to David¦147493 to tell him, “I've fought¦147495 against¦147496 Rabbah¦147496 \add ≈and¦147494\add* I've overthrown the \add ≈city's water¦147503 supply\add*.
+\v 28 \add ≈So¦147505\add* now, gather¦147506 the rest of \add ≈our fighters\add* and lay siege to the city and capture¦147515 it. Otherwise I'll \add *do it\add* and then¦147505 \add ≈it'll be named after me\add*.
+\v 29 \add ≈So¦147527\add* David¦147528 gathered¦147527 all his warriors and went¦147534 to Rabbah¦147535, \add where\add* he attacked \add @the city\add* and captured¦147538 it.
+\v 30 \add *He\add* took¦147540 the king's crown¦147543 off his head (it was gold¦147550 and weighed¦147548 around 30kg), and \add ≈it was placed\add* on \add *his\add* head. \add ≈A¦147557 lot of other plunder¦147558 was also taken from\add* the city¦147559.
+\v 31 The inhabitants of \add @Rabbah\add* were brought¦147570 out and \add ≈assigned¦147571 to work at¦147569 the brick¦147579 kiln\add* with¦147569 saws, iron picks¦147573, and axes¦147575. (He did that¦147567 to all the \add ≈Ammonite\add* cities¦147584.) Then¦147564 David¦147589 and all his people returned¦147588 to Yerushalem¦147593.
+\c 13
+\s1 Amnon rapes Tamar
+\rem /s1 Amnon and Tamar; Conflict in David's family; The Rape of Tamar
+\s4 Full kingdom
+\p
+\v 1 \add ≈Some¦147612 time afterwards¦147597,\add* David's¦147603 son Amnon¦147609 \add ≈fell in love¦147608 with his beautiful¦147605 half-sister\add* Tamar¦147607 (Abshalom's¦147600 sister),
+\v 2 and¦147623 \add *he\add* \add ≈made himself¦147616 frustrated¦147614,\add* \add always thinking about her\add* because¦147617 she¦147622 was a virgin¦147621. However¦147618, \add *he\add* \add ≈couldn't do anything¦147628 with¦147617 her\add*.
+\v 3 \add ≈But¦147630\add* Amnon¦147639 had a very shrewd¦147641 friend¦147631 called Yonadab¦147633 (son of David's¦147638 brother¦147637 Shimeah¦147636)
+\v 4 and¦147658 \add @Yonadab\add* \add ≈asked\add* him, “\add Hey,\add* \add ≈you're a son of the king¦147652, so tell me why you're always so unhappy\add*?”
+\p “I'm in¦147653 love with¦147653 my brother¦147666 Abshalom's¦147665 sister¦147664 Tamar¦147663,” Amnon¦147660 \add ≈replied\add*.
+\p
+\v 5 “\add ≈Go to bed¦147676\add* and pretend¦147677 to be sick,” Yonadab¦147672 \add ≈suggested\add*. “Then¦147670 \add when\add* your father comes¦147678 to see you, \add ≈ask\add* him, ‘Please let my sister¦147686 Tamar¦147685 come¦147683 \add ≈to look after my food. She can cook it here and serve it to me\add*.’ ”
+\v 6 \add ≈So¦147700\add* Amnon lay down and pretended¦147702 to be sick, and \add when\add* the king came to see him, Amnon \add ≈asked\add* \add *him\add*, “Please, let my sister¦147715 Tamar¦147714 come and make a couple of bread¦147716 rolls \add ≈while I'm watching, and then¦147700 she can serve them to me\add*.”
+\p
+\v 7 \add ≈So¦147723\add* David¦147724 sent¦147723 \add a message\add* to Tamar¦147727 \add ≈to ask her to\add* go¦147730 to her brother¦147734 Amnon's¦147733 house¦147732 and¦147723 prepare¦147735 food for him.
+\v 8 \add ≈So¦147740\add* Tamar¦147741 went¦147740 to her¦147744 half-brother Amnon's¦147743 house¦147742 where he was lying¦147746 down. She took¦147747 \add ≈some\add* dough¦147750 and kneaded it into breadrolls and baked¦147755 them.
+\v 9 Then¦147760 she took¦147760 the tray \add ≈over to him\add*, but¦147760 he refused¦147766 to eat¦147767, saying, “\add ≈Send¦147761 everyone else out of here\add*,” \add ≈so they all left¦147764\add*.
+\v 10 Then¦147781 Amnon told Tamar, “Bring the food into the bedroom so that \add ≈you can serve it to me\add*.” \add ≈So¦147781\add* Tamar took the breadrolls that she'd made, and¦147781 took them to Amnon in the bedroom.
+\v 11 \add ≈But¦147803 when she got close enough to him,\add* he grabbed her¦147808 and insisted, “Come¦147814 \add and\add* lie down with¦147808 me, my sister¦147814.”
+\p
+\v 12 “No, my brother¦147820,” she told him, “don't humiliate me because¦147824 \add ≈we Israelis don't do that\add*. Don't¦147821 do this disgraceful¦147835 thing¦147835.
+\v 13 Where \add ≈could I hide my shame\add*? And you—you'd be \add ≈considered\add* a godless fool in¦147848 Yisrael¦147848. \add ≈Just speak¦147850 to the king¦147855 because¦147856 he'd give me to you to marry\add*.”
+\v 14 \add ≈But¦147869 he didn't¦147861 want her advice, and being\add* stronger¦147865 than her, he humiliated her \add ≈by forcing her down and raping\add* her.
+\p
+\v 15 \add ≈Instantly¦147887,\add* Amnon¦147872 hated her with terrible hatred—a much greater hatred than the love with which he'd loved¦147883 her, and \add *he\add* told her to get up and get out.
+\p
+\v 16 “No, \add no\add*.” she responded¦147891. “\add ≈Sending me away would be even worse than what you just\add* did to me.”
+\p \add ≈But¦147891\add* he refused to listen¦147907 to her
+\v 17 and called¦147910 his¦147914 \add ≈personal servant\add*. He told him¦147914 to \add ≈take\add* the woman away and send¦147916 her outside¦147923 and then¦147910 lock the door¦147925 behind¦147926 her.
+\v 18 (She¦147940 was wearing the kind of long¦147929 robe that the virgin¦147937 daughters¦147934 of the king¦147936 wore as an outer garment¦147929.)
+\p \add ≈So¦147928 the servant¦147941 pushed\add* her outside¦147942 and¦147928 locked¦147943 the door¦147944 behind¦147945 her.
+\v 19 Then¦147947 Tamar¦147948 put ashes on her head and tore the long¦147953 robe¦147953 that¦147955 she was wearing. She put her hand on her head and wailed as she walked \add home\add*.\f + \fr 13:19 \ft The ashes, tearing of clothes, putting hand on head, and wailing, were all cultural signs of mourning and distress.\f*
+\v 20 Her¦147970 brother Abshalom \add ≈asked\add* her, “\add ≈Did your half-brother Amnon¦147971 mess\add* with you? But¦147967 now, my sister¦147976, \add ≈don't tell anyone since he's your brother and¦147967 don't let it upset you\add*.” \add ≈So¦147967\add* Tamar¦147989 lived \add ≈in a state of desolation¦147990\add* in her brother Abshalom's¦147969 house¦147991.
+\p
+\v 21 \add ≈When¦147995\add* King¦147995 David¦147996 heard¦147997 about all that, \add ≈he got very angry\add*.
+\v 22 \add Also¦148007,\add* Abshalom¦148010 said nothing to Amnon¦148013 (either¦148014 good¦148017 or bad¦148014) because¦148018 he hated¦148020 \add *him\add* for humiliating his sister¦148032 Tamar¦148031.
+\s1 Abshalom kills Amnon
+\rem /s1 Absalom Avenges the Violation of His Sister; Absalom's Revenge; Absalom Kills Amnon; Absalom's Revenge on Amnon
+\s4 Full kingdom
+\p
+\v 23 Two years¦148036 passed, then Abshalom's¦148040 shearers¦148039 were in¦148041 Baal-Hatsor (near Efrayim¦148046) and Abshalom \add ≈invited\add* all the king's¦148052 sons¦148051.
+\v 24 Abshalom¦148055 went to the king and \add ≈asked\add* him, “Listen, please, \add ≈the shearers¦148063 are working for\add* your servant. Please, let the king and his servants come with your servant.”
+\p
+\v 25 “No, my son,” the king¦148075 \add ≈replied\add*. “\add ≈There's too many of us—it would be too expensive\add* for you.” \add @Abshalom\add* he urged¦148090 him, but¦148074 he wouldn't go, \add ≈however\add* he did bless¦148097 him.
+\p
+\v 26 “But¦148099 if \add you don't¦148101 come\add*,” Abshalom¦148100 \add ≈insisted\add*, “please¦148104 let my brother¦148107 Amnon¦148106 come with us.”
+\p “Why should¦148102 \em he\em* go with you?” the king¦148110 \add ≈asked\add*.
+\v 27 \add ≈But¦148115\add* Abshalom¦148118 \add ≈insisted, so\add* \add @the king¦148128\add* \add agreed to\add* send Amnon¦148123 and¦148115 \add *his\add* other sons¦148127.
+\v 28 Then Abshalom¦148132 \add ≈prepared\add* his young men, “Listen now, when Amnon \add ≈gets a bit drunk from\add* the wine and I tell you all, ‘Strike Amnon!’ then you'll kill¦148150 him. You all don't¦148152 \add need to\add* be afraid¦148154 \add because\add* I myself am the one commanding you. Be courageous \add ≈warriors\add*.”
+\v 29 \add At the right time,\add* Abshalom's¦148168 servants¦148167 did¦148166 to Amnon¦148169 what Abshalom commanded¦148171 \add <them\add*. All the rest of the king's sons¦148177 \add ≈jumped\add* up and onto their mules and fled \add away\add*.
+\p
+\v 30 \add ≈While¦148197 they¦148187 were still on¦148188 the way¦148188\add*, David¦148193 heard the news¦148189 that Abshalom¦148196 had struck¦148195 all of his sons¦148201 and killed them, and none were left alive.
+\v 31 The king¦148211 \add ≈stood\add* up and tore his clothes, then he laid down on the ground¦148217. \add Meanwhile\add*, all his servants¦148220 \add there\add* were tearing their clothes.
+\v 32 Then Yonadab¦148227 (David's¦148234 brother¦148232 Shimeah's¦148231 son) \add ≈spoke¦148226 up\add*, “My master¦148239, don't¦148236 \add ≈imagine that\add* all those young¦148243 men¦148243, the king's sons¦148244, have been murdered. \add I suspect that\add* only Amnon¦148250 is dead, because¦148248 Abshalom¦148258 \add ≈has been determined¦148260 to do this ever since\add* his sister¦148265 Tamar¦148264 was humiliated.
+\v 33 \add ≈So¦148267 my master¦148271, don't¦148268 believe the report that all your\add* sons¦148280 are dead. \add ≈It's probably\add* only Amnon¦148287 who's dead.
+\p
+\v 34 \add Meanwhile,\add* Abshalom¦148293 had fled.
+\p \add Suddenly\add* the watchman¦148296 \add ≈turned\add* and saw¦148301, wow, many people¦148303 coming¦148306 around the hill¦148310 along the road¦148307 behind¦148308 him¦148308.
+\v 35 “Look,” Yonadab¦148313 told the king. “The king's sons are coming! \add ≈It's just what I said\add*.”
+\v 36 He'd \add hardly\add* finished¦148329 speaking¦148330 when, wow, the king's sons came in. Then¦148327 they all cried loudly, and the king and his servants¦148344 \add ≈joined them in their¦148337 wailing\add*.
+\p
+\v 37 \add ≈But\add* Abshalom¦148350 \add had\add* fled, and¦148350 he went¦148352 to Geshur¦148361 to stay with King¦148360 Ammihud's¦148358 son, Talmay¦148355. \add ≈But\add* \add @David\add* mourned¦148362 for his son every day.\x + \xo 13:37: \xt 2Sam 3:3.\x*
+\v 38 \add ≈After\add* Abshalom¦148370 fled to Geshur¦148373, he¦148371 stayed there¦148376 for three¦148377 years¦148378.
+\v 39 \add By then¦148380,\add* King¦148382 David¦148381 was \add ≈no longer grieving over Amnon's¦148392 death\add* and¦148380 longed to go¦148383 to \add see\add* Abshalom¦148386.
+\c 14
+\s1 Abshalom returns to Yerushalem
+\rem /s1 Joab Arranges for Absalom's Return; Absalom Returns to Jerusalem
+\s4 Full kingdom
+\p
+\v 1 \add ≈Now\add* Yoav¦148399 (Tseruyah's son) \add ≈realised\add* that the king¦148406 \add ≈missed\add* Abshalom¦148409,
+\v 2 \add ≈so\add* he sent for a wise woman from Tekoa¦148413 and told her, “Now, please put on mourning clothes¦148426 and don't¦148429 \add ≈put on any make-up\add*. \add ≈Act\add* like a woman who has been mourning for the dead for \add ≈several\add* days¦148436,
+\v 3 and go to the king and \add ≈give him this message¦148449\add*.” Then¦148443 Yoav¦148452 told her¦148456 what to say to the king.
+\p
+\v 4 \add ≈So¦148458\add* the Tekoan woman¦148459 went to the king and¦148458 \add ≈fell onto her¦148467 knees with his face¦148467 down to the ground\add*, saying, “\add ≈Your majesty, help\add* \add me\add*.”
+\p
+\v 5 “What's \add ≈the matter\add*?” the king¦148478 \add ≈asked\add*.
+\p “Alas, I'm a widow¦148486,” she \add ≈replied\add*. “My husband¦148489 has died¦148488.
+\v 6 Your female servant¦148491 had two sons¦148493, and the two of them fought¦148494 \add each other out\add* in the countryside¦148496. There wasn't anyone¦148501 there¦148497 who could \add ≈stop\add* them, and then¦148491 one \add son\add* struck¦148500 the other and killed¦148505 him.
+\v 7 \add ≈Now\add* listen, the entire¦148510 clan has \add ≈turned against\add* your female servant¦148515 and \add ≈demanded\add*, ‘Give \add <us\add* the one who \add ≈killed\add* his brother, and we'll kill¦148528 him in¦148524 exchange for the life¦148524 of the brother that he killed. Also¦148508, \add ≈it would mean that this evil thing couldn't be passed on¦148524\add*.’ \add ≈But¦148508 that would leave me with¦148524 no descendants to continue\add* my husband's¦148543 name¦148544.”
+\p
+\v 8 “Go¦148559 \add ≈home\add*,” the king¦148553 told the woman¦148556, “and I'll¦148560 \add ≈make a decision about what to do\add*.”
+\p
+\v 9 \add ≈But¦148563\add* the Tekoan woman¦148564 \add ≈continued¦148563\add*, “The \add ≈blame\add*,\f + \fr 14:9 \ft Presumably for not putting the murderer to death.\f* my master¦148570 the king, \add ≈will be on me and my extended family, but¦148563\add* the king and his throne¦148578 will be innocent¦148579.”
+\p
+\v 10 “Anyone¦148584 who speaks¦148584 against¦148591 you,” said¦148582 the king¦148583, “bring¦148586 them to me, and then they won't¦148588 \add ≈trouble\add* you any more.”
+\p
+\v 11 “Please,” she \add ≈insisted\add*, “may the king¦148599 \add ≈ask\add* your god¦148603 Yahweh to prevent the avenger¦148606 of blood¦148607 from increasing¦148604 the \add ≈tragedy\add*, so my son won't¦148609 be destroyed¦148610.”
+\p “As surely as Yahweh lives,” he \add ≈vowed\add*, “not a hair from your son's head will fall to the ground¦148623.”
+\p
+\v 12 Then¦148625 the woman¦148626 said, “Please, let your female servant¦148630 \add ≈ask\add* my master¦148633 the king¦148634 \add ≈a question\add*.”
+\p “Speak,” he \add ≈replied\add*.
+\p
+\v 13 \add ≈So\add* the woman¦148641 \add ≈asked\add*, “Why have you \add ≈acted\add* like this against God's people¦148647? When the king says that \add to me\add*, isn't¦148654 he convicting himself since he hasn't \add ≈brought back\add* \em his own\em* \add ≈banished¦148659 son\add*?
+\v 14 \add ≈It's certain¦148663 that we'll\add* \add all\add* die. Water that's spilt on the ground can't¦148669 be gathered together \add again\add* \add ≈but¦148665\add* God's \add not like that\add*. Rather than taking away life¦148675, he devises¦148676 plans¦148677 so that the one who was banished¦148681 can be \add ≈gathered back in\add*.
+\v 15 \add The reason\add* that I've¦148686 come now to tell this to the king my master¦148691, is because¦148696 the people¦148698 have frightened me. \add ≈So¦148683\add* your servant said \add to herself\add*, ‘I will speak¦148701, please¦148703, to the king. Perhaps the king will \add ≈honour the request\add* of his female servant.
+\v 16 \add ≈Maybe\add* the king¦148717 will listen¦148716 in order to save his female servant¦148721 from the man¦148723 who's \add ≈cutting\add* me and¦148726 my son together¦148729 \add off\add* from the inheritance¦148730 given by God¦148731.’
+\v 17 And your female servant¦148734 \add ≈thought\add*, ‘Please, let the word of my master the king become¦148735 \add ≈my assurance\add*, because¦148743 my master the king is like God's messenger¦148738 \add when it comes to\add* understanding good and¦148733 evil. And may Yahweh¦148740 your god¦148754 be with you.’ ”\x + \xo 14:17: \xt 2Sam 19:27.\x*
+\p
+\v 18 “\add Hang on,\add*” the king told the woman. “\add ≈I want you to answer¦148759 this question honestly\add*.”
+\p “Please, let my master¦148780 the king speak¦148777.” \add *she\add* \add ≈responded¦148761\add*.
+\p
+\v 19 “\add ≈Did Yoav perhaps have anything to do\add* with¦148819 all this?” he \add ≈asked\add*.
+\p The woman¦148792 answered¦148791, “By the life of your spirit, my master the king, there's¦148801 no \add ≈avoiding anything\add* that my master the king has said. \add Yes,\add* your servant Yoav—he himself commanded¦148816 me, and¦148783 he himself \add ≈told¦148816\add* your female servant \add ≈what I should say\add*.
+\v 20 Your servant¦148834 Yoav¦148835 \add ≈set this up to try to remedy the situation¦148832\add*. But¦148840 my master¦148840 is wise like the wisdom¦148842 of one of God's messengers¦148843 to know¦148845 everything that's \add going on here\add* on earth¦148851.”
+\p
+\v 21 Then the king¦148855 \add summoned\add* Yoav¦148858 and told him, “\add ≈All right then,\add* I'll \add ≈sort this out. Now\add* go¦148867 \add and\add* bring¦148868 back the young¦148871 man¦148871 Abshalom¦148874.”
+\p
+\v 22 Yoav¦148877 fell \add ≈onto his knees and bowed¦148882\add* his face to the ground, and blessed¦148883 the king, then¦148876 he said, “Today, your servant knows¦148890 that I have found¦148894 favour¦148895 in¦148896 your eyes¦148896, my master¦148897 the king, since the king \add ≈is going to do what\add* his servant \add ≈asked\add*.”
+\v 23 Then¦148909 Yoav¦148910 got up and went¦148911 to Geshur¦148912 to get Abshalom¦148916 and bring him \add back\add* to Yerushalem¦148917,
+\v 24 \add ≈but\add* the king said, “He can go around to his house, but he's \add ≈to stay right away from me\add*.” \add ≈So\add* Abshalom¦148930 \add ≈lived in his own\add* house, \add ≈but wasn't allowed into the palace\add*.
+\s1 Abshalom and David reconcile
+\rem /s1 David Forgives Absalom; Absalom Is Reconciled to David; Absalom Reconciled to David
+\s4 Full kingdom
+\p
+\v 25 \add ≈Now\add* Abshalom¦148940 \add ≈was admired as the most handsome¦148946 man¦148944\add* in all Yisrael¦148949—from the \add ≈top\add* of his head¦148955 to the \add ≈bottom\add* of his feet, \add ≈you wouldn't be able to find a blemish¦148960 on his skin\add*.
+\v 26 He \add ≈had his hair cut once a year when it got too heavy¦148976 on¦148962 him, and¦148962 when the hair was weighed using standard weights, it would be over two¦148984 kilograms\add*.
+\v 27 Abshalom¦148990 had three¦148991 sons¦148992 and¦148989 a daughter¦148993 named Tamar¦148996—a very attractive woman¦148999.
+\p
+\v 28 Abshalom¦149005 lived in¦149006 Yerushalem¦149006 for two¦149007 years¦149007 \add ≈without ever getting to\add* see the king¦149010,
+\v 29 \add ≈so\add* \add *he\add* \add ≈sent a message\add* to Yoav \add ≈about getting an invitation to see\add* the king¦149023, but \add @Yoav\add* wouldn't come to him. He sent \add ≈another message\add*, but \add @Yoav\add* \add still\add* wouldn't come,
+\v 30 \add ≈so\add* he \add ≈instructed\add* his servants, “Listen, Yoav's \add ≈piece of land with¦149052 a barley crop is nearby\add*. Go and¦149035 set fire to it.” \add ≈So¦149035\add* Abshalom's servants \add ≈burnt\add* \add @Yoav's barley\add*.\f + \fr 14:30 \ft TC: The Septuagint translation adds the following words here: “And Abshalom's servants burnt them up. Then Yoav's servants came to him, tearing their garments. They said…”\f*
+\p
+\v 31 Then Yoav¦149063 went¦149064 to Abshalom's¦149067 house¦149068 and \add ≈demanded\add*, “Why did your¦149073 servants¦149073 \add ≈destroy my barley crop\add*?”
+\p
+\v 32 “Listen, I \add ≈tried to contact\add* you,” Abshalom¦149083 \add ≈replied\add*. “I asked you to come here so that I could send you to the king \add ≈to ask what the point was of bringing me here from Geshur¦149103\add* \add if I can't see him\add*—\add ≈I might as well have stayed back\add* there. \add ≈So¦149082\add* now, \add ≈help me to get invited to see\add* the king, and¦149082 then if \add ≈I'm considered guilty of a crime\add*, then let him kill me.”
+\p
+\v 33 \add ≈So¦149122\add* Yoav¦149123 went¦149134 and informed the king, and he called¦149130 for Abshalom¦149133. \add ≈When¦149148 he entered\add*, he \add ≈knelt and bowed¦149138 his face\add* to the ground \add ≈in front¦149144 of\add* the king, and then¦149122 the king kissed¦149146 \add *him\add*.
+\c 15
+\s1 Abshalom plans his rebellion
+\rem /s1 Absalom Plans Rebellion; Absalom's Conspiracy; Absalom Usurps the Throne; Absalom's Rebellion; Absalom's rebellion
+\s4 Full kingdom
+\p
+\v 1 \add ≈Sometime after¦149152 all that\add*, Abshalom¦149156 \add ≈acquired\add* a chariot¦149157 and horses¦149158 and \add hired\add* fifty¦149159 men to run ahead¦149162 of him¦149162.
+\v 2 \add *He\add* would get up early¦149164 and stand¦149166 \add ≈on the side of the road going in and out of the city\add*. \add ≈Every¦149201 time that someone came into the city to take a dispute to be settled by the king, Abshalom¦149165 would ask them where¦149192 they were from, and they'd reply with their city and tribe¦149199\add*,
+\v 3 then¦149204 \add *he'd\add* say, “Listen, \add No doubt\add* what you're saying is sensible and¦149204 right¦149210, but¦149204 the king¦149216 hasn't \add ≈appointed anyone¦149211 to listen¦149211 to people from your¦149208 area\add*.”
+\v 4 Then¦149218 Abshalom¦149219 would \add ≈add\add*, “\add ≈If I was\add* appointed¦149222 as judge¦149223, then¦149218 every¦149227 person¦149229 with a dispute or case could come¦149226 to me and¦149218 \add ≈obtain\add* justice¦149238.”
+\v 5 Whenever¦149247 anyone¦149243 approached him to \add ≈bow respectfully\add* to him, he would put out his hand¦149249 and \add ≈embrace\add* them and kiss¦149252 them.
+\v 6 Abshalom¦149256 acted \add ≈that way¦149257 towards every Israeli\add* who came¦149264 for \add ≈a dispute to be settled by\add* the king¦149268, and¦149255 \add in doing that\add* he stole¦149269 the \add #hearts\add* of the \add ≈Israeli people\add*.
+\p
+\v 7 Four\f + \fr 15:7 \ft The Hebrew says forty years, but this is interpreted here as a scribal error. (David's entire reign was only forty years, see 1 Kings 2:11.)\f* years \add ≈later,\add* Abshalom¦149283 \add ≈begged\add* the king¦149286, “Please, \add ≈release me to\add* go¦149287 and fulfill the vow that¦149293 I made to Yahweh¦149296 in¦149297 Hebron¦149297,
+\v 8 because when I was living in Geshur¦149305 (in Aram¦149306) \add ≈I promised Yahweh¦149313 that\add* if he¦149302 brought me \add back\add* to Yerushalem¦149314, then I'd worship¦149315 him \add in Hebron\add*.”
+\p
+\v 9 “Go in¦149325 peace¦149325,” the king¦149323 \add ≈responded¦149320, so\add* Abshalom \add ≈left for\add* Hebron¦149328.
+\v 10 \add From there,\add* \add *he\add* sent¦149331 \add ≈sleeper groups\add* into all \add areas\add* of Yisrael¦149337, telling \add <them\add*, “When you¦149339 all hear¦149339 the trumpet¦149343 blasts, then \add ≈shout\add*, ‘Abshalom¦149332 has become¦149345 king¦149345 from Hebron¦149347!’ ”
+\v 11 Abshalom¦149351 \add ≈had invited¦149356\add* two¦149353 hundred¦149353 men from Yerushalem¦149355 to go with him \add to Hebron\add*, but¦149349 they were innocent¦149358 and¦149349 didn't¦149359 know what was \add ≈about to happen\add*.
+\v 12 Then¦149365 \add while\add* he was offering¦149375 sacrifices¦149378, Abshalom \add also\add* sent¦149365 for David's¦149372 adviser Ahitofel from Giloh¦149374. \add ≈By now\add* the conspiracy¦149380 was strengthening, and Abshalom \add ≈was becoming popular with¦149375 more and more\add* people¦149382.
+\s1 The fleeing of David
+\rem /s1 David Flees; David Flees from Jerusalem; David Escapes from Jerusalem
+\s4 Full kingdom
+\p
+\v 13 \add Eventually,\add* \add ≈someone went¦149389\add* and¦149389 told David¦149393, “The \add ≈loyalty of the Israeli¦149399 people is turning towards\add* Abshalom¦149401.”
+\p
+\v 14 \add ≈So¦149403\add* David¦149404 told his servants¦149407, “\add ≈Pack up quickly and let's get out of here, or else we won't¦149415 be able\add* to escape¦149420 from Abshalom¦149422. \add ≈Be fast in¦149411 case he's heading here soon\add* and overtakes¦149428 us. \add ≈That would be a massacre and the whole city¦149435 would die from their swords¦149438\add*.”
+\p
+\v 15 “Your servants \add here\add* \add ≈will do everything you tell us\add*,” they \add ≈replied\add* to the king.
+\v 16 \add ≈So¦149464\add* the king left ten of his slave-wives to \add ≈look after\add* the palace, \add ≈but¦149456\add* he left with¦149461 all his family.
+\p
+\v 17 \add ≈So¦149471\add* the king¦149472 departed with¦149476 all his¦149476 people¦149475, and¦149471 they¦149477 stopped¦149477 at¦149476 the last house¦149478.
+\v 18 Then¦149481 all his servants¦149483 passed beside him to go ahead, along with¦149504 his bodyguards (the Kerethites¦149490 and the Felethites) and six hundred¦149499 Gittites (from Gat).
+\v 19 Then¦149512 the king said to Ittai¦149516 the Gittite¦149517, “\add ≈You don't have to come\add* with us. You're a foreigner¦149531 and an exile¦149535 from your place¦149537, \add ≈so you could\add* go back and stay with the \add new\add* king.
+\v 20 \add ≈You haven't been here long\add*, and we don't even know where¦149550 we're going. \add ≈I certainly need to leave but¦149542 you can return¦149554 with your relatives\add*. \add May Yahweh show\add* kindness and faithfulness¦149561 \add to you all\add*.”
+\p
+\v 21 “\add ≈As¦149571 Yahweh¦149573 lives, and¦149563 as my master the king lives\add*,” Ittai¦149564 answered¦149563 the king, “\add ≈wherever¦149579 my master the king goes\add*, your servant¦149596 will certainly be there \add also\add*, whether¦149586 \add ≈it means life or death¦149588\add*.”
+\p
+\v 22 “\add Okay,\add* go \add ≈ahead then¦149598\add*,” David told Ittai. \add ≈So¦149598\add* Ittai and all his men¦149610 and \add ≈their families went with David\add*.
+\v 23 \add ≈All the people along the road cried when they saw them walking by\add*. The king¦149627 and all the others crossed the Kidron¦149630 riverbed and went up the hill toward the wilderness¦149642.
+\p
+\v 24 \add ≈What a sight!\add* Even Tsadok¦149647 and all the Levites¦149650 with him were carrying¦149652 the box¦149655 with God's agreement¦149656 \add in it\add*, and when they put it down \add again\add*, \add the priest\add* Evyatar caught up \add to them and waited\add* until¦149665 all the people¦149670 had finished¦149667 \add exiting\add* the city¦149674.
+\v 25 \add ≈But¦149676\add* the king¦149677 told Tsadok¦149678, “\add ≈Take the sacred chest¦149682 back into\add* the city¦149684. If Yahweh¦149690 favours¦149688 me, then¦149676 he'll \add ≈help\add* me return, and he'll \add ≈let\add* me see¦149692 it and his \add ≈place¦149696 of residence\add* \add again\add*.
+\v 26 \add ≈But¦149698\add* if \add @Yahweh\add* says that he isn't¦149701 pleased with¦149710 me, then¦149698 he'll do¦149705 to me \add ≈whatever he thinks best\add*.
+\v 27 \add ≈Aren't you¦149720 a prophet\add*? Return to the city¦149722 in¦149723 peace¦149723, along with¦149723 your¦149725 son Ahimaats and Evyatar's son Yonatan.
+\v 28 Listen, I'll¦149735 wait at¦149737 the fords¦149737 in¦149737 the wilderness¦149739 until¦149740 \add ≈I get your message¦149742\add*.”
+\v 29 \add ≈So¦149747\add* Tsadok¦149748 and¦149747 Evyatar \add ≈carried the sacred chest¦149752\add* back to Yerushalem¦149754, then¦149747 they¦149755 remained there¦149756.
+\p
+\v 30 \add ≈As\add* David¦149758 was going up the Mt¦149760. of Olives, he was walking¦149769 barefoot¦149770 with his head covered. He was weeping as were the people¦149773 with him—they \add too\add* had their heads covered and¦149758 were weeping.
+\v 31 David¦149784 \add ≈knew\add* that Ahitofel was among¦149788 the people conspiring¦149788 with¦149788 Abshalom¦149791, \add ≈so\add* \add *he\add* \add ≈prayed\add*, “Please, Yahweh¦149801, make Ahitofel \add ≈give foolish¦149794 advice\add*.”
+\rem /s1 Hushai Becomes David's Spy
+\p
+\v 32 \add ≈When¦149803\add* David¦149804 \add ≈reached the summit¦149808\add* (where¦149809 people \add frequently\add* worship God¦149813), Hushay (the Arkite¦149817) met him¦149815 there¦149812. He had torn his clothes and¦149803 put dirt on his head¦149823.
+\v 33 David¦149827 told him, “If you \add ≈come\add* with me, you'll be a burden¦149833 to me,
+\v 34 \add ≈but\add* if you return¦149838 to the city¦149837 and¦149835 tell Abshalom¦149840, ‘I'm your servant, \add ≈my\add* king¦149844. I was your father's servant \add ≈in the past, but\add* now I'll¦149845 be your servant,’ then¦149835 you'll \add be able to oppose\add* Ahitofel's counsel¦149856 for me.
+\v 35 The priests Tsadok¦149862 and¦149859 Evyatar \add ≈are already\add* there¦149861, \add ≈so tell\add* \add *them\add* \add ≈everything¦149866 you hear in the palace\add*.
+\v 36 \add Also\add* Tsadok's¦149885 son Ahimaats and Evyatar's son Yonatan are there¦149880. \add ≈Tell them everything¦149891\add* you¦149895 hear¦149895, then send¦149888 \add ≈them to report it to me\add*.
+\p
+\v 37 \add ≈So¦149897\add* David's¦149900 friend¦149899 Hushay¦149898 \add ≈slipped back into\add* Yerushalem¦149904 \add ≈just as\add* Abshalom¦149902 was entering the city¦149901.
+\c 16
+\s1 Dishonest Tsiva helps David
+\rem /s1 David and Ziba; David's Adversaries
+\s4 Full kingdom
+\p
+\v 1 David¦149906 \add ≈hadn't gone far past the summit¦149909 when\add*, wow, he was meet by Mefiboshet's servant¦149912 Tsiva with a pair of saddled¦149919 donkeys¦149918 \add ≈loaded with\add* two¦149921 hundred bread¦149922 rolls, one hundred \add ≈cakes\add* of raisins¦149924, one hundred \add pieces\add* of fresh fruit¦149926, and¦149906 a \add ≈leather container\add* of wine.\x + \xo 16:1: \xt 2Sam 9:9-10.\x*
+\v 2 “\add ≈What's all that\add*?” the king \add ≈asked\add*.
+\p “The donkeys¦149941 are for the king's \add ≈family\add* to ride,” Tsiva \add ≈answered\add*, “and the bread and fruits¦149948 are for the young¦149950 men to eat, and the wine is for the people to drink¦149952 who \add ≈feel\add* faint¦149953 in¦149954 the wilderness¦149954.”
+\p
+\v 3 “\add ≈So¦149956\add* where's¦149958 your master's¦149961 grandson \add Mefiboshet\add*?” \add ≈asked\add* the king.\x + \xo 16:3: \xt 2Sam 19:25-27.\x*
+\p \add ≈Ha\add*, he stayed in¦149969 Yerushalem¦149969 because¦149970 he thought that \add ≈the Israelis¦149976 might give back control of his grandfather's kingdom\add*,” Tsiva \add ≈lied\add*.
+\p
+\v 4 “Well then¦149981,” the king told Tsiva, “everything that belonged to Mefiboshet now belongs to you.”
+\p “\add ≈I'm honoured\add*,” Tsiva \add ≈responded¦149981\add*, “that I've found favour¦149996 in¦149997 the eyes¦149997 of my master¦149998 the king.”
+\s1 Shimei curses David
+\rem /s1 David and Shimei; Shimei Curses David
+\s4 Full kingdom
+\p
+\v 5 \add ≈When¦150001\add* King¦150002 David got to Bahurim¦150006, wow, a man¦150009 from Sha'ul's \add ≈extended family¦150011\add* came out. He was Gera's¦150019 son Shimei¦150016, and he came out and cursed \add <David\add*.
+\v 6 Then¦150024 he threw stones¦150025 at¦150025 David¦150028 and all \add *his\add* servants¦150033, and all the people¦150038 and \add ≈warriors\add* on¦150025 \add ≈both sides\add* of \add @the king¦150034\add*.
+\v 7 “Go¦150052 away, go away, you worthless¦150055 man of \add ≈much bloodshed¦150053\add*!” Shimei¦150048 \add ≈yelled\add*.
+\v 8 “\add Now\add* Yahweh's returning to you all the blood of Sha'ul's household¦150063. You \add ≈took over as\add* king in¦150075 his¦150068 place¦150068, \add ≈but¦150070\add* Yahweh's giving the kingdom into the hand¦150075 of your¦150079 son Abshalom¦150076. Look at¦150075 you, you're evil because¦150080 you're a man¦150081 of \add ≈much bloodshed\add*.”
+\p
+\v 9 The Tseruyah's son Abishai¦150086 \add ≈asked\add* the king, “Why should¦150102 this dead dog curse¦150094 my master¦150100 the king? Please, let me cross¦150102 over and¦150085 \add ≈lop off\add* his head¦150108.”
+\p
+\v 10 “What \add ≈does it matter\add* to me, or to you \add two\add* sons¦150117 of Tseruyah?” the king¦150112 \add ≈replied\add*. “He's cursing¦150121 because Yahweh¦150124 told him to curse¦150127 \add *me\add*, \add ≈so who has any right to ask him why he's saying it\add*?”
+\v 11 Then David¦150139 told Abishai¦150142 and all his servants¦150147, “Look, my \add ≈own biological son is trying to kill me\add*. \add ≈Now on top of\add* that, this Benjaminite¦150164. Leave him and let him curse¦150167, because¦150159 Yahweh¦150172 \add ≈told him to\add*.
+\v 12 Perhaps¦150174 Yahweh¦150176 will see my suffering and¦150179 return good¦150182 on¦150177 me, instead of this cursing¦150184 today.”
+\v 13 \add ≈As\add* David¦150189 and his¦150197 men¦150190 \add ≈continued along\add* the road¦150191, Shimei¦150193 walked along the hillside beside him—walking and cursing, and throwing stones¦150201 and dirt at¦150191 him.
+\v 14 \add Later\add*, the king¦150208 and all the people¦150211 with him arrived¦150207,\f + \fr 16:14 \ft Probably at the fords mentioned in 15:28.\f* and feeling very tired, they rested.
+\s1 The conflicting advice of Hushay and Ahitofel
+\rem /s1 The Advice of Hushai and Ahithophel; The Counsel of Ahithophel; Absalom in Jerusalem; Ahithophel Advises Absalom
+\s4 Full kingdom
+\p
+\v 15 \add Meanwhile,\add* Abshalom¦150219 and \add ≈all his followers\add* arrived in Yerushalem¦150226, and Ahitofel was among \add #them\add*.
+\v 16 \add ≈When¦150230\add* David's¦150237 friend¦150236 Hushay (the Arkite¦150235) came to Abshalom¦150240, he \add ≈greeted\add* \add *him\add*, “May the king live. May the king live.”
+\p
+\v 17 “Is \add ≈that how you show\add* kindness to your friend \add David\add*?” Abshalom¦150252 \add ≈responded¦150251\add*. “Why didn't¦150262 you go with \add *him\add*?”
+\p
+\v 18 “No,” Hushay \add ≈replied\add*. “I'll \add ≈serve whoever\add* Yahweh¦150278 and these people¦150279 and all the men of Yisrael¦150284 have chosen¦150277. \add So¦150269\add* I'll stay with \add ≈you\add*.
+\v 19 \add ≈Besides that\add*, who should I serve? \add ≈Why shouldn't¦150295 I serve my master's\add* son? Just as I've served¦150299 your¦150304 father, \add ≈similarly, I'll¦150293 serve you\add*.”
+\p
+\v 20 Then Abshalom¦150308 \add turned to\add* Ahitofel, “Give us advice. What should we¦150317 do¦150317 \add next\add*?”
+\p
+\v 21 “Go to your father's slave-wives that he left to guard the house¦150332,” Ahitofel \add ≈replied\add*. “\add Lie with them\add* then all Yisrael¦150336 will hear¦150333 that you've¦150339 made your father stink, and¦150319 then \add ≈everyone\add* with you will be \add ≈encouraged\add*.”
+\v 22 \add ≈So¦150350\add* they \add ≈set up\add* a tent¦150352 for Abshalom¦150351 on the \add palace\add* roof¦150355 and¦150356 \add *he\add* \add ≈had sex\add* with his father's¦150361 slave-wives \add ≈where everyone¦150350 would know what was going on\add*.\x + \xo 16:22: \xt 2Sam 12:11-12.\x*
+\p
+\v 23 In those¦150372 days¦150371, Ahitofel's advice¦150367 was just \add ≈as good as inquiring directly from\add* God¦150378, \add ≈so David¦150386 in¦150377 the past, and¦150367 now Abshalom¦150388, accepted what he said\add*.
+\c 17
+\s1 Hushay argues against Ahitofel's advice
+\rem /s1 Hushai Misleads Absalom
+\s4 Full kingdom
+\p
+\v 1 Then Ahitofel \add ≈asked\add* Abshalom¦150395, “Please, let me choose¦150396 twelve thousand¦150401 men, then let me \add ≈go\add* and pursue¦150404 after¦150405 David¦150407 tonight.
+\v 2 I'll \add ≈attack\add* him while \add #they're\add* tired and \add ≈lacking energy\add*. \add ≈Once I panic¦150416\add* \add #them\add*, all the people¦150421 with him will flee and I'll be able to strike¦150425 the king¦150428 by himself.
+\v 3 Then¦150431 I'll¦150431 \add ≈bring¦150431\add* all the people \add ≈back\add* to you, like \add ≈a reunion\add*. You'll \add have\add* the man¦150438 you're¦150440 \add ≈wanting\add*, and¦150431 all the people will be in peace¦150446.”
+\v 4 \add ≈That¦150456 seemed very sensible to\add* Abshalom¦150451 and¦150452 all the Israeli¦150455 elders¦150455.
+\rem /s1 Hushai Counters Ahithophel's Advice; The Counsel of Hushai
+\p
+\v 5 \add ≈But¦150459\add* Abshalom¦150460 \add ≈insisted\add*, “Now, call Hushay the Arkite¦150465 \add ≈as well\add*, and¦150459 let's also \add ≈listen¦150466 to his suggestions\add*.”
+\v 6 \add ≈So¦150474 when\add* Hushay \add ≈arrived\add*, Abshalom¦150478 \add ≈asked\add* him, “Ahitofel has \add ≈suggested so and¦150474 so\add*. Should we \add ≈do¦150487 what he said¦150479\add*? If not, \add ≈what would you recommend?\add*”
+\p
+\v 7 “This time¦150511, Ahitofel's suggestion isn't¦150503 \add such\add* good¦150505 advice¦150506,” Hushay \add ≈replied\add*.
+\v 8 You yourself know your father and his men—\add and do remember\add* that they're \add ≈powerful warriors¦150525\add*—they're \add ≈still furious\add* like a bear in the countryside¦150532 \add ≈that's been robbed¦150531 of its cubs\add*. And your father is an \add experienced\add* man of war, and he won't¦150536 spend the night¦150537 \add there\add* with the people¦150540.
+\v 9 Listen, he's \add probably\add* \add ≈already hiding¦150546 in a cavern or some other¦150550 place¦150551\add*. \add Also,\add* if \add ≈some of your men\add* were killed early \add in the fighting\add*, \add ≈then the rumour would go around that¦150562 Abshalom's¦150564 already lost many men\add*.
+\v 10 Then¦150566 \add ≈even your bravest warriors might lose heart\add*, because¦150578 all Yisrael¦150583 knows that your father is a \add ≈powerful warrior\add*, and¦150566 \add also\add* that the men with him are \add ≈very experienced\add*.
+\v 11 \add ≈So this is what I suggest\add*: \add ≈Call warriors from\add* all Yisrael¦150601—from Dan¦150602 \add in the far north\add* to Beer¦150605-Sheva \add in the far south\add*. They'll be as numerous as sand \add grains\add* on¦150616 the beach and you¦150598 \add ≈personally¦150614 will be able to lead them into\add* battle¦150616.
+\v 12 Then¦150618 we'll \add ≈be able to find him wherever¦150623 he is\add*, and \add ≈attack him like dew blankets the entire¦150638 area\add*, and neither him nor any of the men¦150640 with¦150620 him \add ≈will survive\add*, not even one.
+\v 13 If¦150657 he \add ≈escaped into some\add* city, \add ≈we'd all\add* bring¦150654 ropes¦150662 to that city and¦150648 drag \add @the stones\add* into the valley¦150667 until¦150668 even a pebble¦150677 couldn't be found¦150673 there¦150674.”
+\p
+\v 14 Abshalom and all the \add ≈Israeli¦150684 elders agreed that Hushay's advice was better than Ahitofel's\add*. (Yahweh¦150702 had \add ≈influenced\add* them to reject Ahitofel's good advice so \add *he\add* could bring¦150701 disaster onto Abshalom.)
+\s1 The warning to David to flee
+\rem /s1 David Is Warned and Escapes; Hushai Warns David to Escape
+\s4 Full kingdom
+\p
+\v 15 Then Hushay told the \add two\add* priests¦150719 Tsadok¦150715 and Evyatar what Ahitofel had suggested to Abshalom¦150726 and the Israeli¦150728 elders¦150728 and \add ≈what he'd countered it with\add*.
+\v 16 Then¦150735 \add ≈he told them\add*, “\add ≈Get that¦150756 message to\add* David¦150739 quickly¦150737. \add Tell him\add* not to \add ≈overnight\add* at¦150745 the fords¦150745 in¦150745 the wilderness¦150746, but¦150735 to cross¦150748 over otherwise he'll be killed \add ≈along with everyone¦150755 else\add* with him.”
+\p
+\v 17 \add Their sons\add* Yonatan and Ahimaats were waiting at¦150762 Eyn-Rogel \add ≈where\add* a female servant¦150766 would come and \add ≈pass the message onto\add* them, because¦150774 it \add ≈wouldn't be safe for them\add* to be seen¦150777 entering¦150778 the city¦150779. Then¦150759 they themselves would go¦150765 and inform King¦150772 David¦150773.
+\v 18 \add ≈But¦150781\add* a young¦150783 man saw them and informed Abshalom¦150785, \add ≈but¦150781\add* \add meanwhile\add* the two of them went quickly¦150788 and got to the house¦150793 of a man in Bahurim¦150796 \add ≈where\add* they went down into the well in his courtyard¦150799.
+\v 19 The¦150806 woman¦150804 \add there\add* stretched a covering¦150808 over the top of the well, and¦150803 then¦150803 spread¦150805 grain¦150815 over it \add to dry\add*, so \add ≈it wasn't obvious\add*.
+\v 20 \add Some of\add* Abshalom's¦150822 servants¦150821 \add ≈arrived at the house¦150826 and asked\add* the woman, “Where's Ahimaats and Yonatan?”
+\p “They crossed over the creek,” she \add ≈replied\add*.
+\p \add ≈So¦150820 they continued¦150827 searching¦150837 for them, but¦150820 gave up\add* \add after a while\add* and returned¦150840 to Yerushalem¦150841.
+\p
+\v 21 \add ≈After they'd gone\add*, \add @the two men\add* \add ≈climbed\add* out of the well, and went¦150850 \add on\add* and informed King¦150852 David¦150853, “\add ≈Pack\add* up and quickly¦150860 cross¦150859 over the river, because¦150864 Ahitofel \add ≈suggested attacking you¦150868 all immediately\add*.”
+\v 22 \add ≈So¦150871\add* David¦150872 and everyone¦150875 with him \add ≈moved on\add* and crossed¦150878 the Yordan¦150897 \add ≈in the night, and by dawn there were all across\add*.
+\p
+\v 23 \add ≈When¦150899\add* Ahitofel saw¦150900 that his \add ≈advice¦150904 hadn't been taken\add*, he saddled¦150905 his donkey¦150908 and¦150899 \add ≈rode\add* to his city¦150916. He gave instructions¦150917 to his \add ≈household¦150913\add*, then¦150899 he hanged¦150921 himself¦150921. \add ≈His body\add* was buried¦150923 in¦150924 his father's¦150925 tomb¦150924.
+\p
+\v 24 \add Meanwhile,\add* David¦150928 arrived at Mahanayim, \add ≈but¦150928\add* Abshalom¦150931 and all his men had crossed over the Yordan¦150935.
+\v 25 As the \add ≈replacement\add* for Yoav as army \add ≈commander\add*, Abshalom¦150947 had appointed¦150946 Amasa¦150945. (He was Yeter's¦150958 son, and¦150943 his mother was Nahash's¦150968 daughter¦150966 Abigail¦150965 who was the sister¦150969 of Yoav's mother Tseruyah.)
+\v 26 Abshalom¦150976 and¦150974 \add ≈his men\add* camped¦150974 in the Gilead¦150978 \add ≈region¦150977\add*.
+\p
+\v 27 \add ≈While David¦150983 was in\add* Mahanayim, Shovi (Nahash's¦150988 son from Rabbah¦150989), Machir¦150993 (Ammiyel's son from Lo-Debar), and Barzillai¦150999 (the Gileadite¦151000 from Rogelim¦151001)
+\v 28 \add brought\add* bedding and basins¦151004, clay pots, wheat¦151007 and barley¦151008, flour¦151009 and roasted¦151010 grain¦151010, beans¦151011 and lentils¦151012,
+\v 29 honey¦151015 and yogurt, sheep¦151017 and cheese¦151018 for David¦151021 and the people with¦151033 him to eat because¦151027 they \add ≈knew that¦151023 they'd\add* be hungry¦151030 and tired and thirsty¦151032 \add there\add* in¦151033 the wilderness¦151033.
+\c 18
+\s1 Abshalom's defeat and death
+\rem /s1 Absalom's Defeat and Death; Absalom's Death; The Defeat and Death of Absalom; Absalom Is Defeated and Killed
+\s4 Full kingdom
+\p
+\v 1 David¦151036 \add ≈divided his warriors¦151039 into units\add* and appointed commanders of hundreds¦151047 and of thousands¦151045.
+\v 2 \add *He\add* \add ≈sent¦151049 them out in three groups under\add* Yoav, Abishai¦151060 (son of Yoav's brother¦151064 Tseruyah) and¦151049 Ittai¦151068 (the Gittite¦151069), then¦151049 \add ≈promised that he'd also join them in battle\add*.
+\p
+\v 3 \add ≈But¦151083\add* the people¦151084 \add ≈complained\add*, “\add No,\add* don't¦151085 go¦151086 out, because if we \add ≈have to\add* flee, they won't \add ≈be worried about\add* us. \add ≈Even\add* if half of us die¦151099, they won't \add ≈be worried about\add* us, because you \add ≈count more to them than ten¦151110 thousand¦151111 of us\add*. \add ≈So¦151083\add* it's better that you \add ≈stay to\add* help¦151120 us from the city¦151119.”
+\p
+\v 4 “I'll¦151131 do whatever seems best to you,” the king \add ≈responded¦151124\add*. \add ≈So\add* the king stayed beside the city gate¦151137 while the \add ≈men\add* went out by their hundreds¦151142 and thousands¦151143.
+\v 5 Then¦151145 he commanded Yoav¦151149 and Abishai¦151152 and Ittai¦151155, “\add ≈For my sake, don't harm my son\add* Abshalom.” All the people¦151164 heard¦151165 the king \add ≈give this command\add* about Abshalom \add ≈to all the leaders\add*.
+\p
+\v 6 So¦151178 \add David's\add* people¦151179 went¦151178 out to the countryside¦151180 to meet \add the rest of\add* Yisrael¦151182. The battle¦151184 was in¦151185 the Efrayim¦151186 forest¦151185
+\v 7 and¦151188 David's¦151194 \add ≈men defeated¦151188 the rest—twenty¦151202 thousand¦151203 men died\add* that day¦151200,
+\v 8 \add ≈but¦151205\add* as the battle¦151208 had spread over the \add ≈entire¦151215 area\add*, the forest¦151219 killed more people¦151221 that day¦151225 than the sword.
+\p
+\v 9 Abshalom¦151229 happened¦151228 to meet some of David's¦151232 \add ≈men\add*. \add *He\add* was riding¦151234 his mule, and when \add it\add* \add ≈darted\add* under the think branches of a large¦151243 terebinth \add tree¦151246\add*, his head¦151245 got caught¦151244 in the branches and he was \add ≈left hanging¦151247 in the air\add* as the mule \add ≈kept going\add*.
+\v 10 \add ≈Someone¦151265 noticed¦151258 him\add* and¦151258 informed Yoav¦151262 that he'd seen Abshalom¦151268 hanging in¦151270 a tree¦151270.
+\p
+\v 11 “\add ≈What!\add*. You saw¦151278 \add <him\add* \add ≈but¦151272 didn't¦151280 strike¦151282 him down\add*?” Yoav¦151273 \add ≈challenged\add*. “\add ≈I would have given\add* you¦151278 ten¦151288 silver¦151289 \add coins\add* and¦151272 a \add leather\add* belt¦151290.”
+\p
+\v 12 “Even if \add ≈you'd placed one thousand¦151306 silver¦151307 coins in¦151318 my hands\add*,” \add *he\add* \add ≈replied\add*, “I wouldn't have \add ≈harmed\add* the king's son, because¦151317 \add ≈we heard the king's command¦151319 with¦151318 our¦151318 own ears¦151318 about looking out for\add* Abshalom¦151333.
+\v 13 \add ≈Even if I'd ignored my good sense, the king¦151349 would have found out about it¦151346, then even you¦151351 wouldn't have stood up for\add* me.”
+\p
+\v 14 “\add ≈I'm¦151359 not going to waste time arguing with¦151364 you\add*,” Yoav¦151355 responded¦151354, then¦151354 he took¦151361 three¦151362 spears¦151363 \add and went\add* and thrust¦151365 them into Abshalom's¦151367 \add ≈abdomen\add* while¦151368 he was \add ≈still¦151368 alive¦151369 and dangling from the tree¦151371\add*.
+\v 15 Then¦151373 ten¦151374 young¦151375 men¦151375 who carried Yoav's¦151378 weapons surrounded¦151373 Abshalom¦151382 and¦151373 \add ≈finished him¦151383 off\add*.
+\p
+\v 16 Then¦151385 Yoav¦151386 blew the trumpet¦151387 \add ≈to signal the end of the fighting\add* and¦151388 the people returned¦151388 from chasing¦151390 \add ≈Abshalom's men\add*.
+\v 17 They took¦151401 Abshalom's¦151404 \add body\add* and threw¦151405 it into a large pit in¦151407 the forest¦151407 and covered it with¦151407 a large pile of stones¦151416. \add Meanwhile\add* \add ≈his men\add* fled back to their homes.
+\p
+\v 18 \add ≈During his lifetime¦151433,\add* Abshalom had setup a pillar in¦151433 the King's Valley because¦151442 \add ≈he had no sons to preserve his name\add*. He \add ≈put his name on¦151433\add* the pillar and it's known as ‘Abshalom's¦151428 hand’ to this day¦151461.
+\s1 David learns about Abshalom's death
+\rem /s1 David Is Told of Absalom's Death; David Mourns; David Hears of Absalom's Death; David Mourns Absalom's Death
+\s4 Full kingdom
+\p
+\v 19 Then Tsadok's¦151468 son Ahimaats \add ≈requested\add*, “Please, let me run¦151470 and let me take the news¦151472 to the king¦151475, because¦151476 Yahweh¦151479 has \add ≈rescued\add* him¦151478 from his enemies¦151481.”
+\p
+\v 20 “\add ≈No, not today\add*,” Yoav¦151485 \add ≈replied\add*. “\add ≈Some other time I'll allow you to take some news, but¦151483 not today\add* because¦151499 the king's son is dead.”
+\v 21 Then¦151509 Yoav instructed a Cushite man, “Go and tell the king¦151514 what you¦151516 saw.”. The \add ≈man\add* bowed¦151517 to Yoav and ran¦151520 \add off\add*.
+\p
+\v 22 \add ≈But¦151522\add* Ahimaats \add ≈begged\add* Yoav again¦151523, “\add ≈Regardless of what might happen\add*, please¦151536, let me also run¦151534 myself after¦151540 the Cushite.”
+\p “Why \add ≈would you do that¦151554\add*, my \add ≈boy\add*?” Yoav \add ≈asked\add*. “\add ≈There won't¦151551 be any reward for\add* \add bad\add* news¦151553.”
+\p
+\v 23 “\add ≈No matter what, I want to\add* run,” \add he replied\add*.
+\p “\add Okay then¦151556,\add* run,” Yoav told him. \add ≈So¦151556\add* Ahimaats \add ≈took a different route through\add* the Yordan valley and¦151556 \add ≈arrived before\add* the Cushite.
+\p
+\v 24 \add ≈Now\add* David¦151572 was sitting¦151573 between¦151574 the \add ≈outer and inner\add* gates¦151577. \add ≈When¦151572\add* the watchman¦151579 had gone over the gate¦151583 roof to the wall, he \add ≈looked out\add* and saw, wow, a man was running¦151595 \add towards them\add* alone¦151596.
+\v 25 The watchman¦151599 called¦151598 \add down\add* and informed the king, and the king said, “If he's alone¦151606, \add ≈he'll be bringing\add* news.”
+\p \add ≈As the runner got closer¦151611\add*,
+\v 26 the watchman¦151614 looked and saw another man running. \add *He\add* called¦151619 \add down\add* to the gatekeeper¦151623 and said, “Look, there's¦151625 \add another\add* man running alone¦151629.”
+\p “He'll also be bringing news,” said the king¦151631.
+\p
+\v 27 “The \add ≈gait\add* of the first¦151644 runner is like that of Tsadok's¦151649 son Ahimaats,” the watchman¦151638 said.
+\p “He's a good man and¦151637 he'll be bringing good news,” said the king¦151651.
+\p
+\v 28 Then¦151662 Ahimaats called¦151662 \add ahead\add* to the king, “Peace!” And he \add ≈knelt down with¦151689 his face¦151671\add* to the ground¦151672 and¦151662 said, “Blessed be Yahweh¦151689 your god¦151677, who's \add ≈stopped\add* the men who \add ≈acted\add* against¦151689 my master¦151689 the king.”
+\p
+\v 29 “Is the young¦151695 man Abshalom¦151696 all right?” the king \add ≈asked\add*.
+\p “When¦151692 Yoab¦151707 sent \add ≈me\add*, your servant,” Ahimaats \add ≈answered\add*, “I \add ≈noticed¦151699 a big\add* commotion, but¦151692 I don't¦151711 know what \add it was about\add*.”
+\p
+\v 30 “\add ≈Go and stand¦151718 over there\add*,” the king¦151716 \add ≈ordered\add*, so he \add ≈stepped aside¦151720\add* and stood¦151721 \add there\add*.
+\p
+\v 31 Then¦151723, wow, the Cushite \add man\add* arrived and¦151723 said¦151726, “May my master¦151729 the king¦151730 receive¦151728 the good news¦151728, because¦151731 Yahweh¦151729 has \add ≈rescued\add* you today from all those¦151739 who rose up against¦151740 you.”
+\p
+\v 32 “Is the young man Abshalom¦151750 all right?” the king asked \add *him\add*.
+\rem /s1 David Mourns for Absalom
+\p The \add ≈man\add* replied, “May the enemies¦151755 of my master¦151756 the king and all those¦151759 who rose up against¦151762 you for evil, be like that young man \add is\add*.”
+\p
+\v 33 Then the king \add started\add* trembling, and he went up to the room over the gate, and \add started\add* weeping, saying, “Oh my son Abshalom, my son. Oh my son Abshalom, I wish I'd died instead of you.”
+\c 19
+\s1 Yoav scolds David
+\rem /s1 Joab Rebukes the King; Joab Reprimands David
+\s4 Full kingdom
+\p
+\v 1 \add Soon\add* Yoav was told that the king¦151768 was weeping and mourning over Abshalom's¦151780 \add death\add*,
+\v 2 and \add so\add* the victory of that day became mourning¦151800 for all the people, because they'd heard that the king¦151798 was grieving for his son.
+\v 3 The people \add started\add* \add ≈quietly heading back into\add* the city, like people \add ≈would do when they're ashamed of having to\add* \em flee\em* from a battle.
+\v 4 \add ≈But¦151828\add* the king covered his face and¦151828 \add kept\add* crying out loudly, “Oh my son Abshalom. Oh Abshalom, my son, my son.”
+\p
+\v 5 Then Yoav went to the house \add ≈where\add* the king was and said, “Today you've \add ≈made your followers feel ashamed\add*—the ones who saved your life today and the lives of your sons and daughters, and the lives of your wives and your slave-wives.
+\v 6 By loving those who hate you and hating those who love you, you've¦151866 \add effectively\add* declared today that your officers and men \add ≈mean\add* nothing to you. \add It seems to us that\add* if Abshalom was still alive today and we were all dead, then it \add ≈would have all been okay to you\add*.
+\v 7 \add ≈So\add* get up now and go and speak \add ≈sincerely\add* to your¦151892 servants¦151905, because¦151897 \add ≈as Yahweh lives\add*, if you don't¦151902 then you won't¦151902 have a single warrior still with¦151922 you by the end of the night, and \add that would¦151921 result in¦151922\add* more trouble for you than \add ≈anything else that's happened\add* to you since you were \add just\add* a lad.”
+\v 8 \add ≈So\add* the king got up and \add went and\add* sat at¦151934 the \add city\add* gate , and \add ≈the news quickly got around\add* and all the people came to \add ≈support\add* the king.
+\s1 David returns to Yerushalem
+\rem /s1 David Starts Back to Jerusalem; David Recalled to Jerusalem; David Returns to Jerusalem
+\s4 Full kingdom
+\p \add ≈But¦151925 Abshalom's warriors had all returned to their homes\add*
+\v 9 and \add ≈over time\add*, people \add ≈all across\add* Yisrael¦151982 began to quarrel and say, “The king rescued us from the \add ≈plans\add* of our enemies \add ≈including¦151963\add* the Philistines, but¦151963 now he's \add ≈left Israel¦151982\add* and fled away from Abshalom.
+\v 10 We anointed Abshalom¦152014 to be over us, but¦151989 he died in the battle. So why \add ≈aren't we doing something\add* about returning \add David as\add* king¦151999?”
+\p
+\v 11 \add ≈So\add* King¦152030 David sent the \add two\add* priests Tsadok and Evyatar to the leaders of Yehudah \add ≈to ask\add*, “Why are you the last \add >group\add* to return the king to \add ≈the palace since the king has heard that the rest of Yisrael want it\add*?
+\v 12 \add Tell them,\add* ‘You're all my relatives—my own flesh and blood, \add ≈so\add* why \add would\add* you¦152052 be the last to \add ≈support me\add* \add again\add*?’ ”
+\v 13 And tell Amasa, ‘Aren't you my \add own\add* flesh¦152077 and bone? May God \add ≈make me suffer\add* if you don't become my army commander \add ≈from now on, to replace\add* Yoav.’ ”
+\v 14 \add In that way,\add* \add @David\add* \add ≈united all the people\add* of Yehudah and they \add ≈notified\add* the king, “\add We all want\add* you and all your servants to return \add here\add*.”
+\rem /s1 David's Return to Jerusalem
+\p
+\v 15 \add ≈So\add* the king \add ≈headed back\add* and reached the Yordan River, and \add men from\add* Yehudah¦152124 went to Gilgal to meet the king and \add ≈help\add* \add *him\add* across.
+\p
+\v 16 Shimei (son of Gera the Benyaminite from Bahurim) hurried down with the Yehudah men to meet King¦152139 David.\x + \xo 19:16: \xt 2Sam 16:5-13.\x*
+\v 17 A thousand Benyamite men \add ≈came\add* with him, as well as Tsiva (formerly Sha'ul's servant) and fifteen of his sons and twenty of his servants, and they hurried¦152159 to the Yordan to \add ≈meet\add* the king¦152175.
+\v 18 They crossed the ford \add to help\add* bring the king's household¦152185 \add back\add* \add ≈across\add* and \add ≈anything else the king wanted\add*.
+\s1 David's mercy to Shimei
+\rem /s1 David's Mercy to Shimei; David Shows Kindness to Shimei
+\s4 Full kingdom
+\p Shimei (Gera's son) fell \add ≈onto his knees in front¦152195\add* of the king when he crossed the Yordan¦152194
+\v 19 and \add ≈begged\add* the king, “May my master not \add ≈consider me guilty\add*, and \add ≈don't keep thinking about the terrible thing\add* your servant dig on¦152208 the day that my master the king left Jerusalem—\add ≈don't brood over it\add*
+\v 20 because your servant¦152238 knows that¦152236 I myself have sinned, and look, I have come today, first of all the Yosef's clans to come down to meet my master, the king.”
+\p
+\v 21 \add ≈But¦152261\add* Abishai (Tseruyah's son) \add ≈answered\add* \add instead\add*, “\add ≈Rather than that\add*, shouldn't Shimei be killed because¦152255 he cursed Yahweh's anointed one?”
+\p
+\v 22 “You sons of Tseruyah!” David responded¦152277. “\add ≈Who asked you\add* \add two\add* \add ≈to accuse others to me today\add*? \add ≈Should today be a time to kill other Israelis\add*? \add ≈Actually, I think it might be\add* \em me\em* who's Yisrael's king?”
+\v 23 Then the king¦152323 \add ≈promised\add* Shimei, “You won't¦152317 die \add ≈for that\add*.”
+\s1 David's mercy to Mefiboshet
+\rem /s1 David and Mephibosheth Meet; David's Kindness to Mephibosheth; David Shows Kindness to Mephibosheth
+\s4 Full kingdom
+\p
+\v 24 Then Shaul's \add ≈grandson\add* Mefiboshet came down to meet the king. He hadn't \add ≈shaved\add* or \add ≈washed\add* his feet, and he hadn't washed his clothes \add ≈since the king had left Yerushalem\add*.\x + \xo 19:24: \xt 2Sam 9:1-13; 16:1-4.\x*
+\v 25 He came from Yerushalem down to the Yordan to meet the king who \add ≈asked\add* him, “Why didn't¦152349 you not \add ≈come\add* with¦152373 me, Mefiboshet?”
+\p
+\v 26 “My master the king,” Mefiboshet \add ≈replied\add*, “my servant deceived me. I, your servant, had said to get my donkey saddled so I could ride it and go with \add ≈you\add*, because¦152377 \add as you know,\add* your servant is lame.
+\v 27 Then my servant \add ≈lied to you about me\add*. \add ≈But¦152394\add* my master¦152395 the king is like God's messenger, so do \add ≈whatever you consider to be appropriate\add*.
+\v 28 All my \add ≈grandfather's household expected that we'd be executed\add*, yet to placed me, your servant¦152419, among those who eat at¦152419 your table, \add ≈so\add* I don't have the right to \add ≈request anything further from\add* the king.”
+\p
+\v 29 “\add ≈Say no more\add*,” said the king. “\add ≈That land will be divided for you and Tsiva\add*.”
+\p
+\v 30 \add ≈Actually\add*, let him take everything,” Mefiboshet responded¦152469. “\add ≈since\add* my master the king \add ≈has been able to return safely\add*.”
+\s1 David's kindness to Barzillai
+\rem /s1 David's Kindness to Barzillai; David Shows Kindness to Barzillai
+\s4 Full kingdom
+\p
+\v 31 Barzillai the Gileadite had \add also\add* come down from Rogelim \add ≈to help\add* the king cross the Yordan.\x + \xo 19:31: \xt 2Sam 17:27-29.\x*
+\v 32 At eighty, \add *he\add* was very old, \add ≈but¦152509 being very wealthy, he'd provided food and supplies\add* to the king¦152516 while he'd stayed at¦152521 Mahanayim,
+\v 33 \add ≈so\add* the king¦152537 told \add *him\add*, “You cross over with me, and I'll provide for you to be with me in¦152538 Yerushalem.”
+\p
+\v 34 “How \add ≈much longer am I likely to live\add*?” Barzillai¦152552 \add ≈pondered\add*. “\add ≈Would it really be worth me moving\add* to Yerushalem¦152559 with¦152559 the king¦152549?
+\v 35 \add ≈Your servant is eighty years¦152569 old\add*. \add ≈My mind isn't the same as it was, and I can't really taste what I\add* eat or drink. \add ≈I can barely hear the sounds\add* of the men and women singing. \add ≈So\add* why would your servant become an extra burden to my master the king?”
+\v 36 \add ≈As a token privilege\add*, your servant will cross the Yordan with the king, \add ≈but¦152600\add* why should the king reward me with that¦152598 \add generous\add* reward?
+\v 37 Please, let your servant return, and let me die in my city \add ≈near\add* the graves of my \add ≈parents\add*. \add ≈But¦152631\add* look, \add here's\add* your servant Kimham—let him cross¦152623 over with my master the king, and do \add ≈whatever you consider to be appropriate\add* for him.”
+\p
+\v 38 “Kimham¦152651 can cross¦152652 over with¦152643 me,” the king¦152656 said, “and I myself will do for him \add ≈whatever\add* \em you\em* \add ≈consider to be appropriate\add*—everything that¦152661 you choose concerning me, I'll do for you.”
+\v 39 \add ≈So\add* all the people crossed the Yordan, and then the king crossed \add over\add*. The king kissed Barzillai and blessed him, and then \add @Barzillai\add* returned \add ≈home\add*.
+\s1 Yehudah and Yisrael disagree
+\rem /s1 Judah and Israel Argue over the King
+\s4 Full kingdom
+\p
+\v 40 Then the king crossed over to Gilgal, and Kimham crossed over with him. All the people of Yehudah brought the king over and also \add about\add* half of the people of Yisrael.
+\rem /s1 An Argument over the King
+\v 41 Then, wow, all the men of Yisrael¦152727 went to the king and \add ≈demanded\add*, “Why did our \add ≈relatives\add* from Yehudah¦152718 \add ≈secret\add* you away \add without inviting us\add*? They \add ≈took you and your household\add* over the Yordan, and all \add &your\add* men \add ≈as well\add*.”
+\p
+\v 42 All the men of Yehudah¦152747 answered the men of Yisrael¦152734, “Because the king is \add from our tribe\add*—\add ≈our close relative\add*. \add ≈Why should that make you all angry\add*? \add ≈Do you all think that the king has rewarded us with fancy food or other privileges\add*?”
+\p
+\v 43 The men of Yisrael¦152774 answered¦152766 the men of Yehudah¦152770, “\add Our ten tribes\add* \add ≈give us ten shares\add* in the king—more than you. \add ≈So\add* why \add ≈do you look down on us\add*? \add ≈Weren't we the first to talk about bringing our\add* king back \add to Yerushalem\add*?”
+\p \add ≈But¦152766\add* \add ≈what the men of Yehudah said\add* was harsher than \add ≈what the ten other tribes said\add*.
+\c 20
+\s1 Sheva rebels against David
+\rem /s1 Sheba Rebels Against David; The Revolt of Sheba; Sheba's Rebellion; The Rebellion of Sheba
+\s4 Full kingdom
+\p
+\v 1 \add ≈Now there was\add* a good-for-nothing Benyaminite man named Sheva who was Bikri's son, and he blasted¦152853 on¦152854 the trumpet¦152854, then said,
+\q1 “\add ≈We have no interest\add* in David¦152860,
+\q1 ≈and no \add ≈claim\add* in Yishay's¦152867 son.
+\q1 \add ≈Go home every¦152868 man from\add* Yisrael¦152870.”\x + \xo 20:1: \xt 1Ki 12:16; 2Ch 10:16.\x*
+\p
+\v 2 \add ≈So¦152872\add* all the men of Yisrael¦152876 \add ≈left\add* David¦152878 \add ≈and went with\add* Sheva (Bikri's sons), but¦152872 the men of Judah \add ≈stayed with\add* their¦152887 king¦152887 from the Yordan¦152890 river and uphill to Yerushalem¦152893.
+\p
+\v 3 \add ≈When¦152895\add* David¦152896 \add ≈got back\add* to his Yerushalem¦152900 \add ≈palace\add*, the ten slave-wives that he'd \add ≈left behind\add* to guard the \add ≈palace\add*, \add *he\add* \add ≈moved\add* them into a \add separate house\add*. \add That place was\add* guarded and¦152895 he provided¦152917 for them, but¦152895 he didn't¦152919 \add ≈sleep with\add* them—\add ≈thus\add* they were locked¦152923 up until¦152924 \add ≈they died living¦152929 as widows¦152928\add*.\x + \xo 20:3: \xt 2Sam 16:22.\x*
+\p
+\v 4 \add One day\add* the king¦152933 told Amasa¦152936 \add (his new army commander)\add*, “Summon the men of Yehudah¦152944 to \add ≈be here in three¦152945 days¦152946, and you be with them\add*.”
+\v 5 \add ≈So¦152951\add* Amasa¦152956 went¦152951 to summon¦152953 \add *them\add*, but¦152951 he \add ≈took longer than the given time¦152961\add*.
+\v 6 \add Meanwhile\add* David¦152967 told Abishai¦152970, “Bikri's son Sheva will do more harm to us now than Abshalom¦152980. Take \add ≈some of my warriors\add* and \add ≈chase him down\add*, in case he finds \add ≈some fortified¦152994 city to hide in and gets away from us\add*.”
+\v 7 \add ≈So¦152998 Yoav's men¦153000 and the king's bodyguards\add* and all the \add ≈best warriors¦153000\add* left Yerushalem¦153008 to \add ≈hunt Sheba¦153011 down\add*.
+\v 8 \add ≈When they were approaching\add* the huge¦153020 rock¦153019 at¦153022 Gibeon¦153022, they met Amasa¦153023. Yoav¦153026 was \add ≈dressed for battle with¦153022 a dagger strapped to his waist¦153038 under his robe\add*. \add ≈As he stepped forward¦153041, he allowed his sword¦153034 to drop to the ground\add* \add from his hand\add*.
+\v 9 Yoav¦153046 \add ≈greeted\add* Amasa, “\add ≈Is all well with¦153056\add* you, my brother¦153050?” Then he used his right¦153054 hand¦153052 to hold Amasa's¦153047 beard¦153056 to kiss¦153058 him,
+\v 10 \add ≈but¦153062\add* Amasa wasn't aware of the dagger that¦153068 was in¦153066 Yoav's \add other\add* hand¦153069. \add @Yoav\add* thrust it into \add &his\add* stomach and his intestines poured¦153077 out on¦153066 the ground. There was no need \add to stab him again\add* and \add @Amasa\add* died¦153084 \add right there\add*.
+\p Then¦153062 Yoav¦153071 and his brother Abishai¦153087 \add continued\add* \add ≈their hunt for\add* Bikri's son Sheva.
+\v 11 One of Yoav's young¦153099 men¦153099 stood¦153097 beside \add @Amasa's body\add* and \add ≈called out\add*, “Whoever favours Yoav and is for David¦153109, \add ≈follow\add* Yoav.”
+\v 12 \add ≈Amasa's¦153128 bloody¦153115 body\add* was in¦153115 the middle¦153116 of the road, and when the \add young\add* man¦153120 saw that everyone¦153140 was stopping to look at¦153115 it, he \add ≈dragged\add* \add *it\add* off the road onto the \add ≈grass\add* and threw¦153135 a \add ≈cloth\add* over it.
+\v 13 \add ≈After the body had been removed¦153147 from the road,\add* all the men \add ≈followed after\add* Yoav¦153156 to chase Sheva.
+\p
+\v 14 \add Meanwhile\add* \add @Sheva\add* crossed through all the \add ≈tribal regions\add* of Yisrael¦153168 to Avel¦153169-Beyt-Maacah \add ≈where all his relatives gathered together and¦153164 agreed to back him¦153181\add*.
+\v 15 \add @Yoav's men\add* arrived and Avel¦153186-Beyt-Maacah. They heaped a siege¦153184 ramp up against¦153191 the city¦153193, and \add also\add* \add ≈pounded\add* the wall¦153205 to \add try to make it\add* \add ≈collapse\add*.
+\v 16 Then¦153207 a wise woman¦153208 called¦153207 out from the city¦153212, “Listen, listen, please¦153217 tell Yoav¦153220 to come closer \add ≈so I can speak¦153225 to him\add*.”
+\v 17 \add @Yoav\add* \add ≈went¦153228 in closer\add* and¦153228 \add *she\add* asked, “Are you Yoav?”
+\p “I am,” he \add ≈replied\add*.
+\p “Listen to \add ≈what your servant has to say\add*,” she said.
+\p “I'm listening¦153242,” he \add ≈answered\add*.
+\p
+\v 18 Then¦153245 she told him, “\add ≈Long ago people used to tell others to come here to Avel¦153253 to get advice, and they'd do that and then¦153245 be able to settle the matter\add*.
+\v 19 I'm a peaceable¦153258 and faithful¦153259 \add ≈citizen\add* of Yisrael. You're \add ≈trying\add* to destroy¦153263 \add &this\add* city¦153264 and a mother¦153265 in¦153266 Yisrael. Why would you \add ≈wipe out our\add* inheritance¦153269 from Yahweh¦153270?”
+\p
+\v 20 “Far be it, far be it for me that I would \add ≈destroy¦153284 or wipe it out\add*,” Yoav¦153274 replied.
+\v 21 \add ≈That's not what we're here for\add*. \add We're here\add* for a man from the Efrayim¦153293 hills named Sheva, the son of Bikri. He \add ≈took a stand\add* against the king¦153301—against David¦153302. \add Just\add* \add ≈hand¦153300 him over to us, and then we'll leave your\add* city¦153309.”
+\p “\add ≈Wait\add*,” the woman¦153311 told Yoav¦153314. “His head¦153316 will be thrown¦153317 over the wall to you.”
+\v 22 \add ≈So¦153322\add* the woman¦153323 went to all the people¦153328 \add ≈with¦153329\add* her¦153329 wisdom¦153329, and they \add ≈decapitated\add* Sheva, and threw¦153338 \add @his head¦153333\add* \add down\add* to Yoav. Then¦153322 he \add ≈signalled\add* on¦153329 the trumpet¦153343, and \add @his men\add* \add ≈left the area and went back to their homes\add*, and Yoav returned¦153351 to the king¦153355 at¦153329 Yerushalem¦153352.
+\s1 David's officials
+\rem /s1 David's Officials; Stories of David's reign
+\s4 Full kingdom
+\p
+\v 23 \add ≈Now\add* Yoav¦153358 was over the entire¦153360 Israeli¦153363 army, and Benayah¦153364 (Yehoyada's son) was over the \add ≈kings bodyguards\add*.
+\v 24 Adoniram\f + \fr 20:24 \ft ‘Adoram’ is a shortened form of his name.\f* was over the forced¦153379 labour¦153379, and Ahilud's¦153383 son Yehoshafat¦153380 was the secretary and
+\v 25 Sheva¦153386 was the scribe. Tsadok¦153389 and¦153386 Evyatar¦153390 were the priests¦153391,
+\v 26 and¦153393 Ira¦153394 (the Yairite¦153395) was David's¦153398 priest¦153397.
+\c 21
+\s1 The Gibeonites' claim on Sha'ul's descendants
+\rem /s1 The Gibeonites Avenged; David Avenges the Gibeonites; Saul's Descendants Are Put to Death
+\s4 Full kingdom
+\p
+\v 1 \add ≈During David's¦153404 reign\add*, there was a three-year famine¦153402. David inquired from Yahweh¦153415 who said¦153417, “Sha'ul¦153421 \add ≈and his family have blood¦153425 on¦153403 their hands\add*, because¦153419 he killed the Gibeonites.”
+\v 2 (The Gibeonites were not \add ≈native Israelis\add*, but were a remnant¦153448 of the Amorites¦153449. The Israelis had \add ≈promised¦153452 to protect them\add*, but Sha'ul¦153455 had attempted to \add ≈eliminate\add* them in¦153457 his zeal for the people¦153458 of Yisrael¦153443 and Yehudah.) \add ≈So¦153435\add* the king¦153436 summoned the Gibeonites and \add ≈asked\add* them,\x + \xo 21:2: \xt Josh 9:3-15.\x*
+\v 3 “What can I do¦153469 for all of you? How can I \add ≈remedy\add* \add what was done in¦153471 the past\add* so that you all would bless¦153473 Yahweh's¦153477 \add ≈people\add*?”
+\p
+\v 4 “\add ≈We have no claim\add* to gold¦153487 or silver¦153486 from Sha'ul¦153490 or his household¦153493,” the Gibeonites \add ≈replied\add*, “And \add ≈we¦153484 don't¦153482 wish to have anyone\add* in¦153499 Yisrael¦153499 put to death¦153498.”
+\p “Then¦153479 what are you saying¦153504 that I can do¦153505 for you all?” he \add ≈asked\add*.
+\p
+\v 5 “That man¦153512 who \add ≈crushed\add* us,” they¦153508 \add ≈replied\add*, “and¦153515 who intended \add ≈that¦153515 we¦153519 be annihilated from within\add* Yisrael's¦153524 borders,
+\v 6 give us seven¦153530 \add ≈of his descendants¦153532\add* and we'll hang them before Yahweh in¦153535 Gibeah¦153535 \add ?≈where Yahweh's¦153534 chosen¦153537 king Sha'ul¦153536 lived\add*.
+\p “\add Okay\add*, I'll¦153543 give them to you,” the king \add ≈responded¦153540\add*.
+\p
+\v 7 \add ≈However\add*, the king¦153546 \add ≈spared¦153545\add* Yonatan's son (and Sha'ul's grandson) Mefiboshet because of the promises that¦153562 he and Yonatan \add ≈had made to each other before\add* Yahweh¦153561.\x + \xo 21:7: \xt 1Sam 20:15-17; 2Sam 9:1-7.\x*
+\v 8 \add ≈Instead\add* \add *he\add* took two of the sons (Armoni¦153587 and Mefiboshet) of Ritsfah (Ayyah's daughter \add ≈and one of Sha'ul's slave-wives\add*), as well as five sons of Sha'ul's daughter Michal¦153595, that she'd bore to Adriel¦153601 (the son of Barzillai¦153604, the Meholatite¦153605).\x + \xo 21:8: \xt 1Sam 18:19.\x*
+\v 9 He \add ≈handed them over to\add* the Gibeonites, and they hung them on¦153608 a hill¦153611 \add ≈before\add* Yahweh¦153613, and the seven of them \add ≈died\add* together¦153617. \add ≈This happened at¦153608\add* the beginning of the barley¦153628 harvest.
+\p
+\v 10 Then¦153630 Ayyah's daughter¦153632 Ritsfah took sackcloth¦153637 and she spread¦153638 it on the rock \add where the corpses were\add*. She \add ≈kept the birds away during the\add* day and the animals¦153663 at night¦153665—\add ≈staying there\add* from the beginning of the harvest¦153644 until¦153645 \add ≈the beginning of the rainy season\add*.
+\p
+\v 11 \add ≈David¦153668 was told\add* what Ritsfah had done¦153672,
+\v 12 and \add *he\add* went¦153680 and got the bones of Sha'ul and his son Yonatan from the \add ≈leaders\add* of Yabesh¦153695-Gilead, who had stolen¦153697 them from the square¦153699 of Beyt-Shan where¦153703 the Philistines had hung them there¦153707 on¦153715 the day¦153709 the Philistines had \add ≈defeated\add* Sha'ul at¦153715 Gilboa¦153715.\x + \xo 21:12: \xt 1Sam 31:8-13.\x*
+\v 13 \add @David\add* took Sha'ul¦153722 and¦153717 Yonatan's¦153726 bones along with the bones of the \add seven\add* \add ≈men\add* who'd been hung,
+\v 14 and¦153734 \add @his men\add* buried¦153734 \add *them\add* in the tomb¦153746 of Sha'ul's father¦153748 Kish¦153747 in Zela (in the Benyamite region¦153743), doing everything that the king¦153754 had commanded¦153753. After that, God¦153756 \add ≈answered their prayers\add* for the \add ≈country\add*.
+\s1 Battles against Philistine giants
+\rem /s1 Wars Against the Philistines; Battles against Philistine Giants; Exploits of David's Men
+\s4 Full kingdom
+\r (1 Chr. 20:4-8)
+\p
+\v 15 The Philistines¦153767 started attacking Yisrael¦153770 again¦153765, and David and his men went down \add towards the coast\add* and fought¦153775 \add ≈back\add*, but¦153763 David \add ≈became¦153763 exhausted\add*.
+\v 16 \add The Philistines had a champion\add* named Yishbi-Benov who was a descendant¦153787 of giants¦153788. He wore new \add armour\add* and¦153782 his bronze¦153794 spear¦153790 \add ≈weighed¦153789 over three¦153791 kilograms\add*. He \add ≈intended\add* to kill¦153799 David¦153802
+\v 17 \add ≈but¦153804\add* Tseruyah's son Abishai¦153807 helped¦153804 \add @David\add*, and he struck¦153811 the Philistine¦153814 and killed¦153815 him. Then¦153804, David's¦153820 men¦153818 \add ≈made a decision\add*, saying, “You won't¦153823 go¦153825 out to battle¦153828 with us anymore \add ≈because we don't¦153823 want\add* Yisrael's¦153834 lamp to be extinguished¦153830.”\x + \xo 21:17: \xt 1Ki 11:36; Psa 132:17.\x*
+\p
+\v 18 \add Some time\add* after¦153838 that, there \add ≈was another battle¦153844\add* with¦153845 the Philistines¦153848 at¦153845 Gov, and Sibbecai¦153851 (the Hushathite¦153852) \add ≈killed\add* Saph¦153855 who was \add ≈another descendant¦153857\add* of the giants¦153858.
+\p
+\v 19 Then in¦153865 \add another\add* battle¦153864 with¦153865 the Philistines¦153868 at¦153865 Gov, Elhanan¦153870 (son of Yaare-Oregim¦153875, from Beyt-Lehem) \add ≈killed¦153869\add* Goliath¦153879 the Gittite¦153880 \add ≈even though\add* his spear¦153882 \add ≈handle\add* was like a weaver's¦153884 beam.
+\p
+\v 20 In¦153910 a \add ≈different\add* battle¦153890 in¦153891 Gat¦153891, there was a \add ≈fierce man¦153894\add* there with¦153891 \add ≈six fingers¦153897 on each hand¦153898 and six toes¦153899 on each foot¦153900\add* who was also a descendant of the giants¦153910,
+\v 21 \add ≈but¦153912 when\add* he taunted¦153912 Yisrael¦153915, Yonatan¦153917 (son of David's¦153923 brother¦153922 Shimeah¦153920) \add ≈killed¦153916\add* him.
+\v 22 Those¦153930 four¦153927 \add >men\add* were descendants of the giants¦153930 in¦153931 Gat¦153931, \add ≈but¦153932\add* they¦153929 were \add ≈killed\add* by David¦153935 and his \add ≈men\add*.
+\c 22
+\s1 David's song of praise
+\rem /s1 Songs of David; David's Song of Victory; David's Song of Praise; David's Song of Thanksgiving
+\s4 Full kingdom
+\r (Psa. 18)
+\p
+\v 1 Then after Yahweh had rescued David from Sha'ul¦153957 and all his enemies¦153955, David \add ≈sang this song\add* for Yahweh,
+\q1
+\v 2 “Yahweh¦153960 is my rock¦153961 and my fortress¦153962
+\q1 and \add ≈the one who rescues me\add*, \add yes,\add* even me.
+\q1
+\v 3 God¦153967 of my rock¦153968—I¦153969 \add ≈find safety\add* in him,
+\q1 ≈my shield¦153972 and \add ≈my powerful saviour\add*,
+\q1 my \add ≈high fort\add* and my refuge,
+\q1 ≈my saviour—you¦153979 save¦153979 me from violence¦153978.
+\q1
+\v 4 I call out to Yahweh¦153983 who \add deserves\add* to be praised¦153981.
+\q1 I was kept safe from my enemies¦153984.
+\b
+\q1
+\v 5 Death \add ≈was enveloping me like a wave\add*.
+\q1 ≈Torrents of worthlessness¦153993 were overwhelming¦153994 me.
+\q1
+\v 6 Sheol's¦153997 ropes¦153996 \add ≈tightened around me\add*.
+\q1 ≈Deadly traps confronted¦153999 me.
+\q1
+\v 7 In my distress¦154004 I called to Yahweh¦154008,
+\q1 ≈and to my god¦154011 I called out.
+\q1 He listened¦154013 to my voice from his temple¦154014,
+\q1 ≈and \add ≈he heard\add* my cry¦154016 for help¦154016.
+\b
+\q1
+\v 8 The earth¦154024 reeled and it shook.
+\q1 ≈The foundations¦154025 of the heavens¦154026 trembled¦154027,
+\q2 and they shook because¦154029 \add ≈he became angry\add*.
+\q1
+\v 9 Smoke went¦154034 up from his nose¦154036,
+\q1 ≈and burning¦154037 coals¦154040 and fire¦154037 from his mouth¦154038.
+\q1
+\v 10 He stretched out the heavens¦154045,
+\q1 then¦154044 he came¦154046 down and¦154044 \add ≈it was dark below him\add*.
+\q1
+\v 11 He rode on a \add ≈winged creature\add*, and¦154051 he flew.
+\q1 \add Yes,\add* he was seen¦154056 on the wings¦154059 of the wind¦154061.
+\q1
+\v 12 He placed darkness¦154064 all around¦154065 him¦154065 as a covering—
+\q1 a \add ≈collection\add* of dark clouds \add ≈holding water¦154069 in them\add*.
+\q1
+\v 13 From the brightness¦154073 in front of him¦154074,
+\q2 coals¦154076 of fire¦154078 burnt¦154075.
+\b
+\q1
+\v 14 Yahweh¦154084 thundered¦154080 from the sky.
+\q1 ≈The most high¦154085 \add >God\add* \add ≈made his voice¦154087 known\add*.
+\q1
+\v 15 He sent out arrows¦154090, and he scattered¦154091 them.
+\q1 ≈\add ≡He sent out\add* lightning¦154092, and he confused¦154093 them.
+\q1
+\v 16 The channels¦154097 of the sea¦154098 \add ≈became visible\add*.
+\q1 ≈The foundations¦154100 of the world¦154101 were uncovered¦154099
+\q2 at¦154102 Yahweh's¦154103 rebuke¦154102,
+\q2 from the \add ≈blast¦154104 from his nostrils¦154106\add*.
+\q1
+\v 17 He \add ≈reached down from above and picked me up\add*.
+\q1 ≈He \add ≈pulled me up out of the surging waters¦154112\add*.
+\q1
+\v 18 He rescued¦154115 me from my¦154118 powerful enemy¦154116—
+\q2 from the people who hated¦154118 me—
+\q1 because¦154119 they¦154120 were stronger¦154120 than me.
+\q1
+\v 19 They \add ≈confronted¦154123\add* me \add ≈when I was experiencing difficulties\add*,
+\q2 but¦154126 Yahweh¦154127 supported¦154128 me.
+\q1
+\v 20 He brought¦154131 me out into a wide area.
+\q1 He rescued¦154134 me because¦154135 he¦154137 was pleased with¦154138 me.
+\b
+\q1
+\v 21 Yahweh¦154141 has rewarded me \add ≈because of my obedience\add*.
+\q1 ≈He's repaid¦154145 me because \add ≈my hands¦154144 were clean¦154143\add*,
+\q1
+\v 22 because I've¦154149 followed Yahweh's¦154151 paths,
+\q1 ≈and¦154152 I haven't acted¦154153 wickedly¦154153 \add by turning\add* away from my god¦154154.
+\q1
+\v 23 \add ≈I'm aware of\add* all his regulations¦154162,
+\q1 ≈and¦154162 I haven't turned away from his decrees.
+\q1
+\v 24 \add ≈I've done nothing that he can accuse me of\add*,
+\q1 ≈and¦154171 I've \add ≈stopped myself¦154171 when I wanted to disobey\add*.
+\q1
+\v 25 Yahweh¦154175 \add ≈rewarded me for my obedience\add*,
+\q1 \add ≈because he¦154174 saw my innocence\add*.
+\b
+\q1
+\v 26 With a faithful person, you show yourself faithful.
+\q1 ≈with a blameless \add ≈warrior\add*, you prove yourself blameless.
+\q1
+\v 27 With \add someone\add* who purifies¦154194 themself, you show yourself pure,
+\q1 ^\add ≈but\add* you show yourself deceptive to a crooked \add >person\add*.
+\q1
+\v 28 You save¦154205 afflicted¦154204 people¦154203,
+\q1 ^but \add ≈you dislike\add* the proud—you bring¦154210 \add them\add* down.
+\b
+\q1
+\v 29 Because¦154217 you¦154214 are my lamp, Yahweh¦154216,
+\q1 ≈and¦154217 \add *you\add* lighten my darkness¦154219.
+\q1
+\v 30 Because by you¦154222, I can charge against a troop of warriors.
+\q1 ≈With my god's \add help\add* I can leap over a \add city\add* wall¦154228.
+\b
+\q1
+\v 31 God's path is perfect.
+\q1 ≈Yahweh's¦154234 message¦154233 is \add ≈tried and tested\add*.
+\q1 →He \add ≈keeps everyone safe who requests his protection\add*.
+\q1
+\v 32 Who could be God¦154245 other than Yahweh¦154247?
+\q1 ≈And who is a rock¦154249 apart from our¦154251 god?
+\q1
+\v 33 This god¦154253 is my strong fortress,
+\q1 and¦154256 he \add ≈keeps my pathways cleared\add*.
+\q1
+\v 34 The one who makes¦154267 my feet¦154262 \add nimble\add* like a deer,
+\q1 ≈and¦154265 places¦154266 me securely¦154267 up on the heights¦154266.\x + \xo 22:34: \xt Hab 3:19.\x*
+\q1
+\v 35 The one who trains¦154269 \add ≈me how to win in battle¦154271\add*,
+\q1 ≈and¦154272 \add strengthens\add* my arms to pull back a \add ≈powerful\add* bow.
+\b
+\q1
+\v 36 You \add ≈saved me\add* \add from death\add* \add ≈like a\add* shield¦154281,
+\q1 and¦154283 \add ≈you helped me become well-known by\add* answering¦154283 \add my prayers\add*.
+\q1
+\v 37 You \add ≈helped me make large strides\add*,
+\q1 and¦154289 \add ≈stopped\add* my feet from slipping.
+\q1
+\v 38 Let me chase down my enemies¦154294 and destroy¦154295 them.
+\q1 ≈Then I won't¦154296 return¦154297 until¦154298 they're \add ≈all defeated\add*.
+\q1
+\v 39 I will \add ≈attack\add* them and¦154302 smash¦154303 them.
+\q1 ≈They won't¦154304 stand \add again\add*—they'll fall under¦154307 my feet¦154308.
+\q1
+\v 40 You \add ≈give me extra strength¦154311\add* for the war.
+\q1 You make the people who \add ≈rebelled against¦154314\add* me \add ≈submit\add*.
+\q1
+\v 41 \add ≈You make my¦154321 enemies¦154317 flee away from me\add*.
+\q1 \add You help me\add* destroy¦154322 the people who hate me.
+\q1
+\v 42 They look, but there's¦154325 \add ≈no one to rescue them\add*.
+\q1 \add They call out\add* to you, Yahweh¦154329, but you don't¦154330 answer¦154331 them.
+\q1
+\v 43 I crush¦154340 them \add as finely\add* as the dust on the ground.
+\q1 ≈I trample them like the mud on the streets¦154339 and¦154333 flatten them.
+\b
+\q1
+\v 44 You rescue me from the arguments of my people.
+\q1 You \add ≈help me remain\add* as the head¦154347 of nations¦154348.
+\q1 People serve¦154353 me \add ≈even if I don't¦154350 even know them\add*.
+\q1
+\v 45 Foreigners \add ≈are afraid of\add* me.
+\q1 ≈\add ≈When they hear¦154360 me\add*, they obey me.
+\q1
+\v 46 \add *They\add* lose heart,
+\q1 and¦154368 come \add out\add* of their¦154369 fortresses trembling¦154368.
+\b
+\q1
+\v 47 Yahweh¦154373 is alive—may my \add secure\add* rock be blessed¦154374.
+\q1 ≈May the god¦154377 of the rock of my salvation¦154379 be praised.
+\q1
+\v 48 He's the god¦154381 who avenges me,
+\q1 ≈and¦154385 the one who makes the people¦154386 who \add ≈rebelled against\add* me \add ≈submit\add*.
+\q1
+\v 49 He's the one who \add ≈helps me escape\add* from my¦154389 enemies¦154390.
+\q1 ≈You hold me up \add away\add* from the ones who rise up against¦154391 me.
+\q1 ≈You rescue¦154395 me from violent¦154394 \add >men\add*.
+\b
+\q1
+\v 50 Therefore¦154397 I praise you, Yahweh¦154401, among¦154402 the nations¦154402,
+\q1 and I sing praises¦154404 \add ≈about who you are\add*.\x + \xo 22:50: \xt Rom 15:9.\x*
+\q1
+\v 51 \add The one who\add* \add ≈helps his king¦154409 to save\add* \add the people\add*,
+\q1 and the one who shows¦154410 loyalty¦154412 to the one he chose—
+\q1 to David¦154414 and to his \add ≈descendants¦154415\add* forever¦154418.”
+\c 23
+\s1 David's ending speech
+\rem /s1 The Last Words of David; David's Last Words
+\s4 Full kingdom
+\p
+\v 1 These are David's¦154423 final words¦154422:
+\q1 “The message from Yishay's¦154429 son David—
+\q1 ≈a message from the man¦154431 who \add ≈rose through the ranks\add*—
+\q2 who was selected by Yakob's god¦154435—
+\q1 \add singer of\add* Yisrael's¦154439 pleasant¦154437 songs¦154438.
+\q1
+\v 2 Yahweh's¦154442 spirit¦154441 spoke¦154443 through me.
+\q1 ≈His message¦154446 \add ≈came out of my mouth\add*.
+\q1
+\v 3 Yisrael's¦154453 god spoke¦154455 to me.
+\q1 ≈The rock¦154456 of Yisrael told \add >me\add*.
+\q1 The one who rules \add ≈people with¦154459 justice\add*,
+\q1 →rules out of his respect for God¦154452.
+\q1
+\v 4 He's like the rising sun¦154469 bringing the morning light¦154465—
+\q2 a cloudless¦154472 morning.
+\q1 Glistening after¦154474 the rain \add that grows\add* fresh¦154475 grass¦154475 from the soil.
+\b
+\q1
+\v 5 My \add ≈household¦154483 is aligned\add* with God¦154486,
+\q1 because¦154487 he made a perpetual¦154489 agreement¦154488 with me—
+\q2 all arranged¦154492 and secured¦154494.
+\q1 He'll make my salvation¦154499 and every¦154493 desire¦154502 grow. ???
+\q1
+\v 6 But¦154508 evil¦154508 \add >people\add* are like \add #thorns\add*—
+\q2 they're all thrown away.
+\q1 because¦154512 they \add ≈injure your hands\add*.
+\q2
+\v 7 Anyone who \add wants to\add* \add ≈move\add* them
+\q2 \add ≈must¦154519 use a metal tool or a wooden stick\add*.
+\q1 They they'll be \add ≈incinerated right there\add*.”
+\s1 David's top warriors
+\rem /s1 David's Famous Soldiers; David's Mighty Men; David's Mightiest Men; David's heroes
+\s4 Full kingdom
+\r (1 Chr. 11:10-41)
+\p
+\v 8 These are the names¦154532 of David's¦154535 \add top\add* warriors:
+\p \bd Yoshev-Bashshevet\bd* the Tahkemonite¦154538 was the head of ‘The Three’. One time¦154551 he attacked and killed eight¦154548 hundred¦154549 men with¦154551 his spear¦154544.
+\p
+\v 9 Next after¦154556 him was \bd Eleazar¦154558\bd*, the son of Ahohi's son Dodo¦154561. \add Once he was\add* among¦154566 the three¦154566 powerful warriors with¦154566 David¦154571 when they taunted the Philistines¦154573 who were gathered¦154574 there¦154576 for battle¦154577. The Israeli¦154579 warriors \add ≈retreated back up\add* their hill,
+\v 10 \add but¦154584\add* \add @Eleazar\add* \add ≈moved forward and attacked the Philistines¦154585 until¦154586 his arm became weak, and his hand cramped around\add* his sword. Yahweh¦154598 \add ≈achieved\add* a great¦154600 victory¦154599 that day¦154601, and the \add ≈other warriors\add* only returned¦154604 afterwards¦154605 to plunder \add the dead\add*.
+\p
+\v 11 Then there was Agge's son \bd Shamma¦154612\bd*, the Hararite¦154616. The Philistines had assembled¦154617 in formation¦154619 where there happened to be a field¦154624 full of lentils¦154626. The \add ≈Israelis¦154627\add* fled from the Philistines
+\v 12 \add ≈but¦154632\add* \add @Shamma\add* remained there in the middle¦154633 of the field and killed¦154637 \add many\add* Philistines¦154640. \add ≈So¦154632 the field was saved\add*, and Yahweh¦154642 \add ≈achieved\add* a great¦154644 victory¦154643.
+\p
+\v 13 \add Once\add* as it was approaching harvest¦154655 time, three¦154648 of ‘The Thirty’ went¦154647 to where David¦154658 \add had been staying\add* at¦154666 Adullam's¦154662 cave. There was a Philistine unit camped in¦154666 the Refaim¦154667 valley¦154666.
+\v 14 At the time, David¦154669 was in the fortress, and¦154672 there was \add another\add* Philistine unit in Beyt-Lehem.
+\v 15 David¦154679 \add ≈was thirsty\add* \add one day\add* and¦154680 \add ≈asked\add*, “Who'll \add ≈get me a drink¦154682 of water¦154683\add* from the Beyt-Lehem well by the gate¦154689?”
+\v 16 \add ≈So¦154691\add* the three¦154692 powerful¦154693 warriors \add ≈broke¦154691 through¦154691\add* the Philistine camp¦154694 and¦154691 got water¦154698 from the Beyt-Lehem well near the gate¦154704. They carried¦154705 it back to David¦154709, but¦154691 he wouldn't drink¦154712 it—pouring it out instead \add as an offering\add* to Yahweh¦154715,
+\v 17 saying, “Far be it for me, Yahweh¦154720, \add ≈to drink\add* this—the blood¦154723 of the men¦154724 who \add ≈risked\add* their¦154726 lives¦154726.” \add ≈So¦154717\add* he wasn't willing¦154728 to drink it.
+\p Those \add were some of the\add* things done by ‘The Three’ powerful¦154733 warriors¦154724.
+\rem /s1 David's Thirty Mighty Men
+\p
+\v 18 Yoav's brother¦154737 \bd Abishai¦154736\bd* (Tseruyah's sons) was the head over ‘The Three’. \add Once\add* he was \add ≈used\add* his spear¦154751 to kill three hundred¦154755 \add >fighters\add*, \add ≈so he was more famous\add* than ‘The Three’.
+\v 19 He was more honoured¦154766 than ‘The Three’ and became their leader \add ≈even though he wasn't one of\add* ‘The Three’.
+\p
+\v 20 Yehoyada's son \bd Benayah¦154778\bd* from Kavtsael was a man¦154784 of military prowess with many deeds¦154790 \add to his name\add*. \add Once\add* he killed ‘The Two’ from Moab¦154797, and \add another time\add* he went¦154799 down in a pit on a snowy¦154808 day¦154807 and killed the lion¦154803 in the pit.
+\v 21 He \add also\add* killed an impressive Egyptian warrior with a spear, even though Benayah \add ≈only held\add* a staff. \add ≈First\add* he snatched¦154826 the spear from the Egyptian's hand, then¦154810 he killed him with his \add own\add* spear.
+\v 22 Those \add were some of the\add* things that Benayah¦154837 did¦154836. He \add ≈became famous\add* alongside ‘The Three’.
+\v 23 (He was more honoured¦154850 than ‘The Thirty’ but¦154851 never entered ‘The Three’.) David¦154858 appointed¦154857 him¦154857 over his bodyguard¦154861.
+\p
+\v 24 \add The following\add* were among¦154870 ‘The Thirty’:
+\li1 Yoav's \add other\add* brother¦154867 Asah-El¦154864,
+\li1 Dodo's¦154874 son Elhanan¦154871 from Beyt-Lehem,
+\li1
+\v 25 Shammah¦154878 and Elika¦154880 the Harodites,
+\li1
+\v 26 Helets¦154884 the Paltite¦154885,
+\li1 Ikkesh's¦154889 son Ira¦154886 the Tekoite¦154890,
+\li1
+\v 27 Aviezer the Anatotite¦154894,
+\li1 Mevunnai the Hushatite¦154896,
+\li1
+\v 28 Tsalmon¦154899 the Ahohite¦154900,
+\li1 Maharai¦154901 the Netofatite¦154902,
+\li1
+\v 29 Baanah's¦154908 son Helev the Netofatite,
+\li1 Rivai's son Ittai¦154911 from Gibeah¦154915 (in Benyamin¦154917),
+\li1
+\v 30 Benayah¦154920 the Piratonite¦154921,
+\li1 Hiddai¦154922 from the Gaash¦154924 valleys,
+\li1
+\v 31 Avi¦154927-Albon¦154929 the Arbatite¦154930,
+\li1 Azmavet¦154931 the Barhumite¦154932,
+\li1
+\v 32 Elyahba the Shaalvonite,
+\li1 Yashen's¦154938 sons¦154937,
+\li1 Yonatan,
+\li1
+\v 33 Shammah¦154942 the Hararite¦154943,
+\li1 Sharar's¦154947 son Ahiam¦154944 the Hararite,
+\li1
+\v 34 Ahasbai's¦154954 son Elifelet¦154951 the Maacatite¦154957,
+\li1 Ahitofel's¦154962 son Eliam¦154959 the Gilonite¦154963,
+\li1
+\v 35 Hezrai¦154966 the Carmelite¦154968,
+\li1 Paarai¦154969 the Arbite¦154970,
+\li1
+\v 36 Natan's¦154976 son Yigal from Tsovah,
+\li1 Bani¦154979 the Gadite¦154980,
+\li1
+\v 37 Tselek¦154983 the Ammonite¦154984,
+\li1 Naharai¦154986 the Beerotite who carried the weapons for Tseruyah's son Yoav¦154991,
+\li1
+\v 38 the Yitrites Ira¦154997 and Garev,
+\li1
+\v 39 and¦155007 Uriyah the Hittite¦155004.
+\p \add There were\add* thirty-seven \add of them\add* \add ≈in total¦155005\add*.
+\c 24
+\s1 David takes a census
+\rem /s1 David's Census of Israel and Judah; David Counts the Fighting Men; David Takes a Census; David's census
+\s4 Full kingdom
+\r (1 Chr. 21:1-27)
+\p
+\v 1 Then Yahweh¦155013 \add ≈was angry\add* against Yisrael again and he incited¦155016 David¦155019 \add ≈to cause problems for\add* them by saying, “Go \add and\add* \add ≈order a census of\add* Yisrael and Yehudah¦155029.”
+\v 2 \add ≈So¦155031\add* the king¦155032 told Yoav¦155035, the commander¦155037 of his army, who was with him \add at the time\add*, “\add ≈Travel throughout\add* all the \add regions of\add* the Israeli¦155048 tribes¦155048, from Dan¦155050 \add (in the far north)\add* down to Beer¦155053-Sheva \add (in the far south)\add*, and¦155031 count the people so that I'll¦155059 know the number¦155061 of \add ≈fighting men\add*.”
+\p
+\v 3 “May¦155071 your god¦155072 Yahweh¦155082 multiply the people¦155075 a hundred¦155079 times¦155080 \add over\add*,” Yoav¦155066 responded¦155065, “add may my master the king \add ≈see that happen, but¦155065\add* why would my master the king \add ≈want to do that\add*?”
+\v 4 \add ≈However,\add* the king \add ≈insisted, so even though\add* Yoav¦155099 and¦155093 the army commanders \add disagreed\add*, \add ≈at the king's command\add* \add *they\add* \add ≈set off to count\add* the Israeli people¦155112.
+\p
+\v 5 They crossed¦155117 the Yordan¦155120 \add river\add* and¦155117 camped¦155121 in Aroer¦155122, south¦155123 of the city¦155124 in the middle¦155126 of the Gad¦155129 valley¦155128, then¦155117 \add proceeded\add* to Yazer¦155132.
+\v 6 Then¦155134 they went¦155134 \add north\add* to Gilead¦155135 and the land of Tahtim¦155140-Hodshi, \add before\add* coming to Dan¦155142-Yaan and around¦155144 to Tsidon.
+\v 7 Then¦155149 they came¦155149 to the Tsor \add (Tyre¦155153)\add* fortress¦155151 and all the cities¦155156 of the Hivites¦155157 and the Canaanites¦155158 \add ≈before going\add* \add east\add* to Be'er-Sheva in the Negev¦155162 \add wilderness\add* (part of Yehudah¦155163).
+\v 8 \add ≈So¦155167 they¦155171 travelled throughout the land for\add* nine¦155173 months¦155174 and¦155167 twenty¦155175 days \add ≈before returning\add* to Yerushalem¦155177.
+\v 9 Then¦155179 Yoav¦155180 \add ≈reported the census results\add* to the king¦155189: 800,000 fighting swordsmen¦155199 in Yisrael¦155191, and¦155179 500,000 in Yehudah¦155201.
+\rem /s1 Judgment for David's Sin; Judgment on David's Sin
+\p
+\v 10 \add ≈However, David¦155211 had a guilty conscience\add* after¦155213 he'd had the people¦155219 counted¦155216 and¦155208 he told Yahweh, “I've \add ≈disobeyed you badly, but¦155208\add* now, Yahweh, please¦155234 \add ≈take¦155232 away\add* the iniquity¦155237 of your servant¦155238 because¦155239 I've been very foolish¦155240.”
+\p
+\v 11 \add When¦155256\add* David¦155244 got up in¦155245 the morning¦155245, Yahweh¦155249 \add ≈gave\add* the prophet¦155254 Gad¦155253 \add this\add* message¦155247
+\v 12 to take to David¦155263, “I, Yahweh¦155266, am \add ≈offering you three¦155267 choices\add*. \add ≈You decide which one I should carry out against\add* you.”
+\v 13 Then¦155281 Gad¦155283 \add ≈asked\add* \add *him\add*, “\add ≈Do you want\add* seven¦155294 years¦155295 of famine¦155297 in your country, or three months¦155303 of fleeing¦155304 from your enemies, or three days¦155315 of plague in your country? \add ≈Consider those and¦155281 let me know¦155319 which option to pass back\add* to the one who sent¦155324 me.”
+\p
+\v 14 David¦155329 \add ≈answered\add* Gad¦155332, “\add ≈This is very distressing¦155333\add*, \add but¦155328\add* please¦155339 \add ≈let Yahweh¦155342 be the one to punish me because¦155343 he's very merciful—don't¦155351 let other men be the ones\add*.”
+\p
+\v 15 \add ≈So¦155355\add* Yahweh¦155356 \add ≈sent\add* a plague to Yisrael¦155358 from the morning¦155359 and¦155355 until the time \add ≈he'd decided\add*. Seventy thousand¦155374 people¦155367 died from Dan¦155368 \add in the north\add* \add ≈down\add* to Beer¦155371-Sheva \add in the south\add*.
+\v 16 \add ≈When\add* \add Yahweh's¦155384\add* messenger stretched¦155377 out his hand to destroy Yerushalem¦155381 \add with¦155391 the plague\add*, Yahweh relented concerning¦155385 the disaster and¦155377 told the messenger who was \add ≈destroying\add* many people¦155391, “Now lower your hand.” \add When he said that,\add* \add *his\add* messenger was near the threshing¦155401 floor¦155401 of Aravnah the Yebusite¦155404.
+\p
+\v 17 David¦155408 \add ≈had complained\add* to Yahweh¦155411 when he saw the messenger¦155416 \add ≈afflicting\add* the people, \add ≈saying\add*, “Listen, \add ≈it's me alone who\add* sinned¦155423, and I myself \add ≈who disobeyed you\add*. \add ≈But¦155407\add* these¦155426 \add innocent\add* \add ≈people\add*—what have they done? Please, \add ≈just punish only me and my relatives\add*.”
+\s2 David builds an altar
+\rem /s1 David's Altar on the Threshing Floor; David Builds an Altar
+\p
+\v 18 Gad¦155440 came¦155438 to David¦155443 that day¦155444, and \add ≈instructed\add* him, “Go to the Yebusite¦155455 Aravnah's threshing¦155452 floor¦155452 \add and\add* \add ≈build\add* an altar¦155451 to Yahweh¦155450 \add there\add*.”
+\v 19 \add ≈So¦155457\add* David¦155458 went \add ≈there just as Yahweh¦155464 had instructed¦155463 him through Gad's¦155461 message¦155459\add*.
+\v 20 \add ≈When¦155466\add* Aravnah looked¦155466 \add ≈out\add* and saw the king and his servants¦155474 \add ≈approaching\add*, \add *he\add* went out and \add ≈fell to his knees in front¦155481 of the king and bowed¦155479 his face¦155481\add* to the ground¦155482.
+\v 21 “Why would my master¦155488 the king¦155490 come¦155487 to his servant¦155493?” Aravnah asked.
+\p “\add ≈I want to buy your\add* threshing¦155500 floor¦155500 to build¦155501 an altar¦155502 for Yahweh¦155488,” David¦155495 \add ≈answered\add*. “\add ≈So¦155484\add* that the plague¦155505 \add ≈afflicting\add* the people¦155507 \add ≈can be stopped\add*.”
+\p
+\v 22 “May my master¦155516 the king¦155517 take¦155514 \add it\add*,” Aravnah responded¦155509. “\add ≈Use it in¦155519 whatever way you think best\add*. See, \add you can use\add* the oxen for the burnt¦155523 offering¦155515, and the threshing¦155524 instruments and the oxen's equipment¦155525 for firewood.
+\v 23 \add *I\add* give \add it all\add* to \add you\add*, the king. May your god¦155541 Yahweh¦155540 accept¦155542 your \add offering\add*.”
+\p
+\v 24 “No,” the king¦155545 \add ≈answered\add*. “I'll¦155554 definitely \add ≈buy\add* it from you¦155555. I couldn't \add ≈offer¦155558 something to\add* my god¦155560 Yahweh¦155559 \add that cost me\add* nothing.”
+\v 25 \add ≈So¦155575\add* David¦155577 built¦155575 an altar¦155578 there¦155576 to Yahweh, and he \add ≈instructed for\add* burnt¦155581 offerings and peace¦155582 offerings to \add ≈be made\add*. Then¦155575 Yahweh \add ≈accepted prayers for the country\add* and the plague¦155587 against Yisrael¦155589 was \add ≈stopped\add*.

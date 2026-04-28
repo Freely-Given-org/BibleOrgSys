@@ -9,6 +9,10 @@ use crate::cv_index_bindings::{
     PyChapterVerse, PyCVIndexEntry, PyCVIndexIter, PyInternalBibleBookCVIndex,
     PyInternalBibleEntry, PyInternalBibleEntryList, PyInternalBibleEntryListIter,
 };
+use crate::discovery_bindings::{
+    py_discover_bible, py_discover_book, PyAggregateDiscoveryResults, PyBibleDiscoveryResults,
+    PyBookDiscoveryResults,
+};
 use crate::extras_bindings::{PyInternalBibleExtra, PyInternalBibleExtraList, PyInternalBibleExtraListIter};
 use crate::processing_bindings::{PyObjectType, PyProcessLinesOptions, py_process_lines};
 use crate::section_index_bindings::{PyInternalBibleBookSectionIndex, PySectionIndexEntry, PySectionIndexIter};
@@ -25,11 +29,18 @@ fn bible_organisational_system(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(set_rust_debug, m)?)?;
     m.add_function(wrap_pyfunction!(set_rust_strict_checking, m)?)?;
     m.add_function(wrap_pyfunction!(py_process_lines, m)?)?;
+    m.add_function(wrap_pyfunction!(py_discover_book, m)?)?;
+    m.add_function(wrap_pyfunction!(py_discover_bible, m)?)?;
 
     // Extra types
     m.add_class::<PyInternalBibleExtra>()?;
     m.add_class::<PyInternalBibleExtraList>()?;
     m.add_class::<PyInternalBibleExtraListIter>()?;
+
+    // Discovery types
+    m.add_class::<PyBookDiscoveryResults>()?;
+    m.add_class::<PyAggregateDiscoveryResults>()?;
+    m.add_class::<PyBibleDiscoveryResults>()?;
 
     // CV index types
     m.add_class::<PyChapterVerse>()?;

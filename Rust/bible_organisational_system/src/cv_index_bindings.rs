@@ -201,13 +201,18 @@ impl PyInternalBibleEntry {
                 && (clean_text.is_none() || clean_text.unwrap().is_empty())
             {
                 // 2-arg simple form: (marker, clean_text)
+                if is_end_marker(marker) {
+                    return InternalBibleEntry::end_marker(marker, text)
+                        .map(|inner| Self { inner })
+                        .map_err(|e| PyValueError::new_err(e.to_string()));
+                }
                 return Ok(Self {
                     inner: InternalBibleEntry::simple(marker, text),
                 });
             } else {
                 // End marker or nesting marker (marker only)
                 if is_end_marker(marker) {
-                    return InternalBibleEntry::end_marker(marker)
+                    return InternalBibleEntry::end_marker(marker, "")
                         .map(|inner| Self { inner })
                         .map_err(|e| PyValueError::new_err(e.to_string()));
                 } else {
@@ -1007,13 +1012,20 @@ impl PyInternalBibleBookCVIndex {
 
     /// Build the CV index from processed entries (Python compat).
     fn makeBookCVIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_println!(3, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_println!(2, "Building CV index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
 
+    /// Perform discovery on this book (Python compat).
+    fn discover(&self) -> crate::discovery_bindings::PyBookDiscoveryResults {
+        let results = bos_internals::discovery::discover_book(self.inner.entries(), self.inner.bos_book_code());
+        crate::discovery_bindings::PyBookDiscoveryResults { inner: results }
+    }
+
     /// Get verse entries for a (C,V) tuple key.
+
     #[pyo3(signature = (cv_key, strict=true))]
     fn getVerseEntries(&self, cv_key: (String, String), strict: bool) -> PyResult<PyInternalBibleEntryList> {
         let cv = ChapterVerse::new(&cv_key.0, &cv_key.1);

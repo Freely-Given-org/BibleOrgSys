@@ -1,0 +1,261 @@
+\id GAL - Open English Translation—Readers' Version (OET-RV) v0.1.60
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 GAL
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h Galatians
+\toc1 Galatians
+\toc2 Galatians
+\toc3 Gal.
+\mt2 Paul's letter to the assemblies in
+\mt1 Galatia
+\is1 Introduction
+\ip At the time when the preaching of the good message about Yeshua began to spread and it started being accepted by non-Jews, an important question arose: whether or not it's necessary for a person wanting to accept the message to also obey the Law of Mosheh. Paul argues that it's not necessary because it's by faith that we can receive life from the messiah, and it's by faith that a person is considered guiltless in God's eyes. But there among the groups of believers in Galasya (a province of Rome in Asia Minor, now part of modern Turkey), there were people who disagreed with Paul and believed that it's still necessary for a follower of Yeshua to obey all of Mosheh's laws in order to become righteous in God's sight.
+\ip In \bk Paul's letter to the assemblies in Galatia\bk*, he wrote so that people who had started to follow deviant teachings might return to the true faith. He began this by explaining the reasons that he himself became a missionary. He showed that his becoming a missionary wasn't because he was selected by the people, but that God himself spoke to him, and what's more, he was specifically sent by God to the non-Jews. As a result of that, he strove to ensure that people understood that there's only one way to restore our relationship with God, and that's through faith in God's son.
+\ip Nearer the end of his letter, he answered those who say that it's wrong not to obey Mosheh's law. Paul stated that he would be afraid to leave behind God's goodness and mercy just to become a slave of Mosheh's rules. Again he advised that it's necessary for them to listen to God's spirit so that they're changed and don't follow the sinful desires of their own bodies.
+\iot Main components of Paul's letter
+\io1 Introduction \ior 1:1-10\ior*
+\io1 Paul's calling as an ambassador of the messiah \ior 1:11–2:14\ior*
+\io1 The good message about the goodness and mercy of God \ior 2:15–4:31\ior*
+\io1 Christian freedom and living \ior 5:1–6:10\ior*
+\io1 Ending \ior 6:11-18\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Greetings from Paul; Salutation
+\p
+\v 1 \add This letter is from\add* Paul, one \add of Yeshua's\add* ambassadors¦125555, not chosen by people or any human¦125558 desire, but¦125562 chosen \add directly\add* by Yeshua the \nd messiah¦125565\nd* and¦125566 \nd God¦125567\nd* the father¦125568 who raised¦125570 Yeshua from the dead¦125574.
+\v 2 \add On behalf of\add* all the believers here, \add I'm writing\add* to the assemblies¦125582 \add of believers\add* in Galatia¦125584.
+\p
+\v 3 May you¦125586 all experience the grace¦125585 and peace¦125588 that comes from \nd God¦125590\nd* the father¦125591 and our¦125595 \nd master¦125594 Yeshua\nd* the \nd messiah¦125597\nd*,
+\v 4 the one who gave¦125599 himself¦125601 for our sins¦125605 to rescue¦125608 us from this present¦125615, evil¦125616 age, according¦125617 to \nd God¦125621\nd* our father's¦125623 desire—
+\v 5 \add our father\add* who'll be praised even through future ages. That's how it is.
+\s1 There's only one good message
+\rem /s1 The One Gospel; One gospel for all; There Is Only One Good News; There Is No Other Gospel
+\p
+\v 6 I'm astounded that you \add people\add* have so quickly¦125638 replaced the good¦125650 message¦125650 \add that you heard\add* from the one who called¦125642 you to the \nd messiah\nd*'s grace¦125646. You've replaced it with another¦125649 narrative
+\v 7 which¦125651 is not at all another¦125654 good message, but¦125662 rather comes from those who are confusing you and wanting¦125663 to alter¦125664 the \add actual\add* good message about the \nd messiah¦125668\nd*.
+\v 8 Even if either we ourselves or \add even\add* a messenger¦125675 from heaven¦125677 were to preach a different ‘good message’ which disagrees with the good message that we \add first\add* preached to you, then they should¦125687 be cursed¦125686.
+\v 9 As we've previously¦125689 said¦125689, and even now say it again¦125693: if anyone¦125696 preaches¦125698 a ‘good¦125698 message¦125698’ to you that's different from what you already heard, let that person be cursed¦125703.
+\p
+\v 10 Am I trying to please and persuade¦125708 people or \nd God¦125712\nd*? If I was still¦125719 trying to please people, I wouldn't be \add worthy to be\add* one of the \nd messiah\nd*'s slaves¦125723.
+\s1 Paul was commissioned directly by God
+\rem /s1 Paul Called by God; Paul's Message Comes from Christ; How Paul Became an Apostle; Paul's Vindication of His Apostleship
+\p
+\v 11 I'm letting you know, brothers¦125731 and¦125731 sisters¦125731, that¦125738 the good message I proclaimed didn't¦125744 just come from human¦125747 ideas.
+\v 12 It didn't come from my ideas, nor was I taught¦125757 it by some other person, but it was revealed to me by \nd Yeshua\nd* the \nd messiah¦125762\nd*.
+\p
+\v 13 \add Brothers and sisters,\add* you've heard¦125763 about my previous behaviour, when as a strict Jew, I was extreme in persecuting\x + \xo 1:13: \xt Acts 8:3; 22:4-5; 26:9-11.\x* the assembly¦125777 of God's people, and was trying to destroy them.
+\v 14 I was progressing¦125784 in Judaism¦125787\x + \xo 1:14: \xt Acts 22:3.\x* quicker than many of my¦125794 contemporaries¦125790, being¦125798 so much more zealous¦125797 in observing our ancient traditions¦125802.
+\p
+\v 15 But¦125816 \add God\add*, who'd planned this from even before I was born,\x + \xo 1:15-16: \xt Acts 9:3-6; 22:6-10; 26:13-18.\x* called¦125817 me, because of his¦125821 grace¦125820,
+\v 16 so that he could reveal¦125822 his¦125825 son through me, and I could preach¦125829 the good¦125829 message¦125829 to non-Jews. I didn't¦125836 rush to get advice from others,
+\v 17 nor did I head to Yerushalem to \add consult with\add* the ambassadors¦125851 there that preceded me, but¦125856 I went away to Arabia¦125855 and then later returned¦125858 to Damascus¦125860.
+\v 18 Then finally, after¦125862 three¦125864 years¦125863, I went¦125866 to Yerushalem\x + \xo 1:18: \xt Acts 9:26-30.\x* to get to know Peter, and¦125873 stayed with him¦125877 for just over two weeks.
+\v 19 I didn't¦125884 meet any of the other ambassadors¦125883, other than Yeshua's brother¦125891, Yacob,
+\v 20 and¦125895 what I'm writing to you, I'm writing with \nd God¦125901\nd* watching, so I'm not lying¦125904.
+\p
+\v 21 Then I went¦125906 into the regions¦125909 of Syria¦125911 and¦125912 Cilicia¦125914.
+\v 22 The assemblies¦125922 back in Yudea¦125925 that¦125926 believe in the \nd messiah¦125928\nd* didn't¦125917 know me by sight,
+\v 23 but¦125930 had only heard about me—that¦125942 the person who'd once been persecuting them was now preaching¦125939 the good¦125939 message¦125939 about the faith¦125941 himself,
+\v 24 and¦125945 they¦125946 praised¦125946 \nd God¦125950\nd* because of \add what had happened to\add* me.
+\c 2
+\s1 The ambassadors accept Paul and Barnabas
+\rem /s1 The Apostles Accept Paul; Paul Accepted by the Apostles; Paul and the Other Apostles
+\p
+\v 1 It was fourteen¦125953 years¦125954 later that I made the uphill trek to Yerushalem\x + \xo 2:1: \xt Acts 11:30; 15:2.\x* with Barnabas¦125961, taking Titos¦125965 along¦125963 as well.
+\v 2 \add God\add* had told me to go there, and I explained to the \add leaders there\add* the good¦125974 message¦125974 that I'd been proclaiming¦125976 to the non-Jews. I did it privately, to double-check that I wasn't somehow¦125986 just acting vainly.
+\v 3 But not even Titos¦125994, who was with me, was compelled¦126000 to be circumcised¦126001, even though he's a Greek¦125998.
+\v 4 However, some false¦126006 brothers¦126006 were sneaked¦126005 in to monitor the freedoms¦126011 that¦126013 we¦126014 have in the \nd messiah¦126017\nd*, \nd Yeshua\nd*, and they¦126021 wanted us to be enslaved¦126021 to their traditions.
+\v 5 But we¦126027 didn't¦126024 submit¦126029 to them even for one hour¦126026, so that the truth¦126032 of the good¦126035 message¦126035 could continue¦126036 amongst you¦126039.
+\p
+\v 6 \x + \xo 2:6: \xt Deu 10:17.\x*And those people who were supposed \add leaders\add* (although what they were didn't mean much to me, because¦126059 \nd God¦126054\nd* doesn't go by appearances¦126052) didn't really contribute¦126063 anything useful, as far as I could tell.
+\v 7 Instead, they saw that I've¦126069 been entrusted with taking the good¦126071 message¦126071 to the non-Jews, just like Peter¦126075 was entrusted to take it to the Jews,
+\v 8 because the same \add God\add* who worked in Peter¦126081 to assign him to the Jews also worked in me \add to assign me\add* to the non-Jews.
+\v 9 So, seeing the grace¦126096 that \add God\add* had shown towards me, Yacob and Peter and Yohan, the apparent pillars¦126108 \add of the assemblies\add*, accepted me and Barnabas¦126114 as equals, so that we¦126117 could go¦126117 to the non-Jews and them to the Jews.
+\v 10 Also, \add they said that\add* we¦126131 need to keep helping the poor, but I was eager to do¦126137 that anyway.
+\s1 Paul scolds Peter
+\rem /s1 Paul Opposes Peter; Paul Confronts Peter; Paul Rebukes Peter at Antioch
+\p
+\v 11 But when Peter came¦126140 to Antioch¦126144, I had to oppose him¦126147 to his face¦126146, because¦126149 he'd messed up.
+\v 12 He'd been eating with non-Jews, but¦126170 when Yacob and his companions arrived, he about-faced and started eating separately, because¦126154 he was afraid of \add being criticised by\add* the strict Jews.
+\v 13 The other Jews with him¦126179 were also being hypocrites—so much so that even Barnabas¦126187 joined their¦126190 hypocrisy—
+\v 14 but¦126193 when I saw¦126195 that they weren't being¦126213 honest with the truth¦126201 of the good¦126203 message¦126203, I had to say to Peter in front of everybody, “If you Jews are living¦126220 more like non-Jews, and not like \add strict\add* Jews, how can you force non-Jews to obey all the Jewish traditions?”
+\s1 You can't be saved by obeying rules
+\rem /s1 Jews and Gentiles Are Saved by Faith
+\p
+\v 15 We follow Jewish laws, not other nations' customs,
+\v 16 but we know that we're not saved by following rules,\x + \xo 2:16: a \xt Psa 143:2; Rom 3:20; \xo b \xt Rom 3:22.\x* but only by faith in Yeshua the messiah. So we've believed¦126258 in Yeshua the messiah so that we can be made guiltless by our faith in the messiah, and not by obeying all those rules, because¦126269 none of those rules can ever make any person¦126241 guiltless.
+\v 17 However, if we attempt to be made guiltless through the messiah, yet find that we're sinners¦126290, does that mean that the messiah is a servant¦126294 to sin¦126293? That could never be so!
+\v 18 If I rebuild what I've already torn down, that would show me to be a law-breaker.
+\v 19 \x + \xo 2:19: \xt Rom 6:1-11; 7:1-6.\x*It was the law that showed me that I needed die to the idea of following the law, so that I could live¦126315 \add to serve\add* \nd God¦126314\nd* \add instead\add*. I was executed on a post along with the \nd messiah¦126316\nd*,
+\v 20 and I'm not living any more, but¦126319 it's the \nd messiah¦126326\nd* now living in me. The way that¦126336 my body¦126332 stays alive now is by living by faith¦126334 in God's son—the one who loved¦126344 me and allowed himself¦126348 to be executed for me.
+\v 21 I'm not rejecting¦126352 God's grace¦126354, because¦126358 if the law could make me guiltless, that would mean that the \nd messiah¦126363\nd* died¦126365 unnecessarily.
+\c 3
+\rem /s1 The freedom of faith; Faith or Observance of the Law; The Law and Faith in Christ; Law or Faith
+\p
+\v 1 You foolish¦126367 Galatians¦126368, who tricked you¦126370 into changing? You know that \nd Yeshua\nd* the \nd messiah¦126380\nd* was publicly¦126381 known to have been executed¦126384 \add by being nailed to\add*\x + \xo 3:1: \xt Jhn 20:25.\x* a post.
+\v 2 So I just want to ask you one thing: did you receive¦126397 the \nd spirit¦126396\nd* by obeying all the rules, or was it by faith¦126401 when you heard?
+\v 3 So aren't you being foolish¦126403? Having¦126405 begun¦126405 in the \nd spirit¦126406\nd*, now you \add people\add* are focussing back on bodily discipline.
+\v 4 You vainly endured so many things—it was vain wasn't it?
+\v 5 So¦126419 the one who gave the \nd spirit¦126423\nd* to you and worked miracles¦126426 among¦126427 you, did all that come about from obeying the rules or by the faith¦126438 that came from hearing¦126437 \add the good message\add*?
+\s1 The spreading of Abraham's blessing
+\p
+\v 6 Abraham¦126440\x + \xo 3:6: \xt Gen 15:6; Rom 4:3.\x* believed¦126441 in \nd God¦126443\nd* and¦126444 was declared guiltless as a result.
+\v 7 So now anyone who exercises faith¦126455 is a descendant of Abraham¦126460.\x + \xo 3:7: \xt Rom 4:16.\x*
+\v 8 \x + \xo 3:8: \xt Gen 12:3.\x*The \add writers of the\add* scriptures¦126464 foresaw¦126461 that \nd God¦126473\nd* was going to make non-Jews guiltless through faith¦126467 when he promised to Abraham¦126476 that all the nations¦126483 would be blessed¦126478 through him,
+\v 9 so those who have faith¦126487 \add that Yeshua is the messiah\add* will be blessed just as Abraham¦126492 was blessed for believing¦126491 \add God\add*.
+\p
+\v 10 All those who strive to be saved by obeying the law are under¦126499 a curse, because¦126503 it's written that ‘everyone is cursed who doesn't live by and fulfil everything that's been written down in the law scroll¦126519’.\x + \xo 3:10: \xt Deu 27:26 (LXX).\x*
+\v 11 It's clear that the law can't make anyone¦126529 guiltless \add ≈in \+nd God\+nd*'s view\add*, because¦126535 \add it's written that\add* ‘those who are guiltless will live by faith¦126539’.\x + \xo 3:11: \xt Hab 2:4.\x*
+\v 12 And the law doesn't produce faith¦126547, but¦126548 ‘the person who obeys these things is the one who will live’.\x + \xo 3:12: \xt Lev 18:5.\x*
+\p
+\v 13 The \nd messiah¦126557\nd* saved us from the law's curse by becoming¦126565 the curse for our sake, because¦126569 it's written¦126570, ‘\nd anyone¦126557\nd* who's hung on a tree¦126577 is cursed’.\x + \xo 3:13: \xt Deu 21:23.\x*
+\v 14 He \add paid the price for us\add* so that the blessing¦126583 for Abraham¦126585 would also reach the non-Jews through the \nd messiah¦126588 Yeshua\nd* and we'd \add all\add* be able to receive¦126598 the \nd spirit¦126597\nd* through faith¦126601.
+\s1 The law didn't annul the promise
+\rem /s1 The Law and the Promise; The Law and God's Promises; The Promise to Abraham
+\p
+\v 15 Brothers¦126602 and¦126602 sisters¦126602, consider our human ways: once an agreement¦126611 has been accepted, one party can't just reject¦126613 it or add conditions¦126615.
+\v 16 The promises¦126621 were given to Abraham¦126618 and¦126622 to his¦126625 offspring. It doesn't say ‘offsprings (plural)’ but¦126634 is only referring to the one who's the \nd messiah¦126644\nd*.
+\v 17 So¦126646 what I'm telling you is that the agreement¦126648 \add with Abraham\add* that was previously¦126649 ratified¦126649 by \nd God¦126652\nd* was not annulled¦126665 430 years¦126661 later\x + \xo 3:17: \xt Exo 12:40.\x* when the law was given \add to Mosheh\add*, and¦126659 nor was the promise¦126670 nullified¦126668,
+\v 18 \x + \xo 3:18: \xt Rom 4:14.\x*because¦126672 if the inheritance¦126677 now came by obeying the law, then it could no longer¦126678 be the result of the promise, but \nd God¦126688\nd* had already granted¦126686 it to Abraham¦126683 via the promise.
+\rem /s1 The Purpose of the Law
+\v 19 So¦126690 what was the law for then? Because of sinfulness, it was added¦126697 until¦126698 the promised¦126705 descendant would come¦126701. It was directed¦126706 through¦126707 messengers¦126708 and entrusted to \add Mosheh as\add* a mediator¦126712.
+\v 20 You don't¦126717 need a mediator¦126715 if there's only one party¦126716 involved, and¦126714 \nd God¦126721\nd* is one.
+\s1 Coming of age for the inheritance
+\rem /s1 The Purpose of the Law
+\p
+\v 21 So¦126725 does the law oppose God's promises¦126729? Certainly not, because¦126735 if the law was able to give¦126741 life¦126741, you could become¦126733 guiltless by obeying the law.
+\v 22 The scriptures¦126757 \add explain that\add* \nd everyone¦126768\nd* is imprisoned¦126755 by sin¦126761 so that by faith¦126766 in \nd Yeshua\nd* the \nd messiah¦126768\nd*, the promise¦126764 could be granted to those who believe¦126771.
+\p
+\v 23 Before faith could come, we were guarded¦126780 under¦126778 the law—imprisoned¦126782 so that faith could be revealed¦126787.
+\rem /s1 God's Children through Faith
+\v 24 So the law was our¦126792 tutor¦126791 until the \nd messiah¦126796\nd* came so that we¦126800 could then be made guiltless by faith¦126799,
+\v 25 and now that we've come¦126801 to faith¦126804, we're no longer¦126805 under¦126806 our tutor¦126807.
+\rem /s1 Sons of God
+\p
+\v 26 So you're all \nd God\nd*'s children through¦126815 faith¦126817 in the \nd messiah¦126819\nd*, \nd Yeshua\nd*,
+\v 27 because¦126823 \nd everyone¦126825\nd* who's been immersed¦126826 \add to obey\add* the messiah is now cloaked in the messiah.
+\v 28 So there's no Jew or Greek¦126835, no slave¦126839 or free person, no male or female¦126846, because¦126849 you're all \add identified\add* as being in the \nd messiah¦126854\nd*, \nd Yeshua\nd*.
+\v 29 \x + \xo 3:29: \xt Rom 4:13.\x*And if you're in the \nd messiah¦126860\nd*, then¦126858 you're now Abraham's descendant, and¦126858 so you're heirs¦126870 of that promise¦126869.
+\c 4
+\rem /s1 Life under the law
+\p
+\v 1 But¦126872 as long¦126874 as the heir is underage, he's no wealthier than a slave¦126882 (even though he'll \add become\add* the master¦126883),
+\v 2 but¦126890 he's under¦126887 guardians¦126888 and managers¦126891 until¦126892 he reaches the age that his father¦126897 specified.
+\v 3 That's how it is with us—when we were infants¦126903 we were enslaved¦126911 by this world's¦126908 principles¦126906,
+\v 4 but¦126913 at the appointed time¦126918, \nd God¦126921\nd* sent¦126919 his¦126924 son down to be given birth to by a woman¦126927 and to live under¦126929 \add Mosheh's\add* law
+\v 5 \x + \xo 4:5-7: \xt Rom 8:15-17.\x*so that he could buy back those enslaved under¦126933 the law and they could now be adopted¦126938 as children \add with an inheritance\add*.
+\p
+\v 6 So¦126941 because¦126940 you're now children, \nd God¦126946\nd* sent his¦126951 son's \nd spirit¦126948\nd* down into our¦126955 hearts¦126954 as we call out, ‘Father, father.’
+\v 7 Now you're¦126963 no longer¦126962 slaves¦126964, but¦126965 children \add with full rights\add*, and¦126968 as children, heirs of God's \add promise\add*.
+\s1 Paul's concerns about their faith
+\rem /s1 Paul's Concern for the Galatians; Paul Reproves the Galatians
+\p
+\v 8 When you didn't¦126979 know \nd God¦126981\nd*, you served¦126982 others who aren't¦126979 really gods¦126988 at all.
+\v 9 But¦126994 now that you do know God, or rather¦126993 now that God knows you, why would you turn back again to useless and inferior beliefs, to serve them all over again?
+\v 10 You \add people\add* observe¦127015 \add special\add* holidays and \add certain\add* months¦127018 and seasons¦127020 and years¦127022.
+\v 11 I worry that maybe I've¦127028 wasted my time helping you.
+\p
+\v 12 I implore you to become¦127032 like me, brothers¦127039 and¦127039 sisters¦127039, because¦127035 I'm also just like you. You haven't wronged¦127044 me in any way,
+\v 13 but you know that it was a result of my fleshly¦127051 weakness that I originally preached¦127052 the good¦127052 message¦127052 to you.\f + \fr 4:13 \ft Scholars are unclear whether this might mean something like ill health, poor eyesight (see v15), or even a moral weakness, so we've left it as ambiguous in the translation as it is in the original.\f*
+\v 14 Yet you didn't¦127066 mock or despise me, \add brothers and¦127056 sisters,\add* for this trial¦127058 of my¦127065 flesh¦127064, but¦127056 rather you received me as God's messenger¦127072 like you might have received the \nd messiah¦127077 Yeshua\nd* himself.
+\v 15 So¦127081 where¦127080 are your generous attitudes now? I know that back then, you would have almost dug¦127095 your own eyes¦127093 out to give them to me.
+\v 16 Have I now become¦127103 your¦127102 enemy¦127101 just because I told you \add people\add* the truth¦127104?
+\p
+\v 17 Those \add others\add* have worked hard to \add try to win\add* you \add over\add*, but not for good \add reasons\add*—they want to cut you off so that you'll be enthusiastic about them.
+\v 18 It's good to be enthusiastic about things that are always¦127124 good, and not only at the times when I'm with you, \add brothers and sisters\add*.
+\v 19 My¦127136 dear ones, who I'm again¦127138 labouring¦127139 with in childbirth until¦127140 the \nd messiah¦127144\nd* becomes part of you¦127146,
+\v 20 I wanted to be there with you now, and to speak quite differently than this, because¦127158 I'm puzzled about you.
+\s1 The free line and the slaves
+\rem /s1 Hagar and Sarah; The Allegory of Hagar and Sarah; The Example of Hagar and Sarah; Abraham's Two Children; Freedom through Christ
+\p
+\v 21 Are you \add people\add* who are under¦127165 the law telling¦127162 me that you're not even hearing¦127173 what the law is?
+\v 22 It's written¦127174 \add in the scriptures\add*\x + \xo 4:22: a \xt Gen 16:15; \xo b \xt Gen 21:2.\x* that Abraham¦127177 had two¦127178 sons¦127179: one son with the slave girl¦127184 \add Hagar\add*, and¦127185 one with the free woman¦127189.
+\v 23 The slave girl's son was born because of human actions, but¦127190 in contrast, the free woman's¦127205 son was a result of God's promise¦127208.
+\v 24 So if we use this as an illustration, there are two¦127216 agreements: one is from Mt¦127221. Sinai¦127222 which¦127226 relates to Hagar¦127228 and gives birth to enslaved people.
+\v 25 Hagar's¦127232 Mt¦127234. Sinai¦127233 is in Arabia¦127239 and corresponds¦127240 to the present¦127243 \add earthly\add* Yerushalem¦127244 in slavery along with her¦127251 children¦127250.
+\v 26 However, the heavenly Yerushalem, which¦127252 is our¦127262 mother¦127260, is free,
+\v 27 because it's been written¦127263 \add in the scriptures\add*:\x + \xo 4:27: \xt Isa 54:1.\x*
+\q1 ‘Be glad barren¦127266 woman,
+\q2 you who have never borne a child.
+\q1 Be bold and shout¦127272,
+\q2 you who have never been in labour¦127275,
+\q1 because the lonely woman \add now\add* has many children¦127279,
+\q2 even more than the woman with a husband¦127287.’
+\p
+\v 28 And you¦127288, brothers¦127291 and¦127290 sisters¦127291, are children¦127295 of the promise¦127294, like Isaac¦127293,
+\v 29 but¦127298 back then the one born because of human actions persecuted¦127305\x + \xo 4:29: \xt Gen 21:9.\x* the one born because of the \nd spirit¦127308\nd*, and that's how it continues now.
+\v 30 But¦127321 what do the scriptures¦127316 say? ‘Send away the slave girl and her¦127324 son, because¦127326 the slave girl's son won't¦127327 be getting the inheritance¦127328 alongside the free woman's¦127338 son.’\x + \xo 4:30: \xt Gen 21:10.\x*
+\v 31 So¦127341, brothers¦127343 and¦127343 sisters¦127343, we're not \add descendants\add* of the slave girl¦127346, but¦127348 of the free woman¦127350.
+\c 5
+\s1 Don't let the law destroy your faith
+\rem /s1 Preserve Your Freedom; Freedom in Christ
+\p
+\v 1 The \nd messiah¦127357\nd* has freed us so we can have freedom, so stand¦127359 firm and¦127361 don't¦127362 get entangled¦127366 again¦127363 in the burden of slavery¦127365.
+\rem /s1 The Nature of Christian Freedom
+\p
+\v 2 What's more, I, Paul¦127369 would add that if you \add men\add* got circumcised¦127374, then the \nd messiah¦127375\nd* wouldn't be of any benefit¦127378.
+\v 3 I'll say it again¦127381 clearly: every¦127382 man¦127383 who \add gets himself\add* circumcised¦127384 has put himself in debt to obeying all of the law.
+\v 4 You were released¦127392 from the \nd messiah¦127395\nd* when you moved to trusting in the law in order to be right with God—you fell away from grace¦127401 at that point.
+\v 5 We who are in the \nd spirit¦127405\nd* are eagerly¦127411 waiting¦127411 for the righteousness¦127409 that we're expecting to receive by faith¦127407,
+\v 6 because¦127413 in the \nd messiah¦127414 Yeshua¦127415\nd*, it's not circumcision¦127417 that achieves anything¦127418, nor uncircumcision¦127421, but¦127422 faith¦127423 worked out through¦127424 love¦127425.
+\p
+\v 7 You \add people\add* were running¦127428 the race so well—who held you¦127431 back from believing the truth¦127435?
+\v 8 It wasn't the one who called you¦127446.
+\v 9 \x + \xo 5:9: \xt 1Cor 5:6.\x*A little¦127447 bit of yeast can make a whole¦127449 loaf of bread rise.
+\v 10 I'm trusting¦127455 in \nd Yahweh¦127459\nd* that you won't¦127461 be thinking¦127463 anything different \add from the truth\add*. The one who'll bear the judgement¦127470 is the one who's been confusing you, whoever¦127471 that was.
+\p
+\v 11 But, brothers¦127477 and¦127477 sisters¦127477, if I was still preaching the Jewish rules, why would I still be being¦127485 persecuted¦127485? If I was still preaching that, then talking about dying on a post wouldn't even be offensive¦127489.
+\v 12 I wish that the ones upsetting¦127500 you¦127501 \add people by suggesting cutting¦127497 off bits\add* would cut it all off.
+\rem /s1 Guidance by the Spirit
+\p
+\v 13 Brothers¦127507 and sisters, you were called¦127506 into freedom. That doesn't mean that you should use the freedom to do whatever your minds desire, but rather, you should be serving¦127520 each other in love¦127519,
+\v 14 \x + \xo 5:14: \xt Lev 19:18.\x*because¦127524 the entire law can be fulfilled¦127530 by obeying one rule: Love your¦127538 neighbour¦127537 like yourself¦127540.
+\v 15 But¦127546 if you're snapping at and¦127546 bullying each other, watch¦127548 out, or else you'll destroy each other's \add faith\add*.
+\s1 Being led by God's spirit
+\rem /s1 Living by the Spirit's Power; Life by the Spirit; The Spirit and Human Nature; The Works of the Flesh
+\p
+\v 16 I'll tell you: allow yourselves to be led by the \nd spirit¦127555\nd*, and¦127558 then your earthly desires¦127559 won't¦127562 triumph,
+\v 17 \x + \xo 5:17: \xt Rom 7:15-23.\x*because¦127579 our earthly desires oppose the spirit, and the spirit opposes our earthly desires—they oppose each other, so that's why you end up doing¦127591 things that you didn't¦127585 really want to do.
+\v 18 But if you're being¦127595 led by the \nd spirit¦127594\nd* then you're not \add trying to earn your way to God by\add* obeying all of Mosheh's rules.
+\p
+\v 19 The actions that¦127609 come from our earthly desires include: sexual¦127612 immorality¦127612, impurity¦127613, sensuality,
+\v 20 idolatry¦127615, sorcery¦127616, hostility, strife¦127618, jealousies¦127620, rages¦127622, selfish¦127623 ambitions¦127623, arguing, divisions,
+\v 21 envy, drunkenness¦127628, carousing¦127629, and other similar¦127633 things which¦127635 I've mentioned previously. And as I \add also\add* said¦127636 previously, the people that¦127635 do these¦127634 things won't¦127649 be inheriting¦127650 God's kingdom¦127647.
+\rem /s1 The Fruit of the Spirit
+\p
+\v 22 But the end result of having \add God's\add* \nd spirit¦127655\nd* is \add to show\add* love¦127657, joy¦127658, peace¦127659, patience¦127660, kindness¦127661, goodness¦127662, faith¦127663,
+\v 23 gentleness¦127664, and self-control—none \add of Mosheh's laws\add* are against¦127666 any of these!
+\v 24 \nd And\nd* for the \nd messiah¦127676 Yeshua\nd*'s \add apprentices\add*, earthly desires¦127686 need to be executed¦127680 on a post, along with their passions¦127683 and¦127684 lusts.
+\v 25 If we're \add being led\add* by \add God's\add* spirit in our living¦127688, then we should also be aligning¦127692 \add our values\add* by the spirit.
+\v 26 We have to take care not to become¦127694 conceited¦127695, not to provoke¦127697 each other, and not to envy each other.
+\c 6
+\s1 Helping each other
+\rem /s1 Bear One Another's Burdens; Doing Good to All; We Reap What We Sow
+\p
+\v 1 Brothers¦127701 and¦127701 sisters¦127701, if a person has been caught¦127704 sinning, you spiritual people need to guide the person with a spirit of gentleness¦127717, at the same time looking¦127718 at your own behaviour, in case you yourselves¦127719 are also tempted¦127723.
+\v 2 Help those who are going through difficulties or pain, and¦127728 in doing so you'll fulfil¦127732 the \nd messiah\nd*'s law,
+\v 3 because¦127739 anyone¦127741 who supposes¦127740 themself to be someone¦127741 special, but isn't, is only deceiving¦127747 themself.
+\v 4 Evaluate your own actions, but¦127750 keep your boasts¦127762 to yourself and don't¦127765 tell others,
+\v 5 because¦127770 each person must¦127774 face up to their own issues.
+\p
+\v 6 Those who are being¦127778 taught should¦127775 share all their blessings with those who are teaching.
+\p
+\v 7 Don't¦127786 be fooled—you can't¦127786 \add get away with\add* mocking \nd God¦127788\nd*, because¦127793 what you sow determines what you'll harvest.
+\v 8 Anyone who sows \add seed\add* to feed their earthly desires will harvest earthly corruption¦127813, but whoever sows spiritual \add seeds\add* will harvest eternal¦127825 life¦127824 from the spirit.
+\v 9 Don't¦127830 be discouraged from doing¦127829 good \add things\add*, because¦127834 we'll have a \add good\add* harvest in due course if we don't¦127830 give up.
+\v 10 So¦127841 then, as time¦127843 allows it, we should be working¦127846 towards good¦127849 for everybody, and especially for fellow believers.
+\s1 Paul's final advice
+\rem /s1 Paul's Final Advice; Final Warning and Greeting; Not Circumcision but a New Creation; Final Admonitions and Benediction
+\p
+\v 11 \sig Look how big these letters¦127863 are when it's my own handwriting.\sig*
+\v 12 \sig There's so many people that want to look good¦127870 in earthly terms, and they're the ones trying to persuade you that you have to fulfil all of Mosheh's rules—they don't¦127885 want to be persecuted¦127886 concerning the \+nd messiah¦127883\+nd* \+add dying\+add* on a post.\sig*
+\v 13 \sig Even those who are circumcised don't¦127889 obey all the rules, but¦127889 they'd still like for your men to be circumcised so that they can claim them as followers.\sig*
+\v 14 \sig As for me, may I never¦127910 boast¦127913, except¦127915 about our¦127922 \+nd master¦127921 Yeshua\+nd* the \+nd messiah¦127924\+nd*, \+add whose life was cut off on the\+add* post. Through him, it's like the entire world has been cut off from me, and¦127930 I've been cut off from the world,\sig*
+\v 15 \sig because¦127938 obeying Mosheh's law is nothing, and not needing to obey it is nothing, but¦127945 being a new creation¦127947 \+add is everything\+add*.\sig*
+\v 16 \sig And everyone who follows that principle¦127951, may peace¦127956 and mercy¦127960 be on them and on God's Yisrael \+add (Israel¦127964)\+add*.\sig*
+\p
+\v 17 \sig As for the other troubles¦127969, don't bother me with them, because¦127974 I carry the marks¦127976 on my¦127984 body¦127983 of \+add someone who follows\+add* \+nd Yeshua\+nd*.\sig*
+\p
+\v 18 \sig May the grace¦127987 from our¦127990 \+nd master¦127989\+nd* \+nd Yeshua\+nd* the \+nd messiah¦127992\+nd* be with your¦127996 spirit¦127995, brothers¦127997 and¦127997 sisters¦127997. That's how I want it to be.\sig*

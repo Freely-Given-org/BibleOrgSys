@@ -1,0 +1,746 @@
+\id ROM - Open English Translation—Readers' Version (OET-RV) v0.1.20
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 ROM
+\rem WORDTABLE OET-LV_NT_word_table.tsv
+\h Romans
+\toc1 Romans
+\toc2 Romans
+\toc3 Rom.
+\mt2 Paul's letter to the believers in
+\mt1 Rome
+\is1 Introduction
+\ip \bk Paul's letter to the believers in Rome\bk* was sent to both Jews and non-Jews who believe in, and trust, Yeshua (Jesus) the messiah. He wrote to them so that they could be prepared for when he could visit them there. Paul planned to work there with other Christians for a while, then with their help, he would travel to Spain. He wrote in order to explain his understanding of Christian faith and of day-to-day living as Christians.
+\ip Paul greets the believers there in Rome and he tells them about his prayers for them. Then he tells them the theme of his letter, “how God makes us guiltless—by faith.” (1:17a). All people, Jewish or not, need to become guiltless in God's sight by means of faith in Yeshua Messiah.
+\ip Next Paul tells them about new life by means of unity with the messiah thereby forming a new relationship with God. Believers will have peace from God and the power of Spirit of God will save them from the power of sin and of death. In chapters 5-8, Paul explains about the purpose of God's law and about the power of God's spirit working through believers.
+\ip Paul answers the question about how Jews and non-Jews fit into God's plan for of all people. Paul explains that the unbelief of Jews is part of God's plan for a time so that the good message can be proclaimed to non-Jews. But concerning God's choosing of Jews, he loved them very much due to his promise to their ancestors, and it's as a result of them that all people can receive the love and mercy of God through the messiah Yeshua.
+\ip In the ending, Paul explains how to live as a Christian, with the main need being to accept and love each other. He also includes themes like serving God, the responsibility of Christians the government, and for each individual, questions concerning the conscience. Paul ends his letter and greeting others, and by his praising God.
+\iot Main components of Paul's letter
+\io1 Introduction and theme \ior 1:1-17\ior*
+\io1 All people need salvation \ior 1:18–3:20\ior*
+\io1 God's way of saving people \ior 3:21–4:25\ior*
+\io1 The new life in the messiah \ior 5:1–8:39\ior*
+\io1 God's plan for Yisrael \ior 9:1–11:36\ior*
+\io1 Christian living \ior 12:1–15:13\ior*
+\io1 Concluding remarks and greetings \ior 15:14–16:27\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\rem /s1 Greetings from Paul; Salutation; The gospel of Christ
+\p
+\v 1 \add This letter is from\add* Paul, a slave¦105121 of \nd Messiah¦105122 Yeshua\nd* and a \nd chosen¦105122\nd* ambassador¦105126 who's been set apart¦105127 for God's good¦105129 message¦105129
+\v 2 which¦105131 he had previously¦105132 promised¦105132 through¦105133 \add the messages\add* of his¦105136 prophets¦105135 in the holy scriptures¦105138.
+\p
+\v 3 \add This good message\add* is about his¦105143 son who was conceived¦105140 as a descendant of David¦105148
+\v 4 and became known as God's son according¦105157 to the \nd spirit¦105158\nd* of holiness¦105159—demonstrating power¦105156 by coming back to life from the dead¦105162. Yes, he's our¦105167 \nd master¦105166\nd*, \nd Yeshua Messiah¦105164\nd*
+\v 5 and it's through¦105168 him¦105186 that we¦105170 received¦105170 grace¦105171 and \add also\add* the commission¦105174 to obey in faith¦105178 \add to take\add* his¦105186 name¦105185 among¦105179 all the non-Jews
+\v 6 which also includes you¦105191 all there who are called¦105192 by \nd Yeshua¦105193 Messiah¦105194\nd*.
+\p
+\v 7 \add This letter is written\add* to all those in Rome¦105200 that God loves and considers as holy. \add May\add* you¦105207 all experience grace¦105205 and peace¦105209 from God our¦105213 father¦105212 and \add from\add* the \nd master¦105215 Yeshua Messiah¦105218\nd*.
+\rem /s1 God's Good News; Paul's Longing to Visit Rome; Prayer of Thanksgiving
+\s1 Paul's wish to visit Rome
+\p
+\v 8 I'll start by thanking¦105221 my¦105224 \nd God¦105223\nd* through¦105225 \nd Yeshua Messiah¦105227\nd* for all of you, because¦105232 the \add story about\add* your¦105231 faith¦105234 has been told in many countries.
+\v 9 Yes, the \nd God¦105246\nd* that I serve in my spirit¦105251 in the good¦105255 message¦105255 about his¦105258 son, is my witness¦105241 about how I never stop mentioning¦105261 all of you¦105262
+\v 10 in my¦105268 prayers¦105267—asking that somehow¦105271 \nd God¦105279\nd* will favour me by allowing me to come¦105280 to visit you¦105282
+\v 11 because¦105284 I'm longing¦105283 to see¦105285 you all so that I can share¦105289 a particular spiritual¦105292 gift¦105290 with you so that you'll all be strengthened¦105295.
+\v 12 I want us to \add all\add* be encouraged¦105300 together¦105300 by each other's faith¦105308—both me and all of you.
+\p
+\v 13 \x + \xo 1:13: \xt Acts 19:21.\x*Brothers¦105319 and sisters, I don't¦105318 want you to be unaware that I had planned several times to come¦105323 to you but¦105316 I was vetoed until¦105328 recently so that I'd also have a harvest among you similar to those among the other¦105343 non-Jews.
+\v 14 Whether it's Greeks¦105345 or other foreigners¦105348, wise people or foolish¦105352, I have an obligation
+\v 15 and so I'm eager¦105359 to also preach¦105365 the good¦105365 message¦105365 to all of you¦105361 there in Rome¦105364.
+\rem /s1 The Power of the Gospel
+\p
+\v 16 \x + \xo 1:16: \xt Mrk 8:38.\x*I'm not ashamed¦105368 to preach the good¦105370 message¦105370 because¦105374 it \add conveys\add* God's power¦105373 to save everyone¦105379 who believes¦105381 it—to Jews first¦105384 and then non-Jews.
+\v 17 \x + \xo 1:17: \xt Hab 2:4.\x*It explains how \nd God¦105390\nd* makes us guiltless—by faith \add leading\add* to \add more\add* faith—as it's been written¦105399: Godly people will live by faith.
+\s1 God's anger towards those who deny his existence
+\rem /s1 The Guilt of Humankind; Human Guilt; God's judgement on sin; God's Wrath Against Mankind; God's Anger at Sin
+\p
+\v 18 God's severe¦105409 anger¦105409 is being¦105407 revealed¦105407 from heaven¦105412 on the ungodliness¦105415 and¦105416 disobedience of people¦105418 who limit the truth¦105421 by \add their\add* disobedience
+\v 19 because the fact that there is a god has been shown to them because \nd God¦105429\nd* \add himself\add* has revealed¦105439 it.
+\v 20 Ever since the creation¦105445 of the world¦105446, the invisible¦105442 attributes of God have been clearly¦105450 seen¦105450 through his workmanship¦105448—both his eternal¦105453 power¦105455 and¦105456 his divinity¦105457—so \add people\add* have no excuse.
+\v 21 \x + \xo 1:21: \xt Eph 4:17-18.\x*Even though they know \add about\add* \nd God¦105466\nd*, they didn't¦105467 honour or thank¦105472 him, but¦105479 their theories made them incompetent and their minds turned from perception towards darkness.
+\v 22 They claimed to be scientific but instead they¦105488 believed foolishness¦105488
+\v 23 \x + \xo 1:23: \xt Deu 4:16-18.\x*and \add so\add* they¦105490 changed¦105490 the greatness of the eternal \nd God¦105495\nd* into the likeness¦105497 of an image¦105498 of a mortal¦105499 human¦105500, or birds¦105502 or animals or reptiles¦105506.
+\p
+\v 24 Therefore¦105507 \nd God¦105512\nd* reluctantly let their lusts lead to impurity¦105520 and the dishonouring¦105522 of their bodies¦105524 among themselves¦105527
+\v 25 as they exchanged¦105530 God's truth¦105532 for a lie and now worshipped¦105539 and served the creation, instead of the creator who \add should be\add* praised throughout the ages. May¦105553 it¦105546 be so¦105553.
+\p
+\v 26 Because¦105554 of that¦105563, \nd God¦105559\nd* reluctantly let them exercise their dishonourable¦105562 passions¦105561 and their women exchanged¦105568 natural acts for those against nature,
+\v 27 and similarly their men deserted the natural¦105584 acts towards women and stoked their lusts towards each other—man with man and the shame¦105599 that¦105604 it¦105605 produces¦105600, and then received back in themselves¦105611 the payment which¦105604 is appropriate¦105605 for such deception¦105607.
+\p
+\v 28 They didn't¦105615 want to know¦105621 about \nd God¦105618\nd* and¦105613 so he reluctantly let their depraved minds be filled with unhelpful thoughts
+\v 29 and so they were filled¦105633 with disobedience, wickedness¦105638, greediness¦105640, and malice, and full of envy, murder¦105644, strife¦105645, and deceit¦105647, \add becoming\add* malicious, gossips¦105649,
+\v 30 slanderers¦105650, god-haters, abusers¦105652, proud¦105653, braggers¦105654, inventors¦105655 of evil¦105656, unable to be persuaded by \add their\add* parents¦105657,
+\v 31 unintelligent¦105659, untrustworthy¦105660, unloving¦105661, \add and\add* unmerciful¦105663.
+\v 32 They know that \nd God¦105668\nd* must exercise justice towards those doing¦105675 such things, yet they not only practice those things which will lead to a death¦105677 sentence, but they also approve when others do them.
+\c 2
+\s1 Judgement even for those without the written law
+\rem /s1 The Righteous Judgment of God; God's Righteous Judgment; God's Judgment of Sin
+\p
+\v 1 \x + \xo 2:1: \xt Mat 7:1; Luk 6:37.\x*So¦105690 there's no excuse for anyone who judges others because¦105709 you're condemning¦105707 yourselves¦105706 if you're doing¦105711 those same things that you're judging other for
+\v 2 because we¦105714 know that God's judgement¦105719 is based on the factual accounts of what \add each person\add* is doing.
+\v 3 But¦105742 maybe you're¦105731 thinking that you can judge others doing¦105743 these things and yet \add somehow\add* escape¦105747 God's judgement¦105749 when you do them yourself¦105744?
+\v 4 Or maybe you're¦105764 \add taking advantage\add* of God's kindness and patience¦105763 without realising that his¦105757 kindness was \add meant\add* to lead you towards repentance¦105772?
+\v 5 But¦105780 it's your¦105779 hardness¦105778 and failure to repent that \add causing\add* severe anger to be stored up for the day of God's judgement¦105794 when \add all\add* will be revealed \add including¦105780\add* his severe anger
+\v 6 \x + \xo 2:6: \xt Psa 62:12; Prv 24:12.\x*as each person will be \add judged\add* by their actions.
+\v 7 Those who've endured¦105807 to do good¦105809 expecting praise and honour¦105812 and to escape destruction, \add will be given\add* eternal¦105817 life¦105816,
+\v 8 but those who've \add lived out\add* their selfish¦105821 ambition¦105821 and refused to believe the truth¦105826 but \add let themselves get\add* persuaded¦105827 by disobedience, \add will meet with\add* severe¦105832 anger¦105832 and rage¦105834.
+\v 9 For every¦105840 person doing evil¦105846, there will be tribulation and distress¦105838—to Jews first¦105849 and then to non-Jews,
+\v 10 but¦105854 to those who do good¦105862, there'll be praise and honour¦105855 and peace¦105857—to Jews first¦105865 and then to non-Jews
+\v 11 \x + \xo 2:11: \xt Deu 10:17.\x*because¦105869 \nd God¦105874\nd* doesn't \add indulge in\add* favouritism¦105871.
+\p
+\v 12 Those not under the \add Jewish\add* laws and yet sinned, they'll be judged without the law, and those who knew the laws and sinned, will be judged by the law,
+\v 13 because¦105891 listening¦105893 to the law doesn't make \add people\add* right¦105896 with \nd God¦105899\nd*, but¦105900 rather it's those who obey the law who will be declared guiltless.
+\v 14 Whenever other nations don't have \add Jewish\add* law but naturally¦105913 obey what's in the laws, then even those that¦105909 don't have \add our\add* laws have their own law.
+\v 15 They demonstrate that they effectively have \add God's\add* law written¦105932 in their minds and which matches their consciences¦105940, and between¦105942 the two they'll be either accused¦105946 or defended¦105949
+\v 16 on the day¦105952 when \nd God¦105958\nd* through \nd Messiah¦105968 Yeshua\nd*, judges people's¦105962 private \add lives\add* as I've shared \add as part of\add* the good¦105965 message¦105965.
+\s1 Jews who disobey their laws
+\rem /s1 The Jews and their law
+\p
+\v 17 But¦105977 if you're a Jew and trusting in the law and boasting¦105982 about \add being¦105976 chosen by\add* \nd God¦105984\nd*
+\v 18 and knowing his will and knowing what's important because of familiarity with the law,
+\v 19 and if you've¦105997 persuaded¦105997 yourself¦105999 that you're a guide¦106000 for the blind¦106002 and a light¦106003 to those who are in darkness¦106006,
+\v 20 and that you're an instructor¦106007 to foolish¦106008 people and a teacher¦106009 of children, and that you appear¦106013 to be knowledgeable¦106015 about the truth¦106018 of the law,
+\v 21 then why do you teach others when you haven't \add even\add* taught¦106024 yourself¦106026? You announce that stealing is wrong, but you're¦106033 a thief.
+\v 22 You teach about not messing with other people's spouses, yet you do it yourself. You detest¦106040 idols¦106042, but you sneak money out of the temple¦106043.
+\v 23 You boast¦106047 about \add being a student \add* of the law, but you¦106055 dishonour¦106055 \nd God¦106054\nd* by breaking the laws.
+\v 24 \x + \xo 2:24: \xt Isa 52:5 (LXX).\x*\add Yes,\add* it's been written¦106068: ‘God's name¦106058 is slandered¦106063 among¦106064 the nations because¦106061 of you¦106062 all.’
+\p
+\v 25 Circumcision¦106069 is of value if you're keeping the law, but if you're breaking the laws, then your¦106083 circumcision¦106082 is just the same as if you're uncircumcised¦106084,
+\v 26 so if uncircumcised \add peoples\add* act justly according to the law, even though they're not physically circumcised¦106101, \add God\add* will consider them as his¦106099 people.
+\v 27 \add Yes, those peoples\add* who are not circumcised but¦106103 keep the law, will be judging¦106104 you¦106112 who were given the law in writing and¦106116 are circumcised, yet break those laws.
+\v 28 A \add true\add* Jew is not just a Jew on the outside, and circumcision¦106135 isn't¦106120 just on the outside of the body¦106134,
+\v 29 \x + \xo 2:29: \xt Deu 30:6.\x*but is a Jew even in their private life and through circumcision¦106143 of their heart¦106144—by the \nd spirit¦106146\nd* and not by the letter¦106148 of the law—earning praise¦106151 not from people, but from \nd God¦106158\nd*.
+\c 3
+\rem /s1 God's Faithfulness; God Remains Faithful
+\p
+\v 1 So¦106160 what advantage is it in being a Jew and what's the benefit¦106168 of circumcision¦106170?
+\v 2 A lot in every¦106173 way. Firstly¦106175, Jews were entrusted¦106179 with \add the writing down\add* of God's messages.
+\v 3 But what if some didn't believe? Wouldn't the unbelief¦106192 of Jews make faith¦106195 \add that comes from\add* \nd God¦106197\nd* worthless?
+\v 4 \x + \xo 3:4: \xt Psa 51:4 (LXX).\x*Absolutely not. Even if every¦106206 person¦106208 was a liar, \nd God¦106204\nd* is true just like it's been written¦106212 \add about him\add*:
+\q1 ‘You will be proved right about what you say,
+\q2 and¦106202 you'll prevail when you're judged¦106225 \add in court\add*.’
+\p
+\v 5 But if our¦106231 sinfulness highlights God's sinlessness, what can we¦106236 say about that? \add So\add* isn't God, the one inflicting¦106242 the severe¦106244 anger¦106244, wrong \add to punish us\add*. (Of course this is reasoning from a human¦106247 perspective.)
+\v 6 Of course not, otherwise how could \nd God¦106256\nd* be able to judge the world¦106258?
+\p
+\v 7 But if my lie \add exposes\add* God's truth¦106263 and so brings him honour, why would he still¦106276 judge¦106280 me as a sinner¦106279?
+\v 8 Some people falsely accuse us of saying, ‘Let's do evil things so that good might follow.’ Those who say that deserve their¦106302 punishment.
+\s1 No person is guiltless
+\rem /s1 No One is Righteous; All People Are Sinners
+\p
+\v 9 What then? Do \add Jews\add* have any advantage¦106308? Definitely not, because¦106313 we¦106312 showed earlier that both Jews and¦106317 other nationalities are all under¦106320 sin's \add shadow\add*
+\v 10 \x + \xo 3:10-12: \xt Psa 14:1-3 (LXX); Psa 53:1-3 (LXX).\x*just like it¦106324 was written¦106324 long ago:
+\q1 ‘No one is guiltless,
+\q2 not even one person.
+\q1
+\v 11 No one understands¦106334,
+\q2 there's not even one person trying to find \nd God¦106341\nd*.
+\q1
+\v 12 Everyone¦106355 has turned¦106343 away,
+\q2 it was a waste of time.
+\q1 No one is being¦106345 kind,
+\q2 Not even one person.’
+\q1
+\v 13 \x + \xo 3:13: a \xt Psa 5:9 (LXX); \xo b \xt Psa 140:3.\x*‘Their words lead to death,
+\q2 their¦106360 tongues¦106362 are deceptive.’
+\q1 ‘Their lips¦106369 spray out poison.’
+\q1
+\v 14 \x + \xo 3:14: \xt Psa 10:7 (LXX).\x*‘Their mouths¦106373 are full of cursing¦106375 and¦106376 bitterness¦106377.’
+\q1
+\v 15 \x + \xo 3:15-17: \xt Isa 59:7-8.\x*‘They rush off to go and shed blood¦106384.
+\q2
+\v 16 They leave trails of destruction¦106385 and¦106386 misery¦106387—
+\q2
+\v 17 they¦106396 don't¦106395 know the path¦106393 \add that leads to\add* peace¦106394.’
+\q2
+\v 18 \x + \xo 3:18: \xt Psa 36:1.\x*Revering \nd God¦106400\nd* isn't at the front¦106401 of their¦106404 \add minds\add*.
+\p
+\v 19 We know that whatever the law says, it's for \add everyone¦106419\add* that the law applies to, so that no one can speak¦106417 against it, and¦106422 the whole world¦106427 will be bound by God's judgement¦106423.
+\v 20 \x + \xo 3:20: \xt Psa 143:2; Gal 2:16.\x*No human will be declared guiltless in front of God by their keeping the law, because¦106441 it's the law that teaches what sin¦106444 is.
+\s1 Removing the guilt from sin
+\rem /s1 Righteousness through Faith; How We Are Put Right with God; Christ Took Our Punishment
+\p
+\v 21 But¦106456 now \nd God¦106450\nd* has revealed¦106451 a way to remove guilt that's not by rules—a way that Mosheh and¦106456 the prophets¦106458 wrote about.
+\v 22 \x + \xo 3:22: \xt Gal 2:16.\x*We can be made right¦106459 with \nd God¦106461\nd* through¦106462 faith¦106463 in \nd Yeshua Messiah¦106466\nd*. This is for \em \+nd everyone¦106466\+nd*\em* who believes¦106475 because¦106477 there's¦106478 no distinction¦106479 \add between Jews and¦106460 others\add*
+\v 23 because¦106481 everyone has sinned¦106482 and¦106483 is unable to be honoured by \nd God¦106489\nd*.
+\v 24 \add But\add* even without deserving it, we can be declared guiltless by God's grace¦106494 by being¦106490 bought out of slavery \add to sin\add* by \nd Messiah¦106500 Yeshua\nd*
+\v 25 who God placed \add on the altar\add* as a sacrifice for sin. \add This happens¦106524\add* through¦106507 faith¦106509 in his blood¦106514 which was a sign¦106516 of his sinlessness.
+\p (God hasn't yet judged those who sinned in the past
+\v 26 because of his patience, waiting for the present¦106539 time¦106540 to show his righteousness¦106535 and to be fair, and to remove the guilt of those with faith¦106550 in \nd Yeshua¦106551\nd*.)
+\p
+\v 27 So¦106553 where¦106552 does that leave boasting¦106555? It's not in the picture. How come? Through¦106557 obeying the \add Mosheh's\add* laws? No, through¦106564 a law about faith¦106566.
+\v 28 So¦106569 now we¦106567 should expect that a person¦106573 will be made guiltless by faith¦106572—not by obeying \add Mosheh's\add* laws.
+\v 29 Or is \nd God¦106581\nd* only god of the Jews? Isn't he also the god of others? Yes, he is the god of others.
+\v 30 \x + \xo 3:30: \xt Deu 6:4; Gal 3:20.\x*Indeed, there's only one \nd God¦106595\nd* and he declares people guiltless by faith whether they're circumcised¦106598 Jews, or non-Jews.
+\v 31 So¦106607 does this ‘faith¦106611’ cancel the law? Not on your life. In fact, it¦106614 upholds the law.
+\c 4
+\s1 Abraham's faith
+\rem /s1 The Faith of Abraham; The Example of Abraham; Abraham Justified by Faith
+\p
+\v 1 So¦106619 what did our¦106626 physical ancestor, Abraham¦106622 discover about all this?
+\v 2 Because¦106631 if Abraham¦106632 was declared guiltless because¦106631 of his actions, maybe he¦106636 could boast¦106637? But not towards¦106640 \nd God¦106642\nd*
+\v 3 \x + \xo 4:3: \xt Gen 15:6; Gal 3:6.\x*because¦106644 the scriptures¦106646 say: ‘Abraham¦106650 believed¦106648 in \nd God¦106652\nd* so he was considered guiltless.’
+\v 4 Now for someone who's working¦106660, their wages are considered ‘owed’, not a gift.
+\v 5 However someone who's not working¦106687 but¦106685 having faith that \add God\add* will declare disobedient people as guiltless, then that person's faith is considered to make them guiltless.
+\v 6 It's just like what David¦106710 said¦106711 about blessing¦106713 a person¦106715 who \nd God¦106718\nd* declares as guiltless despite their actions:
+\q1
+\v 7 \x + \xo 4:7-8: \xt Psa 32:1-2.\x*‘Those who've been forgiven¦106725 for their lawlessness¦106727 will be happy,
+\q2 and whose sins¦106732 have been covered¦106730 over.
+\q1
+\v 8 Anyone who \nd Yahweh¦106740\nd* declares to have no sin¦106741 will be happy.’
+\p
+\v 9 Is this favour shown to circumcised¦106748 Jews or is it also for non-Jews? Because¦106756 we¦106755 were saying¦106755 that Abraham¦106760 was considered guiltless because¦106756 of his faith¦106762.
+\v 10 So¦106766 how did that happen? Because he was circumcised or when he was \add still\add* uncircumcised? No, it¦106767 was before he was circumcised.
+\v 11 \x + \xo 4:11: \xt Gen 17:10.\x*He received¦106782 circumcision¦106783 as a sign¦106781—proof of the righteousness that he gained from his faith¦106789 while he was still uncircumcised—becoming the father¦106798 of everyone who's uncircumcised but¦106780 believes¦106801 so that they'll be declared guiltless.
+\v 12 So our¦106836 ancestor Abraham¦106837 is the ancestor of us as a circumcised people, not just because we're circumcised, but¦106820 also as we follow his steps¦106825 of faith¦106833 while uncircumcised¦106831.
+\s1 God's promise is attained through faith
+\rem /s1 God's Promise Realised through Faith; God's Promise Is Received through Faith
+\p
+\v 13 \x + \xo 4:13: \xt Gen 17:4-6; 22:17-18; Gal 3:29.\x*It wasn't because of \add his obeying\add* the law that it was promised¦106843 that Abraham¦106845 or his descendants¦106848 would inherit the world¦106855, but¦106856 because of \add his\add* righteousness¦106858 \add that came from his\add* faith¦106859,
+\v 14 \x + \xo 4:14: \xt Gal 3:18.\x*because¦106861 if the ones \add obeying\add* the law \add can become\add* heirs¦106865, then faith¦106868 would be declared as useless and¦106869 the promise¦106872 would be invalidated,
+\v 15 because¦106874 the law produces¦106877 severe¦106876 anger¦106876, and¦106879 where¦106878 there's no law, then there's nothing to break.
+\p
+\v 16 \x + \xo 4:16: \xt Gal 3:7.\x*Because¦106886 of this, the promise to the descendants is by faith—\add given \add* not only to the ‘descendants of the law’ but also to the ‘descendants of Abraham's faith’. This promise \add is given\add* by grace¦106893 and has been confirmed¦106897,
+\v 17 \x + \xo 4:17: \xt Gen 17:5.\x*as it's been written¦106921, ‘I've¦106926 appointed you as a father¦106923 of many nations¦106925.’ He¦106923 was appointed in front¦106928 of the god he believed¦106930 in—the god who brings the dead \add back\add* to life and who \add creates by\add* speaking things into being that didn't¦106939 previously exist.
+\v 18 \x + \xo 4:18: \xt Gen 15:5.\x*\add Without any other evidence\add*, he believed¦106948 in hope itself and thus he became the father¦106953 of many nations¦106955 according¦106957 to what he had been told: ‘Your¦106964 descendants¦106963 will be like \add the sand and the stars\add*.’
+\v 19 \x + \xo 4:19: \xt Gen 17:17.\x*He didn't¦106966 falter¦106967 in his faith¦106969, seeing that his body¦106974 was already¦106975 infertile being about¦106978 a hundred¦106977 years old and¦106980 with Sarah¦106985 being past menopause,
+\v 20 but he didn't¦106992 show unbelief¦106995 and doubt¦106993 God's promise¦106989 when it was given¦107000, but rather he was strengthened¦106997 in his faith¦106999 and praised God,
+\v 21 being quite certain that what \add God\add* promises¦107008, he's also able to do¦107012.
+\v 22 Therefore¦107013 \add his faith\add* was credited to him¦107016 and he was declared guiltless.
+\v 23 However that statement wasn't written¦107020 about \add Abraham\add* only,
+\v 24 but¦107028 for us also who are also going¦107033 to receive the same credit because¦107030 of our faith in the \add God\add* who brought our \nd master¦107043 Yeshua\nd* back to life from the dead¦107046
+\v 25 \x + \xo 4:25: \xt Isa 53:4-5.\x*after he was handed over \add to the executioners\add* because of our¦107052 sins, and he was brought back to life to make us guiltless.
+\c 5
+\s1 God showed his love to sinners
+\rem /s1 Peace and Joy; Right with God; Results of Justification; Faith Brings Joy; Life in Christ
+\p
+\v 1 So¦107060 now because we've been declared guiltless by our faith¦107062, we can have peace¦107063 with \nd God¦107068\nd* through¦107069 our \nd master¦107071 Yeshua¦107073 Messiah¦107074\nd*.
+\v 2 Through him we also have access¦107079 by faith¦107083 into this grace¦107087 that¦107090 we \add depend on\add* and we are boasting¦107093 in hope of God's glory¦107097. WHAT DOES THIS MEAN?
+\v 3 Not only that, but¦107102 we are also boasting¦107106 even though we're still being persecuted, because we know that difficulties produce¦107116 endurance¦107115
+\v 4 and endurance¦107119 shows who we really are, and knowing that produces hope,
+\v 5 and¦107126 we're not disgraced¦107129 by that hope because¦107130 God's love¦107132 has been poured¦107135 out into our¦107140 hearts¦107138 through¦107141 the holy \nd spirit¦107142\nd* who has been given¦107145 to us.
+\p
+\v 6 While we were still¦107155 weak and at the \add right\add* time¦107157 for ungodly¦107159 \add people\add*, the \nd messiah¦107151\nd* died¦107160 for us.
+\v 7 Now it's rare for someone to \add offer to\add* die¦107176 to save a guiltless person, although perhaps someone might offer for the \add greater\add* good¦107171,
+\v 8 but¦107178 \nd God¦107185\nd* demonstrated¦107177 his love¦107181 towards us in that the \nd messiah¦107191\nd* died¦107194 for us \em while we were still¦107187 sinners¦107188\em*!
+\p
+\v 9 So¦107196 now that we've been declared guiltless because of his blood¦107203, we'll certainly be spared from his severe¦107210 anger¦107210,
+\v 10 because¦107212 if we were reconciled to \nd God¦107217\nd* through¦107218 the \em death¦107220\em* of his¦107223 son \em while we were still enemies¦107213\em*, now that we've been reconciled how much more certain that we'll be saved¦107227 by \add Yeshua's\add* \em life¦107230\em*!
+\v 11 And not only that, because of what our¦107244 \nd master¦107243 Yeshua Messiah¦107246\nd* \add has done\add* so that we might receive¦107252 that reconciliation¦107251, we can now boast¦107237 in \nd God¦107240\nd* about it.
+\s1 Death through Adam but life through Yeshua
+\rem /s1 Adam and Christ Contrasted; Death Through Adam, Life Through Christ
+\p
+\v 12 \x + \xo 5:12: \xt Gen 3:6.\x*Sin came into the world¦107263 through¦107278 one man, and death came as a result of sin, so death spread to everyone because¦107279 everyone has disobeyed God.
+\v 13 Sin was in the world¦107290 before \add Mosheh's\add* law, but¦107292 it wasn't being charged against them, because¦107284 the law had not yet \add been given\add*.
+\v 14 But death¦107302 reigned¦107300 from \add the time of\add* Adam until¦107305 \add the time of\add* Mosheh, even over those who didn't¦107310 sin in the way that Adam did—Adam\f + \fr 5:14 \ft Adam is called ‘the son of God’ in Luke 3:38.\f* who was a pattern¦107321 of the \add messiah\add* who would \add eventually\add* come.
+\p
+\v 15 But¦107349 the gift is not like the disobedience, because¦107334 if the disobedience of one man introduced death for many, God's grace and the gift that comes from that grace is much more. That gift is the one man \nd Yeshua Messiah¦107359\nd* who has been given to very many \add people\add*.
+\v 16 It only took one man who disobeyed \add to lead to\add* condemnation¦107380, and¦107364 one act of disobedience \add to lead to\add* judgement¦107376, but¦107364 the gift is to bring guiltlessness despite \em many\em* acts of disobedience.
+\v 17 Because¦107390 if the disobedience of one man led to death¦107398 reigning \add over us\add* through that one man, how much more will the ones receiving¦107418 an abundance¦107407 of grace¦107410 and the gift¦107413 of righteousness¦107417 be reigning in life¦107420 through the one man \nd Yeshua¦107426 Messiah¦107427\nd*.
+\p
+\v 18 So¦107429 just as one act of disobedience \add led\add* all people to condemnation¦107439, so also one action \add brought\add* all people to guiltlessness \add and hence to\add* life¦107450.
+\v 19 The disobedience¦107455 of one man caused many people to be made sinners¦107459, so also the obedience¦107469 of one man caused many people to be made guiltless.
+\p
+\v 20 The law was inserted so that acts of disobedience would be plentiful, but¦107485 where¦107484 sin¦107488 has been plentiful, grace¦107491 has overflowed¦107489
+\v 21 so that just as sin¦107496 reigned in death¦107499, so also grace¦107503 now reigns through righteousness¦107507, \add leading to\add* eternal¦107510 life¦107509 through our¦107517 \nd master¦107516 Yeshua¦107513 Messiah¦107514\nd*.
+\c 6
+\s1 Dying and coming back to life with Yeshua
+\rem /s1 Dying and Rising with Christ; Dead to Sin but Alive in Union with Christ; Sin's Power Is Broken; Baptism into Christ; Dead to Sin, Alive in Christ
+\p
+\v 1 So¦107519 should we¦107520 continuing¦107521 disobeying so that more of \add God's\add* grace¦107528 \add will be displayed\add*?
+\v 2 Not on your life! We who died¦107533 to sin¦107535, how could we \add go back\add* to living¦107538 in it?
+\v 3 Or didn't¦107544 you all realise that when we were immersed into \nd Messiah¦107550 Yeshua\nd*, we were immersed into his¦107555 death¦107554?
+\v 4 \x + \xo 6:4: \xt Col 2:12.\x*Therefore¦107558 we were buried¦107557 with him through¦107560 the immersion¦107562 into death¦107565, so that just as \nd Messiah¦107569\nd* was brought back to life by the father's¦107576 power, so too we can walk in newness¦107581 of life.
+\v 5 If we have joined together¦107586 in the likeness¦107589 of his¦107592 death¦107591, then we will also be \add joined\add* in the resurrection¦107596,
+\v 6 knowing¦107600 that the old personality¦107605 was executed¦107606 with him so that sin would have no \add more\add* power over our¦107604 bodies and hence we no longer¦107615 need to serve it
+\v 7 because¦107621 the personality that's died¦107622 has been declared free from sin¦107626.
+\v 8 So¦107630 if we died¦107631 with \nd Messiah¦107633\nd*, we also believe¦107634 that we will live with him¦107638,
+\v 9 knowing¦107639 that now that \nd Messiah¦107641\nd* has come back to life from the dead¦107644, he won't die again—death¦107647 has no more power over him¦107648.
+\v 10 When he died, he died to sin¦107655 once and for all, but now that he lives, he lives to \add please\add* \nd God¦107663\nd*.
+\v 11 So too, you¦107666 should be considering yourselves¦107668 dead¦107670 to sin¦107674, and at the same time, alive to \nd God¦107678\nd* in \nd Messiah¦107680 Yeshua\nd*.
+\p
+\v 12 So¦107686 therefore don't¦107685 let sin¦107689 be reigning¦107687 in your¦107693 mortal¦107692 bodies in such a way that you're submitting¦107697 to its¦107702 lusts¦107701.
+\v 13 Don't be using any parts of your bodies to sin¦107712 as if they're weapons of disobedience, but¦107724 instead present¦107705 yourselves¦107715 to God as if you came back to life from the dead¦107721, and use all your body parts for God as if they're weapons of righteousness¦107729
+\v 14 so that sin¦107732 won't¦107736 be taking control of you—because¦107739 you're not under law but under grace¦107745.
+\s1 Now we are slaves to righteousness
+\rem /s1 Slaves of Righteousness; Freedom to Obey God; Slaves to Righteousness
+\p
+\v 15 What could that mean? That we can sin¦107748 \add freely\add* because¦107750 we're not under law but¦107755 under grace¦107757? Not on your life!
+\v 16 Don't you know who you are presenting¦107764 yourselves¦107765 to as obedient slaves? \add Yes,\add* whoever you all submit¦107772 to, you are their slave—either a slave of sin¦107774 that leads to death¦107776, or a slave of obedience that leads to righteousness¦107780.
+\v 17 But¦107791 be thankful¦107781 to \nd God¦107784\nd* that¦107796 \add although\add* you were all slaves¦107787 to sin¦107789, your hearts¦107794 submitted¦107790 to what was taught¦107799,
+\v 18 and¦107802 \add so\add* having¦107800 been freed¦107800 from sin¦107805, you¦107806 all were enslaved¦107806 to righteousness¦107808.
+\v 19 I'm speaking¦107810 from a human perspective because¦107811 of your \add human\add* weakness¦107813. Just as you all previously used parts of your bodies as slaves to impurity¦107825 and lawlessness leading to \add down to further¦107828\add* lawlessness, so now present¦107819 all your body¦107815 parts as slaves to righteousness¦107841 leading \add up\add* to holiness¦107843.
+\p
+\v 20 When you were all slaves¦107846 of sin¦107849, you were immune to righteousness¦107853
+\v 21 and so what was the fruit¦107856 you had back then which¦107860 you are now ashamed¦107862 of? The end¦107866 \add result\add* of that¦107860 \add lifestyle\add* is death¦107868.
+\v 22 But¦107876 now that you're all free from the \add bondage of\add* sin¦107874 and enslaved¦107875 to \nd God¦107878\nd* \add instead\add*, you bear the fruit¦107881 of holiness¦107884 and the end¦107888 \add result\add* of that is living forever,
+\v 23 because¦107892 the wages¦107893 of sin¦107895 is death¦107896, but¦107898 \nd God¦107901\nd* gives eternal¦107903 life¦107902 as a gift¦107899 through our¦107909 \nd master¦107908 Yeshua¦107906 Messiah¦107905\nd*.
+\c 7
+\s1 Becoming dead to the Law
+\rem /s1 An Illustration from Marriage; An Analogy from Marriage; The role of the law; No Longer Bound to the Law
+\p
+\v 1 Brothers¦107912 and sisters, you know the Law \add well\add* that I'm talking¦107916 about, so surely you realise that the law acts as a person's¦107922 master¦107920 for as long¦107924 as they live?
+\v 2 For \add example\add*, a woman¦107930 who is married¦107929 to her husband is bound¦107934 by the law, but if her husband dies then she's released¦107941 from the law concerning her husband.
+\v 3 So¦107948 while her husband was still living¦107949, he'd call her an adulteress if she \add slept\add* with another man, but after her husband is deceased, she's free from the law and doesn't become an adulteress if she \add marries\add* another man.
+\v 4 So my¦107980 brothers¦107979 and¦107979 sisters¦107979, you also were made dead to the law through the body¦107990 of the \nd messiah¦107992\nd* so that you could \add join\add* to another¦107997—to the one who came back to life from the dead—so that we may bear fruit¦108003 for \nd God¦108005\nd*.
+\v 5 When we¦108008 were \add still\add* focused on the physical, the passions¦108013 \add aroused\add* by sinning against the law were working¦108020 in our¦108024 body¦108011 parts¦108023 so that¦108016 the fruit¦108027 would be death¦108029,
+\v 6 but¦108031 now that¦108038 we're released from the law which¦108038 held us—released by dying to it—we can serve in new ways \add guided by the\add* \nd spirit¦108045\nd* instead of by the letter¦108049 \add of the law\add*.
+\s1 God's Law reveals our sin
+\rem /s1 Struggling With Sin; The Law and Sin
+\p
+\v 7 \x + \xo 7:7: \xt Exo 20:17; Deu 5:21.\x*So¦108051 what will we say then? Say that the law is sin? Not on your life! I wouldn't have known what sin was if it wasn't for the Law. \add For example,\add* I wouldn't have known what coveting was if the Law hadn't told me not to covet.
+\v 8 But sin took the opportunity¦108081 from \add that\add* command¦108088 to produce¦108089 covetousness¦108093 in me, because¦108095 sin would be dead apart¦108094 from the Law.
+\v 9 For a time I was living¦108101 without the Law, but¦108106 once \add God's\add* command¦108108 came then sin¦108110 revived¦108111
+\v 10 and I died¦108114, and I discovered that¦108120 the command¦108119 which¦108120 \add should lead to\add* life¦108122, \add led\add* to death¦108125.
+\v 11 \x + \xo 7:11: \xt Gen 3:13.\x*Sin deceived¦108134 me when the command¦108133 gave it an opportunity¦108129, and in doing so, it killed¦108139 me.
+\p
+\v 12 Now the Law is indeed¦108142 holy and \add God's\add* command¦108147 is holy and righteous¦108150 and good¦108152,
+\v 13 so did what is good turn into death? Not on your life! Rather it was the good \add Law\add* that allowed me to see sin as sin and a producer¦108172 of death
+\s1 Doing what we know is wrong
+\rem /s1 The Conflict in Us; The Inner Conflict; Struggling with Sin
+\p
+\v 14 We know that \add God's\add* law is spiritual¦108190, but¦108193 I am physical, having¦108197 been \add born\add*\f + \fr 7:14 \ft Paul actually talks about ‘being sold into sin’ here which is slavery language.\f* into sin.
+\v 15 \x + \xo 7:15: \xt Gal 5:17.\x*I don't know what's going on because¦108207 I do what I don't want to do and I \add end up\add* doing¦108211 what I hate.
+\v 16 \add So\add* if I do something that I didn't¦108220 want to do, then I'm agreeing¦108224 with the Law that it's good¦108228,
+\v 17 and¦108230 it's no longer¦108231 me that's doing it, but¦108235 the sin¦108241 that's in me.
+\v 18 I'm aware that good isn't¦108245 in my¦108254 physical body¦108253 because¦108257 I want to do good but I can't¦108245.
+\v 19 I don't do the good¦108274 that I want to do, but¦108275 rather I do the evil¦108279 that I don't want to do,
+\v 20 so if I'm doing what I don't¦108285 want to do, then it's not me doing it, but¦108283 it's the sin¦108299 in me that does it.
+\p
+\v 21 As a result, I've discovered the principle that¦108304 when I want to do good¦108309, \add actually\add* there's evil¦108313 in me,
+\v 22 because¦108316 I'm happily accepting God's Law on the inside¦108324,
+\v 23 but¦108327 I'm observing another¦108328 law inside my body parts, fighting against my mind and¦108342 keeping me imprisoned in the law of sin¦108349 which¦108350 is in my body parts.
+\v 24 I'm a miserable person¦108358. Who will rescue¦108361 me from this body¦108364 that's \add full of\add* death¦108366?
+\v 25 Thankfully¦108369 it's God through¦108373 our¦108378 \nd master¦108377 Yeshua Messiah¦108375\nd*. So¦108380 I end up with my mind \add wanting to\add* serve God's Law, but on the other¦108391 hand, my body¦108392 \add wants to serve\add* the law of sin.
+\c 8
+\s1 Being spiritually aware
+\rem /s1 Life in the Spirit; Life through the Spirit
+\p
+\v 1 So now those who are in \nd Messiah¦108401 Yeshua\nd* cannot be condemned¦108398
+\v 2 because¦108411 the law of the \nd spirit¦108414\nd* of life¦108416 in him freed¦108420 you¦108421 from the law of sin¦108427 and¦108428 death¦108430.
+\v 3 The law was powerless¦108433 in that it was faltering¦108438 through¦108439 our bodies. \nd God¦108443\nd* sent his son in a body¦108441 just like our sinful bodies, and concerning¦108454 sin, he condemned¦108456 sin \add itself\add* in the flesh
+\v 4 so that for those of us who were no longer living according to the flesh¦108473 but¦108475 according to the \nd spirit¦108477\nd*, then the just act of the law would be fulfilled¦108467 in us.
+\v 5 People who live according to their physical desires, think about physical things, but those who live according to the spirit, think about spiritual things.
+\v 6 The worldly mindset \add leads to\add* death¦108499, but¦108501 the \nd spiritual¦108504\nd* mindset \add leads to\add* life¦108505 and¦108506 peace¦108507.
+\v 7 The worldly mindset¦108510 is making God your enemy because it's not being¦108522 subjected¦108522 to God's law, in fact it's not even able to,
+\v 8 and¦108527 those who are worldly aren't¦108533 able to bring¦108532 pleasure¦108532 to \nd God¦108531\nd*.
+\p
+\v 9 And all of you aren't¦108537 worldly, but in the spirit, if indeed¦108544 God's spirit is living¦108547 in you, but anyone¦108552 who doesn't have the spirit of \nd Messiah¦108554\nd*, doesn't belong to him.
+\v 10 But if \nd Messiah¦108563\nd* is in you¦108565, while your body¦108568 is dead¦108569 because of sin¦108571, your \nd spirit¦108574\nd* has life¦108575 because it's \add been declared\add* guiltless.
+\v 11 \x + \xo 8:11: \xt 1Cor 3:16.\x*\add Yes,\add* if the spirit of the one who brought Yeshua back to life is living in you, then the one who brought \nd Messiah¦108597\nd* Yeshua back to life will also give life to your¦108605 mortal¦108603 bodies¦108604 by means of his¦108611 spirit living inside you all.
+\p
+\v 12 So¦108618 then brothers¦108619 and¦108619 sisters¦108619, we don't¦108622 owe anything to our sinful natures, nor do we need worldly living¦108628.
+\v 13 If you all live according¦108631 to the sinful nature, you'll die, but if you put bodily practices¦108640 to death¦108643 with \add the help of the\add* \nd spirit¦108638\nd*, you'll live,
+\v 14 because¦108646 all those who are led by God's \nd spirit¦108647\nd* \add become\add* God's children.
+\v 15 \x + \xo 8:15-17: \xt Gal 4:5-7.\x*You didn't¦108656 receive a spirit of slavery¦108660 to fear again¦108661, but \add rather\add* it was the spirit of adoption¦108667 as children that you all received, and \add with his help\add* we call out, ‘Father, father.’
+\v 16 \add God's\add* spirit himself agrees together with our¦108680 spirit that we are God's children¦108683,
+\v 17 and¦108686 if we're \add his\add* children¦108687, then we're also heirs so we'll receive an inheritance from \nd God¦108692\nd*. That makes us fellow-heirs along with \nd Messiah¦108695\nd*—if we're suffering¦108698 with him then we'll also be honoured along with him.
+\s1 Even creation itself is waiting
+\rem /s1 The Future Glory
+\p
+\v 18 I'm sure that any sufferings¦108710 \add we experience\add* in the present¦108712 \add age\add* are nothing in comparison with the coming splendour¦108717 that's going¦108716 to be revealed¦108718 to us
+\v 19 because¦108722 \add all of\add* creation¦108725 is eagerly¦108723 expecting¦108723 and waiting¦108732 for God's children to be revealed.
+\v 20 \x + \xo 8:20: \xt Gen 3:17-19.\x*\add Yes,\add* all of creation¦108737 has been subjected to lack of purpose, not willingly¦108740 but because¦108742 it was decided by the one who subjected it, but \add it remains with\add* the hope
+\v 21 that it too will be freed from the slavery¦108758 of corruption¦108760 and then \add released\add* into the freedom of the splendour¦108765 of God's children¦108767,
+\v 22 because¦108772 we're aware that all of creation¦108776 is groaning¦108777 and¦108778 suffering\f + \fr 8:22 \ft The word picture here is one of childbirth.\f* along with us right through to the present time¦108781.
+\v 23 \x + \xo 8:23: \xt 2Cor 5:2-4.\x*And not only that, but¦108785 we ourselves who have the initial tastes of the \nd spirit¦108792\nd* \add life\add*, we also are groaning¦108800 and like children waiting¦108802 for our¦108807 bodies to be set free from slavery
+\v 24 because we¦108811 were saved¦108811 having hope, but¦108813 if you can see it then it's not hope, because you don't¦108815 need to hope for something that you can \add already\add* see.
+\v 25 So we hope for what we can't¦108829 \add yet\add* see and \add so\add* we have to patiently keep waiting¦108834.
+\p
+\v 26 Similarly the spirit also helps \add us\add* with our¦108845 weaknesses¦108844, because¦108847 we don't¦108853 \add even\add* know what to pray for, but¦108836 the spirit intercedes¦108859 with groanings¦108862 that we can't¦108853 put into words.
+\v 27 The one who searches¦108866 our hearts¦108868 knows the mindset¦108872 of the spirit because¦108875 the spirit intercedes for the believers as \nd God¦108877\nd* desires.
+\rem /s1 More Than Conquerors
+\p
+\v 28 We know that \nd God¦108887\nd* makes all things work together¦108890 for good¦108894 for those who love him—those who are being¦108899 called¦108898 according¦108896 to \add his\add* purpose¦108897.
+\v 29 Because¦108900 those he foreknew¦108902, he also predetermined¦108904 \add to be\add* similar¦108905 to his son's image¦108907, so that \add his son\add* would become the eldest of many siblings.
+\v 30 The ones he'd predetermined¦108923 he also called, and the ones he'd called, he also declared guiltless, and the ones declared guiltless, he also honoured \add in heaven\add*.
+\s1 Nothing can separate us from God's love
+\rem /s1 God's Love in Christ Jesus
+\p
+\v 31 So¦108942 then, what can we¦108943 say about all this? If \nd God¦108948\nd* is for us, who is against¦108952 us?
+\v 32 If he didn't¦108959 spare¦108960 his own son but gave¦108965 him \add to be executed\add* for us, won't¦108959 the two of them also give us everything else?
+\v 33 Who will bring charges against¦108981 those chosen¦108982 by God? God is the one declaring \add us\add* guiltless.
+\v 34 So who's the one condemning¦108989 \add us\add*? \nd Messiah¦108993 Yeshua\nd* (the one who died¦108996 but¦108998 came back to life and who's now \add sitting\add* beside \nd God¦109009\nd*) is also pleading¦109012 \em for\em* us.
+\v 35 Who will separate¦109018 us from Messiah's love¦109022? Tribulation¦109030 or distress¦109032 or persecution¦109034 or famine¦109036 or poverty or danger¦109040 or execution?
+\v 36 \x + \xo 8:36: \xt Psa 44:22.\x*As it's been written¦109044:
+\q1 ‘We are being¦109048 put to death¦109048 all day¦109051
+\q2 on your¦109047 account¦109046.
+\q1 We were counted¦109052 like sheep¦109054 \add ready to be\add* slaughtered¦109055.’
+\m
+\v 37 But in all that, we¦109060 are more than conquerors¦109060 through¦109061 the one who loved¦109063 us.
+\v 38 \add Yes,\add* I've¦109065 been persuaded¦109065 that neither¦109068 death¦109069 or life¦109071, angels or rulers¦109075, present¦109082 or future events, powers¦109086,
+\v 39 height¦109089 or depth¦109091, or anything else in creation¦109094, will be able to separate¦109098 us from God's love¦109101 that's \add revealed\add* in our¦109112 \nd master¦109110 Messiah¦109106 Yeshua\nd*.
+\c 9
+\s1 God's right to choose
+\rem /s1 God's Election of Israel; Israel and the Gentiles in God's plan; God and His People; God's Selection of Israel; God's Sovereign Choice
+\p
+\v 1 I'm not lying¦109118—I'm speaking¦109114 truthfully¦109113 in \nd Messiah¦109116\nd*, and both my¦109123 conscience¦109122 and the holy \nd spirit¦109125\nd* agree
+\v 2 that my sorrow is extensive and¦109133 the sorrow in my heart¦109137 just won't stop
+\v 3 because¦109140 I myself¦109146 was hoping¦109139 to be a sacrifice from the \nd messiah¦109150\nd* for my brothers¦109153 and¦109153 sisters¦109153, my fellow-citizens in this world.
+\v 4 \x + \xo 9:4: \xt Exo 4:22.\x*They're the \add descendants\add* of Yisrael \add (Israel¦109162)\add* who've been adopted¦109165 as \add God's\add* children and \add God revealed \add* his power and the agreements and the Law and the \add temple\add* worship and the promises¦109183.
+\v 5 The patriarchs are \add Jewish\add* and¦109187 the \nd messiah¦109191\nd* who is over everything came from them in a body¦109196. \add May \+nd God¦109201\+nd* be\add* blessed¦109202 throughout the ages. May it¦109206 be so¦109206.
+\p
+\v 6 But it's not that God's message¦109213 has fallen¦109211. Not all of Yisrael's descendants are pro-Yisrael,
+\v 7 \x + \xo 9:7: \xt Gen 21:12.\x*nor are all of Abraham's descendants \add his\add* children¦109231, but¦109232, ‘It's through Isaak that your descendants will be counted.’
+\v 8 That isn't¦109241 \add talking about\add* worldly children—these¦109246 are God's children, but the children of the promise¦109254 are being¦109255 counted¦109255 as descendants¦109257.
+\v 9 \x + \xo 9:9: \xt Gen 18:10.\x*Because¦109259 this is the message¦109261 of the promise¦109258: ‘I will be coming¦109267 and¦109268 Sarah¦109271 will have a son.’
+\p
+\v 10 And not only that, but¦109276 also Rebekah from one pregnancy delivered \add twins, one\add* being our¦109286 ancestor Isaac¦109283.
+\v 11 \x + \xo 9:12: \xt Gen 25:23.\x*Before they were born, and \add so\add* before they could do anything good¦109293 or bad¦109295, in order¦109297 that God's choice¦109300 purpose¦109303 would stand
+\v 12 (not by actions but¦109312 by God's calling¦109315), she was told, ‘The older child will serve the younger one.’
+\v 13 \x + \xo 9:13: \xt Mal 1:2-3.\x*As it¦109327 was written¦109327: ‘I loved¦109330 Yacob¦109329 but¦109332 I hated¦109334 Esau¦109333.’
+\p
+\v 14 So¦109336 what should we¦109337 say then? Is \nd God¦109342\nd* not an impartial judge, \add i.e., unfair\add*? May it¦109344 never be,
+\v 15 \x + \xo 9:15: \xt Exo 33:19.\x*because¦109347 he said¦109349 to Mosheh: ‘I will be merciful to whoever I want, and I will have pity on anyone I want.’
+\v 16 In other words, it¦109365 doesn't depend on the willingness¦109365 or activities of the person, but¦109370 on God's mercy.
+\v 17 \x + \xo 9:17: \xt Exo 9:16 (LXX).\x*Because¦109375 in the scriptures¦109377, \add God\add* says to the king of Egypt \add (Mitsrayim)\add*: ‘I \add chose\add* you \add as king\add* so that I can demonstrate my power¦109392 through you, and so that my name¦109398 will be talked about all over the world.’
+\v 18 In other words, \add God\add* will be merciful to whoever he wants, but he hardens¦109416 whoever he wants.
+\s1 God's anger and his mercy
+\rem /s1 God's Wrath and Mercy; God's Anger and Mercy
+\p
+\v 19 So¦109422 now you'll ask me: Then how can \add God\add* blame us, because¦109426 how could anyone resist¦109430 whatever he wants to do?
+\v 20 \x + \xo 9:20: \xt Isa 29:16; 45:9.\x*Oh human, it¦109447 is you who's talking¦109443 back to \nd God¦109441\nd*? Can the creature that was made talk back to the maker and ask: ‘Why did you make me like this?’
+\v 21 Doesn't the potter¦109458 have the right to split the lump of clay and make a beautiful bowl out of half and a \add chamber pot\add* out of the other¦109472 half?
+\p
+\v 22 \add What\add* if \nd God¦109479\nd* wanted to display¦109480 his severe anger and¦109476 to demonstrate his power¦109486, but¦109476 then¦109476 showed great patience¦109491 to the objects of \add his\add* severe anger that he'd prepared¦109494 for destruction¦109496?
+\v 23 \add What if he did that\add* in order¦109498 to make the riches¦109502 of his greatness known¦109499 to the objects of \add his\add* mercy¦109509 that he'd prepared¦109511 for honour?
+\v 24 \add Yes,\add* he even called¦109516 us, not only from \add among\add* the Jews but also from non-Jews.
+\v 25 The \add prophet\add* Hosea¦109530 even wrote:\x + \xo 9:25: \xt Hos 2:23.\x*
+\q1 “I'll be calling those ‘my people’
+\q2 who are not my people,
+\q1 and I'll be calling as ‘my love’
+\q2 the \add woman¦109541\add* who was never loved.
+\q1
+\v 26 \x + \xo 9:26: \xt Hos 1:10.\x*In the place¦109549 where they¦109561 said¦109554,
+\q2 ‘You're not my¦109558 people¦109557’
+\q1 that's where they'll be called¦109561 ‘children of the living¦109564 \nd God¦109563\nd*’.”
+\m
+\v 27 \x + \xo 9:27-28: \xt Isa 10:22-23 (LXX).\x*\add The prophet\add* Yeshayah called out about Yisrael: ‘Even though the Israelis are as numerous as grains of sand, \add only\add* the minority \add of them\add* will be saved¦109586
+\v 28 because¦109588 \nd Yahweh¦109599\nd* will be abbreviating and¦109590 terminating his message¦109587 on the earth¦109602.’
+\v 29 \x + \xo 9:29: \xt Isa 1:9 (LXX).\x*As Yeshayah had previously¦109605 written: ‘If army commander \nd Yahweh¦109609\nd* hadn't left us \add some\add* descendants¦109614, we would have become¦109618 like \add the peoples\add* of Sodom¦109616 and¦109603 Amorah \add (Gomorrah¦109621)\add*.’
+\s1 The Jews' failure to believe
+\rem /s1 Israel's Unbelief; Israel and the Gospel
+\p
+\v 30 So¦109625 then, what should we¦109626 say? That non-Jews who weren't godly, reached out by faith¦109640 to achieve righteousness,
+\v 31 but¦109642 Jews who chased after righteousness¦109645 \add by obeying\add* The Law, didn't¦109649 achieve it?
+\v 32 How come? Because¦109653 \add they tried to reach it¦109653\add* by works¦109660 and not by faith¦109656. They tripped over the stumbling¦109662 stone¦109665,
+\v 33 \x + \xo 9:33: \xt Isa 28:16 (LXX).\x*as it's written¦109669:
+\q1 ‘Look¦109670, I'm laying¦109671 down a stumbling¦109675 stone¦109674 in Tsiyyon/Zion¦109673,
+\q2 a rock¦109677 \add that causes\add* offence¦109678.
+\q1 Anyone who believes¦109682 in him¦109684,
+\q2 won't¦109685 be disgraced¦109686.’
+\c 10
+\p
+\v 1 Brothers¦109687 and sisters¦109687, my heart¦109693 would be very pleased¦109690 indeed¦109689 if \add Israelis\add* would get saved, and that's what I request from \nd God¦109700\nd*.
+\v 2 I keep telling them that they're very zealous for \nd God¦109713\nd*, yet they lack know-how.
+\v 3 Because¦109721 they don't¦109719 know what God's righteousness is and they try to establish¦109731 their¦109727 own \add system\add*, they weren't covered by his righteousness.
+\v 4 The fulfilment of The Law is \nd Messiah¦109741\nd*, \add leading to\add* righteousness¦109743 for everyone¦109744 who believes¦109746.
+\s1 Salvation is for all peoples
+\rem /s1 Salvation Is for All; Salvation Is for Everyone
+\p
+\v 5 \x + \xo 10:5: \xt Lev 18:5.\x*Mosheh wrote this about the righteousness¦109752 of The Law: ‘The person¦109762 who practices¦109760 it, will live by it.’
+\v 6 \x + \xo 10:6-8: \xt Deu 30:12-14.\x*But the righteousness¦109771 \add based on\add* faith¦109770 says: ‘Don't \add speculate\add* in your¦109779 mind¦109778 about who will go up to heaven¦109784 in order to bring¦109788 \nd Messiah¦109787\nd* down,
+\v 7 and don't ask about who will be going down to the pit in order to bring¦109800 \nd Messiah¦109797\nd* up.’
+\v 8 So what does the righteousness \add based on\add* faith say? \add It says:\add* ‘The message is close to you—it's in your¦109812 mouth¦109811 and heart¦109816.’ That's the message of faith that¦109824 we've been preaching¦109825:
+\v 9 That if you speak out and confess¦109828 that \nd Yeshua\nd* is \nd Yahweh¦109836\nd* and you believe¦109842 in your¦109834 heart¦109845 that \nd God¦109849\nd* brought him¦109850 back to life from the dead¦109854, you will be saved¦109855,
+\v 10 because¦109857 it's the belief¦109858 in your mind¦109856 that leads to righteousness¦109860 and¦109862 it's the confession¦109863 from your mouth¦109861 that leads to salvation¦109865.
+\v 11 \x + \xo 10:11: \xt Isa 28:16 (LXX).\x*As the scriptures¦109869 say: ‘Anyone who believes¦109872 in him¦109874 won't¦109875 \add end up\add* disgraced¦109876.’
+\v 12 There's no distinction¦109880 between¦109881 Jew and¦109883 non-Jew, because¦109886 \add we\add* all have the same¦109887 \nd master¦109888\nd* who gives generously to everyone who makes an appeal to him¦109895,
+\v 13 \x + \xo 10:13: \xt Yoel 2:32.\x*because¦109897 everyone¦109896 who wishfully¦109900 appeals to the authority of \nd Yahweh¦109904\nd* will be saved¦109905.
+\p
+\v 14 How, then¦109915, could they appeal to a god that they don't¦109912 \add even\add* believe in? And how could they believe if they haven't \add even\add* heard¦109921 \add about him\add*? Then¦109915 how would they hear if no one was preaching¦109929 \add to them\add*?
+\v 15 \x + \xo 10:15: \xt Isa 52:7.\x*And who would be \add there\add* preaching if no one was sent¦109936 out just like it's been written¦109939: ‘It's so wonderful that these people came and¦109931 preached the good message¦109946.’?
+\v 16 But not everyone accepted the good¦109958 message¦109958, because¦109965 just like \add the prophet\add* Yeshayah wrote:\x + \xo 10:16: \xt Isa 53:1 (LXX).\x* ‘\nd Yahweh¦109967\nd*, who believed¦109969 our¦109972 report¦109971?’
+\v 17 And so faith¦109975 comes by hearing—\add ≈listening to\add* Messiah's message¦109982.
+\p
+\v 18 But¦109999 then I'd ask: Maybe they haven't heard¦109989 \add it\add*? Indeed¦109990 they have. \add It's written:\add*\x + \xo 10:18: \xt Psa 19:4 (LXX).\x*
+\q1 ‘Their¦109998 voice¦109997 went out into all the earth¦109994,
+\q1 and their¦109998 messages¦110006 went across all the world¦110004.’
+\m
+\v 19 But \add again\add* I'd ask: Didn't the Israelis know? \add Well,\add* firstly Mosheh wrote:\x + \xo 10:19: \xt Deu 32:21.\x*
+\q1 ‘I'll be making you all jealous¦110019
+\q2 using \add people\add* who are not even a nation.
+\q1 Then using a foolish nation,
+\q2 I'll be making you all angry.’
+\m
+\v 20 And Yeshayah dared to write:\x + \xo 10:20: \xt Isa 65:1 (LXX).\x*
+\q1 ‘The ones who weren't looking¦110040 for¦110040 me found¦110035 me.
+\q1 I showed myself to the ones not asking¦110047 \add about me\add*.’
+\m
+\v 21 But¦110063 to Yisrael he wrote:\x + \xo 10:21: \xt Isa 65:2 (LXX).\x* ‘All day¦110055 I stretched¦110056 out my¦110059 hands¦110058 to a people¦110061 who won't believe and who speak¦110064 against¦110064 \add me\add*.’
+\c 11
+\s1 God's mercy on the Jews
+\rem /s1 The Remnant of Israel; God's Mercy on Israel; Israel's Rejection Is Not Final
+\p
+\v 1 Therefore¦110066 I'm asking¦110065: Did \nd God¦110070\nd* push his¦110075 \add chosen\add* people¦110073 away? May it¦110079 never be, because¦110081 I also am an Israeli¦110083, a descendant of Abraham¦110087 in the tribe¦110088 of Benyamin.\x + \xo 11:1: \xt Php 3:5.\x*
+\v 2 \add No,\add* God didn't¦110100 push away his¦110096 people¦110095 that he knew before \add he chose them\add*. Or don't¦110100 you know what Eliyah wrote when he pleaded¦110109 with God to deal with Yisrael:\x + \xo 11:2-3: \xt 1Ki 19:10,14.\x*
+\v 3 ‘\nd Yahweh¦110116\nd*, they killed¦110120 your prophets¦110118 and tore down your altars¦110123, and I was left alone¦110128 and now they want to kill me!’
+\v 4 But what was the revelation¦110139 that¦110149 was given to him¦110137:\x + \xo 11:4: \xt 1Ki 19:18.\x* ‘I've kept aside seven¦110143 thousand¦110143 others who haven't worshipped Baal¦110150.’
+\v 5 So¦110152 too also at the present¦110156 time¦110157, there's a small proportion who've been chosen by \add God's\add* grace¦110161.
+\v 6 So if it's by grace, then it's no longer by their actions, otherwise¦110171 the grace wouldn't be grace \add at all\add*.
+\p
+\v 7 What's¦110193 \add the conclusion\add* then? The Israelis didn't¦110199 find what they were looking¦110194 for¦110194. Only the chosen ones reaching it and the rest were hardened¦110208
+\v 8 just like is was written¦110212:\x + \xo 11:8: \xt Deu 29:4; Isa 29:10.\x*
+\q1 ‘\nd God¦110217\nd* gave them a lethargic spirit¦110218:
+\q1 Eyes which can't see and ears which can't hear¦110228,
+\q2 \add even\add* to this very day.’
+\p
+\v 9 And as David¦110235 wrote:\x + \xo 11:9-10: \xt Psa 69:22-23 (LXX).\x*
+\q1 ‘Let their¦110240 table¦110239 become¦110237 a trap for them—
+\q2 a temptation that will pay them back.
+\q1
+\v 10 Let their eyes¦110255 be darkened¦110253 so they can't¦110258 see,
+\q1 and¦110260 their backs be bent through¦110264 all time¦110265.’
+\rem /s1 The Salvation of the Gentiles; Ingrafted Branches
+\p
+\v 11 So¦110268 now I ask: didn't¦110269 they stumble¦110270 so that they would fall? May it¦110274 never be. But because of their¦110277 disobedience, salvation¦110280 came to non-Jews in order to make \add Jews\add* envious.
+\v 12 But¦110294 if their disobedience \add led to\add* gain for the \add rest of the\add* world¦110293 and¦110294 if their loss \add led to\add* gain for the non-Jews, how much more their fullness¦110303?
+\s1 The grafting in of non-Jews
+\rem /s1 The Salvation of the Gentiles
+\p
+\v 13 But \add now\add* I am speaking¦110309 to you¦110305 all non-Jews. Since I am indeed¦110314 a missionary to the non-Jews, I take pride in my¦110323 ministry,
+\v 14 hoping that somehow¦110327 I might make my¦110329 fellow Jews envious and¦110332 might save¦110333 some of them.
+\v 15 Because¦110338 if their rejection¦110341 \add of the messiah\add* meant that \add the rest of\add* the world¦110344 would be reconciled¦110343, what else could their acceptance¦110348 bring other than \add coming back to\add* life¦110351 from the dead¦110353.
+\p
+\v 16 If the first¦110358 portion \add of dough\add* is holy, so is the lump, and¦110363 if the root is holy, so are the branches¦110370.
+\v 17 But¦110378 if some of the branches¦110375 were broken¦110376 off, and you \add non-Jews\add* who are like a wild, olive tree were grafted into them and so you too were able to share in the growth of the olive tree that was \add sourced\add* in the root,
+\v 18 then don't¦110394 brag that you're better than the branches¦110397. If you must boast, remember that you're not supporting the root, but¦110399 the root is supporting you.
+\p
+\v 19 \add Ah,\add* but then you'll say, ‘Branches were broken¦110414 off so that we could be grafted in.’
+\v 20 \add Well\add* you're right. They were broken¦110424 off because of their¦110421 unbelief¦110422, and \add it's true\add* that you're there because of your faith¦110428. But don't get a big head—maintain your reverence \add for God\add*,
+\v 21 because¦110438 if he didn't¦110446 spare the natural¦110443 branches¦110445 \add when they showed unbelief\add*, then he won't¦110446 spare you either.
+\v 22 So¦110454 you can see¦110453 both God's kindness and his severity—those who disobeyed \add experienced\add* his severity, but¦110456 you \add experienced\add* his kindness. Otherwise you too will be pruned off,
+\v 23 and¦110486 also if they turn from their unbelief¦110492, they'll be grafted \add back\add* in, because¦110495 \nd God¦110498\nd* has the power¦110494 to do that.
+\v 24 If were cut off an olive tree that's \em wild\em* by nature, and contrary¦110513 to normal practice were grafted into a \em cultivated¦110517\em* olive tree, how much more would those who naturally belong be grafted into their¦110525 own olive tree!
+\s1 God's mercy is for everyone
+\rem /s1 All Israel Will Be Saved; God's Mercy on All
+\p
+\v 25 Brothers¦110534 and sisters, I don't¦110528 want you all be to ignorant of this mystery¦110536 so that¦110553 you won't¦110528 end up becoming¦110551 proud: There's a partial hardening¦110546 coming to the Jews until¦110552 the fullness¦110555 of the non-Jews comes to pass
+\v 26 and¦110559 then all the Jews will be saved¦110563 as it's been written¦110565:\x + \xo 11:26: \xt Isa 59:20-21 (LXX).\x*
+\q1 ‘The rescuer¦110570 will be coming¦110566 out of Tsiyyon/Zion¦110568.
+\q1 He will drive ungodliness¦110574 away from Yacob¦110576.
+\q1
+\v 27 And this is my agreement¦110584 with them,\x + \xo 11:27: \xt Isa 27:9 (LXX).\x*
+\q1 whenever I might take¦110586 away their¦110589 sins¦110588.’
+\m
+\v 28 Concerning¦110590 the good¦110593 message¦110593, \add the Jews are\add* enemies¦110594 for your¦110595 sake, but concerning¦110597 being chosen, \add they are\add* loved because of \add their\add* ancestors¦110604,
+\v 29 because¦110606 God's gifts¦110608 and¦110609 his call are irrevocable.
+\v 30 You \add non-Jews\add* didn't originally believe in \nd God¦110623\nd*, but¦110626 now you've all been shown¦110627 mercy¦110627 because¦110616 of the disbelief¦110621 of these¦110629 \add Jews\add*.
+\v 31 Those \add Jews\add* disbelieved¦110635 so that¦110636 as you \add receive\add* mercy, they may also now be shown¦110643 mercy,
+\v 32 because¦110645 \nd God¦110647\nd* imprisoned¦110644 them all in disbelief¦110653 so that¦110655 he might show mercy¦110657 to everyone.
+\s1 Everything comes from God
+\rem /s1 Doxology; Praise to God
+\p
+\v 33 \x + \xo 11:33: \xt Isa 55:8.\x*\add Yes,\add* The God's wisdom¦110662 and knowledge¦110664 are both so richly deep. His¦110670 judgements¦110669 can't be understood and his¦110670 paths can't be tracked,
+\v 34 because¦110677:\x + \xo 11:34: \xt Isa 40:13 (LXX).\x*
+\q1 ‘Who can know \nd Yahweh's\nd* mind
+\q1 or become his¦110684 counsellor¦110683?’
+\q1
+\v 35 \x + \xo 11:35: \xt Yob 41:11.\x*‘Who has been able to give him something,
+\q2 so that \add God\add* now needs to repay them?’
+\m
+\v 36 \x + \xo 11:36: \xt 1Cor 8:6.\x*\add Yes,\add* because everything comes from \add God\add*, and everything comes through him and to him. May he be honoured throughout the ages. May it¦110712 be so¦110712.
+\c 12
+\s1 Different ways to serve ‘the body’
+\rem /s1 The New Life in Christ; Living Sacrifices; Christian service and the community; A Living Sacrifice to God; Life in God's Service
+\p
+\v 1 So¦110714 then, brothers¦110716 and sisters¦110716, with compassion¦110719 from God I urge you to present¦110722 your bodies¦110724 as a living¦110728 sacrifice¦110727—holy \add and\add* pleasing¦110732 to God—your logical¦110736 \add and\add* sacred¦110737 service¦110737.
+\v 2 Don't¦110740 conform¦110741 to \add the norms of\add* this age, but¦110739 be transformed¦110748 by the renewing¦110751 of your minds, then¦110739 you'll all be able to \add accept and\add* approve¦110757 God's will that's good¦110765, pleasing¦110767, and perfect¦110769.
+\p
+\v 3 Because¦110771 of the grace¦110774 which has been given¦110776 to me, I am saying¦110770 that¦110775 every¦110778 one of you should not think of yourself to be more esteemed¦110784 than what's appropriate¦110787, but rather to be sensible¦110793 about what you think of yourselves according to how much faith¦110801 \nd God¦110798\nd* has allotted¦110799 to each of you.
+\v 4 \x + \xo 12:4-5: \xt 1Cor 12:12.\x*Just like one body¦110806 has many components and¦110812 each individual component works differently,
+\v 5 so too all of us are part of one body¦110825 in \nd Messiah¦110828\nd* and¦110831 we're all parts of each other.
+\v 6 \x + \xo 12:6-8: \xt 1Cor 12:4-11.\x*\add We\add* have gifts¦110838 according to the special¦110845 grace¦110841 that¦110842 was given¦110843 to us: maybe prophecy¦110847 \add then do it\add* according to the proportion of \add your\add* faith¦110853,
+\v 7 or service \add then\add* serve, or teaching \add then\add* teach,
+\v 8 or encouraging \add then\add* encourage, or sharing¦110874 \add then\add* be generous¦110876, or leading¦110878 \add then do it\add* earnestly¦110880, or showing¦110882 mercy¦110882 \add then do it\add* cheerfully¦110884.
+\rem /s1 Love; Marks of the True Christian
+\p
+\v 9 Let your¦110885 love¦110886 be without hypocrisy, deploring evil¦110890 but being¦110891 united in doing good¦110893.
+\v 10 Be devoted¦110898 to one another in brotherly¦110895 love¦110895, preferring¦110902 to honour¦110900 one another \add above yourselves\add*.
+\v 11 Be diligent rather than reluctant¦110906 with a spirit¦110908 that's zealous¦110909 to serve the \nd master¦110912\nd*.
+\v 12 Be cheerful about \add your\add* hope, enduring¦110919 persecution and consistently praying.
+\v 13 Contribute to the needs¦110924 of the believers and practice hospitality¦110929.
+\p
+\v 14 \x + \xo 12:14: \xt Mat 5:44; Luk 6:28.\x*Bless anyone who persecutes¦110933 you¦110934—be a blesser and¦110936 not a curser.
+\v 15 Be cheerful along with others who are happy, but weep along with those who are weeping.
+\v 16 \x + \xo 12:16: \xt Prv 3:7.\x*Treat others all the same¦110947—not treating some as higher and being¦110959 condescending¦110959 to those who are poorer. Don't¦110951 act shrewdly.
+\p
+\v 17 Don't return evil to anyone¦110966, but do good to everyone¦110980.
+\v 18 If it's possible¦110982 for you¦110985 all, be at peace¦110989 with everyone¦110988.
+\v 19 Dear friends, don't take revenge on others, but¦110994 leave it to \add God's\add* severe¦110998 anger¦110998, because¦111000 it's written¦110999:\x + \xo 12:19: \xt Deu 32:35.\x* ‘\nd Yahweh¦111007\nd* says, Vengeance belongs to me—I'll¦111004 be the one to repay¦111005.’
+\v 20 \x + \xo 12:20: \xt Prv 25:21-22 (LXX).\x*But if your¦111014 enemies are hungry, then feed them, and if they're thirsty¦111018, then give them a drink¦111019, because¦111023 you'll be leaving them to their own shame and judgement.
+\v 21 Don't be overcome by evil, but overcome evil with goodness.
+\c 13
+\s1 Respect authorities and pay tax
+\rem /s1 Respect for Authority; Being Subject to Authorities; Submission to the Authorities; Duties toward State Authorities
+\p
+\v 1 Everyone¦111046 should¦111051 be subject¦111051 to the authorities who are over them because¦111054 there's¦111055 no authority except¦111057 through God and they're appointed¦111069 by God.
+\v 2 So anyone opposing¦111073 authority¦111075 has rebelled against what \nd God¦111078\nd* has instituted, and¦111082 everyone who rebels is bringing judgement¦111085 on themselves¦111084
+\v 3 because¦111088 rulers¦111089 don't evoke fear¦111092 in those doing good, just those doing evil¦111102. Oh, so you don't want to be afraid of the authorities¦111109, then¦111105 do good and¦111105 you'll receive praise¦111115 from them \add instead\add*
+\v 4 because they're God's servants for your good. But if you're doing evil, then you should \add rightly\add* be afraid because the authorities aren't¦111132 armed without reason—they're God's servants to dispense severe¦111144 anger¦111144 to those doing evil.
+\v 5 Hence it's necessary¦111154 to be subject¦111155 to them, not only \add for fear\add* of their severe¦111161 anger¦111161, but¦111162 also because of your consciences¦111166.
+\p
+\v 6 \x + \xo 13:6-7: \xt Mat 22:21; Mrk 12:17; Luk 20:25.\x*That's also why you all should pay the taxes¦111171 that you owe, because \add the authorities\add* are God's servants and work hard to do that.
+\v 7 So fulfil all of your obligations¦111185: if it's tax then pay it, or revenue then give it, or if it's respect then show it, or giving honour then do it.
+\s1 Love and obedience
+\rem /s1 Duties toward One Another; Love Fulfills God's Requirements; Love for One Another; Love, for the Day is Near
+\p
+\v 8 Don't be in debt to anyone¦111206 other than the debt of love to each other, because¦111217 those who love one another¦111214 have fulfilled¦111222 \add God's\add* law
+\v 9 which¦111223 is:\x + \xo 13:9: a \xt Exo 20:14; Deu 5:18; \xo b \xt Exo 20:13; Deu 5:17; \xo c \xt Exo 20:15; Deu 5:19; \xo d \xt Exo 20:17; Deu 5:21; \xo e \xt Lev 19:18.\x* Don't commit¦111226 adultery¦111226. Don't murder¦111228. Don't steal¦111230. Don't covet¦111234 \add what others have\add*. All of those plus¦111235 any other commands¦111240 can be summarised as: Love your¦111253 neighbour¦111252 like you love yourself¦111255.
+\v 10 If you love those near to you, you won't¦111262 do evil to them, thus love fulfills \add God's\add* law.
+\rem /s1 An Urgent Appeal
+\p
+\v 11 And since you all understand the times, it's now time to get up from your sleep¦111281 because¦111284 the time of our¦111286 salvation¦111288 is nearer¦111285 now than it was when we first¦111290 believed¦111291.
+\v 12 The night¦111293 has progressed¦111294 and the day¦111297 is getting closer, so turn away from the actions done in the darkness¦111306 and dress¦111308 in the weapons¦111313 of the light¦111315.
+\v 13 In the daytime we¦111320 have to walk¦111320 decently—not carousing¦111322 \add on the street\add* and being drunk¦111324, and not having sex and acting lustfully, not causing strife¦111330 and acting jealously¦111333.
+\v 14 Instead, cover yourselves with the \nd master¦111339 Yeshua Messiah¦111342\nd*, and don't¦111350 be giving in to physical lusts and desires¦111354.
+\c 14
+\s1 Don't condemn each other
+\rem /s1 Do Not Judge Another; Do Not Judge Others; The Danger of Criticism; The Weak and the Strong
+\p
+\v 1 \x + \xo 14:1-6: \xt Col 2:16.\x*Accept others who are faltering¦111358 in \add their\add* faith¦111360 without highlighting their wrong ideas.
+\v 2 Some people think it's ok to eat anything, while others¦111372 who are faltering¦111373 will only eat vegetables¦111374.
+\v 3 The one who eats anything shouldn't despise the other, and¦111387 the one who doesn't eat \add meat\add* shouldn't condemn the other, because¦111396 \add both\add* are accepted by \nd God¦111395\nd*.
+\v 4 Who are you to judge someone else's house¦111405 servant\add s\add*? Their own master will judge if they stand or fall, and they'll stand because¦111417 the master is able to \add help\add* them.
+\p
+\v 5 \add Similarly,\add* some people consider one day to be more important than some other day, yet others consider all the days to be alike¦111435. Each one of them should¦111441 be fully¦111441 convinced in their own minds.
+\v 6 Anyone who considers a \add certain\add* day¦111445 to be special¦111445 is thinking about \nd Yahweh\nd*. \add Likewise,\add* anyone who's eating \add meat\add* is eating to \add serve\add* Yahweh and gives thanks to God. The person who doesn't eat \add meat\add* is declining to \add serve\add* Yahweh and gives thanks to God.
+\v 7 \add Yes,\add* we don't live for ourselves and¦111484 we don't die for ourselves.
+\v 8 If we keep living then we're living for the master, and if we die, then we're dying for the master, so whether we live or die we belong to the master
+\v 9 because¦111515 \nd Messiah¦111518\nd* died¦111520 and came back to life in order¦111526 to be master¦111531 of both the dead¦111528 and the living¦111530.
+\v 10 \x + \xo 14:10: \xt 2Cor 5:10.\x*So why are you judging¦111535 fellow believers and why are you also scorning¦111543 them, because¦111548 all of us will \add end up\add* standing¦111549 in God's court of judgement.
+\v 11 As it's been written¦111555:\x + \xo 14:11: \xt Isa 45:23 (LXX).\x*
+\q1 “\nd Yahweh¦111560\nd* is telling me, ‘I am alive
+\q2 and every person will bow to me,
+\q1 and each one will confess¦111570 to \nd God¦111572\nd*.’ ”
+\m
+\v 12 So¦111574 consequently¦111573, each of us will \add need\add* to give an account¦111581 of ourselves to \nd God¦111585\nd*.
+\s1 Taking care not to make others fall
+\rem /s1 Do Not Make Others Fall; Do Not Make Another Stumble
+\p
+\v 13 So¦111587 we shouldn't¦111595 be judging each other, but rather¦111593 be judging \add ourselves\add* that¦111594 we're not causing another¦111588 believer to stumble¦111597 or \add fall into\add* temptation¦111601.
+\v 14 I know (and I'm \add totally\add* persuaded¦111604) that in \nd master¦111606 Yeshua\nd* there's no \add object\add* that's ‘immoral’\f + \fr 14:14 \ft Or (traditionally) ‘unclean’.\f* in itself¦111613, but¦111603 it only becomes ‘immoral’ to the person who evaluates it as such.
+\v 15 If a fellow believer is upset because¦111626 of the food \add you eat\add*, then you're¦111635 no longer¦111632 acting in love¦111634. Don't destroy¦111641 \add the faith of\add* someone that \nd Messiah¦111644\nd* died¦111645 for, \add just\add* for the sake of food.
+\v 16 Don't let anyone slander¦111647 the good¦111651 that you¦111649 do.
+\v 17 God's kingdom¦111656 doesn't \add consist of\add* food and drink¦111661, but¦111660 righteousness¦111663, peace¦111665, and happiness in the holy \nd spirit¦111669\nd*.
+\v 18 so \nd anyone¦111679\nd* serving¦111676 the \nd messiah¦111679\nd* in those ways pleases¦111680 \nd God¦111682\nd* and¦111683 is approved¦111684 by the people¦111687.
+\p
+\v 19 So¦111689 then, we should be pursuing¦111693 actions that lead to peace¦111692 and things that build¦111698 each other up—
+\v 20 don't be tearing¦111706 down God's work¦111708 \add just\add* on account¦111703 of food. Indeed, all foods are ‘clean¦111713’\f + \fr 14:20 \ft In Hebrew, ‘kosher’.\f* but¦111714 it's wrong for a person¦111717 to eat anything that¦111718 \add causes someone else\add* to stumble¦111720.
+\v 21 It's good to avoid eating meat or drinking¦111728 wine or \add doing\add* anything¦111730 else that¦111723 \add might\add* cause your¦111735 fellow believer to stumble¦111737 or be offended or fall.
+\v 22 \add That way\add* you keep the faith¦111743 that you have \add privately\add* before¦111749 God. \add God\add* will bless anyone who doesn't bring guilt on themselves by doing something that they've determined to be right.
+\v 23 But¦111772 anyone who doubts¦111762 that it's ok, if they eat it then they've condemned¦111766 themselves because¦111767 they're not acting in faith, and everything¦111771 that's not done in faith is sin.
+\c 15
+\s1 Living to please others
+\rem /s1 Please Others, Not Yourselves
+\p
+\v 1 We who are powerful should be bearing¦111842 the weaknesses¦111839 of the powerless rather than \add just\add* seeking to bring¦111846 pleasure¦111846 to ourselves¦111845.
+\v 2 Each one of us should¦111852 be bringing¦111852 pleasure¦111852 to those near us—displaying goodness and building¦111857 \add them\add* up,
+\v 3 \x + \xo 15:3: \xt Psa 69:9.\x*because¦111859 even the \nd messiah¦111861\nd* didn't¦111862 bring pleasure¦111864 to himself¦111863, but¦111865, as it¦111867 was written¦111867: ‘Those who were insulting you¦111872, their insults landed on me.’
+\v 4 Because¦111877 everything that was written in the past, was written for teaching¦111884 us so that through endurance¦111890 and through the encouragement from the scriptures¦111896, we would have hope.
+\v 5 May the \nd God¦111904\nd* of endurance¦111906 and¦111907 encouragement help you¦111912 all to think¦111915 likewise, just like \nd Yeshua Messiah¦111919\nd* did,
+\v 6 so that you'll all be united in your purpose and your teaching, thus honouring the \nd God¦111929\nd* and father¦111931 of our¦111934 \nd master¦111933\nd*, \nd Yeshua¦111935 Messiah¦111936\nd*.
+\s1 The good message for non-Jews
+\rem /s1 The Gospel for Jews and Gentiles Alike; The Gospel to the Gentiles
+\p
+\v 7 So¦111937 then be accepting each other just as the \nd messiah¦111945\nd* accepted all of you¦111947 so that \nd God¦111952\nd* will be honoured.
+\v 8 I can tell you that \nd Messiah¦111957\nd* became a servant¦111959 of the circumcised¦111962 \add Jews\add* so that God's truth¦111964 \add will be seen by its\add* confirming¦111968 of the promises¦111970 that were made to \add our\add* ancestors¦111972,
+\v 9 \x + \xo 15:9: \xt 2Sam 22:50; Psa 18:49.\x*and \add also a servant\add* for the non-Jews so that they'll honour¦111978 \nd God¦111980\nd* for \add his\add* mercy¦111977, as it¦111982 was written¦111982:
+\q1 ‘Because¦111983 of this I'll be telling the pagans about you,
+\q1 and I'll be singing¦111995 praises¦111995 to your¦111994 name¦111993.’
+\m
+\v 10 \x + \xo 15:10: \xt Deu 32:43.\x*\add In a different place\add* it's written:
+\q1 ‘You non-Jews, be happy along with his¦112004 people¦112003.’
+\m
+\v 11 \x + \xo 15:11: \xt Psa 117:1.\x*And again:
+\q1 ‘Praise \nd Yahweh¦112015\nd* you non-Jews,
+\q1 and¦112016 let all the peoples¦112022 \add of the world\add* praise¦112018 him¦112019.’
+\m
+\v 12 Also¦112023 Yeshayah wrote:\x + \xo 15:12: \xt Isa 11:10 (LXX).\x*
+\q1 ‘There¦112028 will be a descendant of Yishay \add (Jesse)\add*,
+\q1 and¦112033 the one coming to rule over non-Jews—
+\q2 the non-Jews will \add put their\add* hope in him¦112040.’
+\p
+\v 13 May the \nd God¦112045\nd* of hope that you believe¦112063 in fill¦112049 you all with happiness and¦112044 peace¦112059 so that your hope in the power¦112072 of the holy \nd spirit¦112073\nd* will be \add grow to be\add* plentiful¦112066.
+\s1 Paul as missionary to non-Jews
+\rem /s1 Paul the Minister to the Gentiles; Paul's Reason for Writing So Boldly
+\p
+\v 14 My¦112078 brothers¦112077 and sisters¦112077, I've¦112075 also been persuaded¦112075 about you myself¦112080, that having¦112091 been filled¦112091 with knowledge¦112094, you're also full of goodness¦112090 and able to rebuke each other.
+\v 15 But I wrote¦112102 to you more boldly¦112100, partly to remind¦112111 you all because¦112113 of the grace¦112115 given¦112117 to me by \nd God¦112122\nd*
+\v 16 so that I'd be a minister¦112128 to the non-Jews for \nd Messiah¦112129 Yeshua\nd*, sharing God's good¦112137 message¦112137 so that the offering¦112145 of the non-Jews would be acceptable¦112148 \add to him\add*, having¦112149 been purified by the holy \nd spirit¦112151\nd*. WHAT DOES THIS MEAN?
+\v 17 Therefore¦112155 I'm boasting¦112157 in \nd Messiah¦112159 Yeshua\nd* about things \add to do with\add* \nd God¦112164\nd*.
+\v 18 I wouldn't dare to speak¦112172 about anything¦112170 that wasn't done through¦112177 me by \nd Messiah¦112176\nd*, that led to the obedience¦112182 of non-Jews by \add my\add* message¦112184 and¦112185 \add by my\add* working
+\v 19 powerful miracles and amazing things in the power of God's \nd spirit¦112196\nd*, so that from Yerushalem all the way around¦112204 to Illyricum¦112207, I've obeyed the Messiah's good message¦112210.
+\v 20 I was enthusiastic to be preaching¦112217 the good¦112217 message¦112217 wherever¦112219 \nd Messiah¦112222\nd* wasn't known about so that I wouldn't be building¦112228 on other's foundations¦112227,
+\v 21 \x + \xo 15:21: \xt Isa 52:15 (LXX).\x*but¦112239 as it has been written¦112231:
+\q1 ‘Anyone who hasn't been told about him,
+\q2 they will be seeing¦112238,
+\q1 and anyone who hasn't heard¦112242 about him,
+\q2 they will be understanding¦112243.’
+\s1 Paul's desire to visit Rome
+\rem /s1 Paul's Plan to Visit Rome
+\p
+\v 22 \x + \xo 15:22: \xt Rom 1:13.\x*That's also why I wasn't able to come¦112251 \add to see\add* you¦112253 all,
+\rem /s1 Paul's Travel Plans; Paul's Plan to Visit Rome
+\v 23 but¦112255 now I no longer¦112256 have a role in those regions¦112263. I've been wanting to come¦112269 there for many years¦112275 now—
+\v 24 whenever I'm able to go to Spain¦112283 next I'm hoping¦112287 to see¦112291 you on my way, and then after \add spending time\add* with you all, you'll be able to send me on to my destination.
+\v 25 \x + \xo 15:25-26: \xt 1Cor 16:1-4.\x*But for now, I'm going¦112307 to Yerushalem to serve the believers there.
+\v 26 \add The believers in\add* Macedonia¦112318 and¦112319 Achaia¦112320 took¦112315 pleasure¦112315 in making a contribution for the poor \add people\add* among the believers \add there\add* in Yerushalem.
+\v 27 \x + \xo 15:27: \xt 1Cor 9:11.\x*They took pleasure¦112333 \add but¦112335\add* they're also in debt to them, because¦112342 if the non-Jews have shared¦112346 in \add Jewish\add* spiritual¦112344 things, then they should also minister¦112354 to them with material¦112353 things.
+\v 28 So¦112357 then, having done that and¦112359 having guaranteed \add heavenly rewards\add* for them, I will go to Spain¦112371 by way of your \add place\add*,
+\v 29 and¦112374 I know that when I come, I'll¦112386 come \add bearing\add* Messiah's full blessing¦112381.
+\p
+\v 30 So¦112388 brothers¦112390 and sisters¦112390, I'm urging you¦112389 by our¦112394 \nd master¦112393 Yeshua Messiah¦112396\nd* and by the love¦112400 of the \nd spirit¦112402\nd*, to contend¦112403 along with me in praying to \nd God¦112412\nd* for me
+\v 31 that I will escape from \add the schemes of\add* those in Yudea¦112420 who refuse to believe. Also pray that my¦112426 ministry in Yerushalem would be acceptable¦112432 to the believers there
+\v 32 so that by God's will, I can happily come¦112445 to your place and be refreshed \add there\add* with you all.
+\v 33 \add May\add* the \nd God¦112459\nd* of peace¦112461 be with all of you¦112464. May it¦112517 be so¦112517.
+\c 16
+\s1 Various personal greetings
+\rem /s1 Personal Greetings; Paul Greets His Friends
+\p
+\v 1 I'm commending¦112518 our¦112525 sister¦112523 Phoebe¦112521 to you¦112520 all—she's a servant¦112528 in the assembly¦112530 at Cenchreae.
+\v 2 You can accept¦112536 her in the \nd master¦112539\nd* as worthy¦112540 among godly people, and help her with anything she needs because¦112554 she's been a supporter¦112556 of many of us, including¦112543 myself¦112567.
+\p
+\v 3 \x + \xo 16:3: \xt Acts 18:2.\x*Greet¦112568 Priscilla and¦112571 Aquila¦112572, my¦112575 workmates in \nd Messiah¦112577 Yeshua\nd*
+\v 4 who risked their lives to save mine. It's not just me who's thankful¦112592 for them, but¦112593 also all the assemblies¦112597 of the non-Jews
+\v 5 and¦112600 the assembly¦112605 \add that meets\add* in their¦112604 house¦112603.
+\p Greet¦112606 my¦112610 dear \add friend\add* Epenetus who was one of the first¦112613 in \add the province of\add* Asia¦112616 \add Minor\add* to \add follow\add* \nd Messiah¦112619\nd*.
+\v 6 Greet¦112620 Maria¦112621 who worked hard for you¦112626 all.
+\v 7 Greet¦112628 Andronicus¦112629 and \add sister\add* Junia¦112632, my¦112635 fellow citizens and fellow prisoners with me, and who are notable¦112642 among¦112643 the ambassadors¦112645 in \nd Messiah¦112654\nd* who \add started\add* before¦112649 me.
+\p
+\v 8 Greet¦112655 Ampliatus¦112656, my¦112659 dear \add friend\add* in the \nd master¦112661\nd*.
+\v 9 Greet¦112662 Urbanus¦112663, our¦112666 fellow-worker in \nd Messiah¦112669\nd*, and¦112670 my¦112674 dear \add friend\add* Stachys¦112671.
+\v 10 Greet Apelles¦112676 who's a proven follower of \nd Messiah¦112680\nd*. Greet those from Aristobulus' \add household\add*.
+\v 11 Greet Herodion¦112687, my¦112690 fellow¦112689 citizen. Greet those in Narcissus' \add household\add* who are in the \nd master¦112699\nd*.
+\p
+\v 12 Greet Tryphena¦112701 and Tryphosa¦112703, those \add women\add* who are working for the master. Greet my dear \add friend\add* Persis¦112709, another woman who has worked for the master a lot.
+\v 13 \x + \xo 16:13: \xt Mrk 15:21.\x*Greet¦112717 Rufus¦112718 who's chosen¦112720 by the \nd master¦112722\nd* and his¦112726 mother¦112725 who also mothered me.
+\v 14 Greet¦112729 Asugkritos¦112730, Flegon¦112731, Hermes¦112732, Patrobas¦112734, Hermas¦112735, and the other brothers¦112741 and sisters¦112741 with them.
+\v 15 Greet¦112742 Filologos¦112743, Yulia¦112746, Nereus¦112747 and his¦112753 sister¦112752, and Olumpas¦112755 and all the godly people \add there\add* with them.
+\p
+\v 16 Greet¦112762 each other with a traditional kiss¦112765. All the assemblies¦112770 of the \nd messiah¦112773\nd* \add here\add* send their greetings¦112767 to all of you¦112768.
+\s1 The ending warnings
+\rem /s1 Paul's Final Instructions
+\p
+\v 17 Brothers¦112777 and sisters, I urge you to beware of those who are \add always\add* talking about faults and tempting¦112784 you all with things that are against what you've been taught¦112787. Turn away from them
+\v 18 because¦112802 such people are not serving¦112810 our¦112806 \nd master¦112805 Messiah¦112808\nd* but¦112815 rather, their own bellies, and they¦112821 are deceiving¦112821 innocent¦112825 people with their smooth¦112818 speech¦112818 and ‘blessings¦112820’.
+\v 19 I'm excited because¦112827 the \add story\add* of your¦112828 obedience¦112829 has travelled far, but¦112851 I'm wanting¦112841 you all to \add remain\add* wise about what's good¦112849 and innocent¦112850 about evil¦112854,
+\v 20 then¦112856 the \nd God¦112857\nd* of peace¦112859 will be quickly¦112872 crushing¦112860 Satan¦112863 under¦112866 your¦112870 feet¦112868.
+\s1 Final greetings
+\p \add May\add* the grace¦112874 from our¦112877 \nd master¦112876 Yeshua\nd* be with all of you.
+\p
+\v 21 \x + \xo 16:21: \xt Acts 16:1.\x*My¦112889 co-worker Timothy¦112886 sends his greetings¦112884 as do my¦112889 fellow-citizens Luke, Jason, and Sosipater¦112895.
+\p
+\v 22 I, Tertios¦112903, the one writing down this letter¦112907, greet¦112899 you¦112900 all in the \nd master¦112909\nd*.
+\p
+\v 23 \x + \xo 16:23: a \xt Acts 19:29; 1Cor 1:14; \xo b \xt 2Tim 4:20.\x*Gaios¦112912 who hosts me and all of the assembly¦112920 \add here\add*, greets you all.
+\s1 Closing
+\rem /s1 Concluding Prayer of Praise
+\p
+\v 24 ◘
+\rem /s1 Final Doxology
+\v 25 \add There's\add* one who, according to my¦112952 preaching of the good¦112951 message¦112951 and¦112953 the proclamation¦112955 of \nd Yeshua Messiah¦112959\nd*, is able to strengthen¦112948 you¦112947 all according to the revelation¦112961 of the mystery¦112962 that had been keep silent¦112965 through the ages.
+\v 26 But¦112970 he's been \add there\add* in the prophetic¦112972 scriptures¦112971, and now he's been revealed¦112966 according¦112973 to the command¦112974 of the eternal¦112976 \nd God¦112977\nd* and been made known¦112985 to all the nations¦112984 for obedience¦112979 of faith¦112980.
+\v 27 \add Now\add* may the only wise \nd God¦112988\nd* be honoured through \nd Yeshua Messiah¦112992\nd* throughout the \add remaining\add* ages. May¦113001 it¦113001 be so¦113001.

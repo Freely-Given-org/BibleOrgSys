@@ -1,0 +1,1276 @@
+\id LEV - Open English Translation—Readers' Version (OET-RV) v0.1.02
+\usfm 3.0
+\ide UTF-8
+\rem ESFM v0.6 LEV
+\rem WORDTABLE OET-LV_OT_word_table.tsv
+\h Leviticus
+\toc1 Leviticus
+\toc2 Leviticus
+\toc3 Lev.
+\mt2 The handbook of
+\mt1 Sacred Living
+\mt3 commonly known as
+\mt1 Leviticus
+\is1 Introduction
+\ip The Latin word \bk Leviticus\bk* means ‘concerning the Levites’, who were the tribe of workers and priests who God chose to serve him at the altar and in other religious ceremonies. Hebrew readers call this document ‘Vayikrā’ which is the first word in the Hebrew and means ‘And he called’ (Yahweh called Mosheh/Moses). Some European and other translations call it ‘The third book of Mosheh/Moses’.
+\ip It's presumed that Mosheh wrote this document down while they were all camped there at Mt. Sinai as mentioned in a few places: 1:1, 4:1, 6:1,24, and of 8:1.
+\ip This document focuses on the proper values and behaviour that the Israelis should observe as Yahweh's chosen and sacred people. That involved staying ‘clean’ as per Yahweh's values by carefully following his detailed instructions, and by avoiding wickedness.
+\ip Some of the instructions apply particularly to the priests (Aharon's/Aaron's descendants) and to the remainder of their own tribe (the Levites that this document is often named after) who served the priests in their sacred ceremonies.
+\iot Main components of this account
+\io1 Instructions about offerings and sacrifices \ior 1:1–7:38\ior*
+\io1 The dedication of Aharon and his sons as Yahweh's priests \ior 8:1–10:20\ior*
+\io1 Instructions about ‘clean’ and ‘unclean’ \ior 11:1–15:33\ior*
+\io1 The day for getting right with Yahweh \ior 16:1-34\ior*
+\io1 Instructions for living and worshipping as a sacred people \ior 17:1–27:34\ior*
+\rem This is still a very early look into the unfinished text of the Open English Translation of the Bible. Please double-check the text in advance before using in public.
+\ie
+\c 1
+\s1 Procedures for burnt sacrifices
+\rem /s1 Sacrifices Burned Whole; The Burnt Offering; Offerings and sacrifices; Procedures for the Burnt Offering
+\p
+\v 1 Yahweh¦46173 \add ≈summoned\add* Mosheh¦46171 \add (Moses¦46171)\add* to the \add ≈sacred¦46175\add* tent¦46175 and¦46172 \add ≈told him\add*,
+\v 2 “Tell¦46183 the \add ≈Israelis¦46182\add* that when anyone¦46186 presents an offering¦46205 to Yahweh¦46192, it must¦46184 be presented from their \add ?own\add* herd or flock¦46201.
+\v 3 If it's from the herd, it must be a bull with no¦46215 defects¦46215. It must be presented¦46223 \add ≈in front¦46226 of\add* the entrance¦46219 to the \add ≈sacred¦46221\add* tent¦46221 to be acceptable¦46225 to Yahweh¦46227.
+\v 4 \add @The owner\add* must¦46229 place his hand¦46230 on the head¦46232 of that offering¦46233 to be burnt¦46233, and¦46229 then¦46229 it will be accepted¦46234 \add ≈make him right with Yahweh\add*.
+\v 5 Then¦46239 he must slaughter¦46239 the \add ≈bull in front¦46244\add* of Yahweh¦46245, and the priests¦46249 (Aharon's \add (Aaron's¦46248)\add* descendants), must present¦46246 the blood and splash it all around¦46260 the altar¦46259 which¦46261 is by the entrance¦46263 of the \add ≈sacred¦46264\add* tent.
+\v 6 Then¦46267 \add @the presenter\add* must¦46267 skin the \add ≈bull\add* and¦46271 cut it into pieces¦46273,
+\v 7 \add ≈Meanwhile,\add* the priest¦46278 Aharon's sons must¦46275 put fire on the altar¦46282 and¦46275 arrange¦46283 wood on the fire,
+\v 8 and then¦46289 \add *they\add* must¦46289 arrange¦46289 the pieces¦46294 (including¦46298 the head¦46297 and the fat portions) on top of the burning¦46307 wood on the altar¦46311.
+\v 9 Then¦46313 \add @the presenter\add* must wash the innards and the feet with¦46316 water¦46316, and the priest¦46318 must \add place it\add* on¦46316 the altar¦46322, \add ≈ensuring that every¦46321 part is completely burnt¦46323 up\add* as a pleasing¦46327 aroma¦46325 for Yahweh¦46328.
+\p
+\v 10 “If the offering¦46344 is from the flock¦46335 (i.e., a sheep¦46339 or a goat), then it¦46347 must¦46347 be a healthy male¦46345 that's presented¦46347,
+\v 11 and then¦46349 it must be slaughtered¦46349 on the northern¦46354 side of the altar facing Yahweh¦46356, and Aharon's¦46359 sons¦46358, the priests¦46360, must splash its¦46363 blood¦46363 on the altar, all around¦46367.
+\v 12 Then¦46369 \add @the presenter\add* must cut it into pieces¦46371 and they must arrange¦46378 them (including¦46372 the head¦46374 and fat portions) on top of the burning¦46387 wood on the altar¦46391.
+\v 13 Then¦46393 \add @the presenter¦46397\add* must wash the innards and the feet with¦46396 water¦46396, and the priest¦46398 must \add place it¦46405\add* on¦46396 the altar¦46403, \add ≈ensuring that every¦46401 part is completely burnt¦46404 up\add* as a pleasing¦46408 aroma¦46407 for Yahweh¦46409.
+\p
+\v 14 “\add ≈However,\add* if his burnt¦46416 offering¦46416 to Yahweh¦46418 will be a bird, then \add ≈it must¦46419 be either a dove¦46427 or a young¦46426 pigeon¦46427\add*.
+\v 15 The priest¦46433 must¦46432 present¦46432 it at the altar, and then¦46432 twist its head off and burn¦46441 the head on the altar \add ≈as he\add* drains¦46443 the blood¦46444 out onto the \add ≈outer edge\add* of the altar.
+\v 16 Then¦46449 he must¦46449 \add ≈pull out\add* the crop with¦46453 its contents¦46453, and¦46449 throw¦46454 it down on¦46453 the eastern¦46458 side of the altar¦46457 where the ashes¦46462 are.
+\v 17 He will then¦46464 tear the bird \add mostly\add* apart¦46464 by its wings¦46466 \add ≈(but¦46464 making sure that it stays as one piece)\add*, and¦46464 \add place it\add* on¦46466 the altar¦46472, \add ≈ensuring that every part is completely burnt¦46480 up\add* as a pleasing¦46484 aroma¦46483 for Yahweh¦46485.
+\c 2
+\s1 Procedures for grain offerings
+\rem /s1 Procedures for the Grain Offering; The Grain Offering; Grain Offerings
+\p
+\v 1 “When someone¦46488 presents a grain¦46493 offering¦46493 to Yahweh¦46494, it must¦46491 be as fine, wheat flour¦46495 \add ≈mixed with\add* \add olive\add*, and with frankincense¦46503 added to the top of it.
+\v 2 It must¦46505 be taken to the priest¦46510 Aharon's sons¦46508 who will take it \add from them\add*, then¦46505 take a handful¦46514 out, being sure to get flour¦46515, oil¦46516, and some frankincense¦46520, and \add ≈throw that memorial¦46525 portion¦46525 onto\add* the altar¦46526 to get completely burnt up as a pleasing¦46529 aroma¦46528 for Yahweh¦46530.
+\v 3 Then¦46532 the rest of that grain¦46535 offering¦46535 will be for Aharon¦46536 and¦46537 his sons¦46537—it's a very sacred¦46538 part from the gifts for Yahweh¦46541.
+\p
+\v 4 “When someone presents something baked as their grain¦46547 offering¦46547, it must¦46545 be baked without leaven: either wheat flour mixed¦46553 with \add olive\add* oil and baked into flat buns, or else wheat flour biscuits¦46555 with \add olive\add* oil \add ≈spread on¦46554 top\add*.
+\v 5 Or if your¦46567 grain¦46563 offering¦46563 is done on¦46570 the flat pan, it¦46572 must¦46572 be wheat flour¦46568 mixed¦46569 with¦46570 \add olive\add* oil¦46570 \add ≈and¦46561 made into flat biscuits\add*
+\v 6 that should then be crumbled¦46574 and¦46577 have oil¦46579 poured over them as \add &your\add* grain¦46580 offering¦46580.
+\v 7 Or if your¦46588 grain¦46586 offering¦46586 is \add deep-fried\add* in¦46590 a pot, it¦46591 must¦46591 be made from wheat flour¦46589 with¦46590 \add olive\add* oil¦46590.
+\p
+\v 8 “\add Any of the above types of\add* grain¦46596 offering¦46596 to Yahweh¦46600 must¦46593 be presented¦46601 to the priest¦46604, and¦46593 he will take¦46605 it to the altar¦46608.
+\v 9 Then¦46610 he must¦46610 \add take a handful\add* as a memorial¦46617 portion¦46617 to the altar¦46619 to get completely burnt up as a pleasing¦46622 aroma¦46621 for Yahweh¦46623.
+\v 10 Then¦46625 the rest of that grain¦46628 offering¦46628 will be for Aharon¦46629 and¦46630 his sons¦46630—it's a very sacred¦46631 part from the gifts for Yahweh¦46634.
+\p
+\v 11 “Anything that's presented¦46640 to Yahweh as a grain¦46638 offering must¦46640 not be made with any rising agent, because¦46645 any leaven or honey¦46651 mustn't be burnt as a gift to Yahweh.
+\v 12 \add ≈Foods¦46663 containing those\add* can be presented as a first-fruits offering, but¦46664 they¦46669 mustn't \add ≈be burnt\add* on the altar¦46666.
+\v 13 \add ≈However,\add* every¦46687 grain offering must be salted—the salt in¦46677 the grain offering is a reminder of our agreement¦46682, \add ≈so it must always be present\add*.
+\p
+\v 14 “\add ≈Finally,\add* if you want to offer ripe grain as a grain offering to Yahweh¦46699, then it must¦46696 be a young¦46700 ear of grain that's been roasted¦46701 over the fire¦46702 and presented as a grain offering of your first¦46698 ripe grains
+\v 15 \add ≈with\add* \add olive\add* oil¦46712 on it¦46717 and¦46713 some frankincense¦46715 on top. That \add also becomes\add* a grain¦46716 offering¦46716,
+\v 16 and the priest¦46720 must¦46719 burn¦46719 a memorial¦46723 portion from it with some of the crushed¦46724 grains¦46724 and some of the oil¦46725 and some of the incense, \add to be burnt\add* to become smoke¦46719 as a gift to Yahweh¦46731.
+\c 3
+\s1 Procedures for peace offerings
+\rem /s1 The Fellowship Offering; Fellowship Offerings; Offerings of Well-Being; Procedures for the Peace Offering
+\p
+\v 1 “\add ≈Now\add* if it's a sacrifice¦46736 for a peace¦46737 offering¦46737, if it's from the \bd herd\bd*, then either a male or female¦46750 can be presented¦46744 to Yahweh¦46754 \add ≈as long as it has no¦46751 defects¦46751\add*.
+\v 2 \add @The presenter¦46761\add* must lay their hand¦46757 on the head¦46760 of the \add ≈bull or cow\add*, then¦46756 he must slaughter¦46762 it \add ≈in front of\add* the \add ≈sacred¦46764\add* tent¦46764. Then¦46756 the priest¦46769 Aharon's¦46768 sons¦46767 will splash the blood¦46772 on the altar¦46775 \add ≈on each side\add*.
+\v 3 From that¦46794 peace¦46780 offering¦46781, he must¦46778 present¦46778 the fat covering¦46786 the innards and¦46778 which¦46794 is part of the innards as a gift to Yahweh¦46782,
+\v 4 \add ≈along with both¦46800\add* kidneys and the fat that's attached to them, and the lobe on the liver¦46816 (all of which need to be removed¦46820 \add from the animal\add*).
+\v 5 Then¦46822 Aharon's¦46826 sons¦46824 must¦46822 burn¦46822 them on the wood \add ≈that's burning¦46838\add* on the altar¦46827 as a gift—to become smoke¦46822 as a pleasing¦46841 aroma¦46840 for Yahweh¦46842.
+\p
+\v 6 “\add ≈However,\add* if the sacrifice¦46851 for a peace¦46852 offering¦46850 is from the \bd flock¦46849\bd*, then either a male or a female¦46856 can be presented to Yahweh¦46853 \add ≈as long as it has no¦46857 defects¦46857\add*.
+\v 7 When the offering¦46868 is being presented, it must¦46869 be presented \add ≈in front¦46871\add* of Yahweh¦46872,
+\v 8 and \add @the presenter¦46881\add* will put his hand¦46877 on the head¦46880 of \add the animal being\add* offered¦46881, and slaughter¦46882 it \add ≈in front¦46884\add* of the \add ≈sacred¦46885\add* tent¦46885. Then¦46874 Aharon's¦46889 sons¦46888 must¦46874 splash its blood¦46892 on the altar¦46895, \add ≈on each side\add*.
+\v 9 From that¦46908 peace¦46900 offering¦46901, he must¦46898 present¦46898 the fat as a gift to Yahweh¦46902, \add ≈along with\add* the entire¦46917 fatty tail (cut off near the backbone¦46907), the fat covering¦46912 the innards and¦46898 which is part of the innards,
+\v 10 \add ≈both¦46926\add* kidneys and the fat that's attached to them, and the lobe on the liver¦46942 (all of which need to be removed¦46946 \add from the animal\add*).
+\v 11 Then¦46948 the priest¦46949 must¦46948 burn¦46948 them on the altar¦46950 as a food offering¦46952 made to Yahweh¦46953 by fire¦46952.
+\p
+\v 12 “\add ≈Similarly,\add* if the offering¦46958 is a \bd goat¦46957\bd*, then it¦46959 can be presented to Yahweh¦46961.
+\v 13 \add @The presenter\add* will put his hand¦46966 on its head¦46969, and¦46963 slaughter¦46970 it \add ≈in front¦46972\add* of the \add ≈sacred¦46973\add* tent¦46973. Then¦46963 Aharon's¦46977 sons¦46976 must¦46963 splash its blood¦46980 on the altar¦46983, \add ≈on each side\add*.
+\v 14 From that¦47002 peace offering¦46989, he must¦46986 present¦46986 the fat as a gift to Yahweh¦46990, \add ≈along with\add* the fat covering¦46994 the innards and¦46986 which¦47002 is part of the innards,
+\v 15 \add ≈both¦47008\add* kidneys and the fat that's attached to them, and the lobe on the liver¦47024 (all of which need to be removed¦47028 \add from the animal\add*).
+\v 16 Then¦47030 the priest¦47031 must¦47030 burn¦47030 them on the altar¦47032 as a food offering¦47034 made to Yahweh by fire¦47034 as a pleasing¦47036 aroma¦47035. All the fat \add ≈belongs to\add* Yahweh.
+\p
+\v 17 “\add This\add* regulation¦47042 must be permanent¦47043 for \add all\add* \add ≈future\add* generations¦47044: All of you must \add ≈never\add* eat¦47054 fat or blood¦47052.”
+\c 4
+\s1 Procedures for sin offerings
+\rem /s1 Procedures for the Sin Offering; Offerings for Unintentional Sins; Sin Offerings; The Sin Offering
+\p
+\v 1 Then Yahweh¦47058 told Mosheh¦47061 \add (Moses¦47061)\add*,
+\v 2 “Tell¦47068 the \add ≈Israelis¦47067\add* that if a person \add ≈breaks\add* any of Yahweh's¦47078 regulations unintentionally¦47075, or does anything that he said shouldn't¦47080 be done¦47081, \add then this is the procedure:\add*
+\p
+\v 3 “If it's \bd the \+add ≈high\+add* priest¦47087\bd* \add ≈who's done it\add*, \add that¦47095 causes\add* the \add ≈nation\add* to be guilty¦47090, and for his¦47094 transgression he must¦47089 present¦47092 a bull¦47097 \add ≈with no¦47101 defects¦47101\add* to Yahweh¦47102 as a sin offering¦47092.
+\v 4 He must bring¦47105 the bull before Yahweh at the entrance¦47111 of the \add ≈sacred¦47112\add* tent, then¦47105 he must place his hand on \add *its\add* head and¦47105 slaughter¦47124 \add *it\add* \add ≈in front¦47114\add* of Yahweh.
+\v 5 Then¦47131 the \add ≈high\add* priest¦47132 must¦47131 get some of the bull's¦47135 blood¦47134 and¦47131 bringing¦47136 it into the \add ≈sacred¦47140\add* tent¦47140,
+\v 6 he must dip his finger¦47147 into \add *it\add* and¦47143 seven¦47153 times¦47154 he must \add ≈flick\add* the blood \add ≈towards\add* the \add ≈front\add* of the curtain¦47160 of the sanctuary¦47161 \add ≈in¦47148 front\add* of Yahweh¦47156.
+\v 7 Then the \add high\add* priest¦47164 must put some of the blood on¦47177 the \add four\add* \add ≈projecting corners\add* of the incense altar (\add ≈located\add* inside the sacred tent \add ≈in¦47177 front¦47174\add* of Yahweh¦47175 \add and\add* used for \add burning\add* fragrant¦47173 incense). Then \add he must go back outside and\add* pour \add ≈the rest\add* of the bull's¦47184 blood out at the base of the altar for burnt¦47190 offerings¦47190 (which is \add out\add* at the entrance¦47193 to the \add ≈sacred\add* tent).
+\v 8 Then¦47197 \add @the high priest\add* must¦47204 \add ≈remove\add* all the fat from the bull¦47202 being offered as a sin¦47203 offering¦47203, \add including¦47213\add* the fat covering¦47209 the innards and¦47213 which¦47217 is a part of the innards,
+\v 9 \add ≈both¦47223\add* kidneys and the fat that's attached to them, and the lobe on the liver¦47239 (all of which need to be removed¦47243 \add from the animal\add*)
+\v 10 just \add ≈like you'd do\add* for the bull¦47247 of the peace¦47249 offering. Then the priest¦47251 must¦47250 burn¦47250 them on the altar¦47253 for the burnt¦47254 offering.
+\v 11 \add ≈However,\add* the bull's hide¦47258 and its meat¦47264, plus¦47260 it's head¦47267 and feet, and innards and dung,
+\v 12 must be taken outside¦47282 the camp¦47283 to the clean place¦47286 where they pour out the ashes, and they must \add make\add* a fire¦47297 with¦47297 wood there on¦47297 top of the ashes and burn¦47292 it there.
+\p
+\v 13 “If¦47309 it's the \bd whole community\bd* that \add unintentionally\add* transgresses by doing something that Yahweh¦47320 prohibited, then they'll be guilty¦47325 even if the community didn't¦47322 \add actually\add* notice¦47313.\x + \xo 4:13-21: \xt Num 15:22-26.\x*
+\v 14 \add ≈When¦47327\add* they become aware of \add ≈what they've done wrong\add*, then¦47327 the community must¦47327 present¦47332 a \add ≈young¦47335\add* bull¦47334 \add ≈in front¦47341\add* of the \add ≈sacred¦47342\add* tent as a sin offering¦47332.
+\v 15 Then¦47345 the community¦47347 elders¦47346 must¦47345 place their¦47350 hands¦47350 of the bull's¦47354 head¦47353 \add ≈in front¦47355\add* of Yahweh¦47356, and¦47357 slaughter¦47357 \add *it there\add*.
+\v 16 The \add ≈high\add* priest¦47365 must¦47364 take some of the bull's¦47368 blood¦47367 into the \add ≈sacred¦47371\add* tent¦47371
+\v 17 and seven¦47381 times¦47382 \add *he\add* must¦47374 dip his finger¦47376 in it and \add ≈flick\add* the blood¦47379 \add ≈towards\add* the \add ≈front\add* of the curtain¦47387 of the sanctuary \add ≈in front\add* of Yahweh¦47384.
+\v 18 Then he must put some of the blood on¦47402 the \add four\add* \add ≈projecting corners\add* of the \add incense\add* altar (\add ≈located\add* inside the sacred tent \add ≈in¦47402 front¦47399\add* of Yahweh¦47400). Then \add he must go back outside and¦47389\add* pour \add ≈the rest of\add* the bull's blood out at the base of the altar for burnt¦47413 offerings¦47413 (which is \add out\add* at the entrance¦47416 to the \add ≈sacred\add* tent).
+\v 19 Then¦47420 he must¦47424 \add ≈remove\add* all the fat from \add @the slaughtered bull\add* and¦47420 burn¦47426 up \add @that fat\add* on the altar¦47427,
+\v 20 and he should process the bull just the same as for a sin offering¦47434. Then¦47429 the priest¦47441 \add ≈will have made them right with God\add* and they'll be forgiven¦47442.
+\v 21 Then¦47445 he must¦47445 take \add the remaining parts of\add* the bull outside¦47451 the camp and burn it \add ≈as described above\add* \add and\add* it will be the sin offering¦47460 for the community.
+\p
+\v 22 “If it's \bd a leader¦47466\bd* that \add unintentionally¦47479\add* transgresses by doing something that his god¦47474 Yahweh¦47473 prohibited, then he'll be guilty¦47480.
+\v 23 \add Alternatively, maybe someone else will point out his failing\add* to him. Then he must¦47490 bring¦47490 an offering¦47493 of a male goat¦47494 \add ≈with¦47489 no¦47497 defects¦47497\add*.
+\v 24 He must¦47499 place his hand¦47500 on¦47507 \add *its\add* head¦47503 and¦47499 slaughter it in¦47507 the place where¦47508 \add the animals for\add* the burnt¦47513 offering are slaughtered. It will be a sin offering,
+\v 25 and the priest¦47520 must¦47519 take some of the blood of that sin offering and with¦47523 his finger¦47523, put some of the blood on¦47523 the \add four\add* \add ≈projecting corners\add* of the altar for burnt offerings.
+\v 26 He must¦47545 burn up all the fat on the altar¦47546 just like the fat from the peace¦47549 offering¦47549, and \add that way\add*, the priest¦47552 will make \add @that leader\add* \add ≈right with God\add* and he'll be forgiven¦47554.
+\p
+\v 27 “If it's \bd an \+add ordinary\+add* person¦47560\bd* who \add unintentionally¦47563\add* transgresses by doing¦47566 something that¦47570 Yahweh¦47569 prohibited, then they'll be guilty¦47574.\x + \xo 4:27-31: \xt Num 15:27-28.\x*
+\v 28 \add Alternatively, maybe someone else will point out their failing\add* to them. Then due to their transgression, \add @that person\add* must¦47582 bring¦47582 an offering¦47583 of a female goat¦47584 \add ≈with no¦47586 defects¦47586\add*.
+\v 29 He must¦47594 place his hand¦47597 on¦47605 the head¦47599 of the \add goat that's a\add* sin offering, and¦47594 slaughter¦47601 \add *it\add* at¦47605 the place for burnt¦47606 offerings.
+\v 30 Then¦47608 the priest¦47609 must¦47608 take some of the blood \add and\add* with¦47611 his finger¦47611, put some of the blood on¦47611 the \add four\add* \add ≈projecting corners\add* of the altar for burnt¦47617 offerings¦47617, and then¦47608 pour \add the rest of\add* the blood at¦47611 the altar's base.
+\v 31 Then¦47629 \add @the presenter\add* must¦47634 pull out all the fat (just like it's done for the peace¦47640 offering¦47640), and the priest¦47642 will \add ≈burn¦47641\add* it on the altar¦47643 to make a pleasing¦47645 aroma¦47644 for Yahweh¦47646, and to \add ≈make that person right with God\add*, and they'll be forgiven¦47650.
+\p
+\v 32 “\add ≈But¦47654\add* if it's a lamb¦47656 that \add @the individual\add* wants to bring as their sin¦47659 offering¦47659, then it must¦47657 be a female¦47660 \add ≈with no¦47661 defects¦47661\add*.
+\v 33 \add @The presenter\add* must¦47664 put their hand¦47667 on¦47674 the head¦47669 of the \add ≈lamb\add* and¦47664 slaughter it as a sin offering at¦47674 the place¦47674 where¦47675 burnt¦47679 offerings are slaughtered.
+\v 34 Then¦47681 the priest¦47682 must¦47681 take some of the blood \add and\add* with¦47685 his finger¦47685, put some of the blood on¦47685 the \add four\add* \add ≈projecting corners\add* of the altar for burnt¦47691 offerings, and then¦47681 pour \add the rest of\add* the blood at¦47685 the altar's base.
+\v 35 Then¦47703 \add @the presenter\add* must¦47708 pull out all the fat (just like it's done for the peace¦47715 offering¦47721), and the priest¦47717 will \add ≈burn¦47716\add* it on the altar¦47719 to make a pleasing aroma for Yahweh¦47722, and to \add ≈make that¦47729 person right with God\add*, and they'll be forgiven¦47732.
+\c 5
+\s1 More needs for sin offerings
+\rem /s1 Cases Requiring Sin Offerings; Sins Requiring a Sin Offering
+\p
+\v 1 “If someone¦47736 is a witness¦47744 to a case \add ≈because¦47737 of something they saw¦47746 or knew¦47748 about\add*, and hears¦47740 an oath \add in court\add* but¦47736 doesn't \add ≈testify\add*, then they'll \add ≈become guilty¦47754\add*.
+\p
+\v 2 “If someone¦47757 touches¦47759 anything ‘unclean’ (e.g., a dead domestic or wild animal¦47766, or some creature) \add ≈without realising it\add*, they \add still\add* become ‘unclean’ and is guilty¦47781.
+\p
+\v 3 “If someone touches¦47785 anything ‘unclean¦47791’ from \add another\add* person, even if they \add initially\add* \add ≈didn't realise what it was\add*, they become guilty¦47797.
+\p
+\v 4 “If someone¦47800 makes a rash promise, whether it's to do something good¦47808 or something bad, and even if they were \add just\add* speaking¦47811 carelessly but¦47814 find out \add later\add*, they become guilty¦47819.
+\p
+\v 5 “\add ≈So¦47823 then¦47823\add* \add @the person\add* that became guilty¦47826 from any of the above, must¦47826 confess¦47829 their wrongdoing
+\v 6 and present a penalty¦47837 to Yahweh¦47838 to address that¦47841 wrongdoing, and must¦47834 present a female lamb¦47847 or young goat¦47850 as a sin offering¦47852, and the priest¦47855 will \add act on their behalf\add* \add ≈to make them right with God\add*.
+\p
+\v 7 “\add ≈However if that¦47870 person can't¦47860 afford\add* a sheep¦47865, then¦47858 for their guilt¦47869 offering because of \add ≈their transgression\add*, they must¦47861 bring¦47866 two doves or \add ≈young¦47877\add* pigeons to Yahweh¦47880—one for a sin¦47882 offering and¦47858 one for a burnt¦47884 offering.
+\v 8 \add @The presenter\add* must¦47886 take them to the priest¦47890 who will present the sin¦47895 offering¦47891 first¦47896—twisting \add @the bird's\add* head¦47900 off from the neck, \add ≈but¦47886\add* not \add ≈pulling\add* the body \add in half\add*.
+\v 9 Then¦47906 he must¦47906 sprinkle¦47906 some of the blood from that sin offering onto the side of the altar, and¦47906 then¦47906 drain¦47915 out the rest of the blood at¦47914 the altar's base. That will be the sin offering.
+\v 10 The second¦47925 \add >bird\add* will be for a burnt¦47927 offering¦47926 as per the regulation¦47928. The priest¦47931 will make \add @the presenter\add* \add ≈right with God\add* after their wrongdoing, and¦47923 they'll be forgiven¦47936.
+\p
+\v 11 “\add ≈However if that¦47956 person still can't¦47942 afford\add* those two doves or \add ≈young¦47949\add* pigeons, then they can present¦47955 a kilogram of fine wheat flour¦47960 for a sin offering. It mustn't have oil¦47966 or frankincense¦47971 in it because¦47972 it's a sin offering.
+\v 12 \add @The presenter\add* must¦47976 take it to the priest¦47979 who will then¦47976 take a handful of it, and¦47976 burn¦47989 that memorial¦47988 portion¦47988 on the altar¦47990 for burnt offerings¦47992 to Yahweh¦47993. That will be the sin¦47994 offering.
+\v 13 The priest will make \add @the presenter\add* \add ≈right with God\add* after their wrongdoing as per one of the above, and¦47997 they'll be forgiven¦48008. \add The rest of\add* \add @the flour\add* will be for the priest, similar to a grain¦48012 offering¦48012.”
+\s1 More on guilt offerings
+\rem /s1 Repayment Offerings; The Guilt Offering; Procedures for the Guilt Offering; Offerings with Restitution
+\p
+\v 14 Then Yahweh¦48016 told Mosheh¦48019 \add (Moses¦48019)\add*,
+\v 15 “If¦48035 someone acts unfaithfully¦48025 \add ≈but¦48027\add* unintentionally¦48028 \add ≈desecrates something that's sacred¦48029\add* to Yahweh¦48030, then because¦48023 of their guilt, \add @that person\add* must¦48025 present ram \add ≈with¦48028 no¦48037 defects¦48037\add* from the flock¦48040, or silver¦48042 \add ≈coins using the official valuation¦48041\add*, as a guilt offering.
+\v 16 They must also compensate for the sacred¦48055 item, but¦48050 with an extra twenty¦48059 percent¦48060. That must all be given to the priest who will make \add @the presenter\add* \add ≈right with God\add* with that¦48051 ram as the guilt¦48069 offering¦48069, and¦48050 they'll be forgiven¦48070.
+\p
+\v 17 “If someone¦48076 transgresses by violating¦48079 \add even\add* one of Yahweh's¦48084 \add ≈regulations or prohibitions\add*, even if they didn't¦48086 realise it¦48078, they become guilty and must¦48078 bear responsibility for that¦48085 guilt.
+\v 18 Then¦48095 \add @that person\add* must¦48095 take a ram from the flock¦48100 that \add ≈has no¦48097 defects¦48097\add* to the priest for a guilt¦48102 offering¦48102. Then the priest will make \add @the presenter\add* \add ≈right with¦48101 God\add* after that transgression (even if they weren't aware of it), and¦48095 they'll be forgiven¦48118.
+\v 19 That's a guilt offering¦48121, because they were clearly guilty before Yahweh¦48125.”
+\c 6
+\rem /s1 Sins Requiring a Guilt Offering
+\p
+\v 1 Then Yahweh¦48271 told Mosheh¦48274 \add (Moses¦48274)\add*,\x + \xo 6:1-7: \xt Num 5:5-8.\x*
+\v 2 “Someone who transgresses against Yahweh by \add ≈cheating\add* with respect to a deposit or a pledge, or by theft or extortion,
+\v 3 or by finding lost property and then denying it¦48324, or making an oath that was knowingly false, or by any other typical transgression that people do,
+\v 4 then they've become guilty as a result of that transgression. \add @That person\add* must¦48337 return what was stolen or extorted, or \add ≡return\add* the deposit or the lost property,
+\v 5 or \add ≈make amends for a false oath\add*. They must¦48362 return the full value plus¦48358 an extra twenty percent \add ≈as soon as the guilt is discovered\add*.
+\v 6 Then \add @that person\add* must¦48384 take a ram from the flock \add ≈with no defects\add* to the priest as a guilt offering to Yahweh,
+\v 7 and the priest will make \add @the presenter¦48397\add* \add ≈right with Yahweh¦48403\add* after whatever that transgression was to make them guilty, and they'll be forgiven.
+\s1 The fire and the ashes
+\rem /s1 Further Instructions for the Burnt Offering; Sacrifices Burned Whole; The Burnt Offering; Instructions concerning Sacrifices
+\p
+\v 8 Then Yahweh¦48429 told Mosheh,
+\v 9 “Tell Aharon \add (Aaron¦48435)\add* and his sons¦48436 that these are the \add #regulations\add* for the burnt \add #offerings\add*: The burnt offering must remain¦48432 on the altar's hearth, on the altar all night until the morning and the fire \add ≈must be kept burning\add* on it.
+\v 10 Then¦48452 the priest must¦48449 \add ≈put on\add* his linen underwear and linen robe and \add ≈remove\add* the fatty ashes from the burnt \add #offerings\add* on the altar, and pile them beside \add *it\add*.
+\v 11 \add ≈After that\add*, he'll \add ≈get changed again into his regular\add* clothes and take \add &those\add* ashes outside the camp to a ‘clean’ place.
+\v 12 \add ≈Meanwhile,\add* the fire on the altar must be kept burning—it must never go out. Every morning the priest must put more wood on the fire, then he must arrange more offerings on the fire—he should burn the fat of the fellowship offerings on that fire so the smoke rises.
+\v 13 \add Yes,\add* the fire must¦48497 burn continually¦48506 on¦48508 the altar—never going out.
+\s1 Procedures for the grain offering
+\rem /s1 Further Instructions for the Grain Offering; The Grain Offering; Grain Offerings
+\p
+\v 14 “Here's the regulations for the grain¦48521 offering¦48521: Aharon's sons must¦48517 present¦48523 it \add ≈before\add* Yahweh¦48527 \add ≈in¦48516 front\add* of the altar.
+\v 15 \add @The priest¦48530\add* must¦48534 take a handful of the flour from that grain offering¦48534, being sure it includes some of the oil and the incense, and burn it on the altar as a memorial portion¦48536 to become a pleasing aroma for Yahweh¦48539.
+\v 16 The remainder \add of that flour\add* will be \add ≈used as food\add* for Aharon and¦48544 his sons—they must¦48549 eat the flat bread in a sacred place, i.e., in the courtyard of the \add ≈sacred\add* tent.
+\v 17 It must not be baked with any rising agent. I give that to them from \add ≈what's given to me\add*. It's \add ≈very\add* sacred just like the sin offering and¦48555 the guilt offering.
+\v 18 Any of Aharon's male descendants can eat it—it'll be their portion from Yahweh's gifts throughout the generations. Anyone who touches \add @Yahweh's gifts\add* will become sacred¦48582 \add themself\add*.”
+\s1 Procedures for the ordination offering
+\rem /s1 Procedures for the Ordination Offering
+\p
+\v 19 Then Yahweh told Mosheh,
+\v 20 “On the day when one of Aharon's male descendants is consecrated as a priest, this is what he must¦48602 present to Yahweh: a continual grain offering of a kilogram of fine wheat flour—half for the morning and half for the evening.
+\v 21 It must be mixed with \add olive\add* oil then cooked with oil on¦48629 a flat pan. It must then be broken¦48626 into pieces and presented as a grain offering to make a pleasing aroma for Yahweh.
+\v 22 The priest who's next in¦48640 line to become \add ≈high\add* priest must offer it and it must be completely burnt for Yahweh. This is a permanent regulation.
+\v 23 Any grain offering¦48650 by a priest must be completely burnt¦48663—it must not be eaten¦48661.”
+\s1 Procedures for the sin offering
+\rem /s1 Sin Offerings; Further Instructions for the Sin Offering; The Sin Offering
+\p
+\v 24 Then Yahweh told Mosheh,
+\v 25 “Tell Aharon and his sons that these are the \add #regulations\add* for the sin \add #offerings\add*: The sin offering must be slaughtered \add ≈in front\add* of Yahweh at the place where the burnt \add #offerings\add* are slaughtered. It's a \add ≈very\add* sacred \add activity\add*.
+\v 26 The priest who offers the sin offering \add ≈must be the one to eat it\add*. It must be eaten in a sacred place, i.e., in the courtyard of the \add ≈sacred\add* tent.
+\v 27 Everything that touches the \add animal's\add* body will become sacred. Anyone who \add ≈gets the blood on their\add* clothes, must wash them in a sacred place.
+\v 28 Any clay pot that it's been boiled in, must then be shattered, but if it's boiled in a bronze pot, then that must be scoured and rinsed with water.
+\v 29 Any male in the priests' \add families\add* may eat it—it's \add ≈very\add* sacred.
+\v 30 \add ≈However,\add* every sin offering that has its blood taken inside the \add ≈sacred\add* tent to make \add ≈someone right with God\add*, then that \add meat\add* mustn't be eaten—it must be completely burnt up.
+\c 7
+\s1 Procedures for the guilt offering
+\rem /s1 Repayment Offerings; The Guilt Offering; Further Instructions for the Guilt Offering
+\p
+\v 1 “Then these are the \add #regulations\add* for the \add ≈very\add* sacred¦48669 guilt¦48668 \add #offerings\add*:
+\v 2 The guilt¦48682 offering must be slaughtered at the same place¦48673 as the burnt¦48678 \add #offerings\add*, and¦48683 the blood¦48685 must be splashed on \add ≈each side of\add* the altar¦48689.
+\v 3 \add @The presenter\add* must¦48696 present all the fat \add including¦48700\add* the fatty tail, the fat covering¦48703 the innards,
+\v 4 \add ≈both¦48709\add* kidneys and the fat that's attached to them, and the lobe on the liver¦48725 (\add ≈all of which\add* need to be removed¦48729 \add from the animal\add*).
+\v 5 Then¦48731 the priest¦48733 must¦48731 burn¦48731 those on the altar¦48734 as a guilt¦48737 offering to Yahweh¦48736.
+\v 6 Any male¦48742 in¦48743 the priests' \add families\add* may eat¦48744 it—it's \add ≈very\add* sacred¦48746.
+\v 7 The regulations are the same for the guilt offering as for the sin¦48752 offering—the priest¦48757 who \add ≈offers the guilt offering\add* \add ≈must¦48759 be the one to eat it\add*.
+\p
+\v 8 “Whenever a priest presents someone's burnt offering, the skin¦48771 of the animal that was presented belongs¦48777 to that priest.
+\v 9 Any grain¦48781 offering¦48781 that's baked¦48783 in an oven, or cooked in a pan or on¦48784 a griddle, will belong¦48796 to the priest¦48792 who presents¦48793 it.
+\v 10 Any grain¦48800 offering¦48800 that's either dry or mixed¦48801 with¦48803 oil¦48803, belongs¦48809 to all of Aharon's male descendants \add ≈without any distinction\add*.
+\s1 Procedures for the peace offering
+\rem /s1 The Fellowship Offering; Further Instructions; Fellowship Offerings; Further Instructions for the Peace Offering
+\p
+\v 11 “Then these are the \add #regulations\add* for sacrificing¦48816 peace¦48817 offerings¦48817 to present¦48819 to Yahweh¦48820:
+\v 12 If it's presented \add ≈from thankfulness\add*, then the sacrifice¦48831 \add ≈must¦48826 be accompanied by\add* thanksgiving flat bread buns (\add made from flour\add* mixed with \add olive\add* oil), and flat biscuits¦48837 smeared¦48839 with oil, and buns \add made from\add* fine wheat flour mixed with oil,
+\v 13 \add ≈plus\add* risen bread¦48850 rolls. \add All that\add* must¦48852 accompany the peace¦48858 offering¦48853 \add ≈from thankfulness¦48857\add*.
+\v 14 Then¦48860 he must¦48860 present one of each \add kind of bread\add* as a contribution¦48866 to Yahweh¦48867. Those will belong¦48875 to the priest¦48868 who splashes the blood¦48872 for the peace¦48873 offerings¦48873.
+\v 15 The meat of the thankfulness¦48879 sacrifice¦48878 of those peace¦48880 offerings¦48880 must¦48883 be eaten¦48883 the \add ≈same day¦48881 that it's offered—none of can be left\add* until¦48888 morning¦48890.
+\v 16 \add ≈However,\add* if the sacrificed offering is a vow or freewill¦48897 offering, then¦48892 it can be eaten that same day and¦48892 \add also\add* the next day,
+\v 17 \add ≈but¦48911\add* any left-over meat must¦48917 be burnt¦48917 up on the fire¦48916 on the third¦48915 day¦48914.
+\v 18 If any of that meat from the sacrifice¦48924 was eaten on the third¦48927 day¦48926, the presenter¦48930 won't be accepted¦48929 and \add ≈they won't be forgiven\add*. It is spoilt, and anyone¦48930 who eats¦48938 any of it will bear their own \add ≈guilt\add*.
+\v 19 If any meat touches¦48946 anything that's ‘unclean¦48949’, then¦48943 it must not be eaten—it must be burnt¦48953 up in¦48952 the fire¦48952. \add ≈However,\add* any long as the meat remains ‘clean’, it can be eaten by any person who's ‘clean’.
+\v 20 If¦48969 a person who was ‘unclean¦48970’ were to eat any of the meat from the sacrifice¦48966 for a peace¦48967 offering¦48967, then¦48961 that¦48968 \add >person\add* must¦48964 be cut off from \add ≈the community\add*.
+\v 21 \add ≈Similarly,\add* when a person touches¦48980 anything ‘unclean’ (e.g., human¦48985 uncleanness, or an unclean animal¦48988, or a detestable¦48993 creature¦49003), and¦48977 then¦48977 they eat some of the meat of the sacrifice¦48998 for a peace¦48999 offering¦48999 that \add now\add* belongs to Yahweh¦49001, that \add >person\add* must¦48980 be cut off from \add ≈the community\add*.
+\s1 Don't eat fat or blood
+\rem /s1 Eating Fat and Blood Forbidden; The Forbidden Blood and Fat
+\p
+\v 22 Then Yahweh¦49009 told Mosheh¦49012,
+\v 23 “Tell¦49019 the \add ≈Israelis¦49018\add* that you all must not eat¦49028 the fat from \add #cattle or sheep¦49025 or goats\add*,
+\v 24 ⇔plus you all definitely must¦49034 not eat the fat from an animal \add ≈that died naturally or was killed by wild animals although you can use it for other purposes\add*.
+\v 25 Anyone¦49045 who does eat the fat from an animal presented¦49051 as a gift to Yahweh¦49054 must¦49051 be cut off from \add ≈the community\add*.
+\p
+\v 26 “\add ≈Also¦49060,\add* you all must not eat¦49064 blood¦49062 from either a bird or an animal¦49068, \add ≈no matter where you're living¦49066\add*.\x + \xo 7:26-27: \xt Gen 9:4; Lev 17:10-14; 19:26; Deu 12:16,23; 15:23.\x*
+\v 27 Any person¦49072 who does eat¦49075 blood¦49078 must¦49075 be cut off from \add ≈the community\add*.”
+\s1 The priests' portions
+\rem /s1 The Priests' Share; A Portion for the Priests
+\p
+\v 28 Then Yahweh¦49086 told Mosheh¦49089,
+\v 29 “Tell the \add ≈Israelis¦49095\add* that anyone¦49098 who offers a peace offering to Yahweh must¦49104 take \add ≈some of it as\add* his peace offering to Yahweh.
+\v 30 They must¦49113 \add ≈personally carry\add* Yahweh's¦49116 gift \add which will be\add* the breast with its fat and raise it \add ≈in front¦49129\add* of Yahweh as a wave offering¦49115,
+\v 31 and the priest¦49133 must¦49132 burn¦49132 that fat up on the altar¦49137 \add ≈but¦49132\add* the breast¦49139 will be for Aharon¦49140 and his sons¦49141.
+\v 32 The right¦49145 thigh¦49144 from the sacrifices¦49149 of your peace¦49150 offerings¦49150 must¦49146 be given to the priest¦49148—
+\v 33 whichever \add ≈priest (Aharon's¦49161 descendant) who handled\add* the blood¦49155 of the peace¦49156 offerings¦49152 and¦49157 the fat, that right¦49165 thigh¦49164 will be his portion¦49166
+\v 34 because I took the breast¦49171 from the wave offering and the thigh¦49175 from the contribution¦49176 of the \add ≈Israelis'\add* peace¦49183 offerings¦49183, and I gave¦49184 them to Aharon the priest¦49187 and his sons as an ongoing portion¦49189 from the \add ≈Israeli¦49179 people\add*.
+\v 35 That's the share¦49197 for Aharon and¦49199 his sons¦49200 from the gifts to Yahweh since Mosheh presented¦49204 them to Yahweh as priests¦49206.
+\v 36 Yahweh¦49211 commanded¦49210 them to be given¦49212 to them \add back\add* on the day¦49214 when he anointed¦49215 them out of all the \add ≈Israeli¦49218 people¦49218\add* \add and made it\add* a permanent¦49221 regulation for \add future\add* generations¦49222.
+\p
+\v 37 \add #Those are the regulations\add* for the burnt¦49226 \add #offerings\add*, the grain¦49227 \add #offerings\add*, the sin¦49228 \add #offerings\add*, the guilt¦49229 \add #offerings\add*, the ordination¦49230 \add #offerings\add*, and the peace¦49232 \add #offerings\add*
+\v 38 that Yahweh \add ≈gave to\add* Mosheh¦49239 at¦49240 Mt¦49240. Sinai on¦49240 the day¦49242 when he ordered¦49235 the \add ≈Israelis¦49246\add* to present¦49248 their¦49251 offerings¦49251 to Yahweh \add when they were there\add* in¦49240 the Sinai wilderness¦49253.
+\c 8
+\s1 Ordination of Aharon and his sons
+\rem /s1 The Rites of Ordination; Ordination of the Priests; The priesthood; The Ordination of Aaron and His Sons
+\r (Exo. 29:1-37)
+\p
+\v 1 Then Yahweh¦49258 told Mosheh¦49261 \add (Moses¦49261)\add*,
+\v 2 “Take Aharon \add (Aaron¦49267)\add* and his sons¦49270 with their clothes¦49273 and the anointing¦49276 oil¦49275, and the bull¦49279 for the sin¦49280 offering¦49280 and two¦49282 rams, and a basket¦49285 of unleavened¦49286 bread¦49286,
+\v 3 and¦49288 assemble¦49292 the entire¦49289 \add ≈community\add* at the entrance¦49295 to the \add ≈sacred¦49296\add* tent¦49296.”
+\p
+\v 4 \add ≈So¦49299\add* Mosheh¦49300 did exactly has Yahweh¦49303 had commanded¦49302 him, and¦49305 the \add ≈people\add* assembled¦49305 at the entrance¦49309 of the \add ≈sacred¦49310\add* tent¦49310.
+\v 5 Then¦49313 Mosheh¦49314 told the \add ≈assembled people\add*, “This \add ceremony\add* is what Yahweh¦49323 has told us to do.”
+\p
+\v 6 Then¦49326 Mosheh¦49327 presented¦49326 Aharon¦49330 and his sons¦49333 and \add after\add* washing them with water¦49336,
+\v 7 he put the tunic¦49342 on \add @Aharon\add* and wrapped the sash¦49345 \add around\add* him, and then¦49338 put the robe¦49350 on him. Then¦49338 he put the sacred apron on him, tying \add *its\add* finely woven waistband to fasten it onto him.
+\v 8 Then¦49364 he \add ≈attached\add* the chest pouch and put the Urim and Tummim into the pouch.
+\v 9 \add ≈Finally\add* he placed the turban on his head¦49386, and¦49380 fastened the golden¦49397 flower-shaped plate¦49396 (that sacred¦49399 crown¦49398 that demonstrates that Aharon is set apart to only serve Yahweh) to the front¦49393 of the turban, exactly as Yahweh had instructed¦49401 Mosheh¦49405.
+\p
+\v 10 Then¦49407 Mosheh¦49408 took¦49407 the anointing oil¦49411 and anointed \add &Yahweh's\add* residence and everything in it, thus consecrating¦49424 \add ≈it all\add*.
+\v 11 Seven times¦49433 he flicked some of it onto the altar—anointing¦49434 the altar and all its utensils¦49442 and the basin and its base, thus consecrating them.
+\v 12 He poured¦49451 some of the anointing oil¦49452 over Aharon's head¦49455, thus anointing him to consecrate him.
+\v 13 Then¦49461 Mosheh presented¦49461 Aharon's sons¦49465 and dressed them in tunics¦49468 and wrapped sashes around each of them, and tied their headbands onto them, just as Yahweh¦49477 had instructed¦49476 Mosheh.
+\p
+\v 14 Then¦49482 he brought¦49482 the bull for the sin offering, and Aharon¦49487 and his sons placed their¦49491 hands¦49491 on \add *its\add* head.
+\v 15 Then \add ?@Aharon\add*\f + \fr 8:15 \ft It's not 100% clear from the Hebrew if the pronoun here refers to Aharon or to Mosheh, but as Mosheh's name is specifically mentioned in the next clause, we assume that ‘he’ was still referring to Aharon here.\f* slaughtered it, and Mosheh took the blood and used his finger¦49510 to put some on the \add four\add* \add ≈projecting corners\add* of the altar, thus purifying the altar. Then he poured¦49518 \add the rest of\add* the blood out at the altar's base, sanctifying it \add ≈so it could be used for making people right with God\add*.
+\v 16 Then¦49548 \add @Mosheh\add* took¦49527 all the far that¦49533 was on the innards and the lobe of the liver¦49539, and the two¦49542 kidneys¦49543 and their¦49546 fat, and \add *he\add* burnt them up on the altar¦49549.
+\v 17 \add ≈However¦49572,\add* he burnt¦49563 up \add the rest of\add* the bull¦49553 \add ≈including¦49554\add* its hide¦49556, flesh¦49559, and¦49551 dung, outside¦49565 the camp¦49566, just as Yahweh¦49569 had told¦49568 \add *him\add*.
+\p
+\v 18 Then¦49574 \add @Mosheh\add* presented¦49574 the ram for the burnt¦49577 offering¦49577, and Aharon¦49579 and his sons¦49580 placed their¦49583 hands¦49583 on its head¦49586.
+\v 19 Then¦49589 \add ?@Aharon\add*\f + \fr 8:19 \ft It's not 100% clear from the Hebrew if the pronoun here refers to Aharon or to Mosheh, but as Mosheh's name is specifically mentioned in the next clause, we assume that ‘he’ was still referring to Aharon here.\f* slaughtered it, and¦49590 Mosheh splashed the blood¦49594 on \add ≈each side of\add* the altar¦49597.
+\v 20 Then¦49600 \add ?@Aharon\add*\f + \fr 8:20 \ft Again it's not 100% clear from the Hebrew if the pronoun here refers to Aharon or to Mosheh, but as Mosheh's name is specifically mentioned in the next clause, we assume that ‘he’ was referring to Aharon (and possibly including his sons) here.\f* cut the ram into pieces, and Mosheh burnt up the head¦49609, and the pieces and the fat.
+\v 21 \add ≈However,\add* \add ?@Aharon\add*\f + \fr 8:20 \ft Again it's not 100% clear from the Hebrew if the pronoun here refers to Aharon or to Mosheh, but as Mosheh's name is specifically mentioned in the next clause, we assume that ‘he’ was referring to Aharon here.\f* washed¦49623 the innards and¦49617 the legs, then¦49617 Mosheh \add also\add* burnt \add *those\add* up on the altar¦49632 as a burnt offering that was pleasing¦49637 aroma¦49635 for Yahweh, just as Yahweh had \add ≈instructed¦49642\add* Mosheh.
+\p
+\v 22 Then¦49648 \add ?@Mosheh\add* presented¦49648 the second¦49652 ram for the ordination offering¦49654, and Aharon¦49656 and his sons¦49657 placed their¦49660 hands¦49660 on the ram's head¦49663.
+\v 23 Then¦49666 \add ?@Aharon\add*\f + \fr 8:19 \ft It's not 100% clear from the Hebrew if the pronoun here refers to Aharon or to Mosheh, but as Mosheh's name is specifically mentioned in the next clause, we assume that ‘he’ was still referring to Aharon here.\f* slaughtered it, and Mosheh took¦49668 some of its blood¦49670 and put it on the lobe of Aharon's right ear¦49675, on his right thumb¦49681, and on his right big¦49686 toe¦49686.
+\v 24 Then he presented¦49690 Aharon's sons and put some of the blood on their right earlobes, and their right thumbs¦49707, and their right big toes. Then Mosheh splashed the blood on \add ≈each side of\add* the altar¦49722.
+\v 25 He \add ≈collected\add* the fat and the fatty tail, and all the fat that¦49737 was on the innards and the lobe of the liver¦49743, and the two¦49746 kidneys¦49747 with their¦49750 fat, and the right¦49753 thigh¦49752,
+\v 26 Then¦49755 from the basket¦49755 of unleavened bread that was there \add ≈in front¦49759\add* of Yahweh¦49760, he took one flat bread bun, and one flat bread that had been smeared with oil, and one flat biscuit, and placed them on \add top of\add* the fat and the right¦49777 thigh¦49776.
+\v 27 He place \add ≈all that\add* onto the \add ≈open hands\add* of Aharon and¦49779 his sons¦49788 who raised them as a wave offering \add ≈in front¦49792\add* of Yahweh¦49793.
+\v 28 Then¦49795 Mosheh¦49796 took \add ≈it all again\add*, and¦49795 burnt it all up on the altar¦49801 with the burnt offering. That ordination offering on the fire¦49809 became a pleasing¦49808 aroma¦49807 for Yahweh¦49811.
+\v 29 Then¦49813 Mosheh took the breast¦49817 \add meat\add* from the ram for the ordination offering, and¦49813 raised it as a wave offering \add ≈in front¦49820\add* of Yahweh, just as Yahweh had \add ≈instructed¦49828\add* \add *him\add*.
+\p
+\v 30 Then¦49834 Mosheh¦49835 took some of the anointing¦49837 oil¦49836 and some of the blood¦49840 from on the altar¦49844, and he \add ≈flicked\add* them onto Aharon and his clothes, his sons and \add *their\add* clothes, thus consecrating¦49860 Aharon and his clothes, and his sons and \add *their\add* clothes.
+\p
+\v 31 Then¦49876 Mosheh¦49877 told¦49901 Aharon and his sons, “Boil the meat at the entrance¦49888 to the \add ≈sacred¦49889\add* tent and eat it, along with the \add flat\add* bread¦49896 that's in the basket¦49898 \add ≈as part of\add* the ordination offering¦49899, just as I \add ≈had instructed¦49901 that\add* Aharon and his sons should eat it.
+\v 32 \add ≈Any\add* meat or bread¦49909 \add ≈that's leftover\add* must¦49911 be burnt in the fire¦49910.
+\v 33 None of you may leave the entrance¦49913 to the \add ≈sacred¦49914\add* tent for seven days. \add That's because¦49925\add* \add @Yahweh\add* will ordain you all over those seven days.
+\v 34 What's been done¦49934 today has been \add ≈initiated\add* by Yahweh¦49938 in order to make \add ≈you all right with him\add*,
+\v 35 \add ≈so\add* remain¦49946 here day¦49947 and night¦49948 at the entrance¦49943 of the \add ≈sacred¦49944\add* tent¦49944 for seven¦49949 days¦49950 as per Yahweh's¦49955 \add ≈instructions¦49961\add* and you all won't¦49956 die¦49957, because¦49958 that's what I've¦49961 been commanded¦49961.”
+\v 36 \add ≈So¦49963\add* Aharon¦49964 and¦49963 his sons¦49965 did everything that¦49970 Yahweh¦49973 had instructed¦49972 them via Mosheh¦49976.
+\c 9
+\s1 The priests start their duties
+\rem /s1 Aaron Offers Sacrifices; Aaron's Priesthood Inaugurated; The Priests Begin Their Work; The Priests Begin Their Ministry
+\p
+\v 1 On the eighth¦49981 day¦49980, Mosheh¦49983 summoned¦49982 Aharon and his sons¦49985, along with Yisrael's elders¦49986,
+\v 2 and he told Aharon, “Get a healthy, \add ≈young¦49997\add*, male calf for a sin offering for yourself¦49995, and a ram \add ≈without¦50003 defects¦50003\add* for a burnt¦50002 offering, and present¦50004 them to Yahweh¦50006.
+\v 3 Then¦50008 tell the \add ≈Israeli¦50010 people¦50010\add* to take a male goat¦50015 for a sin offering, and a calf and a lamb¦50020, both a year old and \add ≈without¦50024 defects¦50024\add* for a burnt¦50025 offering,
+\v 4 as well as a bull¦50027 and a ram to sacrifice¦50030 to Yahweh as peace¦50029 offerings¦50029, and a grain¦50033 offering¦50033 mixed¦50034 will oil¦50035, because¦50036 Yahweh will appear¦50039 to you all today.”
+\p
+\v 5 \add ≈So¦50042\add* they brought \add everything\add* to the \add ≈sacred¦50050\add* tent¦50050 that¦50044 Mosheh¦50046 had \add ≈instructed¦50045\add* them, and¦50042 the whole assembly presented them as they stood¦50056 \add ≈before\add* Yahweh¦50058,
+\v 6 then¦50060 Mosheh¦50061 said¦50060, “You've¦50072 done what Yahweh¦50067 told¦50066 you, so now you'll all see his \add ≈brightness\add* appear¦50069.”
+\v 7 Then \add *he\add* told¦50102 Aharon, “\add ≈Go\add* to the altar¦50082 and make your sin offering and your burnt¦50089 offering to make \add ≈yourself¦50091 and the people right with God\add*. Then make the people's offering to make \add ≈them right with God\add*, just as Yahweh¦50103 commanded¦50102.”\x + \xo 9:7: \xt Heb 7:27.\x*
+\p
+\v 8 \add ≈So¦50105\add* Aharon¦50106 approached the altar¦50109 and¦50110 slaughtered the calf for his own sin¦50114 offering¦50114,
+\v 9 and¦50119 \add *his\add* sons presented¦50119 the blood to him. Dipping¦50121 his finger¦50127 into the blood, he \add ≈smeared\add* it on the altar's \add four\add* \add ≈projecting corners\add*, then¦50119 he poured¦50137 \add the rest of\add* the blood out at the altar's base.
+\v 10 He burnt up the fat and the kidneys¦50148, and the lobe from the liver¦50154 for the sin¦50157 offering¦50157 on the altar¦50159, just as Yahweh¦50162 had instructed¦50161 Mosheh¦50165,
+\v 11 \add ≈but¦50167\add* the meat¦50169 and¦50167 the skin¦50172, he burnt¦50173 up in a fire¦50174 outside¦50175 the camp¦50176.
+\p
+\v 12 Then¦50184 \add ?@Aharon\add* slaughtered the burnt¦50181 offering¦50181, and \add *his\add* sons¦50183 brought¦50182 the blood¦50188 to him and he splashed it on \add ≈each side of\add* the altar¦50192.
+\v 13 Then¦50195 they brought¦50198 him the head¦50203 and the \add cut-up\add* pieces¦50200, and he burnt¦50197 them up on the altar¦50207.
+\v 14 He washed¦50209 the innards and the legs, and then¦50209 \add also\add* burnt¦50219 them up on the altar¦50220.
+\p
+\v 15 Then¦50222 \add @Aharon\add* presented¦50222 the people's offering. He took the goat¦50229 for the people's offering and¦50222 slaughtered it, then¦50222 offered it as a sin offering like \add ≈the other one\add*.
+\v 16 He presented¦50237 the burnt¦50240 offering¦50240—following all the \add ≈instructions\add* when he did it.
+\v 17 Then¦50244 he presented¦50244 the grain¦50247 offering, and¦50244 \add ≈taking a large handful\add*, he burnt it on the altar¦50254, in addition¦50244 to the morning's¦50257 burnt offering.
+\v 18 Then¦50259 \add Aharon¦50272\add* slaughtered the bull¦50262 and the ram \add which¦50268\add* were the people's¦50269 peace¦50267 offering¦50267, and \add *his\add* sons¦50271 brought¦50270 the blood¦50275 to him and he splashed it on \add ≈each side of\add* the altar¦50280.\x + \xo 9:18: \xt Lev 3:1-11.\x*
+\v 19 He took the fat from the bull¦50288 and the ram, including¦50289 their fatty tails and \add @the fat\add* covering¦50293 the innards, the kidneys¦50294, and the lobe of the liver¦50296,
+\v 20 and¦50305 placed¦50298 it \add all\add* on top of \add &those animals\add* breast¦50304 \add meat\add*, then¦50298 burnt up \add @the fat\add* on the altar¦50307.
+\v 21 \add ≈Finally¦50315,\add* he raised the breast¦50310 \add meat\add* and¦50309 the right¦50313 thigh¦50312 as a wave offering \add in front¦50317\add* of Yahweh¦50318, just as Mosheh¦50321 had \add ≈instructed¦50320\add*.
+\p
+\v 22 Then¦50323 Aharon¦50324 raised his \add ≈arms\add* towards the people¦50331 and blessed¦50332 them, and then¦50323 he \add ≈stepped\add* down, \add having finished\add* making the sin offering, the burnt¦50336 offering, and the peace¦50337 offerings¦50337.\x + \xo 9:22: \xt Num 6:22-26.\x*
+\v 23 Mosheh¦50340 and Aharon¦50341 entered the \add ≈sacred¦50344\add* tent, and \add when\add* they came \add back\add* out, they blessed¦50347 the people and Yahweh's¦50354 \add ≈brilliance\add* appeared¦50351 to all the people.
+\v 24 Then¦50361 flames¦50362 \add ≈shot out\add* from Yahweh's¦50364 front and \add ≈evaporated\add* the burnt¦50371 offering¦50371 and the fat on the altar¦50368. They people¦50378 saw¦50375 that \add happen\add*, and they yelled out and fell down \add onto their knees\add* \add ≈with their faces¦50383 to the ground\add*.
+\c 10
+\s1 Nadav and Avihu get destroyed
+\rem /s1 The Death of Nadab and Abihu; Nadab and Abihu; The Sin of Nadab and Abihu
+\p
+\v 1 Then¦50385 two of Aharon's sons, Nadav and Avihu each took their \add ≈incense-burning pans\add* and put fire in them, and put incense on \add @the fire\add*, \add ≈thus offering unauthorised\add* fire to Yahweh¦50401 that¦50404 he hadn't instructed¦50406 them to do.
+\v 2 \add ≈So¦50409\add* flames¦50410 \add ≈shot out\add* from Yahweh's¦50412 front and¦50409 consumed then¦50409 \add ≈so\add* they¦50415 died¦50415 \add there\add* \add ≈in front\add* of Yahweh.
+\v 3 Then¦50419 Mosheh¦50420 told Aharon, “That's what Yahweh¦50428 \add ≈meant when he said¦50419\add*, ‘I will \add ≈reveal\add* my holiness to those¦50431 who approach me, then¦50419 I'll¦50432 be honoured \add ≈in the sight of\add* all the people¦50438.’ ”
+\p
+\v 4 Then¦50443 Mosheh¦50444 \add ≈summoned\add* Mishael¦50447 and Elitsafan, the sons of Aharon's Uncle Uzziyel, and told them, “\add ≈Come and help by carrying¦50457\add* your cousins' \add bodies\add* from the sacred¦50464 place \add here\add* to a place outside¦50467 the camp¦50468.”
+\v 5 \add ≈So¦50470\add* they \add ≈came\add* and¦50470 carried¦50471 the two corpses by their¦50472 clothes to a place outside¦50475 the camp¦50476 just as Mosheh¦50479 had told them to do.
+\p
+\v 6 Then¦50481 Mosheh¦50482 told Aharon and his sons¦50489 Eleazar¦50486 and Itamar¦50487, “Don't¦50491 \add ≈leave your hair\add* loose, and don't¦50491 tear your clothes¦50495, so that you won't die¦50500 and \add ≡so that\add* \add @Yahweh\add* won't be angry at the entire¦50502 community. But¦50481 \add ≈meanwhile\add*, all the \add ≈Israelis¦50509\add* must¦50500 \add ≈mourn¦50511\add* because Yahweh \add ≈was angry enough to burn\add* \add those two\add*.
+\v 7 \add ≈Also¦50519,\add* don't¦50522 leave the entrance¦50519 to the \add ≈sacred¦50520\add* tent¦50520, as you might die¦50526 because¦50527 you all \add still\add* have Yahweh's¦50531 anointing¦50530 oil¦50529 on you.” \add ≈So¦50519\add* they¦50533 did¦50533 \add ≈everything that Mosheh¦50535 said\add*.
+\s1 Instructions for priests
+\rem /s1 Instructions for Priestly Conduct; Rules for Priests
+\p
+\v 8 Then Yahweh¦50539 told Aharon,
+\v 9 “\add Neither\add* you or your sons¦50553 should drink wine or strong¦50546 drink when you're \add going to\add* go into the \add ≈sacred¦50558\add* tent¦50558 so that you won't¦50547 die¦50561. This regulation¦50562 is permanent¦50563 \add ≈and for future\add* generations¦50564.
+\v 10 You must \add carefully\add* \add ≈distinguish\add* between what's sacred¦50568 and what's common, and what's ‘unclean¦50572’ and ‘clean¦50574’.
+\v 11 and¦50576 you must teach¦50576 the \add ≈Israelis¦50579\add* all the instructions¦50584 that¦50585 Yahweh¦50587 has \add ≈given\add* them \add ≈via\add* Mosheh¦50591.”
+\p
+\v 12 Then Mosheh¦50595 told Aharon and his \add ≈remaining¦50606\add* sons¦50605 Eleazar¦50600 and Itamar¦50603, “Take the remainder of the grain¦50610 offering¦50610 after \add the memorial portion has been given\add* to Yahweh¦50613, and eat¦50614 that¦50611 \add ≈flat bread¦50615\add* \add there\add* beside¦50616 the altar¦50617, because¦50618 it's \add ≈very sacred¦50619\add*.\x + \xo 10:12-13: \xt Lev 6:14-18.\x*
+\v 13 You all must¦50623 eat¦50623 it in a sacred¦50626 place¦50625, because it's the portion for you and¦50623 your sons¦50631 from the gifts to Yahweh¦50634, because that's what I've¦50638 been instructed¦50638.
+\v 14 \add ≈Also¦50640\add*, you all must¦50647 eat the breast¦50641 \add meat\add* from the wave offering and the thigh¦50645 from the contribution¦50646 \add offering\add* in a ‘clean’ place¦50648. Your¦50664 sons and daughters¦50652 \add ≈can join you all for that\add*, because¦50654 \add @that food\add* has been given¦50660 as the portion for you and your children¦50659 from the peace¦50662 offering sacrifices¦50661 from the \add ≈Israelis¦50663\add*.\x + \xo 10:14-15: \xt Lev 7:30-34.\x*
+\v 15 \add Yes,\add* \add &those\add* \add #thighs\add* from the contribution¦50667 \add offering\add* and the breast¦50668 \add meat\add* from the wave offering, in addition to the gifts of the fat portions, must¦50673 be brought before Yahweh as a raised offering, and then they'll always¦50684 become the portion for you and your families, just as Yahweh instructed¦50686.”
+\p
+\v 16 Then¦50689 Mosheh¦50695 looked for the goat¦50691 \add meat\add* from the sin¦50692 offering¦50692, \add ≈but¦50689 was shocked to discover\add* that it had been burnt¦50697 up \add on the altar\add*, \add ≈so\add* he was angry¦50698 with Aharon's¦50706 remaining¦50707 sons¦50705 Eleazar¦50701 and¦50689 Itamar¦50704, telling them,
+\v 17 “Why didn't¦50711 you eat¦50713 \add &that\add* sin¦50716 offering¦50716 in the sacred place¦50717, because¦50719 it's \add ≈very\add* sacred and he gave¦50725 it to you to bear the community's \add ≈guilt\add* then to \add ≈make them right with\add* Yahweh¦50735.\x + \xo 10:17: \xt Lev 6:24-26.\x*
+\v 18 Listen here! Its blood¦50743 \em wasn't\em* taken into the inner sacred place, \add so\add* you must¦50749 eat it in the sacred place just like I told¦50753 you to do!”
+\p
+\v 19 Then¦50755 Aharon \add ≈explained\add* to Mosheh¦50759, “Listen, they presented¦50762 their sin offering and their burnt¦50768 offering to Yahweh today, and \add ≈yet I lost two of my sons\add*. But¦50755 if I'd eaten the sin offering today, would it have \add ≈pleased\add* Yahweh?”
+\v 20 \add ≈When¦50781\add* Mosheh¦50782 heard \add <that\add*, \add ≈he was satisfied\add*.
+\c 11
+\s1 Creatures that may be eaten
+\rem /s1 Animals That May Be Eaten; Ceremonially Clean and Unclean Animals; Clean and Unclean Foods; Clean and Unclean Food; Purification and atonement
+\r (Deu. 14:3-21)
+\p
+\v 1 Then Yahweh¦50788 told Mosheh¦50791 and Aharon:
+\p
+\v 2 Tell¦50802 the \add ≈Israelis¦50801\add* that \add ≈the following\add* creatures¦50805 on the earth¦50814 are the ones that you all can eat¦50807:
+\v 3 ⇔You all can eat¦50827 any animal¦50825 that has hooves¦50822 \add ≈which are completely split in two¦50818\add* and¦50820 that \add also\add* \add ≈chew\add* the cud.
+\v 4 However you mustn't eat¦50834 those \add ≈without \+em both¦50837\+em* traits\add*, for example camels¦50841 \add ≈chew\add* the cud \add ≈but¦50837\add* don't¦50833 have divided¦50837 hooves¦50838, \add so\add* they are ‘unclean¦50850’ for you.
+\v 5 The rock¦50856 badger¦50856 \add ≈likewise\add*, because¦50857 although it \add ≈chews\add* the cud, it \add too\add* doesn't have divided¦50864 hooves¦50862,
+\v 6 and¦50869 the rabbit is ‘unclean¦50880’ for you all because¦50872 although it \add ≈chews\add* the cud, it doesn't have divided¦50879 hooves¦50877.
+\v 7 \add #Pigs\add* have divided¦50889 \add #hooves\add* that are split completely, \add ≈but¦50884\add* don't¦50897 \add ≈chew\add* the cud, \add so\add* they're ‘unclean¦50900’ for you all—
+\v 8 you mustn't eat their meat or touch¦50909 their carcasses¦50907 \add because\add* they're ‘unclean¦50910’ for you all.
+\p
+\v 9 ⇔You all can eat everything that \add lives\add* in the water, \add whether\add* the oceans or rivers, as long as it has \add both\add* fins and scales¦50926.
+\v 10 \add ≈In contrast,\add* anything in the oceans or rivers without \add both\add* fins and¦50933 scales¦50939, whether they're swarming¦50943 creatures¦50946 or otherwise, they'll \add all\add* be detestable¦50950 for you all.
+\v 11 \add ≈So¦50954\add* anything that's detestable to you all, you mustn't eat their meat and¦50954 you must¦50955 detest¦50954 their carcasses¦50962.
+\v 12 Anything in the water¦50972 that doesn't have \add both\add* fins and¦50971 scales¦50971 will be detestable¦50973 for you all.
+\p
+\v 13 From the birds, the ones that you'll all detest¦50980 and avoid eating will include: the eagle¦50990 and \add ≈any kind of\add* vulture,
+\v 14 the kite and¦51000 any kind of falcon,
+\v 15 any kind of crow,
+\v 16 \add ≈any kind of\add* owl, gull, or hawk,
+\v 17 the cormorant¦51030,
+\v 18 the osprey,
+\v 19 the stork¦51046, any kind of heron¦51047, the hoopoe¦51051, and¦51045 bats.
+\v 20 Everything¦51056 that¦51059 swarms¦51057 with wings and walks¦51059 on four¦51062 \add legs\add* must be detestable¦51063 for you all.
+\v 21 However, you all can eat¦51072 anything that swarms¦51074 with wings and walks¦51076 on four¦51079 \add legs\add* that has its legs above¦51085 its feet¦51086 for hopping on the ground.
+\v 22 You all can eat any kind of locust or cricket or grasshopper¦51112,
+\v 23 \add ≈but¦51115\add* anything that¦51118 swarms¦51116 with wings and¦51115 walks on four¦51121 \add legs\add* must be detestable¦51123 for you all.
+\rem /s1 Unclean Animals
+\p
+\v 24 \add ≈The following\add* will make you¦51128 ‘unclean’—anyone¦51131 who touches¦51131 their¦51132 carcasses¦51132 will become ‘unclean’ until¦51134 the evening¦51136,
+\v 25 plus¦51144 anyone¦51140 who carries¦51140 their carcass¦51141 must¦51142 wash their clothes¦51143 and¦51138 will be ‘unclean¦51144’ until¦51145 the evening¦51147:
+\v 26 Any animal with a divided¦51154 hoof¦51155 but¦51156 not \add ≈completely split in two¦51154\add* or that¦51152 doesn't \add ≈chew\add* the cud will be ‘unclean’ for you all—anyone¦51168 who touches¦51168 them will become ‘unclean’.
+\v 27 \add ≈Also¦51172,\add* any four-footed animal that¦51174 walks on its paws is ‘unclean’ for you—anyone¦51174 who touches¦51190 their¦51191 carcass¦51191 will become ‘unclean’ until¦51193 the evening¦51195,
+\v 28 plus¦51203 anyone¦51197 who carries¦51197 their carcass¦51200 must¦51201 wash their clothes¦51202 and¦51197 will be ‘unclean’ until¦51204 the evening¦51206 \add because\add* they're ‘unclean’ for you all.
+\p
+\v 29 These are the ‘unclean¦51214’ creatures from the ones that¦51216 swarm¦51216 on the ground: \add #rats, mice, lizards¦51222\add*
+\v 30 of any kind, \add #geckos, skinks¦51228, and¦51225 chameleons¦51229\add*.
+\v 31 Out of all the swarming¦51236 things¦51236, those are ‘unclean’ for you—anyone¦51239 who touches¦51239 them when they've died will be ‘unclean’ until¦51243 the evening¦51245.
+\v 32 \add ≈Also¦51247,\add* anything that¦51272 \add ≈their¦51255 dead bodies\add* fall on will become ‘unclean’, whether it's a wooden. cloth, leader, or sackcloth¦51268 object, or any container used for work¦51275, \add so then¦51247\add* it must¦51250 be immersed in water¦51277 and¦51247 it will be ‘unclean’ until¦51280 the evening¦51282 when it will become ‘clean’ \add again\add*.
+\v 33 \add If\add* one of \add @those creatures\add* falls into a clay container, everything in it will become ‘unclean¦51300’ and¦51285 you must¦51292 break¦51302 \add @that container\add*.
+\v 34 If water¦51312 from \add that container\add* got onto any food, it will become ‘unclean’, and any drink¦51316 \add ≈take\add* from that container will be ‘unclean’.
+\v 35 Anything that the dead body of one of \add @those creatures\add* falls onto will become ‘unclean’—any oven or stove¦51333 must¦51327 be smashed. They have become ‘unclean’ \add ≈and¦51324 would always remain so\add*.
+\v 36 However a spring¦51342 or a cistern¦51343 for collecting¦51344 water¦51346 will be ‘clean’, \add ≈but¦51343\add* anyone¦51349 touching¦51349 that dead body will be ‘unclean¦51351’.
+\v 37 If the dead body fell on some seeds that will be planted, \add @that seed\add* is still ‘clean’,
+\v 38 \add ≈but¦51367\add* if the seeds \add ≈are wet\add* when the dead body falls on it, then¦51367 it's ‘unclean¦51377’ for you.
+\p
+\v 39 If any animal that¦51387 you all can eat dies, then any person touches¦51392 its¦51393 carcass¦51393 will be ‘unclean¦51394’ until¦51395 the evening¦51397.
+\v 40 Anyone¦51399 who eats¦51399 any \add part\add* of that dead body, and anyone¦51399 who \add ≈moves\add* it, must¦51401 wash their clothes¦51402 and will be ‘unclean’ until the evening.
+\p
+\v 41 Every creature that¦51421 swarms¦51420 along the ground is detestable¦51425—it mustn't be eaten¦51428.
+\v 42 Everything that \add moves\add* on its belly, and any swarming thing that moves along the ground on four¦51441 or more feet mustn't be eaten because they're detestable.
+\v 43 Don't¦51461 make yourselves detestable¦51463 with any of those swarming¦51469 creatures, and don't¦51461 make yourselves ‘unclean’ by \add touching or eating\add* them,
+\v 44 because I am your god¦51480 Yahweh¦51479. You all must¦51481 keep¦51481 yourselves holy, and you're a holy people because I'm holy. \add ≈So\add* don't¦51487 make yourselves ‘unclean¦51488’ with any swarming¦51494 creatures that creep¦51495 across the ground\x + \xo 11:44: \xt Lev 19:2; 1Pe 1:16.\x*
+\v 45 because I am Yahweh¦51503, the one who brought¦51504 you all out of Egypt¦51507 to be your god¦51510, and you must¦51511 be holy because I am holy.
+\p
+\v 46 The \add above\add* are the regulations about livestock, birds, creatures that move in the water¦51525, and creatures that swarm¦51529 across the ground,
+\v 47 to \add ≈distinguish\add* between the ‘unclean¦51536’ and the ‘clean’, i.e., those that can be eaten and those that must¦51546 not be eaten.
+\c 12
+\s1 Purification after giving birth
+\rem /s1 The Purification of Women after Childbirth; Purification after Childbirth; Purification of Women after Childbirth; Purification After Childbirth
+\p
+\v 1 Then Yahweh¦51550 told Mosheh¦51553:
+\p
+\v 2 Tell¦51560 the \add ≈Israelis¦51559\add* that when a woman¦51562 gets pregnant and then gives birth to a boy, she will then be ‘unclean’ for seven¦51568 days similar to how her impurity¦51571 during her \add ≈monthly period\add* makes her ‘unclean’.
+\v 3 Then¦51575 on the eighth¦51576 day¦51575, \add @the baby boy's\add* foreskin¦51579 must¦51577 be circumcised¦51577.\x + \xo 12:3: \xt Gen 17:12; Luk 2:21.\x*
+\v 4 \add @The mother\add* will remain¦51585 impure from the blood¦51586 for thirty-three days—she must¦51585 not touch¦51593 any sacred¦51590 thing¦51590 and¦51581 may not enter the sanctuary¦51596 until¦51599 her¦51602 purification time¦51584 is completed¦51601.
+\p
+\v 5 \add ≈However,\add* if she gave birth to a \add ≈girl\add*, she'll be ‘unclean¦51609’ for two¦51610 weeks¦51610 similar to how her impurity¦51611 during her \add ≈monthly period\add*, and¦51605 her purification¦51620 time¦51615 will be sixty-six days¦51615.
+\p
+\v 6 When¦51622 \add @the mother's\add* purification¦51625 time¦51624 is completed¦51622 for either a son or a daughter¦51628, she must¦51629 take a one-year-old lamb as a burnt¦51634 offering and¦51622 a \add ≈young¦51635\add* pigeon or dove as a sin offering to the priest¦51650 at the entrance¦51644 to the \add ≈sacred¦51645\add* tent.
+\v 7 Then¦51652 he must¦51652 present¦51652 them to Yahweh¦51654 to \add ≈make her right with God\add*, and¦51652 then¦51652 she'll be purified from her flow of blood¦51659. That's the regulation for a woman who gives¦51662 birth¦51662 to either a male or a female¦51665.
+\p
+\v 8 If \add ≈she's unable to afford\add* a lamb, then she must¦51670 take \em two\em* young¦51680 pigeons or doves—one for the burnt¦51683 offering and one for the sin offering. Then¦51667 the priest¦51688 will \add ≈make her¦51671 right with God\add*, and then she'll will have been purified.\x + \xo 12:8: \xt Luk 2:24.\x*
+\c 13
+\s1 Regulations about skin diseases
+\rem /s1 Laws concerning Skin Diseases; Contagious Skin Diseases; Leprosy, Varieties and Symptoms; Regulations About Infectious Skin Diseases
+\p
+\v 1 Then Yahweh¦51693 told Mosheh¦51696 and Aharon:
+\p
+\v 2 If \add someone discovers\add* a raised area on their skin, or a scab or a bright¦51714 spot, and it seems like an infectious skin disease¦51720, then \add @that person\add* should be taken to a priest¦51725 (Aharon or one of his sons¦51730),
+\v 3 and the priest must \add ≈examine\add* their skin. If the hair¦51741 in the infected \add spot\add* has turned¦51743 white¦51745 and the infection appears¦51746 to be deeper under the skin, then¦51733 it's \add confirmed as\add* an infectious skin disease¦51752 and \add ≈so\add* the priest must pronounce the person as ‘unclean¦51756’.
+\v 4 \add However,\add* if it's a white spot \add ≈that doesn't seem\add* to be deep, and¦51759 the hair¦51773 hasn't turned¦51776 white, then¦51759 the priest¦51779 \add must¦51778 order\add* the person to be quarantined for seven¦51783 days¦51784.
+\v 5 Then¦51786 on the seventh day¦51788, if the infection is still there but¦51786 hasn't spread¦51796, then¦51786 the priest¦51787 \add must¦51786 order\add* a further seven¦51801 days¦51802 of quarantine.
+\v 6 After that next seven¦51809 days, if the infection has faded and not spread¦51816, the priest¦51806 must pronounce the person as ‘clean’—it was just a \add ≈sore\add* so the person must wash their clothes¦51824 and then¦51805 they'll be ‘clean’.
+\v 7 \add ≈However,\add* if the spot does spread across the skin \em after¦51833\em* the priest has pronounced \add @the person\add* to be ‘clean’, then¦51827 they must¦51830 \add ≈return\add* to the priest a second¦51840 time.
+\v 8 The priest must re-examine \add @that person\add* and¦51845 if the spot on the skin has spread¦51848, then¦51845 the priest must pronounce them ‘unclean¦51851’ because they have a skin disease¦51853.
+\p
+\v 9 Anyone who develops an infectious skin disease¦51858 must¦51860 be taken to a priest¦51865
+\v 10 \add ≈to be examined\add*. If it's a white spot on the skin and the hair¦51876 has turned¦51875 white, and there's raw flesh¦51879 \add visible\add* in the swelling,
+\v 11 then it's a chronic skin disease¦51883, and the priest¦51889 must¦51888 pronounce \add @that person\add* as ‘unclean’ and can't¦51890 just be \add temporarily\add* \add ≈quarantined\add*.
+\v 12 \add ≈However,\add* if the disease has broken out and¦51896 spread across the entire¦51905 \add ≈body\add* from head¦51909 to toe as far as can be observed by the priest¦51917,
+\v 13 then¦51919 \add after\add* the priest's¦51920 confirmation that it covers¦51922 the entire¦51926 \add ≈body¦51928\add*, \add @that person\add* can be pronounced as ‘clean’ \add again\add* as all of it has turned¦51934 white¦51935.
+\v 14 \add ≈However,\add* if any raw flesh¦51942 \add ≈shows itself\add*, then¦51939 they'll become ‘unclean¦51944’ \add ≈that same\add* day¦51939.
+\v 15 The priest¦51947 must \add ≈examine\add* that raw flesh and¦51952 must pronounce \add @that person\add* as ‘unclean’ due to \add &their\add* skin disease¦51957.
+\v 16 \add ≈Afterwards, if it heals over\add* and goes white¦51966, then they can return¦51962 to the priest¦51970
+\v 17 \add ≈to be reexamined\add*, and if the infection has indeed gone white¦51977, then¦51972 the priest¦51973 can pronounce it as \add ≈not being infectious\add* and \add @the person\add* as ‘clean’ \add again\add*.
+\p
+\v 18 When \add ≈someone\add* has a boil on their skin, \add ≈but¦51987\add* it heals
+\v 19 \add ≈leaving behind\add* a white swelling¦52000 or a reddish-white bright¦52003 spot, then¦51997 \add @that person\add* must¦52006 show themself to the priest¦52009.
+\v 20 The priest will \add ≈examine\add* it, and if it is indeed more than \add just\add* skin deep and its hair¦52019 has turned¦52020 white¦52021, then¦52011 the priest must¦52011 pronounce \add @that person\add* as ‘unclean¦52022’ because an infectious skin disease¦52026 has broken¦52029 out from the \add original\add* boil.
+\v 21 \add ≈However,\add* if the priest's examination finds not white¦52040 hair¦52039 on it, and it's not more than skin deep, and it's fading, then¦52031 he will \add order\add* \add @that person\add* quarantined for seven¦52050 days¦52051,
+\v 22 and¦52053 if it spreads further on \add &their\add* skin, then¦52053 the priest¦52059 must¦52056 declare¦52058 \add @that person\add* as ‘unclean¦52058’ because it's \add ≈infectious\add*.
+\v 23 \add ≈But¦52064\add* if the bright¦52068 spot \add ≈hasn't spread¦52070\add* \add during the quarantine\add*, then¦52064 it's \add just\add* the scar from the boil and¦52074 the priest¦52075 can pronounce \add @the person\add* as ‘clean’.
+\p
+\v 24 If someone gets a burn on their skin, and the burn area becomes reddish-white or a white spot,
+\v 25 then the priest must examine it, and if the hair¦52101 on the spot has turned¦52100 white¦52102 and \add @the infection\add* looks more than skin deep, then a skin disease has broken¦52112 out in the burn¦52111, and the priest must pronounce \add @that person\add* as ‘unclean¦52113’ because it's \add ≈infectious\add*.
+\v 26 \add ≈However,\add* if the priest¦52123 sees that there's¦52125 no white¦52129 hair¦52128 in the spot, and it's not more than skin deep, and it's fading, then¦52120 \add *he\add* will \add order\add* \add @that person\add* quarantined for seven¦52139 days¦52140.
+\v 27 On the seventh¦52145 day¦52144, the priest¦52143 will re-examine \add @the person\add*, and¦52151 if it's spread further, \add *he\add* must¦52142 pronounce \add @that person\add* as ‘unclean¦52151’ because it's an infectious skin disease¦52155.
+\v 28 \add ≈But¦52158\add* if the bright¦52162 spot hasn't spread¦52165 on the skin, and¦52158 it faded \add more\add*, then¦52158 it was \add just\add* swelling¦52169 from the burn. Then¦52158 the priest¦52173 will pronounce \add @that person\add* to be ‘clean’ because¦52174 it was \add just\add* the scar \add ≈caused by\add* \add &their\add* burn.
+\p
+\v 29 If a man or woman¦52183 has an infection in \add &their\add* \add ≈scalp\add* or \add ≈under\add* \add &their\add* beard¦52191,
+\v 30 then the priest should inspect the infection. If it appears¦52199 to be more than skin deep, and there's any thin yellow¦52206 hairs in it, then the priest must¦52193 pronounce \add @that person\add* as ‘unclean¦52208’ \add because\add* it's a \add ≈itchy and infectious\add* skin infection on the \add ≈scalp or face\add*.
+\v 31 \add ≈However,\add* if the priest¦52222 notices an itchy infection yet it's only skin deep and¦52219 there's¦52237 no black¦52236 hair¦52235 on it, then¦52219 he should quarantine that person for seven¦52245 days¦52246.
+\v 32 On the seventh¦52254 day¦52253, the priest¦52249 will re-examine \add ≈that person\add* and if the spot hasn't widened and \add still\add* only appears¦52266 to be skin deep,
+\v 33 then \add @that person\add* should shave \add their head\add*, and¦52274 then the priest¦52281 should quarantine them for a further seven¦52285 days¦52286.
+\v 34 Then¦52289 \add again\add* on the seventh¦52295 day¦52294, the priest will inspect it, and if the spot hasn't widened after being shaved and it doesn't seem to be more than skin deep, then¦52289 the priest can pronounce \add @that person\add* as ‘clean’ \add ≈once\add* they've washed their clothes¦52312.
+\v 35 \add ≈However,\add* it¦52318 is did spread on their skin after¦52321 \add *that\add*,
+\v 36 then the priest¦52325 must¦52324 inspect it again, and¦52324 if it's spread¦52327 then \add @that person\add* is ‘unclean¦52336’ (whether or not there's any yellow¦52335 hair¦52334).
+\v 37 \add ≈But¦52339\add* if it seems that the spot \add ≈hasn't spread\add* and dark hair¦52344 is growing in it again, then¦52339 \add @that person's\add* \add ≈not infectious\add* and the priest¦52354 can pronounce them as ‘clean’.
+\p
+\v 38 If a man or woman¦52360 \add ≈finds very\add* white¦52369 spots on their¦52366 skin,
+\v 39 then the priest¦52372 must¦52371 examine \add <them\add*. If the spots¦52377 on their¦52376 skin are dull white¦52379, then it's a skin rash that's broken¦52382 out and¦52373 they are ‘clean’.
+\p
+\v 40 If a man's head¦52391 has become¦52390 bare, then he's \add gone\add* bald and¦52388 is \add still\add* ‘clean’.
+\v 41 \add ≈Similarly, \add* if the hair \add ≈is receding\add* from the front corners, he's \add ≈going bald\add* and¦52397 is \add still\add* ‘clean’.
+\v 42 \add ≈However,\add* if there's a balding spot with a reddish-white infection, it's a skin disease¦52416 breaking¦52417 out via that¦52417 spot
+\v 43 and¦52426 the priest¦52425 must¦52423 examine him. If it's a balding spot with a reddish-white infection that looks like a \add contagious\add* skin disease¦52436,
+\v 44 then he's \add ≈contagious\add* and ‘unclean’. The priest¦52448 must¦52447 pronounce his as ‘unclean’ because of that infection on his head¦52449.
+\p
+\v 45 Anyone¦52452 who's developed an infectious skin disease¦52452 must tear their clothes¦52457 and \add ≈leave their hair loose\add*, and must \add ≈cover¦52466 their mouth\add* and call out, ‘Unclean, unclean.’
+\v 46 They will remain ‘unclean’ as long as they \add still\add* have that¦52475 infection, and must¦52478 live alone¦52481 outside¦52483 the camp¦52484.
+\s1 Regulations about moulds and fungi
+\rem /s1 Laws concerning Mildew; Regulations About Mildew; Treatment of Contaminated Clothing
+\p
+\v 47 When a \add piece of\add* clothing has a mould growing on it, whether it's made of wool or linen¦52499,
+\v 48 or whether it's something woven from wool or linen¦52505, or something made from leather,
+\v 49 if the growth is greenish¦52517 or reddish¦52520 in colour, then¦52515 it's something that can spread and¦52515 it must¦52539 be shown¦52539 to the priest¦52542.
+\v 50 The priest¦52545 must¦52544 examine the growth, and¦52549 quarantine the \add ≈article\add* for seven¦52553 days¦52554.
+\v 51 On the seventh¦52561 day¦52560, if the growth has spread on that piece of material or leather equipment, and it's confirmed as spreadable and is ‘unclean¦52584’.
+\v 52 \add ?@The owner\add* must burn¦52587 the piece of clothing or equipment that¦52610 contains the infection because¦52615 it's contagious, so it must be completely burnt¦52621 up.
+\p
+\v 53 \add ≈However\add* if the priest¦52625 notices that the growth hasn't spread¦52629 on the clothing or on the woven or leather \add ≈material\add*,
+\v 54 then the priest¦52644 must¦52643 order that¦52647 the \add ≈material\add* be washed and¦52643 then quarantined for a \add ≈further\add* seven¦52652 days¦52654.
+\v 55 \add On the seventh day,\add* the priest¦52658 must inspect that washed¦52661 \add ≈material\add*, and if the growth hasn't \add ≈changed its appearance\add*, even if it hasn't spread¦52676, then¦52657 it's ‘unclean¦52677’ and must be burnt in the fire¦52679—it's a mildew¦52681 that's on the front¦52685 or back of the material.
+\v 56 \add ≈However,\add* if the priest¦52689 notices that the growth has faded after¦52693 being washed¦52694, then¦52687 it can be torn out of the clothing¦52700 or piece of leather or woven material.
+\v 57 If it \add then\add* reappears on that clothing or material, then it's breaking¦52731 out, so then that article¦52728 must¦52716 be burnt in the fire¦52733.
+\v 58 \add ≈On the other hand,\add* if the growth \add ≈vanished after being\add* washed, then it must¦52755 be washed a second¦52760 time and¦52741 then it will be ‘clean’.
+\p
+\v 59 \add @The above\add* are the regulations concerning any growth on a piece of woollen or linen¦52772 clothing¦52768 or fabric, or any leather article¦52780, to pronounce it ‘clean’ or ‘unclean¦52785’.
+\c 14
+\s1 Purification after a skin disease
+\rem /s1 Purification after Having Skin Diseases; Cleansing from Skin Diseases; Purification of Lepers and Leprous Houses; Cleansing From Infectious Skin Diseases
+\p
+\v 1 Then Yahweh¦52789 told Mosheh¦52792:
+\p
+\v 2 These are the regulations for the purification¦52800 of a person who had a skin disease¦52798. They must¦52796 be taken to a priest¦52804\x + \xo 14:2: \xt Mat 8:4; Mrk 1:44; Luk 5:14; 17:14.\x*
+\v 3 \add *who'll\add* go¦52806 outside¦52810 the camp¦52811 \add to meet them\add*. The priest¦52807 must¦52806 inspect \add that person\add*, and¦52806 if the skin disease has indeed left them,
+\v 4 then¦52823 the priest¦52824 will order them to bring \add <him\add* two¦52827 live, ‘clean’ birds¦52829, some cedar¦52833 \add wood\add*, some scarlet¦52834 \add thread\add*, and¦52823 some hyssop¦52836 \add twigs\add*.
+\v 5 The priest¦52839 must¦52838 tell \add @the person\add* to slaughter one bird \add ?≈so the blood runs into\add* a clay jug \add ?≈containing\add* water¦52852 \add ≈from a spring or creek\add*.
+\v 6 Then \add @the priest\add* will take¦52859 the live bird, along with the cedar¦52864 wood, the scarlet¦52867 \add thread\add*, and the hyssop¦52871 \add twigs\add*, and dip them \add ≈all\add* into that¦52880 blood¦52878 of the slaughtered bird (\add ?≈mixed with\add* the \add ≈fresh\add* water¦52882),
+\v 7 and \add ≈flick\add* it seven¦52891 times¦52892 onto the person who's being purified¦52887 from the skin disease¦52890. Then¦52885 \add @the priest\add* can pronounce them as ‘clean’ \add enough to re-enter the community\add*, and \add ≈release\add* the live bird \add to fly\add* into the countryside¦52902.
+\v 8 The person who's being purified¦52905 must then wash their clothes¦52908, shave¦52909 all their hair¦52914, and¦52904 then bathe in \add flowing\add* water¦52916. After that, they can re-enter the camp¦52922 \add ≈but¦52904\add* must live outside¦52924 their tent¦52925 for seven¦52926 \add more\add* days¦52927.
+\v 9 On the seventh¦52931 day¦52930, \add @that person\add* must¦52932 shave off all their hair (including¦52941 eyebrows¦52945 and beard¦52943 \add if appropriate\add*), wash their clothes¦52956 and bathe themself in \add flowing\add* water¦52961, then¦52929 they'll be ‘clean’.
+\p
+\v 10 Then¦52964 on the eighth¦52965 day¦52964, \add @that person\add* must¦52966 \add ≈get\add* two one-year-old \add male\add* lambs¦52969, and¦52964 one female lamb, \add all\add* \add ≈with no defects\add*, along with three¦52977 kilograms of fine flour¦52979 mixed¦52981 with oil as a grain¦52980 offering¦52980, as well as \add ≈half a litre\add* of \add olive\add* oil.
+\v 11 \add That must¦52987 be taken to\add* the priest¦52988 who'd pronounced them as ‘clean’ \add ≈will accompany them\add* and¦52993 all those offerings to stand \add ≈in front¦52994\add* of Yahweh¦52995 at the entrance¦52996 to the \add ≈sacred¦52997\add* tent¦52997.
+\v 12 Then¦53000 the priest¦53001 must¦53000 take one of the male lambs and the \add ≈container\add* of oil and present¦53006 it as a guilt¦53008 offering, then¦53000 he'll raise them as a wave offering \add ≈in front¦53016\add* of Yahweh¦53017.
+\v 13 Then¦53019 \add @that person\add* must¦53019 slaughter that lamb¦53022 in the sacred place where¦53024 sin offerings and¦53019 burnt¦53031 offerings are slaughtered, because¦53034 this guilt¦53036 offering is like a sin offering in that it's for the priest¦53038—it's \add ≈very\add* sacred.
+\v 14 Then¦53043 the priest¦53044 must¦53043 take¦53043 some of the blood¦53045 from that guilt¦53046 offering¦53046, and put it on the lobe of the right ear¦53052 of the person being purified¦53053, and on their right thumb¦53057 and right big¦53062 toe¦53062.
+\v 15 Then¦53066 the priest¦53067 must¦53066 take¦53066 \add ≈the container\add* of olive oil¦53069 and¦53070 pour some into his left hand.
+\v 16 Then¦53077 he'll dip his right¦53082 finger into that oil on his left palm, and¦53077 with that \add same\add* finger, \add ≈flick\add* it seven¦53096 times¦53097 \add ≈towards\add* Yahweh¦53099.
+\v 17 Then¦53101 the priest¦53108 must¦53107 put some of the remaining¦53101 oil¦53102 on his palm¦53106 onto the lobe of the right ear¦53112 of the person being purified¦53113, and on their right thumb¦53117 and right big¦53122 toe¦53122—on top of the blood¦53126 from the guilt¦53127 offering¦53127.
+\v 18 Then¦53129 the priest will put \add all\add* the remaining¦53129 oil¦53130 from his palm¦53134 onto the head¦53139 of the person being purified¦53140, and¦53141 the priest \add ≈will then¦53129 make that¦53131 person right with\add* Yahweh¦53145.
+\p
+\v 19 Then¦53147 the priest¦53148 must¦53147 make the sin offering and¦53147 \add ≈make that person right\add* after¦53157 being purified¦53155 from their ‘uncleanness¦53156’. After that \add ?@that person\add* will slaughter \add lamb for\add* the burnt¦53161 offering.
+\v 20 Then¦53163 the priest¦53164 must¦53163 offer \add &that\add* burnt¦53167 offering and the grain¦53170 offering \add ≈on the fire\add* on the altar¦53171 and he will make \add ≈that person right again\add* and he will be ‘clean¦53175’.
+\p
+\v 21 \add ≈However,\add* if \add @that person\add* is poor and \add ≈cannot afford\add* \add the multiple lambs\add*, then they must¦53185 take \em one\em* lamb¦53186 to wave as the guilt¦53188 offering and to make \add ≈them right again\add*, along with \em one\em* kilogram of fine flour¦53193 mixed¦53195 with oil for the grain¦53197 offering, and the half litre of oil,
+\v 22 plus¦53210 two doves or \add ≈young¦53205\add* pigeons—whichever¦53207 they can afford—one for a sin offering and¦53201 the other for the burnt¦53214 offering.
+\v 23 Then¦53216 on \add &that\add* eighth¦53219 day¦53218, he'll take them to the priest¦53223 at the entrance¦53226 of the \add ≈sacred¦53227\add* tent¦53227 for purification¦53220 \add ≈in front¦53230\add* of Yahweh¦53231.
+\v 24 Then¦53233 the priest¦53234 should take the guilt¦53238 offering lamb¦53237 and the \add ≈container\add* of oil and lift them up as a wave offering \add ≈in front¦53247\add* of Yahweh¦53248.
+\v 25 Then¦53250 \add ?@the person\add* should slaughter \add &that\add* guilt offering lamb¦53253, and the priest¦53256 must¦53250 take some of \add ≈that\add* blood¦53257 and put it on the lobe of the right ear¦53263 of the person being purified¦53265, and on their right thumb¦53269 and right big toe.
+\v 26 Then¦53278 \add *he\add* must¦53281 pour some of the oil¦53280 onto \add *his\add* left palm¦53285
+\v 27 and¦53289 with his right¦53292 finger¦53291 he must¦53289 \add ≈flick\add* it seven¦53301 times¦53302 \add ≈towards\add* Yahweh¦53304.
+\v 28 Then¦53306 the priest¦53307 must put some of the oil¦53310 from his palm¦53315 onto the lobe of the right ear¦53319 of the person being purified¦53320, and on their right thumb¦53324 and right big¦53329 toe¦53329—on top of the blood¦53335 from the guilt¦53336 offering¦53336.
+\v 29 Then¦53338 the priest will put \add all\add* the remaining¦53338 oil¦53341 from his palm¦53345 onto the head¦53350 of the person being purified¦53351, and¦53338 the priest \add ≈will then¦53338 make that¦53342 person right with\add* Yahweh¦53355.
+\v 30 Then¦53357 he must¦53357 \add ≈offer¦53357\add* one of the birds (dove¦53368 or pigeon—whatever \add @that person\add* \add ≈could afford\add*)
+\v 31 as a sin offering and \add ≈the other\add* as a burnt¦53385 offering along with the grain¦53388 offering and he will make \add ≈that¦53374 person right again with\add* Yahweh¦53394.
+\v 32 \add The above\add* are the regulations for anyone who has a skin disease¦53402 \add ≈but who couldn't afford the regular purification¦53408 offerings\add*.
+\s1 Treating contaminated homes
+\rem /s1 Cleansing From Mildew; Mildew in Houses; Treatment of Contaminated Houses
+\p
+\v 33 Then Yahweh¦53412 told Mosheh¦53415 and Aharon:
+\p
+\v 34 “\add ≈When\add* you enter into the land of Kanaan which¦53427 I'm giving you all as a possession, and if I \add ≈cause\add* an infection in one your¦53437 homes in \add *that\add* land,
+\v 35 then¦53439 the homeowner must¦53439 go and¦53439 inform the priest¦53445 that something like an infection has appeared¦53448 in their house.
+\v 36 The priest¦53453 must¦53452 order that everything be removed out of the house before¦53458 \add *he\add* comes to \add ≈inspect it\add* \add ≈so that\add* it won't¦53465 all be pronounced as ‘unclean¦53466’. After \add ≈that's done\add*, he'll go to see the house
+\v 37 and \add ≈examine\add* the growth. If the growth is greenish¦53489 or reddish¦53491 and seems more than surface deep,
+\v 38 then¦53498 the priest¦53499 must¦53498 leave the house via the \add main\add* entrance¦53505 and¦53498 quarantine the house for seven¦53511 days¦53512.
+\v 39 On the seventh¦53517 day¦53516, the priest¦53515 must¦53514 return¦53514 and \add ≈examine it¦53520\add* \add again\add*, and if the growth has spread¦53520 on the house¦53523 walls¦53522,
+\v 40 then¦53525 \add *he\add* must¦53525 order that those infected stones¦53530 be pulled out of the wall and¦53525 thrown¦53534 outside¦53538 the city¦53539 into a place¦53542 \add that's considered\add* ‘unclean¦53543’.
+\v 41 Then¦53545 \add the homeowner\add* must¦53548 scrape¦53548 \add ≈all the plaster off the inside¦53549 walls\add* and¦53551 \add also\add* \add ≈dispose of that\add* at \add &that\add* ‘unclean¦53564’ place¦53563.
+\v 42 Then¦53566 they \add ≈can replace the stones that were removed\add*, and¦53566 \add ≈apply fresh plaster¦53577\add* to the house¦53580.
+\p
+\v 43 \add ≈However,\add* if the growth returns¦53584 and breaks¦53586 out \add again\add* in the house \add even\add* after \add ≈the stones¦53592 were replaced and the walls were replastered\add*,
+\v 44 then the priest¦53602 must¦53601 come \add back\add* and \add ≈reexamine\add* it. If the growth has spread¦53605 \add ≈on the walls\add*, then it's a malignant¦53609 growth and \add @the house\add* is ‘unclean¦53612’.
+\v 45 \add @The owner\add* must tear the house down—its stones¦53621 and timber and all the mortar, must be \add ≈carted\add* outside¦53633 the city¦53634 into a place¦53637 \add that's considered\add* ‘unclean¦53638’.
+\v 46 Any person that enters that house¦53643 \add ≈after the priest had quarantined it\add*, will be ‘unclean¦53649’ until¦53650 \add &that\add* evening¦53652.
+\v 47 Any person who lies down or eats in that house, must¦53656 wash their clothes¦53659.
+\p
+\v 48 \add ≈However,\add* if the priest¦53671 \add ≈came back\add* after the house was replastered and¦53667 \add ≈after his inspection, find that\add* the growth \add ≈hasn't reappeared\add*, then¦53667 \add *he\add* can pronounce the house as ‘clean’ because¦53689 the \add ≈growth has gone\add*.
+\v 49 Then he must¦53694 take¦53694 two¦53699 birds¦53700, cedar¦53702 wood, scarlet¦53703 \add ≈thread\add*, and some hyssop¦53705 \add twigs\add*,
+\v 50 and¦53707 slaughter one bird \add ?≈so the blood runs into\add* a clay jug \add ?≈containing\add* water¦53719 \add ≈from a spring or creek\add*.
+\v 51 Then¦53722 \add ?@the priest\add* must¦53722 take¦53722 the live bird, along with the cedar¦53727 wood, the scarlet¦53733 \add thread\add*, the hyssop¦53730 \add twigs\add* and the live bird, and dip them \add ≈all\add* into that¦53742 blood¦53740 of the slaughtered bird (\add ?≈mixed with\add* the \add ≈fresh\add* water¦53743), and \add ≈flick\add* it seven¦53749 times¦53750 onto the house¦53748.
+\v 52 \add In that way,\add* he'll purify the house¦53755 with the bird's blood¦53756 and the \add ≈fresh\add* water¦53758, and with the live bird and the cedar¦53763 \add wood\add*, the hyssop¦53764 \add twigs\add* and the scarlet¦53765 \add thread\add*.
+\v 53 Then¦53768 he must¦53768 \add ≈release\add* the live bird \add to fly\add* into the countryside¦53780, \add ≈thus\add* making the house¦53784 \add ≈right with God\add*, and¦53768 then¦53768 it'll be ‘clean’.
+\p
+\v 54 \add @The above\add* are the regulations concerning any serious¦53792 skin diseases¦53792 and¦53793 itchiness,
+\v 55 as well as growths on clothing¦53796 and¦53797 \add ≈buildings\add*
+\v 56 and swellings¦53799, rashes, and bright spots \add on the skin\add*,
+\v 57 \add ≈so that you'll know how to determine what's\add* ‘unclean¦53805’ or ‘clean’. Those are the regulations for \add ≈infectious growths\add*.
+\c 15
+\s1 Dealing with bodily discharges
+\rem /s1 Bodily Discharges; Unclean Bodily Discharges; Discharges Causing Uncleanness; Concerning Bodily Discharges
+\p
+\v 1 Then Yahweh¦53814 told Mosheh¦53817 and Aaron¦53820:
+\p
+\v 2 Tell¦53827 the \add ≈Israelis¦53826\add* that whenever any man has a discharge¦53834 from his \add ≈genitals\add*, then he becomes ‘unclean¦53837’.
+\v 3 He becomes ‘unclean’ whether his body¦53845 secretes¦53844 the flow or if it's blocked—either way he's ‘unclean’.
+\v 4 Any bed¦53859 that¦53860 he was lying on during \add or after\add* the discharge¦53863 becomes ‘unclean’, as does anything he sits on.
+\v 5 Anyone who touches¦53876 that bed¦53877 must¦53876 wash their clothes¦53879 and bathe themself in water¦53881, and \add @that person\add* will be ‘unclean¦53882’ until¦53883 the evening¦53885.
+\v 6 \add ≈Similarly,\add* anyone¦53887 who sits¦53887 on the place where he sat must¦53893 wash their clothes¦53897 and bathe themself in water¦53899, and \add @that person\add* will be ‘unclean¦53900’ until¦53901 the evening¦53903.
+\v 7 Anyone¦53905 who touches¦53905 the man who had a discharge¦53907 must¦53908 wash their clothes¦53909 and bathe themself in water¦53911, and \add @that person\add* will be ‘unclean¦53912’ until¦53913 the evening¦53915.
+\v 8 If that man who had a discharge¦53920 spits on some person who was ‘clean’, then¦53917 \add @that person\add* must¦53919 wash their clothes¦53923 and bathe themself in water¦53925, and they'll be ‘unclean¦53926’ until¦53927 the evening¦53929.
+\v 9 Any thing that¦53934 the man who had a discharge¦53937 rides on, will become ‘unclean¦53938’,
+\v 10 and anyone who touches¦53942 it¦53945 will be ‘unclean’ until the evening, plus¦53951 anyone who \add ≈carries¦53951 any of those things\add*, must¦53945 wash their clothes¦53954 and bathe themself in water¦53956, and they'll be ‘unclean’ until the evening.
+\v 11 Anyone the \add ≈man who had a discharge¦53967\add* touches¦53964 and do didn't¦53969 rinse¦53971 their hands¦53968 in water, must¦53964 wash their clothes¦53974 and bathe themself in water, and they'll be ‘unclean¦53977’ until¦53978 the evening¦53980.
+\v 12 Any container that¦53985 the \add ≈man who had a discharge¦53990\add* touches¦53987, must¦53987 be \add ≈smashed\add* if it's \add ≈made from\add* clay and¦53992 rinsed¦53997 with water¦53998 if it's \add ≈made from\add* wood.
+\p
+\v 13 When¦54000 the \add ≈man's discharge¦54003 ceases\add*, he must mark off seven¦54007 days¦54008 for his purification¦54009, and then¦54000 he must wash his clothes¦54011 and bathe himself in water¦54014, and \add after that,\add* he'll be ‘clean’.
+\v 14 Then¦54018 on the eighth¦54019 day¦54018, he must¦54020 take¦54020 two doves or \add ≈young¦54027\add* pigeons, and¦54018 \add ≈stand in front¦54031\add* of Yahweh¦54032 at the entrance¦54035 to the \add ≈sacred¦54036\add* tent¦54036. There he should give¦54038 them to a priest¦54041,
+\v 15 and the priest¦54045 must¦54043 \add ≈offer\add* one as a sin offering and \add ≈the other\add* as a burnt¦54049 offering, \add ≈thus making the man right\add* with Yahweh¦54054 for his discharge¦54055.
+\p
+\v 16 \add ≈Now\add* when a man¦54058 has an \add ≈emission of semen\add*, then he must¦54061 bathe his entire¦54070 body¦54072 in water¦54067, and he'll be ‘unclean¦54073’ until¦54074 the evening¦54076.
+\v 17 He must¦54086 also wash all his clothing, and any leather articles on him \add ≈that came into contact with the semen\add* and \add @all of that\add* will be ‘unclean¦54093’ until¦54094 the evening¦54096.
+\v 18 \add ≈When a man and a woman¦54099 ‘sleep together’\add*, then they must¦54101 both bathe in water¦54108, and they'll \add both\add* be ‘unclean’ until the evening.\f + \fr 15:18 \ft Note that if they had sexual relations in the evening, say 9pm, then they'd be ‘unclean’ all the next day and until the \+em following\+em* evening (because the Jewish ‘day’ begins after dusk—rather than at midnight like modern Western society counts time).\f*
+\p
+\v 19 When¦54114 a woman¦54114 \add ≈has her menstrual¦54126 period\add*, she'll be ‘unclean’ for seven¦54123 days¦54124, and¦54114 anyone¦54129 who touches¦54129 her \add ≈during that time¦54124\add* will be ‘unclean’ until¦54132 the evening¦54134.
+\v 20 Anything that she lies on or sits on \add ≈during that time\add* will become ‘unclean’.
+\v 21 Anyone¦54151 who touches¦54151 her¦54152 bed¦54152 must¦54153 wash their clothes¦54154 and bathe in water¦54156, and they'll be ‘unclean¦54157’ until¦54158 the evening¦54160.
+\v 22 Anyone¦54164 who touches¦54164 anything that¦54168 she¦54170 sat on must¦54170 wash their clothes¦54173 and bathe in water¦54175, and they'll be ‘unclean¦54176’ until¦54177 the evening¦54179,
+\v 23 \add ≈i.e.,\add* whether it's her bed¦54184 or something she¦54192 sat on, anyone who touches¦54196 it will be ‘unclean¦54199’ until¦54200 the evening¦54202.
+\v 24 If a man¦54207 \add ≈sleeps with\add* \add @a menstruating¦54210 woman\add* and \add ≈gets blood\add* on him, then¦54204 he'll be ‘unclean’ for seven¦54213 days¦54214, and any bed¦54217 that¦54218 he lies on will \add also\add* become ‘unclean’.
+\p
+\v 25 If any woman¦54225 \add ≈has a blood¦54230 flow when it's not her period\add*, or \add ≈keeps bleeding beyond her menstrual period\add*, all \add ≈those\add* days \add ≈will be regarded the same as her menstruation so she'll be\add* ‘unclean¦54248’.
+\v 26 Any bed that¦54258 she lies on \add ≈as long as she's discharging¦54265 blood will be regarded the same as during her¦54264 menstruation and will\add* be ‘unclean¦54277’, as will anything she sits on.
+\v 27 \add ≈Also¦54282,\add* any person who touches¦54284 them will be ‘unclean’ and they must¦54286 wash their clothes¦54288 and bathe in water¦54290, and they'll be ‘unclean’ until¦54292 the evening¦54294.
+\v 28 \add ≈Once the flow stops,\add* then \add @the woman\add* must¦54300 count¦54300 off seven¦54302 days¦54303, and¦54296 then she'll be ‘clean’ after¦54304 that.
+\v 29 Then¦54307 on the eighth¦54308 day¦54307, she must¦54309 take¦54309 two doves or \add ≈young¦54316\add* pigeons and¦54307 \add ≈give them\add* to a priest¦54322 at the entrance¦54325 to the \add ≈sacred¦54326\add* tent¦54326,
+\v 30 and he will offer one as a sin offering and \add ≈the other\add* as a burnt¦54338 offering, \add ≈thus making her right with\add* Yahweh¦54343 from her ‘unclean¦54345’ flow.
+\p
+\v 31 You¦54352 two must¦54347 keep¦54347 the \add ≈Israeli¦54350 people¦54350\add* separate¦54347 from their ‘uncleanness¦54357’, then¦54347 they won't¦54354 defile my residence that's among¦54362 them, and¦54347 cause their \add own\add* death.
+\p
+\v 32 \add ≈The above\add* are the regulations for any man with a discharge¦54366 or a seminal emission that¦54367 makes him ‘unclean¦54373’,
+\v 33 plus¦54379 any woman who is menstruating¦54377 or has a bodily discharge¦54379, as well as any man who sleeps with an ‘unclean¦54390’ woman.
+\c 16
+\s1 The day for making things right
+\rem /s1 The Day of Atonement
+\p
+\v 1 Yahweh spoke¦54393 to Mosheh¦54397 after¦54398 the death¦54399 of two¦54400 of Aharon's sons¦54401 when they approached Yahweh \add wrongly\add* and died¦54407,
+\v 2 and \add *he\add* told Mosheh¦54413:
+\p Tell your brother¦54418 Aharon that if he doesn't \add want to\add* die¦54439, then¦54409 he mustn't \add just\add* enter the \add ≈holiest room¦54427\add* inside¦54428 the curtain¦54429 at any old time¦54424. The atonement lid is on the \add sacred¦54427\add* box, and I will appear¦54442 in a cloud¦54441 over \add *that\add* lid.\x + \xo 16:2: \xt Heb 6:19.\x*
+\p
+\v 3 This is \add how\add* Aharon must enter the \add ≈sacred¦54452 tent\add*: \add he must acquire\add* a \add ≈young¦54454\add* bull¦54453 for a sin offering, and a ram for a burnt¦54459 offering.
+\v 4 ⇔He must bathe himself¦54475 in water¦54484 and then put on linen underclothes¦54466, followed by his sacred linen tunic¦54461 and tie the linen sash¦54473 around it. Then he must wrap the linen turban¦54476 on. Those are \add all\add* sacred clothes¦54479.
+\p
+\v 5 Then¦54493 \add @Aharon\add* must¦54494 \add acquire\add* two \add ≈young\add* goats for a sin offering and¦54490 one ram for a burnt¦54502 offering.
+\v 6 \add *He\add* must¦54504 present¦54504 the bull¦54508 as a sin¦54509 offering¦54509 for himself¦54514 to \add ≈make both him and¦54504 his household¦54516 right with God¦54505\add*.
+\v 7 Then¦54518 he must¦54518 take¦54518 the two¦54521 goats¦54522 and¦54518 make them stand \add ≈in front¦54525\add* of Yahweh¦54526 at the entrance¦54527 to the \add ≈sacred¦54528\add* tent¦54528,
+\v 8 and \add ≈throw dice to decide which\add* one is for Yahweh¦54540, and one is to be the ‘scapegoat’.
+\v 9 Then¦54545 Aharon¦54546 must¦54545 present¦54545 the goat¦54549 that's for Yahweh¦54554, and¦54545 offer it as a sin¦54556 offering¦54556,
+\v 10 \add ≈but¦54558\add* the \add ≈chosen\add* ‘scapegoat’ must¦54564 be kept standing there \add ≈in front¦54567\add* of Yahweh, \add ≈because it'll be used to make the people right with Yahweh\add*, \add and¦54558 be sent\add* into the wilderness¦54574.
+\p
+\v 11 Then¦54576 Aharon must¦54576 present¦54576 the bull for his own sin offering \add ≈to make him and¦54576 his household¦54588 right with God\add*, then¦54576 he'll slaughter the bull for the sin offering for himself¦54586.
+\v 12 Then¦54598 he must¦54598 get a panful of burning¦54604 coals¦54602 off the altar¦54606 \add ≈in front\add* of Yahweh¦54608 as well as two handfuls of finely-ground, fragrant incense¦54611, and¦54598 take¦54598 them inside¦54615 the curtain¦54616
+\v 13 where he'll put the incense on the \add ≈coals\add* in Yahweh's¦54626 \add ≈presence\add*. Then¦54618 the \add smoke\add* cloud¦54629 from the incense will cover the atonement¦54633 lid on the \add sacred\add* chest, and¦54618 he won't¦54638 die.
+\v 14 Then¦54641 he must take some of the bull's blood, and¦54641 using his finger, he must flick the blood seven¦54654 times¦54656 onto the eastern the side of the lid and seven times onto the front¦54648 of the lid.
+\p
+\v 15 Then¦54662 \add @Aharon\add* must¦54662 slaughter the goat for the people's¦54668 sin offering¦54666, and take its blood inside¦54675 the curtain¦54676, and do the same with it that¦54667 he did to the bull's blood—\add ≈flicking\add* it onto the side and front of the atonement lid,\x + \xo 16:15: \xt Heb 9:12.\x*
+\v 16 \add ≈thus\add* making the \add ≈Israeli¦54698 people\add* \add ≈right with Yahweh\add* for their uncleanness and their \add ≈rebellion and disobedience\add*. \add ≈That's also for\add* the \add ≈sacred¦54696\add* tent which¦54708 is among \add @the people\add* with their uncleanness.
+\v 17 \add ≈No one else can enter\add* the \add ≈sacred\add* tent¦54720 when \add @Aharon\add* enters to make atonement in the \add ≈sacred room¦54724\add* until¦54725 he leaves \add again\add*. He must¦54718 make atonement for himself¦54729 and¦54713 his household¦54731, as well as for the whole \add ≈Israeli¦54735 community\add*,
+\v 18 then¦54738 he'll go out to the altar that's \add ≈in front¦54743\add* of Yahweh¦54745 and make atonement¦54746 for that—he must¦54738 take some of the bull's blood and some of the goat's blood and put it on the \add four\add* \add ≈projecting corners\add* of the altar.
+\v 19 Then¦54760 he must¦54760 \add ≈flick\add* blood¦54764 on to it seven¦54766 times¦54767 with his finger¦54765, thus purifying¦54768 it and¦54760 \add ≈removing\add* the uncleanness¦54770 of the \add ≈Israeli¦54771 people¦54771 from it\add*.
+\s1 The goat taking the blame
+\rem /s1 The Scapegoat
+\p
+\v 20 \add ≈When¦54774\add* \add @Aharon\add* has finished¦54774 purifying the sacred \add ≈room¦54778\add*, the \add ≈sacred\add* tent¦54781, and¦54774 the altar¦54785, then¦54774 he should present¦54786 the live goat¦54789.
+\v 21 \add *He\add* must place \add ≈both¦54796\add* his hands¦54797 on the goat's head, and confess¦54803 all of Israel's¦54811 \add ≈disobedience, rebellion, and shortcomings\add*—\add symbolically\add* placing them onto the goat's head, and then¦54792 he must choose a man \add ≈that's nearby\add* to take it into the wilderness¦54831.
+\v 22 ⇔Then he'll release the goat there in the wilderness¦54849, and¦54833 the goat will carry all their¦54840 sins into that barren land.
+\p
+\v 23 Then¦54851 Aharon¦54852 must¦54851 enter the \add ≈sacred\add* tent¦54855 and take off the linen¦54861 garment¦54860 that¦54862 he'd put on as he'd entered into the sacred \add ≈room¦54867\add* and leave¦54868 them there¦54869.\x + \xo 16:23: \xt Eze 44:19.\x*
+\v 24 Then¦54871 he must¦54871 wash himself in water¦54875 in a sacred¦54877 place¦54876, put on his \add regular\add* clothes¦54881, and go out and make his burnt offering and the burnt offering for the people, \add ≈thus making both himself and the people right with Yahweh\add*.
+\v 25 Then¦54896 he must¦54899 burn the fat from the sin¦54898 offering¦54898 up on the altar¦54900.
+\v 26 \add ≈Also¦54902,\add* the person who led away the ‘scapegoat’ must¦54907 wash his clothes¦54908 and bathe himself in water¦54913, and then¦54902 he can reenter the camp¦54920.
+\v 27 Then¦54922 \add the remains of\add* the bull¦54923 and the goat¦54927 from the sin offerings (whose blood¦54933 was taken into the sacred \add ≈room¦54935\add* to make atonement¦54934) must be taken to a place¦54935 outside¦54939 the camp¦54940 where they must be burnt—skins, flesh¦54948, and dung.\x + \xo 16:27: \xt Heb 13:11.\x*
+\v 28 The man who burnt them must¦54955 then wash his clothes¦54956 and bathe his body¦54960 in water¦54961, and then he can reenter the camp¦54968.
+\s1 The national purification day
+\rem /s1 Observing the Day of Atonement
+\p
+\v 29 This will be a permanent¦54973 regulation¦54972 for you all:
+\p On the 10th of the seventh¦54975 month \add (of Tishrei—around September/October)\add*, all of you including¦54982 those who are native-born as well as foreigners living among¦54990 you, must¦54970 humble yourselves and¦54970 not \add ≈work¦54984 that day\add*\x + \xo 16:29-34: \xt Lev 23:26-32; Num 29:7-11.\x*
+\v 30 because on that day¦54994, \add @the high priest\add* will purify¦54998 you all from your sins¦55001 \add ≈to make you right with\add* Yahweh¦55003, and you'll be ‘clean’.
+\v 31 It'll be a \add ≈very sacred\add* rest day for you, and¦55010 you all must¦55010 humble \add ≈yourselves\add*—a permanent¦55015 regulation¦55014 \add for you all\add*.
+\v 32 The priest \add ≈who's anointed¦55021 and ordained to succeed\add* his father¦55030 \add as high priest\add* must \add ≈be the one to\add* make atonement¦55017, and he must be wearing his \add ≈sacred¦55037\add* linen¦55035 clothes¦55034.
+\v 33 He will \add first\add* \add ≈purify\add* the \add ≈sacred room\add* and the \add ≈sacred\add* tent¦55046, and the altar¦55050, and then¦55039 \add ≈make all the priests¦55053 right with Yahweh\add* and \add finally,\add* the \add ≈entire¦55056 community\add*.
+\v 34 That will become¦55062 a permanent¦55067 regulation¦55066 every year¦55077 to \add ≈make all the Israelis¦55071 right with Yahweh because of\add* their¦55075 sins¦55075.
+\p \add ≈So¦55062\add* Mosheh¦55084 did exactly as Yahweh had instructed¦55080 him.
+\c 17
+\s1 Slaughtering animals
+\rem /s1 The Slaughtering of Animals; Law of holiness; Prohibitions against Eating Blood; The Sacredness of Blood; Eating Blood Forbidden
+\p
+\v 1 Then Yahweh¦55088 told Mosheh¦55091:
+\p
+\v 2 Tell Aharon and his sons¦55100 and all the \add ≈Israelis¦55104\add* that¦55110 \add ≈these are the instructions¦55112 from\add* Yahweh¦55113:
+\v 3 \add ≈No Israeli¦55119 is allowed to\add* slaughter a bull¦55122 or lamb or goat \add either\add* inside the camp or outside¦55133 \add *it\add*.
+\v 4 \add ≈If¦55148 they're not taken\add* to the entrance¦55138 to the \add ≈sacred¦55139\add* tent¦55147 to be presented as an offering to Yahweh¦55145 \add ≈in front¦55146\add* of \add *his\add* residence, then¦55136 that person¦55151 \add ≈will be held guilty\add* of its blood—they've shed blood so they must¦55150 be cut off from his people¦55159.
+\v 5 The \add ≈Israelis¦55164\add* \add ≈must stop\add* sacrificing their¦55168 \add ≈animals\add* in the countryside¦55175, and \add instead\add* bring them to Yahweh at the entrance¦55180 to the \add ≈sacred¦55181\add* tent¦55181, \add i.e., they must\add* bring them to the priest¦55185 and sacrifice them as peace¦55188 offerings¦55188 to Yahweh.
+\v 6 Then¦55192 the priest¦55193 will splash the blood¦55196 onto Yahweh's¦55200 altar¦55199 at the tent¦55202 entrance¦55201, and¦55204 burn up the fat to become a \add ≈soothing¦55207 aroma¦55206\add* for Yahweh.
+\v 7 Then¦55210 they \add ≈won't¦55210 be able to continue offering\add* their sacrifices¦55212 to the goat demons that¦55218 they're prostituting¦55220 themselves¦55220 to. \add ≈The above\add* will be a permanent¦55223 regulation¦55222 \add ≈throughout\add* the generations¦55228.
+\p
+\v 8 You must¦55231 tell them that if an \add ≈Israeli¦55235\add* or a foreigner living among¦55242 them, makes a burnt¦55246 offering¦55246 or sacrifice¦55249
+\v 9 without bringing¦55257 it to Yahweh¦55260 at the \add ≈sacred¦55254\add* tent¦55254 entrance¦55253, then¦55251 that person must¦55257 be cut off from \add ≈the community\add*.
+\s1 The law concerning the blood
+\rem /s1 Eating Blood Prohibited
+\p
+\v 10 \add If¦55287 there's\add* any \add ≈Israeli¦55269\add* or foreigner living among¦55274 them, who eats blood, then¦55266 I'll¦55280 \add ≈oppose\add* that person and¦55266 remove them from \add ≈the community\add*\x + \xo 17:10: \xt Gen 9:4; Lev 7:26-27; 19:26; Deu 12:16,23; 15:23.\x*
+\v 11 because the body's life is in the blood. I myself have given¦55298 you \add @blood\add* to make atonement for your lives at the altar¦55302, because \add ≈it's the blood that¦55311 can atone for\add* life.\x + \xo 17:11: \xt Heb 9:22.\x*
+\v 12 \add ≈That's why\add* I told the \add ≈Israelis¦55318\add* that none of them must¦55326 eat blood—\add not even\add* the foreigners that live among¦55330 them may eat blood.
+\p
+\v 13 \add ≈So any person\add* (\add ≈Israeli¦55340\add* or foreigner living among¦55345 them) who catches wild game (\add ≈including¦55337\add* birds) to eat, they must¦55347 pour its blood¦55358 out and cover¦55359 it with soil
+\v 14 because the life of \add ≈their bodies\add* is the blood that's in them. \add ≈Again¦55373,\add* \add that's why\add* I've¦55371 told the \add ≈Israelis¦55372\add* not to eat the blood of any \add ≈living thing\add* because the life is in the blood, and anyone who eats it must¦55390 be cut off \add ≡from the community\add*.
+\p
+\v 15 Anyone who eats \add part of\add* a carcass¦55397 \add they found\add* or one that was \add ≈killed by wild animals¦55398\add*, must¦55396 wash their clothes¦55402 and bathe in water¦55404, and they'll be ‘unclean¦55405’ until¦55406 the evening¦55408, and then¦55392 they'll be ‘clean’ \add again\add*.
+\v 16 \add ≈However,\add* if \add @that person\add* doesn't wash \add their clothes\add* or bathe, then¦55411 they must¦55413 bear \add the punishment for\add* their own \add ≈disobedience\add*.
+\c 18
+\s1 Sexual relationships
+\rem /s1 Unlawful Sexual Relations; Forbidden Sexual Practices; Sexual Relations
+\p
+\v 1 Then Yahweh¦55422 told Mosheh¦55425:
+\p
+\v 2 Tell the \add ≈Israeli¦55431\add* that I am their god¦55437 Yahweh¦55436.
+\v 3 \add ≈They mustn't behave as if they're still there¦55457 in\add* Egypt¦55442, nor should they \add ≈behave like the Canaanites that were living\add* in the land that I'm taking you all into, and don't¦55447 \add ≈emulate their¦55460 customs and practices\add*.
+\v 4 You all must¦55467 \add ≈imbibe my values and¦55468 follow my instructions¦55470\add*. I am your god¦55476 Yahweh¦55475.
+\v 5 You all must¦55478 \add ≈follow my instructions¦55481 and¦55478 my values\add*—those who do¦55486 so will live¦55489. I am your god Yahweh¦55492.\x + \xo 18:5: \xt Neh 9:29; Eze 18:9; 20:11-13; Luk 10:28; Rom 10:5; Gal 3:12.\x*
+\p
+\v 6 None of you may \add ≈ever flirt with any close relative¦55501 to try to get them to undress\add*. I am Yahweh¦55508.
+\v 7 You¦55512 must¦55512 \add ≈never mess with your father's naked body\add*, or your mother's—no, she's your mother so don't¦55515 \add ≈ever take advantage of her¦55521 nakedness\add*.
+\v 8 Don't¦55528 \add ≈ever mess with any of your father's wives, because their naked bodies are the realm\add* of your father.\x + \xo 18:8: \xt Lev 20:11; Deu 22:30; 27:20.\x*
+\v 9 Don't¦55539 \add ≈flirt with your sister's nakedness, whether she's a full sister, a half sister, or an adopted sister\add*.\x + \xo 18:9: \xt Lev 20:17; Deu 27:22.\x*
+\v 10 Don't¦55562 \add ≈flirt with your grandchildren's nakedness, because¦55565 you'd be absolutely shaming yourself\add*.
+\v 11 Don't¦55579 \add ≈flirt with your step-sister's\add* nakedness, because she's your sister and her¦55581 nakedness \add ≈isn't¦55579 yours to enjoy\add*.
+\v 12 Don't¦55588 \add ≈flirt with your aunts nakedness¦55584 on your father's side\add*, because \add ≈she's closely related¦55590 to\add* your father.\x + \xo 18:12-14: \xt Lev 20:19-20.\x*
+\v 13 Don't¦55599 \add ≈flirt with your aunt's nakedness¦55595 on your mother's side\add*, because¦55601 \add ≈she's closely related¦55603 to\add* your mother.
+\v 14 Don't¦55611 \add ≈flirt with your uncle's nakedness¦55608 on your father's side\add*, and \add ≈keep away\add* from his wife, because she's your aunt.
+\v 15 Don't¦55625 \add ≈flirt with\add* your daughter-in-law's nakedness, because she's your son's wife¦55627 and her¦55632 nakedness \add ≈isn't¦55625 yours to enjoy\add*.\x + \xo 18:15: \xt Lev 20:12.\x*
+\v 16 Don't¦55639 \add ≈flirt with\add* your sister-in-law, because \add ≈her naked body is the realm\add* of your brother.\x + \xo 18:16: \xt Lev 20:21.\x*
+\v 17 Don't¦55649 \add ≈flirt with\add* the nakedness of \add both\add* a woman¦55647 and her daughter \add ≈or her granddaughter\add*, because they're \add ≈related¦55665 to each other\add*—that would be perverse.\x + \xo 18:17: \xt Lev 20:14; Deu 27:23.\x*
+\v 18 Don't¦55674 take your wife's sister¦55673 \add ≈to be a junior wife\add* \add ≈while your wife is still alive\add*.
+\p
+\v 19 Don't¦55687 approach a woman¦55684 \add ≈who's menstruating¦55685, to undress her¦55685\add*, because she's ‘unclean¦55686’.\x + \xo 18:19: \xt Lev 20:18.\x*
+\v 20 Don't¦55696 sleep with \add ≈someone else's\add* wife¦55694—your \add ≈child with her¦55703 would be\add* ‘unclean¦55701’.\x + \xo 18:20: \xt Lev 20:10.\x*
+\v 21 Don't¦55706 \add ≈sacrifice your children\add* to Molek¦55710 so you don't¦55706 profane¦55712 your god's \add ≈reputation¦55715\add*. I¦55717 am Yahweh¦55718.\x + \xo 18:21: \xt Lev 20:1-5.\x*
+\v 22 Don't¦55723 \add ≈have sexual relations\add* with a man like with a woman¦55726—it's an abomination¦55727.\x + \xo 18:22: \xt Lev 20:13.\x*
+\v 23 \add Men,\add* don't \add ≈have sexual relations\add* with any animal as that would make you¦55735 ‘unclean¦55737’. And women, don't give¦55735 yourself \add ≈sexually\add* to any animal as that's perverse.\x + \xo 18:23: \xt Exo 22:19; Lev 20:15-16; Deu 27:21.\x*
+\p
+\v 24 Don't¦55750 make yourselves¦55752 ‘unclean’ in any of \add @the above\add* ways, because¦55756 all of those things were done by the \add ≈people groups\add* that¦55762 I'm¦55764 \add ≈driving out\add* of this land ahead of you all.
+\v 25 The land had become ‘unclean¦55768’ \add ≈so I made them pay for their wickedness\add* and¦55768 \add so\add* the land will vomit¦55773 out its inhabitants¦55777.
+\v 26 \add ≈However,\add* you all must¦55779 \add ≈obey my instructions¦55783 and decisions¦55783\add* and not \add ≈tolerate\add* any of \add ≈that perverse behaviour\add*—not you who are native-born, nor any foreigner living among¦55795 you all,
+\v 27 because all \add ≈that perversity\add* was done by those living there before¦55809 you all, and the land became¦55810 ‘unclean¦55810’.
+\v 28 \add Don't¦55813 think\add* that the land won't¦55813 vomit¦55815 you all out just like it's doing to the \add ≈people groups\add* that have been \add there\add* before¦55826 you,
+\v 29 because everyone¦55829 who does any of \add ≈those perversities\add* will be cut off from their¦55840 \add ≈community\add*.
+\v 30 \add ≈So¦55842\add* you all must¦55842 carefully guard against \add ≈practising any of those detestable customs¦55848\add* which were \add ≈previously\add* done¦55851 \add there\add* and¦55842 which would make you all ‘unclean¦55854’. I¦55856 am your god¦55858 Yahweh¦55857.
+\c 19
+\s1 Various moral imperatives
+\rem /s1 Ritual and Moral Holiness; Various Laws; Laws of Holiness and Justice; Holiness in Personal Conduct
+\p
+\v 1 Then Yahweh¦55862 told Mosheh¦55865:
+\p
+\v 2 Tell the \add ≈entire¦55871 Israeli¦55874 community\add* that they must¦55877 \add ≈be separate from others\add*, because¦55881 I, your god¦55885 Yahweh¦55884, am holy \add (i.e., separated from impurity)\add*.\x + \xo 19:2: \xt Lev 11:44-45; 1Pe 1:16.\x*
+\v 3 Everyone must¦55890 \add ≈respect and obey\add* their \add ≈parents\add*, and observe my rest days. I am your god¦55897 Yahweh¦55896.\x + \xo 19:3: a \xt Exo 20:12; Deu 5:16; \xo b \xt Exo 20:8; Deu 5:12.\x*
+\p
+\v 4 Don't¦55899 turn¦55901 to worthless¦55904 idols¦55904, and¦55905 don't¦55899 make cast metal¦55906 gods¦55905 for yourselves. I¦55910 am your god¦55912 Yahweh¦55911.\x + \xo 19:4: a \xt Lev 26:1; \xo b \xt Exo 20:23; 34:17; Deu 27:15.\x*
+\p
+\v 5 When¦55918 you all sacrifice peace¦55917 offerings¦55917, \add ≈do it¦55920 correctly so that you'll all be accepted¦55919\add*.
+\v 6 \add The meat from\add* your sacrifice¦55923 must be eaten¦55924 that same day or the next day—anything left until¦55927 the third¦55930 day must be \add ≈thrown into the fire\add*.
+\v 7 If it was to be eaten on the third¦55938 day¦55937, it would be ‘unclean¦55939’ and¦55934 not acceptable¦55942,
+\v 8 and the people eating it would have to bear their own \add ≈guilt\add* for profaning¦55953 Yahweh's¦55952 holiness, and that person must¦55946 be cut off from \add ≈the community\add*.
+\p
+\v 9 When¦55959 you all harvest your \add ≈crops off\add* your land, you mustn't \add ≈cut the grain right to the very\add* edge of your field¦55967, and¦55959 nor \add ≈can you all pick up any dropped stalks\add*.\x + \xo 19:9-10: \xt Lev 27:15; Deu 24:19-22.\x*
+\v 10 In your \add #vineyards\add*, you must not \add ≈pick every last grape¦55977 or pick up any that fall on the ground\add*, because they must be left for the poor and¦55974 for the foreigners. I am your god¦55987 Yahweh¦55986.
+\p
+\v 11 You all mustn't steal¦55990 or deceive¦55993, or defraud any fellow¦55998 citizen¦55998,\x + \xo 19:11: a \xt Exo 20:15; Deu 5:19; \xo b \xt Exo 20:16; Deu 5:20.\x*
+\v 12 and don't¦56000 use my name to \add ≈seal\add* a promise and then¦56000 \add go ahead and\add* \add ≈ruin my reputation¦56003\add*. I¦56010 am Yahweh¦56011.\x + \xo 19:12: \xt Exo 20:7; Deu 5:11; Mat 5:33.\x*
+\p
+\v 13 Don't oppress¦56015 your¦56018 \add #neighbours\add* or steal from them. Don't \add ≈fail to pay a day-labourer as they finish each day's work\add*.\x + \xo 19:13: \xt Deu 24:14-15.\x*
+\v 14 Don't¦56037 curse¦56033 a deaf person, or \add ≈put something in front of\add* a blind¦56036 person \add to trip them\add*. You must¦56033 \add ≈respect and obey\add* your god¦56041. I am Yahweh¦56043.\x + \xo 19:14: \xt Deu 27:18.\x*
+\p
+\v 15 Don't¦56050 judge unfairly—showing partiality to the poor, or honouring¦56057 those who are well-known—you must¦56047 \add always\add* judge your fellow¦56062 citizens¦56062 fairly.\x + \xo 19:15: \xt Exo 23:6-8; Deu 16:19.\x*
+\v 16 Don't go¦56066 around slandering¦56067 people. Don't \add ?≈take advantage of your¦56074 neighbour's¦56074 death\add*. I am Yahweh¦56076.
+\p
+\v 17 You mustn't hate¦56080 your brother¦56083. Certainly rebuke \add ≈those you interact with\add* \add ≈so you don't¦56090 get blamed for their bad behaviour\add*.\x + \xo 19:17: \xt Mat 18:15.\x*
+\v 18 Don't¦56099 try to get revenge against others or hold a grudge against any of your people¦56105, but¦56099 \add instead,\add* love¦56106 your neighbour¦56107 as yourself. I¦56109 am Yahweh¦56110.\x + \xo 19:18: \xt Mat 5:43; 19:19; 22:39; Mrk 12:31; Luk 10:27; Rom 13:9; Gal 5:14; Jam 2:8.\x*
+\p
+\v 19 \add ≈Follow my instructions¦56114\add*—don't crossbreed two different kinds of animals, don't sow two different crops in your field¦56121, and don't wear clothing¦56126 made of different kinds of thread.\x + \xo 19:19: \xt Deu 22:9-11.\x*
+\p
+\v 20 If a man impregnates a woman¦56140 who's destined to be someone else's slave¦56145 and she hasn't been freed, compensation¦56157 needs to be \add paid\add*.\f + \fr 19:20 \ft We as modern readers don't understand all the dynamics of this seemingly complex social situation.\f* They mustn't be executed, because¦56135 she hadn't been freed.
+\v 21 \add ≈However,\add* \add @that man\add* must¦56166 take a ram to Yahweh¦56170 at the \add ≈sacred¦56174\add* tent's entrance¦56173 for a guilt offering,
+\v 22 and the priest¦56181 will make \add ≈him right with\add* Yahweh¦56185 by means of that¦56189 guilt¦56183 offering¦56183 ram, and then¦56179 he'll be forgiven¦56191 for his transgression.
+\p
+\v 23 When you all enter into the land and plant¦56204 various kinds of fruit trees, you mustn't eat the fruit for the first three¦56214 years¦56215—it should be \add regarded as\add* ‘uncircumcised¦56218’ \add for that duration\add*.
+\v 24 Then¦56222 in the fourth¦56223 year¦56222, all that fruit¦56227 must¦56224 be \add regarded as\add* ‘sacred¦56228’—praise¦56229 offerings¦56229 for Yahweh¦56230.
+\v 25 \add ≈Finally,\add* in the fifth¦56233 year¦56232, you can eat¦56234 that fruit¦56237 and¦56232 add that produce¦56240 to your harvest. I am your god¦56243 Yahweh¦56242.
+\p
+\v 26 Don't eat¦56246 anything with the blood¦56249 \add still in it\add*. Don't practice divination¦56251 or witchcraft.\x + \xo 19:26: a \xt Gen 9:4; Lev 7:26-27; 17:10-14; Deu 12:16,23; 15:23; \xo b \xt Deu 18:10.\x*
+\v 27 Don't¦56259 \add have haircuts that\add* round¦56256 off your hair at the sides, and \add men\add*, don't¦56259 trim the edges of your \add #beards\add*.\x + \xo 19:27-28: \xt Lev 21:5; Deu 14:1.\x*
+\v 28 Don't¦56267 make cuts on your¦56269 bodies \add ≈when someone dies¦56266\add*, and¦56270 don't¦56267 \add ≈tattoo¦56270\add* yourselves¦56274. I¦56275 am Yahweh¦56276.
+\p
+\v 29 don't¦56278 defile your¦56283 daughter¦56283 by making¦56284 her¦56284 prostitute herself¦56284, \add ≈so the country\add* doesn't prostitute itself¦56287 and become full of wickedness¦56291.\x + \xo 19:29: \xt Deu 23:17.\x*
+\v 30 Keep my rest days, and¦56297 \add ≈respect\add* my sanctuary¦56297. I am Yahweh¦56300.\x + \xo 19:30: \xt Lev 26:2.\x*
+\p
+\v 31 Don't¦56302 turn¦56304 to mediums and¦56308 diviners—don't¦56302 make yourselves ‘unclean¦56314’ by means of them. I¦56316 am your god¦56318 Yahweh¦56317.\x + \xo 19:31: \xt Deu 18:11; 1Sam 28:3; 2Ki 23:4; Isa 8:19.\x*
+\p
+\v 32 Stand up for those with gray hair¦56321, and honour¦56323 the \add ≈presence\add* of the elderly. \add ≈Honour and respect\add* your¦56327 god¦56327. I am Yahweh¦56329.
+\p
+\v 33 ⇔Don't \add ≈take advantage of\add* \add #foreigners\add* when they stay in your¦56337 land—\x + \xo 19:33-34: \xt Exo 22:21; Deu 24:17-18; 27:19.\x*
+\v 34 you all must¦56344 treat \add #foreigners\add* the same as native-born \add Israelis\add* and love them like you \add ≡love\add* yourselves¦56352, because¦56353 you were all foreigners in Egypt¦56358 \add (Heb. Mitsrayim)\add*. I am your god¦56361 Yahweh¦56360.
+\p
+\v 35 Don't allow injustice¦56366 \add either\add* in \add ≈judging cases\add*, \add or by trading with rigged\add* weights¦56369 and¦56370 measures¦56368—\x + \xo 19:35-36: \xt Deu 25:13-16; Prv 20:10; Eze 45:10.\x*
+\v 36 your scales and weights¦56374 and measuring containers must¦56381 be honest. I am your god¦56385 Yahweh¦56384 who brought¦56388 you all out of Egypt¦56391 \add (Heb. Mitsrayim)\add*.
+\v 37 You all must¦56393 \add ≈obey my instructions¦56398 and decisions¦56403\add* and \add ≈stick to\add* them. I am Yahweh¦56407.
+\c 20
+\s1 Penalties for disobedience
+\rem /s1 Penalties for Violations of Holiness; Punishments for Sin; Penalties for Disobedience; Punishments for Disobedience
+\p
+\v 1 Then Yahweh¦56411 told Mosheh¦56414:
+\p
+\v 2 Tell the \add ≈Israeli¦56419 people\add* that if any of them, or any foreigner staying in Yisrael¦56420, gives any of their \add ≈children\add* to Molek¦56436, then¦56417 \add *that person\add* must \add ≈definitely be executed\add*—the people must do it by throwing rocks¦56441 at them.
+\v 3 \add Yes,\add* I myself will \add ≈personally punish\add* that person¦56449 and¦56444 cut them off from the people¦56454 for giving their \add ≈child\add* to Molek¦56458 and so making my sanctuary¦56463 ‘unclean¦56460’ and profaning¦56464 my sacred¦56468 name¦56467.
+\v 4 If the people¦56473 of the land \add just\add* hides their eyes¦56477 from \add seeing\add* anyone¦56483 offering their \add ≈child\add* to Molek¦56484 so they¦56472 don't¦56485 have to execute \add @that person\add*,
+\v 5 then¦56489 I'll \add also\add* remove that \add other\add* person¦56494 and¦56489 their clan. I'll cut them off from their people¦56509, along with anyone else who practises prostitution by prostituting themselves to Molek¦56507.
+\p
+\v 6 I'll \add ≈take action against\add* any person who turns to mediums or diviners to prostitute¦56520 themselves to them, and¦56511 I'll cut them off from their people¦56531.
+\v 7 You must¦56533 keep¦56533 yourselves¦56533 \add ≈separate from those kinds of things to be\add* holy, because¦56536 I, Yahweh¦56538, am your god¦56539.
+\v 8 You all must¦56541 \add ≈follow my instructions¦56544\add* and¦56545 \add ≈implement\add* them. I am Yahweh¦56548 who \add ≈makes you different from other people groups\add*.
+\p
+\v 9 Any person who curses¦56556 their father or mother must¦56556 be \add ≈executed\add*—their blood¦56568 will be on \add @their own head\add* for cursing their \add ≈parents\add*.\x + \xo 20:9: \xt Exo 21:17; Mat 15:4; Mrk 7:10.\x*
+\p
+\v 10 Any man who commits adultery¦56587 with another man's wife, maybe even his neighbours¦56583 wife, must¦56573 be \add ≈executed\add*—both the \add ≈man and¦56571 the woman\add*.\x + \xo 20:10: \xt Exo 20:14; Lev 18:20; Deu 5:18.\x*
+\v 11 Any man¦56590 who sleeps with any of his father's wives, has exposed¦56599 his father's nakedness¦56597. Both of them must¦56592 be \add ≈executed\add*—their blood¦56604 is on \add @their own heads\add*.\x + \xo 20:11: \xt Lev 18:8; Deu 22:30; 27:20.\x*
+\v 12 If a man¦56607 sleeps with his daughter-in-law, both of them must¦56609 be executed. That's perversion and¦56607 so their blood¦56618 is on \add @their own heads\add*.\x + \xo 20:12: \xt Lev 18:15.\x*
+\v 13 If a man \add ≈has a sexual relationship\add* with another man, both of them have done something detestable and¦56621 both of them must¦56623 be executed—their blood¦56634 is on \add @their own heads\add*.\x + \xo 20:13: \xt Lev 18:22.\x*
+\v 14 If a man takes both a mother¦56645 and¦56637 her¦56645 daughter as wives, then¦56637 that's wicked. They must¦56639 all be burnt \add ≈to death\add* so that depravity won't¦56652 \add take root\add* among¦56656 you.
+\p
+\v 15 If a man \add tries to\add* \add ≈have sex with\add* an animal, that man must be executed and¦56658 the animal must \add also\add* be killed.\x + \xo 20:15-16: \xt Exo 22:19; Lev 18:23; Deu 27:21.\x*
+\v 16 If a woman \add ≈presents herself sexually\add* to any animal, you must¦56672 \add ≈execute\add* the woman and¦56670 kill the animal—their blood¦56689 is on \add @their own heads\add*.
+\p
+\v 17 If a man¦56692 \add ?≈sleeps with\add* his sister (whether on his father's¦56701 or mother's¦56705 side) and they see each other's nakedness, it's a disgrace and they must be cut off from their¦56721 people¦56721—he's exposed¦56724 her¦56709 nakedness and he must bear his wickedness.\x + \xo 20:17: \xt Lev 18:9; Deu 27:22.\x*
+\v 18 If a man \add ≈sleeps\add* with a woman¦56734 who's menstruating¦56735, he's exposed¦56745 her nakedness¦56739 and¦56728 uncovered¦56736 the \add ≈source\add* of her blood¦56749, \add so\add* they must¦56731 both be cut off from among their¦56753 people¦56753.\x + \xo 20:18: \xt Lev 18:19.\x*
+\p
+\v 19 You mustn't expose the nakedness¦56755 of your sister (whether on your father's side or mother's¦56757 side) because¦56762 \add that's like\add* exposing your own \add ≈body\add*. They must¦56759 bear their¦56767 wickedness.\x + \xo 20:19-20: \xt Lev 18:12-14.\x*
+\v 20 A man¦56770 who \add ≈sleeps\add* with his aunt, he's exposed¦56778 his uncle's¦56777 nakedness¦56776. They'll bear their¦56779 wickedness \add by\add* dying childless¦56781.
+\v 21 If a man \add ?≈marries\add* his brother's wife, it's \add ≈indecent\add*. He's exposed¦56795 his nakedness¦56793 \add and¦56784\add* they'll be childless¦56796.\x + \xo 20:21: \xt Lev 18:16.\x*
+\p
+\v 22 You all must¦56799 \add ≈obey my instructions¦56804 and decisions¦56809\add* and \add ≈stick to\add* them, and then¦56799 the land that I'm about¦56819 to take you into, won't¦56812 vomit¦56814 you all out.
+\v 23 Don't¦56825 follow the \add ≈customs\add* of the \add #peoples\add* that¦56829 I'll drive out ahead of you all, because¦56834 they¦56840 do all of \add @the above\add* things, and¦56841 I detest them
+\v 24 and I've¦56844 told you all that you yourselves will inherit their¦56850 land—I'll¦56852 give¦56852 it to you \add ≈to take possession of\add*. It's a land flowing¦56857 with milk¦56858 and honey¦56859. I am your god¦56862 Yahweh¦56861 who separates¦56865 you all from the \add other\add* people¦56869 \add groups\add*.
+\v 25 You all must¦56871 \add ≈distinguish\add* between ‘clean’ and ‘unclean’ animals and birds. Don't¦56882 make yourselves detestable¦56884 \add to me\add* with any animal or bird or crawling creature which¦56894 I've¦56896 distinguished for you all as ‘unclean’.
+\v 26 You all must¦56900 be ‘holy’ to me, because¦56903 I Yahweh¦56906 am holy, and¦56907 I've¦56907 set you all apart from the other \add ≈people¦56911 groups\add* to be mine.
+\p
+\v 27 Any man or woman¦56918 who's a medium or diviner must be executed—the people¦56929 must do it by throwing rocks¦56929 at them.
+\c 21
+\s1 Stricter instructions for priests
+\rem /s1 The Holiness of the Priests; Instructions for the Priests; Rules for Priests; The Holiness of Priests
+\p
+\v 1 Then Yahweh¦56936 told Mosheh¦56939:
+\p Tell Aharon's descendants the priests¦56943 that they must¦56946 not defile themselves among¦56952 the \add ≈Israelis\add*, by touching anything that's not living¦56948
+\v 2 apart from the body of a close relative¦56957 like a \add ≈parent, child,\add* brother¦56964
+\v 3 or \add ≈unmarried\add* sister¦56966—the priest can become ‘unclean¦56976’ by means of one of them.
+\v 4 He must¦56979 not make himself ‘unclean¦56979’ \add if it's the death of\add* \add ?≈a relative only by marriage\add*.
+\v 5 They must¦56986 not shave¦56993 their heads or trim the edges of their beards¦56991 or cut their bodies \add in grief\add*.\x + \xo 21:5: \xt Lev 19:27-28; Deu 14:1.\x*
+\p
+\v 6 \add @ The priests\add* must stay separate for their God¦57001 and they must not \add ≈tarnish his reputation¦57004\add* because¦57006 they present¦57014 the gifts to Yahweh¦57010—their god's \add ≈food\add*
+\v 7 They mustn't \add ?≈marry\add* a woman who was a prostitute¦57019 or who has defiled herself \add some other way\add* or who is divorced¦57024 from her¦57025 husband¦57025, because¦57028 they're separated for their god¦57032.
+\v 8 You must \add ≈treat\add* him¦57034 as \add ≈set apart\add* because he's the one presenting¦57042 your god's \add ≈food\add*. He must be ‘holy’ for you, because I, Yahweh¦57050, am holy and¦57034 I set you all apart as ‘holy’.
+\v 9 If a priest's¦57055 daughter¦57053 prostituted¦57058 herself¦57057, she would be profaning¦57057 her¦57061 father¦57061 \add so\add* must¦57057 be burnt¦57065 \add to death\add*.
+\p
+\v 10 The priest¦57068 who is chief of all his brothers¦57070 and who had the anointing¦57079 oil poured¦57073 over his head, and \add ≈who has the responsibility of\add* wearing the \add special\add* clothing, must not \add ≈wear his hair loose\add*, and he must not tear his clothes¦57087 \add in grief\add*.
+\v 11 He mustn't approach \em any\em* dead¦57101 body—not \add even\add* his \add own\add* \add ≈parents\add*—he mustn't make himself¦57107 ‘unclean¦57107’.
+\v 12 \add Even for a death,\add* he mustn't leave \add his duties in\add* the sanctuary, and¦57109 he mustn't profane¦57115 the sanctuary of his god, because¦57119 he's been consecrated¦57120 with the anointing¦57122 oil. I am Yahweh¦57126.
+\v 13 He can \add only\add* \add ≈marry\add* a virgin¦57130—
+\v 14 he mustn't take a widow¦57133 or a divorced¦57134 woman, or a defiled prostitute¦57136. He can only \add ≈marry\add* an unmarried, \add ≈Israeli\add* girl,
+\v 15 then¦57150 he¦57152 won't¦57150 profane¦57152 his offspring among¦57154 his relatives, because¦57155 I¦57156 am Yahweh¦57157 who sets him¦57158 apart¦57158 as ‘holy’.
+\p
+\v 16 Then Yahweh¦57162 told Mosheh¦57165,
+\p
+\v 17 Tell Aharon that \add ≈none of his descendants\add* who have a \add ≈deformity\add* should ever approach to present¦57182 the food for his god¦57184.
+\v 18 \add ≈Yes,\add* no man who has a \add ≈deformity\add* must¦57195 approach \add to offer a sacrifice\add*, i.e., no one who's blind¦57197, lame, mutilated, or \add ≈with a swelling\add*,
+\v 19 or with a broken foot¦57212 or hand¦57215,
+\v 20 or a hunchback¦57219 or dwarf, or with an eye¦57225 defect¦57224, with a scab or rash, or anyone with a crushed¦57231 testicle¦57232.
+\v 21 Any \add ≈descendant of\add* Aharon the priest¦57243 with a blemish mustn't approach to preset a gift to Yahweh¦57250—no that person mustn't approach to present god's food.
+\v 22 However, they can eat¦57267 those gifts for God¦57261, including¦57264 the sacred and¦57264 very sacred \add ≈portions\add*.
+\v 23 \add ≈Despite that,\add* they mustn't enter past the curtain¦57272 or approach the altar¦57277 if they have a defect on \add ≈their¦57292 body\add*. They mustn't profane¦57285 my sanctuary¦57288 because¦57280 I am Yahweh¦57291 who sets them apart¦57292 as ‘holy’.
+\p
+\v 24 \add ≈So¦57294\add* Mosheh¦57295 told \add all\add* that to Aharon and his sons¦57301, and all the \add ≈Israelis¦57306\add*.
+\c 22
+\s1 Offerings to Yahweh become sacred
+\rem /s1 The Use of Holy Offerings; The Holiness of the Offerings
+\p
+\v 1 Then Yahweh¦57311 told Mosheh¦57314:
+\p
+\v 2 Tell Aharon and his sons¦57323 that¦57335 they must¦57330 \add ≈carefully honour\add* the holy things¦57325 \add offered\add* by the \add ≈Israeli¦57326\add* people¦57326, and they mustn't profane¦57330 my holy \add ≈reputation¦57333\add*. I am Yahweh¦57340.
+\v 3 Tell them that \add ≈throughout\add* the generations¦57344, any \add ≈of your descendants\add* who is ‘unclean¦57364’ and approaches things¦57357 that have become holy because the people¦57360 have consecrated them to Yahweh, \add @that person\add* will be cut off from me. I am Yahweh.
+\p
+\v 4 Any man who's a descendant of Aharon, if he has a skin disease¦57378 or a discharge¦57380, he mustn't eat any of the sacred \add >food\add* until¦57384 he's ‘clean’ \add again\add*. \add ≈The same applies if\add* he's touched¦57387 any ‘unclean¦57390’ corpse¦57392, anyone¦57394 who's had a seminal emission,
+\v 5 anyone who's touched any swarming¦57410 \add >creature\add* that makes him ‘unclean’ or touches \add another\add* person who makes him ‘unclean’ (whatever that person's uncleanness is).
+\v 6 \add No,\add* the man who's touched¦57426 any of those will be ‘unclean¦57429’ until the evening¦57432 and he mustn't eat¦57434 any of the sacred¦57437 \add >food\add* until he's washed¦57441 his body¦57442 with water¦57443.
+\v 7 When¦57445 the sun¦57446 sets, then¦57445 he'll be ‘clean¦57447’ and¦57445 will be able to eat¦57449 any of those sacred¦57452 \add >offerings\add* because¦57453 that's his food.
+\v 8 \add ≈But¦57458\add* he¦57460 must¦57460 \add ≈never\add* eat¦57460 \add ≈an animal found dead\add* or torn \add by wild animals\add* and¦57458 become¦57461 ‘unclean¦57461’ \add ≈in that way\add*. I¦57464 am Yahweh¦57465.
+\p
+\v 9 \add @The priests\add* must¦57467 \add ≈follow my instructions\add* so they won't¦57471 have to bear their¦57482 own disobedience and¦57467 die¦57476 from it because¦57478 they profaned¦57479 them. I¦57480 am Yahweh¦57481 who makes them sacred¦57482.
+\p
+\v 10 \add ≈However,\add* no stranger¦57486 may eat the sacred¦57490 \add >food\add*, \add e.g.,\add* someone staying with the priest¦57492, or his hired¦57493 servant.
+\v 11 If the priest had purchased \add ≈the person\add* with \add ≈cash¦57505\add*, then¦57499 \add @that person\add* can eat it, plus¦57509 anyone¦57509 that was born into \add @the priest's\add* \add ≈household¦57510\add*.
+\v 12 A priest's daughter¦57515 who \add ≈is married by\add* \add ≈someone who's not a priest\add* can \add no longer\add* eat¦57526 those sacred¦57524 \add ≈offerings\add*.
+\v 13 \add However, in the future\add* if she became a widow¦57533 or was divorced¦57534 without having had children, and¦57528 if she has returned¦57538 to her father's house¦57541 like when she was young, then¦57528 she can eat \add ≈the same food as her father\add*, \add ≈but¦57528 no\add* stranger¦57549 may eat it.
+\p
+\v 14 If someone¦57556 accidentally eats something that's sacred¦57560, then they must¦57559 \add ≈pay back the full value plus¦57556 20%\add* to the priest¦57566.
+\p
+\v 15 \add ≈So¦57571\add* \add in summary\add*, \add @the priests\add* must¦57572 not profane¦57572 the sacred¦57575 things¦57575 \add contributed by\add* the \add ≈Israelis¦57576\add* and¦57571 which¦57579 they've \add ≈offered\add* to Yahweh¦57582
+\v 16 or else they'll cause¦57584 themselves to bear the guilt¦57587 from their¦57591 disobedience concerning eating sacred \add >food\add*, because¦57592 I¦57593 am Yahweh¦57594 who has separated them to be sacred.
+\rem /s1 Worthy and Unworthy Offerings; Unacceptable Sacrifices; Acceptable Offerings
+\p
+\v 17 The Yahweh¦57599 told Mosheh¦57602:
+\p
+\v 18 Tell Aharon and his sons, and all the \add ≈Israelis¦57615\add* that¦57636 any \add ≈Israeli¦57615\add* or outsider \add ≈residing\add* in Yisrael¦57616, when they present their burnt¦57640 offering to Yahweh¦57639, whether it's for a vow or for a freewill¦57635 offering,
+\v 19 to be accepted¦57642 it must¦57643 be a male¦57644 with no¦57643 defects¦57643, whether it's a cow, or a sheep, or a goat.
+\v 20 Anything that has a defect must¦57655 \em not\em* be presented¦57655 because¦57656 it wouldn't be acceptable¦57659 on your behalf.\x + \xo 22:20: \xt Deu 17:1.\x*
+\v 21 \add ≈When¦57663 someone¦57663\add* presents¦57666 a sacrifice¦57667 of peace¦57669 offerings¦57669 to Yahweh¦57670 to fulfill¦57671 a vow or as a freewill¦57675 offering¦57675 from the herd or the flock¦57678, to be accepted¦57681 it must¦57666 \add ≈flawless with no¦57679 defects¦57679\add*—
+\v 22 not blind or with broken \add bones\add*, and not maimed or with an oozing sore or rash or scab. You all mustn't present¦57705 \add ≈anything like that\add* to Yahweh, and must¦57705 not \add even\add* offering¦57708 \add ≈any part of them\add* to Yahweh on the altar¦57715.
+\v 23 \add ≈However,\add* if a cow¦57718 or a sheep¦57719 has something enlarged¦57720 or something stunted¦57721, it can be offered as a freewill¦57722 offering¦57722, but¦57718 it wouldn't be accepted¦57727 for a vow,
+\v 24 and¦57729 you all must¦57734 never present¦57734 to Yahweh¦57735 any animal that's bruised or torn or cut.\f + \fr 22:24 \ft The Septuagint mentions ‘testicles’ here, which also correlates with 21:20.\f* You mustn't do¦57738 that in your¦57736 \add ≈country\add*.
+\p
+\v 25 You all mustn't present¦57745 any of those \add animals¦57752 raised\add* by foreigners¦57743 to your god¦57749 because¦57753 they've been ruined and¦57740 are defective,\f + \fr 22:25 \ft Could this be related to the fact that they'd been neutered (as per v24 in the Septuagint)???\f* \add ≈so\add* they won't¦57744 be accepted¦57759 for you.
+\p
+\v 26 Then Yahweh¦57764 told Mosheh¦57767:
+\p
+\v 27 A \add newborn\add* calf or lamb or goat¦57776 must¦57778 \add ≈remain with\add* its mother¦57783 for seven¦57780 days¦57781—it can be offered¦57789 as a sacrifice to Yahweh¦57790 from the eighth¦57785 day¦57784 onwards¦57786,
+\v 28 \add ≈but¦57792\add* you mustn't slaughter a cow¦57792 or a sheep¦57795 and¦57797 it's \add ≈offspring\add* on \add ≈the same\add* day¦57802.
+\v 29 When¦57805 you \add ≈offer\add* a thanksgiving¦57810 sacrifice to Yahweh¦57811, it must¦57807 be \add ≈acceptable¦57812 as a sacrifice\add*
+\v 30 and you can eat it that same day¦57815 \add but\add* \add ≈no part\add* of it should be left until¦57822 the morning¦57824. I¦57825 am Yahweh¦57826.
+\p
+\v 31 You all must¦57828 \add ≈record my instructions and¦57830 follow\add* them. I am Yahweh¦57833.
+\v 32 You mustn't profane¦57836 the \add ≈reputation¦57839\add* of my holiness, and¦57841 I will demonstrate my holiness among the Israeli¦57843 people¦57843. I am Yahweh¦57846 who separates you all to be sacred¦57840—
+\v 33 who brought¦57849 you all out of Egypt¦57852 \add (Heb. Mitsrayim)\add* to be your god¦57855. I am Yahweh¦57857.
+\c 23
+\s1 The scheduled festivals
+\rem /s1 The Appointed Festivals; Appointed Festivals; The Religious Festivals
+\p
+\v 1 Then Yahweh¦57861 told Mosheh¦57864:
+\p
+\v 2 Tell¦57871 the \add Israelis¦57870\add* that¦57876 they¦57883 must¦57872 proclaim¦57878 Yahweh's¦57875 scheduled festivals as sacred¦57881 assemblies \add ≈at the given times\add*.
+\s2 The rest day
+\rem /s1 The Sabbath; The Sabbath, Passover, and Unleavened Bread
+\p
+\v 3 Work for six days¦57887, then the seventh¦57891 is a rest day \add for\add* a sacred¦57896 assembly¦57894—don't¦57900 work on that day—\add ≈wherever you live\add* it's a rest day \add ≈to honour\add* Yahweh¦57904.\x + \xo 23:3: \xt Exo 20:8-10; 23:12; 31:15; 34:21; 35:2; Deu 5:12-14.\x*
+\rem /s1 The Passover and Unleavened Bread
+\p
+\v 4 \add ≈The¦57911 following\add* are the scheduled festivals that¦57914 you must¦57916 proclaim¦57916 at the appointed times as sacred¦57913 assemblies:
+\s2 Passover and flat bread festivals
+\rem /s1 Passover and Unleavened Bread; Passover and the Festival of Unleavened Bread
+\r (Num. 28:16-25)
+\p
+\v 5 The 14th of the first¦57921 month \add (Nisan = March/April) each year\add* \add ≈at twilight\add* is the \add start of the celebration to honour\add* Yahweh¦57928 with the ‘passover¦57927’.\x + \xo 23:5: \xt Exo 12:1-13; Deu 16:1-2.\x*
+\p
+\v 6 Then¦57930 the \add next day¦57932\add* (the 15th) is \add the start of\add* the festival¦57935 of flat bread \add to honour\add* Yahweh¦57937—you all must¦57930 eat¦57941 bread made without any rising agent for seven¦57938 days¦57939.\x + \xo 23:6-8: \xt Exo 12:14-20; 23:15; 34:18; Deu 16:3-8.\x*
+\v 7 On \add &that\add* first¦57944 day you'll hold a sacred¦57947 assembly¦57945—no \add ≈regular\add* work may be done \add that day\add*.
+\v 8 For seven days¦57961 you all must¦57957 present¦57957 offerings¦57958 to Yahweh¦57959, then¦57957 the seventh day is \add another\add* sacred¦57966 assembly¦57964—\add again\add* no \add ≈regular\add* work may be done \add that day\add*.
+\s1 The firstfruits festival
+\rem /s1 Firstfruits; The Offering of First Fruits; The Festival of Firstfruits
+\p
+\v 9 Then Yahweh¦57976 told Mosheh¦57979:
+\p
+\v 10 Tell the \add ≈Israelis¦57985\add* that when you enter the land that I'm giving you all, and you harvest \add ≈your grain crops\add*, then you all must¦57987 bring¦58003 a sheaf¦58006 of the first¦58007 \add part\add* of your harvest to a priest¦58011,
+\v 11 and¦58013 he will wave the sheaf¦58016 \add ≈in front¦58017\add* of Yahweh¦58018 \add ≈to be accepted¦58019 for you\add*. That must¦58013 be done the day after the rest day.
+\v 12 \add ≈That same\add* day¦58026, you¦58027 all must¦58025 offer a year-old lamb¦58031 \add ≈with no¦58032 defects¦58032\add* to Yahweh¦58037 as a burnt¦58036 offering¦58036,
+\v 13 and the \add associated\add* grain¦58039 offering will be two kilograms of fine wheat flour¦58042 mixed¦58043 with \add olive\add* oil. That will be a gift to Yahweh¦58046 with a pleasing¦58048 aroma¦58047, and the \add associated\add* drink¦58049 offering will be a litre of wine.
+\v 14 You all may not eat¦58059 any bread¦58055, or roasted¦58056 or fresh grain¦58056, on that day¦58063, until \add after\add* you've taken the offering to your god¦58070. That is a \add ≈rule that will continue throughout\add* your generations¦58073 \add ≈no matter where\add* you live.
+\s1 The fiftieth day festival
+\rem /s1 Feast of Weeks; The Festival of Weeks; The Festival of Harvest; The Harvest Festival
+\r (Num. 28:26-31)
+\p
+\v 15 Then count¦58078 seven rest days from the day after you brought¦58083 the \add ≈bundle of grain\add* as a wave offering—seven full weeks.\x + \xo 23:15-21: \xt Exo 23:16; 34:22; Deu 16:9-12.\x*
+\v 16 Then that next day¦58094 \add will make\add* fifty¦58098 days, and¦58100 then you all must¦58097 present¦58100 a new grain¦58101 offering¦58101 to Yahweh¦58103.
+\v 17 From your \add ≈homes\add*, \add @each family\add* must¦58106 bring¦58106 two loaves of bread¦58108 baked¦58116 with a rising agent, as a firstfruits¦58117 \add offering\add* to Yahweh¦58118.
+\v 18 Along with the bread¦58123, you all must¦58120 present¦58120 seven¦58124 \add ≈year-old\add* male lambs¦58125 \add ≈without¦58126 defects¦58126\add*, one \add ≈young¦58130\add* bull¦58129, and two rams. They will be a burnt¦58137 offering to Yahweh, with their \add associated\add* grain¦58139 and drink¦58140 offerings¦58140—a gift with a pleasing¦58144 aroma¦58142 for Yahweh.
+\v 19 You all must¦58147 \add also\add* offer a male goat¦58148 as a sin offering and¦58147 two \add ≈one-year-old\add* male lambs¦58154 as a peace¦58158 offering.
+\v 20 The priest must¦58160 raise them along with the firstfruits¦58166 bread¦58165 as a wave offering \add ≈in front¦58168\add* of Yahweh, with the two lambs¦58173. They will become sacred¦58174 to Yahweh, \add but¦58160\add* for the priest \add to eat\add*.
+\v 21 You all must¦58179 proclaim¦58179 a sacred¦58186 assembly¦58184 that same day¦58182—you mustn't do¦58194 any \add ≈regular¦58195\add* work¦58191. That is a \add ≈permanent¦58196\add* rule that will continue \add ≈throughout\add* the generations¦58200 \add ≈no matter where you live\add*.
+\p
+\v 22 When¦58202 you all harvest your \add ≈crops\add*, don't \add ≈reap\add* to the very edge of your field¦58211 and don't \add ≈pick up stalks that drop on the ground\add*—they must¦58209 be left for the poor and for foreigners \add without land\add*. I¦58221 am your god¦58223, Yahweh¦58222.\x + \xo 23:22: \xt Lev 19:9-10; Deu 24:19-22.\x*
+\s1 The new year festival
+\rem /s1 The Festival of Trumpets; Feast of Trumpets; The New Year Festival
+\r (Num. 29:1-6)
+\p
+\v 23 Then Yahweh¦58227 told Mosheh¦58230,
+\v 24 “Tell the \add ≈Israelis¦58236\add* that on the 1st of the seventh¦58240 month \add (Tishrei = September/October) each year\add*, you must¦58243 have a \add ≈public holiday\add* with a loud¦58247 \add trumpet\add* blast¦58247 announcing the sacred¦58250 assembly¦58248.
+\v 25 You all must not do¦58257 any \add ≈regular\add* work¦58254 on that day, and¦58258 you all must present¦58258 a fire-offering to Yahweh¦58260.”
+\s1 The day of atonement
+\rem /s1 The Day of Atonement
+\r (Num. 29:7-11)
+\p
+\v 26 Then Yahweh¦58264 told Mosheh¦58267,\x + \xo 23:26-32: \xt Lev 16:29-34.\x*
+\v 27 “The 10th of that seventh¦58273 month¦58272 is a day¦58275 \add ≈for making things right\add* \add with Yahweh\add*. You all \add ≈must¦58281 hold a sacred¦58280 assembly¦58278\add* and humble \add ≈yourselves\add* and present¦58287 a fire-offering to Yahweh.
+\v 28 You mustn't do any work on that particular day because¦58299 it's the day for \add ≈making yourselves¦58304 right\add* in front¦58305 of your god Yahweh¦58306,
+\v 29 because anyone who doesn't humble¦58316 themself on that day¦58318 will be cut off from their people.
+\v 30 ⇔\add In addition¦58323,\add* I¦58334 will destroy¦58334 anyone who works on that day¦58332—removing them from their people¦58340.
+\v 31 You all must¦58346 not do¦58346 any work¦58344. That's a permanent¦58348 rule that will continue \add ≈throughout\add* the generations¦58349 \add ≈no matter where you live\add*—
+\v 32 it's a \add ≈very strict\add* rest day¦58361 and¦58357 you all must¦58357 humble yourselves from the evening of the 9th until¦58365 the next evening when \add *it\add* will finish.
+\s1 The celebration in shelters
+\rem /s1 The Festival of Shelters; The Festival of Booths; Feast of Tabernacles
+\r (Num. 29:12-40)
+\p
+\v 33 Then Yahweh¦58373 told Mosheh¦58376:\x + \xo 23:33-36: \xt Deu 16:13-15.\x*
+\p
+\v 34 Tell the \add ≈Israelis¦58382\add* that \add starting\add* on the 15th of the seventh¦58389 month¦58388 \add (of Tishrei—around September/October)\add*, there will be a celebration in shelters to \add honour\add* Yahweh¦58395.
+\v 35 The first¦58398 day¦58397 will be a sacred¦58401 assembly¦58399—you all mustn't do¦58407 any \add ≈regular\add* work¦58404.
+\v 36 You all must¦58411 present a gift to Yahweh \add each day\add* for seven days¦58410, and then on the eighth¦58415 day, there'll be \add another\add* sacred¦58418 assembly¦58424 and you'll all present a gift to Yahweh. It'll be \add a day\add* to assemble—you all mustn't do any \add ≈regular\add* work \add that day\add*.
+\p
+\v 37 \add @The above\add* are the \add ≈scheduled dates\add* to proclaim¦58438 sacred¦58441 assemblies to present¦58442 a gift to Yahweh¦58435: burnt¦58445 offerings and grain¦58446 offerings, sacrifices¦58447 and drink¦58448 offerings, on the \add ≈appropriate\add* days,
+\v 38 as well as Yahweh's¦58456 rest days, and alongside all your \add regular\add* gifts¦58458 and vows and freewill¦58466 offerings¦58466 that¦58467 you all give¦58468 to Yahweh.
+\p
+\v 39 \add ≈So indeed,\add* on the 15th of the seventh month¦58475 when you have \add ≈harvested your crops\add*, you'll all celebrate¦58482 Yahweh's¦58487 festival for seven days with the first¦58491 and eighth¦58494 days being rest days.
+\v 40 On that first¦58500 day, you'll all bring the fruit¦58501 from your trees¦58505, along with palm branches, leafy¦58509 branches, and willow branches from \add beside\add* the \add #creeks\add*, and you'll all \add ≈happily celebrate\add* \add ≈in front¦58514\add* of your god Yahweh¦58515 for seven¦58517 days.
+\v 41 Do that for seven¦58524 days¦58525 each year¦58526 as a festival to \add honour\add* Yahweh¦58523. you all must¦58520 celebrate it in the seventh month¦58530. That's a permanent¦58528 rule that will continue \add ≈throughout\add* the generations¦58529.
+\v 42 You all must¦58536 live in shelters for seven¦58537 days¦58538—all you native-born \add ≈Israelis\add*,
+\v 43 so that the \add future\add* generations¦58548 will know¦58547 that I made \add ≈their ancestors\add* live in shelters when I brought¦58556 them out of Egypt¦58559 \add (Heb. Mitsrayim)\add*. I am your god¦58562 Yahweh¦58561.
+\p
+\v 44 \add ≈So¦58564\add* Mosheh¦58565 \add ≈passed\add* all those \add ≈scheduled dates\add* from Yahweh¦58569, on to the \add ≈Israelis¦58572\add*.
+\c 24
+\s1 Oil for the lamps
+\rem /s1 Taking Care of the Lamps; Pure Oil and Holy Bread; The Lamp; Oil and Bread Set Before the Lord
+\r (Exo. 27:20-21)
+\p
+\v 1 Then Yahweh¦58577 told Mosheh¦58580:
+\p
+\v 2 Order¦58587 the \add ≈Israelis¦58586\add* to bring¦58588 you¦58589 pressed¦58593 olive¦58591 oil¦58590 that's pure, to \add ≈supply\add* \add #lamps\add* \add to give\add* continual¦58597 light¦58594.
+\v 3 \add The high priest\add* (Aharon) \add ≈must¦58604 take care of\add* \add #them\add* from evening¦58607 until¦58608 the morning¦58610 \add to burn\add* continually \add ≈in front¦58611\add* of Yahweh¦58612. That's a permanent¦58615 requirement that will continue \add ≈throughout\add* the generations¦58616.
+\v 4 He will arrange¦58621 the lamps continually¦58627 on the lampstand \add ≈in front¦58625\add* of Yahweh¦58626.
+\s1 The bread offered there to God
+\rem /s1 The Bread for the Tabernacle; The Bread Offered to God
+\p
+\v 5 \add Each week\add* you must¦58630 take¦58630 fine wheat flour and bake twelve loaves of bread, using two kilograms of flour for each loaf.\x + \xo 24:5-6: \xt Exo 25:30.\x*
+\v 6 \add ≈Arrange\add* the loaves into two¦58645 rows of six¦58647 loaves on the pure table¦58650 \add ≈in front¦58652\add* of Yahweh¦58653,
+\v 7 and¦58661 put pure frankincense¦58659 \add ≈with\add* each row to be a memorial¦58663 portion for the bread¦58662 as a gift to Yahweh¦58665.
+\v 8 \add Every¦58678\add* rest day \add ≈it will be placed\add* \add ≈in front¦58672\add* of Yahweh¦58673 \add representing\add* the \add ≈ongoing\add* agreement¦58679 with the \add ≈Israelis¦58676\add*.
+\v 9 \add ≈Afterwards,\add* it will belong¦58682 to Aharon and his sons¦58684, and they must¦58682 eat¦58685 it in a sacred area because¦58688 it's a \add ≈very\add* sacred part of the gifts for Yahweh¦58694. That's a permanent¦58697 rule.\x + \xo 24:9: \xt Mat 12:4; Mrk 2:26; Luk 6:4.\x*
+\s1 Execution for cursing Yahweh
+\rem /s1 An Example of Just and Fair Punishment; An Example of Just Punishment; A Blasphemer Stoned; Blasphemy and Its Punishment
+\p
+\v 10 \add ≈Once\add* there was an Israeli woman¦58703 and an Egyptian man \add ≈who had\add* a son who \add ≈lived among the Israelis¦58711\add*, and he \add ≈got into a fight\add* with an Israeli man.
+\v 11 Then¦58720 that son of the Israeli¦58724 woman¦58723 slandered¦58720 \add &Yahweh's\add* name and cursed¦58728, and \add so\add* the people¦58729 took him to Mosheh¦58733. (The mother¦58735 was Shelomit¦58736, a daughter¦58737 of Dibri¦58739 from the Dan¦58742 tribe¦58740.)
+\v 12 They \add ≈held\add* him¦58744 in custody¦58745 \add ≈while waiting for Yahweh's¦58751 decision\add*.
+\p
+\v 13 Then Yahweh¦58755 told Mosheh¦58758:
+\p
+\v 14 Take \add ≈that man\add* who cursed¦58764 outside¦58767 the camp¦58768, and \add ≈everyone¦58764 who heard¦58772 him\add* must place their¦58775 hands¦58775 on his head¦58778, and then \add ≈all the people must execute him by throwing rocks¦58779 at\add* him.
+\v 15 Then¦58785 tell the \add ≈people¦58787\add* that anyone who curses¦58795 God¦58796 must¦58789 bear \add the results of\add* their own wickedness.
+\v 16 Anyone¦58800 who slanders Yahweh's¦58803 \add ≈reputation¦58801\add* must be executed. The \add gathered assembly\add* must \add ≈throw rocks¦58806 at\add* them. \add It makes no difference\add* whether they're a \add ≈foreigner staying there\add*, or a native-born \add Israeli\add*.
+\p
+\v 17 Anyone who \add ≈murders\add* another person, must¦58822 \add ≈definitely be executed\add*.\x + \xo 24:17: \xt Exo 21:12.\x*
+\v 18 Anyone¦58830 who kills \add someone else's\add* animal, must¦58834 \add ≈make restitution with the same kind of animal\add*.
+\p
+\v 19 Anyone who \add ≈injures\add* a fellow¦58844 citizen¦58844, must¦58842 have the same done to them—
+\v 20 fracture for fracture, eye for eye, tooth for tooth—\add ≈however they injured the other person¦58863, that's what must¦58861 be done to them\add*.\x + \xo 24:20: \xt Exo 21:23-25; Deu 19:21; Mat 5:38.\x*
+\v 21 Anyone¦58868 who kills \add someone else's\add* animal¦58869 must \add ≈replace\add* it¦58870, \add ≈but¦58868\add* anyone¦58868 who kills \add another\add* person¦58872 must be executed.
+\v 22 There's \add only\add* one \add set of\add* regulations for \add both\add* the foreigner and the native-born \add citizen\add* because¦58882 I am your god¦58885 Yahweh¦58884.\x + \xo 24:22: \xt Num 15:16.\x*
+\p
+\v 23 Mosheh \add ≈passed\add* \add all that\add* onto the \add ≈people¦58891\add*, and¦58887 they took the \add ≈man who had cursed¦58896\add* \add Yahweh\add* outside¦58899 the camp¦58900 \add ≈where\add* they \add ≈executed him with rocks\add*. The Israelis¦58891 did¦58907 exactly what Yahweh had commanded¦58909 \add them\add* via Mosheh.
+\c 25
+\s1 The rest year
+\rem /s1 The Sabbatical Year; The Seventh Year; The Sabbath Year
+\r (Deu. 15:1-11)
+\p
+\v 1 Then on Mt¦58921. Sinai¦58922, Yahweh¦58917 told Mosheh¦58920:\x + \xo 25:1-7: \xt Exo 23:10-11.\x*
+\p
+\v 2 Tell the \add ≈Israelis¦58928\add* that when you all enter the land that I'm giving you, the land must¦58930 \add observe\add* a \add ≈rest year\add* for Yahweh¦58944.
+\v 3 ⇔You can \add ≈plant your crops\add*, prune¦58952 your \add ≈grapevines\add*, and \add ≈harvest\add* \add all\add* its produce¦58957 for six years,
+\v 4 but¦58959 during the seventh¦58960 year¦58959, you must¦58963 \add ≈allow the land to rest\add* \add to honour\add* Yahweh¦58966. You mustn't \add ≈plant any crops or prune¦58972 any grapevines\add*.
+\v 5 Don't¦58977 \add systematically\add* harvest the self-sown \add ≈crops\add* or the grapes from the untrimmed¦58982 vines. It must¦58978 be a rest year for the land.
+\v 6 \add ≈However, during\add* the rest year, the land \add ≈will provide\add* food for you and your servants, and for your hired¦58998 workers and the foreigners who are living among you,
+\v 7 as well as your livestock¦59003 and¦59003 the \add wild\add* animals¦59004 across the land. Any produce¦59010 from the land can be eaten.
+\s1 The restoration celebration year
+\rem /s1 The Year of Jubilee; The Year of Restoration
+\p
+\v 8 Count off seven rest years, so seven times¦59022 seven which is forty-nine years,
+\v 9 then¦59033 \add after that\add*, sound¦59035 loud¦59035 horn blasts¦59035 on the 10th of the seventh¦59037 month \add ≈to announce\add* throughout¦59033 the land that it's the day¦59040 for \add ≈making things right with Yahweh\add*.
+\v 10 Then¦59048 you all must¦59048 \add ≈declare\add* \add &that\add* fiftieth year \add ≈to be sacred¦59048\add*. It'll be a \add ≈restoration celebration\add* \add year\add* when you announce freedom for all the inhabitants¦59058 of the \add ≈country\add*—everyone¦59064 can be free to return to their families, and¦59048 \add all families can be free\add* to return to their \add ≈originally inherited land\add*.
+\v 11 That fiftieth year will be a \add ≈restoration celebration\add* year. You all mustn't \add ≈plant crops\add* and don't¦59081 \add systematically\add* harvest¦59084 the self-sown \add ≈crops\add* or the grapes¦59089 from the untrimmed¦59092 vines¦59092,
+\v 12 because it's a \add ≈restoration celebration\add* year. You all must¦59098 \add treat it\add* as sacred¦59097 and \add just\add* eat¦59103 \add ≈what you take\add* \add directly\add* from the countryside¦59102.
+\p
+\v 13 In that \add ≈restoration celebration\add* year¦59108, you all should return¦59111 to your \add ≈inherited land\add*.
+\v 14 \add In the other years\add* when you buy or sell¦59120 from your fellow citizens, you mustn't \add ≈cheat\add* them
+\v 15 \add because the value of the land\add* \add ≈will depend\add* on the number of years after¦59136 the \add ≈restoration celebration\add* year, \add i.e., \add* you must¦59138 take into account the number of years of produce¦59144—
+\v 16 if there's many years \add to go\add*, the price will increase¦59153, and \add ≈if the next rest year is close\add*, the price will decrease because¦59160 you're selling¦59164 the number¦59161 of crops.
+\v 17 \add ≈So¦59167\add* don't¦59167 cheat eat other—you must¦59168 \add ≈respect and¦59167 obey\add* your god, because¦59175 I¦59176 am your god Yahweh¦59177.
+\rem /s1 The Problem of the Seventh Year
+\p
+\v 18 You all must¦59180 \add ≈follow\add* all my instructions¦59183 and¦59180 \add ≈maintain\add* my \add ≈values\add*—keeping them \add ≈so that\add* you'll be able to live securely¦59194 on the land.
+\v 19 The land will \add ≈yield its¦59198 crops\add* and you'll all \add ≈have plenty to eat¦59199\add*, and you'll be able to live \add *there\add* securely¦59202.
+\p
+\v 20 \add ≈But¦59205\add* if you all \add ≈wonder\add* what you'll eat¦59209 in \add &that\add* seventh¦59213 year¦59212 when you'll neither \add ≈plant crops\add* or \add ≈do organised harvests\add*,
+\v 21 \add ≈well\add* I'll¦59223 \add ≈send\add* my blessing¦59226 to you all in the sixth¦59229 year¦59228, and¦59223 it'll produce¦59233 enough for three¦59234 years¦59235
+\v 22 \add ≈so\add* you all can still eat that \add ≈stored\add* food while you \add ≈plant crops\add* in the eighth¦59240 year \add ≈to feed you all through\add* the ninth¦59249 year.
+\s1 Returning property to the clan
+\rem /s1 Restoration of Property
+\p
+\v 23 The land can not be \add ≈irrevocably\add* sold, because¦59261 it¦59259 belongs to me and you all are foreigners and temporary residents¦59268 \add ≈on my\add* \add land\add*.
+\rem /s1 Redemption of Property
+\v 24 \add ≈so\add* for all the land \add ≈that you take possession¦59274 of\add*, \add ≈there must¦59276 be a way to get back the family\add* land.
+\v 25 \add For example,\add* if an \add ≈Israeli man\add* becomes¦59282 poor and sells off some of his \add ≈inherited land\add*, then a close relative \add must¦59282 have the right to\add* go and \add ≈buy back\add* that land.
+\v 26 Even if he didn't¦59297 have \add ≈a relative who could do that\add*, and he prospers again \add in the future\add* and is \add ≈able to raise enough money\add*,
+\v 27 then he can calculate¦59308 \add ≈the value of the years¦59311\add* \add until the restoration celebration\add*, and¦59308 then \add ≈for that amount\add* he \add ≈must¦59308 be allowed to\add* \add ≈buy the land back from the person¦59317 he'd sold it to\add*.
+\v 28 \add ≈However,\add* if \add ≈the original owner wasn't able to raise enough money\add*, then¦59325 that \add ≈piece of land that\add* was sold will remain \add ≈under the control of the buyer\add* until¦59338 the \add ≈restoration celebration\add* year¦59339 when it must¦59341 be returned¦59343 \add anyway\add*.
+\p
+\v 29 If a house¦59350 inside a walled city¦59353 is sold, then¦59346 the right \add ≈to buy it back\add* will last until¦59357 one full year¦59360 after the sale.
+\v 30 If it's not bought¦59387 back \add by the original family\add* within that year, then that house¦59377 in the walled city¦59380 will then belong permanently to the buyer—it won't¦59367 \add ≈be returned in the restoration celebration year\add*.
+\v 31 \add ≈On the contrary,\add* village¦59395 houses¦59394 will be considered as part of the family land, so they'll be able to be bought back \add by the family\add*, \add ≈otherwise they'll be returned in the restoration celebration year\add*.
+\p
+\v 32 The Levites' cities and¦59414 houses¦59416 will belong¦59421 to them permanently—the Levites \add ≈must¦59421 \+em always¦59420\+em* be able to buy them back\add*,
+\v 33 \add ≈but¦59424\add* \add even\add* if \add *they\add* \add ?don't\add* \add ≈buy them back\add*, they must¦59425 be \add ≈returned in the restoration celebration year\add* because¦59436 the Levites' houses¦59437 are their¦59441 \add only\add* possession among the \add ≈Israelis¦59443\add*.
+\v 34 \add ≈In addition¦59446,\add* they may not sell¦59450 the pastureland¦59447 around their cities¦59448 because¦59451 that's their permanent¦59454 possession¦59453.
+\s1 Assisting the poor
+\rem /s1 Loans to the Poor; Redemption of the Poor and Enslaved
+\p
+\v 35 If \add ≈a fellow citizen\add* becomes¦59461 poor and \add ≈is unable to survive\add* beside you, then you must¦59461 \add ≈support\add* \add @that person\add* and \add ≈allow him to live¦59470 with you like a foreigner might\add*.\x + \xo 25:35: \xt Deu 15:7-8.\x*
+\v 36 You mustn't \add ≈charge\add* \add @that person\add* any interest¦59477 \add ≈or make a profit from him¦59476\add*, \add ≈but¦59478\add* you must¦59479 \add ≈respect and obey\add* your god¦59480, and your \add ≈fellow citizen\add* can \add continue\add* to live¦59481 with you.
+\v 37 \add ≈If you loan him money\add*, don't¦59488 \add ≈charge\add* interest¦59492 \add ≈or make a profit from his\add* food.\x + \xo 25:37: \xt Exo 22:25; Deu 23:19-20.\x*
+\v 38 I am your god Yahweh¦59500 who brought¦59504 you all out of Egypt¦59507 \add (Heb. Mitsrayim)\add* to give you the Kanaan \add ≈region¦59506\add* \add and\add* to be your god.
+\s1 Treatment of slaves
+\rem /s1 Release of Slaves
+\p
+\v 39 If \add ≈a fellow citizen\add* becomes¦59521 poor and selling himself¦59524 to you, don't¦59527 \add ≈force him to work like a slave¦59532\add*—\x + \xo 25:39-46: \xt Exo 21:2-6; Deu 15:12-18.\x*
+\v 40 \add ≈treat him\add* like a hired¦59534 worker or a temporary resident¦59535. He can work with you until¦59538 the \add ≈restoration celebration\add* year¦59540
+\v 41 \add ≈when he must¦59545 be released\add* \add ≈along with\add* his children, and he can return to his family, and to \add ≈his clan's land\add*,
+\v 42 because they are my slaves that I¦59566 brought¦59566 out of Egypt¦59569 so they mustn't be sold \add again\add* as slaves.
+\v 43 Don't rule harshly¦59579 over \add #them\add* \add ≈but¦59580 rather\add*, \add ≈respect and¦59580 obey\add* your¦59581 god¦59581.
+\v 44 \add ≈If you want to have\add* male or female slaves, they you can buy them from the surrounding countries¦59590,
+\v 45 or else from the children or clans of the foreigners who are living among you—you all can \add ≈own¦59613 them\add*
+\v 46 and¦59615 then¦59615 pass them on to your children to own¦59621 as their inheritance¦59615. You¦59628 all can make them work indefinitely \add for you\add*, but¦59615 you mustn't harshly¦59635 oppress your \add ≈fellow Israelis¦59626\add*.
+\p
+\v 47 If a foreigner living among you \add ≈becomes wealthy\add*, \add ≈yet\add* your \add ≈fellow citizen\add* becomes poor and sells himself¦59647 to that resident foreigner or to a member¦59652 of their clan,
+\v 48 then there's always the right¦59658 of redemption¦59658 even after he's sold himself¦59657, \add so\add* one of his brothers¦59663 can \add ≈buy him¦59664 back\add*,
+\v 49 or his uncle or \add ≈cousin\add* or another relative¦59676 from the clan can \add ≈pay to free him\add*. \add ≈In fact,\add* he might even be able to \add ≈buy his own way out\add*.
+\v 50 He must¦59686 \add ≈work out\add* with his master how many years from when he sold himself¦59691, until¦59693 the \add ≈restoration celebration\add* year, and¦59686 \add ≈figure out\add* the price according¦59701 to the wages of a hired¦59702 worker for that many years.
+\v 51 If there's still¦59708 a lot of years¦59710 \add ≈to go\add*, he'd need to repay¦59712 \add ≈most\add* of \add ≈what he sold himself for\add*,
+\v 52 \add ≈but¦59717\add* if it's only a few years \add ≈to go\add*, \add ≈the price for his freedom would be proportionally smaller\add*.
+\v 53 While he works for \add @the foreign master\add*, he must be treated like an annual hired¦59736 worker. \add ≈You others must ensure that he's not treated\add* harshly¦59744.
+\v 54 Then¦59747 even if he's not \add ≈bought¦59750 out\add*, he and¦59747 his children must¦59750 be released in the \add ≈restoration celebration\add* year¦59753
+\v 55 because the \add ≈Israelis¦59762\add* are my slaves—my slaves because I brought¦59770 them out of Egypt¦59773. I am your god¦59776 Yahweh¦59775.
+\c 26
+\s1 Obedience will lead to prosperity
+\rem /s1 Rewards for Obedience; Reward for Obedience; Blessings for Obedience
+\r (Deu. 7:12-24; 28:1-14)
+\p
+\v 1 You all mustn't make worthless¦59782 idols¦59782 or carved¦59790 images for yourselves, or set up sacred¦59784 pillars¦59784. In your country, you must never bow down to an \add engraved\add* stone¦59789 image, because¦59796 I am your god¦59799 Yahweh¦59798.\x + \xo 26:1: a \xt Lev 19:4; \xo b \xt Exo 20:4; Deu 5:8; 16:21-22; 27:1.\x*
+\v 2 You all must¦59804 \add ≈observe\add* my rest days and¦59805 \add ≈honour\add* my sanctuary¦59805. I am Yahweh¦59808.
+\p
+\v 3 If you'll all \add ≈follow my instructions¦59813\add* and \add ≈remember my rules and obey\add* them,
+\v 4 then¦59822 I'll¦59822 give you all rain \add ≈in the proper season\add*, and the land will produce crops and the trees in the countryside¦59829 will produce fruit¦59831.
+\v 5 The \add grain\add* threshing¦59835 will \add ≈continue until\add* the grape harvest, and the grape harvesting will \add ≈continue until\add* \add ≈it's time to plant new crops\add*, and so you'll all have \add ≈plenty of food¦59845\add* and you'll live securely¦59848 \add there\add* on your land.
+\p
+\v 6 Then¦59851 I'll give¦59851 peace¦59852 \add ≈in your country\add* \add ≈so that\add* you'll all sleep \add ≈without being afraid\add*. I'll \add ≈remove\add* the wild animals¦59858 from your \add ≈area\add* and¦59851 there'll¦59855 be no \add ≈raids or wars\add* in your \add ≈region¦59867\add*.
+\v 7 You'll all \add be able to\add* chase away your enemies¦59872 and¦59873 \add ≈destroy them\add*—
+\v 8 five¦59880 of you will chase away a hundred, and a hundred of you will chase away ten¦59884 thousand¦59884, and you'll \add ≈be able to defeat\add* your enemies¦59887.
+\p
+\v 9 I'll \add ≈give you all my attention\add* and \add ≈bless¦59893 you with many¦59895 children\add*, and I'll \add ≈maintain\add* my agreement¦59900 with you all.
+\v 10 You'll all \add still\add* \add ≈be eating the previous year's grain\add* when the new harvest \add ≈starts\add*, and¦59903 you'll have to \add ≈move\add* out \add ≈that left-over grain\add* \add to make room for the new\add*.
+\v 11 Then¦59911 I'll¦59911 put my residence among¦59913 you all and¦59914 won't¦59914 \add ≈reject\add* you,
+\v 12 and I'll¦59920 walk¦59920 among¦59921 you and be your god¦59924, and you'll all be my people¦59929.
+\v 13 I am your¦59944 god¦59933 Yahweh¦59932 who brought¦59935 you all out from being¦59939 slaves¦59941 in Egypt¦59938, and I broke¦59942 the \add ≈chains off you\add* \add ≈so that you all could walk¦59945 with heads erect\add*.
+\s1 Punishments for disobedience
+\rem /s1 Punishment for Disobedience; Penalties for Disobedience; Punishments for Disobedience
+\r (Deu. 28:15-68)
+\p
+\v 14 \add ≈However,\add* if you all won't listen¦59953 to me and won't \add ≈follow all those instructions\add*,\x + \xo 26:14-33: \xt Deu 28:15-68.\x*
+\v 15 and if you¦59980 all reject¦59966 my regulations¦59965 and my \add ≈values\add* \add ≈to the point of\add* hating my commands¦59979, thus breaking¦59980 my agreement¦59983,
+\v 16 then this is what I'll do¦59988 to you all: I'll \add ≈send\add* sudden¦59994 terror¦59994 to you all, and \add ≈wasting diseases and sicknesses\add*. You'll all \add ≈be wasting your time\add* sowing seeds \add ≈because\add* your enemies¦60009 will eat¦60008 \add @the harvest\add*.
+\v 17 I'll¦60011 \add ≈take action\add* against you, and you'll be defeated¦60014 by your enemies¦60016. You'll be ruled over by those¦60019 who hate¦60019 you, and you'll all \add ≈run away frightened\add* \add even\add* when no one's chasing you.
+\p
+\v 18 If you all \add still\add* won't¦60032 listen¦60033 to me \add ≈after that\add*, then I'll¦60035 continue on to discipline¦60036 you seven¦60038 times over for your \add ≈disobedience\add*.
+\v 19 Then¦60043 I'll \add ≈smash\add* your strong pride¦60046, and I'll make the sky like iron \add with no rain\add* and your land \add hard\add* like bronze¦60056.
+\v 20 Your \add ≈energy spent working\add* your land will be \add just\add* wasted \add ≈as\add* your land won't \add ≈produce its crops\add*, and¦60058 the trees won't \add ≈produce any fruit¦60072\add*.
+\p
+\v 21 Then¦60074 if you're all \add still\add* \add ≈being contrary¦60078\add* and¦60074 unwilling to listen¦60081 to me, then¦60074 I'll¦60083 \add ≈send\add* seven¦60086 times more plagues¦60085 according¦60087 to your \add ≈disobedience\add*.
+\v 22 Then¦60089 I'll¦60089 send¦60089 in the wild animals¦60093 \add ≈to\add* make you childless¦60095 and to cut back your livestocks¦60100, \add ≈thus diminishing¦60101 your numbers\add* and \add leaving\add* your roads¦60104 desolate¦60103.
+\p
+\v 23 Then¦60106 \add ≈after that\add* if you¦60110 all \add still\add* \add ≈won't¦60109 accept my discipline¦60110\add* and¦60112 \add ≈continue to oppose\add* me,
+\v 24 then¦60116 I myself will \add ≈oppose\add* you all and¦60122 \add ≈punish\add* you all seven¦60127 times over for your \add ≈disobedience\add*.
+\v 25 I'll \add ≈send armies against\add* you all to avenge¦60135 \add ≈the breaking of our agreement¦60138\add*. You'll be \add ≈shut into\add* your cities¦60142 \add ≈where\add* I'll send diseases in for you all, and¦60132 \add ≈allow your enemies to defeat\add* you.
+\v 26 When I \add ≈limit your food¦60155 supplies\add*, ten women¦60158 will bake bread in one oven and \add ≈it will be rationed\add* by weight¦60164—you'll all eat \add ≈but¦60156 never\add* be satisfied¦60167.
+\p
+\v 27 In spite of \add all\add* that, if you all \add still\add* won't¦60173 listen¦60174 to me, and \add ≈continue to oppose\add* me,
+\v 28 then¦60180 I'll \add ≈be in a hostile rage against\add* you all and¦60185 I'll discipline¦60185 you seven¦60190 times \add more\add* for your \add ≈disobedience\add*
+\v 29 and you'll \add start\add* eating your own sons¦60198 and daughters¦60200.
+\v 30 I'll destroy¦60203 your \add ≈hilltop shrines\add* and cut down you incense¦60210 altars¦60210, then¦60203 I'll \add ≈pile\add* your corpses on top of your idols' corpses, and I myself will detest you all.
+\v 31 I'll make your cities¦60226 into \add ≈heaps of rubble\add* and I'll devastate¦60228 your sanctuaries¦60231 and \add no longer\add* smell¦60233 the pleasing¦60235 aromas \add of your sacrifices\add*.
+\p
+\v 32 I'll¦60237 devastate¦60237 the \add ≈region\add*, and¦60237 your enemies¦60244 who live in it¦60246 will be appalled¦60242.
+\v 33 Then¦60248 I'll¦60249 scatter¦60249 you all among¦60250 \add other\add* nations¦60250 and then¦60248 \add ≈armies will come in\add* after¦60252 you and your land will become desolate¦60256 and your cities¦60257 will become \add ≈rubble\add*,
+\v 34 and the land will enjoy all its rest \add ≈times\add* while it's desolate¦60269 and you're all in your enemies' \add ≈countries\add*. The land will \add ≈stop producing\add* and \add ≈enjoy its times of resting\add*.
+\v 35 It will rest all through its desolation¦60284 since it didn't¦60288 get its rest times when you lived on it.
+\p
+\v 36 Then¦60295 those¦60295 of you who are left in your enemies' countries, I'll¦60297 make \add ≈you paranoid\add* \add there¦60312\add*—even the sound¦60304 of a blowing leaf will make them run away as if someone's chasing them with a sword¦60310, and¦60295 they'll fall down even when no one's chasing them.
+\v 37 They'll stumble¦60315 over each other as if \add ≈being attacked\add*, but¦60315 there¦60323 won't be anyone¦60322 chasing them, and¦60315 then¦60315 you all won't have the energy to stand¦60328 up against your enemies¦60330.
+\v 38 You'll die in \add various\add* countries¦60333 and¦60332 your enemies¦60337 will consume¦60334 you.
+\v 39 Those of you who are left will rot away amongst¦60340 the wickedness in your enemies' countries and¦60339 because of the wickedness of their ancestors¦60347.
+\p
+\v 40 \add ≈However,\add* if they confess¦60351 their wickedness and their ancestors' wickedness, that¦60360 they've disobeyed and neglected me, and \add ≈been hostile towards\add* me,
+\v 41 (and that I became hostile toward them and took their into their enemies' countries,) and humble¦60384 their \add ≈undisciplined\add* hearts¦60385 and \add ≈admit their disobedience\add*,
+\v 42 then¦60393 I'll remember my agreements with Yakov \add (Jacob)\add* and with Yitshak \add (Isaac¦60402)\add* and with Avraham, and I'll remember \add &this\add* land.
+\v 43 The land \add here\add* will have been deserted¦60419 by them and will have enjoyed its \add ≈times of rest\add*, and they'll accept their wickedness because¦60426 they rejected¦60429 my \add ≈values\add* and they \add ≈really\add* detested my regulations¦60432.
+\v 44 \add ≈Despite that\add*, I won't reject¦60446 them in their enemies' countries, and I won't detest them enough to completely destroy them \add and\add* to break¦60451 my agreement¦60452 with them, because¦60454 I am their god¦60457 Yahweh¦60456.
+\v 45 I'll¦60459 remember¦60459 the \add ≈earlier\add* agreement¦60461 with their ancestors that I brought¦60464 out of Egypt¦60468 while all the nations¦60470 watched me be their god¦60473. I am Yahweh¦60475.
+\p
+\v 46 \add ≈The above\add* are the \add ≈instructions¦60478 and values and rules\add* that¦60481 Yahweh¦60483 \add ≈instilled\add* between him and the \add ≈Israelis¦60486\add* through Mosheh¦60492 \add (Moses)\add* there at Mt¦60488. Sinai¦60489.
+\c 27
+\s1 Valuations of vows to Yahweh
+\rem /s1 Votive Offerings; Redeeming Gifts Offered to the Lord; Laws concerning Gifts to the Lord; Redeeming What Is the Lord's
+\p
+\v 1 Then Yahweh¦60496 told Mosheh¦60499:
+\p
+\v 2 Tell¦60506 the \add ≈Israelis¦60505\add* that when someone makes a special vow \add ≈to offer someone\add* to Yahweh¦60515,
+\v 3 a man between twenty¦60521 and¦60517 sixty¦60526 will be valued at fifty¦60530 silver¦60532 \add ≈coins\add* (according to the sanctuary standard weights)
+\v 4 and¦60540 a woman at thirty¦60542 coins.
+\v 5 If it's someone between five and twenty, then¦60545 it's twenty silver coins for a male and ten for a female¦60560.
+\v 6 Between one month¦60567 old and five years¦60572, it's five silver coins for a male and three¦60581 for a female¦60579.
+\v 7 For sixty¦60588 years old and older, it's fifteen silver coins for a male and ten for a female¦60599.
+\p
+\v 8 If \add @the maker of the vow\add* can't afford the valuation¦60607, then \add @that person\add* must¦60608 stand in front¦60609 of the priest \add and give an account\add*, and then the priest \add ≈can set a value that they can afford\add*.
+\p
+\v 9 If¦60637 it's an animal that they're \add ≈promising\add* as a gift for Yahweh¦60632, then \add ?≈that animal becomes sacred¦60640\add*—
+\v 10 it can't¦60644 be \add ≈exchanged for a different one (either better or worse)\add*, \add ≈but¦60644\add* if it does get substituted, then \add ≈both animals will become sacred¦60666\add*.
+\v 11 Any ‘unclean¦60672’ animal cannot be presented to Yahweh¦60679, \add so if that's what was promised\add*, \add @the person\add* must¦60676 take the animal to the priest¦60685,
+\v 12 and¦60692 a priest must¦60687 \add ≈give a fair valuation¦60694 according¦60694 to the quality of the animal\add*—the priest's \add ≈decision¦60687 will be final\add*.
+\v 13 \add ≈However,\add* if it's later bought back, then¦60699 an extra twenty¦60704 percent¦60703 must¦60702 be added to that valuation¦60707.
+\p
+\v 14 If someone¦60709 dedicates their house¦60715 as sacred¦60712 to Yahweh¦60717, a priest must¦60712 \add ≈value it according to its quality\add*—the priest's \add ≈decision¦60718 will be final\add*.
+\v 15 \add ≈However,\add* if \add ≈that person\add* \add decides to\add* buy back their house¦60737, then an extra twenty¦60739 percent¦60738 must¦60734 be added to the valuation¦60742 and¦60731 then it \add ≈can be theirs again\add*.
+\p
+\v 16 If someone¦60752 dedicates part of their \add ≈farmland\add* as sacred¦60751 to Yahweh¦60753, then¦60747 \add ≈it will be valued according to how much seed\add* \add would be sown in it\add*—fifty¦60761 silver¦60763 coins for each 130kg of barley¦60760 \add seed required\add*.
+\v 17 ⇔That would be its value if it¦60772 was dedicated during the \add ≈restoration celebration\add* year¦60767,
+\v 18 \add ≈but¦60774 in the years following,\add* the priest¦60783 must¦60778 calculate¦60780 the field's¦60779 value \add ≈depending on\add* how many years remain¦60791 before the next \add ≈rest\add* year.
+\v 19 \add ≈However,\add* if \add @that person\add* \add decides to\add* buy back their land, then an extra twenty¦60808 percent¦60807 must¦60801 be added to the valuation¦60811 and¦60798 then it \add ≈can be theirs again\add*.
+\v 20 If \add @the person\add* doesn't buy back the field \add ≈but¦60816\add* sells it to someone else, then¦60816 it can't¦60818 be bought¦60832 back again¦60833.
+\v 21 Then¦60835 when the field is released at the next \add ≈rest year\add*, it will be sacred¦60839 to Yahweh¦60840 and¦60835 the \add #priests\add* \add ≈will take ownership\add*.
+\p
+\v 22 If someone dedicates to Yahweh¦60857 some land that¦60852 they've bought (i.e., it's not part of their clan inheritance),
+\v 23 then¦60859 a priest¦60862 must calculate¦60859 the valuation until¦60866 the \add next\add* \add ≈restoration celebration year\add*, and¦60859 it must be paid that same day¦60873 —becoming sacred¦60875 to Yahweh¦60876.
+\v 24 In \add ≈that rest\add* year¦60878, the land will return¦60880 to the original owner who \add ≈has it as part of their clan inheritance\add*.
+\p
+\v 25 All valuations¦60893 will \add ≈be calculated\add* using the standard weights from the sanctuary—the \add ≈silver coin must¦60894 weigh twelve grams\add*.
+\p
+\v 26 Every¦60922 firstborn¦60905 \add ≈domestic animal\add* (including cows and sheep¦60921) \add automatically\add* belongs¦60908 to Yahweh¦60909, and no person can \add claim to\add* ‘dedicate’ it.
+\v 27 \add ≈However,\add* if it's an ‘unclean¦60927’ animal then it must be bought back by paying its valuation plus¦60928 an additional twenty¦60931 percent¦60930, \add ≈but¦60925\add* if it's not bought back, then it must be sold at its valuation \add price\add*.
+\p
+\v 28 If someone¦60947 dedicates something to Yahweh that they own¦60957 (e.g., a man or an animal, or a field¦60956), they can't¦60958 then sell¦60959 it or buy it \add ?straight\add* back—everything that's dedicated \add like that\add* becomes sacred¦60965 to Yahweh.\x + \xo 27:28: \xt Num 18:14.\x*
+\p
+\v 29 Any person¦60973 who's dedicated for destruction¦60975 cannot be bought¦60980 back—they must¦60975 be executed.
+\p
+\v 30 A tenth of all the \add ≈harvests¦60990 from the crops\add* and¦60984 fruit¦60990 from the trees, belongs to Yahweh. It's sacred¦60994 to Yahweh.\x + \xo 27:30-33: \xt Num 18:21; Deu 14:22-29.\x*
+\v 31 If someone¦61001 \add really\add* wanted to buy back their tenth \add of their produce\add*, \add an additional\add* twenty¦61003 percent¦61004 must¦61000 be added \add to the valuation\add*.
+\v 32 Every tenth¦61018 animal of the \add ≈mustered domestic\add* cattle and sheep and goats, is sacred¦61021 to Yahweh¦61022.
+\v 33 \add @The herder\add* mustn't pick out good¦61028 or bad ones, or make substitutions. (If a substitution was made, both animals then become sacred and must¦61025 not be bought back.)
+\p
+\v 34 \add @The above\add* are the \add ≈instructions¦61049 and rules\add* that¦61048 Yahweh¦61050 \add ≈gave\add* Mosheh¦61053 at Mt¦61058. Sinai¦61059 for the \add ≈Israelis¦61056\add*.

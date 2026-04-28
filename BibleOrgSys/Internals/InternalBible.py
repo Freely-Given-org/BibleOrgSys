@@ -1236,52 +1236,39 @@ _pickle.PicklingError: Can't pickle <class 'BibleOrgSys.Reference.BibleBooksName
         """
         Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards.
+            Uses multiple cores via Rust implementation.
         """
-        fnPrint( DEBUGGING_THIS_MODULE, "InternalBible:discover()" )
+        fnPrint( DEBUGGING_THIS_MODULE, "InternalBible:discover() using Rust" )
         if 'discoveryResults' in self.__dict__:
             logging.warning( _("discover: We had done this already!") )
             if DEBUGGING_THIS_MODULE: halt
 
+        from bible_organisational_system import discoverBible
+
+        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Running multi-core discover on {}…").format( self.name ) )
+        
+        # Collect entries for all books
+        booksEntries = {}
+        for BBB in self.books:
+            if not self.books[BBB]._processedFlag:
+                self.books[BBB].processLines()
+            booksEntries[BBB] = self.books[BBB]._processedLines
+        
+        # Call Rust implementation
+        rustResults = discoverBible(booksEntries)
+        
+        # Convert Rust results to Python format
         self.discoveryResults = {}
-
-        # Get our recommendations for added units -- only load this once per Bible
-        #import pickle
-        #folder = os.path.join( os.path.dirname(__file__), 'DataFiles/', 'ScrapedFiles/' ) # Relative to module, not cwd
-        #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #dPrint( 'Verbose', DEBUGGING_THIS_MODULE, _("Importing from {}…").format( filepath ) )
-        #with open( filepath, 'rb' ) as pickleFile:
-        #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-
-        vPrint( 'Info', DEBUGGING_THIS_MODULE, _("Running discover on {}…").format( self.name ) )
-        # NOTE: We can't pickle sqlite3.Cursor objects so can not use multiprocessing here for e-Sword Bibles or commentaries
-        # NOTE: Multiprocessing discover is considerably slower, hence disabled
-        #           68 books 12 sec, but multithreaded 16s using 67s of processing!!!
-        # if self.objectTypeString not in ('CrosswireSword','e-Sword-Bible','e-Sword-Commentary','MyBible') \
-        # and BibleOrgSysGlobals.maxProcesses > 1 \
-        # and not BibleOrgSysGlobals.alreadyMultiprocessing: # Check all the books as quickly as possible
-        #     BibleOrgSysGlobals.alreadyMultiprocessing = True
-        #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, _("Prechecking/“discover” {} books using {} processes…").format( len(self.books), BibleOrgSysGlobals.maxProcesses ) )
-        #     vPrint( 'Normal', DEBUGGING_THIS_MODULE, "  NOTE: Outputs (including error and warning messages) from scanning various books may be interspersed." )
-        #     with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-        #         results = pool.map( self._discoverBookMP, [BBB for BBB in self.books] ) # have the pool do our loads
-        #         assert len(results) == len(self.books)
-        #         for j,BBB in enumerate( self.books ):
-        #             self.discoveryResults[BBB] = results[j] # Saves them in the correct order
-        #     BibleOrgSysGlobals.alreadyMultiprocessing = False
-        # else: # Just single threaded
-        if 1: # Just single threaded
-            vPrint( 'Normal', DEBUGGING_THIS_MODULE, " " + _(f"Prechecking {self.getAName( abbrevFirst=True )} in single-threaded mode!") )
-            for BBB in self.books: # Do individual book prechecks
-                vPrint( 'Info', DEBUGGING_THIS_MODULE, "  " + _("Prechecking {}…").format( BBB ) )
-                self.discoveryResults[BBB] = self.books[BBB]._discover()
-                vPrint( 'Verbose', DEBUGGING_THIS_MODULE, "    " + _("Finished prechecking {}").format( BBB ) )
+        for bbb, bkResults in rustResults.books.items():
+            self.discoveryResults[bbb] = bkResults # This is now a dict from Rust getter
+            
+        self.discoveryResults['ALL'] = rustResults.all.to_dict()
 
         if self.objectTypeString == 'PTX8':
             self.discoverPTX8()
 
-        self.__aggregateDiscoveryResults()
-        # if 'uWencoded' in self.__dict__ and self.uWencoded:
-        #     self.__aggregateAlignmentResults_noSuchFunction() # What should it have done???
+        # No need to aggregate manually as Rust already did it
+        # self.__aggregateDiscoveryResults()
     # end of InternalBible.discover
 
 

@@ -497,7 +497,7 @@ pub fn add_nesting_markers(
                 && let Some(pos) = open_markers.iter().rposition(|m| m == "v")
             {
                 let m = open_markers.remove(pos);
-                new_lines.push(InternalBibleEntry::simple(format!("¬{}", m), current_verse.as_str()));
+                new_lines.push(InternalBibleEntry::end_marker(format!("¬{}", m), current_verse.as_str()).unwrap());
             }
         }
 
@@ -507,15 +507,16 @@ pub fn add_nesting_markers(
 
     // Close any left-over open markers
     while let Some(marker) = open_markers.pop() {
-        let mut end_marker = CompactString::from("¬");
-        end_marker.push_str(&marker);
+        let mut end_marker_str = CompactString::from("¬");
+        end_marker_str.push_str(&marker);
         let with_text = if marker == "v" {
             current_verse.as_str()
         } else if marker == "c" {
             current_chapter.as_str()
         } else { "" };
-        new_lines.push(InternalBibleEntry::simple(end_marker, with_text));
+        new_lines.push(InternalBibleEntry::end_marker(end_marker_str, with_text).unwrap());
     }
+
 
     log::info!("    add_nesting_markers for {} finishing with {} entries", bos_book_code, new_lines.len());
     
@@ -580,7 +581,7 @@ mod tests {
 
     #[test]
     fn test_oet_lv_haggai_nesting() {
-        let file_path = "test_data/OET-LV_HAG.ESFM";
+        let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
 
@@ -620,7 +621,7 @@ mod tests {
 
     #[test]
     fn test_oet_rv_haggai_nesting() {
-        let file_path = "test_data/OET-RV_HAG.ESFM";
+        let file_path = "../../Tests/DataFilesForTests/OET-RV/OET-RV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-RV Haggai ESFM file");
         let reader = BufReader::new(file);
 

@@ -9,9 +9,14 @@ __all__ = [
     "set_rust_debug",
     "set_rust_strict_checking",
     "processLines",
+    "discoverBook",
+    "discoverBible",
     "InternalBibleExtra",
     "InternalBibleExtraList",
     "PyInternalBibleExtraListIter",
+    "BookDiscoveryResults",
+    "AggregateDiscoveryResults",
+    "BibleDiscoveryResults",
     "ChapterVerse",
     "InternalBibleEntry",
     "InternalBibleEntryList",
@@ -42,6 +47,8 @@ def processLines(
     work_name: str,
     options: ProcessLinesOptions,
 ) -> InternalBibleEntryList: ...
+def discoverBook(entries: InternalBibleEntryList, bbb: str) -> BookDiscoveryResults: ...
+def discoverBible(books_dict: dict) -> BibleDiscoveryResults: ...
 
 @t.final
 class InternalBibleExtra:
@@ -151,6 +158,35 @@ class PyInternalBibleExtraListIter:
     """Iterator for PyInternalBibleExtraList."""
     def __iter__(self) -> t.Self: ...
     def __next__(self) -> InternalBibleExtra | None: ...
+
+@t.final
+class BookDiscoveryResults:
+    @property
+    def chapter_count(self) -> int | None: ...
+    @property
+    def verse_count(self) -> int | None: ...
+    @property
+    def completed_verse_count(self) -> int: ...
+    @property
+    def percentage_progress(self) -> int | None: ...
+    @property
+    def word_count(self) -> int: ...
+    def __getitem__(self, key: str) -> t.Any: ...
+    def to_dict(self) -> dict: ...
+
+@t.final
+class AggregateDiscoveryResults:
+    def to_dict(self) -> dict: ...
+
+@t.final
+class BibleDiscoveryResults:
+    @property
+    def all(self) -> AggregateDiscoveryResults: ...
+    @property
+    def books(self) -> dict: ...
+    @property
+    def books_as_objects(self) -> dict: ...
+    def get_book_results(self, bbb: str) -> BookDiscoveryResults | None: ...
 
 @t.final
 class ChapterVerse:
@@ -550,6 +586,9 @@ class InternalBibleBookCVIndex:
 
     def makeBookCVIndex(self, entries: InternalBibleEntryList) -> None:
         """Build the CV index from processed entries (Python compat)."""
+
+    def discover(self) -> BookDiscoveryResults:
+        """Perform discovery on this book (Python compat)."""
 
     def getVerseEntries(
         self, cv_key: tuple[str, str], strict: bool = True

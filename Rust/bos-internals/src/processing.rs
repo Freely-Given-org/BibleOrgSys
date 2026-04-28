@@ -46,7 +46,7 @@ impl Default for ProcessLinesOptions {
 /// footnotes, cross-references, and figures, Strongs numbers.
 /// 
 /// Returns the adjusted text, the clean text (with all markers removed), and a list of extras.
-pub fn move_extras_out_of_line(
+pub fn line_fix_and_move_extras_out(
     text: &str,
     chapter: &str,
     verse: &str,
@@ -189,14 +189,20 @@ pub fn move_extras_out_of_line(
 
     // 5. Generate clean text by removing all markers
     let mut final_clean = final_adj.clone();
-    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z1-4]{1,4}(?:\*| )?").unwrap());
+    static MARKER_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\\\+?[a-z0-9]{1,6}(?:\*| )?").unwrap());
     final_clean = MARKER_RE.replace_all(&final_clean, "").to_string();
-    assert!(!final_clean.contains('\\'), "move_extras_out_of_line {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'", line_location, final_clean, text);
+    assert!(!final_clean.contains('\\'), "line_fix_and_move_extras_out {}: Clean text should not contain backslashes after marker removal: '{}' from '{}'", line_location, final_clean, text);
 
     (final_adj, final_clean, extras)
 }
 
 /// Main entry point for porting Python `processLines`.
+//         Move notes out of the text into a separate area.
+//     Also, splits lines if a paragraph marker appears within a line.
+//
+//     Uses self._rawLines and fills self._processedLines.
+//
+// Also creates the CV index (but NOT the section index)
 pub fn process_lines(
     raw_lines: Vec<(String, String)>,
     book_code: &str,
@@ -240,7 +246,7 @@ pub fn process_lines(
 
             if let Some(v_text) = parts.next() {
                 let (adj, clean, extras) =
-                    move_extras_out_of_line(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
+                    line_fix_and_move_extras_out(v_text, &chapter, &verse, book_code, "v", options, &mut errors);
                 processed.push(InternalBibleEntry::new_unchecked(
                     "v~",
                     "v",
@@ -260,7 +266,7 @@ pub fn process_lines(
             if let Some(pos) = text.find(|c: char| !c.is_ascii_digit() && c != ' ') {
                 let extra = &text[pos..];
                 let (adj, clean, extras) =
-                    move_extras_out_of_line(extra, &chapter, &verse, book_code, "c", options, &mut errors);
+                    line_fix_and_move_extras_out(extra, &chapter, &verse, book_code, "c", options, &mut errors);
                 processed.push(InternalBibleEntry::new_unchecked(
                     "c",
                     "c",
@@ -303,7 +309,7 @@ pub fn process_lines(
             ));
         } else if marker == "cl" && chapter == "-1" {
             let (adj, clean, extras) =
-                move_extras_out_of_line(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+                line_fix_and_move_extras_out(&text, &chapter, &verse, book_code, marker, options, &mut errors);
             processed.push(InternalBibleEntry::new_unchecked(
                 "cl¤",
                 marker,
@@ -315,8 +321,8 @@ pub fn process_lines(
             continue;
         }
 
-        let (adj, clean, extras) = move_extras_out_of_line(&text, &chapter, &verse, book_code, marker, options, &mut errors);
-        // println!("process_lines: After move_extras_out_of_line for marker {}: adj='{}', clean='{}', extras={}", marker, adj, clean, extras.len());
+        let (adj, clean, extras) = line_fix_and_move_extras_out(&text, &chapter, &verse, book_code, marker, options, &mut errors);
+        // println!("process_lines: After line_fix_and_move_extras_out for marker {}: adj='{}', clean='{}', extras={}", marker, adj, clean, extras.len());
 
         if (marker == "b" || crate::markers::paragraph_markers::is_paragraph(marker))
             && (!clean.is_empty() || !extras.is_empty())
@@ -356,8 +362,8 @@ mod tests {
     use std::io::{BufRead, BufReader};
 
     #[test]
-    fn test_move_extras_out_of_line() {
-        let (_adj_text, clean_text, extras) = move_extras_out_of_line(
+    fn test_line_fix_and_move_extras_out() {
+        let (_adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r" Mismatched \f footnote \fe* should be ignored. ",
             "1",
             "1",
@@ -371,7 +377,7 @@ mod tests {
         // Trailing space is trimmed, \f<space> is removed, \fe* is removed
         assert_eq!(clean_text, " Mismatched footnote  should be ignored.");
 
-        let (_adj_text, clean_text, extras) = move_extras_out_of_line(
+        let (_adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r" Mismatched \w word|attr \+w* should be ignored. ",
             "1",
             "1",
@@ -384,7 +390,7 @@ mod tests {
         assert!(extras.is_empty());
         assert_eq!(clean_text, " Mismatched word|attr  should be ignored.");
 
-        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+        let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"\fig |/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||\fig*",
             "-1",
             "16",
@@ -400,7 +406,7 @@ mod tests {
         assert_eq!(extras[0].clean_note_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
         assert_eq!(extras[0].clean_text(), "|/srv/Websites/Freely-Given.org/Logo/FG_with_text_below.png|span||||");
         
-        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+        let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r" Praise Yah.\f + \fr 150:? \ft Hebrew \+it hallelujah\+it*\f* ",
             "150",
             "6",
@@ -416,7 +422,7 @@ mod tests {
         assert_eq!(extras[0].clean_note_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
         assert_eq!(extras[0].clean_text(), "+ \\fr 150:? Hebrew \\+it hallelujah\\+it*");
         
-        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+        let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"\f + \fr 8:28 \ft Note: KJB: Exod.8.32\f* and¦29089= Parˊoh¦29090 =he¦29089_made¦29089_unresponsive¦29089 \untr DOM¦29091\untr* his/its¦29093=heart¦29093 also¦29094 at¦29095÷time¦29095 (the)¦29096÷this¦29096 and¦29097=not¦29097 he¦29098_let¦29098_go¦29098 \untr DOM¦29099\untr* the¦29101÷people¦29101.",
             "8",
             "28",
@@ -432,7 +438,7 @@ mod tests {
         assert_eq!(extras[0].clean_note_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
         assert_eq!(extras[0].clean_text(), "+ \\fr 8:28 Note: KJB: Exod.8.32");
         
-        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+        let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"The¦283645_vision¦283645_of¦283645 Yəshaˊ\sup yāh\sup*¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziy\sup yāh\sup*¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiy\sup yāh\sup*¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.",
             "1",
             "1",
@@ -445,7 +451,8 @@ mod tests {
         assert_eq!(clean_text, "The¦283645_vision¦283645_of¦283645 Yəshaˊyāh¦283646 the¦283647_son¦283647_of¦283647 ʼĀmōʦ¦283649 which¦283650 he¦283651_saw¦283651 on¦283652 Yəhūdāh/(Judah)¦283654 and¦283655÷Yərūshālam/(Jerusalem)¦283655 in¦283656÷the¦283656_days¦283656_of¦283656 ˊUzziyyāh¦283657 Yōtām/(Jotham)¦283658 ʼĀḩāz¦283659 Ḩizqiyyāh¦283660 the¦283661_kings¦283661_of¦283661 Yəhūdāh¦283662.");
         assert!(extras.is_empty());
 
-        let (adj_text, clean_text, extras) = move_extras_out_of_line(
+
+        let (adj_text, clean_text, extras) = line_fix_and_move_extras_out(
             r"Hear¦283664 Oh¦283665_heavens¦283665 and¦283666÷give¦283666_ear¦283666 Oh¦283667_earth¦283667 if/because¦283668 \nd YHWH¦283669\nd* he¦283670_has¦283670_spoken¦283670 children¦283671 I¦283672_have¦283672_brought¦283672_up¦283672 and¦283673÷I¦283673_have¦283673_raised¦283673 and¦283674÷they¦283674 they¦283675_have¦283675_rebelled¦283675 against¦283676÷me¦283676.",
             "1",
             "2",
@@ -461,7 +468,7 @@ mod tests {
 
     #[test]
     fn test_oet_lv_process_lines_haggai() {
-        let file_path = "test_data/OET-LV_HAG.ESFM";
+        let file_path = "../../Tests/DataFilesForTests/OET-LV/OET-LV_HAG.ESFM";
         let file = File::open(file_path).expect("Could not open OET-LV Haggai ESFM file");
         let reader = BufReader::new(file);
 
@@ -532,5 +539,42 @@ mod tests {
         // Check if "mt" was normalized to "mt1"
         assert!(markers.contains(&"mt1"));
         assert!(!markers.contains(&"mt"));
+    }
+
+    #[test]
+    fn test_process_lines_greek() {
+        let raw_lines = vec![
+            ("id".to_string(), "MRK".to_string()),
+            ("mt".to_string(), "Μάρκος".to_string()),
+            ("c".to_string(), "1".to_string()),
+            ("v".to_string(), r#"24 \w Καὶ|lemma="καί" x-koine="και" x-strong="G25320" x-morph="Gr,C,......."\w* \w ἀπῆλθεν|lemma="ἀπέρχομαι" x-koine="απηλθεν" x-strong="G05650" x-morph="Gr,V,IAA3..S"\w* \w μετʼ|lemma="μετά" x-koine="μετ" x-strong="G33260" x-morph="Gr,P,......."\w* \w αὐτοῦ|lemma="αὐτός" x-koine="αυτου" x-strong="G08460" x-morph="Gr,R,...3GMS"\w*"#.to_string()),
+            ("p".to_string(), r#"\w Καὶ|lemma="καί" x-koine="και" x-strong="G25320" x-morph="Gr,C,......."\w* \w ἠκολούθει|lemma="ἀκολουθέω" x-koine="ηκολουθει" x-strong="G01900" x-morph="Gr,V,IIA3..S"\w*"#.to_string()),
+            ("v".to_string(), r#"25 \w Καὶ|lemma="καί" x-koine="και" x-strong="G25320" x-morph="Gr,C,......."\w* "\w γυνὴ|lemma="γυνή" x-koine="γυνη" x-strong="G11350" x-morph="Gr,N,....NFS"\w*"#.to_string()),
+        ];
+        let options = ProcessLinesOptions::default();
+        let processed = process_lines(raw_lines, "MRK", "GREEK", &options);
+        for entry in &processed {
+            println!("Marker: {}, Clean Text: '{}', Extras: {:?}", entry.marker(), entry.clean_text(), entry.extras());
+        }
+
+        // Verification
+        let markers: Vec<&str> = processed.iter().map(|e| e.marker()).collect();
+        println!("Markers: {:?}", markers);
+
+        // Should have start/end markers for chapters and verses due to nesting
+        assert!(!markers.contains(&""), "{:?}", markers);
+        assert!(markers.contains(&"v"), "{:?}", markers);
+        assert!(markers.contains(&"v~"), "{:?}", markers);
+        assert!(markers.contains(&"¬v"), "{:?}", markers);
+        assert!(markers.contains(&"p"), "{:?}", markers);
+        assert!(markers.contains(&"p~"), "{:?}", markers);
+        assert!(markers.contains(&"¬p"), "{:?}", markers);
+
+        // Find "Καὶ" at start of verse 24
+        let kai = processed.iter().find(|e| e.clean_text().contains("Καὶ")).expect("Should find Καὶ in verse 24");
+        assert!(kai.has_extras());
+        let extra = &kai.extras().unwrap()[0];
+        assert_eq!(extra.extra_type(), ExtraType::WordWithAttributes);
+        assert!(extra.clean_note_text().contains("G25320"));
     }
 }

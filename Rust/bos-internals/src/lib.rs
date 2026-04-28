@@ -79,6 +79,7 @@
 
 // Re-export core modules
 pub mod chapter_verse;
+pub mod discovery;
 pub mod entry;
 pub mod entry_extras;
 pub mod error;
@@ -90,14 +91,19 @@ pub mod processing;
 
 // Re-export commonly used types at crate root
 pub use chapter_verse::ChapterVerse;
+pub use discovery::{
+    AggregateDiscoveryResults, BibleDiscoveryResults, BookDiscoveryResults, discover_book,
+    discover_bible,
+};
 pub use entry::{InternalBibleEntry, InternalBibleExtra};
 pub use entry_extras::{InternalBibleEntryList, InternalBibleExtraList};
 pub use error::{BosError, IndexError, LookupError, ParseError, ValidationError};
 pub use indexes::{CVIndexEntry, InternalBibleBookCVIndex, InternalBibleBookSectionIndex, SectionIndexEntry};
 pub use markers::ExtraType;
 pub use parsing::{
-    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_small_leading_int,
-    parse_figure_attributes, parse_word_attributes,
+    UsfmFigureAttributes, WordWithAttributes, abbreviate, get_positive_leading_int,
+    get_small_leading_int, parse_figure_attributes, parse_word_attributes,
+    strip_word_ends_punctuation,
 };
 pub use processing::{ObjectType, ProcessLinesOptions, process_lines};
 
