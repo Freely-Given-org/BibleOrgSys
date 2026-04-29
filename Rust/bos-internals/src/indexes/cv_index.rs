@@ -334,12 +334,11 @@ impl InternalBibleBookCVIndex {
         let mut current_context: Vec<CompactString> = Vec::new();
 
         for (i, entry) in self.entries.iter().enumerate() {
-            let marker = entry.marker();
-
             let mut next_chapter = current_chapter.clone();
             let mut next_verse = current_verse.clone();
             let mut is_cv_start = false;
-
+            
+            let marker = entry.marker();
             if marker == "c" {
                 next_chapter = CompactString::from(entry.clean_text());
                 next_verse = CompactString::from("0");
@@ -376,20 +375,24 @@ impl InternalBibleBookCVIndex {
             }
 
             if is_cv_start && (next_chapter != current_chapter || next_verse != current_verse) {
+                // Finish previous CV
+                let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
+                let entry_count = (i - current_start) as u16;
+                // // Double-check that all verse markers in this range have the same verse number (to catch any inconsistencies)
+                // for entry in self.entries.slice(current_start, i) {
+                //     if entry.marker() == "v" || entry.marker() == "v=" || entry.marker() == "¬v" {
+                //         let verse_num = entry.clean_text();
+                //         assert!(verse_num==current_verse.as_str(), "{} {} CV index entry for {} contains inconsistent verse marker with text {}='{}'",
+                //             self.work_name(), self.bos_book_code(), cv, entry.marker(), verse_num);
+                //     }
+                // }
+                self.index_data
+                    .insert(cv, CVIndexEntry::new(current_start, entry_count, current_context.clone()));
+
                 current_chapter = next_chapter;
                 current_verse = next_verse;
                 current_start = i;
                 current_context = context.clone();
-            }
-
-            // Always update/insert the current CV entry to include the current entry
-            let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
-            let entry_count = (i - current_start + 1) as u16;
-            if let Some(existing) = self.index_data.get_mut(&cv) {
-                existing.entry_count = (i - existing.entry_index + 1) as u16;
-            } else {
-                self.index_data
-                    .insert(cv, CVIndexEntry::new(current_start, entry_count, current_context.clone()));
             }
 
             // 2. Handle nesting markers - push onto context
@@ -410,9 +413,21 @@ impl InternalBibleBookCVIndex {
             }
         }
 
+        // Finish last CV
+        let cv = ChapterVerse::new(current_chapter.as_str(), current_verse.as_str());
+        let entry_count = (self.entries.len() - current_start) as u16;
+        self.index_data.insert(cv, CVIndexEntry::new(current_start, entry_count, current_context));
+
         self.indexed = true;
         self.validate(); // This line can be removed in the future for a speed-up once fully debugged and tested
         Ok(())
+    }
+
+    fn format_verse_result(&self, res: Result<InternalBibleEntryList, LookupError>) -> String {
+        match res {
+            Ok(entries) => format!("{}", entries),
+            Err(e) => format!("{}", e),
+        }
     }
 
     /// Validate the index structure.
@@ -441,7 +456,11 @@ impl InternalBibleBookCVIndex {
             if cv.chapter() != "-1"  {
                 for processed_line_entry in self.entries.slice(entry.entry_index(), entry.next_entry_index()) {
                     if processed_line_entry.marker() == "v" || processed_line_entry.marker() == "v=" || processed_line_entry.marker() == "¬v" {
-                        assert!(processed_line_entry.clean_text().starts_with(cv.verse().to_string().as_str()), "{} {} CV index entry for {} contains unexpected verse marker with text {}='{}'", self.work_name(), self.bos_book_code(), cv, processed_line_entry.marker(),processed_line_entry.clean_text());
+                        assert!(processed_line_entry.clean_text().starts_with(cv.verse().to_string().as_str()), "Validating {} {} CV index entry for {} found unexpected verse marker with text {}='{}'\n\n{}:{} {}\n\n{} {}\n\n{}:{} {}",
+                            self.work_name(), self.bos_book_code(), cv, processed_line_entry.marker(),processed_line_entry.clean_text(),
+                            cv.chapter(), cv.verse_int().unwrap_or(1)-1, self.format_verse_result(self.get_verse_entries(&ChapterVerse::new(cv.chapter(), (cv.verse_int().unwrap_or(1) - 1).to_string().as_str()), true)),
+                            cv, self.format_verse_result(self.get_verse_entries(cv, true)),
+                            cv.chapter(), cv.verse_int().unwrap_or(1)+1, self.format_verse_result(self.get_verse_entries(&ChapterVerse::new(cv.chapter(), (cv.verse_int().unwrap_or(1) + 1).to_string().as_str()), true)));
                     }
                 }
             }
@@ -502,7 +521,7 @@ mod tests {
     use crate::ProcessLinesOptions;
     use crate::process_lines;
 
-    fn create_test_entries() -> InternalBibleEntryList {
+    fn create_test_entries_1() -> InternalBibleEntryList {
         let mut entries = InternalBibleEntryList::new();
 
         // Introduction
@@ -540,9 +559,9 @@ mod tests {
     }
 
     #[test]
-    fn test_build_index() {
+    fn test_build_index_1() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        let entries = create_test_entries();
+        let entries = create_test_entries_1();
 
         index.build(entries).unwrap();
         log::trace!("CV index: {}", index);
@@ -578,10 +597,63 @@ mod tests {
         assert!(index.len() == 10);
     }
 
+    fn create_test_entries_2() -> InternalBibleEntryList {
+        let mut entries = InternalBibleEntryList::new();
+
+        entries.push(InternalBibleEntry::simple("id", "SA2")); // 0
+        entries.push(InternalBibleEntry::nesting_marker("chapters")); // 1
+
+        // Chapter 6
+        entries.push(InternalBibleEntry::simple("c", "6")); // 2
+        entries.push(InternalBibleEntry::simple("v", "1")); // 3
+        entries.push(InternalBibleEntry::simple("v~", "Forsothe Dauid gaderide eft alle the chosun men of Israel, thritti thousynde.")); // 4
+        entries.push(InternalBibleEntry::end_marker("¬v", "1").expect("Fail")); // 5
+        entries.push(InternalBibleEntry::simple("v", "2")); // 6
+        entries.push(InternalBibleEntry::simple("v~", "And Dauid roos, and yede, and al the puple that was with hym of the men of Juda, to brynge the arke of God, on which the name of the Lord of oostis, sittynge in cherubyn on that arke, was clepid.")); // 7
+        entries.push(InternalBibleEntry::end_marker("¬v", "2").expect("Fail")); // 8
+        entries.push(InternalBibleEntry::simple("v", "3")); // 9
+        entries.push(InternalBibleEntry::simple("v~", "And thei puttiden the arke of God on a newe wayn, and thei token it fro the hows of Amynadab, that was in Gabaa. Forsothe Oza and Haio, the sons of Amynadab, dryueden the newe wayn.")); // 10
+        entries.push(InternalBibleEntry::end_marker("¬v", "3").expect("Fail")); // 11
+        entries.push(InternalBibleEntry::simple("v", "4")); // 12
+        entries.push(InternalBibleEntry::simple("v~", "And whanne thei hadden take it fro the hows of Amynadab, that was in Gabaa, and kepte the arke of God, Haio yede bifor the arke.")); // 13
+        entries.push(InternalBibleEntry::end_marker("¬v", "4").expect("Fail")); // 14
+        entries.push(InternalBibleEntry::end_marker("¬c", "6").expect("Fail")); // 15
+
+        entries
+    }
+
+    #[test]
+    fn test_build_index_2() {
+        let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
+        let entries = create_test_entries_2();
+
+        index.build(entries).unwrap();
+        log::trace!("CV index: {}", index);
+        assert!(index.is_indexed());
+
+        // 6:1
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_index(), 3);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "1")).unwrap().entry_count(), 3);
+
+        // 6:2
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_index(), 6);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "2")).unwrap().entry_count(), 3);
+
+        // 6:3
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_index(), 9);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "3")).unwrap().entry_count(), 3);
+
+        // 6:4
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_index(), 12);
+        assert_eq!(index.get_index_entry(&ChapterVerse::new("6", "4")).unwrap().entry_count(), 4);
+
+        assert_eq!(index.len(), 7);
+    }
+
     #[test]
     fn test_get_verse_entries() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let entries = index.get_verse_entries(&ChapterVerse::new("1", "1"), true).unwrap();
         assert!(!entries.is_empty());
@@ -592,7 +664,7 @@ mod tests {
     #[test]
     fn test_get_chapter_entries() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let entries = index.get_chapter_entries("1").unwrap();
         log::trace!("Chapter entries:{}", entries);
@@ -603,7 +675,7 @@ mod tests {
     #[test]
     fn test_chapters() {
         let mut index = InternalBibleBookCVIndex::new("ESV", "GEN");
-        index.build(create_test_entries()).unwrap();
+        index.build(create_test_entries_1()).unwrap();
 
         let chapters = index.chapters();
         assert!(chapters.contains(&"1"));

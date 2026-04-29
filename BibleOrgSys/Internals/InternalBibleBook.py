@@ -71,11 +71,9 @@ import unicodedata
 # BibleOrgSys imports
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint, LARGE_DUMMY_VALUE
-from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, \
-    USFM_ALL_BIBLE_PARAGRAPH_MARKERS
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_CONTENT_MARKERS, BOS_CUSTOM_NESTING_MARKERS, \
-    BOS_END_MARKERS, BOS_ALL_CUSTOM_MARKERS, BOS_EXTRA_TYPES, BOS_PRINTABLE_MARKERS, \
-    InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
+from BibleOrgSys.Reference.USFM3Markers import USFM_ALL_BIBLE_PARAGRAPH_MARKERS, USFM_ALL_TITLE_MARKERS, USFM_ALL_INTRODUCTION_MARKERS, \
+                        USFM_ALL_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleExtra, InternalBibleExtraList, \
     getSmallLeadingInt
 from bible_organisational_system import InternalBibleBookCVIndex, InternalBibleBookSectionIndex
 from BibleOrgSys.Reference.BibleReferences import BibleAnchorReference
@@ -85,7 +83,7 @@ from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from bible_organisational_system import processLines, ProcessLinesOptions, ObjectType
 
 
-LAST_MODIFIED_DATE = '2026-04-23' # by RJH
+LAST_MODIFIED_DATE = '2026-04-29' # by RJH
 SHORT_PROGRAM_NAME = "InternalBibleBook"
 PROGRAM_NAME = "Internal Bible book handler"
 PROGRAM_VERSION = '1.00'
@@ -98,6 +96,80 @@ BCV_VERSION = '1.0'
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK_NORMAL = 3
 MAX_NONCRITICAL_ERRORS_PER_BOOK_VERBOSE = 5
+
+
+BOS_CUSTOM_CONTENT_MARKERS = ( 'c~', 'c#', 'v=', 'v~', 'p~', 'cl¤', 'vp#', )
+"""
+    c~  anything after the chapter number on a \\c line is split off into here --
+            note that it can be blank (but have extras) if the chapter number is footnoted
+    c#  the chapter number in the correct position to be printed
+            This is usually a duplicate of the c field, but may have come from the cp field instead
+            Usually only one of c or c# is used for exports
+    v= the verse number (not to be printed)
+            that the next field(s) (usually a section heading) logically belong together with
+    v~  verse text -- anything after the verse number on a \\v line is split off into here
+    p~  verse text -- anything that was on a paragraph line (e.g., \\p, \\q, \\q2, etc.) is split off into here
+    cl¤ used to rename cl markers BEFORE the '\\c 1' marker --
+                            represents the text for "chapter" (e.g., Psalm) to be used throughout the book
+        cl markers AFTER the '\\c 1' marker remain unchanged (the text for the individual chapter/psalm heading)
+    vp# used for the vp (character field) when it is copied and converted to a separate (newline) field
+            This is inserted BEFORE the v (and v~) marker(s) that contained the vp (character) field.
+"""
+
+# NOTE: Don't use any of the following symbols here: = ¬ or backslashes.
+BOS_PRINTABLE_MARKERS = USFM_ALL_TITLE_MARKERS + USFM_ALL_INTRODUCTION_MARKERS + USFM_ALL_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
+
+# BOS_REGULAR_NESTING_MARKERS = USFM_ALL_SECTION_HEADING_MARKERS + ('c','v' ) # No need to nest s1 type markers (one line only expected)
+BOS_REGULAR_NESTING_MARKERS = ('c','v')
+
+BOS_CUSTOM_NESTING_MARKERS = ( 'headers', 'intro', 'ilist', 'chapters', 'list' )
+"""
+    intro       Inserted at the start of book introductions
+    ilist       Inserted at the start of introduction lists (before ili markers)
+    chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
+    list       Inserted at the start of lists (before li markers)
+"""
+BOS_ALL_CUSTOM_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_CUSTOM_NESTING_MARKERS
+
+BOS_ALL_CUSTOM_NESTING_MARKERS = BOS_CUSTOM_NESTING_MARKERS + ('iot',)
+"""
+    intro       Inserted at the start of book introductions
+    iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
+    ilist       Inserted at the start of introduction lists (before ili markers)
+    chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
+    list       Inserted at the start of lists (before li markers)
+"""
+
+BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS \
+                            + USFM_BIBLE_PARAGRAPH_MARKERS + ('ms1','ms2','ms3')
+
+#BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
+#for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
+#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS )
+BOS_END_MARKERS = [ f'¬{marker}' for marker in BOS_NESTING_MARKERS]
+#dPrint( 'Quiet', DEBUGGING_THIS_MODULE, len(BOS_END_MARKERS), BOS_END_MARKERS );halt
+# (46) ['¬c', '¬v', '¬headers', '¬intro', '¬ilist', '¬chapters', '¬list', '¬iot', '¬p', '¬pc', '¬pr',
+#       '¬m', '¬mi', '¬pm', '¬pmo', '¬pmc', '¬pmr', '¬cls',
+#       '¬pi','¬pi1','¬pi2','¬pi3','¬pi4', '¬ph','¬ph1','¬ph2','¬ph3','¬ph4',
+#       '¬q','¬q1','¬q2','¬q3','¬q4', '¬qr', '¬qm','¬qm1','¬qm2','¬qm3','¬qm4',
+#       '¬li','¬li1','¬li2','¬li3','¬li4', '¬ms1','¬ms2','¬ms3']
+
+
+#BOS_MARKERS = BOS_CUSTOM_CONTENT_MARKERS + BOS_ALL_CUSTOM_NESTING_MARKERS + BOS_END_MARKERS
+
+# "EXTRA" here means footnote type fields that are not part of the main line of text.
+BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'ww', 'vp', )
+BOS_EXTRA_MARKERS = ( 'f', 'fe', 'x', 'fig', 'str', 'sem', 'ww', 'vp', )
+"""
+    fn  footnote
+    en  endnote
+    xr  cross-reference
+    fig figure
+    str Strongs' number
+    sem semantic and other translation-related markers
+    vp  published verse number
+"""
+assert len(BOS_EXTRA_TYPES) == len(BOS_EXTRA_MARKERS)
 
 
 

@@ -3,6 +3,8 @@ resolver = "3"
 members = [
     "Rust/bible_organisational_system",
     "Rust/bos-internals",
+    "Rust/bos_books_codes",
+    "Rust/bos_books_codes_py",
 ]
 
 [workspace.package]
@@ -13,6 +15,7 @@ authors = ["Robert Hunt <Freely.Given.org+BOS@gmail.com>"]
 [workspace.dependencies]
 # local dependencies
 bos-internals = { path = "Rust/bos-internals" }
+bos_books_codes = { path = "Rust/bos_books_codes" }
 
 compact_str = { version = "0.9.0", features = ["rkyv"] }
 indexmap = "2.14"

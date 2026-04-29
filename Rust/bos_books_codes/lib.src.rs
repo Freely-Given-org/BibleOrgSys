@@ -35,6 +35,30 @@ pub fn is_valid_reference_abbreviation(reference_abbreviation: &str) -> bool {
     REFERENCE_ABBREVIATION_MAP.contains_key(reference_abbreviation)
 }
 
+pub fn get_reference_number(reference_abbreviation: &str) -> Result<u16, LookupError<'_>> {
+    let array_index = *REFERENCE_ABBREVIATION_MAP.get(reference_abbreviation)
+        .ok_or_else(|| LookupError::AbbrevNotFound("Reference", reference_abbreviation))?;
+    Ok(BIBLE_BOOKS_CODES_ARRAY[array_index].BOS_reference_number)
+}
+
+pub fn is_ot(reference_abbreviation: &str) -> bool {
+    if let Ok(num) = get_reference_number(reference_abbreviation) {
+        return 1 <= num && num <= 39;
+    }
+    false
+}
+
+pub fn is_nt(reference_abbreviation: &str) -> bool {
+    if let Ok(num) = get_reference_number(reference_abbreviation) {
+        return 40 <= num && num <= 66;
+    }
+    false
+}
+
+pub fn is_dc(reference_abbreviation: &str) -> bool {
+    matches!(reference_abbreviation, "TOB"|"JDT"|"ESG"|"WIS"|"SIR"|"BAR"|"LJE"|"PAZ"|"SUS"|"BEL"|"MA1"|"MA2"|"GES"|"LES"|"MAN")
+}
+
 #[inline]
 pub fn reference_abbrev_to_usfm_abbrev<'a>(
     reference_abbreviation: &str,

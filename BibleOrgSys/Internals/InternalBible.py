@@ -77,13 +77,13 @@ import copy
 
 from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
-from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
-from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION
+from BibleOrgSys.Internals.InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
+from BibleOrgSys.Internals.InternalBibleBook import BCV_VERSION, BOS_EXTRA_TYPES, BOS_EXTRA_MARKERS
 from BibleOrgSys.Reference.VerseReferences import SimpleVerseKey
 from BibleOrgSys.Reference.BibleBooksCodes import BOOKLIST_OT39, BOOKLIST_NT27
 
 
-LAST_MODIFIED_DATE = '2025-03-22' # by RJH
+LAST_MODIFIED_DATE = '2026-04-29' # by RJH
 SHORT_PROGRAM_NAME = "InternalBible"
 PROGRAM_NAME = "Internal Bible handler"
 PROGRAM_VERSION = '0.92'

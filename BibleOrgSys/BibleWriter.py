@@ -105,7 +105,7 @@ from BibleOrgSys import BibleOrgSysGlobals
 from BibleOrgSys.BibleOrgSysGlobals import fnPrint, vPrint, dPrint
 from BibleOrgSys.InputOutput import ControlFiles
 from BibleOrgSys.InputOutput.MLWriter import MLWriter
-from BibleOrgSys.Internals.InternalBibleInternals import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS, InternalBibleExtraList
+from BibleOrgSys.Internals.InternalBibleBook import BOS_CUSTOM_NESTING_MARKERS, BOS_NESTING_MARKERS, InternalBibleExtraList
 from BibleOrgSys.Internals.InternalBible import InternalBible
 from BibleOrgSys.Reference.BibleOrganisationalSystems import BibleOrganisationalSystem
 from BibleOrgSys.Reference.BibleReferences import BibleReferenceList
@@ -116,7 +116,7 @@ from BibleOrgSys.Reference.USFM3Markers import OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleOrgSys.Misc.NoisyReplaceFunctions import noisyRegExDeleteAll
 
 
-LAST_MODIFIED_DATE = '2023-05-04' # by RJH
+LAST_MODIFIED_DATE = '2026-04-29' # by RJH
 SHORT_PROGRAM_NAME = "BibleWriter"
 PROGRAM_NAME = "Bible writer"
 PROGRAM_VERSION = '0.96'

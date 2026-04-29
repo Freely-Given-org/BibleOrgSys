@@ -297,7 +297,7 @@ impl PyInternalBibleBookSectionIndex {
 
     /// Build the section index from processed entries.
     fn makeBookSectionIndex(&mut self, entries: &PyInternalBibleEntryList) -> PyResult<()> {
-        verbosity_println!(2, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
+        verbosity_println!(3, "Building section index for {} {}…", self.inner.work_name(), self.inner.bos_book_code());
         self.inner
             .build(entries.inner.clone())
             .map_err(|e| PyValueError::new_err(e.to_string()))

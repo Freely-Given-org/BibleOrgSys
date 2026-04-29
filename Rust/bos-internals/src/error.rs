@@ -101,6 +101,9 @@ pub enum IndexError {
 
     #[error("Invalid marker sequence: {0}")]
     InvalidMarkerSequence(String),
+
+    #[error("Inconsistent verse numbers at {0}: found {1}")]
+    InconsistentVerseNumbers(ChapterVerse, String),
 }
 
 /// A combined result type for convenience.

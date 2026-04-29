@@ -37,6 +37,7 @@ from BibleOrgSys.Reference import BibleBooksCodes
 
 
 LAST_MODIFIED_DATE = '2022-07-31' # by RJH
+SHORT_PROGRAM_NAME = "BibleBooksCodesTests"
 PROGRAM_NAME = "Bible Books Codes tests"
 PROGRAM_VERSION = '0.73'
 PROGRAM_NAME_VERSION = f'{PROGRAM_NAME} v{PROGRAM_VERSION}'
@@ -71,16 +72,18 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 18 )
+        self.assertEqual( len(result), 21 )
         for dictName in ('referenceNumberDict','referenceAbbreviationDict','sequenceList',
+                        'shortAbbreviationDict',
                         'SBLAbbreviationDict','OSISAbbreviationDict','SwordAbbreviationDict','CCELDict',
                         'USFMAbbreviationDict','USFMNumberDict','USXNumberDict','UnboundCodeDict',
-                        'BibleditNumberDict','NETBibleAbbreviationDict','DrupalBibleAbbreviationDict','BibleWorksAbbreviationDict',
+                        'BibleditNumberDict','LogosNumberDict','LogosAbbreviationDict',
+                        'NETBibleAbbreviationDict','DrupalBibleAbbreviationDict','BibleWorksAbbreviationDict',
                         'ByzantineAbbreviationDict','EnglishNameDict',
-                        'allAbbreviationsDict',):
+                        'allEnglishAbbreviationsDict',):
             self.assertTrue( dictName in result )
             self.assertGreater( len(result[dictName]), 20 )
-            self.assertLess( len(result[dictName]), 420 )
+            self.assertLess( len(result[dictName]), 5000 )
     # end of test_1030_importDataToPython
 
     def test_1040_pickle( self ):
@@ -154,7 +157,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getAllReferenceAbbreviations function. """
         results = self.bbc.getAllReferenceAbbreviations()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 66 < len(results) < 250 )
+        self.assertTrue( 66 < len(results) < 300 )
         self.assertFalse( None in results )
         for result in results:
             self.assertTrue( len(result)==3 )
