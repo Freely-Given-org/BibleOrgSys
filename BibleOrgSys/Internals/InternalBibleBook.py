@@ -770,7 +770,6 @@ class InternalBibleBook:
     # (Removed addVerseStartMarkers as it is now implemented in Rust)
 
 
-
     def reorderRawOsisLines( self ):
         """
         Using self._rawLines from OSIS input, reorder them before further processing.
@@ -953,6 +952,17 @@ class InternalBibleBook:
 
         # Call Rust implementation
         self._processedLines = processLines(self._rawLines, self.BBB, self.workName, options)
+
+        # # Create files for tests for new Rust implementation
+        # if 'OET' in self.workName and self.BBB=='HAG':
+        #     with open( f'{self.workName}_{self.BBB}_rawLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
+        #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._rawLines)}\n" )
+        #         for n, (marker,text) in enumerate( self._rawLines ):
+        #             debugOutputFile.write( f"{n} {marker=} {text=}\n")
+        #     with open( f'{self.workName}_{self.BBB}_processedLines.txt', 'wt', encoding='utf-8' ) as debugOutputFile:
+        #         debugOutputFile.write( f"{self.workName} {self.BBB} {len(self._processedLines)}\n" )
+        #         for n, processedLine in enumerate( self._processedLines ):
+        #             debugOutputFile.write( f"{n} {processedLine}\n")
 
         # Get rid of data that we don't need
         del self._rawLines # if short of memory
